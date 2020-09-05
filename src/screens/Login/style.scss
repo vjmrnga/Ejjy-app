@@ -1,0 +1,29 @@
+@import '../../assets/styles/main';
+
+.Login {
+	height: 100vh;
+	@include flex(center, center);
+
+	.container {
+		width: 400px;
+		padding: 50px 40px;
+		@include flex(center, center, column);
+
+		.form {
+			width: 100%;
+		}
+
+		.logo {
+			margin-bottom: 40px;
+		}
+
+		.input-field {
+			width: 100%;
+			margin-bottom: 30px;
+		}
+
+		.errors {
+			width: 100%;
+		}
+	}
+}
