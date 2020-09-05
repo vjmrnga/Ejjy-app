@@ -7,7 +7,7 @@ import './style.scss';
 
 type IDashboardProps = ConnectedProps<typeof connector>;
 
-const Dashboard = ({}: IDashboardProps) => {
+const Dashboard = () => {
 	return (
 		<Container>
 			<section className="Dashboard"></section>
