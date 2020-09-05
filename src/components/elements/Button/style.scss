@@ -1,0 +1,56 @@
+@import '../../../assets/styles/variables';
+
+.Button {
+	padding: 8px 20px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	border-radius: $border-radius;
+	cursor: pointer;
+	transition: 300ms;
+
+	&.block {
+		display: block;
+		width: 100%;
+	}
+
+	&.loading {
+		opacity: 0.8;
+		pointer-events: none;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		background-color: $color-dark-gray !important;
+		border: 0 !important;
+		box-shadow: none !important;
+		pointer-events: none;
+	}
+
+	&.default {
+		color: #23252e;
+		border: 1px solid;
+	}
+
+	&.primary {
+		background-color: $color-primary;
+		border: 1px solid $color-primary;
+		box-shadow: 0px 5px 20px 3px $color-primary-05;
+
+		&:hover {
+			transition: 300ms;
+			box-shadow: 0px 5px 20px 3px $color-primary-08;
+		}
+	}
+
+	&.secondary {
+		background-color: $color-secondary;
+		border: 1px solid $color-secondary;
+		box-shadow: 0px 5px 20px 3px $color-secondary-05;
+
+		&:hover {
+			transition: 300ms;
+			box-shadow: 0px 5px 20px 3px $color-secondary-08;
+		}
+	}
+}
