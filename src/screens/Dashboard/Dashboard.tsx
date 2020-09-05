@@ -1,15 +1,17 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Container } from '../../components';
+
 import './style.scss';
 
 type IDashboardProps = ConnectedProps<typeof connector>;
 
 const Dashboard = ({}: IDashboardProps) => {
 	return (
-		<section className="Dashboard">
-			<p>Hello there!</p>
-		</section>
+		<Container>
+			<section className="Dashboard"></section>
+		</Container>
 	);
 };
 
