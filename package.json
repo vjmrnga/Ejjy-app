@@ -57,6 +57,15 @@
 		"@types/react-router-dom": "^5.1.5",
 		"@types/redux-actions": "^2.6.1",
 		"@types/yup": "^0.29.6",
-		"node-sass": "^4.14.1"
+		"copy-webpack-plugin": "^6.1.0",
+		"eslint": "^7.8.1",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-import": "^2.22.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"eslint-plugin-react": "^7.20.6",
+		"eslint-plugin-react-hooks": "^4.1.0",
+		"node-sass": "^4.14.1",
+		"prettier": "^2.1.1",
+		"react-app-rewired": "^2.1.6"
 	}
 }

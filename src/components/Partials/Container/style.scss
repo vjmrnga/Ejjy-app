@@ -1,0 +1,23 @@
+@import '../../../assets/styles/main';
+
+.Main {
+	@include flex();
+
+	.Content {
+		padding: 50px 30px;
+		flex: 1;
+
+		.page-header {
+			@include flex($justify-content: space-between);
+
+			.page-title {
+				@include font(1.875rem, 800);
+				margin-bottom: 5px;
+			}
+		}
+
+		.page-content {
+			margin-top: 30px;
+		}
+	}
+}

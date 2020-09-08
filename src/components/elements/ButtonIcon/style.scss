@@ -1,0 +1,30 @@
+@import '../../../assets/styles/variables';
+
+.ButtonIcon {
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	background-color: white;
+	border-radius: 10px;
+	border: 2px solid $color-gray;
+	display: block;
+	cursor: pointer;
+
+	&.block {
+		display: block;
+		width: 100%;
+	}
+
+	&.loading {
+		opacity: 0.8;
+		pointer-events: none;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		background-color: $color-dark-gray !important;
+		border: 0 !important;
+		box-shadow: none !important;
+		pointer-events: none;
+	}
+}

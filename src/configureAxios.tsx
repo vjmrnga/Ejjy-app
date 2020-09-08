@@ -3,9 +3,12 @@ import { flatten, values } from 'lodash';
 import { actions as authActions, key as AUTH_KEY } from './ducks/auth';
 import { API_TIMEOUT, API_URL, NO_VERIFICATION_NEEDED } from './global/variables';
 
-const VERIFY_ACCESS_TOKEN_URL = `${API_URL}/tokens/access/verify/`;
-const VERIFY_REFRESH_TOKEN_URL = `${API_URL}/tokens/refresh/verify/`;
+const VERIFY_TOKEN_URL = `${API_URL}/tokens/access/verify/`;
 const RENEW_ACCESS_TOKEN_URL = `${API_URL}/tokens/renew/`;
+
+const tokenResponseStatuses = {
+	INVALID: 'token_not_valid',
+};
 
 export default function configureAxios(store: any) {
 	axios.defaults.baseURL = API_URL;
@@ -26,48 +29,10 @@ export default function configureAxios(store: any) {
 			// since there's no `connect` HOC, this is how we
 			// access the store (or reducer)
 			const state = store.getState();
-			const { accessToken, refreshToken } = state[AUTH_KEY];
+			const { accessToken } = state[AUTH_KEY];
 
-			// we need to check if the access token is still valid. For this case,
-			// so as to prevent forever loop, we're going to use the native `fetch`
-			// method to do the request. Otherwise, if we use `axios` it will be
-			// intercepted again by this interceptor
-			fetch(`${VERIFY_ACCESS_TOKEN_URL}?token=${accessToken}`, {
-				method: 'GET',
-			})
-				.then((res) => res.json())
-				.then((tokenStatus) => {
-					if (!tokenStatus) {
-						// access token has already expired, so try to
-						// see if refresh token is still active
-						return fetch(`${VERIFY_REFRESH_TOKEN_URL}?token=${refreshToken}`);
-					}
-
-					// if the access token is still active, just throw an error immediately
-					// to immediately exit this Promise chain
-					throw new Error('Access token is still active');
-				})
-				.then((res) => res.json())
-				.then((tokenStatus) => {
-					if (!tokenStatus) {
-						// if the refresh token has already expired as well, logout the user
-						// and throw an error to exit this Promise chain
-						store.dispatch(authActions.loginReset());
-						throw new Error('Refresh token has already expired');
-					}
-
-					// if the refresh token is still active, renew the access token using it
-					return fetch(`${RENEW_ACCESS_TOKEN_URL}?token=${refreshToken}`);
-				})
-				.then((res) => res.json())
-				.then((newToken) => {
-					console.log('newToken', newToken);
-					// store the new access token to the reducer
-					// store.dispatch(actions.loginRenewAccessToken(newToken)); TODO:
-				})
-				.catch(() => {
-					// just do nothing
-				});
+			// Get access token from store for every api request
+			config.headers.authorization = accessToken ? `Bearer ${accessToken}` : null;
 
 			return config;
 		},
@@ -76,20 +41,66 @@ export default function configureAxios(store: any) {
 		},
 	);
 
-	axios.interceptors.response.use(
-		(config) => config,
-		(error) => {
-			const modifiedError = { ...error };
+	axios.interceptors.response.use(null, (error) => {
+		if (error.config && error.response && error.response.status === 401) {
+			// Get refresh token when 401 response status
+			const state = store.getState();
+			const { refreshToken } = state[AUTH_KEY];
 
-			if (error.isAxiosError) {
-				if (typeof error.response.data === 'string') {
-					modifiedError.errors = [error.response.data];
-				} else {
-					modifiedError.errors = flatten(values(error.response.data));
-				}
+			if (!refreshToken) {
+				store.dispatch(authActions.loginReset());
+				return;
 			}
 
-			return Promise.reject(modifiedError);
-		},
-	);
+			// We are certain that the access token already expired.
+			// We'll check if REFRESH TOKEN has also expired.
+			return fetch(VERIFY_TOKEN_URL, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ token: refreshToken }),
+			})
+				.then((res) => res.json())
+				.then((tokenStatus) => {
+					if (tokenStatus?.code === tokenResponseStatuses.INVALID) {
+						// if the REFRESH TOKEN has already expired as well, logout the user
+						// and throw an error to exit this Promise chain
+						store.dispatch(authActions.loginReset());
+						throw new Error('refresh token has already expired');
+					}
+
+					// If the REFRESH TOKEN is still active, renew the ACCESS TOKEN and the REFRESH TOKEN
+					return fetch(RENEW_ACCESS_TOKEN_URL, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ refresh: refreshToken }),
+					});
+				})
+				.then((res) => res.json())
+				.then(({ access, refresh }) => {
+					// store the NEW ACCESS TOKEN and NEW REFRESH TOKEN to the reducer
+					store.dispatch(
+						authActions.save({
+							accessToken: access,
+							refreshToken: refresh,
+						}),
+					);
+					// Modify the Authorization Header using the NEW ACCESS TOKEN
+					error.config.headers.authorization = `Bearer ${access}`;
+					return axios.request(error.config);
+				})
+				.catch(() => Promise.reject(error));
+		}
+
+		const modifiedError = { ...error };
+
+		if (error.isAxiosError) {
+			if (typeof error.response.data === 'string') {
+				modifiedError.errors = [error.response.data];
+			} else {
+				modifiedError.errors = flatten(values(error.response.data));
+			}
+		}
+
+		return Promise.reject(modifiedError);
+	});
 }

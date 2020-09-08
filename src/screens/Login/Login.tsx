@@ -8,10 +8,7 @@ import { IFormValues, LoginForm } from './components/LoginForm';
 import { useLogin } from './hooks/useLogin';
 import './style.scss';
 
-type ILoginProps = ConnectedProps<typeof connector> & {
-	loginStatus: number;
-	loginErrors: string[];
-};
+type ILoginProps = ConnectedProps<typeof connector>;
 
 const Login = ({ loginDispatch }: ILoginProps) => {
 	const [login, loginStatus, loginErrors] = useLogin(loginDispatch);
