@@ -1,0 +1,16 @@
+@import '../../assets/styles/main';
+
+.Icon {
+	@include flex(center, center);
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+
+	&.primary {
+		background-color: $color-primary;
+	}
+
+	&.error {
+		background-color: $color-red;
+	}
+}
