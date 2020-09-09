@@ -1,8 +1,39 @@
 @import '~antd/dist/antd.css';
-@import './assets/styles/variables';
+@import './assets/styles/main';
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
 
 body {
 	background-color: $color-main-background;
 	font-family: $font-primary;
+}
+
+.ml-10 {
+	margin-left: 10px;
+}
+
+.mr-10 {
+	margin-right: 10px;
+}
+
+.ant-modal-root {
+	.ant-modal-content {
+		margin: 25px;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+
+	.ant-modal {
+		width: 100% !important;
+		min-width: 350px !important;
+		max-width: 800px !important;
+	}
+
+	.ant-modal-body {
+		overflow-y: auto;
+		max-height: 80vh;
+	}
+
+	.custom-footer {
+		@include flex($justify-content: flex-end);
+	}
 }

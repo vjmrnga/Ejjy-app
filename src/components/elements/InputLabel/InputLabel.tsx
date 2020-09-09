@@ -1,17 +1,16 @@
 import * as React from 'react';
 import Input, { IInputProps } from '../Input/Input';
+import Label from '../Label/Label';
 import './style.scss';
 
-interface IInputLabelProps extends IInputProps {
+interface Props extends IInputProps {
 	label: string;
 }
 
-const InputLabel = ({ id, label: inputLabel, type, placeholder }: IInputLabelProps) => (
+const InputLabel = ({ id, label: inputLabel, type, max, min, placeholder, disabled }: Props) => (
 	<>
-		<label htmlFor={id} className="Label">
-			{inputLabel}
-		</label>
-		<Input type={type} id={id} placeholder={placeholder} />
+		<Label id={id} label={inputLabel} spacing />
+		<Input type={type} id={id} max={max} min={min} placeholder={placeholder} disabled={disabled} />
 	</>
 );
 

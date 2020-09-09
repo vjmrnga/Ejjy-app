@@ -1,30 +1,34 @@
+import { Layout } from 'antd';
 import React, { ReactNode } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import './style.scss';
 
-interface IContainerProps {
+const { Header, Content } = Layout;
+
+interface Props {
 	title: string;
 	rightTitle?: string;
 	breadcrumbs?: ReactNode;
 	children?: ReactNode;
 }
 
-const Container = ({ title, rightTitle, breadcrumbs, children }: IContainerProps) => {
+const Container = ({ title, rightTitle, breadcrumbs, children }: Props) => {
 	return (
-		<section className="Main">
+		<Layout className="Main">
 			<Sidebar />
-			<section className="Content">
-				<section className="page-header">
-					<div>
-						<h3 className="page-title">{title}</h3>
-						{breadcrumbs}
-					</div>
-					<h3 className="page-title">{rightTitle}</h3>
-				</section>
-
-				<section className="page-content">{children}</section>
-			</section>
-		</section>
+			<Layout className="site-layout">
+				<Header className="site-layout-background">
+					<section className="page-header">
+						<div>
+							<h3 className="page-title">{title}</h3>
+							{breadcrumbs}
+						</div>
+						<h3 className="page-title">{rightTitle}</h3>
+					</section>
+				</Header>
+				<Content className="page-content">{children}</Content>
+			</Layout>
+		</Layout>
 	);
 };
 

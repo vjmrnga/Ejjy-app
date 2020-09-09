@@ -1,11 +1,19 @@
 @import '../../../assets/styles/main';
 
 .Sidebar {
-	@include flex($direction: column);
-	width: 280px;
 	height: 100vh;
-	padding: 50px 30px;
+	width: 280px !important;
+	min-width: 280px !important;
+	max-width: 280px !important;
+	padding: 30px 30px 50px 30px;
+	position: fixed !important;
+	left: 0;
 	background-color: white;
+	overflow: 'auto';
+
+	.ant-layout-sider-children {
+		@include flex($direction: column);
+	}
 
 	.logo {
 		display: block;
