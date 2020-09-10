@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { productTypes, request } from '../global/variables';
-import { modifiedCallback } from '../utils/function';
-import { types } from '../ducks/products';
 import { useSelector } from 'react-redux';
-import { selectors } from '../ducks/products';
+import { selectors, types } from '../ducks/products';
+import { request } from '../global/variables';
+import { modifiedCallback } from '../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Product created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the product';
@@ -32,8 +31,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 
 	const createProductRequest = (product) => {
 		setRecentRequest(types.CREATE_PRODUCT);
-		product.allowable_spoilage =
-			product?.type === productTypes.WET ? product.allowable_spoilage / 100 : undefined;
+		product.allowable_spoilage = (product.allowable_spoilage || 0) / 100;
 
 		createDispatch({
 			...product,
@@ -43,8 +41,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 
 	const editProductRequest = (product) => {
 		setRecentRequest(types.EDIT_PRODUCT);
-		product.allowable_spoilage =
-			product?.type === productTypes.WET ? product.allowable_spoilage / 100 : undefined;
+		product.allowable_spoilage = (product.allowable_spoilage || 0) / 100;
 
 		editDispatch({
 			...product,
