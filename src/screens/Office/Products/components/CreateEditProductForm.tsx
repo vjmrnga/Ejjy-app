@@ -73,6 +73,11 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						then: Yup.number().required(),
 						otherwise: Yup.number().notRequired(),
 					})
+					.when('unit_of_measurement', {
+						is: unitsOfMeasurement.WEIGHING,
+						then: Yup.number().required(),
+						otherwise: Yup.number().notRequired(),
+					})
 					.label('Allowable Spoilage'),
 				cost_per_piece: Yup.number().required().min(0).label('Cost per Piece'),
 				cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
@@ -188,7 +193,6 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								type="number"
 								id="allowable_spoilage"
 								label="Allowable Spoilage (%)"
-								disabled={values.type === productTypes.DRY}
 							/>
 							{errors.allowable_spoilage && touched.allowable_spoilage ? (
 								<FieldError error={errors.allowable_spoilage} />
