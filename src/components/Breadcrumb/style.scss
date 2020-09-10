@@ -1,0 +1,31 @@
+@import '../../assets/styles/main';
+
+.Breadcrumb {
+	margin-top: 10px;
+
+	@include flex($align-items: center);
+	line-height: 100%;
+	height: auto;
+
+	.item {
+		line-height: 100%;
+
+		.last {
+			font-weight: 600;
+		}
+
+		.link-icon-container {
+			@include flex($align-items: center);
+
+			a {
+				color: $color-link;
+			}
+
+			.divider {
+				width: 12px;
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+		}
+	}
+}

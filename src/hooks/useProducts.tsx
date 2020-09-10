@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectors, types } from '../ducks/products';
+import { selectors, types, actions } from '../ducks/products';
 import { request } from '../global/variables';
 import { modifiedCallback } from '../utils/function';
+import { useActionDispatch } from './useActionDispatch';
 
 const CREATE_SUCCESS_MESSAGE = 'Product created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the product';
@@ -14,19 +15,24 @@ const EDIT_ERROR_MESSAGE = 'An error occurred while editing the product';
 const REMOVE_SUCCESS_MESSAGE = 'Product removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the product';
 
-export const useProducts = (listDispatch, createDispatch, editDispatch, removeDispatch) => {
+export const useProducts = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 	const products = useSelector(selectors.selectProducts());
 
+	const getProducts = useActionDispatch(actions.getProducts);
+	const createProduct = useActionDispatch(actions.createProduct);
+	const editProduct = useActionDispatch(actions.editProduct);
+	const removeProduct = useActionDispatch(actions.removeProduct);
+
 	useEffect(() => {
-		getProducts();
+		getProductsRequest();
 	}, []);
 
-	const getProducts = () => {
+	const getProductsRequest = () => {
 		setRecentRequest(types.GET_PRODUCTS);
-		listDispatch({ callback });
+		getProducts({ callback });
 	};
 
 	const createProductRequest = (product) => {
@@ -36,7 +42,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
 		};
 
-		createDispatch({
+		createProduct({
 			...clonedProduct,
 			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
 		});
@@ -49,7 +55,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
 		};
 
-		editDispatch({
+		editProduct({
 			...clonedProduct,
 			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 		});
@@ -57,7 +63,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 
 	const removeProductRequest = (id) => {
 		setRecentRequest(types.REMOVE_PRODUCT);
-		removeDispatch({
+		removeProduct({
 			id,
 			callback: modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
 		});

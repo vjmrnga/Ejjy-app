@@ -240,7 +240,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						/>
 						<Button
 							type="submit"
-							text={product ? 'Edit' : 'Add'}
+							text={product ? 'Edit' : 'Create'}
 							variant="primary"
 							loading={loading || isSubmitting}
 						/>

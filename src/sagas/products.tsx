@@ -15,7 +15,7 @@ function* getProducts({ payload }: any) {
 		});
 
 		yield put(actions.save({ type: types.GET_PRODUCTS, products: response.data.results }));
-		callback({ status: request.SUCCESS, products: response.data.results });
+		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}

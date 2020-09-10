@@ -1,0 +1,28 @@
+@import '../../assets/styles/main';
+
+.TableHeader {
+	@include flex($align-items: center);
+	padding: 25px;
+
+	&.only-button {
+		@include flex(flex-end, center);
+
+		.controls {
+			display: inline-block !important;
+		}
+	}
+
+	.title {
+		@include font(1.25rem, bold);
+		margin: 0;
+		color: $color-dark;
+		flex: 1;
+	}
+
+	.controls {
+		@include flex(space-between, center);
+		button {
+			margin-left: 15px;
+		}
+	}
+}

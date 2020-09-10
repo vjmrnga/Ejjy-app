@@ -1,22 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Container, Table } from '../../../components';
 import { Box } from '../../../components/elements';
-import { actions } from '../../../ducks/products';
+import { TableHeader } from '../../../components/TableHeaders/TableHeader';
+import { types } from '../../../ducks/products';
 import { request } from '../../../global/variables';
 import { useProducts } from '../../../hooks/useProducts';
 import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
-import { Header } from './components/Header';
 import { ProductActions } from './components/ProductActions';
 import { ViewProductModal } from './components/ViewProductModal';
-import { types } from '../../../ducks/products';
-import './style.scss';
-
-type IProductsProps = ConnectedProps<typeof connector>;
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
@@ -24,7 +18,7 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IProductsProps) => {
+const Products = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
 	const [createEditProductModalVisible, setCreateEditProductModalVisible] = useState(false);
@@ -40,11 +34,10 @@ const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IP
 		status,
 		errors,
 		recentRequest,
-	] = useProducts(getProducts, createProduct, editProduct, removeProduct);
+	] = useProducts();
 
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
-		console.log('FORMAT');
 		const formattedProducts = products.map((product) => {
 			const { id, barcode, name } = product;
 
@@ -107,7 +100,7 @@ const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IP
 		<Container title="Products">
 			<section className="Products">
 				<Box>
-					<Header onSearchChange={onSearch} onCreateProduct={onCreate} />
+					<TableHeader buttonName="Create Product" onSearch={onSearch} onCreate={onCreate} />
 
 					<Table
 						columns={columns}
@@ -135,18 +128,4 @@ const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IP
 	);
 };
 
-const mapDispatch = (dispatch: any) => ({
-	...bindActionCreators(
-		{
-			getProducts: actions.getProducts,
-			createProduct: actions.createProduct,
-			editProduct: actions.editProduct,
-			removeProduct: actions.removeProduct,
-		},
-		dispatch,
-	),
-});
-
-const connector = connect(null, mapDispatch);
-
-export default connector(Products);
+export default Products;

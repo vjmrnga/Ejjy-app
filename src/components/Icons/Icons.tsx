@@ -17,3 +17,12 @@ export const ErrorIcon = ({ classNames }: Props) => (
 		<img src={require('../../assets/images/icon-x-white.svg')} alt="icon" />
 	</div>
 );
+
+export const AddIcon = ({ classNames }: Props) => (
+	<img
+		src={require('../../assets/images/icon-add-white.svg')}
+		width="16"
+		alt="icon"
+		className={classNames}
+	/>
+);

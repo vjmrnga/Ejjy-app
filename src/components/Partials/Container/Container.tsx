@@ -8,11 +8,11 @@ const { Header, Content } = Layout;
 interface Props {
 	title: string;
 	rightTitle?: string;
-	breadcrumbs?: ReactNode;
+	breadcrumb?: ReactNode;
 	children?: ReactNode;
 }
 
-const Container = ({ title, rightTitle, breadcrumbs, children }: Props) => {
+const Container = ({ title, rightTitle, breadcrumb, children }: Props) => {
 	return (
 		<Layout className="Main">
 			<Sidebar />
@@ -21,7 +21,7 @@ const Container = ({ title, rightTitle, breadcrumbs, children }: Props) => {
 					<section className="page-header">
 						<div>
 							<h3 className="page-title">{title}</h3>
-							{breadcrumbs}
+							{breadcrumb}
 						</div>
 						<h3 className="page-title">{rightTitle}</h3>
 					</section>

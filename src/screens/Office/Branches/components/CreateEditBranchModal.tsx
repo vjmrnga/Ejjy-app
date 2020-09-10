@@ -1,19 +1,19 @@
 import { Modal } from 'antd';
 import React from 'react';
 import { FieldError } from '../../../../components/elements';
-import { CreateEditProductForm } from './CreateEditProductForm';
+import { CreateEditBranchForm } from './CreateEditBranchForm';
 
 interface Props {
 	visible: boolean;
-	product: any;
+	branch: any;
 	onSubmit: any;
 	onClose: any;
 	errors: string[];
 	loading: boolean;
 }
 
-export const CreateEditProductModal = ({
-	product,
+export const CreateEditBranchModal = ({
+	branch,
 	visible,
 	onSubmit,
 	onClose,
@@ -22,8 +22,7 @@ export const CreateEditProductModal = ({
 }: Props) => {
 	return (
 		<Modal
-			className="CreateEditProductModal"
-			title={product ? 'Edit Product' : 'Create Product'}
+			title={branch ? 'Edit Branch' : 'Create Branch'}
 			visible={visible}
 			footer={null}
 			onCancel={onClose}
@@ -34,8 +33,8 @@ export const CreateEditProductModal = ({
 				<FieldError key={index} error={error} />
 			))}
 
-			<CreateEditProductForm
-				product={product}
+			<CreateEditBranchForm
+				branch={branch}
 				onSubmit={onSubmit}
 				onClose={onClose}
 				loading={loading}
@@ -44,6 +43,6 @@ export const CreateEditProductModal = ({
 	);
 };
 
-CreateEditProductModal.defaultProps = {
+CreateEditBranchModal.defaultProps = {
 	loading: false,
 };
