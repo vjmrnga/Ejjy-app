@@ -31,20 +31,26 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 
 	const createProductRequest = (product) => {
 		setRecentRequest(types.CREATE_PRODUCT);
-		product.allowable_spoilage = (product.allowable_spoilage || 0) / 100;
+		const clonedProduct = {
+			...product,
+			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
+		};
 
 		createDispatch({
-			...product,
+			...clonedProduct,
 			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
 		});
 	};
 
 	const editProductRequest = (product) => {
 		setRecentRequest(types.EDIT_PRODUCT);
-		product.allowable_spoilage = (product.allowable_spoilage || 0) / 100;
+		const clonedProduct = {
+			...product,
+			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
+		};
 
 		editDispatch({
-			...product,
+			...clonedProduct,
 			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 		});
 	};

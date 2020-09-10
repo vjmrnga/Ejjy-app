@@ -58,8 +58,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				price_per_bulk: product?.price_per_bulk || '',
 			},
 			Schema: Yup.object().shape({
-				barcode: Yup.string().required().label('Barcode'),
-				name: Yup.string().required().label('Name'),
+				barcode: Yup.string().required().max(50).label('Barcode'),
+				name: Yup.string().required().max(70).label('Name'),
 				type: Yup.string().label('Type'),
 				unit_of_measurement: Yup.string().label('Unit of Measurement'),
 				print_details: Yup.string().required().label('Print Details'),
@@ -67,7 +67,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				allowable_spoilage: Yup.number()
 					.integer()
 					.min(0)
-					.max(100)
+					.max(99)
 					.when('type', {
 						is: productTypes.WET,
 						then: Yup.number().required(),
@@ -81,8 +81,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 					.label('Allowable Spoilage'),
 				cost_per_piece: Yup.number().required().min(0).label('Cost per Piece'),
 				cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
-				reorder_point: Yup.number().required().min(0).label('Reorder Point'),
-				max_balance: Yup.number().required().min(0).label('Max Balance'),
+				reorder_point: Yup.number().required().min(0).max(65535).label('Reorder Point'),
+				max_balance: Yup.number().required().min(0).max(65535).label('Max Balance'),
 				price_per_piece: Yup.number().required().min(0).label('Price per Piece'),
 				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
 			}),
@@ -189,7 +189,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						<Col span={24}>
 							<InputLabel
 								min={0}
-								max={100}
+								max={99}
 								type="number"
 								id="allowable_spoilage"
 								label="Allowable Spoilage (%)"
