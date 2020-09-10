@@ -4,34 +4,40 @@ import cn from 'classnames';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-const loadingIcon = <LoadingOutlined style={{ fontSize: 24, color: 'white' }} spin />;
+const loadingIcon = <LoadingOutlined style={{ fontSize: 17, color: 'white' }} spin />;
 
-export interface IButtonProps {
+interface Props {
 	text: string;
 	variant: 'primary' | 'secondary' | 'default';
 	onClick?: any;
+	type?: 'button' | 'submit' | 'reset';
 	icon?: any;
 	iconDirection?: 'left' | 'right';
 	loading?: boolean;
 	disabled?: boolean;
 	block?: boolean;
+	classNames?: any;
 }
 
 const Button = ({
 	text,
 	variant,
 	onClick,
+	type,
 	icon,
 	iconDirection,
 	block,
 	loading,
 	disabled,
-}: IButtonProps) => (
+	classNames,
+}: Props) => (
 	<button
-		className={cn('Button', {
+		type={type}
+		className={cn('Button', classNames, {
 			primary: variant === 'primary',
 			secondary: variant === 'secondary',
 			default: variant === 'default',
+			flex: !!icon,
 			block,
 			disabled,
 			loading,
@@ -39,18 +45,19 @@ const Button = ({
 		onClick={onClick}
 	>
 		{loading ? (
-			<Spin indicator={loadingIcon} />
+			<Spin indicator={loadingIcon} className="spinner" />
 		) : (
 			<>
-				{iconDirection === 'left' && icon}
+				{iconDirection === 'left' && <div className="icon-left">{icon}</div>}
 				{text}
-				{iconDirection === 'right' && icon}
+				{iconDirection === 'right' && <div className="icon-right">{icon}</div>}
 			</>
 		)}
 	</button>
 );
 
 Button.defaultProps = {
+	type: 'button',
 	onClick: null,
 	variant: 'default',
 	iconDirection: null,

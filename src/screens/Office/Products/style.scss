@@ -1,0 +1,12 @@
+@import '../../../assets/styles/main';
+
+.Products {
+	.header {
+		@include flex(space-between, center);
+		padding: 25px;
+
+		.icon {
+			width: 16px;
+		}
+	}
+}

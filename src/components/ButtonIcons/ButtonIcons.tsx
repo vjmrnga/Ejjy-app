@@ -1,41 +1,53 @@
 import React from 'react';
 import { ButtonIcon } from '../elements';
 
-interface IButtonIconsProps {
+interface Props {
+	tooltip: string;
+	onClick: any;
 	classNames?: any;
 }
 
-export const AddButtonIcon = ({ classNames }: IButtonIconsProps) => (
+export const AddButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
 	<ButtonIcon
 		icon={<img src={require('../../assets/images/icon-add.svg')} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const EditButtonIcon = ({ classNames }: IButtonIconsProps) => (
+export const EditButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
 	<ButtonIcon
 		icon={<img src={require('../../assets/images/icon-edit.svg')} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const RemoveButtonIcon = ({ classNames }: IButtonIconsProps) => (
+export const RemoveButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
 	<ButtonIcon
 		icon={<img src={require('../../assets/images/icon-remove.svg')} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const ViewButtonIcon = ({ classNames }: IButtonIconsProps) => (
+export const ViewButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
 	<ButtonIcon
 		icon={<img src={require('../../assets/images/icon-view.svg')} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const DeliverButtonIcon = ({ classNames }: IButtonIconsProps) => (
+export const DeliverButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
 	<ButtonIcon
 		icon={<img src={require('../../assets/images/icon-deliver.svg')} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );

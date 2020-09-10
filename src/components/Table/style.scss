@@ -1,0 +1,25 @@
+@import '../../assets/styles/main';
+
+.VirtualTable {
+	.ant-table-thead {
+		.ant-table-cell {
+			padding: 25px;
+			@include font(1rem, bold);
+			color: $color-dark;
+			background-color: $color-main-background;
+		}
+	}
+
+	.virtual-grid {
+		.virtual-table-cell {
+			@include flex($align-items: center);
+			@include font(1rem, 600);
+			padding: 0 25px;
+			color: $color-dark-gray;
+
+			a {
+				color: $color-link !important;
+			}
+		}
+	}
+}

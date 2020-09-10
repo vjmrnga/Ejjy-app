@@ -1,10 +1,10 @@
-@import '../../../assets/styles/variables';
+@import '../../../assets/styles/main';
 
 .Input {
+	@include font(1rem);
 	width: 100%;
 	padding: 8px 12px;
 	color: $color-dark;
-	font-size: 16px;
 	border: 1px solid $color-gray;
 	border-radius: $border-radius;
 	outline: 0 !important;

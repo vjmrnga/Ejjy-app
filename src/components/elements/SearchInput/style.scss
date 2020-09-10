@@ -1,0 +1,38 @@
+@import '../../../assets/styles/main';
+
+.SearchInput {
+	display: block;
+	position: relative;
+
+	.icon {
+		@include font(1.1rem, 600);
+		@include flex(center, center);
+		position: absolute;
+		left: 10px;
+		top: 0;
+		bottom: 0;
+		color: $color-dark-gray;
+	}
+
+	input {
+		@include font(0.875rem, 600);
+		padding: 9px 16px 9px 35px;
+		color: $color-dark;
+		border: 1px solid $color-gray;
+		border-radius: $border-radius;
+		outline: 0 !important;
+
+		&::placeholder {
+			color: $color-dark-gray;
+			opacity: 1;
+		}
+
+		&:-ms-input-placeholder {
+			color: $color-dark-gray;
+		}
+
+		&::-ms-input-placeholder {
+			color: $color-dark-gray;
+		}
+	}
+}

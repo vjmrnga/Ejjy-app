@@ -1,3 +1,4 @@
+import { Layout } from 'antd';
 import cn from 'classnames';
 import React from 'react';
 import { useLocation } from 'react-router';
@@ -6,24 +7,28 @@ import './style.scss';
 
 const SidebarItems = [
 	{
+		key: 'dashboard',
 		name: 'Dashboard',
 		activeIcon: require(`../../../assets/images/icon-dashboard-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-dashboard.svg`),
 		link: '/dashboard',
 	},
 	{
-		name: 'Product',
+		key: 'products',
+		name: 'Products',
 		activeIcon: require(`../../../assets/images/icon-product-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-product.svg`),
-		link: '/product',
+		link: '/products',
 	},
 	{
+		key: 'transaction',
 		name: 'Transaction',
 		activeIcon: require(`../../../assets/images/icon-transaction-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-transaction.svg`),
 		link: '/transaction',
 	},
 	{
+		key: 'logout',
 		name: 'Logout',
 		activeIcon: require(`../../../assets/images/icon-logout-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-logout.svg`),
@@ -35,12 +40,11 @@ const Sidebar = () => {
 	const { pathname } = useLocation();
 
 	return (
-		<section className="Sidebar">
-			<img src={require('../../../assets/images/logo.svg')} alt="logo" className="logo" />
-
+		<Layout.Sider theme="light" breakpoint="md" collapsedWidth="0" className="Sidebar">
+			<img src={require('../../../assets/images/logo.jpg')} alt="logo" className="logo" />
 			<div className="sidebar-items">
 				{SidebarItems.map((item) => (
-					<Link to={item.link}>
+					<Link to={item.link} key={item.key}>
 						<div className={cn('item', { active: pathname === item.link })}>
 							<img src={item.defaultIcon} alt={item.name} className="icon" />
 							<img src={item.activeIcon} alt={item.name} className="icon icon-active" />
@@ -61,7 +65,7 @@ const Sidebar = () => {
 					<span className="role">Superadmin</span>
 				</div>
 			</div>
-		</section>
+		</Layout.Sider>
 	);
 };
 

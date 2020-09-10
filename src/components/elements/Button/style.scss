@@ -1,13 +1,20 @@
-@import '../../../assets/styles/variables';
+@import '../../../assets/styles/main';
 
 .Button {
-	padding: 8px 20px;
+	@include font(1rem, 700);
+	min-width: 100px;
+	padding: 10px 16px;
+	display: inline-block;
 	color: white;
-	font-size: 18px;
-	font-weight: bold;
+	background-color: white;
 	border-radius: $border-radius;
 	cursor: pointer;
 	transition: 300ms;
+	outline: 0 !important;
+
+	&.flex {
+		@include flex(center, center);
+	}
 
 	&.block {
 		display: block;
@@ -52,5 +59,17 @@
 			transition: 300ms;
 			box-shadow: 0px 5px 20px 3px $color-secondary-08;
 		}
+	}
+
+	.icon-left {
+		margin-right: 5px;
+	}
+
+	.icon-right {
+		margin-left: 5px;
+	}
+
+	.spinner {
+		line-height: 100%;
 	}
 }

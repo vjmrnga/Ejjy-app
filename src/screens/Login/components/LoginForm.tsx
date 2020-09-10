@@ -60,7 +60,13 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 							{errors.password && touched.password ? <FieldError error={errors.password} /> : null}
 						</div>
 
-						<Button text="Login" variant="primary" loading={loading || isSubmitting} block />
+						<Button
+							type="submit"
+							text="Login"
+							variant="primary"
+							loading={loading || isSubmitting}
+							block
+						/>
 					</Form>
 				)}
 			</Formik>
