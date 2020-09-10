@@ -1,5 +1,7 @@
+import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
+import { NOT_FOUND_INDEX } from '../global/variables';
 
 export const key = 'PRODUCTS';
 
@@ -17,10 +19,38 @@ const initialState = {
 
 const reducer = handleActions(
 	{
-		[types.SAVE]: (state, { payload }) => ({
-			...state,
-			...payload,
-		}),
+		[types.SAVE]: (state, { payload }: any) => {
+			const { type } = payload;
+			let newData = {};
+
+			switch (type) {
+				case types.GET_PRODUCTS: {
+					newData = { products: payload.products };
+					break;
+				}
+				case types.CREATE_PRODUCT: {
+					newData = { products: [payload.product, ...state.products] };
+					break;
+				}
+				case types.EDIT_PRODUCT: {
+					const { product: editedProduct } = payload;
+					const index = state.products.findIndex(({ id }) => id === editedProduct.id);
+
+					if (index !== NOT_FOUND_INDEX) {
+						const products = cloneDeep(state.products);
+						products[index] = editedProduct;
+						newData = { products };
+					}
+					break;
+				}
+				case types.REMOVE_PRODUCT: {
+					newData = { products: state.products.filter(({ id }) => id !== payload.id) };
+					break;
+				}
+			}
+
+			return { ...state, ...newData };
+		},
 	},
 	initialState,
 );

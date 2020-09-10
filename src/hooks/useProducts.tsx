@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { productTypes, request } from '../global/variables';
 import { modifiedCallback } from '../utils/function';
 import { types } from '../ducks/products';
+import { useSelector } from 'react-redux';
+import { selectors } from '../ducks/products';
 
 const CREATE_SUCCESS_MESSAGE = 'Product created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the product';
@@ -17,7 +19,7 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
-	const [products, setProducts] = useState<any>([]);
+	const products = useSelector(selectors.selectProducts());
 
 	useEffect(() => {
 		getProducts();
@@ -58,18 +60,13 @@ export const useProducts = (listDispatch, createDispatch, editDispatch, removeDi
 		});
 	};
 
-	const callback = ({ products = null, status, errors = [] }) => {
+	const callback = ({ status, errors = [] }) => {
 		setStatus(status);
 		setErrors(errors);
-
-		if (products !== null) {
-			setProducts(products);
-		}
 	};
 
 	return [
 		products,
-		getProducts,
 		createProductRequest,
 		editProductRequest,
 		removeProductRequest,

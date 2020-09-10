@@ -20,7 +20,7 @@ const Login = ({ loginDispatch }: ILoginProps) => {
 	return (
 		<section className="Login">
 			<Box className="container">
-				<img src={require('../../assets/images/logo.svg')} alt="logo" className="logo" />
+				<img src={require('../../assets/images/logo.jpg')} alt="logo" className="logo" />
 
 				<LoginForm
 					onSubmit={onSubmit}

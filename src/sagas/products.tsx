@@ -14,7 +14,7 @@ function* getProducts({ payload }: any) {
 			page_size: MAX_PAGE_SIZE,
 		});
 
-		yield put(actions.save({ products: response.data.results }));
+		yield put(actions.save({ type: types.GET_PRODUCTS, products: response.data.results }));
 		callback({ status: request.SUCCESS, products: response.data.results });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -26,7 +26,9 @@ function* createProduct({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.createProduct, data);
+		const response = yield call(service.createProduct, data);
+
+		yield put(actions.save({ type: types.CREATE_PRODUCT, product: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -38,7 +40,9 @@ function* editProduct({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.editProduct, data);
+		const response = yield call(service.editProduct, data);
+
+		yield put(actions.save({ type: types.EDIT_PRODUCT, product: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -51,6 +55,8 @@ function* removeProduct({ payload }: any) {
 
 	try {
 		yield call(service.removeProduct, id);
+
+		yield put(actions.save({ type: types.REMOVE_PRODUCT, id }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

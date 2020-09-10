@@ -34,7 +34,6 @@ const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IP
 	const { height } = useWindowDimensions();
 	const [
 		products,
-		getProductsRequest,
 		createProductRequest,
 		editProductRequest,
 		removeProductRequest,
@@ -45,40 +44,38 @@ const Products = ({ getProducts, createProduct, editProduct, removeProduct }: IP
 
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.GET_PRODUCTS) {
-			const formattedProducts = products.map((product) => {
-				const { id, barcode, name } = product;
+		console.log('FORMAT');
+		const formattedProducts = products.map((product) => {
+			const { id, barcode, name } = product;
 
-				return {
-					_barcode: barcode,
-					barcode: (
-						<a href="#" onClick={() => onView(product)}>
-							{barcode}
-						</a>
-					),
-					name,
-					actions: (
-						<ProductActions
-							onEdit={() => onEdit(product)}
-							onRemove={() => removeProductRequest(id)}
-						/>
-					),
-				};
-			});
+			return {
+				_barcode: barcode,
+				barcode: (
+					<a href="#" onClick={() => onView(product)}>
+						{barcode}
+					</a>
+				),
+				name,
+				actions: (
+					<ProductActions
+						onEdit={() => onEdit(product)}
+						onRemove={() => removeProductRequest(id)}
+					/>
+				),
+			};
+		});
 
-			setData(formattedProducts);
-			setTableData(formattedProducts);
-		}
-	}, [products, status, recentRequest]);
+		setData(formattedProducts);
+		setTableData(formattedProducts);
+	}, [products]);
 
 	// Effect: Reload the list if recent requests are Create, Edit or Remove
 	useEffect(() => {
-		const reloadListTypes = [types.CREATE_PRODUCT, types.EDIT_PRODUCT, types.REMOVE_PRODUCT];
+		const reloadListTypes = [types.CREATE_PRODUCT, types.EDIT_PRODUCT];
 
 		if (status === request.SUCCESS && reloadListTypes.includes(recentRequest)) {
 			setCreateEditProductModalVisible(false);
 			setSelectedProduct(null);
-			getProductsRequest();
 		}
 	}, [status, recentRequest]);
 

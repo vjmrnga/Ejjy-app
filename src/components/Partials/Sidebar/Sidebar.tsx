@@ -41,7 +41,7 @@ const Sidebar = () => {
 
 	return (
 		<Layout.Sider theme="light" breakpoint="md" collapsedWidth="0" className="Sidebar">
-			<img src={require('../../../assets/images/logo.svg')} alt="logo" className="logo" />
+			<img src={require('../../../assets/images/logo.jpg')} alt="logo" className="logo" />
 			<div className="sidebar-items">
 				{SidebarItems.map((item) => (
 					<Link to={item.link} key={item.key}>

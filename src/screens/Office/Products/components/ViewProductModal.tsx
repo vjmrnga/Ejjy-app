@@ -47,9 +47,9 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 		>
 			<Row gutter={[15, 15]}>
 				{renderProductDetails('Barcode', product?.barcode)}
+				{renderProductDetails('Name', product?.name)}
 				{renderProductDetails('Type', product?.type)}
 				{renderProductDetails('Unit of Measurement', product?.unit_of_measurement)}
-				{renderProductDetails('Name', product?.name)}
 				{renderProductDetails('Print Details', product?.print_details)}
 				{renderProductDetails('Description', product?.description)}
 				<Divider dashed />

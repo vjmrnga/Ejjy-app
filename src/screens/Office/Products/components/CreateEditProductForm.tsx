@@ -129,12 +129,12 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col sm={12} xs={24}>
-							<InputLabel id="name" label="Name" />
-							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
-						</Col>
-						<Col sm={12} xs={24}>
 							<InputLabel id="barcode" label="Barcode" />
 							{errors.barcode && touched.barcode ? <FieldError error={errors.barcode} /> : null}
+						</Col>
+						<Col sm={12} xs={24}>
+							<InputLabel id="name" label="Name" />
+							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
