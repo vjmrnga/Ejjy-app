@@ -1,0 +1,8 @@
+@import '../../../assets/styles/main';
+
+.Branches {
+	.header {
+		@include flex(flex-end, center);
+		padding: 25px;
+	}
+}

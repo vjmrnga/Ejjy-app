@@ -1,0 +1,59 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { actions, selectors, types } from '../ducks/branch-products';
+import { request } from '../global/variables';
+import { modifiedCallback } from '../utils/function';
+import { useActionDispatch } from './useActionDispatch';
+
+const EDIT_SUCCESS_MESSAGE = 'Branch Product edited successfully';
+const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch';
+
+export const useBranchProducts = () => {
+	const [status, setStatus] = useState<any>(request.NONE);
+	const [errors, setErrors] = useState<any>([]);
+	const [recentRequest, setRecentRequest] = useState<any>();
+
+	const branchProducts = useSelector(selectors.selectBranchProducts());
+	const getBranchProducts = useActionDispatch(actions.getBranchProducts);
+	const editBranchProduct = useActionDispatch(actions.editBranchProduct);
+
+	const reset = () => {
+		resetError();
+		resetStatus();
+	};
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
+
+	const getBranchProductsRequest = () => {
+		setRecentRequest(types.GET_BRANCH_PRODUCTS);
+		getBranchProducts({ callback });
+	};
+
+	const editBranchProductRequest = (branchProduct) => {
+		setRecentRequest(types.EDIT_BRANCH_PRODUCT);
+		editBranchProduct({
+			...branchProduct,
+			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+		});
+	};
+
+	const callback = ({ status, errors = [] }) => {
+		setStatus(status);
+		setErrors(errors);
+	};
+
+	return {
+		branchProducts,
+		getBranchProducts: getBranchProductsRequest,
+		editBranchProduct: editBranchProductRequest,
+		status,
+		errors,
+		recentRequest,
+		reset,
+		resetStatus,
+		resetError,
+	};
+};

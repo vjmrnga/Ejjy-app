@@ -1,8 +1,0 @@
-@import '../../../assets/styles/main';
-
-.Label {
-	display: block;
-	margin-bottom: 5px;
-	color: $color-dark-gray;
-	@include font(0.875rem, bold);
-}

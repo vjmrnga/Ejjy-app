@@ -8,5 +8,8 @@ export { default as InputLabel } from './InputLabel/InputLabel';
 export { default as Label } from './Label/Label';
 export { default as RadioButton } from './RadioButton/RadioButton';
 export { default as SearchInput } from './SearchInput/SearchInput';
+export { default as Select } from './Select/Select';
+export { default as SelectLabel } from './SelectLabel/SelectLabel';
+export { default as StatusSelect } from './StatusSelect/StatusSelect';
 export { default as Textarea } from './Textarea/Textarea';
 export { default as TextareaLabel } from './TextareaLabel/TextareaLabel';

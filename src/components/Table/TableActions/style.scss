@@ -1,0 +1,9 @@
+@import '../../../assets/styles/main';
+
+.TableActions {
+	@include flex();
+
+	& > *:not(:last-child) {
+		margin-right: 10px;
+	}
+}

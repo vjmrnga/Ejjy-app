@@ -34,6 +34,7 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
+	selectUser: () => createSelector(selectState, (state) => state.user),
 	selectAccessToken: () => createSelector(selectState, (state) => state.accessToken),
 	selectRefreshToken: () => createSelector(selectState, (state) => state.refreshToken),
 };

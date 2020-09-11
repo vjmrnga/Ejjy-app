@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Label from '../Label/Label';
 import Textarea, { ITextareaProps } from '../Textarea/Textarea';
-import './style.scss';
 
 interface Props extends ITextareaProps {
 	label: string;

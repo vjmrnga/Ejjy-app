@@ -1,13 +1,16 @@
+import { isArray } from 'lodash';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Redirect, Route, useLocation } from 'react-router-dom';
-import { createStructuredSelector } from 'reselect';
 import { selectors } from '../../ducks/auth';
 
 const portal = ['/', '/login'];
 
-const CommonRoute = ({ accessToken, refreshToken, ...rest }: any) => {
+export const CommonRoute = ({ path, exact, component }: any) => {
 	const { pathname: pathName } = useLocation();
+	const accessToken = useSelector(selectors.selectAccessToken());
+	const refreshToken = useSelector(selectors.selectRefreshToken());
+	const user = useSelector(selectors.selectUser());
 
 	if (portal.includes(pathName) && accessToken && refreshToken) {
 		return <Route render={() => <Redirect to="/dashboard" />} />;
@@ -17,14 +20,9 @@ const CommonRoute = ({ accessToken, refreshToken, ...rest }: any) => {
 		return <Route render={() => <Redirect to="/" />} />;
 	}
 
-	return <Route {...rest} />;
+	if (!portal.includes(pathName) && !component[user.user_type]) {
+		return <Route render={() => <Redirect to="404" />} />;
+	}
+
+	return <Route path={path} exact={exact} component={component[user.user_type] || component} />;
 };
-
-const mapState = createStructuredSelector({
-	accessToken: selectors.selectAccessToken(),
-	refreshToken: selectors.selectRefreshToken(),
-});
-
-const connector = connect(mapState, null);
-
-export default connector(CommonRoute);
