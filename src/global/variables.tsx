@@ -19,11 +19,26 @@ export const NOT_FOUND_INDEX = -1;
 export const LINK_VOID = 'javascript:void(0)';
 
 export const productTypes = {
-	DRY: 'Dry',
-	WET: 'Wet',
+	DRY: 'dry',
+	WET: 'wet',
 };
 
 export const unitsOfMeasurement = {
-	WEIGHING: 'Weighing',
-	NON_WEIGHING: 'Non-Weighing',
+	WEIGHING: 'weighing',
+	NON_WEIGHING: 'non_weighing',
+};
+
+export const userTypes = {
+	OFFICE_MANAGER: 'office_manager',
+	BRANCH_MANAGER: 'branch_manager',
+};
+
+export const purchaseRequestActions = {
+	NEW: 'new',
+	SEEN: 'seen',
+	F_OS1_CREATED: 'f_os1_created',
+	F_OS1_PREPARED: 'f_os1_prepared',
+	F_DS1_CREATED: 'f_ds1_created',
+	F_DS1_DONE: 'f_ds1_done',
+	F_DS1_ERROR: 'f_ds1_error',
 };

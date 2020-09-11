@@ -11,7 +11,7 @@ interface Props {
 	items: Step[];
 }
 
-const Breadcrumb = ({ items }: Props) => {
+export const Breadcrumb = ({ items }: Props) => {
 	return (
 		<div className="Breadcrumb">
 			{items.map(({ name, link }, index) => (
@@ -33,5 +33,3 @@ const Breadcrumb = ({ items }: Props) => {
 		</div>
 	);
 };
-
-export default Breadcrumb;

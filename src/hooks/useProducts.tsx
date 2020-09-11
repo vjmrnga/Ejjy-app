@@ -30,6 +30,15 @@ export const useProducts = () => {
 		getProductsRequest();
 	}, []);
 
+	const reset = () => {
+		resetError();
+		resetStatus();
+	};
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
+
 	const getProductsRequest = () => {
 		setRecentRequest(types.GET_PRODUCTS);
 		getProducts({ callback });
@@ -74,13 +83,17 @@ export const useProducts = () => {
 		setErrors(errors);
 	};
 
-	return [
+	return {
 		products,
-		createProductRequest,
-		editProductRequest,
-		removeProductRequest,
+		getProducts: getProductsRequest,
+		createProduct: createProductRequest,
+		editProduct: editProductRequest,
+		removeProduct: removeProductRequest,
 		status,
 		errors,
 		recentRequest,
-	];
+		reset,
+		resetStatus,
+		resetError,
+	};
 };

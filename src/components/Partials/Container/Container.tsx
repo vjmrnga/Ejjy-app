@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import React, { ReactNode } from 'react';
-import Sidebar from '../Sidebar/Sidebar';
+import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
 
 const { Header, Content } = Layout;
@@ -12,7 +12,7 @@ interface Props {
 	children?: ReactNode;
 }
 
-const Container = ({ title, rightTitle, breadcrumb, children }: Props) => {
+export const Container = ({ title, rightTitle, breadcrumb, children }: Props) => {
 	return (
 		<Layout className="Main">
 			<Sidebar />
@@ -31,5 +31,3 @@ const Container = ({ title, rightTitle, breadcrumb, children }: Props) => {
 		</Layout>
 	);
 };
-
-export default Container;

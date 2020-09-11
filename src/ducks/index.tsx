@@ -6,6 +6,7 @@ import branchesReducer, { key as BRANCHES_KEY } from './branches';
 import branchProductsReducer, { key as BRANCH_PRODUCTS_KEY } from './branch-products';
 import history from '../utils/history';
 import { connectRouter } from 'connected-react-router';
+import { branchManagerReducers } from './BranchManager';
 
 export default combineReducers({
 	router: connectRouter(history),
@@ -14,4 +15,5 @@ export default combineReducers({
 	[PRODUCTS_KEY]: productsReducer,
 	[BRANCHES_KEY]: branchesReducer,
 	[BRANCH_PRODUCTS_KEY]: branchProductsReducer,
+	...branchManagerReducers,
 });

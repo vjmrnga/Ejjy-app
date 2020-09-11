@@ -27,9 +27,22 @@ export const useBranches = () => {
 	const removeBranch = useActionDispatch(actions.removeBranch);
 
 	useEffect(() => {
+		getBranchesRequest();
+	}, []);
+
+	const reset = () => {
+		resetError();
+		resetStatus();
+	};
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
+
+	const getBranchesRequest = () => {
 		setRecentRequest(types.GET_BRANCHES);
 		getBranches({ callback });
-	}, []);
+	};
 
 	const createBranchRequest = (branch) => {
 		setRecentRequest(types.CREATE_BRANCH);
@@ -60,13 +73,17 @@ export const useBranches = () => {
 		setErrors(errors);
 	};
 
-	return [
+	return {
 		branches,
-		createBranchRequest,
-		editBranchRequest,
-		removeBranchRequest,
+		getBranches: getBranchesRequest,
+		createBranch: createBranchRequest,
+		editBranch: editBranchRequest,
+		removeBranch: removeBranchRequest,
 		status,
 		errors,
 		recentRequest,
-	];
+		reset,
+		resetStatus,
+		resetError,
+	};
 };

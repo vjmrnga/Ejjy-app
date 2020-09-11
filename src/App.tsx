@@ -1,28 +1,33 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import CommonRoute from './components/CommonRoute/CommonRoute';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { CommonRoute } from './components';
+import { Error404, Login } from './screens';
 import {
-	OfficeDashboard,
-	OfficeProducts,
-	Login,
-	OfficeBranches,
-	OfficePurchaseRequests,
-	OfficeUsers,
-	OfficeNotifications,
-	OfficeViewBranch,
-} from './screens';
+	BranchesScreens,
+	DashboardScreens,
+	NotificationsScreens,
+	OrderSlipsScreens,
+	ProductsScreens,
+	PurchaseRequestsScreens,
+	UsersScreens,
+	ViewBranchScreens,
+} from './utils/routeMapping';
 
 const App = () => (
-	<Router>
+	<Switch>
 		<CommonRoute path={['/', '/login']} exact component={Login} />
-		<CommonRoute path={'/dashboard'} exact component={OfficeDashboard} />
-		<CommonRoute path={'/products'} exact component={OfficeProducts} />
-		<CommonRoute path={'/branches'} exact component={OfficeBranches} />
-		<CommonRoute path={'/branches/:id'} exact component={OfficeViewBranch} />
-		<CommonRoute path={'/purchase-requests'} exact component={OfficePurchaseRequests} />
-		<CommonRoute path={'/users'} exact component={OfficeUsers} />
-		<CommonRoute path={'/notifications'} exact component={OfficeNotifications} />
-	</Router>
+		<CommonRoute path="/dashboard" exact component={DashboardScreens} />
+		<CommonRoute path="/products" exact component={ProductsScreens} />
+		<CommonRoute path="/branches" exact component={BranchesScreens} />
+		<CommonRoute path="/branches/:id" exact component={ViewBranchScreens} />
+		<CommonRoute path="/purchase-requests" exact component={PurchaseRequestsScreens} />
+		<CommonRoute path="/users" exact component={UsersScreens} />
+		<CommonRoute path="/notifications" exact component={NotificationsScreens} />
+		<CommonRoute path="/order-slips" exact component={OrderSlipsScreens} />
+
+		<Route path="/404" exact component={Error404} />
+		<Route path="" render={() => <Redirect to="/404" />} />
+	</Switch>
 );
 
 export default App;

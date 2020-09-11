@@ -41,20 +41,6 @@ function* getBranchProductsByBranch({ payload }: any) {
 	}
 }
 
-function* createBranchProduct({ payload }: any) {
-	const { callback, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(service.createBranchProduct, data);
-
-		yield put(actions.save({ type: types.CREATE_BRANCH_PRODUCT, branchProduct: response.data }));
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 function* editBranchProduct({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
@@ -68,21 +54,6 @@ function* editBranchProduct({ payload }: any) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
-
-function* removeBranchProduct({ payload }: any) {
-	const { callback, id } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		yield call(service.removeBranchProduct, id);
-
-		yield put(actions.save({ type: types.REMOVE_BRANCH_PRODUCT, id }));
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 /* WATCHERS */
 const getBranchProductsWatcherSaga = function* getBranchProductsWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, getBranchProducts);
@@ -92,22 +63,12 @@ const getBranchProductsByBranchWatcherSaga = function* getBranchProductsByBranch
 	yield takeLatest(types.GET_BRANCH_PRODUCTS_BY_BRANCH, getBranchProductsByBranch);
 };
 
-const createBranchProductWatcherSaga = function* createBranchProductWatcherSaga() {
-	yield takeLatest(types.CREATE_BRANCH_PRODUCT, createBranchProduct);
-};
-
 const editBranchProductWatcherSaga = function* editBranchProductWatcherSaga() {
 	yield takeLatest(types.EDIT_BRANCH_PRODUCT, editBranchProduct);
-};
-
-const removeBranchProductWatcherSaga = function* removeBranchProductWatcherSaga() {
-	yield takeLatest(types.REMOVE_BRANCH_PRODUCT, removeBranchProduct);
 };
 
 export default [
 	getBranchProductsWatcherSaga(),
 	getBranchProductsByBranchWatcherSaga(),
-	createBranchProductWatcherSaga(),
 	editBranchProductWatcherSaga(),
-	removeBranchProductWatcherSaga(),
 ];

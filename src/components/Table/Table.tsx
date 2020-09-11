@@ -7,7 +7,7 @@ import './style.scss';
 
 const ROW_HEIGHT = 65;
 
-const Table = (props) => {
+export const Table = (props) => {
 	const { columns, scroll } = props;
 	const [tableWidth, setTableWidth] = useState(0);
 
@@ -98,5 +98,3 @@ const Table = (props) => {
 		</ResizeObserver>
 	);
 };
-
-export default Table;

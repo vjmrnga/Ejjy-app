@@ -1,0 +1,164 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../../components';
+import { Box } from '../../../components/elements';
+import { types } from '../../../ducks/branch-products';
+import { selectors as branchesSelectors } from '../../../ducks/branches';
+import { request } from '../../../global/variables';
+import { useBranchProducts } from '../../../hooks/useBranchProducts';
+import { useProducts } from '../../../hooks/useProducts';
+import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { CreateEditBranchProductsModal } from './components/BranchProducts/CreateEditBranchProductsModal';
+import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
+import './style.scss';
+
+interface IBranchesProps {
+	match: any;
+}
+
+const columns = [
+	{ title: 'Barcode', dataIndex: 'barcode' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Balance', dataIndex: 'balance' },
+	{ title: 'Actions', dataIndex: 'actions' },
+];
+
+const Branches = ({ match }: IBranchesProps) => {
+	const branchId = match?.params?.id;
+	const { branchProducts, editBranchProduct, status, errors, recentRequest } = useBranchProducts();
+	const { products } = useProducts();
+	const { height } = useWindowDimensions();
+	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
+
+	const [data, setData] = useState([]);
+	const [tableData, setTableData] = useState([]);
+	const [createEditBranchProductModalVisible, setCreateEditBranchProductModalVisible] = useState(
+		false,
+	);
+	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
+	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
+
+	// Effect: Format branch products to be rendered in Table
+	useEffect(() => {
+		const formattedBranchProducts = branchProducts
+			.filter(({ branch_id }) => branch_id === Number(branchId))
+			.map((branchProduct) => {
+				const {
+					product: { barcode, name, max_balance },
+					current_balance,
+				} = branchProduct;
+
+				return {
+					_barcode: barcode,
+					barcode: (
+						<a href="#" onClick={() => onView(branchProduct)}>
+							{barcode}
+						</a>
+					),
+					name,
+					balance: `${current_balance} / ${max_balance}`,
+					actions: <TableActions onEdit={() => onEdit(branchProduct)} />,
+				};
+			});
+
+		setData(formattedBranchProducts);
+		setTableData(formattedBranchProducts);
+	}, [branchProducts]);
+
+	// Effect: Reload the list if recent requests are Create, Edit or Remove
+	useEffect(() => {
+		if (status === request.SUCCESS && types.EDIT_BRANCH_PRODUCT === recentRequest) {
+			setCreateEditBranchProductModalVisible(false);
+			setSelectedBranchProduct(null);
+		}
+	}, [status, recentRequest]);
+
+	const getProductOptions = useCallback(() => {
+		const existingProductsIds = branchProducts.map(({ product_id }) => product_id);
+		const filteredProducts = selectedBranchProduct
+			? products
+			: products.filter(({ id }) => !existingProductsIds.includes(id));
+
+		return filteredProducts.map(({ id, name }) => ({
+			name,
+			value: id,
+			selected: selectedBranchProduct?.product_id === id,
+		}));
+	}, [products, branchProducts, selectedBranchProduct]);
+
+	const getSelectedProductBranchForView = useCallback(() => {
+		return selectedBranchProduct
+			? {
+					...selectedBranchProduct?.product,
+					...selectedBranchProduct,
+			  }
+			: null;
+	}, [selectedBranchProduct]);
+
+	const getBreadcrumbItems = useCallback(
+		() => [{ name: 'Branches', link: '/branches' }, { name: branch?.name }],
+		[branch],
+	);
+
+	const onView = (branchProduct) => {
+		setSelectedBranchProduct(branchProduct);
+		setViewBranchProductModalVisible(true);
+	};
+
+	const onEdit = (branch) => {
+		setSelectedBranchProduct(branch);
+		setCreateEditBranchProductModalVisible(true);
+	};
+
+	const onSearch = (keyword) => {
+		const filteredData =
+			keyword.length > 0
+				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
+				: data;
+
+		setTableData(filteredData);
+	};
+
+	return (
+		<Container
+			title="[VIEW] Branch"
+			rightTitle={branch?.name}
+			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+		>
+			<section>
+				<Box>
+					<TableHeader title="Products" buttonName="Create Branch Product" onSearch={onSearch} />
+
+					<Table
+						columns={columns}
+						dataSource={tableData}
+						scroll={{ y: height * 0.6, x: '100vw' }}
+					/>
+
+					<ViewBranchProductModal
+						branchName={branch?.name}
+						branchProduct={getSelectedProductBranchForView()}
+						visible={viewBranchProductModalVisible && !!getSelectedProductBranchForView()}
+						onClose={() => setViewBranchProductModalVisible(false)}
+					/>
+
+					<CreateEditBranchProductsModal
+						branchName={branch?.name}
+						branchId={branchId}
+						branchProduct={selectedBranchProduct}
+						productOptions={getProductOptions()}
+						visible={createEditBranchProductModalVisible}
+						onSubmit={editBranchProduct}
+						onClose={() => setCreateEditBranchProductModalVisible(false)}
+						errors={errors}
+						loading={status === request.REQUESTING}
+					/>
+				</Box>
+			</section>
+		</Container>
+	);
+};
+
+export default Branches;
