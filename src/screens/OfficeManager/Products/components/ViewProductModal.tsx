@@ -55,11 +55,12 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 				<Divider dashed />
 				{renderProductNumbers('Reorder Point', product?.reorder_point)}
 				{renderProductNumbers('Max Balance', product?.max_balance)}
+				{renderProductNumbers('Pieces in Bulk', product?.pieces_in_bulk)}
+				{renderProductNumbers('Allowable Spoilage (%)', product?.allowable_spoilage * 100)}
 				{renderProductNumbers('Cost (Piece)', product?.cost_per_piece)}
 				{renderProductNumbers('Cost (Bulk)', product?.cost_per_bulk)}
 				{renderProductNumbers('Price (Piece)', product?.price_per_piece)}
 				{renderProductNumbers('Price (Bulk)', product?.price_per_bulk)}
-				{renderProductNumbers('Allowable Spoilage (%)', product?.allowable_spoilage * 100)}
 			</Row>
 		</Modal>
 	);

@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { Button, FieldError, InputLabel, SelectLabel } from '../../../../../components/elements';
 import { Option } from '../../../../../components/elements/Select/Select';
+import { productTypes, unitsOfMeasurement } from '../../../../../global/variables';
 import { sleep } from '../../../../../utils/function';
 // import { Button, FieldError, InputLabel } from '../../../../components/elements';
 // import { sleep } from '../../../../utils/function';
@@ -41,12 +42,15 @@ export const CreateEditBranchProductsForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
+				type: branchProduct?.product?.type,
+				unit_of_measurement: branchProduct?.product?.unit_of_measurement,
 				product_id: branchProduct?.product_id || '',
 				reorder_point: branchProduct?.reorder_point || '',
 				max_balance: branchProduct?.max_balance || '',
 				price_per_piece: branchProduct?.price_per_piece || '',
 				price_per_bulk: branchProduct?.price_per_bulk || '',
 				current_balance: branchProduct?.current_balance || '',
+				allowable_spoilage: branchProduct?.allowable_spoilage * 100 || '',
 			},
 			Schema: Yup.object().shape({
 				product_id: Yup.number().required().label('Product'),
@@ -55,6 +59,17 @@ export const CreateEditBranchProductsForm = ({
 				price_per_piece: Yup.number().required().min(0).label('Price per Piece'),
 				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
 				current_balance: Yup.number().nullable().min(0).max(65535),
+				allowable_spoilage: Yup.number()
+					.integer()
+					.min(0)
+					.max(99)
+					.when(['type', 'unit_of_measurement'], {
+						is: (type, unit_of_measurement) =>
+							type === productTypes.WET && unit_of_measurement === unitsOfMeasurement.WEIGHING,
+						then: Yup.number().required(),
+						otherwise: Yup.number().notRequired(),
+					})
+					.label('Allowable Spoilage'),
 			}),
 		}),
 		[branchProduct],
@@ -75,7 +90,7 @@ export const CreateEditBranchProductsForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors, touched }) => (
+			{({ values, errors, touched }) => (
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col span={24}>
@@ -121,7 +136,25 @@ export const CreateEditBranchProductsForm = ({
 							) : null}
 						</Col>
 
-						<Col span={24}>
+						<Col sm={12} xs={24}>
+							<InputLabel
+								min={0}
+								type="number"
+								id="allowable_spoilage"
+								label="Allowable Spoilage"
+								disabled={
+									!(
+										values?.type === productTypes.WET &&
+										values?.unit_of_measurement === unitsOfMeasurement.WEIGHING
+									)
+								}
+							/>
+							{errors.allowable_spoilage && touched.allowable_spoilage ? (
+								<FieldError error={errors.allowable_spoilage} />
+							) : null}
+						</Col>
+
+						<Col sm={12} xs={24}>
 							<InputLabel min={0} type="number" id="current_balance" label="Current Balance" />
 							{errors.current_balance && touched.current_balance ? (
 								<FieldError error={errors.current_balance} />

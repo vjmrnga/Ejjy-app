@@ -50,6 +50,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				print_details: product?.name || '',
 				description: product?.name || '',
 				allowable_spoilage: product?.allowable_spoilage * 100 || '',
+				pieces_in_bulk: product?.pieces_in_bulk || '',
 				cost_per_piece: product?.cost_per_piece || '',
 				cost_per_bulk: product?.cost_per_bulk || '',
 				reorder_point: product?.reorder_point || '',
@@ -64,6 +65,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				unit_of_measurement: Yup.string().label('Unit of Measurement'),
 				print_details: Yup.string().required().label('Print Details'),
 				description: Yup.string().required().label('Description'),
+				pieces_in_bulk: Yup.number().required().min(0).label('Pieces in Bulk'),
 				allowable_spoilage: Yup.number()
 					.integer()
 					.min(0)
@@ -182,13 +184,26 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 							) : null}
 						</Col>
 
-						<Col span={24}>
+						<Col sm={12} xs={24}>
+							<InputLabel min={0} type="number" id="pieces_in_bulk" label="Pieces in Bulk" />
+							{errors.pieces_in_bulk && touched.pieces_in_bulk ? (
+								<FieldError error={errors.pieces_in_bulk} />
+							) : null}
+						</Col>
+
+						<Col span={12}>
 							<InputLabel
 								min={0}
 								max={99}
 								type="number"
 								id="allowable_spoilage"
 								label="Allowable Spoilage (%)"
+								disabled={
+									!(
+										values?.type === productTypes.WET &&
+										values?.unit_of_measurement === unitsOfMeasurement.WEIGHING
+									)
+								}
 							/>
 							{errors.allowable_spoilage && touched.allowable_spoilage ? (
 								<FieldError error={errors.allowable_spoilage} />

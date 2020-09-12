@@ -42,6 +42,7 @@ export const useBranchProducts = () => {
 		setRecentRequest(types.EDIT_BRANCH_PRODUCT);
 		editBranchProduct({
 			...branchProduct,
+			allowable_spoilage: (branchProduct.allowable_spoilage || 0) / 100,
 			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 		});
 	};
