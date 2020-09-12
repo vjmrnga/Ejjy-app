@@ -126,8 +126,9 @@ const PurchaseRequests = () => {
 			.map(({ product_id, pieces_in_bulk, quantity, quantity_type }) => ({
 				product_id,
 				quantity_piece:
-					quantity_type === quantityTypes.PIECE ? quantity : floor(quantity / pieces_in_bulk),
-				quantity_bulk: quantity_type === quantityTypes.BULK ? quantity : quantity * pieces_in_bulk,
+					quantity_type === quantityTypes.PIECE ? quantity : quantity * pieces_in_bulk,
+				quantity_bulk:
+					quantity_type === quantityTypes.BULK ? quantity : floor(quantity / pieces_in_bulk),
 			}));
 
 		createPurchaseRequest({
