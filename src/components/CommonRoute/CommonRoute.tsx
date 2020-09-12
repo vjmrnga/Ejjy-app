@@ -1,4 +1,3 @@
-import { isArray } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, useLocation } from 'react-router-dom';
