@@ -6,6 +6,10 @@ interface Props {
 	classNames?: any;
 }
 
+export const EmptyIcon = ({ classNames }: Props) => (
+	<div className={cn('Icon', 'empty', classNames)}></div>
+);
+
 export const CheckIcon = ({ classNames }: Props) => (
 	<div className={cn('Icon', 'primary', classNames)}>
 		<img src={require('../../assets/images/icon-check-white.svg')} alt="icon" />

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Table as AntdTable } from 'antd';
 import './style.scss';
 
-const ROW_HEIGHT = 65;
+export const ROW_HEIGHT = 65;
 
 export const Table = (props) => {
 	const { columns, scroll } = props;
@@ -57,7 +57,6 @@ export const Table = (props) => {
 				columnCount={mergedColumns.length}
 				columnWidth={(index) => {
 					const { width } = mergedColumns[index];
-
 					return index === mergedColumns.length - 1 ? width - scrollbarSize - 1 : width;
 				}}
 				height={scroll.y}

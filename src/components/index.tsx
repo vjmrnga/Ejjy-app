@@ -7,3 +7,4 @@ export * from './Partials/Container/Container';
 export * from './Table/Table';
 export * from './Table/TableActions/TableActions';
 export * from './Table/TableHeaders/TableHeader';
+export * from './TableNormal/TableNormal';

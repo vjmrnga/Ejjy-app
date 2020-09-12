@@ -11,16 +11,18 @@ export interface Option {
 
 export interface ISelectProps {
 	id: string;
-	placeholder: string;
+	placeholder?: string;
 	disabled?: boolean;
 	options: Option[];
 }
 
 const Select = ({ id, options, placeholder, disabled }: ISelectProps) => (
 	<Field as="select" id={id} name={id} className={cn('Select', { disabled })} disabled={disabled}>
-		<option value="" selected disabled>
-			{placeholder}
-		</option>
+		{placeholder && (
+			<option value="" selected disabled>
+				{placeholder}
+			</option>
+		)}
 		{options.map(({ name, value, selected = false }) => (
 			<option selected={selected} value={value}>
 				{name}

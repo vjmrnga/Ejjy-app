@@ -1,0 +1,26 @@
+@import '../../assets/styles/main';
+
+.TableNormal {
+	width: 100%;
+
+	thead {
+		th {
+			padding: 25px 15px;
+			@include font(1rem, bold);
+			color: $color-dark;
+			background-color: $color-main-background;
+		}
+	}
+
+	tbody {
+		td {
+			@include font(1rem, 600);
+			padding: 10px 15px;
+			color: $color-dark-gray;
+
+			a {
+				color: $color-link !important;
+			}
+		}
+	}
+}

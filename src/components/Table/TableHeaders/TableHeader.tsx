@@ -13,6 +13,8 @@ interface Props {
 	searchPlaceholder?: string;
 	buttonName?: string;
 	statuses?: Option[];
+	onCreateDisabled?: boolean;
+	onCreateTooltip?: string;
 	onStatusSelect?: any;
 	onSearch?: any;
 	onCreate?: any;
@@ -24,6 +26,8 @@ export const TableHeader = ({
 	buttonName,
 	onStatusSelect,
 	statuses,
+	onCreateDisabled,
+	onCreateTooltip,
 	onSearch,
 	onCreate,
 }: Props) => {
@@ -44,6 +48,7 @@ export const TableHeader = ({
 			>
 				{onSearch && (
 					<SearchInput
+						classNames="search-input"
 						placeholder={searchPlaceholder}
 						onChange={(event) => debounceSearchedChange(event.target.value.trim())}
 					/>
@@ -51,9 +56,10 @@ export const TableHeader = ({
 
 				{onStatusSelect && (
 					<StatusSelect
+						classNames="status-select"
 						options={statuses}
 						placeholder="status"
-						onSelect={(event) => onStatusSelect(event.target.value)}
+						onChange={(event) => onStatusSelect(event.target.value)}
 					/>
 				)}
 
@@ -64,6 +70,8 @@ export const TableHeader = ({
 						onClick={onCreate}
 						iconDirection="left"
 						icon={<AddIcon />}
+						disabled={onCreateDisabled}
+						tooltip={onCreateTooltip}
 					/>
 				)}
 			</div>

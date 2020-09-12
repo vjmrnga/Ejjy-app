@@ -16,6 +16,7 @@ export const useBranchProducts = () => {
 
 	const branchProducts = useSelector(selectors.selectBranchProducts());
 	const getBranchProducts = useActionDispatch(actions.getBranchProducts);
+	const getBranchProductsByBranch = useActionDispatch(actions.getBranchProductsByBranch);
 	const editBranchProduct = useActionDispatch(actions.editBranchProduct);
 
 	const reset = () => {
@@ -30,6 +31,11 @@ export const useBranchProducts = () => {
 	const getBranchProductsRequest = () => {
 		setRecentRequest(types.GET_BRANCH_PRODUCTS);
 		getBranchProducts({ callback });
+	};
+
+	const getBranchProductsByBranchRequest = (branchId) => {
+		setRecentRequest(types.GET_BRANCH_PRODUCTS_BY_BRANCH);
+		getBranchProductsByBranch({ branchId, callback });
 	};
 
 	const editBranchProductRequest = (branchProduct) => {
@@ -48,6 +54,7 @@ export const useBranchProducts = () => {
 	return {
 		branchProducts,
 		getBranchProducts: getBranchProductsRequest,
+		getBranchProductsByBranch: getBranchProductsByBranchRequest,
 		editBranchProduct: editBranchProductRequest,
 		status,
 		errors,

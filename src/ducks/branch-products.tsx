@@ -10,7 +10,6 @@ export const types = {
 	GET_BRANCH_PRODUCTS: `${key}/GET_BRANCH_PRODUCTS`,
 	GET_BRANCH_PRODUCTS_BY_BRANCH: `${key}/GET_BRANCH_PRODUCTS_BY_BRANCH`,
 	EDIT_BRANCH_PRODUCT: `${key}/EDIT_BRANCH_PRODUCT`,
-	REMOVE_BRANCH_PRODUCT: `${key}/REMOVE_BRANCH_PRODUCT`,
 };
 
 const initialState = {
@@ -24,7 +23,8 @@ const reducer = handleActions(
 			let newData = {};
 
 			switch (type) {
-				case types.GET_BRANCH_PRODUCTS: {
+				case types.GET_BRANCH_PRODUCTS:
+				case types.GET_BRANCH_PRODUCTS_BY_BRANCH: {
 					newData = { branchProducts: payload.branchProducts };
 
 					// const { branchProducts } = state;

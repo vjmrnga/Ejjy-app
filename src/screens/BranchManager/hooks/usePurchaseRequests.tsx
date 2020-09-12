@@ -37,10 +37,10 @@ export const usePurchaseRequests = (branchId) => {
 		getPurchaseRequestsExtended({ id: branchId, callback });
 	};
 
-	const createPurchaseRequestRequest = (branch) => {
+	const createPurchaseRequestRequest = (purchaseRequest) => {
 		setRecentRequest(types.CREATE_PURCHASE_REQUEST);
 		createPurchaseRequest({
-			...branch,
+			...purchaseRequest,
 			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
 		});
 	};

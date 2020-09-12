@@ -1,5 +1,11 @@
 @import '../../../assets/styles/main';
 
+.button-tooltip {
+	.ant-tooltip-inner {
+		text-align: center;
+	}
+}
+
 .Button {
 	@include font(1rem, 700);
 	min-width: 100px;
@@ -31,7 +37,7 @@
 		background-color: $color-dark-gray !important;
 		border: 0 !important;
 		box-shadow: none !important;
-		pointer-events: none;
+		cursor: default;
 	}
 
 	&.default {

@@ -33,6 +33,11 @@ export const userTypes = {
 	BRANCH_MANAGER: 'branch_manager',
 };
 
+export const purchaseRequestTypes = {
+	MANUAL: 'manual',
+	AUTOMATIC: 'automatic',
+};
+
 export const purchaseRequestActions = {
 	NEW: 'new',
 	SEEN: 'seen',
@@ -42,3 +47,25 @@ export const purchaseRequestActions = {
 	F_DS1_DONE: 'f_ds1_done',
 	F_DS1_ERROR: 'f_ds1_error',
 };
+
+export const branchProductStatus = {
+	AVAILABLE: 'available',
+	REORDER: 'reorder',
+	OUT_OF_STOCK: 'out_of_stock',
+};
+
+export const quantityTypes = {
+	BULK: 'bulk',
+	PIECE: 'piece',
+};
+
+export const quantityTypeOptions = [
+	{
+		name: quantityTypes.BULK,
+		value: quantityTypes.BULK,
+	},
+	{
+		name: quantityTypes.PIECE,
+		value: quantityTypes.PIECE,
+	},
+];
