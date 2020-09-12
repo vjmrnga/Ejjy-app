@@ -24,15 +24,20 @@ function* getBranchProducts({ payload }: any) {
 }
 
 function* getBranchProductsByBranch({ payload }: any) {
-	const { branch_id, callback } = payload;
+	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.getBranchProductsByBranch, branch_id);
+		const response = yield call(service.getBranchProductsByBranch, {
+			page: 1,
+			page_size: MAX_PAGE_SIZE,
+			branch_id: branchId,
+		});
+
 		yield put(
 			actions.save({
 				type: types.GET_BRANCH_PRODUCTS_BY_BRANCH,
-				branchProducts: response.data.results,
+				branchProducts: response.data,
 			}),
 		);
 		callback({ status: request.SUCCESS });

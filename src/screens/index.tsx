@@ -8,10 +8,11 @@ export { default as BranchManagerNotifications } from './BranchManager/Notificat
 export { default as BranchManagerOrderSlips } from './BranchManager/OrderSlips/OrderSlips';
 export { default as BranchManagerProducts } from './BranchManager/Products/Products';
 export { default as BranchManagerPurchaseRequests } from './BranchManager/PurchaseRequests/PurchaseRequests';
+export { default as BranchManagerViewPurchaseRequest } from './BranchManager/PurchaseRequests/ViewPurchaseRequest';
 
+// Office Manager
 export { default as OfficeManagerBranches } from './OfficeManager/Branches/Branches';
 export { default as OfficeManagerViewBranch } from './OfficeManager/Branches/ViewBranch';
-// Office Manager
 export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Dashboard';
 export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
 export { default as OfficeManagerProducts } from './OfficeManager/Products/Products';

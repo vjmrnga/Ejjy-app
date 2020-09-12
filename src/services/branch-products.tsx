@@ -12,9 +12,14 @@ interface IEditBranchProduct {
 	current_balance?: number;
 }
 
+interface IGetBranchProductsByBranchRequest extends IGetRequest {
+	branch_id: number;
+}
+
 export const service = {
 	list: async (params: IGetRequest) => axios.get('/branches-products/extended/', { params }),
-	getBranchProductsByBranch: async (id) => axios.get(`/branches-products/${id}/`),
+	getBranchProductsByBranch: async (params: IGetBranchProductsByBranchRequest) =>
+		axios.get('branches-products/with-branch-manager-details/', { params }),
 	editBranchProduct: async (body: IEditBranchProduct) =>
 		axios.patch(`/branches-products/${body.id}/`, body),
 };

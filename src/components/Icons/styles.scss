@@ -6,11 +6,18 @@
 	width: 20px;
 	border-radius: 50%;
 
+	&.empty {
+		border: 1px solid $color-dark-gray;
+		background-color: transparent;
+	}
+
 	&.primary {
+		border: 1px solid $color-primary;
 		background-color: $color-primary;
 	}
 
 	&.error {
+		border: 1px solid $color-red;
 		background-color: $color-red;
 	}
 }

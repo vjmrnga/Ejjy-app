@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { CommonRoute } from './components';
 import { Error404, Login } from './screens';
 import {
@@ -11,6 +11,7 @@ import {
 	PurchaseRequestsScreens,
 	UsersScreens,
 	ViewBranchScreens,
+	ViewPurchaseRequestScreens,
 } from './utils/routeMapping';
 
 const App = () => (
@@ -21,6 +22,7 @@ const App = () => (
 		<CommonRoute path="/branches" exact component={BranchesScreens} />
 		<CommonRoute path="/branches/:id" exact component={ViewBranchScreens} />
 		<CommonRoute path="/purchase-requests" exact component={PurchaseRequestsScreens} />
+		<CommonRoute path="/purchase-requests/:id" exact component={ViewPurchaseRequestScreens} />
 		<CommonRoute path="/users" exact component={UsersScreens} />
 		<CommonRoute path="/notifications" exact component={NotificationsScreens} />
 		<CommonRoute path="/order-slips" exact component={OrderSlipsScreens} />

@@ -24,5 +24,13 @@
 		&.only-button {
 			@include flex(flex-end, center);
 		}
+
+		.search-input {
+			margin-right: 10px;
+		}
+
+		.status-select {
+			margin-right: auto;
+		}
 	}
 }

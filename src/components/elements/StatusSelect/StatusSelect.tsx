@@ -1,3 +1,4 @@
+import cn from 'classnames';
 import * as React from 'react';
 import './style.scss';
 
@@ -10,16 +11,17 @@ export interface Option {
 interface Props {
 	placeholder: string;
 	options: Option[];
-	onSelect: any;
+	onChange: any;
+	classNames: any;
 }
 
-const StatusSelect = ({ options, placeholder, onSelect }: Props) => (
-	<select className="StatusSelect">
+const StatusSelect = ({ options, placeholder, onChange, classNames }: Props) => (
+	<select className={cn('StatusSelect', classNames)} onChange={onChange}>
 		<option value="" selected disabled>
 			{placeholder}
 		</option>
 		{options.map(({ name, value, selected = false }) => (
-			<option selected={selected} value={value} onSelect={onSelect}>
+			<option selected={selected} value={value}>
 				{name}
 			</option>
 		))}

@@ -5,6 +5,7 @@ import {
 	BranchManagerOrderSlips,
 	BranchManagerProducts,
 	BranchManagerPurchaseRequests,
+	BranchManagerViewPurchaseRequest,
 	OfficeManagerBranches,
 	OfficeManagerDashboard,
 	OfficeManagerNotifications,
@@ -34,6 +35,10 @@ export const ViewBranchScreens = {
 export const PurchaseRequestsScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerPurchaseRequests,
 	[userTypes.BRANCH_MANAGER]: BranchManagerPurchaseRequests,
+};
+
+export const ViewPurchaseRequestScreens = {
+	[userTypes.BRANCH_MANAGER]: BranchManagerViewPurchaseRequest,
 };
 
 export const OrderSlipsScreens = {

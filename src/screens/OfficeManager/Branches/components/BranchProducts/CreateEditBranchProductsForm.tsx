@@ -59,7 +59,7 @@ export const CreateEditBranchProductsForm = ({
 		}),
 		[branchProduct],
 	);
-	console.log('branchProduct', branchProduct);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}

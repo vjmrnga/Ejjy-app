@@ -48,6 +48,10 @@ export const actions = {
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
 	selectPurchaseRequests: () => createSelector(selectState, (state) => state.purchaseRequests),
+	selectPurchaseRequestById: (id) =>
+		createSelector(selectState, (state) =>
+			state.purchaseRequests.find((purchaseRequest) => purchaseRequest.id === id),
+		),
 };
 
 export default reducer;

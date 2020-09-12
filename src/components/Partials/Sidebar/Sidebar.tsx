@@ -77,7 +77,7 @@ export const Sidebar = () => {
 			<div className="sidebar-items">
 				{SidebarItems.filter((item) => item.userTypes.includes(user.user_type)).map((item) => (
 					<Link to={item.link} key={item.key}>
-						<div className={cn('item', { active: pathname === item.link })}>
+						<div className={cn('item', { active: pathname.startsWith(item.link) })}>
 							<img src={item.defaultIcon} alt={item.name} className="icon" />
 							<img src={item.activeIcon} alt={item.name} className="icon icon-active" />
 							<span className="name">{item.name}</span>
