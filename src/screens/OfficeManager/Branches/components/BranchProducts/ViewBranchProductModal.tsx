@@ -54,6 +54,7 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 				{renderProductNumbers('Max Balance', branchProduct?.max_balance)}
 				{renderProductNumbers('Price (Piece)', branchProduct?.price_per_piece)}
 				{renderProductNumbers('Price (Bulk)', branchProduct?.price_per_bulk)}
+				{renderProductNumbers('Allowable Spoilage (%)', branchProduct?.allowable_spoilage * 100)}
 				{renderProductNumbers('Current Balance', branchProduct?.current_balance)}
 			</Row>
 		</Modal>

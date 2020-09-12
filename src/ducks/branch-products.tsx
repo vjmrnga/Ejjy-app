@@ -44,7 +44,10 @@ const reducer = handleActions(
 
 					if (index !== NOT_FOUND_INDEX) {
 						const branchProducts = cloneDeep(state.branchProducts);
-						branchProducts[index] = editedBranchProduct;
+						branchProducts[index] = {
+							...branchProducts[index],
+							...editedBranchProduct,
+						};
 						newData = { branchProducts };
 					}
 					break;

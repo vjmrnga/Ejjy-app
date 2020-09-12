@@ -10,6 +10,7 @@ interface IEditBranchProduct {
 	price_per_piece?: number;
 	price_per_bulk?: number;
 	current_balance?: number;
+	allowable_spoilage?: number;
 }
 
 interface IGetBranchProductsByBranchRequest extends IGetRequest {
