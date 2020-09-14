@@ -15,9 +15,12 @@ import {
 	request,
 } from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, getPurchaseRequestStatus } from '../../../utils/function';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getPurchaseRequestStatus,
+} from '../../../utils/function';
 import { CreatePurchaseRequestModal } from './components/CreatePurchaseRequestModal';
 import './style.scss';
 
@@ -30,7 +33,6 @@ const columns = [
 ];
 
 const PurchaseRequests = () => {
-	const { height } = useWindowDimensions();
 	const user = useSelector(authSelectors.selectUser());
 
 	const [data, setData] = useState([]);
@@ -46,7 +48,11 @@ const PurchaseRequests = () => {
 		recentRequest,
 	} = usePurchaseRequests();
 
-	const { branchProducts, getBranchProductsByBranch } = useBranchProducts();
+	const {
+		branchProducts,
+		getBranchProductsByBranch,
+		status: branchProductsStatus,
+	} = useBranchProducts();
 
 	useEffect(() => {
 		getPurchaseRequestsExtended(user?.branch_id);
@@ -137,7 +143,8 @@ const PurchaseRequests = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
 					/>
 
 					<CreatePurchaseRequestModal
@@ -146,7 +153,7 @@ const PurchaseRequests = () => {
 						onSubmit={onCreate}
 						onClose={() => setCreateModalVisible(false)}
 						errors={errors}
-						loading={status === request.REQUESTING}
+						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
 					/>
 				</Box>
 			</section>

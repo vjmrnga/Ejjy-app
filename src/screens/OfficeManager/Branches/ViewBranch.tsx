@@ -10,7 +10,7 @@ import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/bra
 import { request } from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useProducts } from '../../../hooks/useProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditBranchProductsModal } from './components/BranchProducts/CreateEditBranchProductsModal';
 import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
 import './style.scss';
@@ -30,7 +30,6 @@ const ViewBranch = ({ match }: Props) => {
 	const branchId = match?.params?.id;
 	const { branchProducts, editBranchProduct, status, errors, recentRequest } = useBranchProducts();
 	const { products } = useProducts();
-	const { height } = useWindowDimensions();
 	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
 	const [data, setData] = useState([]);
@@ -136,7 +135,7 @@ const ViewBranch = ({ match }: Props) => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
 					/>
 
 					<ViewBranchProductModal

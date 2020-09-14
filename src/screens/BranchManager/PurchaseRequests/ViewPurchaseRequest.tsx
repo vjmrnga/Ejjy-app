@@ -5,11 +5,16 @@ import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Breadcrumb, Container, Table } from '../../../components';
-import { Box, Button, Label } from '../../../components/elements';
+import { Box, Button, Label, Select } from '../../../components/elements';
 import { selectors } from '../../../ducks/purchase-requests';
+import { quantityTypeOptions, quantityTypes } from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, getPurchaseRequestStatus, sleep } from '../../../utils/function';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getPurchaseRequestStatus,
+	sleep,
+} from '../../../utils/function';
 import './style.scss';
 
 interface Props {
@@ -19,13 +24,11 @@ interface Props {
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
-	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
+	{ title: 'Quantity', dataIndex: 'quantity' },
 ];
 
 const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
-	const { height } = useWindowDimensions();
 	const { branchProducts } = useBranchProducts();
 	const purchaseRequest = useSelector(
 		selectors.selectPurchaseRequestById(Number(purchaseRequestId)),
@@ -41,10 +44,11 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 			const { barcode = '', name = '' } = branchProduct?.product;
 
 			return {
+				_quantity_bulk: quantity_bulk,
+				_quantity_piece: quantity_piece,
 				barcode,
 				name,
-				quantity_bulk,
-				quantity_piece,
+				quantity: quantity_piece,
 			};
 		});
 
@@ -58,6 +62,17 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 		],
 		[purchaseRequest],
 	);
+
+	const onQuantityTypeChange = (quantityType) => {
+		const requestProducts = data.map((requestProduct) => ({
+			...requestProduct,
+			quantity:
+				quantityType === quantityTypes.PIECE
+					? requestProduct._quantity_piece
+					: requestProduct._quantity_bulk,
+		}));
+		setData(requestProducts);
+	};
 
 	return (
 		<Container
@@ -100,10 +115,27 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 					<div className="requested-products">
 						<Divider dashed />
-						<Label label="Requested Products" />
+						<Row gutter={[15, 15]} align="middle">
+							<Col span={24} lg={12}>
+								<Label label="Requested Products" />
+							</Col>
+							<Col span={24} lg={12}>
+								<Select
+									classNames="status-select"
+									options={quantityTypeOptions}
+									placeholder="quantity"
+									defaultValue={quantityTypes.PIECE}
+									onChange={(event) => onQuantityTypeChange(event.target.value)}
+								/>
+							</Col>
+						</Row>
 					</div>
 
-					<Table columns={columns} dataSource={data} scroll={{ y: height * 0.5, x: '100vw' }} />
+					<Table
+						columns={columns}
+						dataSource={data}
+						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
+					/>
 				</Box>
 			</section>
 		</Container>

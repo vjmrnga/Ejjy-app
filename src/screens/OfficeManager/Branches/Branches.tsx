@@ -6,8 +6,8 @@ import { Container, Table, TableActions, TableHeader } from '../../../components
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/variables';
+import { calculateTableHeight } from '../../../utils/function';
 import { useBranches } from '../hooks/useBranches';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
 import { CreateEditBranchModal } from './components/CreateEditBranchModal';
 import './style.scss';
 
@@ -21,7 +21,6 @@ const Branches = () => {
 	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] = useState(false);
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
-	const { height } = useWindowDimensions();
 	const {
 		branches,
 		createBranch,
@@ -75,7 +74,7 @@ const Branches = () => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
 						loading={status === request.REQUESTING}
 					/>
 

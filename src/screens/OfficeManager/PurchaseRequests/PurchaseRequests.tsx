@@ -6,9 +6,11 @@ import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { purchaseRequestActionsOptions, request } from '../../../global/variables';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, getPurchaseRequestStatus } from '../../../utils/function';
-
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getPurchaseRequestStatus,
+} from '../../../utils/function';
 import './style.scss';
 
 const columns = [
@@ -20,8 +22,6 @@ const columns = [
 ];
 
 const PurchaseRequests = () => {
-	const { height } = useWindowDimensions();
-
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
 	const { purchaseRequests, getPurchaseRequestsExtended, status } = usePurchaseRequests();
@@ -88,7 +88,7 @@ const PurchaseRequests = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
 						loading={status === request.REQUESTING}
 					/>
 				</Box>

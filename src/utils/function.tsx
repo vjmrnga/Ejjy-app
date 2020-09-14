@@ -12,11 +12,17 @@ import {
 	NewBadgePill,
 	OutOfStocksBadgePill,
 	ReorderBadgePill,
+	ROW_HEIGHT,
 	SeenBadgePill,
 } from '../components';
 import { branchProductStatus, purchaseRequestActions, request } from '../global/variables';
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export const calculateTableHeight = (listLength) => {
+	const MAX_ROW_COUNT = 6;
+	return ROW_HEIGHT * (listLength <= MAX_ROW_COUNT ? listLength : MAX_ROW_COUNT);
+};
 
 export const showMessage = (status, successMessage, errorMessage) => {
 	if (status === request.SUCCESS) {

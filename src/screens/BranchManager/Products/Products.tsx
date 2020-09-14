@@ -4,8 +4,9 @@ import { lowerCase } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
+import { request } from '../../../global/variables';
 import { useProducts } from '../../../hooks/useProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { calculateTableHeight } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
 
 const columns = [
@@ -20,8 +21,11 @@ const Products = () => {
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const { height } = useWindowDimensions();
-	const { products } = useProducts();
+	const { status, products, getProducts } = useProducts();
+
+	useEffect(() => {
+		getProducts();
+	}, []);
 
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
@@ -67,7 +71,8 @@ const Products = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						loading={status === request.REQUESTING}
 					/>
 
 					<ViewProductModal

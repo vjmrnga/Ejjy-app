@@ -1,3 +1,5 @@
+import { upperFirst } from 'lodash';
+
 export const API_URL = process.env.REACT_APP_API_URL;
 export const API_TIMEOUT = 5000;
 
@@ -62,12 +64,12 @@ export const quantityTypes = {
 
 export const quantityTypeOptions = [
 	{
-		name: quantityTypes.BULK,
-		value: quantityTypes.BULK,
+		name: upperFirst(quantityTypes.PIECE),
+		value: quantityTypes.PIECE,
 	},
 	{
-		name: quantityTypes.PIECE,
-		value: quantityTypes.PIECE,
+		name: upperFirst(quantityTypes.BULK),
+		value: quantityTypes.BULK,
 	},
 ];
 

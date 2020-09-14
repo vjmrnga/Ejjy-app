@@ -7,10 +7,13 @@ import { useSelector } from 'react-redux';
 import { Breadcrumb, Container, Table } from '../../../components';
 import { Box, Label, Select } from '../../../components/elements';
 import { selectors } from '../../../ducks/purchase-requests';
-import { purchaseRequestActionsOptions } from '../../../global/variables';
+import {
+	purchaseRequestActionsOptions,
+	quantityTypeOptions,
+	quantityTypes,
+} from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, sleep } from '../../../utils/function';
+import { calculateTableHeight, formatDateTime, sleep } from '../../../utils/function';
 import './style.scss';
 
 interface Props {
@@ -20,26 +23,24 @@ interface Props {
 const requestProductsColumns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
-	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
+	{ title: 'Quantity', dataIndex: 'quantity' },
 ];
 
-const orderSlipsColumns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
-	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
-];
+// const orderSlipsColumns = [
+// 	{ title: 'Barcode', dataIndex: 'barcode' },
+// 	{ title: 'Name', dataIndex: 'name' },
+// 	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
+// 	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
+// ];
 
 const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
-	const { height } = useWindowDimensions();
 	const { branchProducts } = useBranchProducts();
 	const purchaseRequest = useSelector(
 		selectors.selectPurchaseRequestById(Number(purchaseRequestId)),
 	);
 
-	const [data, setData] = useState([]);
+	const [requestedProductsData, setRequestProductsData] = useState([]);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
@@ -49,14 +50,15 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 			const { barcode = '', name = '' } = branchProduct?.product;
 
 			return {
+				_quantity_bulk: quantity_bulk,
+				_quantity_piece: quantity_piece,
 				barcode,
 				name,
-				quantity_bulk,
-				quantity_piece,
+				quantity: quantity_piece,
 			};
 		});
 
-		sleep(500).then(() => setData(formattedRequestedProducts));
+		sleep(500).then(() => setRequestProductsData(formattedRequestedProducts));
 	}, [purchaseRequest]);
 
 	const getBreadcrumbItems = useCallback(
@@ -69,6 +71,17 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 	const onStatusChange = (status) => {
 		console.log(status);
+	};
+
+	const onQuantityTypeChange = (quantityType) => {
+		const requestProducts = requestedProductsData.map((requestProduct) => ({
+			...requestProduct,
+			quantity:
+				quantityType === quantityTypes.PIECE
+					? requestProduct._quantity_piece
+					: requestProduct._quantity_bulk,
+		}));
+		setRequestProductsData(requestProducts);
 	};
 
 	return (
@@ -127,13 +140,26 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 					<div className="requested-products">
 						<Divider dashed />
-						<Label label="Requested Products" />
+						<Row gutter={[15, 15]} align="middle">
+							<Col span={24} lg={12}>
+								<Label label="Requested Products" />
+							</Col>
+							<Col span={24} lg={12}>
+								<Select
+									classNames="status-select"
+									options={quantityTypeOptions}
+									placeholder="quantity"
+									defaultValue={quantityTypes.PIECE}
+									onChange={(event) => onQuantityTypeChange(event.target.value)}
+								/>
+							</Col>
+						</Row>
 					</div>
 
 					<Table
 						columns={requestProductsColumns}
-						dataSource={data}
-						scroll={{ y: height * 0.5, x: '100vw' }}
+						dataSource={requestedProductsData}
+						scroll={{ y: calculateTableHeight(requestedProductsData.length), x: '100vw' }}
 					/>
 				</Box>
 			</section>

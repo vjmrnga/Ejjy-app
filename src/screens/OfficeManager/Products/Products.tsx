@@ -7,7 +7,7 @@ import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/products';
 import { request } from '../../../global/variables';
 import { useProducts } from '../../../hooks/useProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { ViewProductModal } from './components/ViewProductModal';
 
@@ -24,9 +24,9 @@ const Products = () => {
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const { height } = useWindowDimensions();
 	const {
 		products,
+		getProducts,
 		createProduct,
 		editProduct,
 		removeProduct,
@@ -34,6 +34,10 @@ const Products = () => {
 		errors,
 		recentRequest,
 	} = useProducts();
+
+	useEffect(() => {
+		getProducts();
+	}, []);
 
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
@@ -100,7 +104,7 @@ const Products = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
 						loading={status === request.REQUESTING}
 					/>
 
