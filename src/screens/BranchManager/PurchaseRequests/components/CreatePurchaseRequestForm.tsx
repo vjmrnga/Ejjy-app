@@ -4,7 +4,13 @@ import { floor } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
-import { Button, Checkbox, FieldError, Input, Select } from '../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormCheckbox,
+	FormInput,
+	FormSelect,
+} from '../../../../components/elements';
 import { quantityTypeOptions, quantityTypes } from '../../../../global/variables';
 import { getBranchProductStatus, sleep } from '../../../../utils/function';
 
@@ -65,19 +71,19 @@ export const CreatePurchaseRequestForm = ({
 		<Field type="hidden" name={`branchProducts.${index}.product_id`} />
 	);
 
-	const getSelectRadioButton = (index) => <Checkbox id={`branchProducts.${index}.selected`} />;
+	const getSelectRadioButton = (index) => <FormCheckbox id={`branchProducts.${index}.selected`} />;
 
 	const getQuantity = (index, values, touched, errors) => {
 		return (
 			<>
 				<div className="quantity-container">
-					<Input
+					<FormInput
 						type="number"
 						id={`branchProducts.${index}.quantity`}
 						min={1}
 						disabled={!values?.branchProducts?.[index]?.selected}
 					/>
-					<Select
+					<FormSelect
 						id={`branchProducts.${index}.quantity_type`}
 						options={quantityTypeOptions}
 						disabled={!values?.branchProducts?.[index]?.selected}

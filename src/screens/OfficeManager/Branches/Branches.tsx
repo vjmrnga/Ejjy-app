@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { types } from '../../../ducks/branches';
+import { types } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/variables';
-import { useBranches } from '../../../hooks/useBranches';
+import { useBranches } from '../hooks/useBranches';
 import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
 import { CreateEditBranchModal } from './components/CreateEditBranchModal';
 import './style.scss';
@@ -72,7 +72,12 @@ const Branches = () => {
 				<Box>
 					<TableHeader buttonName="Create Branch" onCreate={onCreate} />
 
-					<Table columns={columns} dataSource={data} scroll={{ y: height * 0.6, x: '100vw' }} />
+					<Table
+						columns={columns}
+						dataSource={data}
+						scroll={{ y: height * 0.6, x: '100vw' }}
+						loading={status === request.REQUESTING}
+					/>
 
 					<CreateEditBranchModal
 						branch={selectedBranch}

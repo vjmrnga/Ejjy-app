@@ -13,6 +13,7 @@ import {
 	OfficeManagerPurchaseRequests,
 	OfficeManagerUsers,
 	OfficeManagerViewBranch,
+	OfficeManagerViewPurchaseRequest,
 } from '../screens';
 
 export const DashboardScreens = {
@@ -39,6 +40,7 @@ export const PurchaseRequestsScreens = {
 };
 
 export const ViewPurchaseRequestScreens = {
+	[userTypes.OFFICE_MANAGER]: OfficeManagerViewPurchaseRequest,
 	[userTypes.BRANCH_MANAGER]: BranchManagerViewPurchaseRequest,
 };
 

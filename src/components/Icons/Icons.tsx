@@ -30,3 +30,7 @@ export const AddIcon = ({ classNames }: Props) => (
 		className={classNames}
 	/>
 );
+
+export const InfoIcon = ({ classNames }: Props) => (
+	<img src={require('../../assets/images/icon-info.svg')} alt="icon" className={classNames} />
+);

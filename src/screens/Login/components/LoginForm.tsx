@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, InputLabel } from '../../../components/elements';
+import { Button, FieldError, FormInputLabel } from '../../../components/elements';
 import { sleep } from '../../../utils/function';
 import '../style.scss';
 
@@ -51,12 +51,12 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 				{({ errors, touched }) => (
 					<Form className="form">
 						<div className="input-field">
-							<InputLabel id="username" label="Username" />
+							<FormInputLabel id="username" label="Username" />
 							{errors.username && touched.username ? <FieldError error={errors.username} /> : null}
 						</div>
 
 						<div className="input-field">
-							<InputLabel type="password" id="password" label="Password" />
+							<FormInputLabel type="password" id="password" label="Password" />
 							{errors.password && touched.password ? <FieldError error={errors.password} /> : null}
 						</div>
 

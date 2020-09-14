@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { lowerCase } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
@@ -48,6 +49,7 @@ const Products = () => {
 	};
 
 	const onSearch = (keyword) => {
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))

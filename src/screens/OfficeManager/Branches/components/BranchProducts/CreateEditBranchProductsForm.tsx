@@ -2,11 +2,16 @@ import { Col, Divider, Row } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, InputLabel, SelectLabel } from '../../../../../components/elements';
-import { Option } from '../../../../../components/elements/Select/Select';
+import {
+	Button,
+	FieldError,
+	FormInputLabel,
+	FormSelectLabel,
+} from '../../../../../components/elements';
+import { Option } from '../../../../../components/elements/FormSelect/FormSelect';
 import { productTypes, unitsOfMeasurement } from '../../../../../global/variables';
 import { sleep } from '../../../../../utils/function';
-// import { Button, FieldError, InputLabel } from '../../../../components/elements';
+// import { Button, FieldError, FormInputLabel } from '../../../../components/elements';
 // import { sleep } from '../../../../utils/function';
 
 interface ICreateBranch {
@@ -94,7 +99,7 @@ export const CreateEditBranchProductsForm = ({
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col span={24}>
-							<SelectLabel
+							<FormSelectLabel
 								label="Product"
 								id="product_id"
 								placeholder="Select a product"
@@ -109,35 +114,35 @@ export const CreateEditBranchProductsForm = ({
 						<Divider dashed />
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
+							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
 							{errors.reorder_point && touched.reorder_point ? (
 								<FieldError error={errors.reorder_point} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="max_balance" label="Max Balance" />
+							<FormInputLabel min={0} type="number" id="max_balance" label="Max Balance" />
 							{errors.max_balance && touched.max_balance ? (
 								<FieldError error={errors.max_balance} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="price_per_piece" label="Price (Piece)" />
+							<FormInputLabel min={0} type="number" id="price_per_piece" label="Price (Piece)" />
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="price_per_bulk" label="Price (Bulk)" />
+							<FormInputLabel min={0} type="number" id="price_per_bulk" label="Price (Bulk)" />
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel
+							<FormInputLabel
 								min={0}
 								type="number"
 								id="allowable_spoilage"
@@ -155,7 +160,7 @@ export const CreateEditBranchProductsForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="current_balance" label="Current Balance" />
+							<FormInputLabel min={0} type="number" id="current_balance" label="Current Balance" />
 							{errors.current_balance && touched.current_balance ? (
 								<FieldError error={errors.current_balance} />
 							) : null}

@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import {
 	Button,
 	FieldError,
-	InputLabel,
+	FormInputLabel,
+	FormRadioButton,
+	FormTextareaLabel,
 	Label,
-	RadioButton,
-	TextareaLabel,
 } from '../../../../components/elements';
 import { productTypes, unitsOfMeasurement } from '../../../../global/variables';
 import { sleep } from '../../../../utils/function';
@@ -132,37 +132,37 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col sm={12} xs={24}>
-							<InputLabel id="barcode" label="Barcode" />
+							<FormInputLabel id="barcode" label="Barcode" />
 							{errors.barcode && touched.barcode ? <FieldError error={errors.barcode} /> : null}
 						</Col>
 						<Col sm={12} xs={24}>
-							<InputLabel id="name" label="Name" />
+							<FormInputLabel id="name" label="Name" />
 							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Tag Type PT01" />
-							<RadioButton name="type" items={type} />
+							<Label label="Tag Type PT01" spacing />
+							<FormRadioButton name="type" items={type} />
 							{errors.type && touched.type ? <FieldError error={errors.type} /> : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Tag Type PT02" />
-							<RadioButton name="unit_of_measurement" items={unitOfMeasurement} />
+							<Label label="Tag Type PT02" spacing />
+							<FormRadioButton name="unit_of_measurement" items={unitOfMeasurement} />
 							{errors.unit_of_measurement && touched.unit_of_measurement ? (
 								<FieldError error={errors.unit_of_measurement} />
 							) : null}
 						</Col>
 
 						<Col span={24}>
-							<TextareaLabel id="print_details" label="Print Details" />
+							<FormTextareaLabel id="print_details" label="Print Details" />
 							{errors.print_details && touched.print_details ? (
 								<FieldError error={errors.print_details} />
 							) : null}
 						</Col>
 
 						<Col span={24}>
-							<TextareaLabel id="description" label="Description" />
+							<FormTextareaLabel id="description" label="Description" />
 							{errors.description && touched.description ? (
 								<FieldError error={errors.description} />
 							) : null}
@@ -171,28 +171,28 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						<Divider dashed />
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
+							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
 							{errors.reorder_point && touched.reorder_point ? (
 								<FieldError error={errors.reorder_point} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="max_balance" label="Max Balance" />
+							<FormInputLabel min={0} type="number" id="max_balance" label="Max Balance" />
 							{errors.max_balance && touched.max_balance ? (
 								<FieldError error={errors.max_balance} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="pieces_in_bulk" label="Pieces in Bulk" />
+							<FormInputLabel min={0} type="number" id="pieces_in_bulk" label="Pieces in Bulk" />
 							{errors.pieces_in_bulk && touched.pieces_in_bulk ? (
 								<FieldError error={errors.pieces_in_bulk} />
 							) : null}
 						</Col>
 
 						<Col span={12}>
-							<InputLabel
+							<FormInputLabel
 								min={0}
 								max={99}
 								type="number"
@@ -211,28 +211,28 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="cost_per_piece" label="Cost (Piece)" />
+							<FormInputLabel min={0} type="number" id="cost_per_piece" label="Cost (Piece)" />
 							{errors.cost_per_piece && touched.cost_per_piece ? (
 								<FieldError error={errors.cost_per_piece} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="cost_per_bulk" label="Cost (Bulk)" />
+							<FormInputLabel min={0} type="number" id="cost_per_bulk" label="Cost (Bulk)" />
 							{errors.cost_per_bulk && touched.cost_per_bulk ? (
 								<FieldError error={errors.cost_per_bulk} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="price_per_piece" label="Price (Piece)" />
+							<FormInputLabel min={0} type="number" id="price_per_piece" label="Price (Piece)" />
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<InputLabel min={0} type="number" id="price_per_bulk" label="Price (Bulk)" />
+							<FormInputLabel min={0} type="number" id="price_per_bulk" label="Price (Bulk)" />
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />
 							) : null}

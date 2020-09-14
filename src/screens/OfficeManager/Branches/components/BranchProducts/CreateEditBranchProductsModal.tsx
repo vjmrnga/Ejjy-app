@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import React from 'react';
 import { FieldError } from '../../../../../components/elements';
-import { Option } from '../../../../../components/elements/Select/Select';
+import { Option } from '../../../../../components/elements/FormSelect/FormSelect';
 import { CreateEditBranchProductsForm } from './CreateEditBranchProductsForm';
 
 interface Props {

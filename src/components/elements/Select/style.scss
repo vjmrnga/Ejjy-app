@@ -2,9 +2,10 @@
 
 .Select {
 	width: 100%;
+	max-width: 160px;
 	padding: 8px 12px;
 	color: $color-dark;
-	@include font(1rem);
+	@include font(0.875rem, 600);
 	border: 1px solid $color-gray;
 	border-radius: $border-radius;
 	outline: 0 !important;

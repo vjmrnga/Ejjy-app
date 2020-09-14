@@ -1,11 +1,5 @@
 export const API_URL = process.env.REACT_APP_API_URL;
 export const API_TIMEOUT = 5000;
-export const request = {
-	NONE: 0,
-	REQUESTING: 1,
-	SUCCESS: 2,
-	ERROR: 3,
-};
 
 export const NO_VERIFICATION_NEEDED = 'NO_VERIFICATION_NEEDED';
 
@@ -17,6 +11,13 @@ export const NOT_FOUND_INDEX = -1;
 
 // eslint-disable-next-line no-script-url
 export const LINK_VOID = 'javascript:void(0)';
+
+export const request = {
+	NONE: 0,
+	REQUESTING: 1,
+	SUCCESS: 2,
+	ERROR: 3,
+};
 
 export const productTypes = {
 	DRY: 'dry',
@@ -67,5 +68,40 @@ export const quantityTypeOptions = [
 	{
 		name: quantityTypes.PIECE,
 		value: quantityTypes.PIECE,
+	},
+];
+
+export const purchaseRequestActionsOptions = [
+	{
+		value: 'all',
+		name: 'All',
+	},
+	{
+		value: purchaseRequestActions.NEW,
+		name: 'New',
+	},
+	{
+		value: purchaseRequestActions.SEEN,
+		name: 'Seen',
+	},
+	{
+		value: purchaseRequestActions.F_OS1_CREATED,
+		name: 'F-OS1 Created',
+	},
+	{
+		value: purchaseRequestActions.F_OS1_PREPARED,
+		name: 'F-OS1 Prepared',
+	},
+	{
+		value: purchaseRequestActions.F_DS1_CREATED,
+		name: 'F-DS1 Created',
+	},
+	{
+		value: purchaseRequestActions.F_DS1_DONE,
+		name: 'F-DS1 Done',
+	},
+	{
+		value: purchaseRequestActions.F_DS1_ERROR,
+		name: 'F-DS1 Error',
 	},
 ];

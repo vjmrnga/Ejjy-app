@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectors, types, actions } from '../ducks/products';
+import { selectors, types, actions } from '../ducks/OfficeManager/products';
 import { request } from '../global/variables';
 import { modifiedCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';

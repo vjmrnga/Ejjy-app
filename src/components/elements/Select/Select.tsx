@@ -1,7 +1,6 @@
-import { Field } from 'formik';
+import cn from 'classnames';
 import * as React from 'react';
 import './style.scss';
-import cn from 'classnames';
 
 export interface Option {
 	value: string;
@@ -9,30 +8,29 @@ export interface Option {
 	selected?: true | false;
 }
 
-export interface ISelectProps {
-	id: string;
-	placeholder?: string;
-	disabled?: boolean;
+interface Props {
+	placeholder: string;
 	options: Option[];
+	onChange: any;
+	classNames: any;
+	defaultValue?: any;
 }
 
-const Select = ({ id, options, placeholder, disabled }: ISelectProps) => (
-	<Field as="select" id={id} name={id} className={cn('Select', { disabled })} disabled={disabled}>
-		{placeholder && (
-			<option value="" selected disabled>
-				{placeholder}
-			</option>
-		)}
+const Select = ({ options, placeholder, onChange, classNames, defaultValue }: Props) => (
+	<select className={cn('Select', classNames)} onChange={onChange} defaultValue={defaultValue}>
+		<option value="" selected disabled>
+			{placeholder}
+		</option>
 		{options.map(({ name, value, selected = false }) => (
 			<option selected={selected} value={value}>
 				{name}
 			</option>
 		))}
-	</Field>
+	</select>
 );
 
 Select.defaultProps = {
-	disabled: false,
+	defaultValue: null,
 };
 
 export default Select;

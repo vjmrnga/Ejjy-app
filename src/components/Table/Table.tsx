@@ -8,7 +8,7 @@ import './style.scss';
 export const ROW_HEIGHT = 65;
 
 export const Table = (props) => {
-	const { columns, scroll } = props;
+	const { columns, scroll, loading } = props;
 	const [tableWidth, setTableWidth] = useState(0);
 
 	const widthColumnCount = columns.filter(({ width }) => !width).length;
@@ -93,6 +93,7 @@ export const Table = (props) => {
 				columns={mergedColumns}
 				pagination={false}
 				components={{ body: renderVirtualList }}
+				loading={loading}
 			/>
 		</ResizeObserver>
 	);

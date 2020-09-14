@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { floor, lowerCase, upperFirst } from 'lodash';
@@ -8,9 +7,9 @@ import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
-import { types } from '../../../ducks/BranchManager/purchase-requests';
+import { types } from '../../../ducks/purchase-requests';
 import {
-	purchaseRequestActions,
+	purchaseRequestActionsOptions,
 	purchaseRequestTypes,
 	quantityTypes,
 	request,
@@ -18,7 +17,7 @@ import {
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
 import { formatDateTime, getPurchaseRequestStatus } from '../../../utils/function';
-import { usePurchaseRequests } from '../hooks/usePurchaseRequests';
+import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import { CreatePurchaseRequestModal } from './components/CreatePurchaseRequestModal';
 import './style.scss';
 
@@ -28,41 +27,6 @@ const columns = [
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Status', dataIndex: 'status' },
 	{ title: 'Actions', dataIndex: 'action' },
-];
-
-const purchaseRequestActionsOptions = [
-	{
-		value: 'all',
-		name: 'All',
-	},
-	{
-		value: purchaseRequestActions.NEW,
-		name: 'New',
-	},
-	{
-		value: purchaseRequestActions.SEEN,
-		name: 'Seen',
-	},
-	{
-		value: purchaseRequestActions.F_OS1_CREATED,
-		name: 'F-OS1 Created',
-	},
-	{
-		value: purchaseRequestActions.F_OS1_PREPARED,
-		name: 'F-OS1 Prepared',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_CREATED,
-		name: 'F-DS1 Created',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_DONE,
-		name: 'F-DS1 Done',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_ERROR,
-		name: 'F-DS1 Error',
-	},
 ];
 
 const PurchaseRequests = () => {
@@ -80,12 +44,12 @@ const PurchaseRequests = () => {
 		status,
 		errors,
 		recentRequest,
-	} = usePurchaseRequests(user?.branch_id);
+	} = usePurchaseRequests();
 
 	const { branchProducts, getBranchProductsByBranch } = useBranchProducts();
 
 	useEffect(() => {
-		getPurchaseRequestsExtended();
+		getPurchaseRequestsExtended(user?.branch_id);
 		getBranchProductsByBranch(user?.branch_id);
 	}, []);
 
@@ -139,12 +103,14 @@ const PurchaseRequests = () => {
 	};
 
 	const onSearch = (keyword) => {
-		const lcKeyword = lowerCase(keyword);
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(
 						({ _id, _datetime_created, _type }) =>
-							_id == keyword || _datetime_created.includes(lcKeyword) || _type.includes(lcKeyword),
+							_id.toString() === keyword ||
+							_datetime_created.includes(keyword) ||
+							_type.includes(keyword),
 				  )
 				: data;
 

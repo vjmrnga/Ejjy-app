@@ -6,13 +6,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Breadcrumb, Container, Table } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
-import { selectors } from '../../../ducks/BranchManager/purchase-requests';
+import { selectors } from '../../../ducks/purchase-requests';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
 import { formatDateTime, getPurchaseRequestStatus, sleep } from '../../../utils/function';
 import './style.scss';
 
-interface IBranchesProps {
+interface Props {
 	match: any;
 }
 
@@ -23,7 +23,7 @@ const columns = [
 	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
 ];
 
-const Branches = ({ match }: IBranchesProps) => {
+const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
 	const { height } = useWindowDimensions();
 	const { branchProducts } = useBranchProducts();
@@ -79,7 +79,7 @@ const Branches = ({ match }: IBranchesProps) => {
 							</Row>
 							<Row gutter={[15, 15]}>
 								<Col span={12}>
-									<Label label="Type" />
+									<Label label="Request Type" />
 								</Col>
 								<Col span={12}>
 									<span>{upperFirst(purchaseRequest?.type)}</span>
@@ -110,4 +110,4 @@ const Branches = ({ match }: IBranchesProps) => {
 	);
 };
 
-export default Branches;
+export default ViewPurchaseRequest;

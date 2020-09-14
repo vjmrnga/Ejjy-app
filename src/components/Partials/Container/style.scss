@@ -17,8 +17,14 @@
 		padding: 35px 30px 30px 30px;
 
 		.page-title {
+			@include flex(center, center);
 			@include font(1.875rem, 800);
 			margin: 0;
+
+			.icon-info {
+				margin-left: 10px;
+				cursor: pointer;
+			}
 		}
 	}
 

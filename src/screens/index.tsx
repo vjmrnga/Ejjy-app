@@ -17,4 +17,6 @@ export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Das
 export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
 export { default as OfficeManagerProducts } from './OfficeManager/Products/Products';
 export { default as OfficeManagerPurchaseRequests } from './OfficeManager/PurchaseRequests/PurchaseRequests';
+export { default as OfficeManagerViewPurchaseRequest } from './OfficeManager/PurchaseRequests/ViewPurchaseRequest';
+
 export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';

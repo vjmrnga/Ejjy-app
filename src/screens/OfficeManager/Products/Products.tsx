@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { lowerCase } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { types } from '../../../ducks/products';
+import { types } from '../../../ducks/OfficeManager/products';
 import { request } from '../../../global/variables';
 import { useProducts } from '../../../hooks/useProducts';
 import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
@@ -81,6 +82,7 @@ const Products = () => {
 	};
 
 	const onSearch = (keyword) => {
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
@@ -99,6 +101,7 @@ const Products = () => {
 						columns={columns}
 						dataSource={tableData}
 						scroll={{ y: height * 0.6, x: '100vw' }}
+						loading={status === request.REQUESTING}
 					/>
 
 					<ViewProductModal

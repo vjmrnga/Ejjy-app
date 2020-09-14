@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/branch-products';
-import { selectors as branchesSelectors } from '../../../ducks/branches';
+import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useProducts } from '../../../hooks/useProducts';
@@ -14,7 +15,7 @@ import { CreateEditBranchProductsModal } from './components/BranchProducts/Creat
 import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
 import './style.scss';
 
-interface IBranchesProps {
+interface Props {
 	match: any;
 }
 
@@ -25,7 +26,7 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const Branches = ({ match }: IBranchesProps) => {
+const ViewBranch = ({ match }: Props) => {
 	const branchId = match?.params?.id;
 	const { branchProducts, editBranchProduct, status, errors, recentRequest } = useBranchProducts();
 	const { products } = useProducts();
@@ -113,6 +114,7 @@ const Branches = ({ match }: IBranchesProps) => {
 	};
 
 	const onSearch = (keyword) => {
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
@@ -161,4 +163,4 @@ const Branches = ({ match }: IBranchesProps) => {
 	);
 };
 
-export default Branches;
+export default ViewBranch;
