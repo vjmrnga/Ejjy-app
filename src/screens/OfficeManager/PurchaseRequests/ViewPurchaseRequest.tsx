@@ -1,73 +1,76 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Col, Divider, Row } from 'antd';
-import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Breadcrumb, Container, Table } from '../../../components';
-import { Box, Label, Select } from '../../../components/elements';
+import { Breadcrumb, Container, QuantitySelect, Table, TableHeader } from '../../../components';
+import { Box } from '../../../components/elements';
 import { selectors } from '../../../ducks/purchase-requests';
-import {
-	purchaseRequestActionsOptions,
-	quantityTypeOptions,
-	quantityTypes,
-} from '../../../global/variables';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { calculateTableHeight, formatDateTime, sleep } from '../../../utils/function';
+import { quantityTypes, request } from '../../../global/variables';
+import { useProducts } from '../../../hooks/useProducts';
+import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
+import { calculateTableHeight, sleep } from '../../../utils/function';
+import { useBranches } from '../hooks/useBranches';
+import { CreateEditOrderSlipModal } from './components/CreateEditOrderSlipModal';
+import { RequestedProducts } from './components/RequestedProducts';
+import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 import './style.scss';
 
 interface Props {
 	match: any;
 }
 
-const requestProductsColumns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity', dataIndex: 'quantity' },
+const orderSlipsColumns = [
+	{ title: 'ID', dataIndex: 'barcode' },
+	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
+	{ title: 'Status', dataIndex: 'status' },
+	{ title: 'DR Status', dataIndex: 'dr_status' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
-
-// const orderSlipsColumns = [
-// 	{ title: 'Barcode', dataIndex: 'barcode' },
-// 	{ title: 'Name', dataIndex: 'name' },
-// 	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
-// 	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
-// ];
 
 const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
-	const { branchProducts } = useBranchProducts();
+
+	const { products, status: productStatus, getProducts } = useProducts();
+	const { branches, status: branchStatus, getBranches } = useBranches();
+	const { status: purchaseRequestStatus, getPurchaseRequestsExtended } = usePurchaseRequests();
 	const purchaseRequest = useSelector(
 		selectors.selectPurchaseRequestById(Number(purchaseRequestId)),
 	);
 
 	const [requestedProductsData, setRequestProductsData] = useState([]);
+	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
+	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
+
+	useEffect(() => {
+		getProducts();
+		getBranches();
+		getPurchaseRequestsExtended();
+	}, []);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
-		const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
-			const { product_id, quantity_bulk, quantity_piece } = requestedProduct;
-			const branchProduct = branchProducts.find((product) => product?.product_id === product_id);
-			const { barcode = '', name = '' } = branchProduct?.product;
+		if (
+			purchaseRequest &&
+			purchaseRequestStatus === request.SUCCESS &&
+			products.length &&
+			productStatus === request.SUCCESS
+		) {
+			const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
+				const { product_id, quantity_bulk, quantity_piece } = requestedProduct;
+				const product = products.find(({ id }) => id === product_id);
+				const { barcode = '', name = '' } = product;
 
-			return {
-				_quantity_bulk: quantity_bulk,
-				_quantity_piece: quantity_piece,
-				barcode,
-				name,
-				quantity: quantity_piece,
-			};
-		});
-
-		sleep(500).then(() => setRequestProductsData(formattedRequestedProducts));
-	}, [purchaseRequest]);
-
-	const getBreadcrumbItems = useCallback(
-		() => [
-			{ name: 'Purchase Requests', link: '/purchase-requests' },
-			{ name: `#${purchaseRequest?.id}` },
-		],
-		[purchaseRequest],
-	);
+				return {
+					_quantity_bulk: quantity_bulk,
+					_quantity_piece: quantity_piece,
+					barcode,
+					name,
+					quantity: quantity_piece,
+				};
+			});
+			sleep(500).then(() => setRequestProductsData(formattedRequestedProducts));
+		}
+	}, [purchaseRequest, products, productStatus]);
 
 	const onStatusChange = (status) => {
 		console.log(status);
@@ -84,6 +87,26 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 		setRequestProductsData(requestProducts);
 	};
 
+	const getBreadcrumbItems = useCallback(
+		() => [
+			{ name: 'Purchase Requests', link: '/purchase-requests' },
+			{ name: `#${purchaseRequest?.id}` },
+		],
+		[purchaseRequest],
+	);
+
+	const getRequestProductsColums = useCallback(
+		() => [
+			{ title: 'Barcode', dataIndex: 'barcode' },
+			{ title: 'Name', dataIndex: 'name' },
+			{
+				title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
+				dataIndex: 'quantity',
+			},
+		],
+		[onQuantityTypeChange],
+	);
+
 	return (
 		<Container
 			title="[VIEW] F-RS01"
@@ -91,75 +114,50 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
 			<section className="ViewPurchaseRequest">
+				<RequestedProducts
+					datetimeCreated={purchaseRequest?.datetime_created}
+					requestor={purchaseRequest?.requestor_id}
+					type={purchaseRequest?.type}
+					action={purchaseRequest?.action?.action}
+					onStatusChange={onStatusChange}
+					columns={getRequestProductsColums()}
+					data={requestedProductsData}
+				/>
+
 				<Box>
-					<Row className="details">
-						<Col span={24} lg={12}>
-							<Row gutter={[15, 15]}>
-								<Col span={12}>
-									<Label label="Date &amp; Time Created" />
-								</Col>
-								<Col span={12}>
-									<strong>{formatDateTime(purchaseRequest?.datetime_created)}</strong>
-								</Col>
-							</Row>
-							<Row gutter={[15, 15]}>
-								<Col span={12}>
-									<Label label="Requestor" />
-								</Col>
-								<Col span={12}>
-									<strong>{purchaseRequest?.requestor_id}</strong>
-								</Col>
-							</Row>
-							<Row gutter={[15, 15]}>
-								<Col span={12}>
-									<Label label="Request Type" />
-								</Col>
-								<Col span={12}>
-									<strong>{upperFirst(purchaseRequest?.type)}</strong>
-								</Col>
-							</Row>
-						</Col>
-
-						<Col span={24} lg={12}>
-							<Row gutter={[15, 15]}>
-								<Col span={12}>
-									<Label label="Status" />
-								</Col>
-								<Col span={12}>
-									<Select
-										classNames="status-select"
-										options={purchaseRequestActionsOptions}
-										placeholder="status"
-										defaultValue={purchaseRequest?.action?.action}
-										onChange={(event) => onStatusChange(event.target.value)}
-									/>
-								</Col>
-							</Row>
-						</Col>
-					</Row>
-
-					<div className="requested-products">
-						<Divider dashed />
-						<Row gutter={[15, 15]} align="middle">
-							<Col span={24} lg={12}>
-								<Label label="Requested Products" />
-							</Col>
-							<Col span={24} lg={12}>
-								<Select
-									classNames="status-select"
-									options={quantityTypeOptions}
-									placeholder="quantity"
-									defaultValue={quantityTypes.PIECE}
-									onChange={(event) => onQuantityTypeChange(event.target.value)}
-								/>
-							</Col>
-						</Row>
-					</div>
+					<TableHeader
+						title="F-OS1"
+						buttonName="Create Order Slip"
+						onCreate={() => setViewOrderSlipVisible(true)}
+					/>
 
 					<Table
-						columns={requestProductsColumns}
-						dataSource={requestedProductsData}
-						scroll={{ y: calculateTableHeight(requestedProductsData.length), x: '100vw' }}
+						columns={orderSlipsColumns}
+						dataSource={[]}
+						scroll={{ y: calculateTableHeight([].length), x: '100vw' }}
+						loading={
+							purchaseRequestStatus === request.REQUESTING || productStatus === request.REQUESTING
+						}
+					/>
+
+					<ViewOrderSlipModal
+						visible={viewOrderSlipVisible}
+						orderSlip={null}
+						onClose={() => setViewOrderSlipVisible(false)}
+					/>
+
+					<CreateEditOrderSlipModal
+						requestedProducts={[]}
+						branchesOptions={[]}
+						assignedPersonnelOptions={[]}
+						dateTimeRequested="test"
+						requestingBranch="test"
+						purchaseRequestId="test"
+						visible={createEditOrderSlipVisible}
+						onSubmit={null}
+						onClose={() => setCreateEditOrderSlipVisible(false)}
+						errors={[]}
+						loading={false}
 					/>
 				</Box>
 			</section>

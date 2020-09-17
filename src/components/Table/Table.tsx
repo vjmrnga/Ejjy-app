@@ -4,11 +4,20 @@ import ResizeObserver from 'rc-resize-observer';
 import classNames from 'classnames';
 import { Table as AntdTable } from 'antd';
 import './style.scss';
+import cn from 'classnames';
 
 export const ROW_HEIGHT = 65;
 
-export const Table = (props) => {
-	const { columns, scroll, loading } = props;
+interface Props {
+	columns: any;
+	scroll: any;
+	dataSource: any;
+	loading?: boolean;
+	hasCustomHeaderComponent?: boolean;
+}
+
+export const Table = (props: Props) => {
+	const { columns, scroll, loading, hasCustomHeaderComponent } = props;
 	const [tableWidth, setTableWidth] = useState(0);
 
 	const widthColumnCount = columns.filter(({ width }) => !width).length;
@@ -89,7 +98,7 @@ export const Table = (props) => {
 		>
 			<AntdTable
 				{...props}
-				className="VirtualTable"
+				className={cn('VirtualTable', { hasCustomHeaderComponent })}
 				columns={mergedColumns}
 				pagination={false}
 				components={{ body: renderVirtualList }}
@@ -97,4 +106,9 @@ export const Table = (props) => {
 			/>
 		</ResizeObserver>
 	);
+};
+
+Table.defaultProps = {
+	loading: false,
+	hasCustomHeaderComponent: false,
 };

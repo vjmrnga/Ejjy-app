@@ -1,0 +1,13 @@
+@import '../../assets/styles/main';
+
+.QuantitySelect {
+	@include flex($align-items: center);
+
+	span {
+		margin-right: 10px;
+	}
+
+	.quantity-select {
+		max-width: 100px;
+	}
+}

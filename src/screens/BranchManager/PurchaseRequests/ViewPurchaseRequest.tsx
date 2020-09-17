@@ -4,10 +4,10 @@ import { Col, Divider, Row } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Breadcrumb, Container, Table } from '../../../components';
-import { Box, Button, Label, Select } from '../../../components/elements';
+import { Breadcrumb, Container, QuantitySelect, Table } from '../../../components';
+import { Box, Button, Label } from '../../../components/elements';
 import { selectors } from '../../../ducks/purchase-requests';
-import { quantityTypeOptions, quantityTypes } from '../../../global/variables';
+import { quantityTypes } from '../../../global/variables';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import {
 	calculateTableHeight,
@@ -20,12 +20,6 @@ import './style.scss';
 interface Props {
 	match: any;
 }
-
-const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity', dataIndex: 'quantity' },
-];
 
 const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
@@ -74,6 +68,18 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 		setData(requestProducts);
 	};
 
+	const getColums = useCallback(
+		() => [
+			{ title: 'Barcode', dataIndex: 'barcode' },
+			{ title: 'Name', dataIndex: 'name' },
+			{
+				title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
+				dataIndex: 'quantity',
+			},
+		],
+		[onQuantityTypeChange],
+	);
+
 	return (
 		<Container
 			title="[VIEW] F-RS01"
@@ -116,23 +122,14 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 					<div className="requested-products">
 						<Divider dashed />
 						<Row gutter={[15, 15]} align="middle">
-							<Col span={24} lg={12}>
+							<Col span={24}>
 								<Label label="Requested Products" />
-							</Col>
-							<Col span={24} lg={12}>
-								<Select
-									classNames="status-select"
-									options={quantityTypeOptions}
-									placeholder="quantity"
-									defaultValue={quantityTypes.PIECE}
-									onChange={(event) => onQuantityTypeChange(event.target.value)}
-								/>
 							</Col>
 						</Row>
 					</div>
 
 					<Table
-						columns={columns}
+						columns={getColums()}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
 					/>
