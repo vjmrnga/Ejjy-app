@@ -34,11 +34,17 @@ export const unitsOfMeasurement = {
 export const userTypes = {
 	OFFICE_MANAGER: 'office_manager',
 	BRANCH_MANAGER: 'branch_manager',
+	BRANCH_PERSONNEL: 'branch_personnel',
 };
 
 export const purchaseRequestTypes = {
 	MANUAL: 'manual',
 	AUTOMATIC: 'automatic',
+};
+
+export const purchaseRequestProductStatus = {
+	ADDED_TO_OS: 'added_to_os',
+	NOT_ADDED_TO_OS: 'not_added_to_os',
 };
 
 export const purchaseRequestActions = {

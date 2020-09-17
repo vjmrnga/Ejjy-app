@@ -6,6 +6,7 @@ import branchProductsReducer, { key as BRANCH_PRODUCTS_KEY } from './branch-prod
 import { branchManagerReducers } from './BranchManager';
 import { officeManagerReducers } from './OfficeManager';
 import purchaseRequestsReducer, { key as PURCHASE_REQUESTS_KEY } from './purchase-requests';
+import usersReducer, { key as USERS_KEY } from './users';
 import requestReducer, { REQUEST_KEY } from './request';
 
 export default combineReducers({
@@ -14,6 +15,7 @@ export default combineReducers({
 	[REQUEST_KEY]: requestReducer,
 	[BRANCH_PRODUCTS_KEY]: branchProductsReducer,
 	[PURCHASE_REQUESTS_KEY]: purchaseRequestsReducer,
+	[USERS_KEY]: usersReducer,
 	...officeManagerReducers,
 	...branchManagerReducers,
 });

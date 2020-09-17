@@ -6,7 +6,7 @@ import { Container, Table, TableActions, TableHeader } from '../../../components
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/variables';
-import { calculateTableHeight } from '../../../utils/function';
+import { calculateTableHeight, sleep } from '../../../utils/function';
 import { useBranches } from '../hooks/useBranches';
 import { CreateEditBranchModal } from './components/CreateEditBranchModal';
 import './style.scss';
@@ -42,7 +42,7 @@ const Branches = () => {
 			};
 		});
 
-		setData(formattedBranches);
+		sleep(500).then(() => setData(formattedBranches));
 	}, [branches]);
 
 	// Effect: Reload the list if recent requests are Create, Edit or Remove

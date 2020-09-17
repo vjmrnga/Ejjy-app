@@ -19,7 +19,8 @@ const columns = [
 	{ name: 'Barcode' },
 	{ name: 'Name' },
 	{ name: 'Quantity', width: '200px' },
-	{ name: "Preparing Branch's Balance" },
+	{ name: 'Ordered' },
+	{ name: 'Balance' },
 	{ name: 'Assigned Personnel' },
 ];
 
@@ -32,7 +33,6 @@ interface Props {
 
 export const CreateEditOrderSlipForm = ({
 	requestedProducts,
-	branchesOptions,
 	assignedPersonnelOptions,
 	onSubmit,
 	onClose,
@@ -43,31 +43,35 @@ export const CreateEditOrderSlipForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				branch_id: '',
 				requestedProducts: requestedProducts.map((requestedProduct) => ({
-					selected: true,
-					quantity: '',
-					quantity_type: quantityTypes.PIECE,
+					selected: requestedProduct?.selected,
+					quantity: requestedProduct?.quantity,
+					quantity_type: requestedProduct?.quantity_type,
 					product_id: requestedProduct?.product_id,
+					assigned_personnel: requestedProduct?.assigned_personnel,
 				})),
 			},
 			Schema: Yup.object().shape({
 				requestedProducts: Yup.array().of(
 					Yup.object().shape({
-						selected: Yup.boolean(),
 						quantity: Yup.number()
-							.min(1, 'Must greater than zero')
+							.positive()
 							.when('selected', {
 								is: true,
 								then: Yup.number().required('Qty required'),
 								otherwise: Yup.number().notRequired(),
 							}),
+						assigned_personnel: Yup.number().when('selected', {
+							is: true,
+							then: Yup.number().required('Personnel required'),
+							otherwise: Yup.number().notRequired(),
+						}),
 					}),
 				),
 			}),
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[],
+		[requestedProducts],
 	);
 
 	const getExtraFields = (index) => (
@@ -102,11 +106,26 @@ export const CreateEditOrderSlipForm = ({
 		);
 	};
 
-	const getCurrentBalance = (index, current_balance, pieces_in_bulk, values) => {
+	const getOrdered = (index, quantity_piece, quantity_bulk, values) => {
 		return values?.requestedProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
-			<span>{current_balance}</span>
+			<span>{quantity_piece}</span>
 		) : (
-			<span>{floor(current_balance / pieces_in_bulk)}</span>
+			<span>{quantity_bulk}</span>
+		);
+	};
+
+	const getBalance = (
+		index,
+		branch_current,
+		branch_max_balance,
+		branch_current_bulk,
+		branch_max_balance_bulk,
+		values,
+	) => {
+		return values?.requestedProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+			<span>{`${branch_current} / ${branch_max_balance}`}</span>
+		) : (
+			<span>{`${branch_current_bulk} / ${branch_max_balance_bulk}`}</span>
 		);
 	};
 
@@ -137,8 +156,6 @@ export const CreateEditOrderSlipForm = ({
 					name="requestedProducts"
 					render={() => (
 						<Form className="form">
-							<FormSelect id={`assigned_branch_id`} options={branchesOptions} />
-
 							<TableNormal
 								columns={columns}
 								data={requestedProducts.map((requestedProduct, index) => [
@@ -148,16 +165,25 @@ export const CreateEditOrderSlipForm = ({
 										{getExtraFields(index)}
 									</>,
 									// Barcode
-									requestedProduct?.product?.id,
+									requestedProduct?.product_barcode,
 									// Name
-									requestedProduct?.product?.name,
+									requestedProduct?.product_name,
 									// Quantity / Bulk | Pieces
 									getQuantity(index, values, touched, errors),
-									// Current Balance
-									getCurrentBalance(
+									// Quantity / Bulk | Pieces
+									getOrdered(
 										index,
-										requestedProduct?.current_balance,
-										requestedProduct?.product?.pieces_in_bulk,
+										requestedProduct?.quantity_piece,
+										requestedProduct?.quantity_bulk,
+										values,
+									),
+									// Current Balance
+									getBalance(
+										index,
+										requestedProduct?.branch_current,
+										requestedProduct?.branch_max_balance,
+										requestedProduct?.branch_current_bulk,
+										requestedProduct?.branch_max_balance_bulk,
 										values,
 									),
 									// Assigned Personnel

@@ -1,12 +1,13 @@
 import { Col, Divider, Modal, Row } from 'antd';
 import React from 'react';
-import { FieldError, Label } from '../../../../components/elements';
+import { FieldError, Label, Select } from '../../../../components/elements';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 
 interface Props {
 	// TODO:: FINALIZE
 	requestedProducts: any;
-	branchesOptions: any;
+	branchOptions: any;
+	onChangePreparingBranch: any;
 	assignedPersonnelOptions: any;
 	dateTimeRequested: any;
 	requestingBranch: any;
@@ -21,7 +22,8 @@ interface Props {
 
 export const CreateEditOrderSlipModal = ({
 	requestedProducts,
-	branchesOptions,
+	branchOptions,
+	onChangePreparingBranch,
 	assignedPersonnelOptions,
 	dateTimeRequested,
 	requestingBranch,
@@ -79,11 +81,21 @@ export const CreateEditOrderSlipModal = ({
 
 			<Divider dashed />
 
-			<Label label="Requested Products" />
+			<Row gutter={[15, 15]} align="middle">
+				<Col span={12}>
+					<Label label="Requested Products" />
+				</Col>
+				<Col span={12}>
+					<Select
+						placeholder="Select Branch"
+						options={branchOptions}
+						onChange={onChangePreparingBranch}
+					/>
+				</Col>
+			</Row>
 
 			<CreateEditOrderSlipForm
 				requestedProducts={requestedProducts}
-				branchesOptions={branchesOptions}
 				assignedPersonnelOptions={assignedPersonnelOptions}
 				onSubmit={onSubmit}
 				onClose={onClose}

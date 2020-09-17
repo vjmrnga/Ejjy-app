@@ -3,21 +3,6 @@
 .PurchaseRequests {
 }
 
-.CreatePurchaseRequestModal {
-	.quantity-container {
-		@include flex();
-
-		& > *:first-child {
-			margin-right: 8px;
-		}
-
-		select {
-			width: 80px;
-			font-size: 12px;
-		}
-	}
-}
-
 .ViewPurchaseRequest {
 	.details {
 		padding: 25px 25px 0 25px;

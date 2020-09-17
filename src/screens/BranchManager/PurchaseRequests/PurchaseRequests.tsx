@@ -55,8 +55,8 @@ const PurchaseRequests = () => {
 	} = useBranchProducts();
 
 	useEffect(() => {
-		getPurchaseRequestsExtended(user?.branch_id);
-		getBranchProductsByBranch(user?.branch_id);
+		getPurchaseRequestsExtended(user?.branch?.id);
+		getBranchProductsByBranch(user?.branch?.id);
 	}, []);
 
 	// Effect: Format purchaseRequests to be rendered in Table
@@ -102,7 +102,8 @@ const PurchaseRequests = () => {
 			}));
 
 		createPurchaseRequest({
-			requestor_id: user?.branch_id,
+			requestor_id: user?.branch?.id,
+			requesting_user_id: user?.id,
 			type: purchaseRequestTypes.MANUAL,
 			products,
 		});

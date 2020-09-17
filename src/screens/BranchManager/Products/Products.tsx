@@ -1,27 +1,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { lowerCase } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/variables';
 import { useProducts } from '../../../hooks/useProducts';
 import { calculateTableHeight } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
+import { types } from '../../../ducks/OfficeManager/products';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
+// NOTE: THIS IS NOT COMPLETED YET, NOT PART OF ANY SPRINTS YET.
 const Products = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const { status, products, getProducts } = useProducts();
+	const { status, products, getProducts, recentRequest } = useProducts();
 
 	useEffect(() => {
 		getProducts();
@@ -47,6 +48,11 @@ const Products = () => {
 		setTableData(formattedProducts);
 	}, [products]);
 
+	const getFetchLoading = useCallback(
+		() => status === request.REQUESTING && recentRequest === types.GET_PRODUCTS,
+		[status, recentRequest],
+	);
+
 	const onView = (product) => {
 		setSelectedProduct(product);
 		setViewProductModalVisible(true);
@@ -63,7 +69,7 @@ const Products = () => {
 	};
 
 	return (
-		<Container title="Products">
+		<Container title="Products" loading={getFetchLoading()} loadingText="Fetching products...">
 			<section className="Products">
 				<Box>
 					<TableHeader onSearch={onSearch} />

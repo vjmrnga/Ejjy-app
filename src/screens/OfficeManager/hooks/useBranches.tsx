@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/variables';
-import { modifiedCallback } from '../../../utils/function';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
+import { modifiedCallback } from '../../../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Branch created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the branch';
@@ -25,10 +25,6 @@ export const useBranches = () => {
 	const createBranch = useActionDispatch(actions.createBranch);
 	const editBranch = useActionDispatch(actions.editBranch);
 	const removeBranch = useActionDispatch(actions.removeBranch);
-
-	useEffect(() => {
-		getBranchesRequest();
-	}, []);
 
 	const reset = () => {
 		resetError();

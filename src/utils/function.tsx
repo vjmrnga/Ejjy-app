@@ -3,6 +3,7 @@ import { memoize } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import {
+	AddedToOSBadgePill,
 	AvailableBadgePill,
 	FDS1CreatedBadgePill,
 	FDS1DoneBadgePill,
@@ -10,12 +11,18 @@ import {
 	FOS1CreatedBadgePill,
 	FOS1PreparedBadgePill,
 	NewBadgePill,
+	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
 	ReorderBadgePill,
 	ROW_HEIGHT,
 	SeenBadgePill,
 } from '../components';
-import { branchProductStatus, purchaseRequestActions, request } from '../global/variables';
+import {
+	branchProductStatus,
+	purchaseRequestActions,
+	purchaseRequestProductStatus,
+	request,
+} from '../global/variables';
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -77,6 +84,17 @@ export const getPurchaseRequestStatus = memoize((status) => {
 		}
 		case purchaseRequestActions.F_DS1_ERROR: {
 			return <FDS1ErrorBadgePill />;
+		}
+	}
+});
+
+export const getPurchaseRequestProductStatus = memoize((status) => {
+	switch (status) {
+		case purchaseRequestProductStatus.ADDED_TO_OS: {
+			return <AddedToOSBadgePill />;
+		}
+		case purchaseRequestProductStatus.NOT_ADDED_TO_OS: {
+			return <NotAddedToOSBadgePill />;
 		}
 	}
 });

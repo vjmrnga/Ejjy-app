@@ -4,14 +4,17 @@ import { Col, Divider, Row } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container, QuantitySelect, Table } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
-import { selectors } from '../../../ducks/purchase-requests';
-import { quantityTypes } from '../../../global/variables';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
+import { selectors as authSelectors } from '../../../ducks/auth';
+import { selectors, types } from '../../../ducks/purchase-requests';
+import { quantityTypes, request } from '../../../global/variables';
+import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
 	calculateTableHeight,
 	formatDateTime,
+	getPurchaseRequestProductStatus,
 	getPurchaseRequestStatus,
 	sleep,
 } from '../../../utils/function';
@@ -22,32 +25,56 @@ interface Props {
 }
 
 const ViewPurchaseRequest = ({ match }: Props) => {
+	// Routing
 	const purchaseRequestId = match?.params?.id;
-	const { branchProducts } = useBranchProducts();
-	const purchaseRequest = useSelector(
-		selectors.selectPurchaseRequestById(Number(purchaseRequestId)),
-	);
+	const history = useHistory();
 
+	// Custom hooks
+	const user = useSelector(authSelectors.selectUser());
+	const {
+		getPurchaseRequestsByIdAndBranch,
+		status: purchaseRequestStatus,
+		recentRequest: purchaseRequestRecentRequest,
+	} = usePurchaseRequests();
+	const purchaseRequest = useSelector(selectors.selectPurchaseRequest());
+
+	// States
 	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		getPurchaseRequestsByIdAndBranch(purchaseRequestId, user?.branch?.id);
+	}, []);
+
+	useEffect(() => {
+		if (
+			!purchaseRequest &&
+			purchaseRequestRecentRequest === types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH &&
+			purchaseRequestStatus === request.ERROR
+		) {
+			history.replace('/404');
+		}
+	}, [purchaseRequest, purchaseRequestStatus, purchaseRequestRecentRequest]);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
-		const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
-			const { product_id, quantity_bulk, quantity_piece } = requestedProduct;
-			const branchProduct = branchProducts.find((product) => product?.product_id === product_id);
-			const { barcode = '', name = '' } = branchProduct?.product;
+		if (purchaseRequest && purchaseRequestStatus === request.SUCCESS) {
+			const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
+				const { product, status } = requestedProduct;
+				const { barcode, name } = product?.product;
 
-			return {
-				_quantity_bulk: quantity_bulk,
-				_quantity_piece: quantity_piece,
-				barcode,
-				name,
-				quantity: quantity_piece,
-			};
-		});
+				return {
+					_quantity_bulk: product?.quantity_bulk,
+					_quantity_piece: product?.quantity_piece,
+					barcode,
+					name,
+					quantity: product?.quantity_piece,
+					status: getPurchaseRequestProductStatus(status),
+				};
+			});
 
-		sleep(500).then(() => setData(formattedRequestedProducts));
-	}, [purchaseRequest]);
+			sleep(500).then(() => setData(formattedRequestedProducts));
+		}
+	}, [purchaseRequest, purchaseRequestStatus]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -76,6 +103,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 				title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
 				dataIndex: 'quantity',
 			},
+			{ title: 'Status', dataIndex: 'status' },
 		],
 		[onQuantityTypeChange],
 	);
@@ -132,6 +160,8 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 						columns={getColums()}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
+						loading={purchaseRequestStatus === request.REQUESTING}
+						hasCustomHeaderComponent
 					/>
 				</Box>
 			</section>

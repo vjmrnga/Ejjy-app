@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { lowerCase, upperFirst } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
+import { types } from '../../../ducks/purchase-requests';
 import { purchaseRequestActionsOptions, request } from '../../../global/variables';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
@@ -24,7 +25,12 @@ const columns = [
 const PurchaseRequests = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
-	const { purchaseRequests, getPurchaseRequestsExtended, status } = usePurchaseRequests();
+	const {
+		purchaseRequests,
+		getPurchaseRequestsExtended,
+		status,
+		recentRequest,
+	} = usePurchaseRequests();
 
 	useEffect(() => {
 		getPurchaseRequestsExtended();
@@ -54,6 +60,11 @@ const PurchaseRequests = () => {
 		setTableData(formattedProducts);
 	}, [purchaseRequests]);
 
+	const getFetchLoading = useCallback(
+		() => status === request.REQUESTING && recentRequest === types.GET_PURCHASE_REQUESTS_EXTENDED,
+		[status, recentRequest],
+	);
+
 	const onSearch = (keyword) => {
 		keyword = lowerCase(keyword);
 		const filteredData =
@@ -75,7 +86,12 @@ const PurchaseRequests = () => {
 	};
 
 	return (
-		<Container title="F-RS1" description="Requests from branches">
+		<Container
+			title="F-RS1"
+			description="Requests from branches"
+			loading={getFetchLoading()}
+			loadingText="Fetching purchase requests..."
+		>
 			<section className="PurchaseRequests">
 				<Box>
 					<TableHeader

@@ -1,13 +1,8 @@
 import { Col, Divider, Row } from 'antd';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-	FormSelectLabel,
-} from '../../../../../components/elements';
+import { Button, FieldError, FormInputLabel, Label } from '../../../../../components/elements';
 import { Option } from '../../../../../components/elements/FormSelect/FormSelect';
 import { productTypes, unitsOfMeasurement } from '../../../../../global/variables';
 import { sleep } from '../../../../../utils/function';
@@ -28,7 +23,6 @@ interface ICreateBranch {
 interface Props {
 	branchId: number;
 	branchProduct: any;
-	productOptions: Option[];
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
@@ -37,7 +31,6 @@ interface Props {
 export const CreateEditBranchProductsForm = ({
 	branchId,
 	branchProduct,
-	productOptions,
 	onSubmit,
 	onClose,
 	loading,
@@ -80,6 +73,19 @@ export const CreateEditBranchProductsForm = ({
 		[branchProduct],
 	);
 
+	const renderProductDetails = (label, value) => (
+		<Col sm={12} xs={24}>
+			<Row gutter={{ sm: 15, xs: 0 }}>
+				<Col sm={16} xs={24}>
+					<Label label={label} />
+				</Col>
+				<Col sm={8} xs={24}>
+					<span>{value}</span>
+				</Col>
+			</Row>
+		</Col>
+	);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -97,23 +103,23 @@ export const CreateEditBranchProductsForm = ({
 		>
 			{({ values, errors, touched }) => (
 				<Form className="form">
+					<Field type="hidden" name="product_id" />
+
 					<Row gutter={[15, 15]}>
-						<Col span={24}>
-							<FormSelectLabel
-								label="Product"
-								id="product_id"
-								placeholder="Select a product"
-								options={productOptions}
-								disabled={!!branchProduct}
-							/>
-							{errors.product_id && touched.product_id ? (
-								<FieldError error={errors.product_id} />
-							) : null}
-						</Col>
+						{renderProductDetails('Barcode', branchProduct?.product?.id)}
+						{renderProductDetails('Name', branchProduct?.product?.name)}
 
 						<Divider dashed />
 
 						<Col sm={12} xs={24}>
+							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
+							{errors.reorder_point && touched.reorder_point ? (
+								<FieldError error={errors.reorder_point} />
+							) : null}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Field type="hidden" name="product_id" />
 							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
 							{errors.reorder_point && touched.reorder_point ? (
 								<FieldError error={errors.reorder_point} />

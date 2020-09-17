@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { CommonRoute } from './components';
-import { Error404, Login } from './screens';
+import { Error404, Landing, Login } from './screens';
 import {
 	BranchesScreens,
 	DashboardScreens,
@@ -17,6 +17,7 @@ import {
 const App = () => (
 	<Switch>
 		<CommonRoute path={['/', '/login']} exact component={Login} />
+		<CommonRoute path="/landing" exact component={Landing} />
 		<CommonRoute path="/dashboard" exact component={DashboardScreens} />
 		<CommonRoute path="/products" exact component={ProductsScreens} />
 		<CommonRoute path="/branches" exact component={BranchesScreens} />

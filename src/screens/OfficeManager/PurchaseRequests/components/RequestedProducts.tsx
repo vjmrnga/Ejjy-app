@@ -66,7 +66,7 @@ export const RequestedProducts = ({
 							options={purchaseRequestActionsOptions}
 							placeholder="status"
 							defaultValue={action}
-							onChange={(event) => onStatusChange(event.target.value)}
+							onChange={onStatusChange}
 						/>
 					</Col>
 				</Row>

@@ -1,6 +1,7 @@
 // Common
 export { default as Login } from './Login/Login';
 export { default as Error404 } from './404/404';
+export { default as Landing } from './Landing/Landing';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';

@@ -5,14 +5,14 @@ import { service } from '../services/purchase-requests';
 
 /* WORKERS */
 function* getPurchaseRequests({ payload }: any) {
-	const { id, callback } = payload;
+	const { id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(service.list, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			id,
+			branch_id: id,
 		});
 
 		yield put(
@@ -25,20 +25,66 @@ function* getPurchaseRequests({ payload }: any) {
 }
 
 function* getPurchaseRequestsExtended({ payload }: any) {
-	const { id, callback } = payload;
+	const { id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(service.listExtended, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			id,
+			branch_id: id,
 		});
-		console.log(response.data.results);
+
 		yield put(
 			actions.save({
 				type: types.GET_PURCHASE_REQUESTS_EXTENDED,
 				purchaseRequests: response.data.results,
+			}),
+		);
+		callback({ status: request.SUCCESS });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* getPurchaseRequestByIdAndBranch({ payload }: any) {
+	const { id, branchId, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(service.listByIdAndBranch, { branch_id: branchId }, id);
+
+		yield put(
+			actions.save({
+				type: types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH,
+				branchId,
+				purchaseRequest: response.data,
+			}),
+		);
+		callback({ status: request.SUCCESS });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* getPurchaseRequestById({ payload }: any) {
+	const { id, callback } = payload;
+	yield put(
+		actions.save({
+			type: types.GET_PURCHASE_REQUEST_BY_ID,
+			purchaseRequest: null,
+		}),
+	);
+
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(service.listById, id);
+
+		yield put(
+			actions.save({
+				type: types.GET_PURCHASE_REQUEST_BY_ID,
+				purchaseRequest: response.data,
 			}),
 		);
 		callback({ status: request.SUCCESS });
@@ -72,6 +118,14 @@ const getPurchaseRequestsExtendedWatcherSaga = function* getPurchaseRequestsExte
 	yield takeLatest(types.GET_PURCHASE_REQUESTS_EXTENDED, getPurchaseRequestsExtended);
 };
 
+const getPurchaseRequestByIdWatcherSaga = function* getPurchaseRequestByIdWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID, getPurchaseRequestById);
+};
+
+const getPurchaseRequestByIdAndBranchWatcherSaga = function* getPurchaseRequestByIdAndBranchWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH, getPurchaseRequestByIdAndBranch);
+};
+
 const createPurchaseRequestWatcherSaga = function* createPurchaseRequestWatcherSaga() {
 	yield takeLatest(types.CREATE_PURCHASE_REQUEST, createPurchaseRequest);
 };
@@ -79,5 +133,7 @@ const createPurchaseRequestWatcherSaga = function* createPurchaseRequestWatcherS
 export default [
 	getPurchaseRequestsWatcherSaga(),
 	getPurchaseRequestsExtendedWatcherSaga(),
+	getPurchaseRequestByIdWatcherSaga(),
+	getPurchaseRequestByIdAndBranchWatcherSaga(),
 	createPurchaseRequestWatcherSaga(),
 ];

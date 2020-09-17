@@ -1,0 +1,6 @@
+@import '../../assets/styles/main';
+
+.Landing {
+	height: 100vh;
+	@include flex(center, center);
+}

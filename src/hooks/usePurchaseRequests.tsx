@@ -14,8 +14,13 @@ export const usePurchaseRequests = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const purchaseRequests = useSelector(selectors.selectPurchaseRequests());
+	const purchaseRequestsByBranch = useSelector(selectors.selectPurchaseRequestsByBranch());
 	const getPurchaseRequests = useActionDispatch(actions.getPurchaseRequests);
 	const getPurchaseRequestsExtended = useActionDispatch(actions.getPurchaseRequestsExtended);
+	const getPurchaseRequestsById = useActionDispatch(actions.getPurchaseRequestById);
+	const getPurchaseRequestsByIdAndBranch = useActionDispatch(
+		actions.getPurchaseRequestByIdAndBranch,
+	);
 	const createPurchaseRequest = useActionDispatch(actions.createPurchaseRequest);
 
 	const reset = () => {
@@ -37,6 +42,20 @@ export const usePurchaseRequests = () => {
 		getPurchaseRequestsExtended({ id: branchId, callback });
 	};
 
+	const getPurchaseRequestsByIdRequest = (id) => {
+		setRecentRequest(types.GET_PURCHASE_REQUEST_BY_ID);
+		getPurchaseRequestsById({ id, callback });
+	};
+
+	const getPurchaseRequestsByIdAndBranchRequest = (id, branchId) => {
+		setRecentRequest(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH);
+		if (!purchaseRequestsByBranch?.[branchId]) {
+			getPurchaseRequestsByIdAndBranch({ id, branchId, callback });
+		} else {
+			callback({ status: request.SUCCESS });
+		}
+	};
+
 	const createPurchaseRequestRequest = (purchaseRequest) => {
 		setRecentRequest(types.CREATE_PURCHASE_REQUEST);
 		createPurchaseRequest({
@@ -54,6 +73,8 @@ export const usePurchaseRequests = () => {
 		purchaseRequests,
 		getPurchaseRequests: getPurchaseRequestsRequest,
 		getPurchaseRequestsExtended: getPurchaseRequestsExtendedRequest,
+		getPurchaseRequestsById: getPurchaseRequestsByIdRequest,
+		getPurchaseRequestsByIdAndBranch: getPurchaseRequestsByIdAndBranchRequest,
 		createPurchaseRequest: createPurchaseRequestRequest,
 		status,
 		errors,

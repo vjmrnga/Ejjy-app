@@ -5,7 +5,7 @@ import { Box } from '../../components/elements';
 import { actions } from '../../ducks/auth';
 import { request } from '../../global/variables';
 import { IFormValues, LoginForm } from './components/LoginForm';
-import { useLogin } from './hooks/useLogin';
+import { useLogin } from '../../hooks/useLogin';
 import './style.scss';
 
 type ILoginProps = ConnectedProps<typeof connector>;

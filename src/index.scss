@@ -26,7 +26,7 @@ body {
 	.ant-modal {
 		width: 100% !important;
 		min-width: 350px !important;
-		max-width: 800px !important;
+		max-width: 1100px !important;
 	}
 
 	.ant-modal-body {
@@ -36,5 +36,18 @@ body {
 
 	.custom-footer {
 		@include flex($justify-content: flex-end);
+	}
+}
+
+.quantity-container {
+	@include flex();
+
+	& > *:first-child {
+		margin-right: 8px;
+	}
+
+	select {
+		width: 80px;
+		font-size: 12px;
 	}
 }

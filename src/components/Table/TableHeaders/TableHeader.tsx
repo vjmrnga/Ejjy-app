@@ -59,7 +59,7 @@ export const TableHeader = ({
 						classNames="status-select"
 						options={statuses}
 						placeholder="status"
-						onChange={(event) => onStatusSelect(event.target.value)}
+						onChange={onStatusSelect}
 					/>
 				)}
 

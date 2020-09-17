@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { lowerCase } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/products';
@@ -70,6 +70,11 @@ const Products = () => {
 		}
 	}, [status, recentRequest]);
 
+	const getFetchLoading = useCallback(
+		() => status === request.REQUESTING && recentRequest === types.GET_PRODUCTS,
+		[status, recentRequest],
+	);
+
 	const onView = (product) => {
 		setSelectedProduct(product);
 		setViewProductModalVisible(true);
@@ -96,7 +101,7 @@ const Products = () => {
 	};
 
 	return (
-		<Container title="Products">
+		<Container title="Products" loading={getFetchLoading()} loadingText="Fetching products">
 			<section className="Products">
 				<Box>
 					<TableHeader buttonName="Create Product" onSearch={onSearch} onCreate={onCreate} />
