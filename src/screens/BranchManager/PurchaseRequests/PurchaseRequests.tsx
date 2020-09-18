@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { floor, lowerCase, upperFirst } from 'lodash';
+import { lowerCase, upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -93,8 +93,6 @@ const PurchaseRequests = () => {
 				product_id,
 				quantity_piece:
 					quantity_type === quantityTypes.PIECE ? quantity : quantity * pieces_in_bulk,
-				quantity_bulk:
-					quantity_type === quantityTypes.BULK ? quantity : floor(quantity / pieces_in_bulk),
 			}));
 
 		createPurchaseRequest({

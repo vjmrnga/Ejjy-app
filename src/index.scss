@@ -20,6 +20,7 @@ body {
 	.ant-modal-content {
 		margin: 25px;
 		border-radius: 10px;
+		max-height: 85vh;
 		overflow: hidden;
 	}
 
@@ -31,7 +32,7 @@ body {
 
 	.ant-modal-body {
 		overflow-y: auto;
-		max-height: 80vh;
+		max-height: 70vh;
 	}
 
 	.custom-footer {

@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { memoize } from 'lodash';
+import { floor, memoize } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import {
@@ -42,6 +42,8 @@ export const showMessage = (status, successMessage, errorMessage) => {
 };
 
 export const formatDateTime = (datetime) => moment(datetime).format('MM/DD/YYYY h:mma ');
+
+export const convertBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
 
 export const modifiedCallback = (callback, successMessage, errorMessage) => {
 	return (response) => {

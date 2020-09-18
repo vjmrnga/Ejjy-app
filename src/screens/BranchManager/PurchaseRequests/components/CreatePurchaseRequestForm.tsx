@@ -1,6 +1,5 @@
 import { Divider } from 'antd';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { floor } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
@@ -13,7 +12,7 @@ import {
 } from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
-import { getBranchProductStatus, sleep } from '../../../../utils/function';
+import { convertBulk, getBranchProductStatus, sleep } from '../../../../utils/function';
 
 const columns = [
 	{ name: '', width: '80px' },
@@ -101,7 +100,7 @@ export const CreatePurchaseRequestForm = ({
 		return values?.branchProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
 			<span>{current_balance}</span>
 		) : (
-			<span>{floor(current_balance / pieces_in_bulk)}</span>
+			<span>{convertBulk(current_balance, pieces_in_bulk)}</span>
 		);
 	};
 

@@ -1,5 +1,5 @@
 import { Divider } from 'antd';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
@@ -25,6 +25,7 @@ const columns = [
 ];
 
 interface Props {
+	orderSlip: any;
 	branchProducts: any;
 	onSubmit: any;
 	onClose: any;
@@ -32,6 +33,7 @@ interface Props {
 }
 
 export const CreateEditOrderSlipForm = ({
+	orderSlip,
 	requestedProducts,
 	assignedPersonnelOptions,
 	onSubmit,
@@ -45,10 +47,12 @@ export const CreateEditOrderSlipForm = ({
 			DefaultValues: {
 				requestedProducts: requestedProducts.map((requestedProduct) => ({
 					selected: requestedProduct?.selected,
+					order_slip_product_id: requestedProduct?.order_slip_product_id,
 					quantity: requestedProduct?.quantity,
 					quantity_type: requestedProduct?.quantity_type,
 					product_id: requestedProduct?.product_id,
 					assigned_personnel: requestedProduct?.assigned_personnel,
+					pieces_in_bulk: requestedProduct?.product_pieces_in_bulk,
 				})),
 			},
 			Schema: Yup.object().shape({
@@ -72,10 +76,6 @@ export const CreateEditOrderSlipForm = ({
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[requestedProducts],
-	);
-
-	const getExtraFields = (index) => (
-		<Field type="hidden" name={`requestedProducts.${index}.product_id`} />
 	);
 
 	const getSelectRadioButton = (index) => {
@@ -160,10 +160,7 @@ export const CreateEditOrderSlipForm = ({
 								columns={columns}
 								data={requestedProducts.map((requestedProduct, index) => [
 									// Select
-									<>
-										{getSelectRadioButton(index)}
-										{getExtraFields(index)}
-									</>,
+									getSelectRadioButton(index),
 									// Barcode
 									requestedProduct?.product_barcode,
 									// Name
@@ -203,7 +200,7 @@ export const CreateEditOrderSlipForm = ({
 								/>
 								<Button
 									type="submit"
-									text="Create"
+									text={orderSlip ? 'Edit' : 'Create'}
 									variant="primary"
 									loading={loading || isSubmitting}
 								/>

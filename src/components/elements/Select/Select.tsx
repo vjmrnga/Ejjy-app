@@ -13,23 +13,19 @@ interface Props {
 	options: Option[];
 	onChange: any;
 	classNames?: any;
-	defaultValue?: any;
+	value?: any;
 }
 
-const Select = ({ options, placeholder, onChange, classNames, defaultValue }: Props) => (
-	<select
-		className={cn('Select', classNames)}
-		onChange={(event) => onChange(event.target.value)}
-		defaultValue={defaultValue}
-	>
+const Select = ({ options, placeholder, onChange, classNames, value }: Props) => (
+	<select className={cn('Select', classNames)} onChange={(event) => onChange(event.target.value)}>
 		{placeholder && (
-			<option value="" selected disabled>
+			<option value={null} selected disabled>
 				{placeholder}
 			</option>
 		)}
 
-		{options.map(({ name, value, selected = false }) => (
-			<option selected={selected} value={value}>
+		{options.map(({ name, value: optionValue }) => (
+			<option key={optionValue} selected={optionValue === value} value={optionValue}>
 				{name}
 			</option>
 		))}

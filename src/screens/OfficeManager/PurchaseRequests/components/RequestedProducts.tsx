@@ -65,7 +65,7 @@ export const RequestedProducts = ({
 							classNames="status-select"
 							options={purchaseRequestActionsOptions}
 							placeholder="status"
-							defaultValue={action}
+							value={action}
 							onChange={onStatusChange}
 						/>
 					</Col>

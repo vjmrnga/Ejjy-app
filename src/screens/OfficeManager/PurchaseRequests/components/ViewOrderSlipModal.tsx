@@ -1,5 +1,6 @@
 import { Col, Divider, Modal, Row } from 'antd';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { TableNormal } from '../../../../components';
 import { Button, Input, Label } from '../../../../components/elements';
 import { formatDateTime, getOrderSlipStatus } from '../../../../utils/function';
 
@@ -10,7 +11,42 @@ interface Props {
 }
 
 export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
-	console.log(orderSlip);
+	const [requestedProducts, setRequestedProducts] = useState([]);
+
+	// const onQuantityTypeChange = (quantityType) => {};
+
+	const getColumns = useCallback(
+		() => [
+			{ name: 'Barcode' },
+			{ name: 'Name' },
+			{ name: 'Quantity' },
+			// {
+			// 	title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
+			// 	dataIndex: 'quantity',
+			// },
+			{ name: 'Assigned Personnel' },
+		],
+		[],
+	);
+
+	useEffect(() => {
+		if (orderSlip) {
+			const formattedRequestedProducts = orderSlip?.products?.map((requestedProduct) => {
+				const { product, assigned_person } = requestedProduct;
+				const { barcode, name } = product;
+				const { first_name, last_name } = assigned_person;
+
+				return [barcode, name, 0, `${first_name} ${last_name}`];
+			});
+
+			setRequestedProducts([
+				...formattedRequestedProducts,
+				...formattedRequestedProducts,
+				...formattedRequestedProducts,
+			]);
+		}
+	}, [orderSlip]);
+
 	const renderDetail = (label, value) => (
 		<Col sm={12} xs={24}>
 			<Row gutter={{ sm: 15, xs: 0 }}>
@@ -58,6 +94,8 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 					<Input placeholder={orderSlip?.assigned_store?.name} onChange={null} disabled />
 				</Col>
 			</Row>
+
+			<TableNormal columns={getColumns()} data={requestedProducts} />
 		</Modal>
 	);
 };

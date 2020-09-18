@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { VariableSizeGrid as Grid } from 'react-window';
-import ResizeObserver from 'rc-resize-observer';
-import classNames from 'classnames';
 import { Table as AntdTable } from 'antd';
+import { default as classNames, default as cn } from 'classnames';
+import ResizeObserver from 'rc-resize-observer';
+import React, { useEffect, useRef, useState } from 'react';
+import { VariableSizeGrid as Grid } from 'react-window';
 import './style.scss';
-import cn from 'classnames';
 
 export const ROW_HEIGHT = 65;
 

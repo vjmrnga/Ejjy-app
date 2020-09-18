@@ -53,7 +53,7 @@ function* getPurchaseRequestByIdAndBranch({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.listByIdAndBranch, { branch_id: branchId }, id);
+		const response = yield call(service.listByIdAndBranch, { preparing_branch_id: branchId }, id);
 
 		yield put(
 			actions.save({
@@ -110,6 +110,20 @@ function* createPurchaseRequest({ payload }: any) {
 	}
 }
 
+function* editPurchaseRequest({ payload }: any) {
+	const { callback, ...data } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(service.editPurchaseRequest, data);
+
+		yield put(actions.save({ type: types.EDIT_PURCHASE_REQUEST, purchaseRequest: response.data }));
+		callback({ status: request.SUCCESS });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 /* WATCHERS */
 const getPurchaseRequestsWatcherSaga = function* getPurchaseRequestsWatcherSaga() {
 	yield takeLatest(types.GET_PURCHASE_REQUESTS, getPurchaseRequests);
@@ -131,10 +145,15 @@ const createPurchaseRequestWatcherSaga = function* createPurchaseRequestWatcherS
 	yield takeLatest(types.CREATE_PURCHASE_REQUEST, createPurchaseRequest);
 };
 
+const editPurchaseRequestWatcherSaga = function* editPurchaseRequestWatcherSaga() {
+	yield takeLatest(types.EDIT_PURCHASE_REQUEST, editPurchaseRequest);
+};
+
 export default [
 	getPurchaseRequestsWatcherSaga(),
 	getPurchaseRequestsExtendedWatcherSaga(),
 	getPurchaseRequestByIdWatcherSaga(),
 	getPurchaseRequestByIdAndBranchWatcherSaga(),
 	createPurchaseRequestWatcherSaga(),
+	editPurchaseRequestWatcherSaga(),
 ];

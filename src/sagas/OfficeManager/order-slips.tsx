@@ -52,9 +52,7 @@ function* createOrderSlip({ payload }: any) {
 		const response = yield call(service.createOrderSlip, data);
 
 		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
-		yield put(
-			purchaseRequestActions.removePurchaseRequestByBranch({ branchId: data.assigned_store_id }),
-		);
+		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -69,6 +67,7 @@ function* editOrderSlip({ payload }: any) {
 		const response = yield call(service.updateOrderSlip, data);
 
 		yield put(actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }));
+		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

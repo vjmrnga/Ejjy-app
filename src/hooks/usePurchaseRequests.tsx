@@ -5,8 +5,12 @@ import { actions, selectors, types } from '../ducks/purchase-requests';
 import { request } from '../global/types';
 import { modifiedCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
+
 const CREATE_SUCCESS_MESSAGE = 'Purchase Request created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the branch';
+
+const EDIT_SUCCESS_MESSAGE = 'Purchase Request updated successfully';
+const EDIT_ERROR_MESSAGE = 'An error occurred while updating the branch';
 
 export const usePurchaseRequests = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -22,6 +26,7 @@ export const usePurchaseRequests = () => {
 		actions.getPurchaseRequestByIdAndBranch,
 	);
 	const createPurchaseRequest = useActionDispatch(actions.createPurchaseRequest);
+	const editPurchaseRequest = useActionDispatch(actions.editPurchaseRequest);
 
 	const reset = () => {
 		resetError();
@@ -52,6 +57,7 @@ export const usePurchaseRequests = () => {
 		if (!purchaseRequestsByBranch?.[branchId]) {
 			getPurchaseRequestsByIdAndBranch({ id, branchId, callback });
 		} else {
+			callback({ status: request.REQUESTING });
 			callback({ status: request.SUCCESS });
 		}
 	};
@@ -61,6 +67,15 @@ export const usePurchaseRequests = () => {
 		createPurchaseRequest({
 			...purchaseRequest,
 			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+		});
+	};
+
+	const editPurchaseRequestRequest = (id, status) => {
+		setRecentRequest(types.EDIT_PURCHASE_REQUEST);
+		editPurchaseRequest({
+			id,
+			action: status,
+			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 		});
 	};
 
@@ -76,6 +91,7 @@ export const usePurchaseRequests = () => {
 		getPurchaseRequestsById: getPurchaseRequestsByIdRequest,
 		getPurchaseRequestsByIdAndBranch: getPurchaseRequestsByIdAndBranchRequest,
 		createPurchaseRequest: createPurchaseRequestRequest,
+		editPurchaseRequest: editPurchaseRequestRequest,
 		status,
 		errors,
 		recentRequest,

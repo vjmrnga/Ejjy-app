@@ -33,6 +33,8 @@ const Landing = () => {
 		if (user) {
 			if (getBranchesStatus === request.SUCCESS) {
 				history.replace('/dashboard');
+			} else {
+				history.replace('/dashboard');
 			}
 		}
 	}, [user, getBranchesStatus]);

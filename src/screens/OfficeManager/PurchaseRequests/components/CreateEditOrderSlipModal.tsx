@@ -6,11 +6,13 @@ import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 
 interface Props {
 	// TODO:: FINALIZE
+	orderSlip: any;
 	requestedProducts: any;
 	branchOptions: any;
 	onChangePreparingBranch: any;
 	assignedPersonnelOptions: any;
 	purchaseRequest: any;
+	selectedBranchId?: number;
 
 	visible: boolean;
 	onSubmit: any;
@@ -20,11 +22,13 @@ interface Props {
 }
 
 export const CreateEditOrderSlipModal = ({
+	orderSlip,
 	requestedProducts,
 	branchOptions,
 	onChangePreparingBranch,
 	assignedPersonnelOptions,
 	purchaseRequest,
+	selectedBranchId,
 	visible,
 	onSubmit,
 	onClose,
@@ -32,7 +36,7 @@ export const CreateEditOrderSlipModal = ({
 	loading,
 }: Props) => (
 	<Modal
-		title="[CREATE] F-OS1"
+		title={`${orderSlip ? '[EDIT]' : '[CREATE]'} F-OS1`}
 		visible={visible}
 		footer={null}
 		onCancel={onClose}
@@ -86,11 +90,13 @@ export const CreateEditOrderSlipModal = ({
 					placeholder="Select Branch"
 					options={branchOptions}
 					onChange={onChangePreparingBranch}
+					value={selectedBranchId}
 				/>
 			</Col>
 		</Row>
 
 		<CreateEditOrderSlipForm
+			orderSlip={orderSlip}
 			requestedProducts={requestedProducts}
 			assignedPersonnelOptions={assignedPersonnelOptions}
 			onSubmit={onSubmit}
