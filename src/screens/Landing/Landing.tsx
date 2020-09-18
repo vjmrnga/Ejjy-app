@@ -2,12 +2,12 @@
 /* eslint-disable no-fallthrough */
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { useBranches } from '../OfficeManager/hooks/useBranches';
-import { selectors } from '../../ducks/auth';
-import './style.scss';
 import { useSelector } from 'react-redux';
-import { request, userTypes } from '../../global/variables';
 import { useHistory } from 'react-router-dom';
+import { selectors } from '../../ducks/auth';
+import { request, userTypes } from '../../global/types';
+import { useBranches } from '../OfficeManager/hooks/useBranches';
+import './style.scss';
 
 const Landing = () => {
 	const history = useHistory();

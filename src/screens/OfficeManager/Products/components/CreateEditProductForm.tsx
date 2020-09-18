@@ -10,7 +10,7 @@ import {
 	FormTextareaLabel,
 	Label,
 } from '../../../../components/elements';
-import { productTypes, unitsOfMeasurement } from '../../../../global/variables';
+import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
 
 interface ICreateProduct {
@@ -46,7 +46,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				barcode: product?.barcode || '',
 				name: product?.name || '',
 				type: product?.type || productTypes.WET,
-				unit_of_measurement: product?.unit_of_measurement || unitsOfMeasurement.WEIGHING,
+				unit_of_measurement: product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
 				print_details: product?.name || '',
 				description: product?.name || '',
 				allowable_spoilage: product?.allowable_spoilage * 100 || '',
@@ -72,7 +72,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 					.max(99)
 					.when(['type', 'unit_of_measurement'], {
 						is: (type, unit_of_measurement) =>
-							type === productTypes.WET && unit_of_measurement === unitsOfMeasurement.WEIGHING,
+							type === productTypes.WET && unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
 						then: Yup.number().required(),
 						otherwise: Yup.number().notRequired(),
 					})
@@ -103,14 +103,14 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 
 	const unitOfMeasurement = [
 		{
-			id: unitsOfMeasurement.WEIGHING,
+			id: unitOfMeasurementTypes.WEIGHING,
 			label: 'Weighing',
-			value: unitsOfMeasurement.WEIGHING,
+			value: unitOfMeasurementTypes.WEIGHING,
 		},
 		{
-			id: unitsOfMeasurement.NON_WEIGHING,
+			id: unitOfMeasurementTypes.NON_WEIGHING,
 			label: 'Non-Weighing',
-			value: unitsOfMeasurement.NON_WEIGHING,
+			value: unitOfMeasurementTypes.NON_WEIGHING,
 		},
 	];
 
@@ -201,7 +201,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								disabled={
 									!(
 										values?.type === productTypes.WET &&
-										values?.unit_of_measurement === unitsOfMeasurement.WEIGHING
+										values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 									)
 								}
 							/>

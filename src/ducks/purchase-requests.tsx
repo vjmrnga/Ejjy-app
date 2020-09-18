@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 
@@ -10,6 +11,8 @@ export const types = {
 	GET_PURCHASE_REQUEST_BY_ID: `${key}/GET_PURCHASE_REQUEST_BY_ID`,
 	GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH: `${key}/GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH`,
 	CREATE_PURCHASE_REQUEST: `${key}/CREATE_PURCHASE_REQUEST`,
+
+	REMOVE_PURCHASE_REQUEST_BY_BRANCH: `${key}/REMOVE_PURCHASE_REQUEST_BY_BRANCH`,
 };
 
 const initialState = {
@@ -48,6 +51,11 @@ const reducer = handleActions(
 
 			return { ...state, ...newData };
 		},
+
+		[types.REMOVE_PURCHASE_REQUEST_BY_BRANCH]: (state, { payload }: any) => {
+			const { branchId } = payload;
+			return { ...state, purchaseRequestsByBranch: omit(state.purchaseRequestsByBranch, branchId) };
+		},
 	},
 	initialState,
 );
@@ -59,6 +67,8 @@ export const actions = {
 	getPurchaseRequestById: createAction(types.GET_PURCHASE_REQUEST_BY_ID),
 	getPurchaseRequestByIdAndBranch: createAction(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH),
 	createPurchaseRequest: createAction(types.CREATE_PURCHASE_REQUEST),
+
+	removePurchaseRequestByBranch: createAction(types.REMOVE_PURCHASE_REQUEST_BY_BRANCH),
 };
 
 const selectState = (state: any) => state[key] || initialState;

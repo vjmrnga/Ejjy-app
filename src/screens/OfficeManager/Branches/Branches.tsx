@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/branches';
-import { request } from '../../../global/variables';
+import { request } from '../../../global/types';
 import { calculateTableHeight, sleep } from '../../../utils/function';
 import { useBranches } from '../hooks/useBranches';
 import { CreateEditBranchModal } from './components/CreateEditBranchModal';
@@ -74,7 +74,7 @@ const Branches = () => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
 						loading={status === request.REQUESTING}
 					/>
 

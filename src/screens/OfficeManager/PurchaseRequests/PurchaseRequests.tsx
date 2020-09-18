@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/purchase-requests';
-import { purchaseRequestActionsOptions, request } from '../../../global/variables';
+import { purchaseRequestActionsOptions } from '../../../global/options';
+import { request } from '../../../global/types';
+
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
 	calculateTableHeight,
@@ -104,7 +106,7 @@ const PurchaseRequests = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 						loading={status === request.REQUESTING}
 					/>
 				</Box>

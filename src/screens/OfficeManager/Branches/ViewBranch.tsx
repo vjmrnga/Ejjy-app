@@ -7,7 +7,7 @@ import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../.
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/branch-products';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
-import { request } from '../../../global/variables';
+import { request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditBranchProductsModal } from './components/BranchProducts/CreateEditBranchProductsModal';
@@ -143,7 +143,7 @@ const ViewBranch = ({ match }: Props) => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 					/>
 
 					<ViewBranchProductModal

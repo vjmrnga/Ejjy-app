@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/products';
-import { request } from '../../../global/variables';
+import { LINK_VOID } from '../../../global/constants';
+import { request } from '../../../global/types';
 import { useProducts } from '../../../hooks/useProducts';
 import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
@@ -47,7 +47,7 @@ const Products = () => {
 			return {
 				_barcode: barcode,
 				barcode: (
-					<a href="#" onClick={() => onView(product)}>
+					<a href={LINK_VOID} onClick={() => onView(product)}>
 						{barcode}
 					</a>
 				),
@@ -109,7 +109,7 @@ const Products = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 						loading={status === request.REQUESTING}
 					/>
 

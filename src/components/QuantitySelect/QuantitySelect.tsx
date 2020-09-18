@@ -1,5 +1,6 @@
 import React from 'react';
-import { quantityTypeOptions, quantityTypes } from '../../global/variables';
+import { quantityTypeOptions } from '../../global/options';
+import { quantityTypes } from '../../global/types';
 import { Select } from '../elements';
 import './style.scss';
 

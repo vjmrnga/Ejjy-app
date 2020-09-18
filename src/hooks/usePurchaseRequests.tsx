@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/purchase-requests';
-import { request } from '../global/variables';
-import { useActionDispatch } from './useActionDispatch';
+import { request } from '../global/types';
 import { modifiedCallback } from '../utils/function';
+import { useActionDispatch } from './useActionDispatch';
 const CREATE_SUCCESS_MESSAGE = 'Purchase Request created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the branch';
 

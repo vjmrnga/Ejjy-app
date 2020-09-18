@@ -1,4 +1,4 @@
-import { userTypes } from '../global/variables';
+import { userTypes } from '../global/types';
 import {
 	BranchManagerDashboard,
 	BranchManagerNotifications,

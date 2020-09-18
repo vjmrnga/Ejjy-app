@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { request } from '../global/variables';
+import { request } from '../global/types';
 
 export const REQUEST_KEY = 'REQUEST';
 

@@ -4,9 +4,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { userTypes } from '../../../global/variables';
-import './style.scss';
 import { selectors } from '../../../ducks/auth';
+import { userTypes } from '../../../global/types';
+import './style.scss';
 
 const SidebarItems = [
 	{

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { request } from '../global/variables';
+import { request } from '../global/types';
 import { IFormValues } from '../screens/Login/components/LoginForm';
 
 export const useLogin = (dispatch: any) => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/OfficeManager/order-slips';
-import { request } from '../../../global/variables';
+import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
 
@@ -14,7 +14,7 @@ const EDIT_ERROR_MESSAGE = 'An error occurred while editing the order slip';
 const REMOVE_SUCCESS_MESSAGE = 'Order Slip removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the order slip';
 
-export const useOrderSlip = () => {
+export const useOrderSlips = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
@@ -35,14 +35,14 @@ export const useOrderSlip = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const getOrderSlipRequest = () => {
+	const getOrderSlipRequest = (purchaseRequestId) => {
 		setRecentRequest(types.GET_ORDER_SLIPS);
-		getOrderSlips({ callback });
+		getOrderSlips({ purchase_request_id: purchaseRequestId, callback });
 	};
 
-	const getOrderSlipsExtendedRequest = () => {
+	const getOrderSlipsExtendedRequest = (purchaseRequestId) => {
 		setRecentRequest(types.GET_ORDER_SLIPS_EXTENDED);
-		getOrderSlipsExtended({ callback });
+		getOrderSlipsExtended({ purchase_request_id: purchaseRequestId, callback });
 	};
 
 	const createOrderSlipRequest = (orderSlip) => {

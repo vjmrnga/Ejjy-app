@@ -1,18 +1,20 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/order-slips';
-import { MAX_PAGE_SIZE, request } from '../../global/variables';
+import { actions as purchaseRequestActions } from '../../ducks/purchase-requests';
+import { MAX_PAGE_SIZE } from '../../global/constants';
+import { request } from '../../global/types';
 import { service } from '../../services/order-slips';
 
 /* WORKERS */
 function* getOrderSlips({ payload }: any) {
-	const { id, callback } = payload;
+	const { purchase_request_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(service.list, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			purchase_request_id: id,
+			purchase_request_id,
 		});
 
 		yield put(actions.save({ type: types.GET_ORDER_SLIPS, orderSlips: response.data.results }));
@@ -23,14 +25,14 @@ function* getOrderSlips({ payload }: any) {
 }
 
 function* getOrderSlipsExtended({ payload }: any) {
-	const { id, callback } = payload;
+	const { purchase_request_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(service.listExtended, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			purchase_request_id: id,
+			purchase_request_id,
 		});
 
 		yield put(
@@ -49,7 +51,10 @@ function* createOrderSlip({ payload }: any) {
 	try {
 		const response = yield call(service.createOrderSlip, data);
 
-		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, branch: response.data }));
+		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
+		yield put(
+			purchaseRequestActions.removePurchaseRequestByBranch({ branchId: data.assigned_store_id }),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

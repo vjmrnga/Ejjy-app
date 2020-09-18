@@ -1,12 +1,13 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/OfficeManager/branches';
 import {
 	actions as branchProductsActions,
 	types as branchProductsTypes,
 } from '../../ducks/branch-products';
-import { MAX_PAGE_SIZE, request } from '../../global/variables';
-import { service } from '../../services/OfficeManager/branches';
+import { actions, types } from '../../ducks/OfficeManager/branches';
+import { MAX_PAGE_SIZE } from '../../global/constants';
+import { request } from '../../global/types';
 import { service as branchProductsService } from '../../services/branch-products';
+import { service } from '../../services/OfficeManager/branches';
 
 /* WORKERS */
 function* getBranch({ payload }: any) {

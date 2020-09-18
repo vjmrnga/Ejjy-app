@@ -3,11 +3,8 @@ import { Field, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { Button, FieldError, FormInputLabel, Label } from '../../../../../components/elements';
-import { Option } from '../../../../../components/elements/FormSelect/FormSelect';
-import { productTypes, unitsOfMeasurement } from '../../../../../global/variables';
+import { productTypes, unitOfMeasurementTypes } from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
-// import { Button, FieldError, FormInputLabel } from '../../../../components/elements';
-// import { sleep } from '../../../../utils/function';
 
 interface ICreateBranch {
 	id?: number;
@@ -63,7 +60,7 @@ export const CreateEditBranchProductsForm = ({
 					.max(99)
 					.when(['type', 'unit_of_measurement'], {
 						is: (type, unit_of_measurement) =>
-							type === productTypes.WET && unit_of_measurement === unitsOfMeasurement.WEIGHING,
+							type === productTypes.WET && unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
 						then: Yup.number().required(),
 						otherwise: Yup.number().notRequired(),
 					})
@@ -156,7 +153,7 @@ export const CreateEditBranchProductsForm = ({
 								disabled={
 									!(
 										values?.type === productTypes.WET &&
-										values?.unit_of_measurement === unitsOfMeasurement.WEIGHING
+										values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 									)
 								}
 							/>

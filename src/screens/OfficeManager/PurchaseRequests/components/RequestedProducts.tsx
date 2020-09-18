@@ -3,7 +3,7 @@ import { upperFirst } from 'lodash';
 import React from 'react';
 import { Table } from '../../../../components';
 import { Box, Label, Select } from '../../../../components/elements';
-import { purchaseRequestActionsOptions } from '../../../../global/variables';
+import { purchaseRequestActionsOptions } from '../../../../global/options';
 import { calculateTableHeight, formatDateTime } from '../../../../utils/function';
 import '../style.scss';
 
@@ -85,7 +85,7 @@ export const RequestedProducts = ({
 		<Table
 			columns={columns}
 			dataSource={data}
-			scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
+			scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
 			hasCustomHeaderComponent
 		/>
 	</Box>

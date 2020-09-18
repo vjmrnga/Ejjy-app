@@ -11,7 +11,8 @@ import {
 	FormInput,
 	FormSelect,
 } from '../../../../components/elements';
-import { quantityTypeOptions, quantityTypes } from '../../../../global/variables';
+import { quantityTypeOptions } from '../../../../global/options';
+import { quantityTypes } from '../../../../global/types';
 import { getBranchProductStatus, sleep } from '../../../../utils/function';
 
 const columns = [

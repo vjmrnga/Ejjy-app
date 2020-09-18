@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/OfficeManager/branches';
-import { request } from '../../../global/variables';
+import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
 

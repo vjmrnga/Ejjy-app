@@ -1,7 +1,5 @@
-import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../../global/variables';
 
 export const key = 'OM_ORDER_SLIPS';
 
@@ -24,16 +22,12 @@ const reducer = handleActions(
 			const { type } = payload;
 			let newData = {};
 
-			switch (
-				type
-				// case types.GET_BRANCHES: {
-				// 	newData = { branches: payload.branches };
-				// 	break;
-				// }
-				// case types.GET_BRANCH: {
-				// 	newData = { branch: payload.branch };
-				// 	break;
-				// }
+			switch (type) {
+				case types.GET_ORDER_SLIPS:
+				case types.GET_ORDER_SLIPS_EXTENDED: {
+					newData = { orderSlips: payload.orderSlips };
+					break;
+				}
 				// case types.CREATE_BRANCH: {
 				// 	newData = { branches: [payload.branch, ...state.branches] };
 				// 	break;
@@ -53,7 +47,6 @@ const reducer = handleActions(
 				// 	newData = { branches: state.branches.filter(({ id }) => id !== payload.id) };
 				// 	break;
 				// }
-			) {
 			}
 
 			return { ...state, ...newData };

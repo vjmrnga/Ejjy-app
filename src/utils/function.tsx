@@ -17,12 +17,14 @@ import {
 	ROW_HEIGHT,
 	SeenBadgePill,
 } from '../components';
+import { BadgePill } from '../components/elements';
 import {
 	branchProductStatus,
+	orderSlipStatus,
 	purchaseRequestActions,
 	purchaseRequestProductStatus,
 	request,
-} from '../global/variables';
+} from '../global/types';
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -95,6 +97,20 @@ export const getPurchaseRequestProductStatus = memoize((status) => {
 		}
 		case purchaseRequestProductStatus.NOT_ADDED_TO_OS: {
 			return <NotAddedToOSBadgePill />;
+		}
+	}
+});
+
+export const getOrderSlipStatus = memoize((status, percentage, isDrStatusError = false) => {
+	switch (status) {
+		case orderSlipStatus.PREPARING: {
+			return <BadgePill label={`Preparing (${percentage}%)`} />;
+		}
+		case orderSlipStatus.PREPARED: {
+			return <BadgePill label="Prepared" variant="secondary" />;
+		}
+		case orderSlipStatus.DELIVERED: {
+			return <BadgePill label="Delivered" variant={isDrStatusError ? 'error' : 'primary'} />;
 		}
 	}
 });

@@ -8,12 +8,8 @@ import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/purchase-requests';
-import {
-	purchaseRequestActionsOptions,
-	purchaseRequestTypes,
-	quantityTypes,
-	request,
-} from '../../../global/variables';
+import { purchaseRequestActionsOptions } from '../../../global/options';
+import { purchaseRequestTypes, quantityTypes, request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
@@ -144,7 +140,7 @@ const PurchaseRequests = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
 					/>
 

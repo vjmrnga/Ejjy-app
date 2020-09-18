@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Col, Divider, Row } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,7 +8,7 @@ import { Breadcrumb, Container, QuantitySelect, Table } from '../../../component
 import { Box, Button, Label } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { selectors, types } from '../../../ducks/purchase-requests';
-import { quantityTypes, request } from '../../../global/variables';
+import { quantityTypes, request } from '../../../global/types';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
 	calculateTableHeight,
@@ -159,7 +158,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 					<Table
 						columns={getColums()}
 						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100vw' }}
+						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
 						loading={purchaseRequestStatus === request.REQUESTING}
 						hasCustomHeaderComponent
 					/>

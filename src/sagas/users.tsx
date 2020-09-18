@@ -1,6 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/users';
-import { MAX_PAGE_SIZE, request } from '../global/variables';
+import { MAX_PAGE_SIZE } from '../global/constants';
+import { request } from '../global/types';
 import { service } from '../services/users';
 
 /* WORKERS */

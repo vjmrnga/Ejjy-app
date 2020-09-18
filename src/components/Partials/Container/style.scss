@@ -2,8 +2,9 @@
 
 .Main {
 	.site-layout {
-		background: $color-main-background;
 		margin-left: 280px;
+		max-width: calc(100% - 281px);
+		overflow-x: hidden;
 
 		.site-layout-background {
 			height: auto;
