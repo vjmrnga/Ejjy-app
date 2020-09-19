@@ -66,11 +66,13 @@ export const OrderSlipList = ({
 }: Props) => {
 	const getBranchOptions = useCallback(
 		() =>
-			branches.map((branch) => ({
-				value: branch?.id,
-				name: branch?.name,
-			})),
-		[branches],
+			branches
+				.filter((branch) => branch.id !== purchaseRequest?.requesting_user?.branch?.id)
+				.map((branch) => ({
+					value: branch?.id,
+					name: branch?.name,
+				})),
+		[branches, purchaseRequest],
 	);
 
 	return (
