@@ -14,6 +14,7 @@ export const types = {
 	EDIT_PURCHASE_REQUEST: `${key}/EDIT_PURCHASE_REQUEST`,
 
 	REMOVE_PURCHASE_REQUEST_BY_BRANCH: `${key}/REMOVE_PURCHASE_REQUEST_BY_BRANCH`,
+	SET_PURCHASE_REQUEST_ACTION: `${key}/SET_PURCHASE_REQUEST_ACTION`,
 };
 
 const initialState = {
@@ -53,8 +54,15 @@ const reducer = handleActions(
 			return { ...state, ...newData };
 		},
 
-		[types.REMOVE_PURCHASE_REQUEST_BY_BRANCH]: (state: any) => {
+		[types.REMOVE_PURCHASE_REQUEST_BY_BRANCH]: (state) => {
 			return { ...state, purchaseRequestsByBranch: {} };
+		},
+
+		[types.SET_PURCHASE_REQUEST_ACTION]: (state, { payload }: any) => {
+			const purchaseRequest = cloneDeep(state.purchaseRequest);
+			purchaseRequest.action.action = payload.action;
+
+			return { ...state, purchaseRequest };
 		},
 	},
 	initialState,
@@ -70,6 +78,7 @@ export const actions = {
 	editPurchaseRequest: createAction(types.EDIT_PURCHASE_REQUEST),
 
 	removePurchaseRequestByBranch: createAction(types.REMOVE_PURCHASE_REQUEST_BY_BRANCH),
+	setPurchaseRequestAction: createAction(types.SET_PURCHASE_REQUEST_ACTION),
 };
 
 const selectState = (state: any) => state[key] || initialState;

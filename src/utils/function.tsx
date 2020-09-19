@@ -48,10 +48,22 @@ export const convertToBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBu
 
 export const convertToPieces = (bulk, piecesInBulk) => bulk * piecesInBulk;
 
-export const modifiedCallback = (callback, successMessage, errorMessage) => {
+export const modifiedCallback = (callback, successMessage, errorMessage, extraCallback = null) => {
 	return (response) => {
 		showMessage(response?.status, successMessage, errorMessage);
 		callback(response);
+		if (extraCallback) {
+			extraCallback(response);
+		}
+	};
+};
+
+export const modifiedExtraCallback = (callback, extraCallback = null) => {
+	return (response) => {
+		callback(response);
+		if (extraCallback) {
+			extraCallback(response);
+		}
 	};
 };
 
