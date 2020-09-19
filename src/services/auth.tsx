@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NO_VERIFICATION_CONFIG } from '../global/variables';
+import { NO_VERIFICATION_CONFIG } from '.';
 
 interface ILogin {
 	login: string;

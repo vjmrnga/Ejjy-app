@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { types } from '../../../ducks/branches';
-import { request } from '../../../global/variables';
-import { useBranches } from '../../../hooks/useBranches';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { types } from '../../../ducks/OfficeManager/branches';
+import { request } from '../../../global/types';
+import { calculateTableHeight, sleep } from '../../../utils/function';
+import { useBranches } from '../hooks/useBranches';
 import { CreateEditBranchModal } from './components/CreateEditBranchModal';
 import './style.scss';
 
@@ -21,7 +21,6 @@ const Branches = () => {
 	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] = useState(false);
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
-	const { height } = useWindowDimensions();
 	const {
 		branches,
 		createBranch,
@@ -43,7 +42,7 @@ const Branches = () => {
 			};
 		});
 
-		setData(formattedBranches);
+		sleep(500).then(() => setData(formattedBranches));
 	}, [branches]);
 
 	// Effect: Reload the list if recent requests are Create, Edit or Remove
@@ -72,7 +71,12 @@ const Branches = () => {
 				<Box>
 					<TableHeader buttonName="Create Branch" onCreate={onCreate} />
 
-					<Table columns={columns} dataSource={data} scroll={{ y: height * 0.6, x: '100vw' }} />
+					<Table
+						columns={columns}
+						dataSource={data}
+						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+						loading={status === request.REQUESTING}
+					/>
 
 					<CreateEditBranchModal
 						branch={selectedBranch}

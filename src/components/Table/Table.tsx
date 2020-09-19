@@ -1,14 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { VariableSizeGrid as Grid } from 'react-window';
-import ResizeObserver from 'rc-resize-observer';
-import classNames from 'classnames';
 import { Table as AntdTable } from 'antd';
+import { default as classNames, default as cn } from 'classnames';
+import ResizeObserver from 'rc-resize-observer';
+import React, { useEffect, useRef, useState } from 'react';
+import { VariableSizeGrid as Grid } from 'react-window';
 import './style.scss';
 
 export const ROW_HEIGHT = 65;
 
-export const Table = (props) => {
-	const { columns, scroll } = props;
+interface Props {
+	columns: any;
+	scroll: any;
+	dataSource: any;
+	loading?: boolean;
+	hasCustomHeaderComponent?: boolean;
+}
+
+export const Table = (props: Props) => {
+	const { columns, scroll, loading, hasCustomHeaderComponent } = props;
 	const [tableWidth, setTableWidth] = useState(0);
 
 	const widthColumnCount = columns.filter(({ width }) => !width).length;
@@ -89,11 +97,17 @@ export const Table = (props) => {
 		>
 			<AntdTable
 				{...props}
-				className="VirtualTable"
+				className={cn('VirtualTable', { hasCustomHeaderComponent })}
 				columns={mergedColumns}
 				pagination={false}
 				components={{ body: renderVirtualList }}
+				loading={loading}
 			/>
 		</ResizeObserver>
 	);
+};
+
+Table.defaultProps = {
+	loading: false,
+	hasCustomHeaderComponent: false,
 };

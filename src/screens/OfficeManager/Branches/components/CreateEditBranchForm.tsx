@@ -2,7 +2,7 @@ import { Col, Divider, Row } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, InputLabel } from '../../../../components/elements';
+import { Button, FieldError, FormInputLabel } from '../../../../components/elements';
 import { sleep } from '../../../../utils/function';
 
 interface ICreateBranch {
@@ -50,7 +50,7 @@ export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Pro
 				<Form className="form">
 					<Row>
 						<Col span={24}>
-							<InputLabel id="name" label="Name" />
+							<FormInputLabel id="name" label="Name" />
 							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
 						</Col>
 					</Row>

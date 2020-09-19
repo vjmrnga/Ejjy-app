@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectors, types, actions } from '../ducks/products';
-import { request } from '../global/variables';
+import { actions, selectors, types } from '../ducks/OfficeManager/products';
+import { request } from '../global/types';
 import { modifiedCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
 
@@ -25,10 +25,6 @@ export const useProducts = () => {
 	const createProduct = useActionDispatch(actions.createProduct);
 	const editProduct = useActionDispatch(actions.editProduct);
 	const removeProduct = useActionDispatch(actions.removeProduct);
-
-	useEffect(() => {
-		getProductsRequest();
-	}, []);
 
 	const reset = () => {
 		resetError();

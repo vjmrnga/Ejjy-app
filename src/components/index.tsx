@@ -4,6 +4,7 @@ export * from './ButtonIcons/ButtonIcons';
 export * from './CommonRoute/CommonRoute';
 export * from './Icons/Icons';
 export * from './Partials/Container/Container';
+export * from './QuantitySelect/QuantitySelect';
 export * from './Table/Table';
 export * from './Table/TableActions/TableActions';
 export * from './Table/TableHeaders/TableHeader';

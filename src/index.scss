@@ -5,6 +5,7 @@
 body {
 	background-color: $color-main-background;
 	font-family: $font-primary;
+	color: $color-dark;
 }
 
 .ml-10 {
@@ -19,21 +20,35 @@ body {
 	.ant-modal-content {
 		margin: 25px;
 		border-radius: 10px;
+		max-height: 85vh;
 		overflow: hidden;
 	}
 
 	.ant-modal {
 		width: 100% !important;
 		min-width: 350px !important;
-		max-width: 800px !important;
+		max-width: 1100px !important;
 	}
 
 	.ant-modal-body {
 		overflow-y: auto;
-		max-height: 80vh;
+		max-height: 70vh;
 	}
 
 	.custom-footer {
 		@include flex($justify-content: flex-end);
+	}
+}
+
+.quantity-container {
+	@include flex();
+
+	& > *:first-child {
+		margin-right: 8px;
+	}
+
+	select {
+		width: 80px;
+		font-size: 12px;
 	}
 }

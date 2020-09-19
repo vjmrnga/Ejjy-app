@@ -1,3 +1,1 @@
-import purchaseRequestsSagas from './purchase-requests';
-
-export const branchManagerSagas = [...purchaseRequestsSagas];
+export const branchManagerSagas = [];

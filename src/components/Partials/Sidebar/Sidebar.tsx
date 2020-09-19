@@ -4,9 +4,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { userTypes } from '../../../global/variables';
-import './style.scss';
 import { selectors } from '../../../ducks/auth';
+import { userTypes } from '../../../global/types';
+import { getUserTypeName } from '../../../utils/function';
+import './style.scss';
 
 const SidebarItems = [
 	{
@@ -93,8 +94,8 @@ export const Sidebar = () => {
 					className="avatar"
 				/>
 				<div>
-					<span className="name">Emman Jae</span>
-					<span className="role">Superadmin</span>
+					<span className="name">{`${user.first_name} ${user.last_name}`}</span>
+					<span className="role">{getUserTypeName(user.user_type)}</span>
 				</div>
 			</div>
 		</Layout.Sider>

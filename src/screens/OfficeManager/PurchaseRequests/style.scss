@@ -2,3 +2,21 @@
 
 .PurchaseRequests {
 }
+
+.ViewPurchaseRequest {
+	.details {
+		padding: 25px 25px 0 25px;
+	}
+
+	.requested-products {
+		padding: 0 25px 10px 25px;
+	}
+
+	.order-slip-actions {
+		@include flex();
+
+		& > *:not(:last-child) {
+			margin-right: 10px;
+		}
+	}
+}

@@ -1,26 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react';
+import { lowerCase } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
+import { types } from '../../../ducks/OfficeManager/products';
+import { LINK_VOID } from '../../../global/constants';
+import { request } from '../../../global/types';
 import { useProducts } from '../../../hooks/useProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { calculateTableHeight } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
+// NOTE: THIS IS NOT COMPLETED YET, NOT PART OF ANY SPRINTS YET.
 const Products = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const { height } = useWindowDimensions();
-	const { products } = useProducts();
+	const { status, products, getProducts, recentRequest } = useProducts();
+
+	useEffect(() => {
+		getProducts();
+	}, []);
 
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
@@ -30,7 +36,7 @@ const Products = () => {
 			return {
 				_barcode: barcode,
 				barcode: (
-					<a href="#" onClick={() => onView(product)}>
+					<a href={LINK_VOID} onClick={() => onView(product)}>
 						{barcode}
 					</a>
 				),
@@ -42,12 +48,18 @@ const Products = () => {
 		setTableData(formattedProducts);
 	}, [products]);
 
+	const getFetchLoading = useCallback(
+		() => status === request.REQUESTING && recentRequest === types.GET_PRODUCTS,
+		[status, recentRequest],
+	);
+
 	const onView = (product) => {
 		setSelectedProduct(product);
 		setViewProductModalVisible(true);
 	};
 
 	const onSearch = (keyword) => {
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
@@ -57,7 +69,7 @@ const Products = () => {
 	};
 
 	return (
-		<Container title="Products">
+		<Container title="Products" loading={getFetchLoading()} loadingText="Fetching products...">
 			<section className="Products">
 				<Box>
 					<TableHeader onSearch={onSearch} />
@@ -65,7 +77,8 @@ const Products = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
+						loading={status === request.REQUESTING}
 					/>
 
 					<ViewProductModal

@@ -1,7 +1,6 @@
 import { Modal } from 'antd';
 import React from 'react';
 import { FieldError } from '../../../../../components/elements';
-import { Option } from '../../../../../components/elements/Select/Select';
 import { CreateEditBranchProductsForm } from './CreateEditBranchProductsForm';
 
 interface Props {
@@ -9,7 +8,6 @@ interface Props {
 	branchName: string;
 	branchId: number;
 	branchProduct: any;
-	productOptions: Option[];
 	onSubmit: any;
 	onClose: any;
 	errors: string[];
@@ -20,7 +18,6 @@ export const CreateEditBranchProductsModal = ({
 	branchId,
 	branchName,
 	branchProduct,
-	productOptions,
 	visible,
 	onSubmit,
 	onClose,
@@ -43,7 +40,6 @@ export const CreateEditBranchProductsModal = ({
 			<CreateEditBranchProductsForm
 				branchId={branchId}
 				branchProduct={branchProduct}
-				productOptions={productOptions}
 				onSubmit={onSubmit}
 				onClose={onClose}
 				loading={loading}

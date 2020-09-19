@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { flatten, values } from 'lodash';
 import { actions as authActions, key as AUTH_KEY } from './ducks/auth';
-import { API_TIMEOUT, API_URL, NO_VERIFICATION_NEEDED } from './global/variables';
+import { API_TIMEOUT, API_URL, NO_VERIFICATION_NEEDED } from './services';
 
 const VERIFY_TOKEN_URL = `${API_URL}/tokens/access/verify/`;
 const RENEW_ACCESS_TOKEN_URL = `${API_URL}/tokens/renew/`;

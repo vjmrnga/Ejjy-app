@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/auth';
-import { request } from '../global/variables';
+import { request } from '../global/types';
 import { service } from '../services/auth';
 
 /* WORKERS */

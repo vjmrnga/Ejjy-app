@@ -2,8 +2,8 @@ import cn from 'classnames';
 import { debounce } from 'lodash';
 import React, { useCallback } from 'react';
 import { AddIcon } from '../..';
-import { Button, SearchInput, StatusSelect } from '../../elements';
-import { Option } from '../../elements/StatusSelect/StatusSelect';
+import { Button, SearchInput, Select } from '../../elements';
+import { Option } from '../../elements/Select/Select';
 import './style.scss';
 
 const SEARCH_DEBOUNCE_TIME = 250; // 250ms
@@ -55,11 +55,11 @@ export const TableHeader = ({
 				)}
 
 				{onStatusSelect && (
-					<StatusSelect
+					<Select
 						classNames="status-select"
 						options={statuses}
 						placeholder="status"
-						onChange={(event) => onStatusSelect(event.target.value)}
+						onChange={onStatusSelect}
 					/>
 				)}
 

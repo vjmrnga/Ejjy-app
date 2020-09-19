@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/branch-products';
-import { selectors as branchesSelectors } from '../../../ducks/branches';
-import { request } from '../../../global/variables';
+import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
+import { request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useProducts } from '../../../hooks/useProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
+import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditBranchProductsModal } from './components/BranchProducts/CreateEditBranchProductsModal';
 import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
 import './style.scss';
 
-interface IBranchesProps {
+interface Props {
 	match: any;
 }
 
@@ -25,13 +25,22 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const Branches = ({ match }: IBranchesProps) => {
+const ViewBranch = ({ match }: Props) => {
+	// Routing
 	const branchId = match?.params?.id;
-	const { branchProducts, editBranchProduct, status, errors, recentRequest } = useBranchProducts();
-	const { products } = useProducts();
-	const { height } = useWindowDimensions();
+
+	// Custom hooks
+	const {
+		branchProducts,
+		getBranchProductsByBranch,
+		editBranchProduct,
+		status,
+		errors,
+		recentRequest,
+	} = useBranchProducts();
 	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
+	// States
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
 	const [createEditBranchProductModalVisible, setCreateEditBranchProductModalVisible] = useState(
@@ -40,11 +49,15 @@ const Branches = ({ match }: IBranchesProps) => {
 	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
+	// Effect: Fetch branch products
+	useEffect(() => {
+		getBranchProductsByBranch(branchId);
+	}, []);
+
 	// Effect: Format branch products to be rendered in Table
 	useEffect(() => {
-		const formattedBranchProducts = branchProducts
-			.filter(({ branch_id }) => branch_id === Number(branchId))
-			.map((branchProduct) => {
+		if (status === request.SUCCESS && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH) {
+			const formattedBranchProducts = branchProducts.map((branchProduct) => {
 				const {
 					product: { barcode, name, max_balance },
 					current_balance,
@@ -63,9 +76,10 @@ const Branches = ({ match }: IBranchesProps) => {
 				};
 			});
 
-		setData(formattedBranchProducts);
-		setTableData(formattedBranchProducts);
-	}, [branchProducts]);
+			setData(formattedBranchProducts);
+			setTableData(formattedBranchProducts);
+		}
+	}, [branchProducts, status, recentRequest]);
 
 	// Effect: Reload the list if recent requests are Create, Edit or Remove
 	useEffect(() => {
@@ -75,18 +89,10 @@ const Branches = ({ match }: IBranchesProps) => {
 		}
 	}, [status, recentRequest]);
 
-	const getProductOptions = useCallback(() => {
-		const existingProductsIds = branchProducts.map(({ product_id }) => product_id);
-		const filteredProducts = selectedBranchProduct
-			? products
-			: products.filter(({ id }) => !existingProductsIds.includes(id));
-
-		return filteredProducts.map(({ id, name }) => ({
-			name,
-			value: id,
-			selected: selectedBranchProduct?.product_id === id,
-		}));
-	}, [products, branchProducts, selectedBranchProduct]);
+	const getFetchLoading = useCallback(
+		() => status === request.REQUESTING && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH,
+		[status, recentRequest],
+	);
 
 	const getSelectedProductBranchForView = useCallback(() => {
 		return selectedBranchProduct
@@ -113,6 +119,7 @@ const Branches = ({ match }: IBranchesProps) => {
 	};
 
 	const onSearch = (keyword) => {
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
@@ -126,6 +133,8 @@ const Branches = ({ match }: IBranchesProps) => {
 			title="[VIEW] Branch"
 			rightTitle={branch?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			loadingText="Fetching branch details..."
+			loading={getFetchLoading()}
 		>
 			<section>
 				<Box>
@@ -134,7 +143,7 @@ const Branches = ({ match }: IBranchesProps) => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 					/>
 
 					<ViewBranchProductModal
@@ -148,7 +157,6 @@ const Branches = ({ match }: IBranchesProps) => {
 						branchName={branch?.name}
 						branchId={branchId}
 						branchProduct={selectedBranchProduct}
-						productOptions={getProductOptions()}
 						visible={createEditBranchProductModalVisible}
 						onSubmit={editBranchProduct}
 						onClose={() => setCreateEditBranchProductModalVisible(false)}
@@ -161,4 +169,4 @@ const Branches = ({ match }: IBranchesProps) => {
 	);
 };
 
-export default Branches;
+export default ViewBranch;

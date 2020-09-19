@@ -1,6 +1,7 @@
 // Common
 export { default as Login } from './Login/Login';
 export { default as Error404 } from './404/404';
+export { default as Landing } from './Landing/Landing';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';
@@ -17,4 +18,6 @@ export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Das
 export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
 export { default as OfficeManagerProducts } from './OfficeManager/Products/Products';
 export { default as OfficeManagerPurchaseRequests } from './OfficeManager/PurchaseRequests/PurchaseRequests';
+export { default as OfficeManagerViewPurchaseRequest } from './OfficeManager/PurchaseRequests/ViewPurchaseRequest';
+
 export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';

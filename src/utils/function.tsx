@@ -1,8 +1,9 @@
 import { message } from 'antd';
-import { memoize } from 'lodash';
+import { floor, memoize } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import {
+	AddedToOSBadgePill,
 	AvailableBadgePill,
 	FDS1CreatedBadgePill,
 	FDS1DoneBadgePill,
@@ -10,13 +11,28 @@ import {
 	FOS1CreatedBadgePill,
 	FOS1PreparedBadgePill,
 	NewBadgePill,
+	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
 	ReorderBadgePill,
+	ROW_HEIGHT,
 	SeenBadgePill,
 } from '../components';
-import { branchProductStatus, purchaseRequestActions, request } from '../global/variables';
+import { BadgePill } from '../components/elements';
+import {
+	branchProductStatus,
+	orderSlipStatus,
+	purchaseRequestActions,
+	purchaseRequestProductStatus,
+	request,
+	userTypes,
+} from '../global/types';
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export const calculateTableHeight = (listLength) => {
+	const MAX_ROW_COUNT = 6;
+	return ROW_HEIGHT * (listLength <= MAX_ROW_COUNT ? listLength : MAX_ROW_COUNT);
+};
 
 export const showMessage = (status, successMessage, errorMessage) => {
 	if (status === request.SUCCESS) {
@@ -27,6 +43,10 @@ export const showMessage = (status, successMessage, errorMessage) => {
 };
 
 export const formatDateTime = (datetime) => moment(datetime).format('MM/DD/YYYY h:mma ');
+
+export const convertToBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
+
+export const convertToPieces = (bulk, piecesInBulk) => bulk * piecesInBulk;
 
 export const modifiedCallback = (callback, successMessage, errorMessage) => {
 	return (response) => {
@@ -71,6 +91,45 @@ export const getPurchaseRequestStatus = memoize((status) => {
 		}
 		case purchaseRequestActions.F_DS1_ERROR: {
 			return <FDS1ErrorBadgePill />;
+		}
+	}
+});
+
+export const getPurchaseRequestProductStatus = memoize((status) => {
+	switch (status) {
+		case purchaseRequestProductStatus.ADDED_TO_OS: {
+			return <AddedToOSBadgePill />;
+		}
+		case purchaseRequestProductStatus.NOT_ADDED_TO_OS: {
+			return <NotAddedToOSBadgePill />;
+		}
+	}
+});
+
+export const getOrderSlipStatus = memoize((status, percentage, isDrStatusError = false) => {
+	switch (status) {
+		case orderSlipStatus.PREPARING: {
+			return <BadgePill label={`Preparing (${percentage}%)`} />;
+		}
+		case orderSlipStatus.PREPARED: {
+			return <BadgePill label="Prepared" variant="secondary" />;
+		}
+		case orderSlipStatus.DELIVERED: {
+			return <BadgePill label="Delivered" variant={isDrStatusError ? 'error' : 'primary'} />;
+		}
+	}
+});
+
+export const getUserTypeName = memoize((type) => {
+	switch (type) {
+		case userTypes.OFFICE_MANAGER: {
+			return 'Office Manager';
+		}
+		case userTypes.BRANCH_MANAGER: {
+			return 'Branch Manager';
+		}
+		case userTypes.BRANCH_PERSONNEL: {
+			return 'Branch Personnel';
 		}
 	}
 });

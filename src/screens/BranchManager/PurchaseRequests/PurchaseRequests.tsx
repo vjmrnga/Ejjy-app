@@ -1,24 +1,23 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { floor, lowerCase, upperFirst } from 'lodash';
+import { lowerCase, upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
-import { types } from '../../../ducks/BranchManager/purchase-requests';
-import {
-	purchaseRequestActions,
-	purchaseRequestTypes,
-	quantityTypes,
-	request,
-} from '../../../global/variables';
+import { types } from '../../../ducks/purchase-requests';
+import { purchaseRequestActionsOptions } from '../../../global/options';
+import { purchaseRequestTypes, quantityTypes, request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, getPurchaseRequestStatus } from '../../../utils/function';
-import { usePurchaseRequests } from '../hooks/usePurchaseRequests';
+import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
+import {
+	calculateTableHeight,
+	convertToPieces,
+	formatDateTime,
+	getPurchaseRequestStatus,
+} from '../../../utils/function';
 import { CreatePurchaseRequestModal } from './components/CreatePurchaseRequestModal';
 import './style.scss';
 
@@ -30,43 +29,7 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'action' },
 ];
 
-const purchaseRequestActionsOptions = [
-	{
-		value: 'all',
-		name: 'All',
-	},
-	{
-		value: purchaseRequestActions.NEW,
-		name: 'New',
-	},
-	{
-		value: purchaseRequestActions.SEEN,
-		name: 'Seen',
-	},
-	{
-		value: purchaseRequestActions.F_OS1_CREATED,
-		name: 'F-OS1 Created',
-	},
-	{
-		value: purchaseRequestActions.F_OS1_PREPARED,
-		name: 'F-OS1 Prepared',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_CREATED,
-		name: 'F-DS1 Created',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_DONE,
-		name: 'F-DS1 Done',
-	},
-	{
-		value: purchaseRequestActions.F_DS1_ERROR,
-		name: 'F-DS1 Error',
-	},
-];
-
 const PurchaseRequests = () => {
-	const { height } = useWindowDimensions();
 	const user = useSelector(authSelectors.selectUser());
 
 	const [data, setData] = useState([]);
@@ -80,13 +43,17 @@ const PurchaseRequests = () => {
 		status,
 		errors,
 		recentRequest,
-	} = usePurchaseRequests(user?.branch_id);
+	} = usePurchaseRequests();
 
-	const { branchProducts, getBranchProductsByBranch } = useBranchProducts();
+	const {
+		branchProducts,
+		getBranchProductsByBranch,
+		status: branchProductsStatus,
+	} = useBranchProducts();
 
 	useEffect(() => {
-		getPurchaseRequestsExtended();
-		getBranchProductsByBranch(user?.branch_id);
+		getPurchaseRequestsExtended(user?.branch?.id);
+		getBranchProductsByBranch(user?.branch?.id);
 	}, []);
 
 	// Effect: Format purchaseRequests to be rendered in Table
@@ -126,25 +93,28 @@ const PurchaseRequests = () => {
 			.map(({ product_id, pieces_in_bulk, quantity, quantity_type }) => ({
 				product_id,
 				quantity_piece:
-					quantity_type === quantityTypes.PIECE ? quantity : quantity * pieces_in_bulk,
-				quantity_bulk:
-					quantity_type === quantityTypes.BULK ? quantity : floor(quantity / pieces_in_bulk),
+					quantity_type === quantityTypes.PIECE
+						? quantity
+						: convertToPieces(quantity, pieces_in_bulk),
 			}));
 
 		createPurchaseRequest({
-			requestor_id: user?.branch_id,
+			requestor_id: user?.branch?.id,
+			requesting_user_id: user?.id,
 			type: purchaseRequestTypes.MANUAL,
 			products,
 		});
 	};
 
 	const onSearch = (keyword) => {
-		const lcKeyword = lowerCase(keyword);
+		keyword = lowerCase(keyword);
 		const filteredData =
 			keyword.length > 0
 				? data.filter(
 						({ _id, _datetime_created, _type }) =>
-							_id == keyword || _datetime_created.includes(lcKeyword) || _type.includes(lcKeyword),
+							_id.toString() === keyword ||
+							_datetime_created.includes(keyword) ||
+							_type.includes(keyword),
 				  )
 				: data;
 
@@ -171,7 +141,8 @@ const PurchaseRequests = () => {
 					<Table
 						columns={columns}
 						dataSource={tableData}
-						scroll={{ y: height * 0.6, x: '100vw' }}
+						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
+						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
 					/>
 
 					<CreatePurchaseRequestModal
@@ -180,7 +151,7 @@ const PurchaseRequests = () => {
 						onSubmit={onCreate}
 						onClose={() => setCreateModalVisible(false)}
 						errors={errors}
-						loading={status === request.REQUESTING}
+						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
 					/>
 				</Box>
 			</section>

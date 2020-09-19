@@ -1,55 +1,77 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Col, Divider, Row } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Breadcrumb, Container, Table } from '../../../components';
+import { useHistory } from 'react-router-dom';
+import { Breadcrumb, Container, QuantitySelect, Table } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
-import { selectors } from '../../../ducks/BranchManager/purchase-requests';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useWindowDimensions } from '../../../hooks/useWindowDimensions';
-import { formatDateTime, getPurchaseRequestStatus, sleep } from '../../../utils/function';
+import { selectors, types } from '../../../ducks/purchase-requests';
+import { quantityTypes, request } from '../../../global/types';
+import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getPurchaseRequestProductStatus,
+	getPurchaseRequestStatus,
+	sleep,
+} from '../../../utils/function';
 import './style.scss';
 
-interface IBranchesProps {
+interface Props {
 	match: any;
 }
 
-const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity (Bulk)', dataIndex: 'quantity_bulk' },
-	{ title: 'Quantity (Pieces)', dataIndex: 'quantity_piece' },
-];
-
-const Branches = ({ match }: IBranchesProps) => {
+const ViewPurchaseRequest = ({ match }: Props) => {
+	// Routing
 	const purchaseRequestId = match?.params?.id;
-	const { height } = useWindowDimensions();
-	const { branchProducts } = useBranchProducts();
-	const purchaseRequest = useSelector(
-		selectors.selectPurchaseRequestById(Number(purchaseRequestId)),
-	);
+	const history = useHistory();
 
+	// Custom hooks
+	const {
+		getPurchaseRequestsById,
+		status: purchaseRequestStatus,
+		recentRequest: purchaseRequestRecentRequest,
+	} = usePurchaseRequests();
+	const purchaseRequest = useSelector(selectors.selectPurchaseRequest());
+
+	// States
 	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		getPurchaseRequestsById(purchaseRequestId);
+	}, []);
+
+	useEffect(() => {
+		if (
+			!purchaseRequest &&
+			purchaseRequestRecentRequest === types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH &&
+			purchaseRequestStatus === request.ERROR
+		) {
+			history.replace('/404');
+		}
+	}, [purchaseRequest, purchaseRequestStatus, purchaseRequestRecentRequest]);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
-		const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
-			const { product_id, quantity_bulk, quantity_piece } = requestedProduct;
-			const branchProduct = branchProducts.find((product) => product?.product_id === product_id);
-			const { barcode = '', name = '' } = branchProduct?.product;
+		if (purchaseRequest && purchaseRequestStatus === request.SUCCESS) {
+			const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
+				const { product, status } = requestedProduct;
+				const { barcode, name } = product?.product;
 
-			return {
-				barcode,
-				name,
-				quantity_bulk,
-				quantity_piece,
-			};
-		});
+				return {
+					_quantity_bulk: product?.quantity_bulk,
+					_quantity_piece: product?.quantity_piece,
+					barcode,
+					name,
+					quantity: product?.quantity_piece,
+					status: getPurchaseRequestProductStatus(status),
+				};
+			});
 
-		sleep(500).then(() => setData(formattedRequestedProducts));
-	}, [purchaseRequest]);
+			sleep(500).then(() => setData(formattedRequestedProducts));
+		}
+	}, [purchaseRequest, purchaseRequestStatus]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -57,6 +79,30 @@ const Branches = ({ match }: IBranchesProps) => {
 			{ name: `#${purchaseRequest?.id}` },
 		],
 		[purchaseRequest],
+	);
+
+	const onQuantityTypeChange = (quantityType) => {
+		const requestProducts = data.map((requestProduct) => ({
+			...requestProduct,
+			quantity:
+				quantityType === quantityTypes.PIECE
+					? requestProduct._quantity_piece
+					: requestProduct._quantity_bulk,
+		}));
+		setData(requestProducts);
+	};
+
+	const getColums = useCallback(
+		() => [
+			{ title: 'Barcode', dataIndex: 'barcode' },
+			{ title: 'Name', dataIndex: 'name' },
+			{
+				title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
+				dataIndex: 'quantity',
+			},
+			{ title: 'Status', dataIndex: 'status' },
+		],
+		[onQuantityTypeChange],
 	);
 
 	return (
@@ -79,7 +125,7 @@ const Branches = ({ match }: IBranchesProps) => {
 							</Row>
 							<Row gutter={[15, 15]}>
 								<Col span={12}>
-									<Label label="Type" />
+									<Label label="Request Type" />
 								</Col>
 								<Col span={12}>
 									<span>{upperFirst(purchaseRequest?.type)}</span>
@@ -100,14 +146,24 @@ const Branches = ({ match }: IBranchesProps) => {
 
 					<div className="requested-products">
 						<Divider dashed />
-						<Label label="Requested Products" />
+						<Row gutter={[15, 15]} align="middle">
+							<Col span={24}>
+								<Label label="Requested Products" />
+							</Col>
+						</Row>
 					</div>
 
-					<Table columns={columns} dataSource={data} scroll={{ y: height * 0.5, x: '100vw' }} />
+					<Table
+						columns={getColums()}
+						dataSource={data}
+						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+						loading={purchaseRequestStatus === request.REQUESTING}
+						hasCustomHeaderComponent
+					/>
 				</Box>
 			</section>
 		</Container>
 	);
 };
 
-export default Branches;
+export default ViewPurchaseRequest;
