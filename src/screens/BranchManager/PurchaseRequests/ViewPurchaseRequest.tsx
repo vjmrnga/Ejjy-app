@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container, QuantitySelect, Table } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { selectors, types } from '../../../ducks/purchase-requests';
 import { quantityTypes, request } from '../../../global/types';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
@@ -29,9 +28,8 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 	const history = useHistory();
 
 	// Custom hooks
-	const user = useSelector(authSelectors.selectUser());
 	const {
-		getPurchaseRequestsByIdAndBranch,
+		getPurchaseRequestsById,
 		status: purchaseRequestStatus,
 		recentRequest: purchaseRequestRecentRequest,
 	} = usePurchaseRequests();
@@ -41,7 +39,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 	const [data, setData] = useState([]);
 
 	useEffect(() => {
-		getPurchaseRequestsByIdAndBranch(purchaseRequestId, user?.branch?.id);
+		getPurchaseRequestsById(purchaseRequestId);
 	}, []);
 
 	useEffect(() => {

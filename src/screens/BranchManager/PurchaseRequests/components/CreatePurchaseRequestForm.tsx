@@ -12,7 +12,7 @@ import {
 } from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
-import { convertBulk, getBranchProductStatus, sleep } from '../../../../utils/function';
+import { convertToBulk, getBranchProductStatus, sleep } from '../../../../utils/function';
 
 const columns = [
 	{ name: '', width: '80px' },
@@ -100,7 +100,7 @@ export const CreatePurchaseRequestForm = ({
 		return values?.branchProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
 			<span>{current_balance}</span>
 		) : (
-			<span>{convertBulk(current_balance, pieces_in_bulk)}</span>
+			<span>{convertToBulk(current_balance, pieces_in_bulk)}</span>
 		);
 	};
 

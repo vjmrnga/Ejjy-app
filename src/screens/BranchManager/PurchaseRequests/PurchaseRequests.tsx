@@ -14,6 +14,7 @@ import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
 	calculateTableHeight,
+	convertToPieces,
 	formatDateTime,
 	getPurchaseRequestStatus,
 } from '../../../utils/function';
@@ -92,7 +93,9 @@ const PurchaseRequests = () => {
 			.map(({ product_id, pieces_in_bulk, quantity, quantity_type }) => ({
 				product_id,
 				quantity_piece:
-					quantity_type === quantityTypes.PIECE ? quantity : quantity * pieces_in_bulk,
+					quantity_type === quantityTypes.PIECE
+						? quantity
+						: convertToPieces(quantity, pieces_in_bulk),
 			}));
 
 		createPurchaseRequest({

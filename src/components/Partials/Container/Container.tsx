@@ -45,7 +45,7 @@ export const Container = ({
 
 								{breadcrumb}
 							</div>
-							<h3 className="page-title">{rightTitle}</h3>
+							<h3 className="page-title">{rightTitle || ''}</h3>
 						</section>
 					</Header>
 					<Content className="page-content">{children}</Content>

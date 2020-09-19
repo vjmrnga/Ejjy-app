@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 
@@ -38,7 +39,7 @@ const reducer = handleActions(
 					break;
 				}
 				case types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH: {
-					const purchaseRequestsByBranch = state.purchaseRequestsByBranch;
+					const purchaseRequestsByBranch = cloneDeep(state.purchaseRequestsByBranch);
 					purchaseRequestsByBranch[payload?.branchId] = payload.purchaseRequest;
 					newData = { purchaseRequestsByBranch };
 					break;
@@ -52,7 +53,7 @@ const reducer = handleActions(
 			return { ...state, ...newData };
 		},
 
-		[types.REMOVE_PURCHASE_REQUEST_BY_BRANCH]: (state, { payload }: any) => {
+		[types.REMOVE_PURCHASE_REQUEST_BY_BRANCH]: (state: any) => {
 			return { ...state, purchaseRequestsByBranch: {} };
 		},
 	},

@@ -6,8 +6,8 @@ import { request } from '../global/types';
 import { modifiedCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
 
-const EDIT_SUCCESS_MESSAGE = 'Branch Product edited successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch';
+const EDIT_SUCCESS_MESSAGE = 'Branch product edited successfully';
+const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch product';
 
 export const useBranchProducts = () => {
 	const [status, setStatus] = useState<any>(request.NONE);

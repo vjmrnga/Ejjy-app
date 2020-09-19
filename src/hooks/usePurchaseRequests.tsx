@@ -7,10 +7,10 @@ import { modifiedCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
 
 const CREATE_SUCCESS_MESSAGE = 'Purchase Request created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the branch';
+const CREATE_ERROR_MESSAGE = 'An error occurred while creating the purchase request';
 
 const EDIT_SUCCESS_MESSAGE = 'Purchase Request updated successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while updating the branch';
+const EDIT_ERROR_MESSAGE = 'An error occurred while updating the purchase request';
 
 export const usePurchaseRequests = () => {
 	const [status, setStatus] = useState<any>(request.NONE);

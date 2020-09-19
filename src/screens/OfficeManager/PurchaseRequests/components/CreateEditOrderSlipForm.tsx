@@ -186,6 +186,7 @@ export const CreateEditOrderSlipForm = ({
 									// Assigned Personnel
 									getAssignedPersonnel(index, values),
 								])}
+								loading={loading}
 							/>
 
 							<Divider dashed />

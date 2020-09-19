@@ -1,5 +1,7 @@
+import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
+import { NOT_FOUND_INDEX } from '../../global/constants';
 
 export const key = 'OM_ORDER_SLIPS';
 
@@ -28,21 +30,21 @@ const reducer = handleActions(
 					newData = { orderSlips: payload.orderSlips };
 					break;
 				}
-				// case types.CREATE_BRANCH: {
-				// 	newData = { branches: [payload.branch, ...state.branches] };
-				// 	break;
-				// }
-				// case types.EDIT_BRANCH: {
-				// 	const { branch: editedBranch } = payload;
-				// 	const index = state.branches.findIndex(({ id }) => id === editedBranch.id);
+				case types.CREATE_ORDER_SLIP: {
+					newData = { orderSlips: [payload.orderSlip, ...state.orderSlips] };
+					break;
+				}
+				case types.EDIT_ORDER_SLIP: {
+					const { orderSlip: editedOrderSlip } = payload;
+					const index = state.orderSlips.findIndex(({ id }) => id === editedOrderSlip.id);
 
-				// 	if (index !== NOT_FOUND_INDEX) {
-				// 		const branches = cloneDeep(state.branches);
-				// 		branches[index] = editedBranch;
-				// 		newData = { branches };
-				// 	}
-				// 	break;
-				// }
+					if (index !== NOT_FOUND_INDEX) {
+						const orderSlips = cloneDeep(state.orderSlips);
+						orderSlips[index] = editedOrderSlip;
+						newData = { orderSlips };
+					}
+					break;
+				}
 				// case types.REMOVE_BRANCH: {
 				// 	newData = { branches: state.branches.filter(({ id }) => id !== payload.id) };
 				// 	break;

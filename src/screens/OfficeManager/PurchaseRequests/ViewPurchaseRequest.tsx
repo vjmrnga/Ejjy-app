@@ -4,8 +4,7 @@ import { message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Container, QuantitySelect, Table, TableHeader } from '../../../components';
-import { Box } from '../../../components/elements';
+import { Breadcrumb, Container, QuantitySelect } from '../../../components';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { types as orderSlipsTypes } from '../../../ducks/OfficeManager/order-slips';
 import { selectors, types } from '../../../ducks/purchase-requests';
@@ -18,31 +17,22 @@ import {
 } from '../../../global/types';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
-	calculateTableHeight,
-	convertBulk,
+	convertToBulk,
+	convertToPieces,
 	formatDateTime,
 	getOrderSlipStatus,
 	sleep,
 } from '../../../utils/function';
 import { useBranches } from '../hooks/useBranches';
 import { useOrderSlips } from '../hooks/useOrderSlips';
-import { CreateEditOrderSlipModal } from './components/CreateEditOrderSlipModal';
 import { OrderSlipActions } from './components/OrderSlipActions';
+import { OrderSlipList } from './components/OrderSlipList';
 import { RequestedProducts } from './components/RequestedProducts';
-import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 import './style.scss';
 
 interface Props {
 	match: any;
 }
-
-const orderSlipsColumns = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
-	{ title: 'Status', dataIndex: 'status' },
-	{ title: 'DR Status', dataIndex: 'dr_status' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
 
 const ViewPurchaseRequest = ({ match }: Props) => {
 	// Routing
@@ -106,11 +96,11 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 	useEffect(() => {
 		if (purchaseRequest && purchaseRequestStatus === request.SUCCESS) {
 			const formattedRequestedProducts = purchaseRequest?.products.map((requestedProduct) => {
-				const { product, quantity_piece, quantity_bulk } = requestedProduct;
-				const { barcode, name } = product;
+				const { product, quantity_piece } = requestedProduct;
+				const { barcode, name, pieces_in_bulk } = product;
 
 				return {
-					_quantity_bulk: quantity_bulk,
+					_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
 					_quantity_piece: quantity_piece,
 					barcode,
 					name,
@@ -141,10 +131,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 	// Effect: Format order slips to be rendered in Table
 	useEffect(() => {
-		if (
-			orderSlipStatus === request.SUCCESS &&
-			orderSlipRecentRequest === orderSlipsTypes.GET_ORDER_SLIPS_EXTENDED
-		) {
+		if (orderSlipStatus === request.SUCCESS) {
 			const formattedOrderSlips = orderSlips.map((orderSlip) => {
 				const { id, datetime_created, status } = orderSlip;
 				const { value, percentage_fulfilled } = status;
@@ -163,7 +150,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 			});
 			sleep(500).then(() => setOrderSlipsData(formattedOrderSlips));
 		}
-	}, [orderSlipStatus, orderSlipRecentRequest]);
+	}, [orderSlipStatus]);
 
 	// Effect: Close modal if create/edit success
 	useEffect(() => {
@@ -176,86 +163,80 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 	const processOrderSlip = (orderSlip = null) => {
 		const branchData = purchaseRequestsByBranch?.[selectedBranchId];
-		let requestedProducts = [];
-
 		if (branchData) {
+			let requestedProducts = [];
+
 			const personnelOptions = branchData.branch_personnels.map((personnel) => ({
 				value: personnel.id,
 				name: `${personnel.first_name} ${personnel.last_name}`,
 			}));
 			setAssignedPersonnelOptions(personnelOptions);
-		}
 
-		if (orderSlip) {
-			const findBranchBalance = (productId) =>
-				branchData.products.find(({ product }) => product?.product_id === productId)
-					?.branch_balance;
+			if (orderSlip) {
+				const findBranchBalance = (productId) =>
+					branchData.products.find(({ product }) => product?.product_id === productId)
+						?.branch_balance;
 
-			requestedProducts = orderSlip.products.map((product) => {
-				const { id: orderSlipProductId, quantity_piece, quantity_bulk, assigned_person } = product;
-				const { id: productId, name, barcode, pieces_in_bulk } = product.product;
-				const { current = '', max_balance = '' } = findBranchBalance(productId);
-
-				return {
-					order_slip_product_id: orderSlipProductId,
-					selected: true,
-					product_id: productId,
-					product_name: name,
-					product_barcode: barcode,
-					product_pieces_in_bulk: pieces_in_bulk,
-					quantity: quantity_piece >= 0 ? quantity_piece : quantity_bulk,
-					quantity_piece,
-					quantity_bulk,
-					quantity_type: quantity_piece ? quantityTypes.PIECE : quantityTypes.BULK,
-					branch_current: current,
-					branch_max_balance: max_balance,
-					branch_current_bulk: convertBulk(current, pieces_in_bulk),
-					branch_max_balance_bulk: convertBulk(max_balance, pieces_in_bulk),
-					assigned_personnel: assigned_person?.id,
-				};
-			});
-
-			setPurchaseRequestProducts(requestedProducts);
-		}
-
-		if (branchData && !orderSlip) {
-			requestedProducts = branchData.products
-				.filter(({ status }) => status === purchaseRequestProductStatus.NOT_ADDED_TO_OS)
-				.map((product) => {
-					const { id: productId, name, barcode, pieces_in_bulk } = product.product.product;
-					const { quantity_piece, quantity_bulk } = product.product;
-					const { current, max_balance } = product.branch_balance;
+				requestedProducts = orderSlip.products.map((product) => {
+					const {
+						id: orderSlipProductId,
+						quantity_piece,
+						quantity_bulk,
+						assigned_person,
+					} = product;
+					const { id: productId, name, barcode, pieces_in_bulk } = product.product;
+					const { current = '', max_balance = '' } = findBranchBalance(productId);
 
 					return {
+						order_slip_product_id: orderSlipProductId,
 						selected: true,
 						product_id: productId,
 						product_name: name,
 						product_barcode: barcode,
 						product_pieces_in_bulk: pieces_in_bulk,
-						quantity: '',
+						quantity: quantity_piece >= 0 ? quantity_piece : quantity_bulk,
 						quantity_piece,
 						quantity_bulk,
-						quantity_type: quantityTypes.PIECE,
+						quantity_type: quantity_piece ? quantityTypes.PIECE : quantityTypes.BULK,
 						branch_current: current,
 						branch_max_balance: max_balance,
-						branch_current_bulk: convertBulk(current, pieces_in_bulk),
-						branch_max_balance_bulk: convertBulk(max_balance, pieces_in_bulk),
-						assigned_personnel: branchData?.branch_personnels?.[0]?.id,
+						branch_current_bulk: convertToBulk(current, pieces_in_bulk),
+						branch_max_balance_bulk: convertToBulk(max_balance, pieces_in_bulk),
+						assigned_personnel: assigned_person?.id,
 					};
 				});
+
+				setPurchaseRequestProducts(requestedProducts);
+			} else {
+				requestedProducts = branchData.products
+					.filter(({ status }) => status === purchaseRequestProductStatus.NOT_ADDED_TO_OS)
+					.map((product) => {
+						const { id: productId, name, barcode, pieces_in_bulk } = product.product.product;
+						const { quantity_piece } = product.product;
+						const { current, max_balance } = product.branch_balance;
+
+						return {
+							selected: true,
+							product_id: productId,
+							product_name: name,
+							product_barcode: barcode,
+							product_pieces_in_bulk: pieces_in_bulk,
+							quantity: '',
+							quantity_piece,
+							quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
+							quantity_type: quantityTypes.PIECE,
+							branch_current: current,
+							branch_max_balance: max_balance,
+							branch_current_bulk: convertToBulk(current, pieces_in_bulk),
+							branch_max_balance_bulk: convertToBulk(max_balance, pieces_in_bulk),
+							assigned_personnel: branchData?.branch_personnels?.[0]?.id,
+						};
+					});
+			}
+
+			setPurchaseRequestProducts(requestedProducts);
 		}
-
-		setPurchaseRequestProducts(requestedProducts);
 	};
-
-	const getBranchOptions = useCallback(
-		() =>
-			branches.map((branch) => ({
-				value: branch?.id,
-				name: branch?.name,
-			})),
-		[branches],
-	);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -312,7 +293,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 				quantity_piece:
 					product.quantity_type === quantityTypes.PIECE
 						? product.quantity
-						: product.quantity * product.pieces_in_bulk,
+						: convertToPieces(product.quantity, product.pieces_in_bulk),
 				assigned_person_id: product.assigned_personnel,
 			}));
 
@@ -346,7 +327,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 				quantity_piece:
 					product.quantity_type === quantityTypes.PIECE
 						? product.quantity
-						: product.quantity * product.pieces_in_bulk,
+						: convertToPieces(product.quantity, product.pieces_in_bulk),
 				assigned_person_id: product.assigned_personnel,
 			}));
 
@@ -386,37 +367,29 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 					data={requestedProductsData}
 				/>
 
-				<Box>
-					<TableHeader title="F-OS1" buttonName="Create Order Slip" onCreate={onCreateOrderSlip} />
-
-					<Table
-						columns={orderSlipsColumns}
-						dataSource={orderSlipsData}
-						scroll={{ y: calculateTableHeight(orderSlipsData.length), x: '100%' }}
-						loading={purchaseRequestStatus === request.REQUESTING}
-					/>
-
-					<ViewOrderSlipModal
-						visible={viewOrderSlipVisible}
-						orderSlip={selectedOrderSlip}
-						onClose={() => setViewOrderSlipVisible(false)}
-					/>
-
-					<CreateEditOrderSlipModal
-						selectedBranchId={selectedBranchId}
-						orderSlip={selectedOrderSlip}
-						requestedProducts={purchaseRequestProducts}
-						branchOptions={getBranchOptions()}
-						onChangePreparingBranch={onChangePreparingBranch}
-						assignedPersonnelOptions={assignedPersonnelOptions}
-						purchaseRequest={purchaseRequest}
-						visible={createEditOrderSlipVisible}
-						onSubmit={selectedOrderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
-						onClose={() => setCreateEditOrderSlipVisible(false)}
-						errors={[]}
-						loading={false}
-					/>
-				</Box>
+				<OrderSlipList
+					// Table Header
+					onCreateOrderSlip={onCreateOrderSlip}
+					// Table
+					orderSlips={orderSlipsData}
+					purchaseRequestStatus={purchaseRequestStatus}
+					// View Order Slip Modal
+					viewOrderSlipVisible={viewOrderSlipVisible}
+					onCloseViewOrderSlip={() => setViewOrderSlipVisible(false)}
+					orderSlip={selectedOrderSlip}
+					// Creat Edit Order Slip Modal
+					branches={branches}
+					purchaseRequest={purchaseRequest}
+					purchaseRequestProducts={purchaseRequestProducts}
+					selectedBranchId={selectedBranchId}
+					onChangePreparingBranch={onChangePreparingBranch}
+					assignedPersonnelOptions={assignedPersonnelOptions}
+					createEditOrderSlipVisible={createEditOrderSlipVisible}
+					onCreateEditOrderSlip={
+						selectedOrderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit
+					}
+					onCloseCreateEditOrderSlip={() => setCreateEditOrderSlipVisible(false)}
+				/>
 			</section>
 		</Container>
 	);

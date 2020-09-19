@@ -24,6 +24,7 @@ import {
 	purchaseRequestActions,
 	purchaseRequestProductStatus,
 	request,
+	userTypes,
 } from '../global/types';
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -43,7 +44,9 @@ export const showMessage = (status, successMessage, errorMessage) => {
 
 export const formatDateTime = (datetime) => moment(datetime).format('MM/DD/YYYY h:mma ');
 
-export const convertBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
+export const convertToBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
+
+export const convertToPieces = (bulk, piecesInBulk) => bulk * piecesInBulk;
 
 export const modifiedCallback = (callback, successMessage, errorMessage) => {
 	return (response) => {
@@ -113,6 +116,20 @@ export const getOrderSlipStatus = memoize((status, percentage, isDrStatusError =
 		}
 		case orderSlipStatus.DELIVERED: {
 			return <BadgePill label="Delivered" variant={isDrStatusError ? 'error' : 'primary'} />;
+		}
+	}
+});
+
+export const getUserTypeName = memoize((type) => {
+	switch (type) {
+		case userTypes.OFFICE_MANAGER: {
+			return 'Office Manager';
+		}
+		case userTypes.BRANCH_MANAGER: {
+			return 'Branch Manager';
+		}
+		case userTypes.BRANCH_PERSONNEL: {
+			return 'Branch Personnel';
 		}
 	}
 });
