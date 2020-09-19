@@ -27,6 +27,7 @@ export const usePurchaseRequests = () => {
 	);
 	const createPurchaseRequest = useActionDispatch(actions.createPurchaseRequest);
 	const editPurchaseRequest = useActionDispatch(actions.editPurchaseRequest);
+	const removePurchaseRequestByBranch = useActionDispatch(actions.removePurchaseRequestByBranch);
 
 	const reset = () => {
 		resetError();
@@ -92,6 +93,7 @@ export const usePurchaseRequests = () => {
 		getPurchaseRequestsByIdAndBranch: getPurchaseRequestsByIdAndBranchRequest,
 		createPurchaseRequest: createPurchaseRequestRequest,
 		editPurchaseRequest: editPurchaseRequestRequest,
+		removePurchaseRequestByBranch,
 		status,
 		errors,
 		recentRequest,

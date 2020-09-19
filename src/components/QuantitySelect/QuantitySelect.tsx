@@ -16,7 +16,7 @@ export const QuantitySelect = ({ onQuantityTypeChange }: Props) => {
 				classNames="quantity-select"
 				options={quantityTypeOptions}
 				placeholder="quantity"
-				defaultValue={quantityTypes.PIECE}
+				value={quantityTypes.PIECE}
 				onChange={onQuantityTypeChange}
 			/>
 		</div>
