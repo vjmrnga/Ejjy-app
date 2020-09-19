@@ -14,10 +14,14 @@ interface Props {
 	onChange: any;
 	classNames?: any;
 	value?: any;
+	disabled?: boolean;
 }
 
-const Select = ({ options, placeholder, onChange, classNames, value }: Props) => (
-	<select className={cn('Select', classNames)} onChange={(event) => onChange(event.target.value)}>
+const Select = ({ options, placeholder, onChange, classNames, value, disabled }: Props) => (
+	<select
+		className={cn('Select', classNames, { disabled })}
+		onChange={(event) => onChange(event.target.value)}
+	>
 		{placeholder && (
 			<option value={null} selected disabled>
 				{placeholder}
@@ -33,7 +37,8 @@ const Select = ({ options, placeholder, onChange, classNames, value }: Props) =>
 );
 
 Select.defaultProps = {
-	defaultValue: null,
+	value: null,
+	disabled: false,
 };
 
 export default Select;

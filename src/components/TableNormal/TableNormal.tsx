@@ -22,16 +22,18 @@ export const TableNormal = ({ columns, data, loading }: Props) => {
 				<table>
 					<thead>
 						<tr>
-							{columns.map(({ name, width }) => (
-								<th style={{ width }}>{name}</th>
+							{columns.map(({ name, width }, index) => (
+								<th key={`th-${index}`} style={{ width }}>
+									{name}
+								</th>
 							))}
 						</tr>
 					</thead>
 					<tbody>
 						{data.map((items, index) => (
-							<tr key={index} style={{ height: `${ROW_HEIGHT}px` }}>
-								{items.map((item) => (
-									<td>{item}</td>
+							<tr key={`tr-${index}`} style={{ height: `${ROW_HEIGHT}px` }}>
+								{items.map((item, index) => (
+									<td key={`td-${index}`}>{item}</td>
 								))}
 							</tr>
 						))}

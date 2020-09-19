@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeliverButtonIcon, EditButtonIcon, ViewButtonIcon } from '../../../../components';
+import { DeliverButtonIcon, EditButtonIcon, ViewButtonIcon } from '../../../../../components';
 
 interface Props {
 	onView?: any;

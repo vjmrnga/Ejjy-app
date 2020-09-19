@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/purchase-requests';
 import { request } from '../global/types';
-import { modifiedCallback } from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
 
-const CREATE_SUCCESS_MESSAGE = 'Purchase Request created successfully';
+const CREATE_SUCCESS_MESSAGE = 'Purchase request created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the purchase request';
 
-const EDIT_SUCCESS_MESSAGE = 'Purchase Request updated successfully';
+const EDIT_SUCCESS_MESSAGE = 'Purchase request updated successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while updating the purchase request';
 
 export const usePurchaseRequests = () => {
@@ -48,15 +48,19 @@ export const usePurchaseRequests = () => {
 		getPurchaseRequestsExtended({ id: branchId, callback });
 	};
 
-	const getPurchaseRequestsByIdRequest = (id) => {
+	const getPurchaseRequestsByIdRequest = (id, extraCallback = null) => {
 		setRecentRequest(types.GET_PURCHASE_REQUEST_BY_ID);
-		getPurchaseRequestsById({ id, callback });
+		getPurchaseRequestsById({ id, callback: modifiedExtraCallback(callback, extraCallback) });
 	};
 
-	const getPurchaseRequestsByIdAndBranchRequest = (id, branchId) => {
+	const getPurchaseRequestsByIdAndBranchRequest = (id, branchId, extraCallback = null) => {
 		setRecentRequest(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH);
 		if (!purchaseRequestsByBranch?.[branchId]) {
-			getPurchaseRequestsByIdAndBranch({ id, branchId, callback });
+			getPurchaseRequestsByIdAndBranch({
+				id,
+				branchId,
+				callback: modifiedExtraCallback(callback, extraCallback),
+			});
 		} else {
 			callback({ status: request.REQUESTING });
 			callback({ status: request.SUCCESS });

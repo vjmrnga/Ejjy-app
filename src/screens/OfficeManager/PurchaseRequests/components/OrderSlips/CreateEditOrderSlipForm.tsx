@@ -2,17 +2,17 @@ import { Divider } from 'antd';
 import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { TableNormal } from '../../../../components';
+import { TableNormal } from '../../../../../components';
 import {
 	Button,
 	FieldError,
 	FormCheckbox,
 	FormInput,
 	FormSelect,
-} from '../../../../components/elements';
-import { quantityTypeOptions } from '../../../../global/options';
-import { quantityTypes } from '../../../../global/types';
-import { sleep } from '../../../../utils/function';
+} from '../../../../../components/elements';
+import { quantityTypeOptions } from '../../../../../global/options';
+import { quantityTypes } from '../../../../../global/types';
+import { sleep } from '../../../../../utils/function';
 
 const columns = [
 	{ name: '', width: '80px' },
