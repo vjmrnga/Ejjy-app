@@ -144,10 +144,12 @@ export const CreateEditOrderSlipForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			onSubmit={async (values: any) => {
-				setSubmitting(true);
-				await sleep(500);
-				setSubmitting(false);
-				onSubmit(values);
+				if (requestedProducts.length > 0) {
+					setSubmitting(true);
+					await sleep(500);
+					setSubmitting(false);
+					onSubmit(values);
+				}
 			}}
 			enableReinitialize
 		>
@@ -170,8 +172,8 @@ export const CreateEditOrderSlipForm = ({
 									// Quantity / Bulk | Pieces
 									getOrdered(
 										index,
-										requestedProduct?.quantity_piece,
-										requestedProduct?.quantity_bulk,
+										requestedProduct?.ordered_quantity_piece,
+										requestedProduct?.ordered_quantity_bulk,
 										values,
 									),
 									// Current Balance
@@ -204,6 +206,7 @@ export const CreateEditOrderSlipForm = ({
 									text={orderSlip ? 'Edit' : 'Create'}
 									variant="primary"
 									loading={loading || isSubmitting}
+									disabled={!requestedProducts.length}
 								/>
 							</div>
 						</Form>

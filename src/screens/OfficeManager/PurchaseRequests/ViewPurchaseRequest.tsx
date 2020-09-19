@@ -46,6 +46,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 		getPurchaseRequestsById,
 		getPurchaseRequestsByIdAndBranch,
 		editPurchaseRequest,
+		removePurchaseRequestByBranch,
 		status: purchaseRequestStatus,
 		recentRequest: purchaseRequestRecentRequest,
 	} = usePurchaseRequests();
@@ -79,6 +80,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 		getPurchaseRequestsById(purchaseRequestId);
 		getOrderSlipsExtended(purchaseRequestId);
+		removePurchaseRequestByBranch();
 	}, []);
 
 	// Effect: Fetch data
@@ -163,6 +165,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 
 	const processOrderSlip = (orderSlip = null) => {
 		const branchData = purchaseRequestsByBranch?.[selectedBranchId];
+
 		if (branchData) {
 			let requestedProducts = [];
 
@@ -177,15 +180,18 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 					branchData.products.find(({ product }) => product?.product_id === productId)
 						?.branch_balance;
 
+				const findPurchaseRequestProduct = (productId) =>
+					orderSlip.purchase_request.products.find(({ product_id }) => product_id === productId);
+
 				requestedProducts = orderSlip.products.map((product) => {
 					const {
 						id: orderSlipProductId,
-						quantity_piece,
-						quantity_bulk,
+						quantity_piece: orderedQuantityPiece,
 						assigned_person,
 					} = product;
 					const { id: productId, name, barcode, pieces_in_bulk } = product.product;
 					const { current = '', max_balance = '' } = findBranchBalance(productId);
+					const { quantity_piece = '' } = findPurchaseRequestProduct(productId);
 
 					return {
 						order_slip_product_id: orderSlipProductId,
@@ -194,10 +200,10 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 						product_name: name,
 						product_barcode: barcode,
 						product_pieces_in_bulk: pieces_in_bulk,
-						quantity: quantity_piece >= 0 ? quantity_piece : quantity_bulk,
-						quantity_piece,
-						quantity_bulk,
-						quantity_type: quantity_piece ? quantityTypes.PIECE : quantityTypes.BULK,
+						quantity: quantity_piece,
+						ordered_quantity_piece: orderedQuantityPiece,
+						ordered_quantity_bulk: convertToBulk(orderedQuantityPiece, pieces_in_bulk),
+						quantity_type: orderedQuantityPiece ? quantityTypes.PIECE : quantityTypes.BULK,
 						branch_current: current,
 						branch_max_balance: max_balance,
 						branch_current_bulk: convertToBulk(current, pieces_in_bulk),
@@ -212,7 +218,7 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 					.filter(({ status }) => status === purchaseRequestProductStatus.NOT_ADDED_TO_OS)
 					.map((product) => {
 						const { id: productId, name, barcode, pieces_in_bulk } = product.product.product;
-						const { quantity_piece } = product.product;
+						const { quantity_piece: orderedQuantityPiece } = product.product;
 						const { current, max_balance } = product.branch_balance;
 
 						return {
@@ -222,8 +228,8 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 							product_barcode: barcode,
 							product_pieces_in_bulk: pieces_in_bulk,
 							quantity: '',
-							quantity_piece,
-							quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
+							ordered_quantity_piece: orderedQuantityPiece,
+							ordered_quantity_bulk: convertToBulk(orderedQuantityPiece, pieces_in_bulk),
 							quantity_type: quantityTypes.PIECE,
 							branch_current: current,
 							branch_max_balance: max_balance,
