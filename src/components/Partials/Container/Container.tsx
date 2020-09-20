@@ -1,8 +1,11 @@
 import { Layout, Spin, Tooltip } from 'antd';
 import React, { ReactNode } from 'react';
+import { useSelector } from 'react-redux';
 import { InfoIcon } from '../../Icons/Icons';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
+import { selectors as uiSelectors } from '../../../ducks/ui';
+import cn from 'classnames';
 
 const { Header, Content } = Layout;
 
@@ -25,9 +28,11 @@ export const Container = ({
 	loadingText,
 	children,
 }: Props) => {
+	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+
 	return (
-		<Layout className="Main">
-			<Spin size="large" tip="" spinning={loading}>
+		<Layout className={cn('Main', { 'sidebar-collapsed': isSidebarCollapsed })}>
+			<Spin size="large" spinning={loading} tip={loadingText} className="container-spinner">
 				<Sidebar />
 				<Layout className="site-layout">
 					<Header className="site-layout-background">

@@ -4,8 +4,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { selectors } from '../../../ducks/auth';
+import { selectors as authSelectors } from '../../../ducks/auth';
+import { actions as uiActions, selectors as uiSelectors } from '../../../ducks/ui';
 import { userTypes } from '../../../global/types';
+import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { getUserTypeName } from '../../../utils/function';
 import './style.scss';
 
@@ -70,10 +72,19 @@ const SidebarItems = [
 
 export const Sidebar = () => {
 	const { pathname } = useLocation();
-	const user = useSelector(selectors.selectUser());
+	const user = useSelector(authSelectors.selectUser());
+	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+	const onCollapseSidebar = useActionDispatch(uiActions.onCollapseSidebar);
 
 	return (
-		<Layout.Sider theme="light" breakpoint="md" collapsedWidth="0" className="Sidebar">
+		<Layout.Sider
+			className={cn('Sidebar', { collapsed: isSidebarCollapsed })}
+			theme="light"
+			width={280}
+			breakpoint="md"
+			collapsedWidth="0"
+			onCollapse={(collapsed) => onCollapseSidebar(collapsed)}
+		>
 			<img src={require('../../../assets/images/logo.jpg')} alt="logo" className="logo" />
 			<div className="sidebar-items">
 				{SidebarItems.filter((item) => item.userTypes.includes(user.user_type)).map((item) => (
@@ -93,7 +104,7 @@ export const Sidebar = () => {
 					alt="user avatar"
 					className="avatar"
 				/>
-				<div>
+				<div className="user-text-info">
 					<span className="name">{`${user.first_name} ${user.last_name}`}</span>
 					<span className="role">{getUserTypeName(user.user_type)}</span>
 				</div>

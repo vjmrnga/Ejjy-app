@@ -1,10 +1,23 @@
 @import '../../../assets/styles/main';
 
+.ant-layout {
+	background: transparent !important;
+}
+
 .Main {
+	& > .ant-spin-nested-loading,
+	.container-spinner {
+		width: 100%;
+	}
+
 	.site-layout {
 		margin-left: 280px;
-		max-width: calc(100% - 281px);
+		width: calc(100% - 281px);
 		overflow-x: hidden;
+
+		@media only screen and (max-width: 768px) {
+			width: calc(100%) !important	;
+		}
 
 		.site-layout-background {
 			height: auto;
@@ -13,7 +26,14 @@
 		}
 	}
 
+	&.sidebar-collapsed {
+		.site-layout {
+			margin-left: 0 !important;
+		}
+	}
+
 	.page-header {
+		width: 100%;
 		@include flex($justify-content: space-between);
 		padding: 35px 30px 30px 30px;
 
