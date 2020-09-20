@@ -7,6 +7,7 @@ import {
 	DashboardScreens,
 	NotificationsScreens,
 	OrderSlipsScreens,
+	PreparationSlipsScreens,
 	ProductsScreens,
 	PurchaseRequestsScreens,
 	UsersScreens,
@@ -27,6 +28,7 @@ const App = () => (
 		<CommonRoute path="/users" exact component={UsersScreens} />
 		<CommonRoute path="/notifications" exact component={NotificationsScreens} />
 		<CommonRoute path="/order-slips" exact component={OrderSlipsScreens} />
+		<CommonRoute path="/preparation-slips" exact component={PreparationSlipsScreens} />
 
 		<Route path="/404" exact component={Error404} />
 		<Route path="" render={() => <Redirect to="/404" />} />

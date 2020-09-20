@@ -6,6 +6,10 @@ import {
 	BranchManagerProducts,
 	BranchManagerPurchaseRequests,
 	BranchManagerViewPurchaseRequest,
+	BranchPersonnelDashboard,
+	BranchPersonnelNotifications,
+	BranchPersonnelPreparationSlips,
+	BranchPersonnelProducts,
 	OfficeManagerBranches,
 	OfficeManagerDashboard,
 	OfficeManagerNotifications,
@@ -19,11 +23,13 @@ import {
 export const DashboardScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerDashboard,
 	[userTypes.BRANCH_MANAGER]: BranchManagerDashboard,
+	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelDashboard,
 };
 
 export const ProductsScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerProducts,
 	[userTypes.BRANCH_MANAGER]: BranchManagerProducts,
+	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelProducts,
 };
 
 export const BranchesScreens = {
@@ -55,4 +61,9 @@ export const UsersScreens = {
 export const NotificationsScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerNotifications,
 	[userTypes.BRANCH_MANAGER]: BranchManagerNotifications,
+	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelNotifications,
+};
+
+export const PreparationSlipsScreens = {
+	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelPreparationSlips,
 };

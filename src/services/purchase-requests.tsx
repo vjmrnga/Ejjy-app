@@ -37,11 +37,9 @@ export const service = {
 	list: async (params: IGetRequestPurchaseRequest) => axios.get('/purchase-requests/', { params }),
 	listExtended: async (params: IGetRequestPurchaseRequest) =>
 		axios.get('/purchase-requests/extended/', { params }),
-	listById: async (id) => axios.get(`/purchase-requests/${id}/extended`),
-	listByIdAndBranch: async (params: IBranchIdGetRequestPurchaseRequest, id: number) =>
+	getById: async (id) => axios.get(`/purchase-requests/${id}/extended`),
+	getByIdAndBranch: async (params: IBranchIdGetRequestPurchaseRequest, id: number) =>
 		axios.get(`/purchase-requests/${id}/with-preparing-branch-details`, { params }),
-	createPurchaseRequest: async (body: ICreatePurchaseRequest) =>
-		axios.post('/purchase-requests/', body),
-	editPurchaseRequest: async (body: IEditPurchaseRequest) =>
-		axios.patch(`/purchase-requests/${body.id}/`, body),
+	create: async (body: ICreatePurchaseRequest) => axios.post('/purchase-requests/', body),
+	edit: async (body: IEditPurchaseRequest) => axios.patch(`/purchase-requests/${body.id}/`, body),
 };

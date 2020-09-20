@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { request } from '../global/types';
-import { IFormValues } from '../screens/Login/components/LoginForm';
+import { IFormValues } from '../screens/_Login/components/LoginForm';
 
 export const useLogin = (dispatch: any) => {
 	const [status, setStatus] = useState<any>(request.NONE);

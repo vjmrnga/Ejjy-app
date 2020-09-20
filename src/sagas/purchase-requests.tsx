@@ -5,7 +5,7 @@ import { request } from '../global/types';
 import { service } from '../services/purchase-requests';
 
 /* WORKERS */
-function* getPurchaseRequests({ payload }: any) {
+function* list({ payload }: any) {
 	const { id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -25,7 +25,7 @@ function* getPurchaseRequests({ payload }: any) {
 	}
 }
 
-function* getPurchaseRequestsExtended({ payload }: any) {
+function* listExtended({ payload }: any) {
 	const { id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -48,12 +48,12 @@ function* getPurchaseRequestsExtended({ payload }: any) {
 	}
 }
 
-function* getPurchaseRequestByIdAndBranch({ payload }: any) {
+function* getByIdAndBranch({ payload }: any) {
 	const { id, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.listByIdAndBranch, { preparing_branch_id: branchId }, id);
+		const response = yield call(service.getByIdAndBranch, { preparing_branch_id: branchId }, id);
 
 		yield put(
 			actions.save({
@@ -68,7 +68,7 @@ function* getPurchaseRequestByIdAndBranch({ payload }: any) {
 	}
 }
 
-function* getPurchaseRequestById({ payload }: any) {
+function* getById({ payload }: any) {
 	const { id, callback } = payload;
 	yield put(
 		actions.save({
@@ -80,7 +80,7 @@ function* getPurchaseRequestById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.listById, id);
+		const response = yield call(service.getById, id);
 
 		yield put(
 			actions.save({
@@ -94,12 +94,12 @@ function* getPurchaseRequestById({ payload }: any) {
 	}
 }
 
-function* createPurchaseRequest({ payload }: any) {
+function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.createPurchaseRequest, data);
+		const response = yield call(service.create, data);
 
 		yield put(
 			actions.save({ type: types.CREATE_PURCHASE_REQUEST, purchaseRequest: response.data }),
@@ -110,12 +110,12 @@ function* createPurchaseRequest({ payload }: any) {
 	}
 }
 
-function* editPurchaseRequest({ payload }: any) {
+function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.editPurchaseRequest, data);
+		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_PURCHASE_REQUEST, purchaseRequest: response.data }));
 		callback({ status: request.SUCCESS });
@@ -125,35 +125,35 @@ function* editPurchaseRequest({ payload }: any) {
 }
 
 /* WATCHERS */
-const getPurchaseRequestsWatcherSaga = function* getPurchaseRequestsWatcherSaga() {
-	yield takeLatest(types.GET_PURCHASE_REQUESTS, getPurchaseRequests);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUESTS, list);
 };
 
-const getPurchaseRequestsExtendedWatcherSaga = function* getPurchaseRequestsExtendedWatcherSaga() {
-	yield takeLatest(types.GET_PURCHASE_REQUESTS_EXTENDED, getPurchaseRequestsExtended);
+const listExtendedWatcherSaga = function* listExtendedWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUESTS_EXTENDED, listExtended);
 };
 
-const getPurchaseRequestByIdWatcherSaga = function* getPurchaseRequestByIdWatcherSaga() {
-	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID, getPurchaseRequestById);
+const getByIdWatcherSaga = function* getByIdWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID, getById);
 };
 
-const getPurchaseRequestByIdAndBranchWatcherSaga = function* getPurchaseRequestByIdAndBranchWatcherSaga() {
-	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH, getPurchaseRequestByIdAndBranch);
+const getByIdAndBranchWatcherSaga = function* getByIdAndBranchWatcherSaga() {
+	yield takeLatest(types.GET_PURCHASE_REQUEST_BY_ID_AND_BRANCH, getByIdAndBranch);
 };
 
-const createPurchaseRequestWatcherSaga = function* createPurchaseRequestWatcherSaga() {
-	yield takeLatest(types.CREATE_PURCHASE_REQUEST, createPurchaseRequest);
+const createWatcherSaga = function* createWatcherSaga() {
+	yield takeLatest(types.CREATE_PURCHASE_REQUEST, create);
 };
 
-const editPurchaseRequestWatcherSaga = function* editPurchaseRequestWatcherSaga() {
-	yield takeLatest(types.EDIT_PURCHASE_REQUEST, editPurchaseRequest);
+const editWatcherSaga = function* editWatcherSaga() {
+	yield takeLatest(types.EDIT_PURCHASE_REQUEST, edit);
 };
 
 export default [
-	getPurchaseRequestsWatcherSaga(),
-	getPurchaseRequestsExtendedWatcherSaga(),
-	getPurchaseRequestByIdWatcherSaga(),
-	getPurchaseRequestByIdAndBranchWatcherSaga(),
-	createPurchaseRequestWatcherSaga(),
-	editPurchaseRequestWatcherSaga(),
+	listWatcherSaga(),
+	listExtendedWatcherSaga(),
+	getByIdWatcherSaga(),
+	getByIdAndBranchWatcherSaga(),
+	createWatcherSaga(),
+	editWatcherSaga(),
 ];

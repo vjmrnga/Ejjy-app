@@ -12,8 +12,8 @@ interface IEditBranch {
 
 export const service = {
 	list: async (params: IGetRequest) => axios.get('/branches/', { params }),
-	getBranch: async (id) => axios.get(`/branches/${id}/`),
-	createBranch: async (body: ICreateBranch) => axios.post('/branches/', body),
-	editBranch: async (body: IEditBranch) => axios.patch(`/branches/${body.id}/`, body),
-	removeBranch: async (id) => axios.delete(`/branches/${id}/`),
+	getById: async (id) => axios.get(`/branches/${id}/`),
+	create: async (body: ICreateBranch) => axios.post('/branches/', body),
+	edit: async (body: IEditBranch) => axios.patch(`/branches/${body.id}/`, body),
+	remove: async (id) => axios.delete(`/branches/${id}/`),
 };

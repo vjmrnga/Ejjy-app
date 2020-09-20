@@ -3,7 +3,7 @@ import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 import { NOT_FOUND_INDEX } from '../../global/constants';
 
-export const key = 'PRODUCTS';
+export const key = 'OM_PRODUCTS';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
