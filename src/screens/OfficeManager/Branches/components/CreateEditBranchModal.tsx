@@ -15,7 +15,7 @@ interface Props {
 export const CreateEditBranchModal = ({ branch, visible, onClose }: Props) => {
 	const { createBranch, editBranch, status, errors, recentRequest, reset } = useBranches();
 
-	// Effect: Reload the list if recent requests are Create or Edit
+	// Effect: Close modal if recent requests are Create or Edit
 	useEffect(() => {
 		const reloadListTypes = [types.CREATE_BRANCH, types.EDIT_BRANCH];
 		if (status === request.SUCCESS && reloadListTypes.includes(recentRequest)) {

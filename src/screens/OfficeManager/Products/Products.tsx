@@ -24,16 +24,7 @@ const Products = () => {
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const {
-		products,
-		getProducts,
-		createProduct,
-		editProduct,
-		removeProduct,
-		status,
-		errors,
-		recentRequest,
-	} = useProducts();
+	const { products, getProducts, removeProduct, status, recentRequest } = useProducts();
 
 	useEffect(() => {
 		getProducts();
@@ -59,16 +50,6 @@ const Products = () => {
 		setData(formattedProducts);
 		setTableData(formattedProducts);
 	}, [products]);
-
-	// Effect: Reload the list if recent requests are Create, Edit or Remove
-	useEffect(() => {
-		const reloadListTypes = [types.CREATE_PRODUCT, types.EDIT_PRODUCT];
-
-		if (status === request.SUCCESS && reloadListTypes.includes(recentRequest)) {
-			setCreateEditProductModalVisible(false);
-			setSelectedProduct(null);
-		}
-	}, [status, recentRequest]);
 
 	const getFetchLoading = useCallback(
 		() => status === request.REQUESTING && recentRequest === types.GET_PRODUCTS,
@@ -122,10 +103,7 @@ const Products = () => {
 					<CreateEditProductModal
 						product={selectedProduct}
 						visible={createEditProductModalVisible}
-						onSubmit={selectedProduct ? editProduct : createProduct}
 						onClose={() => setCreateEditProductModalVisible(false)}
-						errors={errors}
-						loading={status === request.REQUESTING}
 					/>
 				</Box>
 			</section>

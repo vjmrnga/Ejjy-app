@@ -39,8 +39,6 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 
 	const {
 		orderSlips,
-		createOrderSlip,
-		editOrderSlip,
 		getOrderSlipsExtended,
 		status: orderSlipStatus,
 		recentRequest: orderSlipRecentRequest,
@@ -96,15 +94,6 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 			if (actionRequiresUpdate.includes(purchaseRequest?.action?.action)) {
 				setPurchaseRequestAction({ action: purchaseRequestActions.F_OS1_CREATED });
 			}
-		}
-	}, [orderSlipStatus, orderSlipRecentRequest]);
-
-	// Effect: Close modal if create/edit success
-	useEffect(() => {
-		const recentRequests = [orderSlipsTypes.CREATE_ORDER_SLIP, orderSlipsTypes.EDIT_ORDER_SLIP];
-		if (orderSlipStatus === request.SUCCESS && recentRequests.includes(orderSlipRecentRequest)) {
-			setCreateEditOrderSlipVisible(false);
-			setSelectedOrderSlip(null);
 		}
 	}, [orderSlipStatus, orderSlipRecentRequest]);
 
@@ -231,12 +220,8 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 				selectedBranchId={selectedBranchId}
 				requestedProducts={purchaseRequestProducts}
 				onChangePreparingBranch={onChangePreparingBranch}
-				createOrderSlip={createOrderSlip}
-				editOrderSlip={editOrderSlip}
 				visible={createEditOrderSlipVisible}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
-				errors={[]}
-				loading={purchaseRequestStatus === request.REQUESTING}
 			/>
 		</Box>
 	);

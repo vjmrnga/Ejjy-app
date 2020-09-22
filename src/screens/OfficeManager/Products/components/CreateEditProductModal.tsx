@@ -1,25 +1,31 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FieldError } from '../../../../components/elements';
+import { types } from '../../../../ducks/OfficeManager/products';
+import { request } from '../../../../global/types';
+import { useProducts } from '../../../../hooks/useProducts';
 import { CreateEditProductForm } from './CreateEditProductForm';
 
 interface Props {
 	visible: boolean;
 	product: any;
-	onSubmit: any;
 	onClose: any;
-	errors: string[];
-	loading: boolean;
 }
 
-export const CreateEditProductModal = ({
-	product,
-	visible,
-	onSubmit,
-	onClose,
-	errors,
-	loading,
-}: Props) => {
+export const CreateEditProductModal = ({ product, visible, onClose }: Props) => {
+	const { createProduct, editProduct, status, errors, recentRequest, reset } = useProducts();
+
+	// Effect: Close modal if recent requests are Create, Edit or Remove
+	useEffect(() => {
+		const reloadListTypes = [types.CREATE_PRODUCT, types.EDIT_PRODUCT];
+
+		if (status === request.SUCCESS && reloadListTypes.includes(recentRequest)) {
+			reset();
+			onClose();
+		}
+	}, [status, recentRequest]);
+
 	return (
 		<Modal
 			className="CreateEditProductModal"
@@ -36,9 +42,9 @@ export const CreateEditProductModal = ({
 
 			<CreateEditProductForm
 				product={product}
-				onSubmit={onSubmit}
+				onSubmit={product ? editProduct : createProduct}
 				onClose={onClose}
-				loading={loading}
+				loading={status === request.REQUESTING}
 			/>
 		</Modal>
 	);

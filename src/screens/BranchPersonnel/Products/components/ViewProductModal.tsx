@@ -1,6 +1,7 @@
-import { Col, Divider, Modal, Row } from 'antd';
+import { Divider, Modal } from 'antd';
 import React from 'react';
-import { Button, Label } from '../../../../components/elements';
+import { DetailsHalf, DetailsRow, DetailsSingle } from '../../../../components';
+import { Button } from '../../../../components/elements';
 
 interface Props {
 	visible: boolean;
@@ -9,32 +10,6 @@ interface Props {
 }
 
 export const ViewProductModal = ({ product, visible, onClose }: Props) => {
-	const renderProductDetails = (label, value) => (
-		<Col span={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={8} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={16} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-
-	const renderProductNumbers = (label, value) => (
-		<Col sm={12} xs={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={16} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={8} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-
 	return (
 		<Modal
 			className="ViewProductModal"
@@ -45,22 +20,24 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 			centered
 			closable
 		>
-			<Row gutter={[15, 15]}>
-				{renderProductDetails('Barcode', product?.barcode)}
-				{renderProductDetails('Name', product?.name)}
-				{renderProductDetails('Type', product?.type)}
-				{renderProductDetails('Unit of Measurement', product?.unit_of_measurement)}
-				{renderProductDetails('Print Details', product?.print_details)}
-				{renderProductDetails('Description', product?.description)}
+			<DetailsRow>
+				<DetailsSingle label="Barcode" value={product?.barcode} />
+				<DetailsSingle label="Name" value={product?.name} />
+				<DetailsSingle label="Type" value={product?.type} />
+				<DetailsSingle label="Unit of Measurement" value={product?.unit_of_measurement} />
+				<DetailsSingle label="Print Details" value={product?.print_details} />
+				<DetailsSingle label="Description" value={product?.description} />
+
 				<Divider dashed />
-				{renderProductNumbers('Reorder Point', product?.reorder_point)}
-				{renderProductNumbers('Max Balance', product?.max_balance)}
-				{renderProductNumbers('Cost (Piece)', product?.cost_per_piece)}
-				{renderProductNumbers('Cost (Bulk)', product?.cost_per_bulk)}
-				{renderProductNumbers('Price (Piece)', product?.price_per_piece)}
-				{renderProductNumbers('Price (Bulk)', product?.price_per_bulk)}
-				{renderProductNumbers('Allowable Spoilage (%)', product?.allowable_spoilage * 100)}
-			</Row>
+
+				<DetailsHalf label="Reorder Point" value={product?.reorder_point} />
+				<DetailsHalf label="Max Balance" value={product?.max_balance} />
+				<DetailsHalf label="Cost (Piece)" value={product?.cost_per_piece} />
+				<DetailsHalf label="Cost (Bulk)" value={product?.cost_per_bulk} />
+				<DetailsHalf label="Price (Piece)" value={product?.price_per_piece} />
+				<DetailsHalf label="Price (Bulk)" value={product?.price_per_bulk} />
+				<DetailsHalf label="Allowable Spoilage (%)" value={product?.allowable_spoilage * 100} />
+			</DetailsRow>
 		</Modal>
 	);
 };

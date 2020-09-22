@@ -1,6 +1,7 @@
-import { Col, Divider, Modal, Row } from 'antd';
+import { Divider, Modal } from 'antd';
 import React from 'react';
-import { Button, Label } from '../../../../../components/elements';
+import { DetailsHalf, DetailsRow, DetailsSingle } from '../../../../../components';
+import { Button } from '../../../../../components/elements';
 
 interface Props {
 	visible: boolean;
@@ -10,32 +11,6 @@ interface Props {
 }
 
 export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onClose }: Props) => {
-	const renderProductDetails = (label, value) => (
-		<Col span={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={8} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={16} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-
-	const renderProductNumbers = (label, value) => (
-		<Col sm={12} xs={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={16} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={8} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-
 	return (
 		<Modal
 			className="ViewBranchProductModal"
@@ -46,17 +21,22 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 			centered
 			closable
 		>
-			<Row gutter={[15, 15]}>
-				{renderProductDetails('Barcode', branchProduct?.product?.barcode)}
-				{renderProductDetails('Name', branchProduct?.product?.name)}
+			<DetailsRow>
+				<DetailsSingle label="Barcode" value={branchProduct?.product?.barcode} />
+				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
+
 				<Divider dashed />
-				{renderProductNumbers('Reorder Point', branchProduct?.reorder_point)}
-				{renderProductNumbers('Max Balance', branchProduct?.max_balance)}
-				{renderProductNumbers('Price (Piece)', branchProduct?.price_per_piece)}
-				{renderProductNumbers('Price (Bulk)', branchProduct?.price_per_bulk)}
-				{renderProductNumbers('Allowable Spoilage (%)', branchProduct?.allowable_spoilage * 100)}
-				{renderProductNumbers('Current Balance', branchProduct?.current_balance)}
-			</Row>
+
+				<DetailsHalf label="Reorder Point'" value={branchProduct?.reorder_point} />
+				<DetailsHalf label="Max Balance" value={branchProduct?.max_balance} />
+				<DetailsHalf label="Price (Piece)" value={branchProduct?.price_per_piece} />
+				<DetailsHalf label="Price (Bulk)" value={branchProduct?.price_per_bulk} />
+				<DetailsHalf
+					label="Allowable Spoilage (%)"
+					value={branchProduct?.allowable_spoilage * 100}
+				/>
+				<DetailsHalf label="Current Balance" value={branchProduct?.current_balance} />
+			</DetailsRow>
 		</Modal>
 	);
 };

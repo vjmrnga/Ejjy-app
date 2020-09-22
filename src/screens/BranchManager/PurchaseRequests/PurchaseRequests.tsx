@@ -80,7 +80,7 @@ const PurchaseRequests = () => {
 		setTableData(formattedProducts);
 	}, [purchaseRequests]);
 
-	// Effect: Reload the list if recent requests are Create, Edit or Remove
+	// Effect: Close modal if recent requests are Create, Edit or Remove
 	useEffect(() => {
 		if (status === request.SUCCESS && recentRequest === types.CREATE_PURCHASE_REQUEST) {
 			setCreateModalVisible(false);

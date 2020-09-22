@@ -1,8 +1,9 @@
-import { Col, Divider, Row } from 'antd';
+import { Col, Divider } from 'antd';
 import { Field, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel, Label } from '../../../../../components/elements';
+import { DetailsRow, DetailsSingle } from '../../../../../components';
+import { Button, FieldError, FormInputLabel } from '../../../../../components/elements';
 import { productTypes, unitOfMeasurementTypes } from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
 
@@ -70,19 +71,6 @@ export const EditBranchProductsForm = ({
 		[branchProduct],
 	);
 
-	const renderProductDetails = (label, value) => (
-		<Col sm={12} xs={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={16} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={8} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -102,9 +90,9 @@ export const EditBranchProductsForm = ({
 				<Form className="form">
 					<Field type="hidden" name="product_id" />
 
-					<Row gutter={[15, 15]}>
-						{renderProductDetails('Barcode', branchProduct?.product?.id)}
-						{renderProductDetails('Name', branchProduct?.product?.name)}
+					<DetailsRow>
+						<DetailsSingle label="Barcode" value={branchProduct?.product?.id} />
+						<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 
 						<Divider dashed />
 
@@ -168,7 +156,7 @@ export const EditBranchProductsForm = ({
 								<FieldError error={errors.current_balance} />
 							) : null}
 						</Col>
-					</Row>
+					</DetailsRow>
 
 					<Divider />
 
