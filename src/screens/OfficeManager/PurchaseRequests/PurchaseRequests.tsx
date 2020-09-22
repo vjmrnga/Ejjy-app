@@ -27,6 +27,7 @@ const columns = [
 const PurchaseRequests = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
+
 	const {
 		purchaseRequests,
 		getPurchaseRequestsExtended,

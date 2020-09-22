@@ -29,6 +29,17 @@ interface Props {
 }
 
 export const OrderSlips = ({ purchaseRequestId }: Props) => {
+	// State: Selection
+	const [selectedBranchId, setSelectedBranchId] = useState(null);
+	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
+
+	// State: Table Data
+	const [purchaseRequestProducts, setPurchaseRequestProducts] = useState([]);
+
+	// State: Modal
+	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
+	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
+
 	const branches = useSelector(branchesSelectors.selectBranches());
 
 	const {
@@ -46,19 +57,7 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 
 	const purchaseRequest = useSelector(prSelectors.selectPurchaseRequest());
 	const purchaseRequestsByBranch = useSelector(prSelectors.selectPurchaseRequestsByBranch());
-
 	const setPurchaseRequestAction = useActionDispatch(prActions.setPurchaseRequestAction);
-
-	// State: Selection
-	const [selectedBranchId, setSelectedBranchId] = useState(null);
-	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
-
-	// State: Table Data
-	const [purchaseRequestProducts, setPurchaseRequestProducts] = useState([]);
-
-	// State: Modal
-	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
-	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
 
 	// Effect: Fetch purchase request
 	useEffect(() => {

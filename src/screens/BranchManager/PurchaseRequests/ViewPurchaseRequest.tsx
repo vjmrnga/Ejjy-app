@@ -27,6 +27,9 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 	const purchaseRequestId = match?.params?.id;
 	const history = useHistory();
 
+	// States
+	const [data, setData] = useState([]);
+
 	// Custom hooks
 	const {
 		getPurchaseRequestsById,
@@ -34,9 +37,6 @@ const ViewPurchaseRequest = ({ match }: Props) => {
 		recentRequest: purchaseRequestRecentRequest,
 	} = usePurchaseRequests();
 	const purchaseRequest = useSelector(selectors.selectPurchaseRequest());
-
-	// States
-	const [data, setData] = useState([]);
 
 	useEffect(() => {
 		getPurchaseRequestsById(purchaseRequestId);
