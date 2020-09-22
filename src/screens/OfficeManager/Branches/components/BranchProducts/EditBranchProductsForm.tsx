@@ -25,7 +25,7 @@ interface Props {
 	loading: boolean;
 }
 
-export const CreateEditBranchProductsForm = ({
+export const EditBranchProductsForm = ({
 	branchId,
 	branchProduct,
 	onSubmit,

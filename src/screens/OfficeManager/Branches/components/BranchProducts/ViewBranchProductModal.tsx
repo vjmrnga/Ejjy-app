@@ -47,8 +47,8 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 			closable
 		>
 			<Row gutter={[15, 15]}>
-				{renderProductDetails('Barcode', branchProduct?.barcode)}
-				{renderProductDetails('Name', branchProduct?.name)}
+				{renderProductDetails('Barcode', branchProduct?.product?.barcode)}
+				{renderProductDetails('Name', branchProduct?.product?.name)}
 				<Divider dashed />
 				{renderProductNumbers('Reorder Point', branchProduct?.reorder_point)}
 				{renderProductNumbers('Max Balance', branchProduct?.max_balance)}
