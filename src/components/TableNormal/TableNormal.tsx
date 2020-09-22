@@ -1,11 +1,11 @@
 import { Spin } from 'antd';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { calculateTableHeight } from '../../utils/function';
 import { ROW_HEIGHT } from '../Table/Table';
 import './style.scss';
 
 interface Column {
-	name: string;
+	name: string | ReactNode;
 	width?: string;
 }
 

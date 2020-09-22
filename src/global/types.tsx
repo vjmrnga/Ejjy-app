@@ -57,3 +57,9 @@ export const orderSlipStatus = {
 	PREPARING: 'preparing',
 	PREPARED: 'prepared',
 };
+
+export const preparationSlipStatus = {
+	NEW: 'new',
+	PREPARING: 'preparing',
+	COMPLETED: 'completed',
+};

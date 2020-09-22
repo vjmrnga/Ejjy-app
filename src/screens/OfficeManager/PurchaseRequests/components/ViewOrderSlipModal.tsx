@@ -39,11 +39,7 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 				return [barcode, name, 0, `${first_name} ${last_name}`];
 			});
 
-			setRequestedProducts([
-				...formattedRequestedProducts,
-				...formattedRequestedProducts,
-				...formattedRequestedProducts,
-			]);
+			setRequestedProducts(formattedRequestedProducts);
 		}
 	}, [orderSlip]);
 

@@ -1,5 +1,5 @@
 import { upperFirst } from 'lodash';
-import { purchaseRequestActions, quantityTypes } from './types';
+import { preparationSlipStatus, purchaseRequestActions, quantityTypes } from './types';
 
 export const quantityTypeOptions = [
 	{
@@ -13,10 +13,6 @@ export const quantityTypeOptions = [
 ];
 
 export const purchaseRequestActionsOptions = [
-	{
-		value: 'all',
-		name: 'All',
-	},
 	{
 		value: purchaseRequestActions.NEW,
 		name: 'New',
@@ -44,5 +40,32 @@ export const purchaseRequestActionsOptions = [
 	{
 		value: purchaseRequestActions.F_DS1_ERROR,
 		name: 'F-DS1 Error',
+	},
+];
+
+export const purchaseRequestActionsOptionsWithAll = [
+	{
+		value: 'all',
+		name: 'All',
+	},
+	...purchaseRequestActionsOptions,
+];
+
+export const preparationSlipStatusOptions = [
+	{
+		value: 'all',
+		name: 'All',
+	},
+	{
+		value: preparationSlipStatus.NEW,
+		name: 'New',
+	},
+	{
+		value: preparationSlipStatus.PREPARING,
+		name: 'Preparing',
+	},
+	{
+		value: preparationSlipStatus.COMPLETED,
+		name: 'Completed',
 	},
 ];
