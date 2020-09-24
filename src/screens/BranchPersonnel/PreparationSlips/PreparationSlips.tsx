@@ -1,12 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Table, TableHeader } from '../../../components';
+import { useSelector } from 'react-redux';
+import { AddButtonIcon, Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
+import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
+import { LINK_VOID } from '../../../global/constants';
 import { preparationSlipStatusOptions } from '../../../global/options';
 import { request } from '../../../global/types';
-import { calculateTableHeight } from '../../../utils/function';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getPreparationSlipStatus,
+} from '../../../utils/function';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { FulfillPreparationSlipModal } from './components/FulfillPreparationSlipModal';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
@@ -20,12 +27,8 @@ const columns = [
 ];
 
 const PreparationSlips = () => {
-	const {
-		preparationSlips,
-		getPreparationSlipsExtended,
-		status,
-		recentRequest,
-	} = usePreparationSlips();
+	const user = useSelector(authSelectors.selectUser());
+	const { preparationSlips, getPreparationSlips, status, recentRequest } = usePreparationSlips();
 
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
@@ -34,36 +37,36 @@ const PreparationSlips = () => {
 	const [selectedPreparationSlip, setSelectedPreparationSlip] = useState(null);
 
 	useEffect(() => {
-		getPreparationSlipsExtended();
+		getPreparationSlips(user?.id);
 	}, []);
 
 	// Effect: Format preparation slips to be rendered in Table
 	useEffect(() => {
-		// const formattedPreparationSlips = preparationSlips.map((preparationSlip) => {
-		// 	const { id, datetime_created, status, actions} = preparationSlip;
-		// 	const dateTime = formatDateTime(datetime_created);
+		const formattedPreparationSlips = preparationSlips.map((preparationSlip) => {
+			const { id, datetime_created, status } = preparationSlip;
+			const dateTime = formatDateTime(datetime_created);
 
-		// 	return {
-		// 		_id: id,
-		// 		_datetime_created: dateTime,
-		// 		_type: type,
-		// 		_status: action,
-		// 		id: <Link to={`/purchase-requests/${id}`}>{id}</Link>,
-		// 		datetime_created: dateTime,
-		// 		requestor: requestor_id,
-		// 		type: upperFirst(type),
-		// 		action: getPurchaseRequestStatus(action),
-		// 	};
-		// });
-
-		const formattedPreparationSlips = [];
+			return {
+				_id: id,
+				_datetime_created: dateTime,
+				_status: status,
+				id: (
+					<a href={LINK_VOID} onClick={() => onView(preparationSlip)}>
+						{id}
+					</a>
+				),
+				datetime_created: dateTime,
+				status: getPreparationSlipStatus(status),
+				action: <AddButtonIcon onClick={() => onFulfill(preparationSlip)} tooltip="Fulfill" />,
+			};
+		});
 
 		setData(formattedPreparationSlips);
 		setTableData(formattedPreparationSlips);
 	}, [preparationSlips]);
 
 	const getFetchLoading = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.GET_PREPARATION_SLIPS_EXTENDED,
+		() => status === request.REQUESTING && recentRequest === types.GET_PREPARATION_SLIPS,
 		[status, recentRequest],
 	);
 
@@ -116,8 +119,8 @@ const PreparationSlips = () => {
 					/>
 
 					<ViewPreparationSlipModal
+						preparationSlip={selectedPreparationSlip}
 						visible={viewPreparationSlipModalVisible}
-						preparationSlip={null}
 						onClose={() => setViewPreparationSlipModalVisible(false)}
 					/>
 

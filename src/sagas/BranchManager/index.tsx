@@ -1,1 +1,3 @@
-export const branchManagerSagas = [];
+import preparationSlipsSagas from './delivery-receipts';
+
+export const branchManagerSagas = [...preparationSlipsSagas];

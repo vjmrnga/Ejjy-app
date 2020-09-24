@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { TableHeader } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
-import { types as orderSlipsTypes } from '../../../../../ducks/OfficeManager/order-slips';
+import { types as orderSlipsTypes } from '../../../../../ducks/order-slips';
 import {
 	actions as prActions,
 	selectors as prSelectors,
@@ -19,10 +19,11 @@ import {
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { usePurchaseRequests } from '../../../../../hooks/usePurchaseRequests';
 import { convertToBulk } from '../../../../../utils/function';
+import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import { ViewOrderSlipModal } from '../ViewOrderSlipModal';
 import { CreateEditOrderSlipModal } from './CreateEditOrderSlipModal';
 import { OrderSlipsTable } from './OrderSlipsTable';
+import { ViewDeliveryReceiptModal } from './ViewDeliveryReceiptModal';
 
 interface Props {
 	purchaseRequestId: number;
@@ -38,7 +39,7 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 
 	// State: Modal
 	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
-	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
+	const [viewDeliveryReceiptVisible, setViewDeliveryReceiptVisible] = useState(false);
 
 	const branches = useSelector(branchesSelectors.selectBranches());
 
@@ -47,6 +48,8 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 		status: purchaseRequestStatus,
 		recentRequest: purchaseRequestRecentRequest,
 	} = usePurchaseRequests();
+
+	const { createDeliveryReceipt, status: deliveryReceiptStatus } = useDeliveryReceipt();
 
 	const {
 		orderSlips,
@@ -185,15 +188,19 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 		setCreateEditOrderSlipVisible(true);
 	};
 
-	const onViewOrderSlip = (orderSlip) => {
-		setSelectedOrderSlip(orderSlip);
-		setViewOrderSlipVisible(true);
-	};
-
 	const onEditOrderSlip = (orderSlip) => {
 		onChangePreparingBranch(orderSlip?.assigned_store?.id);
 		setSelectedOrderSlip(orderSlip);
 		setCreateEditOrderSlipVisible(true);
+	};
+
+	const onViewDeliveryReceipt = (orderSlip) => {
+		setSelectedOrderSlip(orderSlip);
+		setViewDeliveryReceiptVisible(true);
+	};
+
+	const onCreateDeliveryReceipt = (id) => {
+		createDeliveryReceipt(id);
 	};
 
 	return (
@@ -203,14 +210,16 @@ export const OrderSlips = ({ purchaseRequestId }: Props) => {
 			<OrderSlipsTable
 				orderSlips={orderSlips}
 				orderSlipStatus={orderSlipStatus}
-				onViewOrderSlip={onViewOrderSlip}
 				onEditOrderSlip={onEditOrderSlip}
+				onViewDeliveryReceipt={onViewDeliveryReceipt}
+				onCreateDeliveryReceipt={onCreateDeliveryReceipt}
+				loading={deliveryReceiptStatus === request.REQUESTING}
 			/>
 
-			<ViewOrderSlipModal
-				visible={viewOrderSlipVisible}
+			<ViewDeliveryReceiptModal
+				visible={viewDeliveryReceiptVisible}
 				orderSlip={selectedOrderSlip}
-				onClose={() => setViewOrderSlipVisible(false)}
+				onClose={() => setViewDeliveryReceiptVisible(false)}
 			/>
 
 			<CreateEditOrderSlipModal

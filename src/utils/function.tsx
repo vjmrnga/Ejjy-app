@@ -5,11 +5,17 @@ import React from 'react';
 import {
 	AddedToOSBadgePill,
 	AvailableBadgePill,
+	ColoredText,
+	coloredTextType,
+	CompletedBadgePill,
 	FDS1CreatedBadgePill,
-	FDS1DoneBadgePill,
-	FDS1ErrorBadgePill,
+	FDS1CreatingBadgePill,
+	FDS1DeliveredBadgePill,
+	FDS1DeliveringBadgePill,
 	FOS1CreatedBadgePill,
+	FOS1CreatingBadgePill,
 	FOS1PreparedBadgePill,
+	FOS1PreparingBadgePill,
 	NewBadgePill,
 	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
@@ -21,6 +27,7 @@ import { BadgePill } from '../components/elements';
 import {
 	branchProductStatus,
 	orderSlipStatus,
+	preparationSlipStatus,
 	purchaseRequestActions,
 	purchaseRequestProductStatus,
 	request,
@@ -67,6 +74,20 @@ export const modifiedExtraCallback = (callback, extraCallback = null) => {
 	};
 };
 
+export const getColoredText = memoize((key, isDefault, x, y) => {
+	const text = `${x}/${y}`;
+
+	if (isDefault) {
+		return <ColoredText type={coloredTextType.DEFAULT} text={text} />;
+	} else if (x !== y) {
+		return <ColoredText type={coloredTextType.ERROR} text={text} />;
+	} else if (x === y) {
+		return <ColoredText type={coloredTextType.PRIMARY} text={text} />;
+	}
+
+	return null;
+});
+
 export const getBranchProductStatus = memoize((status) => {
 	switch (status) {
 		case branchProductStatus.AVAILABLE: {
@@ -89,20 +110,29 @@ export const getPurchaseRequestStatus = memoize((status) => {
 		case purchaseRequestActions.SEEN: {
 			return <SeenBadgePill />;
 		}
+		case purchaseRequestActions.F_OS1_CREATING: {
+			return <FOS1CreatingBadgePill />;
+		}
 		case purchaseRequestActions.F_OS1_CREATED: {
 			return <FOS1CreatedBadgePill />;
+		}
+		case purchaseRequestActions.F_OS1_PREPARING: {
+			return <FOS1PreparingBadgePill />;
 		}
 		case purchaseRequestActions.F_OS1_PREPARED: {
 			return <FOS1PreparedBadgePill />;
 		}
+		case purchaseRequestActions.F_DS1_CREATING: {
+			return <FDS1CreatingBadgePill />;
+		}
 		case purchaseRequestActions.F_DS1_CREATED: {
 			return <FDS1CreatedBadgePill />;
 		}
-		case purchaseRequestActions.F_DS1_DONE: {
-			return <FDS1DoneBadgePill />;
+		case purchaseRequestActions.F_DS1_DELIVERING: {
+			return <FDS1DeliveringBadgePill />;
 		}
-		case purchaseRequestActions.F_DS1_ERROR: {
-			return <FDS1ErrorBadgePill />;
+		case purchaseRequestActions.F_DS1_DELIVERED: {
+			return <FDS1DeliveredBadgePill />;
 		}
 	}
 });
@@ -118,16 +148,30 @@ export const getPurchaseRequestProductStatus = memoize((status) => {
 	}
 });
 
-export const getOrderSlipStatus = memoize((status, percentage, isDrStatusError = false) => {
+export const getOrderSlipStatus = memoize((status, percentage) => {
 	switch (status) {
 		case orderSlipStatus.PREPARING: {
 			return <BadgePill label={`Preparing (${percentage}%)`} />;
 		}
 		case orderSlipStatus.PREPARED: {
-			return <BadgePill label="Prepared" variant="secondary" />;
+			return <BadgePill label="Prepared" />;
 		}
 		case orderSlipStatus.DELIVERED: {
-			return <BadgePill label="Delivered" variant={isDrStatusError ? 'error' : 'primary'} />;
+			return <BadgePill label="Delivered" variant="secondary" />;
+		}
+		case orderSlipStatus.RECEIVED: {
+			return <BadgePill label="Received" variant="primary" />;
+		}
+	}
+});
+
+export const getPreparationSlipStatus = memoize((status) => {
+	switch (status) {
+		case preparationSlipStatus.NEW: {
+			return <NewBadgePill />;
+		}
+		case preparationSlipStatus.COMPLETED: {
+			return <CompletedBadgePill />;
 		}
 	}
 });

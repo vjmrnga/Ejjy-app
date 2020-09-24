@@ -1,37 +1,29 @@
 import { Divider } from 'antd';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
-import {
-	Button,
-	FieldError,
-	FormCheckbox,
-	FormInput,
-	FormSelect,
-} from '../../../../components/elements';
+import { Button, FieldError, FormInput, FormSelect } from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, getBranchProductStatus, sleep } from '../../../../utils/function';
+import { convertToBulk, sleep } from '../../../../utils/function';
 
 const columns = [
 	{ name: 'Barcode' },
+	{ name: 'Ordered' },
 	{ name: 'Name' },
 	{ name: 'Quantity', width: '200px' },
-	{ name: 'Ordered' },
 ];
 
 interface Props {
-	preparationSlip: any;
-	requestedProducts: any;
+	preparationSlipProducts: any;
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
 }
 
 export const FulfillPreparationSlipForm = ({
-	preparationSlip,
-	requestedProducts,
+	preparationSlipProducts,
 	onSubmit,
 	onClose,
 	loading,
@@ -41,67 +33,55 @@ export const FulfillPreparationSlipForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				requestedProducts: requestedProducts.map((branchProduct) => ({
-					selected: true,
-					quantity: '',
-					quantity_type: quantityTypes.PIECE,
-					product_id: branchProduct?.product?.id,
-					pieces_in_bulk: branchProduct?.product?.pieces_in_bulk,
+				preparationSlipProducts: preparationSlipProducts.map((product) => ({
+					pieces_in_bulk: product.pieces_in_bulk,
+					quantity_type: product.quantity_type,
+					order_slip_product_id: product.order_slip_product_id,
+					product_id: product.product_id,
+					quantity: product.quantity,
+					fulfilled_quantity: product.fulfilled_quantity || '',
+					assigned_person_id: product.assigned_person_id,
 				})),
 			},
 			Schema: Yup.object().shape({
-				requestedProducts: Yup.array().of(
+				preparationSlipProducts: Yup.array().of(
 					Yup.object().shape({
-						selected: Yup.boolean(),
-						quantity: Yup.number()
-							.min(1, 'Must greater than zero')
-							.when('selected', {
-								is: true,
-								then: Yup.number().required('Qty required'),
-								otherwise: Yup.number().notRequired(),
-							}),
+						quantity: Yup.number().min(1, 'Must greater than zero').required('Qty required'),
 					}),
 				),
 			}),
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[],
+		[preparationSlipProducts],
 	);
 
-	const getExtraFields = (index) => (
-		<Field type="hidden" name={`branchProducts.${index}.product_id`} />
-	);
-
-	const getSelectRadioButton = (index) => <FormCheckbox id={`branchProducts.${index}.selected`} />;
-
-	const getQuantity = (index, values, touched, errors) => {
+	const getFulfilledQuantity = (index, values, touched, errors) => {
 		return (
 			<>
 				<div className="quantity-container">
 					<FormInput
 						type="number"
-						id={`branchProducts.${index}.quantity`}
+						id={`preparationSlipProducts.${index}.fulfilled_quantity`}
 						min={1}
-						disabled={!values?.branchProducts?.[index]?.selected}
 					/>
 					<FormSelect
-						id={`branchProducts.${index}.quantity_type`}
+						id={`preparationSlipProducts.${index}.quantity_type`}
 						options={quantityTypeOptions}
-						disabled={!values?.branchProducts?.[index]?.selected}
 					/>
 				</div>
-				{errors?.branchProducts?.[index]?.quantity && touched?.branchProducts?.[index]?.quantity ? (
-					<FieldError error={errors?.branchProducts?.[index]?.quantity} />
+				{errors?.preparationSlipProducts?.[index]?.quantity &&
+				touched?.preparationSlipProducts?.[index]?.quantity ? (
+					<FieldError error={errors?.preparationSlipProducts?.[index]?.quantity} />
 				) : null}
 			</>
 		);
 	};
 
-	const getCurrentBalance = (index, current_balance, pieces_in_bulk, values) => {
-		return values?.branchProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
-			<span>{current_balance}</span>
+	const getOrdered = (index, ordered, pieces_in_bulk, values) => {
+		return values?.preparationSlipProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+			<span>{ordered}</span>
 		) : (
-			<span>{convertToBulk(current_balance, pieces_in_bulk)}</span>
+			<span>{convertToBulk(ordered, pieces_in_bulk)}</span>
 		);
 	};
 
@@ -119,30 +99,20 @@ export const FulfillPreparationSlipForm = ({
 		>
 			{({ values, errors, touched }) => (
 				<FieldArray
-					name="requestedProducts"
+					name="preparationSlipProducts"
 					render={() => (
 						<Form className="form">
 							<TableNormal
 								columns={columns}
-								data={requestedProducts.map((branchProduct, index) => [
-									// Select
-									<>
-										{getSelectRadioButton(index)}
-										{getExtraFields(index)}
-									</>,
+								data={preparationSlipProducts.map((product, index) => [
 									// Name
-									branchProduct?.product?.name,
-									// Quantity / Bulk | Pieces
-									getQuantity(index, values, touched, errors),
-									// Current Balance
-									getCurrentBalance(
-										index,
-										branchProduct?.current_balance,
-										branchProduct?.product?.pieces_in_bulk,
-										values,
-									),
-									// Status
-									getBranchProductStatus(branchProduct?.product_status),
+									product?.name,
+									// Ordered
+									getOrdered(index, product?.quantity, product?.pieces_in_bulk, values),
+									// Barcode
+									product?.barcode,
+									// Fulfilled quantity / Bulk | Pieces
+									getFulfilledQuantity(index, values, touched, errors),
 								])}
 							/>
 
@@ -158,7 +128,7 @@ export const FulfillPreparationSlipForm = ({
 								/>
 								<Button
 									type="submit"
-									text="Create"
+									text="Fulfill"
 									variant="primary"
 									loading={loading || isSubmitting}
 								/>

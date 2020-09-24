@@ -4,11 +4,12 @@ import history from '../utils/history';
 import authReducer, { key as AUTH_KEY } from './auth';
 import branchProductsReducer, { key as BRANCH_PRODUCTS_KEY } from './branch-products';
 import { branchManagerReducers } from './BranchManager';
+import { branchPersonnelReducers } from './BranchPersonnel';
 import { officeManagerReducers } from './OfficeManager';
 import purchaseRequestsReducer, { key as PURCHASE_REQUESTS_KEY } from './purchase-requests';
-import usersReducer, { key as USERS_KEY } from './users';
 import requestReducer, { REQUEST_KEY } from './request';
 import uiReducer, { key as UI_KEY } from './ui';
+import usersReducer, { key as USERS_KEY } from './users';
 
 export default combineReducers({
 	router: connectRouter(history),
@@ -20,4 +21,5 @@ export default combineReducers({
 	[UI_KEY]: uiReducer,
 	...officeManagerReducers,
 	...branchManagerReducers,
+	...branchPersonnelReducers,
 });

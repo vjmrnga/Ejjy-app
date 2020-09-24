@@ -22,24 +22,36 @@ export const purchaseRequestActionsOptions = [
 		name: 'Seen',
 	},
 	{
+		value: purchaseRequestActions.F_OS1_CREATING,
+		name: 'F-OS1 Creating',
+	},
+	{
 		value: purchaseRequestActions.F_OS1_CREATED,
 		name: 'F-OS1 Created',
+	},
+	{
+		value: purchaseRequestActions.F_OS1_PREPARING,
+		name: 'F-OS1 Preparing',
 	},
 	{
 		value: purchaseRequestActions.F_OS1_PREPARED,
 		name: 'F-OS1 Prepared',
 	},
 	{
+		value: purchaseRequestActions.F_DS1_CREATING,
+		name: 'F-DS1 Creating',
+	},
+	{
 		value: purchaseRequestActions.F_DS1_CREATED,
 		name: 'F-DS1 Created',
 	},
 	{
-		value: purchaseRequestActions.F_DS1_DONE,
-		name: 'F-DS1 Done',
+		value: purchaseRequestActions.F_DS1_DELIVERING,
+		name: 'F-DS1 Delivering',
 	},
 	{
-		value: purchaseRequestActions.F_DS1_ERROR,
-		name: 'F-DS1 Error',
+		value: purchaseRequestActions.F_DS1_DELIVERED,
+		name: 'F-DS1 Delivered',
 	},
 ];
 

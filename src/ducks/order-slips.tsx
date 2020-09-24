@@ -1,7 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../../global/constants';
+import { NOT_FOUND_INDEX } from '../global/constants';
+import { orderSlipStatus } from '../global/types';
+import { types as OMDeliveryReceiptTypes } from './OfficeManager/delivery-receipts';
+import { types as BMDeliveryReceiptTypes } from './BranchManager/delivery-receipts';
 
 export const key = 'OM_ORDER_SLIPS';
 
@@ -45,10 +48,29 @@ const reducer = handleActions(
 					}
 					break;
 				}
-				// case types.REMOVE_BRANCH: {
-				// 	newData = { branches: state.branches.filter(({ id }) => id !== payload.id) };
-				// 	break;
-				// }
+				case OMDeliveryReceiptTypes.CREATE_DELIVERY_RECEIPT: {
+					const { orderSlipId, deliveryReceiptId } = payload;
+					const index = state.orderSlips.findIndex(({ id }) => id === orderSlipId);
+
+					if (index !== NOT_FOUND_INDEX) {
+						const orderSlips = cloneDeep(state.orderSlips);
+						orderSlips[index].delivery_receipt_id = deliveryReceiptId;
+						orderSlips[index].status.value = orderSlipStatus.DELIVERED;
+						newData = { orderSlips };
+					}
+					break;
+				}
+				case BMDeliveryReceiptTypes.RECEIVE_DELIVERY_RECEIPT: {
+					const { orderSlipId } = payload;
+					const index = state.orderSlips.findIndex(({ id }) => id === orderSlipId);
+
+					if (index !== NOT_FOUND_INDEX) {
+						const orderSlips = cloneDeep(state.orderSlips);
+						orderSlips[index].status.value = orderSlipStatus.RECEIVED;
+						newData = { orderSlips };
+					}
+					break;
+				}
 			}
 
 			return { ...state, ...newData };

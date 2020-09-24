@@ -1,8 +1,9 @@
 import { Col, Divider, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { DetailsHalf, DetailsRow, TableNormal } from '../../../../components';
-import { Button, Input, Label } from '../../../../components/elements';
-import { formatDateTime, getOrderSlipStatus } from '../../../../utils/function';
+import { DetailsHalf, DetailsRow, TableNormal } from '../../../../../components';
+import { Button, Input, Label } from '../../../../../components/elements';
+import { formatDateTime, getOrderSlipStatus } from '../../../../../utils/function';
+import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 
 interface Props {
 	visible: boolean;
@@ -10,8 +11,15 @@ interface Props {
 	onClose: any;
 }
 
-export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
+export const ViewDeliveryReceiptModal = ({ orderSlip, visible, onClose }: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
+
+	const {
+		deliveryReceipt,
+		getDeliveryReceiptById,
+		status: deliveryReceiptStatus,
+		recentRequest: deliveryReceiptRecentRequest,
+	} = useDeliveryReceipt();
 
 	// const onQuantityTypeChange = (quantityType) => {};
 

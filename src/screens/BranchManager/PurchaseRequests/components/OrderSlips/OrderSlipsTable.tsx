@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table } from '../../../../../components';
+import { AddButtonIcon, Table } from '../../../../../components';
 import { EMPTY_DR_STATUS } from '../../../../../global/constants';
 import { orderSlipStatus as osStatus, request } from '../../../../../global/types';
 import {
@@ -8,7 +8,6 @@ import {
 	getOrderSlipStatus,
 	sleep,
 } from '../../../../../utils/function';
-import { OrderSlipActions } from './OrderSlipActions';
 
 const orderSlipsColumns = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -21,19 +20,13 @@ const orderSlipsColumns = [
 interface Props {
 	orderSlips: any;
 	orderSlipStatus: any;
-	onViewDeliveryReceipt: any;
-	onEditOrderSlip: any;
-	onCreateDeliveryReceipt: any;
-	loading: boolean;
+	onReceiveDeliveryReceipt: any;
 }
 
 export const OrderSlipsTable = ({
 	orderSlips,
 	orderSlipStatus,
-	onViewDeliveryReceipt,
-	onEditOrderSlip,
-	onCreateDeliveryReceipt,
-	loading,
+	onReceiveDeliveryReceipt,
 }: Props) => {
 	const [orderSlipsData, setOrderSlipsData] = useState([]);
 
@@ -44,36 +37,30 @@ export const OrderSlipsTable = ({
 				const { id, datetime_created, status } = orderSlip;
 				const { value, percentage_fulfilled } = status;
 
-				const onViewDR =
-					value === osStatus.RECEIVED ? () => onViewDeliveryReceipt(orderSlip) : null;
-				const onEdit = value === osStatus.PREPARING ? () => onEditOrderSlip(orderSlip) : null;
-				const onCreateDR =
-					value === osStatus.PREPARED ? () => onCreateDeliveryReceipt(orderSlip) : null;
-
 				return {
-					id: id,
+					id,
 					datetime_created: formatDateTime(datetime_created),
 					status: getOrderSlipStatus(value, percentage_fulfilled * 100),
 					dr_status: EMPTY_DR_STATUS,
-					actions: <OrderSlipActions onView={onViewDR} onEdit={onEdit} onCreateDR={onCreateDR} />,
+					actions:
+						status.value === osStatus.DELIVERED ? (
+							<AddButtonIcon
+								onClick={() => onReceiveDeliveryReceipt(orderSlip)}
+								tooltip="Receive"
+							/>
+						) : null,
 				};
 			});
 			sleep(500).then(() => setOrderSlipsData(formattedOrderSlips));
 		}
-	}, [
-		orderSlips,
-		orderSlipStatus,
-		onViewDeliveryReceipt,
-		onEditOrderSlip,
-		onCreateDeliveryReceipt,
-	]);
+	}, [orderSlips, orderSlipStatus, onReceiveDeliveryReceipt]);
 
 	return (
 		<Table
 			columns={orderSlipsColumns}
 			dataSource={orderSlipsData}
 			scroll={{ y: calculateTableHeight(orderSlipsData.length), x: '100%' }}
-			loading={orderSlipStatus === request.REQUESTING || loading}
+			loading={orderSlipStatus === request.REQUESTING}
 		/>
 	);
 };

@@ -1,6 +1,7 @@
 export * from './BadgePills/BadgePills';
 export * from './Breadcrumb/Breadcrumb';
 export * from './ButtonIcons/ButtonIcons';
+export * from './ColoredText/ColoredText';
 export * from './CommonRoute/CommonRoute';
 export * from './Details/DetailsHalf';
 export * from './Details/DetailsRow';

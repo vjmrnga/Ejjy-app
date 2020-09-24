@@ -6,70 +6,40 @@ import { service } from '../../services/BranchPersonnel/preparation-slips';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { callback } = payload;
+	const {
+		purchase_request_id = null,
+		assigned_store_id = null,
+		assigned_personnel_id,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(service.list, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
+			purchase_request_id,
+			assigned_store_id,
+			assigned_personnel_id,
 		});
 
-		yield put(
-			actions.save({ type: types.GET_PREPARATION_SLIPS, preparationSlips: response.data.results }),
-		);
+		yield put(actions.save({ type: types.GET_PREPARATION_SLIPS, preparationSlips: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
-function* listExtended({ payload }: any) {
-	const { callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-		});
-
-		yield put(
-			actions.save({
-				type: types.GET_PREPARATION_SLIPS_EXTENDED,
-				preparationSlips: response.data.results,
-			}),
-		);
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* create({ payload }: any) {
+function* fulfill({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data);
+		const response = yield call(service.fulfill, data);
 
 		yield put(
-			actions.save({ type: types.CREATE_PREPARATION_SLIP, preparationSlip: response.data }),
+			actions.save({ type: types.FULFILL_PREPARATION_SLIP, preparationSlip: response.data }),
 		);
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* edit({ payload }: any) {
-	const { callback, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(service.edit, data);
-
-		yield put(actions.save({ type: types.EDIT_PREPARATION_SLIP, preparationSlip: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -81,21 +51,8 @@ const listWatcherSaga = function* listesWatcherSaga() {
 	yield takeLatest(types.GET_PREPARATION_SLIPS, list);
 };
 
-const listExtendedWatcherSaga = function* listExtendedWatcherSaga() {
-	yield takeLatest(types.GET_PREPARATION_SLIPS_EXTENDED, listExtended);
+const fulfillWatcherSaga = function* fulfillWatcherSaga() {
+	yield takeLatest(types.FULFILL_PREPARATION_SLIP, fulfill);
 };
 
-const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_PREPARATION_SLIP, create);
-};
-
-const editWatcherSaga = function* editWatcherSaga() {
-	yield takeLatest(types.EDIT_PREPARATION_SLIP, edit);
-};
-
-export default [
-	listWatcherSaga(),
-	listExtendedWatcherSaga(),
-	createWatcherSaga(),
-	editWatcherSaga(),
-];
+export default [listWatcherSaga(), fulfillWatcherSaga()];

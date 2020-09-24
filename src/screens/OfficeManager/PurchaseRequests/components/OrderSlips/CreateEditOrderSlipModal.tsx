@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { FieldError, Label, Select } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
-import { types } from '../../../../../ducks/OfficeManager/order-slips';
+import { types } from '../../../../../ducks/order-slips';
 import { selectors } from '../../../../../ducks/purchase-requests';
 import { quantityTypes, request } from '../../../../../global/types';
 import { convertToPieces } from '../../../../../utils/function';

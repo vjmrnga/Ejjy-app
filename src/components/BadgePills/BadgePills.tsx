@@ -17,24 +17,48 @@ export const NewBadgePill = ({ classNames }: Props) => (
 	<BadgePill classNames={classNames} label="New" variant="secondary" />
 );
 
+export const CompleteBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="Complete" variant="primary" />
+);
+
+export const CompletedBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="Completed" variant="primary" />
+);
+
 export const SeenBadgePill = ({ classNames }: Props) => (
 	<BadgePill classNames={classNames} label="Seen" />
+);
+
+export const FOS1CreatingBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="F-OS1 Creating" />
 );
 
 export const FOS1CreatedBadgePill = ({ classNames }: Props) => (
 	<BadgePill classNames={classNames} label="F-OS1 Created" />
 );
 
+export const FOS1PreparingBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="F-OS1 Preparing" />
+);
+
 export const FOS1PreparedBadgePill = ({ classNames }: Props) => (
 	<BadgePill classNames={classNames} label="F-OS1 Prepared" />
+);
+
+export const FDS1CreatingBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="F-DS1 Creating" />
 );
 
 export const FDS1CreatedBadgePill = ({ classNames }: Props) => (
 	<BadgePill classNames={classNames} label="F-DS1 Created" />
 );
 
-export const FDS1DoneBadgePill = ({ classNames }: Props) => (
-	<BadgePill classNames={classNames} label="F-DS1 Done" variant="primary" />
+export const FDS1DeliveringBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="F-DS1 Delivering" />
+);
+
+export const FDS1DeliveredBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="F-DS1 Delivered" variant="primary" />
 );
 
 export const FDS1ErrorBadgePill = ({ classNames }: Props) => (

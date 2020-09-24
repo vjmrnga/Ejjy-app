@@ -1,9 +1,9 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/OfficeManager/order-slips';
-import { actions as purchaseRequestActions } from '../../ducks/purchase-requests';
-import { MAX_PAGE_SIZE } from '../../global/constants';
-import { request } from '../../global/types';
-import { service } from '../../services/order-slips';
+import { actions, types } from '../ducks/order-slips';
+import { actions as purchaseRequestActions } from '../ducks/purchase-requests';
+import { MAX_PAGE_SIZE } from '../global/constants';
+import { request } from '../global/types';
+import { service } from '../services/order-slips';
 
 /* WORKERS */
 function* list({ payload }: any) {

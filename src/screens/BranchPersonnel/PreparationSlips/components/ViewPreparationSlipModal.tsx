@@ -1,8 +1,9 @@
-import { Col, Divider, Modal, Row } from 'antd';
+import { Col, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, TableNormal } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
+import { convertToBulk, getColoredText } from '../../../../utils/function';
 import { PreparationSlipDetails } from './PreparationSlipDetails';
 
 interface Props {
@@ -21,23 +22,29 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 			const formattedPreparationSlip = [];
 
 			preparationSlip?.products?.forEach((requestedProduct) => {
-				const { product } = requestedProduct;
-				const { barcode, name } = product;
+				const { product, quantity_piece, fulfilled_quantity_piece = 0 } = requestedProduct;
+				const { barcode, name, pieces_in_bulk } = product;
 
 				const quantity = {
-					barcode: 'asdf',
-					piecesInputted: 0,
-					piecesOrdered: 0,
-					bulkInputted: 0,
-					bulkOrdered: 0,
+					barcode,
+					isFulfilled: fulfilled_quantity_piece !== null,
+					piecesInputted: fulfilled_quantity_piece || 0,
+					piecesOrdered: quantity_piece,
+					bulkInputted: convertToBulk(fulfilled_quantity_piece, pieces_in_bulk),
+					bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
 				};
 
+				formattedQuantities.push(quantity);
 				formattedPreparationSlip.push([
 					barcode,
 					name,
-					`${quantity?.piecesInputted} / ${quantity?.piecesOrdered}`,
+					getColoredText(
+						`${preparationSlip?.id}-${product}-${quantity.isFulfilled}`, // key
+						!quantity.isFulfilled,
+						quantity.piecesInputted,
+						quantity.piecesOrdered,
+					),
 				]);
-				formattedQuantities.push(quantity);
 
 				return;
 			});
@@ -52,17 +59,22 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 			const QUANTITY_INDEX = 2;
 			const formattedRequestedProducts = requestedProducts.map((requestedProduct, index) => {
 				const quantity = requestedProductsQuantity[index];
-				const inputted =
-					quantityType === quantityTypes.PIECE ? quantity.piecesInputted : quantity.bulkInputted;
-				const ordered =
-					quantityType === quantityTypes.PIECE ? quantity.piecesOrdered : quantity.bulkOrdered;
+				const isPiece = quantityType === quantityTypes.PIECE;
+				const inputted = isPiece ? quantity.piecesInputted : quantity.bulkInputted;
+				const ordered = isPiece ? quantity.piecesOrdered : quantity.bulkOrdered;
+				const key = `${preparationSlip?.id}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
 
-				requestedProduct[QUANTITY_INDEX] = `${inputted} / ${ordered}`;
+				requestedProduct[QUANTITY_INDEX] = getColoredText(
+					key,
+					!quantity.isFulfilled,
+					inputted,
+					ordered,
+				);
 				return requestedProduct;
 			});
 			setRequestedProducts(formattedRequestedProducts);
 		},
-		[requestedProducts, requestedProductsQuantity],
+		[requestedProducts, requestedProductsQuantity, preparationSlip],
 	);
 
 	const getColumns = useCallback(
@@ -87,7 +99,6 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 			<PreparationSlipDetails preparationSlip={preparationSlip} />
 
 			<div className="requested-products">
-				<Divider dashed />
 				<Row gutter={[15, 15]} align="middle">
 					<Col span={24}>
 						<Label label="Requested Products" />

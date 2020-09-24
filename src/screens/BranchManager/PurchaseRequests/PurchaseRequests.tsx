@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
-import { purchaseRequestActionsOptions } from '../../../global/options';
+import { purchaseRequestActionsOptionsWithAll } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
@@ -62,7 +62,6 @@ const PurchaseRequests = () => {
 				datetime_created: dateTime,
 				type: upperFirst(type),
 				status: getPurchaseRequestStatus(action),
-				// actions: <TableActions onEdit={() => onEdit(product)} onRemove={() => removeProduct(id)} />,
 			};
 		});
 
@@ -97,7 +96,7 @@ const PurchaseRequests = () => {
 				<Box>
 					<TableHeader
 						buttonName="Create Purchase Request"
-						statuses={purchaseRequestActionsOptions}
+						statuses={purchaseRequestActionsOptionsWithAll}
 						onStatusSelect={onStatusSelect}
 						onSearch={onSearch}
 						onCreate={() => setCreateModalVisible(true)}
