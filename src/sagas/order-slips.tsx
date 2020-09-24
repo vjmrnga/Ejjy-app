@@ -1,12 +1,12 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/OfficeManager/order-slips';
-import { actions as purchaseRequestActions } from '../../ducks/purchase-requests';
-import { MAX_PAGE_SIZE } from '../../global/constants';
-import { request } from '../../global/types';
-import { service } from '../../services/order-slips';
+import { actions, types } from '../ducks/order-slips';
+import { actions as purchaseRequestActions } from '../ducks/purchase-requests';
+import { MAX_PAGE_SIZE } from '../global/constants';
+import { request } from '../global/types';
+import { service } from '../services/order-slips';
 
 /* WORKERS */
-function* getOrderSlips({ payload }: any) {
+function* list({ payload }: any) {
 	const { purchase_request_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -24,7 +24,7 @@ function* getOrderSlips({ payload }: any) {
 	}
 }
 
-function* getOrderSlipsExtended({ payload }: any) {
+function* listExtended({ payload }: any) {
 	const { purchase_request_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -44,12 +44,12 @@ function* getOrderSlipsExtended({ payload }: any) {
 	}
 }
 
-function* createOrderSlip({ payload }: any) {
+function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.createOrderSlip, data);
+		const response = yield call(service.create, data);
 
 		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
 		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
@@ -59,12 +59,12 @@ function* createOrderSlip({ payload }: any) {
 	}
 }
 
-function* editOrderSlip({ payload }: any) {
+function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.updateOrderSlip, data);
+		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }));
 		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
@@ -74,12 +74,12 @@ function* editOrderSlip({ payload }: any) {
 	}
 }
 
-function* removeOrderSlip({ payload }: any) {
+function* remove({ payload }: any) {
 	const { callback, id } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.removeOrderSlip, id);
+		yield call(service.remove, id);
 
 		yield put(actions.save({ type: types.REMOVE_ORDER_SLIP, id }));
 		callback({ status: request.SUCCESS });
@@ -89,30 +89,30 @@ function* removeOrderSlip({ payload }: any) {
 }
 
 /* WATCHERS */
-const getOrderSlipsWatcherSaga = function* getOrderSlipsWatcherSaga() {
-	yield takeLatest(types.GET_ORDER_SLIPS, getOrderSlips);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_ORDER_SLIPS, list);
 };
 
-const getOrderSlipsExtendedWatcherSaga = function* getOrderSlipsExtendedWatcherSaga() {
-	yield takeLatest(types.GET_ORDER_SLIPS_EXTENDED, getOrderSlipsExtended);
+const listExtendedWatcherSaga = function* listExtendedWatcherSaga() {
+	yield takeLatest(types.GET_ORDER_SLIPS_EXTENDED, listExtended);
 };
 
-const createOrderSlipWatcherSaga = function* createOrderSlipWatcherSaga() {
-	yield takeLatest(types.CREATE_ORDER_SLIP, createOrderSlip);
+const createWatcherSaga = function* createWatcherSaga() {
+	yield takeLatest(types.CREATE_ORDER_SLIP, create);
 };
 
-const editOrderSlipWatcherSaga = function* editOrderSlipWatcherSaga() {
-	yield takeLatest(types.EDIT_ORDER_SLIP, editOrderSlip);
+const editWatcherSaga = function* editWatcherSaga() {
+	yield takeLatest(types.EDIT_ORDER_SLIP, edit);
 };
 
-const removeOrderSlipWatcherSaga = function* removeOrderSlipWatcherSaga() {
-	yield takeLatest(types.REMOVE_ORDER_SLIP, removeOrderSlip);
+const removeWatcherSaga = function* removeWatcherSaga() {
+	yield takeLatest(types.REMOVE_ORDER_SLIP, remove);
 };
 
 export default [
-	getOrderSlipsWatcherSaga(),
-	getOrderSlipsExtendedWatcherSaga(),
-	createOrderSlipWatcherSaga(),
-	editOrderSlipWatcherSaga(),
-	removeOrderSlipWatcherSaga(),
+	listWatcherSaga(),
+	listExtendedWatcherSaga(),
+	createWatcherSaga(),
+	editWatcherSaga(),
+	removeWatcherSaga(),
 ];

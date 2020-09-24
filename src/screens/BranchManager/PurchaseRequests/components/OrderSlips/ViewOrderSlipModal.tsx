@@ -1,8 +1,9 @@
 import { Col, Divider, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { TableNormal } from '../../../../components';
-import { Button, Input, Label } from '../../../../components/elements';
-import { formatDateTime, getOrderSlipStatus } from '../../../../utils/function';
+import { DetailsHalf, DetailsRow, TableNormal } from '../../../../../components';
+import { Button, Input, Label } from '../../../../../components/elements';
+import { formatDateTime, getOrderSlipStatus } from '../../../../../utils/function';
+import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 
 interface Props {
 	visible: boolean;
@@ -10,8 +11,15 @@ interface Props {
 	onClose: any;
 }
 
-export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
+export const ViewDeliveryReceiptModal = ({ orderSlip, visible, onClose }: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
+
+	const {
+		deliveryReceipt,
+		getDeliveryReceiptById,
+		status: deliveryReceiptStatus,
+		recentRequest: deliveryReceiptRecentRequest,
+	} = useDeliveryReceipt();
 
 	// const onQuantityTypeChange = (quantityType) => {};
 
@@ -39,26 +47,9 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 				return [barcode, name, 0, `${first_name} ${last_name}`];
 			});
 
-			setRequestedProducts([
-				...formattedRequestedProducts,
-				...formattedRequestedProducts,
-				...formattedRequestedProducts,
-			]);
+			setRequestedProducts(formattedRequestedProducts);
 		}
 	}, [orderSlip]);
-
-	const renderDetail = (label, value) => (
-		<Col sm={12} xs={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={16} xs={24}>
-					<Label label={label} />
-				</Col>
-				<Col sm={8} xs={24}>
-					<span>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
 
 	return (
 		<Modal
@@ -69,20 +60,23 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 			centered
 			closable
 		>
-			<Row gutter={[15, 15]}>
-				{renderDetail('Date & Time Requested', formatDateTime(orderSlip?.datetime_created))}
-				{renderDetail('F-RS1', orderSlip?.purchase_request?.id)}
-				{renderDetail('Requesting Branch', orderSlip?.requesting_user?.branch?.name)}
-				{renderDetail('F-OS1', orderSlip?.id)}
-				{renderDetail('Created By', 'a')}
-				{renderDetail(
-					'Status',
-					getOrderSlipStatus(
+			<DetailsRow>
+				<DetailsHalf
+					label="Date & Time Requested"
+					value={formatDateTime(orderSlip?.datetime_created)}
+				/>
+				<DetailsHalf label="F-RS1" value={orderSlip?.purchase_request?.id} />
+				<DetailsHalf label="Requesting Branch" value={orderSlip?.requesting_user?.branch?.name} />
+				<DetailsHalf label="F-OS1" value={orderSlip?.id} />
+				<DetailsHalf label="Created By" value={'a'} />
+				<DetailsHalf
+					label="Status"
+					value={getOrderSlipStatus(
 						orderSlip?.status?.value,
 						orderSlip?.status?.percentage_fulfilled * 100,
-					),
-				)}
-			</Row>
+					)}
+				/>
+			</DetailsRow>
 
 			<Divider dashed />
 

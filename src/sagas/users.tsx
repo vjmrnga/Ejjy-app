@@ -5,7 +5,7 @@ import { request } from '../global/types';
 import { service } from '../services/users';
 
 /* WORKERS */
-function* getUsers({ payload }: any) {
+function* list({ payload }: any) {
 	const { callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -23,8 +23,8 @@ function* getUsers({ payload }: any) {
 }
 
 /* WATCHERS */
-const getUsersWatcherSaga = function* getUsersWatcherSaga() {
-	yield takeLatest(types.GET_USERS, getUsers);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_USERS, list);
 };
 
-export default [getUsersWatcherSaga()];
+export default [listWatcherSaga()];

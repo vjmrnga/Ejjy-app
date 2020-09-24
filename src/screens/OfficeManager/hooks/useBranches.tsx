@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/OfficeManager/branches';

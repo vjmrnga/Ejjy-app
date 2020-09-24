@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,10 +6,11 @@ import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../.
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/branch-products';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
+import { LINK_VOID } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { calculateTableHeight } from '../../../utils/function';
-import { CreateEditBranchProductsModal } from './components/BranchProducts/CreateEditBranchProductsModal';
+import { EditBranchProductsModal } from './components/BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
 import './style.scss';
 
@@ -29,25 +29,16 @@ const ViewBranch = ({ match }: Props) => {
 	// Routing
 	const branchId = match?.params?.id;
 
-	// Custom hooks
-	const {
-		branchProducts,
-		getBranchProductsByBranch,
-		editBranchProduct,
-		status,
-		errors,
-		recentRequest,
-	} = useBranchProducts();
-	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
-
 	// States
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
-	const [createEditBranchProductModalVisible, setCreateEditBranchProductModalVisible] = useState(
-		false,
-	);
+	const [editBranchProductModalVisible, setEditBranchProductModalVisible] = useState(false);
 	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
+
+	// Custom hooks
+	const { branchProducts, getBranchProductsByBranch, status, recentRequest } = useBranchProducts();
+	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
 	// Effect: Fetch branch products
 	useEffect(() => {
@@ -66,7 +57,7 @@ const ViewBranch = ({ match }: Props) => {
 				return {
 					_barcode: barcode,
 					barcode: (
-						<a href="#" onClick={() => onView(branchProduct)}>
+						<a href={LINK_VOID} onClick={() => onView(branchProduct)}>
 							{barcode}
 						</a>
 					),
@@ -81,27 +72,10 @@ const ViewBranch = ({ match }: Props) => {
 		}
 	}, [branchProducts, status, recentRequest]);
 
-	// Effect: Reload the list if recent requests are Create, Edit or Remove
-	useEffect(() => {
-		if (status === request.SUCCESS && types.EDIT_BRANCH_PRODUCT === recentRequest) {
-			setCreateEditBranchProductModalVisible(false);
-			setSelectedBranchProduct(null);
-		}
-	}, [status, recentRequest]);
-
 	const getFetchLoading = useCallback(
 		() => status === request.REQUESTING && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH,
 		[status, recentRequest],
 	);
-
-	const getSelectedProductBranchForView = useCallback(() => {
-		return selectedBranchProduct
-			? {
-					...selectedBranchProduct?.product,
-					...selectedBranchProduct,
-			  }
-			: null;
-	}, [selectedBranchProduct]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [{ name: 'Branches', link: '/branches' }, { name: branch?.name }],
@@ -115,7 +89,7 @@ const ViewBranch = ({ match }: Props) => {
 
 	const onEdit = (branch) => {
 		setSelectedBranchProduct(branch);
-		setCreateEditBranchProductModalVisible(true);
+		setEditBranchProductModalVisible(true);
 	};
 
 	const onSearch = (keyword) => {
@@ -148,20 +122,16 @@ const ViewBranch = ({ match }: Props) => {
 
 					<ViewBranchProductModal
 						branchName={branch?.name}
-						branchProduct={getSelectedProductBranchForView()}
-						visible={viewBranchProductModalVisible && !!getSelectedProductBranchForView()}
+						branchProduct={selectedBranchProduct}
+						visible={viewBranchProductModalVisible}
 						onClose={() => setViewBranchProductModalVisible(false)}
 					/>
 
-					<CreateEditBranchProductsModal
-						branchName={branch?.name}
-						branchId={branchId}
+					<EditBranchProductsModal
+						branch={branch}
 						branchProduct={selectedBranchProduct}
-						visible={createEditBranchProductModalVisible}
-						onSubmit={editBranchProduct}
-						onClose={() => setCreateEditBranchProductModalVisible(false)}
-						errors={errors}
-						loading={status === request.REQUESTING}
+						visible={editBranchProductModalVisible}
+						onClose={() => setEditBranchProductModalVisible(false)}
 					/>
 				</Box>
 			</section>

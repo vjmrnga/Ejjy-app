@@ -8,7 +8,7 @@ type Product = {
 	assigned_person_id: number;
 };
 
-type UpdateProduct = {
+type EditProduct = {
 	order_slip_product_id: number;
 	product_id: number;
 	quantity_piece?: number;
@@ -23,10 +23,10 @@ interface ICreateOrderSlip {
 	products: Product[];
 }
 
-interface IUpdateOrderSlip {
+interface IEditOrderSlip {
 	id: number;
 	assigned_store_id: number;
-	products: UpdateProduct[];
+	products: EditProduct[];
 }
 
 interface IGetOrderSlipsRequest extends IGetRequest {
@@ -37,7 +37,7 @@ export const service = {
 	list: async (params: IGetOrderSlipsRequest) => axios.get('/order-slips/', { params }),
 	listExtended: async (params: IGetOrderSlipsRequest) =>
 		axios.get('/order-slips/extended/', { params }),
-	createOrderSlip: async (body: ICreateOrderSlip) => axios.post('/order-slips/', body),
-	updateOrderSlip: async (body: IUpdateOrderSlip) => axios.patch(`/order-slips/${body.id}/`, body),
-	removeOrderSlip: async (id: number) => axios.delete(`/order-slips/${id}/`),
+	create: async (body: ICreateOrderSlip) => axios.post('/order-slips/', body),
+	edit: async (body: IEditOrderSlip) => axios.patch(`/order-slips/${body.id}/`, body),
+	remove: async (id: number) => axios.delete(`/order-slips/${id}/`),
 };

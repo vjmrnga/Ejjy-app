@@ -18,7 +18,7 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-dashboard-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-dashboard.svg`),
 		link: '/dashboard',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER],
+		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
 	},
 	{
 		key: 'products',
@@ -26,7 +26,7 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-product-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-product.svg`),
 		link: '/products',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER],
+		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
 	},
 	{
 		key: 'branches',
@@ -61,12 +61,20 @@ const SidebarItems = [
 		userTypes: [userTypes.BRANCH_MANAGER],
 	},
 	{
+		key: 'preparation-slips',
+		name: 'Preparation Slips',
+		activeIcon: require(`../../../assets/images/icon-order-slips-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-order-slips.svg`),
+		link: '/preparation-slips',
+		userTypes: [userTypes.BRANCH_PERSONNEL],
+	},
+	{
 		key: 'notifications',
 		name: 'Notifications',
 		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
 		link: '/notifications',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER],
+		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
 	},
 ];
 

@@ -10,21 +10,7 @@ import { service as branchProductsService } from '../../services/branch-products
 import { service } from '../../services/OfficeManager/branches';
 
 /* WORKERS */
-function* getBranch({ payload }: any) {
-	const { id, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(service.list, id);
-
-		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data.results }));
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* getBranches({ payload }: any) {
+function* list({ payload }: any) {
 	const { withBranchProducts = true, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -56,12 +42,26 @@ function* getBranches({ payload }: any) {
 	}
 }
 
-function* createBranch({ payload }: any) {
+function* getById({ payload }: any) {
+	const { id, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(service.getById, id);
+
+		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data.results }));
+		callback({ status: request.SUCCESS });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.createBranch, data);
+		const response = yield call(service.create, data);
 
 		yield put(actions.save({ type: types.CREATE_BRANCH, branch: response.data }));
 		callback({ status: request.SUCCESS });
@@ -70,12 +70,12 @@ function* createBranch({ payload }: any) {
 	}
 }
 
-function* editBranch({ payload }: any) {
+function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.editBranch, data);
+		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_BRANCH, branch: response.data }));
 		callback({ status: request.SUCCESS });
@@ -84,12 +84,12 @@ function* editBranch({ payload }: any) {
 	}
 }
 
-function* removeBranch({ payload }: any) {
+function* remove({ payload }: any) {
 	const { callback, id } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.removeBranch, id);
+		yield call(service.remove, id);
 
 		yield put(actions.save({ type: types.REMOVE_BRANCH, id }));
 		callback({ status: request.SUCCESS });
@@ -99,30 +99,30 @@ function* removeBranch({ payload }: any) {
 }
 
 /* WATCHERS */
-const getBranchWatcherSaga = function* getBranchesWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH, getBranch);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_BRANCHES, list);
 };
 
-const getBranchesWatcherSaga = function* getBranchesWatcherSaga() {
-	yield takeLatest(types.GET_BRANCHES, getBranches);
+const getByIdWatcherSaga = function* getByIdesWatcherSaga() {
+	yield takeLatest(types.GET_BRANCH, getById);
 };
 
-const createBranchWatcherSaga = function* createBranchWatcherSaga() {
-	yield takeLatest(types.CREATE_BRANCH, createBranch);
+const createWatcherSaga = function* createWatcherSaga() {
+	yield takeLatest(types.CREATE_BRANCH, create);
 };
 
-const editBranchWatcherSaga = function* editBranchWatcherSaga() {
-	yield takeLatest(types.EDIT_BRANCH, editBranch);
+const editWatcherSaga = function* editWatcherSaga() {
+	yield takeLatest(types.EDIT_BRANCH, edit);
 };
 
-const removeBranchWatcherSaga = function* removeBranchWatcherSaga() {
-	yield takeLatest(types.REMOVE_BRANCH, removeBranch);
+const removeWatcherSaga = function* removeWatcherSaga() {
+	yield takeLatest(types.REMOVE_BRANCH, remove);
 };
 
 export default [
-	getBranchWatcherSaga(),
-	getBranchesWatcherSaga(),
-	createBranchWatcherSaga(),
-	editBranchWatcherSaga(),
-	removeBranchWatcherSaga(),
+	getByIdWatcherSaga(),
+	listWatcherSaga(),
+	createWatcherSaga(),
+	editWatcherSaga(),
+	removeWatcherSaga(),
 ];

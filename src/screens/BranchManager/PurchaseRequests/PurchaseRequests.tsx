@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { lowerCase, upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,14 +6,12 @@ import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
-import { types } from '../../../ducks/purchase-requests';
-import { purchaseRequestActionsOptions } from '../../../global/options';
-import { purchaseRequestTypes, quantityTypes, request } from '../../../global/types';
+import { purchaseRequestActionsOptionsWithAll } from '../../../global/options';
+import { request } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { usePurchaseRequests } from '../../../hooks/usePurchaseRequests';
 import {
 	calculateTableHeight,
-	convertToPieces,
 	formatDateTime,
 	getPurchaseRequestStatus,
 } from '../../../utils/function';
@@ -36,14 +33,7 @@ const PurchaseRequests = () => {
 	const [tableData, setTableData] = useState([]);
 	const [createModalVisible, setCreateModalVisible] = useState(false);
 
-	const {
-		purchaseRequests,
-		getPurchaseRequestsExtended,
-		createPurchaseRequest,
-		status,
-		errors,
-		recentRequest,
-	} = usePurchaseRequests();
+	const { purchaseRequests, getPurchaseRequestsExtended, status } = usePurchaseRequests();
 
 	const {
 		branchProducts,
@@ -72,39 +62,12 @@ const PurchaseRequests = () => {
 				datetime_created: dateTime,
 				type: upperFirst(type),
 				status: getPurchaseRequestStatus(action),
-				// actions: <TableActions onEdit={() => onEdit(product)} onRemove={() => removeProduct(id)} />,
 			};
 		});
 
 		setData(formattedProducts);
 		setTableData(formattedProducts);
 	}, [purchaseRequests]);
-
-	// Effect: Reload the list if recent requests are Create, Edit or Remove
-	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.CREATE_PURCHASE_REQUEST) {
-			setCreateModalVisible(false);
-		}
-	}, [status, recentRequest]);
-
-	const onCreate = (values) => {
-		const products = values.branchProducts
-			.filter(({ selected }) => selected)
-			.map(({ product_id, pieces_in_bulk, quantity, quantity_type }) => ({
-				product_id,
-				quantity_piece:
-					quantity_type === quantityTypes.PIECE
-						? quantity
-						: convertToPieces(quantity, pieces_in_bulk),
-			}));
-
-		createPurchaseRequest({
-			requestor_id: user?.branch?.id,
-			requesting_user_id: user?.id,
-			type: purchaseRequestTypes.MANUAL,
-			products,
-		});
-	};
 
 	const onSearch = (keyword) => {
 		keyword = lowerCase(keyword);
@@ -121,8 +84,9 @@ const PurchaseRequests = () => {
 		setTableData(filteredData);
 	};
 
-	const onStatusSelect = (status) => {
-		const filteredData = status !== 'all' ? data.filter(({ _status }) => _status === status) : data;
+	const onStatusSelect = (selectedStatus) => {
+		const filteredData =
+			selectedStatus !== 'all' ? data.filter(({ _status }) => _status === selectedStatus) : data;
 		setTableData(filteredData);
 	};
 
@@ -132,7 +96,7 @@ const PurchaseRequests = () => {
 				<Box>
 					<TableHeader
 						buttonName="Create Purchase Request"
-						statuses={purchaseRequestActionsOptions}
+						statuses={purchaseRequestActionsOptionsWithAll}
 						onStatusSelect={onStatusSelect}
 						onSearch={onSearch}
 						onCreate={() => setCreateModalVisible(true)}
@@ -148,10 +112,8 @@ const PurchaseRequests = () => {
 					<CreatePurchaseRequestModal
 						branchProducts={branchProducts}
 						visible={createModalVisible}
-						onSubmit={onCreate}
 						onClose={() => setCreateModalVisible(false)}
-						errors={errors}
-						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
+						loading={branchProductsStatus === request.REQUESTING}
 					/>
 				</Box>
 			</section>

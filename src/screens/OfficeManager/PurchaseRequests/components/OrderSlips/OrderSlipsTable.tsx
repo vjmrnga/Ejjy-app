@@ -18,12 +18,23 @@ const orderSlipsColumns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
+interface Props {
+	orderSlips: any;
+	orderSlipStatus: any;
+	onViewDeliveryReceipt: any;
+	onEditOrderSlip: any;
+	onCreateDeliveryReceipt: any;
+	loading: boolean;
+}
+
 export const OrderSlipsTable = ({
 	orderSlips,
 	orderSlipStatus,
-	onViewOrderSlip,
+	onViewDeliveryReceipt,
 	onEditOrderSlip,
-}) => {
+	onCreateDeliveryReceipt,
+	loading,
+}: Props) => {
 	const [orderSlipsData, setOrderSlipsData] = useState([]);
 
 	// Effect: Format order slips to be rendered in Table
@@ -33,28 +44,36 @@ export const OrderSlipsTable = ({
 				const { id, datetime_created, status } = orderSlip;
 				const { value, percentage_fulfilled } = status;
 
-				const onView = value === osStatus.DELIVERED ? () => onViewOrderSlip(orderSlip) : null;
+				const onViewDR =
+					value === osStatus.RECEIVED ? () => onViewDeliveryReceipt(orderSlip) : null;
 				const onEdit = value === osStatus.PREPARING ? () => onEditOrderSlip(orderSlip) : null;
-				const onCreateDR = null;
+				const onCreateDR =
+					value === osStatus.PREPARED ? () => onCreateDeliveryReceipt(orderSlip) : null;
 
 				return {
-					id,
+					id: id,
 					datetime_created: formatDateTime(datetime_created),
 					status: getOrderSlipStatus(value, percentage_fulfilled * 100),
 					dr_status: EMPTY_DR_STATUS,
-					actions: <OrderSlipActions onView={onView} onEdit={onEdit} onCreateDR={onCreateDR} />,
+					actions: <OrderSlipActions onView={onViewDR} onEdit={onEdit} onCreateDR={onCreateDR} />,
 				};
 			});
 			sleep(500).then(() => setOrderSlipsData(formattedOrderSlips));
 		}
-	}, [orderSlips, orderSlipStatus, onViewOrderSlip, onEditOrderSlip]);
+	}, [
+		orderSlips,
+		orderSlipStatus,
+		onViewDeliveryReceipt,
+		onEditOrderSlip,
+		onCreateDeliveryReceipt,
+	]);
 
 	return (
 		<Table
 			columns={orderSlipsColumns}
 			dataSource={orderSlipsData}
 			scroll={{ y: calculateTableHeight(orderSlipsData.length), x: '100%' }}
-			loading={orderSlipStatus === request.REQUESTING}
+			loading={orderSlipStatus === request.REQUESTING || loading}
 		/>
 	);
 };

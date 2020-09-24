@@ -64,7 +64,7 @@ export const CreatePurchaseRequestForm = ({
 			}),
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[],
+		[branchProducts],
 	);
 
 	const getExtraFields = (index) => (

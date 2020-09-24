@@ -1,12 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Divider, message, Modal, Row } from 'antd';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { FieldError, Label, Select } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
+import { types } from '../../../../../ducks/order-slips';
 import { selectors } from '../../../../../ducks/purchase-requests';
-import { quantityTypes } from '../../../../../global/types';
+import { quantityTypes, request } from '../../../../../global/types';
 import { convertToPieces } from '../../../../../utils/function';
+import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { PurchaseRequestDetails, purchaseRequestDetailsType } from '../PurchaseRequestDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 
@@ -16,12 +19,8 @@ interface Props {
 	selectedBranchId?: number;
 	requestedProducts: any;
 	onChangePreparingBranch: any;
-	createOrderSlip: any;
-	editOrderSlip: any;
 	visible: boolean;
 	onClose: any;
-	errors: string[];
-	loading: boolean;
 }
 
 export const CreateEditOrderSlipModal = ({
@@ -30,16 +29,23 @@ export const CreateEditOrderSlipModal = ({
 	selectedBranchId,
 	requestedProducts,
 	onChangePreparingBranch,
-	createOrderSlip,
-	editOrderSlip,
 	visible,
 	onClose,
-	errors,
-	loading,
 }: Props) => {
 	const user = useSelector(authSelectors.selectUser());
 	const branches = useSelector(branchesSelectors.selectBranches());
 	const purchaseRequestsByBranch = useSelector(selectors.selectPurchaseRequestsByBranch());
+	const { createOrderSlip, editOrderSlip, status, errors, recentRequest, reset } = useOrderSlips();
+
+	// Effect: Close modal if create/edit success
+	useEffect(() => {
+		const recentRequests = [types.CREATE_ORDER_SLIP, types.EDIT_ORDER_SLIP];
+
+		if (status === request.SUCCESS && recentRequests.includes(recentRequest)) {
+			reset();
+			onClose();
+		}
+	}, [status, recentRequest]);
 
 	const getBranchOptions = useCallback(
 		() =>
@@ -154,7 +160,7 @@ export const CreateEditOrderSlipModal = ({
 				assignedPersonnelOptions={getAssignedPersonnelOptions()}
 				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={loading}
+				loading={status === request.REQUESTING}
 			/>
 		</Modal>
 	);

@@ -19,8 +19,7 @@ interface IGetBranchProductsByBranchRequest extends IGetRequest {
 
 export const service = {
 	list: async (params: IGetRequest) => axios.get('/branches-products/extended/', { params }),
-	getBranchProductsByBranch: async (params: IGetBranchProductsByBranchRequest) =>
+	listByBranch: async (params: IGetBranchProductsByBranchRequest) =>
 		axios.get('branches-products/with-branch-manager-details/', { params }),
-	editBranchProduct: async (body: IEditBranchProduct) =>
-		axios.patch(`/branches-products/${body.id}/`, body),
+	edit: async (body: IEditBranchProduct) => axios.patch(`/branches-products/${body.id}/`, body),
 };

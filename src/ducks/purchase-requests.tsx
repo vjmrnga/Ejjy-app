@@ -1,8 +1,9 @@
 import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
+import { types as BMDeliveryReceiptTypes } from './BranchManager/delivery-receipts';
 
-export const key = 'BM_PURCHASE_REQUESTS';
+export const key = 'PURCHASE_REQUESTS';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
@@ -47,6 +48,13 @@ const reducer = handleActions(
 				}
 				case types.CREATE_PURCHASE_REQUEST: {
 					newData = { purchaseRequests: [payload.purchaseRequest, ...state.purchaseRequests] };
+					break;
+				}
+				case BMDeliveryReceiptTypes.RECEIVE_DELIVERY_RECEIPT: {
+					const { purchaseRequestAction } = payload;
+					const purchaseRequest = cloneDeep(state.purchaseRequest);
+					purchaseRequest.action.action = purchaseRequestAction;
+					newData = { purchaseRequest };
 					break;
 				}
 			}

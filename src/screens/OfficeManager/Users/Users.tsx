@@ -1,10 +1,6 @@
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Container } from '../../../components';
 import './style.scss';
-
-type IUsersProps = ConnectedProps<typeof connector>;
 
 const Users = () => {
 	return (
@@ -16,10 +12,4 @@ const Users = () => {
 	);
 };
 
-const mapDispatch = (dispatch: any) => ({
-	...bindActionCreators({}, dispatch),
-});
-
-const connector = connect(null, mapDispatch);
-
-export default connector(Users);
+export default Users;

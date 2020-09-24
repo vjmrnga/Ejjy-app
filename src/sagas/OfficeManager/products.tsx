@@ -5,7 +5,7 @@ import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/products';
 
 /* WORKERS */
-function* getProducts({ payload }: any) {
+function* list({ payload }: any) {
 	const { callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -22,12 +22,12 @@ function* getProducts({ payload }: any) {
 	}
 }
 
-function* createProduct({ payload }: any) {
+function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.createProduct, data);
+		const response = yield call(service.create, data);
 
 		yield put(actions.save({ type: types.CREATE_PRODUCT, product: response.data }));
 		callback({ status: request.SUCCESS });
@@ -36,12 +36,12 @@ function* createProduct({ payload }: any) {
 	}
 }
 
-function* editProduct({ payload }: any) {
+function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.editProduct, data);
+		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_PRODUCT, product: response.data }));
 		callback({ status: request.SUCCESS });
@@ -50,12 +50,12 @@ function* editProduct({ payload }: any) {
 	}
 }
 
-function* removeProduct({ payload }: any) {
+function* remove({ payload }: any) {
 	const { callback, id } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.removeProduct, id);
+		yield call(service.remove, id);
 
 		yield put(actions.save({ type: types.REMOVE_PRODUCT, id }));
 		callback({ status: request.SUCCESS });
@@ -65,25 +65,20 @@ function* removeProduct({ payload }: any) {
 }
 
 /* WATCHERS */
-const getProductsWatcherSaga = function* getProductsWatcherSaga() {
-	yield takeLatest(types.GET_PRODUCTS, getProducts);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_PRODUCTS, list);
 };
 
-const createProductWatcherSaga = function* createProductWatcherSaga() {
-	yield takeLatest(types.CREATE_PRODUCT, createProduct);
+const createWatcherSaga = function* createWatcherSaga() {
+	yield takeLatest(types.CREATE_PRODUCT, create);
 };
 
-const editProductWatcherSaga = function* editProductWatcherSaga() {
-	yield takeLatest(types.EDIT_PRODUCT, editProduct);
+const editWatcherSaga = function* editWatcherSaga() {
+	yield takeLatest(types.EDIT_PRODUCT, edit);
 };
 
-const removeProductWatcherSaga = function* removeProductWatcherSaga() {
-	yield takeLatest(types.REMOVE_PRODUCT, removeProduct);
+const removeWatcherSaga = function* removeWatcherSaga() {
+	yield takeLatest(types.REMOVE_PRODUCT, remove);
 };
 
-export default [
-	getProductsWatcherSaga(),
-	createProductWatcherSaga(),
-	editProductWatcherSaga(),
-	removeProductWatcherSaga(),
-];
+export default [listWatcherSaga(), createWatcherSaga(), editWatcherSaga(), removeWatcherSaga()];

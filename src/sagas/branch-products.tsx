@@ -5,7 +5,7 @@ import { request } from '../global/types';
 import { service } from '../services/branch-products';
 
 /* WORKERS */
-function* getBranchProducts({ payload }: any) {
+function* list({ payload }: any) {
 	const { callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -24,12 +24,12 @@ function* getBranchProducts({ payload }: any) {
 	}
 }
 
-function* getBranchProductsByBranch({ payload }: any) {
+function* listByBranch({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.getBranchProductsByBranch, {
+		const response = yield call(service.listByBranch, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
 			branch_id: branchId,
@@ -47,12 +47,12 @@ function* getBranchProductsByBranch({ payload }: any) {
 	}
 }
 
-function* editBranchProduct({ payload }: any) {
+function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.editBranchProduct, data);
+		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_BRANCH_PRODUCT, branchProduct: response.data }));
 		callback({ status: request.SUCCESS });
@@ -61,20 +61,16 @@ function* editBranchProduct({ payload }: any) {
 	}
 }
 /* WATCHERS */
-const getBranchProductsWatcherSaga = function* getBranchProductsWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS, getBranchProducts);
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
 };
 
-const getBranchProductsByBranchWatcherSaga = function* getBranchProductsByBranchWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS_BY_BRANCH, getBranchProductsByBranch);
+const listByBranchWatcherSaga = function* listByBranchWatcherSaga() {
+	yield takeLatest(types.GET_BRANCH_PRODUCTS_BY_BRANCH, listByBranch);
 };
 
-const editBranchProductWatcherSaga = function* editBranchProductWatcherSaga() {
-	yield takeLatest(types.EDIT_BRANCH_PRODUCT, editBranchProduct);
+const editWatcherSaga = function* editWatcherSaga() {
+	yield takeLatest(types.EDIT_BRANCH_PRODUCT, edit);
 };
 
-export default [
-	getBranchProductsWatcherSaga(),
-	getBranchProductsByBranchWatcherSaga(),
-	editBranchProductWatcherSaga(),
-];
+export default [listWatcherSaga(), listByBranchWatcherSaga(), editWatcherSaga()];

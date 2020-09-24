@@ -1,7 +1,7 @@
 // Common
-export { default as Login } from './Login/Login';
-export { default as Error404 } from './404/404';
-export { default as Landing } from './Landing/Landing';
+export { default as Login } from './_Login/Login';
+export { default as Error404 } from './_404/404';
+export { default as Landing } from './_Landing/Landing';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';
@@ -10,6 +10,12 @@ export { default as BranchManagerOrderSlips } from './BranchManager/OrderSlips/O
 export { default as BranchManagerProducts } from './BranchManager/Products/Products';
 export { default as BranchManagerPurchaseRequests } from './BranchManager/PurchaseRequests/PurchaseRequests';
 export { default as BranchManagerViewPurchaseRequest } from './BranchManager/PurchaseRequests/ViewPurchaseRequest';
+
+// Branch Personnel
+export { default as BranchPersonnelDashboard } from './BranchPersonnel/Dashboard/Dashboard';
+export { default as BranchPersonnelNotifications } from './BranchPersonnel/Notifications/Notifications';
+export { default as BranchPersonnelPreparationSlips } from './BranchPersonnel/PreparationSlips/PreparationSlips';
+export { default as BranchPersonnelProducts } from './BranchPersonnel/Products/Products';
 
 // Office Manager
 export { default as OfficeManagerBranches } from './OfficeManager/Branches/Branches';
