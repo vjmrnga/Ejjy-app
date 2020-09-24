@@ -11,10 +11,10 @@ export const DetailsHalf = ({ value, label }: Props) => {
 	return (
 		<Col sm={12} xs={24}>
 			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={16} xs={24}>
+				<Col sm={12} xs={24}>
 					<Label label={label} />
 				</Col>
-				<Col sm={8} xs={24}>
+				<Col sm={12} xs={24}>
 					<span>{value}</span>
 				</Col>
 			</Row>

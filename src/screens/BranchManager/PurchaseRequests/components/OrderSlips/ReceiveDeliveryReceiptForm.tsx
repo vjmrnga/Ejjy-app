@@ -35,25 +35,23 @@ export const ReceiveDeliveryReceiptForm = ({ products, onSubmit, onClose, loadin
 		[products],
 	);
 
-	const getRow = (name, index, values, touched, errors) => {
+	const getRow = (name, index, touched, errors) => {
 		return (
-			<>
-				<Row gutter={[25, 8]}>
-					<Col xs={24} sm={12}>
-						<Label label="Product" spacing />
-						<Input placeholder={name} onChange={null} disabled />
-					</Col>
+			<Row gutter={[25, 8]}>
+				<Col xs={24} sm={12}>
+					<Label label="Product" spacing />
+					<Input placeholder={name} onChange={null} disabled />
+				</Col>
 
-					<Col xs={24} sm={12}>
-						<Label label="Quantity" spacing />
-						<FormInput type="number" id={`products.${index}.received_quantity_piece`} />
-						{errors?.products?.[index]?.received_quantity_piece &&
-						touched?.products?.[index]?.received_quantity_piece ? (
-							<FieldError error={errors?.products?.[index]?.received_quantity_piece} />
-						) : null}
-					</Col>
-				</Row>
-			</>
+				<Col xs={24} sm={12}>
+					<Label label="Quantity" spacing />
+					<FormInput type="number" id={`products.${index}.received_quantity_piece`} />
+					{errors?.products?.[index]?.received_quantity_piece &&
+					touched?.products?.[index]?.received_quantity_piece ? (
+						<FieldError error={errors?.products?.[index]?.received_quantity_piece} />
+					) : null}
+				</Col>
+			</Row>
 		);
 	};
 
@@ -78,7 +76,7 @@ export const ReceiveDeliveryReceiptForm = ({ products, onSubmit, onClose, loadin
 						<Form className="form">
 							<Row gutter={[0, 20]}>
 								{products.map(({ name }, index) => (
-									<Col span={24}>{getRow(name, index, values, touched, errors)}</Col>
+									<Col span={24}>{getRow(name, index, touched, errors)}</Col>
 								))}
 							</Row>
 
