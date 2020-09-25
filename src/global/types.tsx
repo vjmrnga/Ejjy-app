@@ -67,3 +67,8 @@ export const preparationSlipStatus = {
 	PREPARING: 'preparing',
 	COMPLETED: 'completed',
 };
+
+export const deliveryReceiptProductStatus = {
+	RESOLVED: 'resolved',
+	INVESTIGATION: 'investigation',
+};

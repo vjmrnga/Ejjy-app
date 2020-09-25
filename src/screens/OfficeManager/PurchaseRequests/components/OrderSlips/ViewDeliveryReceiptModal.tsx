@@ -9,7 +9,8 @@ import {
 	DetailsRow,
 	ErrorIcon,
 } from '../../../../../components';
-import { Button, Input, Label } from '../../../../../components/elements';
+import { Button, Input, Label, Select } from '../../../../../components/elements';
+import { deliveryReceiptProductOptions } from '../../../../../global/options';
 import { request } from '../../../../../global/types';
 import { formatDateTime } from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
@@ -74,6 +75,10 @@ export const ViewDeliveryReceiptModal = ({ orderSlip, visible, onClose }: Props)
 		}
 	}, [orderSlip, deliveryReceipt, status]);
 
+	const onChangeStatus = (status) => {
+		console.log(status);
+	};
+
 	const getRow = (product) => {
 		return (
 			<Col span={24}>
@@ -95,7 +100,11 @@ export const ViewDeliveryReceiptModal = ({ orderSlip, visible, onClose }: Props)
 
 					<Col xs={12} sm={6}>
 						<Label label="Status" spacing />
-						<Input placeholder={product.status} onChange={null} disabled />
+						<Select
+							options={deliveryReceiptProductOptions}
+							value={product.status}
+							onChange={onChangeStatus}
+						/>
 					</Col>
 				</Row>
 				<Row gutter={[25, 8]}>

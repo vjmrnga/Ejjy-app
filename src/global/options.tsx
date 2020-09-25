@@ -1,5 +1,10 @@
 import { upperFirst } from 'lodash';
-import { preparationSlipStatus, purchaseRequestActions, quantityTypes } from './types';
+import {
+	deliveryReceiptProductStatus,
+	preparationSlipStatus,
+	purchaseRequestActions,
+	quantityTypes,
+} from './types';
 
 export const quantityTypeOptions = [
 	{
@@ -79,5 +84,16 @@ export const preparationSlipStatusOptions = [
 	{
 		value: preparationSlipStatus.COMPLETED,
 		name: 'Completed',
+	},
+];
+
+export const deliveryReceiptProductOptions = [
+	{
+		name: upperFirst(deliveryReceiptProductStatus.RESOLVED),
+		value: deliveryReceiptProductStatus.RESOLVED,
+	},
+	{
+		name: upperFirst(deliveryReceiptProductStatus.INVESTIGATION),
+		value: deliveryReceiptProductStatus.INVESTIGATION,
 	},
 ];
