@@ -47,8 +47,7 @@ export const OrderSlipsTable = ({
 				const onViewDR =
 					value === osStatus.RECEIVED ? () => onViewDeliveryReceipt(orderSlip) : null;
 				const onEdit = value === osStatus.PREPARING ? () => onEditOrderSlip(orderSlip) : null;
-				const onCreateDR =
-					value === osStatus.PREPARED ? () => onCreateDeliveryReceipt(orderSlip) : null;
+				const onCreateDR = value === osStatus.PREPARED ? () => onCreateDeliveryReceipt(id) : null;
 
 				return {
 					id: id,
