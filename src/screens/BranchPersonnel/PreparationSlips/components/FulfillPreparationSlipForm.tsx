@@ -104,7 +104,7 @@ export const FulfillPreparationSlipForm = ({
 						<Form className="form">
 							<TableNormal
 								columns={columns}
-								data={preparationSlipProducts.map((product, index) => [
+								data={preparationSlipProducts?.map((product, index) => [
 									// Name
 									product?.name,
 									// Ordered
