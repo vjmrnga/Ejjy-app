@@ -33,7 +33,7 @@ export const FulfillPreparationSlipForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				preparationSlipProducts: preparationSlipProducts.map((product) => ({
+				preparationSlipProducts: preparationSlipProducts?.map((product) => ({
 					pieces_in_bulk: product.pieces_in_bulk,
 					quantity_type: product.quantity_type,
 					order_slip_product_id: product.order_slip_product_id,
@@ -55,7 +55,7 @@ export const FulfillPreparationSlipForm = ({
 		[preparationSlipProducts],
 	);
 
-	const getFulfilledQuantity = (index, values, touched, errors) => {
+	const getFulfilledQuantity = (index, touched, errors) => {
 		return (
 			<>
 				<div className="quantity-container">
@@ -112,7 +112,7 @@ export const FulfillPreparationSlipForm = ({
 									// Barcode
 									product?.barcode,
 									// Fulfilled quantity / Bulk | Pieces
-									getFulfilledQuantity(index, values, touched, errors),
+									getFulfilledQuantity(index, touched, errors),
 								])}
 							/>
 
