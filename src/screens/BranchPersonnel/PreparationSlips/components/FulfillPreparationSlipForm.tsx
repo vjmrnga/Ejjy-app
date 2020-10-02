@@ -46,7 +46,9 @@ export const FulfillPreparationSlipForm = ({
 			Schema: Yup.object().shape({
 				preparationSlipProducts: Yup.array().of(
 					Yup.object().shape({
-						quantity: Yup.number().min(1, 'Must greater than zero').required('Qty required'),
+						fulfilled_quantity: Yup.number()
+							.min(1, 'Must greater than zero')
+							.required('Qty required'),
 					}),
 				),
 			}),
@@ -69,9 +71,9 @@ export const FulfillPreparationSlipForm = ({
 						options={quantityTypeOptions}
 					/>
 				</div>
-				{errors?.preparationSlipProducts?.[index]?.quantity &&
-				touched?.preparationSlipProducts?.[index]?.quantity ? (
-					<FieldError error={errors?.preparationSlipProducts?.[index]?.quantity} />
+				{errors?.preparationSlipProducts?.[index]?.fulfilled_quantity &&
+				touched?.preparationSlipProducts?.[index]?.fulfilled_quantity ? (
+					<FieldError error={errors?.preparationSlipProducts?.[index]?.fulfilled_quantity} />
 				) : null}
 			</>
 		);

@@ -4,5 +4,4 @@ export const NOT_FOUND_INDEX = -1;
 
 export const EMPTY_DR_STATUS = '—';
 
-// eslint-disable-next-line no-script-url
-export const LINK_VOID = 'javascript:void(0)';
+export const EMPTY_PR_PROGRESS = '—';
