@@ -9,4 +9,8 @@
 	border-radius: $border-radius;
 	outline: 0 !important;
 	display: block;
+
+	&.disabled {
+		background-color: $color-main-background;
+	}
 }

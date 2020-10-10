@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss';
 
-interface IInputProps {
+interface Props {
 	id?: string;
 	type?: string;
 	placeholder?: string;
@@ -11,7 +11,7 @@ interface IInputProps {
 	onChange: any;
 }
 
-const Input = ({ type, id, max, min, placeholder, onChange, disabled }: IInputProps) => (
+const Input = ({ type, id, max, min, placeholder, onChange, disabled }: Props) => (
 	<input
 		type={type}
 		id={id}
