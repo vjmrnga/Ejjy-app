@@ -1,14 +1,15 @@
-import { Spin } from 'antd';
+import { Spin, Tooltip } from 'antd';
+import cn from 'classnames';
 import React, { ReactNode } from 'react';
 import { calculateTableHeight } from '../../utils/function';
 import { ROW_HEIGHT } from '../Table/Table';
 import './style.scss';
-import cn from 'classnames';
 
 interface Column {
 	name: string | ReactNode;
 	width?: string;
 	center?: boolean;
+	tooltip?: string;
 }
 
 interface Props {
@@ -16,21 +17,28 @@ interface Props {
 	data: any;
 	loading?: boolean;
 	displayInPage?: boolean;
+	hasCustomHeaderComponent?: boolean;
 }
 
-export const TableNormal = ({ columns, data, loading, displayInPage }: Props) => {
+export const TableNormal = ({
+	columns,
+	data,
+	loading,
+	displayInPage,
+	hasCustomHeaderComponent,
+}: Props) => {
 	return (
 		<Spin size="large" spinning={loading}>
 			<div
-				className={cn('TableNormal', { page: displayInPage })}
+				className={cn('TableNormal', { page: displayInPage, hasCustomHeaderComponent })}
 				style={{ height: calculateTableHeight(data?.length + 1) + 25 }}
 			>
 				<table>
 					<thead>
 						<tr>
-							{columns.map(({ name, width, center = false }, index) => (
+							{columns.map(({ name, width, center = false, tooltip = null }, index) => (
 								<th key={`th-${index}`} style={{ width, textAlign: center ? 'center' : 'left' }}>
-									{name}
+									{tooltip ? <Tooltip title={tooltip}>{name}</Tooltip> : name}
 								</th>
 							))}
 						</tr>

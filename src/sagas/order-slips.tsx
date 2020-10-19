@@ -1,21 +1,21 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/order-slips';
-import { actions as purchaseRequestActions } from '../ducks/purchase-requests';
+import { actions as requisitionSlipActions } from '../ducks/requisition-slips';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/order-slips';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { purchase_request_id, callback } = payload;
+	const { requisition_slip_id = null, assigned_store_id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			purchase_request_id,
-			is_out_of_stock: false,
+			requisition_slip_id,
+			assigned_store_id,
 		});
 
 		yield put(actions.save({ type: types.GET_ORDER_SLIPS, orderSlips: response.data.results }));
@@ -26,15 +26,15 @@ function* list({ payload }: any) {
 }
 
 function* listExtended({ payload }: any) {
-	const { purchase_request_id, callback } = payload;
+	const { requisition_slip_id = null, assigned_store_id = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.listExtended, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			purchase_request_id,
-			is_out_of_stock: false,
+			requisition_slip_id,
+			assigned_store_id,
 		});
 
 		yield put(
@@ -54,7 +54,7 @@ function* create({ payload }: any) {
 		const response = yield call(service.create, data);
 
 		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
-		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
+		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -69,7 +69,7 @@ function* edit({ payload }: any) {
 		const response = yield call(service.edit, data);
 
 		yield put(actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }));
-		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
+		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -84,19 +84,6 @@ function* remove({ payload }: any) {
 		yield call(service.remove, id);
 
 		yield put(actions.save({ type: types.REMOVE_ORDER_SLIP, id }));
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* setOutOfStock({ payload }: any) {
-	const { callback, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		yield call(service.create, data);
-		yield put(purchaseRequestActions.removePurchaseRequestByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -124,15 +111,10 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 	yield takeLatest(types.REMOVE_ORDER_SLIP, remove);
 };
 
-const setOutOfStockWatcherSaga = function* setOutOfStockWatcherSaga() {
-	yield takeLatest(types.SET_OUT_OF_STOCK, setOutOfStock);
-};
-
 export default [
 	listWatcherSaga(),
 	listExtendedWatcherSaga(),
 	createWatcherSaga(),
 	editWatcherSaga(),
 	removeWatcherSaga(),
-	setOutOfStockWatcherSaga(),
 ];

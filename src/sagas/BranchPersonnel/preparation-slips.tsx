@@ -7,7 +7,7 @@ import { service } from '../../services/BranchPersonnel/preparation-slips';
 /* WORKERS */
 function* list({ payload }: any) {
 	const {
-		purchase_request_id = null,
+		requisition_slip_id = null,
 		assigned_store_id = null,
 		assigned_personnel_id,
 		callback,
@@ -19,11 +19,12 @@ function* list({ payload }: any) {
 			ordering: 'id',
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
-			purchase_request_id,
+			requisition_slip_id,
 			assigned_store_id,
 			assigned_personnel_id,
 		});
 
+		// NOTE: Commented out because prep slip re-fetched after fulfilling prep slip
 		yield put(actions.save({ type: types.GET_PREPARATION_SLIPS, preparationSlips: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {

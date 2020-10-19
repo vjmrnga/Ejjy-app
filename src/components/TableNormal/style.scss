@@ -31,6 +31,14 @@
 		}
 	}
 
+	&.hasCustomHeaderComponent {
+		thead {
+			th {
+				padding: 13px 15px;
+			}
+		}
+	}
+
 	&.page {
 		table {
 			thead {

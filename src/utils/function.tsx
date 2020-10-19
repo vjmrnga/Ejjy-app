@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { floor, memoize } from 'lodash';
 import moment from 'moment';
 import React from 'react';
@@ -10,22 +10,13 @@ import {
 	CompletedBadgePill,
 	DoneBadgePill,
 	ErrorBadgePill,
-	FDS1CreatedBadgePill,
-	FDS1CreatingBadgePill,
-	FDS1DeliveredBadgePill,
-	FDS1DeliveringBadgePill,
-	FOS1CreatedBadgePill,
-	FOS1CreatingBadgePill,
-	FOS1PreparedBadgePill,
-	FOS1PreparingBadgePill,
 	NewBadgePill,
 	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
 	ReorderBadgePill,
 	ROW_HEIGHT,
-	SeenBadgePill,
 } from '../components';
-import { BadgePill } from '../components/elements';
+import { BadgePill, Input } from '../components/elements';
 import { EMPTY_CELL } from '../global/constants';
 import {
 	branchProductStatus,
@@ -33,9 +24,9 @@ import {
 	orderSlipStatus,
 	OSDRStatus,
 	preparationSlipStatus,
-	purchaseRequestActions,
-	purchaseRequestProductStatus,
 	request,
+	requisitionSlipActions,
+	requisitionSlipProductStatus,
 	userTypes,
 } from '../global/types';
 
@@ -52,6 +43,35 @@ export const showMessage = (status, successMessage, errorMessage) => {
 	} else if (status === request.ERROR) {
 		message.error(errorMessage);
 	}
+};
+
+interface ConfirmPassword {
+	title?: string;
+	label?: string;
+	onSuccess: any;
+}
+export const confirmPassword = ({ title = 'Input Password', onSuccess }: ConfirmPassword) => {
+	let password = '';
+
+	Modal.confirm({
+		title,
+		centered: true,
+		className: 'ConfirmPassword',
+		okText: 'Submit',
+		content: (
+			<div>
+				<Input onChange={(value) => (password = value)} />
+			</div>
+		),
+		onOk: (close) => {
+			if (password === 'generic123') {
+				onSuccess();
+				close();
+			} else {
+				message.error('Incorrect password');
+			}
+		},
+	});
 };
 
 export const formatDateTime = memoize((datetime) => moment(datetime).format('MM/DD/YYYY h:mma'));
@@ -110,47 +130,53 @@ export const getBranchProductStatus = memoize((status) => {
 	}
 });
 
-export const getPurchaseRequestStatus = memoize((status) => {
+export const getRequisitionSlipStatus = memoize((status) => {
 	switch (status) {
-		case purchaseRequestActions.NEW: {
-			return <NewBadgePill />;
+		case requisitionSlipActions.NEW: {
+			return <BadgePill label="(1/6) New" variant="secondary" />;
 		}
-		case purchaseRequestActions.SEEN: {
-			return <SeenBadgePill />;
+		case requisitionSlipActions.SEEN: {
+			return <BadgePill label="(2/6) Seen" />;
 		}
-		case purchaseRequestActions.F_OS1_CREATING: {
-			return <FOS1CreatingBadgePill />;
+		case requisitionSlipActions.F_OS1_CREATING: {
+			return <BadgePill label="(3/6) F-OS1 Creating" />;
 		}
-		case purchaseRequestActions.F_OS1_CREATED: {
-			return <FOS1CreatedBadgePill />;
+		case requisitionSlipActions.F_OS1_CREATED: {
+			return <BadgePill label="(3/6) F-OS1 Created" />;
 		}
-		case purchaseRequestActions.F_OS1_PREPARING: {
-			return <FOS1PreparingBadgePill />;
+		case requisitionSlipActions.F_OS1_PREPARING: {
+			return <BadgePill label="(4/6) F-OS1 Preparing" />;
 		}
-		case purchaseRequestActions.F_OS1_PREPARED: {
-			return <FOS1PreparedBadgePill />;
+		case requisitionSlipActions.F_OS1_PREPARED: {
+			return <BadgePill label="(4/6) F-OS1 Prepared" />;
 		}
-		case purchaseRequestActions.F_DS1_CREATING: {
-			return <FDS1CreatingBadgePill />;
+		case requisitionSlipActions.F_DS1_CREATING: {
+			return <BadgePill label="(5/6) F-DS1 Creating" />;
 		}
-		case purchaseRequestActions.F_DS1_CREATED: {
-			return <FDS1CreatedBadgePill />;
+		case requisitionSlipActions.F_DS1_CREATED: {
+			return <BadgePill label="(5/6) F-DS1 Created" />;
 		}
-		case purchaseRequestActions.F_DS1_DELIVERING: {
-			return <FDS1DeliveringBadgePill />;
+		case requisitionSlipActions.F_DS1_DELIVERING: {
+			return <BadgePill label="(6/6) F-DS1 Delivering" />;
 		}
-		case purchaseRequestActions.F_DS1_DELIVERED: {
-			return <FDS1DeliveredBadgePill />;
+		case requisitionSlipActions.F_DS1_DELIVERED_DONE: {
+			return <BadgePill label="(6/6) F-DS1 Delivered" variant="primary" />;
+		}
+		case requisitionSlipActions.F_DS1_DELIVERED_ERROR: {
+			return <BadgePill label="(6/6) F-DS1 Delivered" variant="error" />;
+		}
+		case requisitionSlipActions.OUT_OF_STOCK: {
+			return <BadgePill label="Out Of Stock" variant="secondary" />;
 		}
 	}
 });
 
-export const getPurchaseRequestProductStatus = memoize((status) => {
+export const getRequisitionSlipProductStatus = memoize((status) => {
 	switch (status) {
-		case purchaseRequestProductStatus.ADDED_TO_OS: {
+		case requisitionSlipProductStatus.ADDED_TO_OS: {
 			return <AddedToOSBadgePill />;
 		}
-		case purchaseRequestProductStatus.NOT_ADDED_TO_OS: {
+		case requisitionSlipProductStatus.NOT_ADDED_TO_OS: {
 			return <NotAddedToOSBadgePill />;
 		}
 	}

@@ -21,17 +21,17 @@ export const userTypes = {
 	BRANCH_PERSONNEL: 'branch_personnel',
 };
 
-export const purchaseRequestTypes = {
+export const requisitionSlipTypes = {
 	MANUAL: 'manual',
 	AUTOMATIC: 'automatic',
 };
 
-export const purchaseRequestProductStatus = {
+export const requisitionSlipProductStatus = {
 	ADDED_TO_OS: 'added_to_os',
 	NOT_ADDED_TO_OS: 'not_added_to_os',
 };
 
-export const purchaseRequestActions = {
+export const requisitionSlipActions = {
 	NEW: 'new',
 	SEEN: 'seen',
 	F_OS1_CREATING: 'f_os1_creating',
@@ -41,7 +41,9 @@ export const purchaseRequestActions = {
 	F_DS1_CREATING: 'f_ds1_creating',
 	F_DS1_CREATED: 'f_ds1_created',
 	F_DS1_DELIVERING: 'f_ds1_delivering',
-	F_DS1_DELIVERED: 'f_ds1_delivered',
+	F_DS1_DELIVERED_DONE: 'f_ds1_delivered_done',
+	F_DS1_DELIVERED_ERROR: 'f_ds1_delivered_error',
+	OUT_OF_STOCK: 'out_of_stock',
 };
 
 export const branchProductStatus = {
@@ -82,4 +84,9 @@ export const deliveryReceiptStatus = {
 	INVESTIGATION: 'investigation',
 	RESOLVED: 'resolved',
 	DONE: 'done',
+};
+
+export const productCheckingTypes = {
+	DAILY: 'daily',
+	RANDOM: 'random',
 };
