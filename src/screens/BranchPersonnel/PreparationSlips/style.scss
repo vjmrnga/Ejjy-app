@@ -9,3 +9,70 @@
 		padding: 0 25px 10px 25px;
 	}
 }
+
+.FulfillPreparationSlip {
+	.details {
+		padding: 25px 25px 0 25px;
+	}
+
+	.keyboard-keys {
+		padding: 0 25px 0 25px;
+		display: flex;
+		align-items: center;
+
+		.KeyboardButton {
+			margin-right: 50px;
+		}
+	}
+
+	.search-input-container {
+		padding: 25px;
+
+		input {
+			display: block;
+			width: 100%;
+		}
+	}
+
+	.product-name {
+		display: flex;
+		align-items: center;
+
+		span {
+			margin-left: 8px;
+		}
+	}
+
+	.btn-fulfill-container {
+		padding: 0 25px 25px 25px;
+
+		.divider {
+			margin-top: 0;
+		}
+
+		.btn-fulfill {
+			display: block;
+			margin-left: auto;
+			width: 150px;
+		}
+	}
+}
+
+.FulfillSlipModal {
+	.keyboard-keys {
+		display: flex;
+		align-items: center;
+
+		.KeyboardButton {
+			margin-right: 50px;
+		}
+	}
+
+	.input-quantity {
+		margin-top: 20px;
+
+		input {
+			text-align: center;
+		}
+	}
+}

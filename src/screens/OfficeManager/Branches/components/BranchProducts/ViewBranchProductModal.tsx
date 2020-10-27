@@ -13,7 +13,7 @@ interface Props {
 export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onClose }: Props) => {
 	return (
 		<Modal
-			className="ViewBranchProductModal"
+			className="ViewBranchProductModal modal-large"
 			title={`[VIEW] Product Details (${branchName})`}
 			visible={visible}
 			footer={[<Button text="Close" onClick={onClose} />]}
@@ -30,6 +30,10 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 				<DetailsHalf
 					label="Checking"
 					value={branchProduct?.is_daily_checked ? 'Daily' : 'Random'}
+				/>
+				<DetailsHalf
+					label="Is Vat Exempted?"
+					value={branchProduct?.is_vat_exempted ? 'Yes' : 'No'}
 				/>
 				<DetailsHalf label="Reorder Point" value={branchProduct?.reorder_point} />
 				<DetailsHalf label="Max Balance" value={branchProduct?.max_balance} />

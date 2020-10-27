@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
 import { floor, memoize } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React from 'react';
 import {
 	AddedToOSBadgePill,
@@ -16,7 +16,7 @@ import {
 	ReorderBadgePill,
 	ROW_HEIGHT,
 } from '../components';
-import { BadgePill, Input } from '../components/elements';
+import { BadgePill, UncontrolledInput } from '../components/elements';
 import { EMPTY_CELL } from '../global/constants';
 import {
 	branchProductStatus,
@@ -24,9 +24,11 @@ import {
 	orderSlipStatus,
 	OSDRStatus,
 	preparationSlipStatus,
+	productTypes,
 	request,
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
+	unitOfMeasurementTypes,
 	userTypes,
 } from '../global/types';
 
@@ -58,11 +60,7 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 		centered: true,
 		className: 'ConfirmPassword',
 		okText: 'Submit',
-		content: (
-			<div>
-				<Input onChange={(value) => (password = value)} />
-			</div>
-		),
+		content: <UncontrolledInput type="password" onChange={(value) => (password = value)} />,
 		onOk: (close) => {
 			if (password === 'generic123') {
 				onSuccess();
@@ -74,9 +72,13 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 	});
 };
 
-export const formatDateTime = memoize((datetime) => moment(datetime).format('MM/DD/YYYY h:mma'));
+export const formatDateTime = memoize((datetime) => dayjs(datetime).format('MM/DD/YYYY h:mma'));
 
-export const formatDate = memoize((date) => moment(date).format('MM/DD/YYYY'));
+export const formatDateTimeExtended = memoize((datetime) =>
+	dayjs(datetime).format('MMMM D, YYYY h:mma'),
+);
+
+export const formatDate = memoize((date) => dayjs(date).format('MM/DD/YYYY'));
 
 export const convertToBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
 
@@ -257,6 +259,34 @@ export const getDeliveryReceiptStatus = memoize((key, status, isAdjusted) => {
 		}
 		case deliveryReceiptStatus.INVESTIGATION: {
 			return <BadgePill label={`Investigation ${isAdjustedText}`} variant="secondary" />;
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getUnitOfMeasurement = memoize((unitOfMeasurement) => {
+	switch (unitOfMeasurement) {
+		case unitOfMeasurementTypes.WEIGHING: {
+			return 'Weighing';
+		}
+		case unitOfMeasurementTypes.NON_WEIGHING: {
+			return 'Non-weighing';
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getProductType = memoize((type) => {
+	switch (type) {
+		case productTypes.DRY: {
+			return 'Dry';
+		}
+		case productTypes.WET: {
+			return 'Wet';
 		}
 		default: {
 			return EMPTY_CELL;
