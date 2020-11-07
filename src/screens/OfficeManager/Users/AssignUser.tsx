@@ -69,6 +69,8 @@ const AssignUser = ({ match }) => {
 					dayjs(ca.date, 'YYYY-MM-DD', true).isSame(item.date, 'date'),
 				);
 
+				console.log(assignment);
+
 				return {
 					date: item.display,
 					day: item.day,
