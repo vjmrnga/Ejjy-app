@@ -65,11 +65,12 @@ const AssignUser = ({ match }) => {
 
 			const formattedAssignments = days.map((item) => {
 				const isDateAfter = today.isAfter(item.date);
-				console.log(isDateAfter);
+				console.log('item', item);
 				const assignment = cashieringAssignments.find((ca) => {
-					console.log(ca);
-					console.log(dayjs(ca.date, 'YYYY-MM-DD', true));
-					return dayjs(ca.date, 'YYYY-MM-DD', true).isSame(item.date, 'date');
+					console.log('ca', ca);
+					console.log('ca date', dayjs(ca.date, 'YYYY-MM-DD'));
+					console.log('isValid', dayjs(ca.date, 'YYYY-MM-DD').isValid());
+					return dayjs(ca.date, 'YYYY-MM-DD').isSame(item.date, 'date');
 				});
 
 				console.log(assignment);
