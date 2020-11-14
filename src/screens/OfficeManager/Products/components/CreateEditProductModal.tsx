@@ -6,6 +6,7 @@ import { types } from '../../../../ducks/OfficeManager/products';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';
 import { CreateEditProductForm } from './CreateEditProductForm';
+import '../style.scss';
 
 interface Props {
 	visible: boolean;

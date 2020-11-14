@@ -15,7 +15,8 @@ import { sleep } from '../../../../utils/function';
 
 interface ICreateProduct {
 	id?: number;
-	barcode: string;
+	barcode?: string;
+	textcode?: string;
 	name: string;
 	type: 'Wet' | 'Dry';
 	unit_of_measurement: 'Weighing' | 'Non-Weighing';
@@ -44,6 +45,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 		() => ({
 			DefaultValues: {
 				barcode: product?.barcode || '',
+				textcode: product?.textcode || '',
 				name: product?.name || '',
 				type: product?.type || productTypes.WET,
 				unit_of_measurement: product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
@@ -58,32 +60,61 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
 			},
-			Schema: Yup.object().shape({
-				barcode: Yup.string().required().max(50).label('Barcode'),
-				name: Yup.string().required().max(70).label('Name'),
-				type: Yup.string().label('Type'),
-				unit_of_measurement: Yup.string().label('Unit of Measurement'),
-				print_details: Yup.string().required().label('Print Details'),
-				description: Yup.string().required().label('Description'),
-				pieces_in_bulk: Yup.number().required().min(0).label('Pieces in Bulk'),
-				allowable_spoilage: Yup.number()
-					.integer()
-					.min(0)
-					.max(99)
-					.when(['type', 'unit_of_measurement'], {
-						is: (type, unit_of_measurement) =>
-							type === productTypes.WET && unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
-						then: Yup.number().required(),
-						otherwise: Yup.number().notRequired(),
-					})
-					.label('Allowable Spoilage'),
-				cost_per_piece: Yup.number().required().min(0).label('Cost per Piece'),
-				cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
-				reorder_point: Yup.number().required().min(0).max(65535).label('Reorder Point'),
-				max_balance: Yup.number().required().min(0).max(65535).label('Max Balance'),
-				price_per_piece: Yup.number().required().min(0).label('Price per Piece'),
-				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
-			}),
+			Schema: Yup.object().shape(
+				{
+					barcode: Yup.string()
+						.max(50, 'Barcode/Textcode must be at most 50 characters')
+						.test(
+							'notBothAtTheSameTime',
+							'You can only input either barcode or textcode',
+							function (barcode) {
+								return !(this.parent.textcode && barcode);
+							},
+						)
+						.when('textcode', {
+							is: (value) => !value?.length,
+							then: Yup.string().required('Barcode/Textcode is a required field'),
+						}),
+					textcode: Yup.string()
+						.max(50, 'Barcode/Textcode must be at most 50 characters')
+						.test(
+							'notBothAtTheSameTime',
+							'You can only input either barcode or textcode',
+							function (textcode) {
+								return !(this.parent.barcode && textcode);
+							},
+						)
+						.when('barcode', {
+							is: (value) => !value?.length,
+							then: Yup.string().required('Barcode/Textcode is a required field'),
+						}),
+					name: Yup.string().required().max(70).label('Name'),
+					type: Yup.string().label('Type'),
+					unit_of_measurement: Yup.string().label('Unit of Measurement'),
+					print_details: Yup.string().required().label('Print Details'),
+					description: Yup.string().required().label('Description'),
+					pieces_in_bulk: Yup.number().required().min(0).label('Pieces in Bulk'),
+					allowable_spoilage: Yup.number()
+						.integer()
+						.min(0)
+						.max(99)
+						.when(['type', 'unit_of_measurement'], {
+							is: (type, unit_of_measurement) =>
+								type === productTypes.WET &&
+								unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
+							then: Yup.number().required(),
+							otherwise: Yup.number().notRequired(),
+						})
+						.label('Allowable Spoilage'),
+					cost_per_piece: Yup.number().required().min(0).label('Cost per Piece'),
+					cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
+					reorder_point: Yup.number().required().min(0).max(65535).label('Reorder Point'),
+					max_balance: Yup.number().required().min(0).max(65535).label('Max Balance'),
+					price_per_piece: Yup.number().required().min(0).label('Price per Piece'),
+					price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
+				},
+				[['barcode', 'textcode']],
+			),
 		}),
 		[product],
 	);
@@ -132,8 +163,20 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col sm={12} xs={24}>
-							<FormInputLabel id="barcode" label="Barcode" />
-							{errors.barcode && touched.barcode ? <FieldError error={errors.barcode} /> : null}
+							<Row gutter={[15, 15]}>
+								<Col xs={24} md={12}>
+									<FormInputLabel id="barcode" label="Barcode" />
+								</Col>
+								<Col xs={24} md={12}>
+									<FormInputLabel id="textcode" label="Textcode" />
+								</Col>
+								{(errors.textcode || errors.barcode) && (touched.textcode || touched.barcode) ? (
+									<FieldError
+										classNames="custom-field-error"
+										error={errors.textcode || errors.barcode}
+									/>
+								) : null}
+							</Row>
 						</Col>
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="name" label="Name" />
