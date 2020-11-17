@@ -94,7 +94,7 @@ const Products = () => {
 						columns={columns}
 						dataSource={tableData}
 						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
-						loading={status === request.REQUESTING}
+						loading={status === request.REQUESTING && recentRequest !== types.GET_PRODUCTS}
 					/>
 
 					<ViewProductModal
