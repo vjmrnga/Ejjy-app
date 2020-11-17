@@ -1,5 +1,6 @@
 import { Spin } from 'antd';
 import React, { useCallback } from 'react';
+import swal from 'sweetalert';
 import { Box, Button } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { formatDateTimeExtended } from '../../../../utils/function';
@@ -31,6 +32,32 @@ export const CashieringCard = ({ branchDay, onClick, loading }: Props) => {
 		}
 	}, [branchDay]);
 
+	const confirm = () => {
+		swal({
+			title: 'Confirmation',
+			text: `Are you sure you want to ${branchDay ? 'End Day' : 'Start Day'}?`,
+			icon: 'warning',
+			buttons: {
+				cancel: {
+					text: 'Cancel',
+					value: null,
+					visible: true,
+					closeModal: true,
+				},
+				confirm: {
+					text: 'OK',
+					value: true,
+					visible: true,
+					closeModal: true,
+				},
+			},
+		}).then((value) => {
+			if (value) {
+				onClick();
+			}
+		});
+	};
+
 	return (
 		<Box>
 			<Spin size="large" spinning={loading}>
@@ -44,7 +71,7 @@ export const CashieringCard = ({ branchDay, onClick, loading }: Props) => {
 						<Button
 							text={branchDay ? 'End Day' : 'Start Day'}
 							variant="primary"
-							onClick={onClick}
+							onClick={confirm}
 						/>
 					)}
 				</div>
