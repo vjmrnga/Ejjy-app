@@ -46,6 +46,21 @@ body {
 	}
 }
 
+.swal-button--confirm {
+	background-color: $color-primary;
+	@include font(1rem, 700);
+
+	&:hover {
+		background-color: $color-primary !important;
+		transition: 300ms;
+		box-shadow: 0px 5px 20px 3px $color-primary-08;
+	}
+}
+
+.swal-button--cancel {
+	@include font(1rem, 700);
+}
+
 .quantity-container {
 	@include flex();
 
