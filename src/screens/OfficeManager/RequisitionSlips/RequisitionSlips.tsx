@@ -1,9 +1,11 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { lowerCase, upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Table, TableHeader } from '../../../components';
+import { Container, Table } from '../../../components';
 import { Box } from '../../../components/elements';
+import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeaders/TableHeaderRequisitionSlip';
 import { types } from '../../../ducks/requisition-slips';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
@@ -14,6 +16,7 @@ import {
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
+import { useBranches } from '../hooks/useBranches';
 import './style.scss';
 
 const columns = [
@@ -28,6 +31,8 @@ const columns = [
 const RequisitionSlips = () => {
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
+	const [selectedStatus, setSelectedStatus] = useState('all');
+	const [selectedBranch, setSelectedBranch] = useState('all');
 
 	const {
 		requisitionSlips,
@@ -35,6 +40,8 @@ const RequisitionSlips = () => {
 		status,
 		recentRequest,
 	} = useRequisitionSlips();
+
+	const { branches } = useBranches();
 
 	useEffect(() => {
 		getRequisitionSlipsExtended();
@@ -45,7 +52,6 @@ const RequisitionSlips = () => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
 			const { id, type, requesting_user, progress, action: prAction } = requisitionSlip;
 			const { datetime_created, action } = prAction;
-
 			const dateTime = formatDateTime(datetime_created);
 
 			return {
@@ -53,6 +59,7 @@ const RequisitionSlips = () => {
 				_datetime_created: dateTime,
 				_type: type,
 				_status: action,
+				_branch: requesting_user.branch.id,
 				id: <Link to={`/requisition-slips/${id}`}>{id}</Link>,
 				datetime_created: dateTime,
 				requestor: requesting_user.branch.name,
@@ -71,6 +78,17 @@ const RequisitionSlips = () => {
 		[status, recentRequest],
 	);
 
+	const getBranchOptions = useCallback(
+		() => [
+			{
+				value: 'all',
+				name: 'All',
+			},
+			...branches.map(({ id, name }) => ({ value: id, name })),
+		],
+		[branches],
+	);
+
 	const onSearch = (keyword) => {
 		keyword = lowerCase(keyword);
 		const filteredData =
@@ -86,10 +104,22 @@ const RequisitionSlips = () => {
 		setTableData(filteredData);
 	};
 
-	const onStatusSelect = (status) => {
-		const filteredData = status !== 'all' ? data.filter(({ _status }) => _status === status) : data;
+	useEffect(() => {
+		const filteredData = data.filter(({ _status, _branch }) => {
+			let isSelected = true;
+
+			if (selectedStatus !== 'all') {
+				isSelected = _status === selectedStatus;
+			}
+
+			if (selectedBranch !== 'all') {
+				isSelected = _branch == selectedBranch;
+			}
+
+			return isSelected;
+		});
 		setTableData(filteredData);
-	};
+	}, [selectedStatus, selectedBranch]);
 
 	return (
 		<Container
@@ -100,10 +130,11 @@ const RequisitionSlips = () => {
 		>
 			<section className="RequisitionSlips">
 				<Box>
-					<TableHeader
-						buttonName="Create Requisition Slip"
+					<TableHeaderRequisitionSlip
 						statuses={requisitionSlipActionsOptionsWithAll}
-						onStatusSelect={onStatusSelect}
+						onStatusSelect={(status) => setSelectedStatus(status)}
+						branches={getBranchOptions()}
+						onBranchSelect={(branch) => setSelectedBranch(branch)}
 						onSearch={onSearch}
 					/>
 

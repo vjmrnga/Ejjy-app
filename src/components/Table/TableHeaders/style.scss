@@ -29,8 +29,13 @@
 			margin-right: 10px;
 		}
 
-		.status-select {
+		.selects {
 			margin-right: auto;
+			display: flex;
+
+			.status-select {
+				margin-right: 10px;
+			}
 		}
 	}
 }

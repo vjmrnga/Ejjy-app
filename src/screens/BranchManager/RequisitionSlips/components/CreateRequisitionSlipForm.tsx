@@ -108,11 +108,13 @@ export const CreateRequisitionSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
+			onSubmit={async (values: any, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
+
 				onSubmit(values);
+				resetForm();
 			}}
 			enableReinitialize
 		>
