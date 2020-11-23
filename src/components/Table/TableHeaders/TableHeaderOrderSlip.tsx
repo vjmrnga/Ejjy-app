@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { AddIcon } from '../..';
 import { Button, SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
+import { Pending } from '../../Pending/Pending';
 import './style.scss';
 
 const SEARCH_DEBOUNCE_TIME = 250; // 250ms
@@ -21,6 +22,7 @@ interface Props {
 	onSearch?: any;
 	onCreate?: any;
 	onOutOfStock?: any;
+	pending?: number;
 }
 
 export const TableHeaderOrderSlip = ({
@@ -36,6 +38,7 @@ export const TableHeaderOrderSlip = ({
 	onSearch,
 	onCreate,
 	onOutOfStock,
+	pending,
 }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceSearchedChange = useCallback(
@@ -68,6 +71,8 @@ export const TableHeaderOrderSlip = ({
 						onChange={onStatusSelect}
 					/>
 				)}
+
+				<Pending value={pending} />
 
 				{onOutOfStock && (
 					<Button

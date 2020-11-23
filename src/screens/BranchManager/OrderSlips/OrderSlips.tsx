@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Table, TableHeader } from '../../../components';
 import { useOrderSlips } from '../hooks/useOrderSlips';
 import { selectors as authSelectors } from '../../../ducks/auth';
@@ -11,7 +11,7 @@ import {
 	sleep,
 } from '../../../utils/function';
 import { Box, ButtonLink } from '../../../components/elements';
-import { request } from '../../../global/types';
+import { orderSlipStatus, request } from '../../../global/types';
 import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 
 const columns = [
@@ -19,6 +19,8 @@ const columns = [
 	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
+
+const pendingOrderSlipStatus = [orderSlipStatus.PREPARING];
 
 const OrderSlips = () => {
 	const [orderSlipsData, setOrderSlipsData] = useState([]);
@@ -55,11 +57,16 @@ const OrderSlips = () => {
 		setViewOrderSlipVisible(true);
 	};
 
+	const getPendingCount = useCallback(
+		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		[orderSlips],
+	);
+
 	return (
 		<Container title="Order Slips">
 			<section className="OrderSlips">
 				<Box>
-					<TableHeader title="F-OS1" />
+					<TableHeader title="F-OS1" pending={getPendingCount()} />
 
 					<Table
 						columns={columns}

@@ -25,6 +25,11 @@
 			@include flex(flex-end, center);
 		}
 
+		.main-controls,
+		.pending-button {
+			@include flex(stretch, center);
+		}
+
 		.search-input {
 			margin-right: 10px;
 		}

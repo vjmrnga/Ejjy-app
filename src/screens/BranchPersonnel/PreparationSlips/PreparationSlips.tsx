@@ -25,6 +25,8 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'action' },
 ];
 
+const pendingPreparationSlipStatus = [preparationSlipStatus.NEW];
+
 const PreparationSlips = () => {
 	let history = useHistory();
 	const user = useSelector(authSelectors.selectUser());
@@ -96,6 +98,12 @@ const PreparationSlips = () => {
 		setTableData(filteredData);
 	};
 
+	const getPendingCount = useCallback(
+		() =>
+			preparationSlips.filter(({ status }) => pendingPreparationSlipStatus.includes(status)).length,
+		[preparationSlips],
+	);
+
 	return (
 		<Container
 			title="Preparation Slips"
@@ -108,6 +116,7 @@ const PreparationSlips = () => {
 						statuses={preparationSlipStatusOptions}
 						onStatusSelect={onStatusSelect}
 						onSearch={onSearch}
+						pending={getPendingCount()}
 					/>
 
 					<Table

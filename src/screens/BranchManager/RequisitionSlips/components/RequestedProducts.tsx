@@ -1,5 +1,5 @@
 import { Col, Divider, Row } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { request } from '../../../../global/types';
@@ -11,6 +11,11 @@ interface Props {
 	requisitionSlip: any;
 	requisitionSlipStatus: number;
 }
+
+const columns = [
+	{ title: 'Barcode', dataIndex: 'barcode' },
+	{ title: 'Name', dataIndex: 'name' },
+];
 
 export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
@@ -35,32 +40,6 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 		}
 	}, [requisitionSlip, requisitionSlipStatus]);
 
-	// const onQuantityTypeChange = useCallback(
-	// 	(quantityType) => {
-	// 		const formattedRequestedProducts = requestedProducts.map((requestProduct) => ({
-	// 			...requestProduct,
-	// 			quantity:
-	// 				quantityType === quantityTypes.PIECE
-	// 					? requestProduct._quantity_piece
-	// 					: requestProduct._quantity_bulk,
-	// 		}));
-	// 		setRequestedProducts(formattedRequestedProducts);
-	// 	},
-	// 	[requestedProducts],
-	// );
-
-	const getColumns = useCallback(
-		() => [
-			{ title: 'Barcode', dataIndex: 'barcode' },
-			{ title: 'Name', dataIndex: 'name' },
-			// {
-			// 	title: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} />,
-			// 	dataIndex: 'quantity',
-			// },
-		],
-		[],
-	);
-
 	return (
 		<Box>
 			<RequisitionSlipDetails
@@ -78,10 +57,9 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 			</div>
 
 			<Table
-				columns={getColumns()}
+				columns={columns}
 				dataSource={requestedProducts}
 				scroll={{ y: calculateTableHeight(requestedProducts.length), x: '100%' }}
-				hasCustomHeaderComponent
 			/>
 		</Box>
 	);

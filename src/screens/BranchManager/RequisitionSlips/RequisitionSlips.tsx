@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { lowerCase, upperFirst } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
@@ -8,7 +8,7 @@ import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import { request } from '../../../global/types';
+import { request, requisitionSlipActions } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -26,6 +26,12 @@ const columns = [
 	{ title: 'Request Type', dataIndex: 'type' },
 	{ title: 'Actions', dataIndex: 'action' },
 	{ title: 'Progress', dataIndex: 'progress' },
+];
+
+const pendingRequisitionSlipActions = [
+	requisitionSlipActions.F_DS1_CREATING,
+	requisitionSlipActions.F_DS1_CREATED,
+	requisitionSlipActions.F_DS1_DELIVERING,
 ];
 
 const RequisitionSlips = () => {
@@ -78,6 +84,16 @@ const RequisitionSlips = () => {
 		setTableData(formattedProducts);
 	}, [requisitionSlips]);
 
+	const getPendingCount = useCallback(
+		() =>
+			requisitionSlips.filter(
+				({ action, requesting_user }) =>
+					pendingRequisitionSlipActions.includes(action?.action) &&
+					user?.branch?.id === requesting_user.branch.id,
+			).length,
+		[requisitionSlips],
+	);
+
 	const onSearch = (keyword) => {
 		keyword = lowerCase(keyword);
 		const filteredData =
@@ -109,6 +125,7 @@ const RequisitionSlips = () => {
 						onStatusSelect={onStatusSelect}
 						onSearch={onSearch}
 						onCreate={() => setCreateModalVisible(true)}
+						pending={getPendingCount()}
 					/>
 
 					<Table
