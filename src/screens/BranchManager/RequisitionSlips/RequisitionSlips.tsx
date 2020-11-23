@@ -8,7 +8,7 @@ import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import { request, requisitionSlipActions } from '../../../global/types';
+import { request, requisitionSlipActions, userTypes } from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -62,7 +62,9 @@ const RequisitionSlips = () => {
 			const dateTime = formatDateTime(datetime_created);
 
 			const isOwnRequisitionSlip = user?.branch?.id === requesting_user.branch.id;
-			const _action = isOwnRequisitionSlip ? getRequisitionSlipStatus(action) : EMPTY_CELL;
+			const _action = isOwnRequisitionSlip
+				? getRequisitionSlipStatus(action, userTypes.BRANCH_MANAGER)
+				: EMPTY_CELL;
 			let _progress = progress ? `${progress.current} / ${progress.total}` : EMPTY_CELL;
 			_progress = isOwnRequisitionSlip ? _progress : EMPTY_CELL;
 

@@ -3,6 +3,7 @@ import cn from 'classnames';
 import { upperFirst } from 'lodash';
 import React, { useCallback } from 'react';
 import { Label } from '../../../../components/elements';
+import { userTypes } from '../../../../global/types';
 import { formatDateTime, getRequisitionSlipStatus } from '../../../../utils/function';
 import '../style.scss';
 
@@ -59,7 +60,9 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 						<Col span={12}>
 							<Label label="Status" />
 						</Col>
-						<Col span={12}>{getRequisitionSlipStatus(requisitionSlip?.action?.action)}</Col>
+						<Col span={12}>
+							{getRequisitionSlipStatus(requisitionSlip?.action?.action, userTypes.BRANCH_MANAGER)}
+						</Col>
 					</Row>
 				)}
 

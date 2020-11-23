@@ -4,7 +4,7 @@ import './style.scss';
 
 interface Props {
 	label: string;
-	variant?: 'primary' | 'secondary' | 'error';
+	variant?: 'primary' | 'secondary' | 'error' | 'orange' | 'yellow';
 	classNames?: any;
 }
 

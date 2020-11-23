@@ -9,7 +9,7 @@ import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeade
 import { types } from '../../../ducks/requisition-slips';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import { request, requisitionSlipActions } from '../../../global/types';
+import { request, requisitionSlipActions, userTypes } from '../../../global/types';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	calculateTableHeight,
@@ -75,7 +75,7 @@ const RequisitionSlips = () => {
 				datetime_created: dateTime,
 				requestor: requesting_user.branch.name,
 				type: upperFirst(type),
-				action: getRequisitionSlipStatus(action),
+				action: getRequisitionSlipStatus(action, userTypes.OFFICE_MANAGER),
 				progress: progress ? `${progress.current} / ${progress.total}` : EMPTY_CELL,
 			};
 		});

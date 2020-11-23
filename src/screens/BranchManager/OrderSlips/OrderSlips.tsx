@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Table, TableHeader } from '../../../components';
-import { useOrderSlips } from '../hooks/useOrderSlips';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { useSelector } from 'react-redux';
+import { Container, Table, TableHeader } from '../../../components';
+import { Box, ButtonLink } from '../../../components/elements';
+import { selectors as authSelectors } from '../../../ducks/auth';
+import { orderSlipStatus, request } from '../../../global/types';
 import {
 	calculateTableHeight,
 	formatDateTime,
-	getOrderSlipStatus,
+	getOrderSlipStatusBranchManager,
 	sleep,
 } from '../../../utils/function';
-import { Box, ButtonLink } from '../../../components/elements';
-import { orderSlipStatus, request } from '../../../global/types';
+import { useOrderSlips } from '../hooks/useOrderSlips';
 import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 
 const columns = [
@@ -45,7 +45,12 @@ const OrderSlips = () => {
 				return {
 					id: <ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />,
 					datetime_created: formatDateTime(datetime_created),
-					status: getOrderSlipStatus(value, percentage_fulfilled * 100, delivery_receipt?.status),
+					status: getOrderSlipStatusBranchManager(
+						value,
+						null,
+						percentage_fulfilled * 100,
+						delivery_receipt?.status,
+					),
 				};
 			});
 			sleep(500).then(() => setOrderSlipsData(formattedOrderSlips));
