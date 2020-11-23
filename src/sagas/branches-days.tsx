@@ -1,8 +1,8 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/BranchManager/branches-days';
-import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
-import { request } from '../../global/types';
-import { service } from '../../services/BranchManager/branches-days';
+import { actions, types } from '../ducks/branches-days';
+import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
+import { request } from '../global/types';
+import { service } from '../services/BranchManager/branches-days';
 
 /* WORKERS */
 function* getBranchDay({ payload }: any) {

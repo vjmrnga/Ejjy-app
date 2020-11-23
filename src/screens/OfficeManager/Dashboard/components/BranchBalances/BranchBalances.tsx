@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Spin, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Box } from '../../../../components/elements';
-import { selectors as branchSelectors } from '../../../../ducks/OfficeManager/branches';
-import { request } from '../../../../global/types';
-import { useBranchProducts } from '../../../../hooks/useBranchProducts';
-import { getBranchProductStatus } from '../../../../utils/function';
+import { Box } from '../../../../../components/elements';
+import { selectors as branchSelectors } from '../../../../../ducks/OfficeManager/branches';
+import { request } from '../../../../../global/types';
+import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
+import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
+import { getBranchProductStatus } from '../../../../../utils/function';
 import { BranchBalanceItem } from './BranchBalanceItem';
 
 const { TabPane } = Tabs;
@@ -16,7 +17,12 @@ export const BranchBalances = () => {
 	const [queriedBranches, setQueriedBranches] = useState([]);
 
 	const branches = useSelector(branchSelectors.selectBranches());
-	const { branchProducts, getBranchProductsByBranch, status } = useBranchProducts();
+	const {
+		branchProducts,
+		getBranchProductsByBranch,
+		status: branchProductsStatus,
+	} = useBranchProducts();
+	const { getBranchDay, status: branchesDaysStatus } = useBranchesDays();
 
 	useEffect(() => {
 		if (branches) {
@@ -59,15 +65,22 @@ export const BranchBalances = () => {
 			});
 	};
 
-	const onTabClick = (key) => {
-		if (!queriedBranches.includes(key) && key) {
-			setQueriedBranches((value) => [...value, key.toString()]);
-			getBranchProductsByBranch(key);
+	const onTabClick = (branchId) => {
+		if (!queriedBranches.includes(branchId) && branchId) {
+			setQueriedBranches((value) => [...value, branchId.toString()]);
+			getBranchProductsByBranch(branchId);
 		}
+
+		getBranchDay(branchId);
 	};
 
+	const getStatus = useCallback(
+		() => branchesDaysStatus === request.REQUESTING || branchProductsStatus === request.REQUESTING,
+		[branchesDaysStatus, branchProductsStatus],
+	);
+
 	return (
-		<Spin size="large" spinning={status === request.REQUESTING}>
+		<Spin size="large" spinning={getStatus()}>
 			<Box>
 				<Tabs
 					defaultActiveKey={branches?.[0]?.id}
@@ -77,7 +90,7 @@ export const BranchBalances = () => {
 				>
 					{branches.map(({ name, id }) => (
 						<TabPane key={id} tab={name}>
-							<BranchBalanceItem dataSource={getTableDataSource(id)} />
+							<BranchBalanceItem branchId={id} dataSource={getTableDataSource(id)} />
 						</TabPane>
 					))}
 				</Tabs>

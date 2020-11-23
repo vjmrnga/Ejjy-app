@@ -3,10 +3,10 @@ import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Container } from '../../../components';
+import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { request } from '../../../global/types';
-import { useBranchesDays } from '../hooks/useBranchesDays';
-import { CashieringCard } from './components/CashieringCard';
+import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import './style.scss';
 
 const Dashboard = () => {

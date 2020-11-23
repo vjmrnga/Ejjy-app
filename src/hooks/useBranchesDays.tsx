@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchManager/branches-days';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
+import { actions, selectors, types } from '../ducks/branches-days';
+import { request } from '../global/types';
+import { useActionDispatch } from './useActionDispatch';
 
 export const useBranchesDays = () => {
 	const [status, setStatus] = useState<any>(request.NONE);

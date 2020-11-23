@@ -5,11 +5,12 @@ import { STORAGE_KEY } from '../configureStore';
 import history from '../utils/history';
 import authReducer, { key as AUTH_KEY, types } from './auth';
 import branchProductsReducer, { key as BRANCH_PRODUCTS_KEY } from './branch-products';
+import branchesDaysReducer, { key as BRANCHES_DAYS_KEY } from './branches-days';
 import { branchManagerReducers } from './BranchManager';
 import { branchPersonnelReducers } from './BranchPersonnel';
 import { officeManagerReducers } from './OfficeManager';
-import requisitionSlipsReducer, { key as REQUISITION_SLIP_KEY } from './requisition-slips';
 import requestReducer, { REQUEST_KEY } from './request';
+import requisitionSlipsReducer, { key as REQUISITION_SLIP_KEY } from './requisition-slips';
 import uiReducer, { key as UI_KEY } from './ui';
 import usersReducer, { key as USERS_KEY } from './users';
 
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
 	[REQUEST_KEY]: requestReducer,
 	[BRANCH_PRODUCTS_KEY]: branchProductsReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
+	[BRANCHES_DAYS_KEY]: branchesDaysReducer,
 	[USERS_KEY]: usersReducer,
 	[UI_KEY]: uiReducer,
 	...officeManagerReducers,
