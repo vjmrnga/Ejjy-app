@@ -41,7 +41,7 @@ export const BranchBalances = () => {
 					barcode: branchProduct.product.barcode,
 					name: branchProduct.product.name,
 					current_balance: branchProduct.current_balance,
-					max_balance: branchProduct.product.max_balance,
+					max_balance: branchProduct.max_balance,
 					status: branchProduct.product_status,
 				}));
 
