@@ -1,109 +1,67 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
+import { Tabs } from 'antd';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Breadcrumb, Container, Table, TableActions, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { types } from '../../../ducks/branch-products';
+import { Breadcrumb, Container } from '../../../components';
+import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { request } from '../../../global/types';
+import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { calculateTableHeight } from '../../../utils/function';
-import { EditBranchProductsModal } from './components/BranchProducts/EditBranchProductsModal';
-import { ViewBranchProductModal } from './components/BranchProducts/ViewBranchProductModal';
+import { useSessions } from '../../../hooks/useSessions';
+import { useTransactions } from '../../../hooks/useTransactions';
+import { ViewBranchDays } from './components/ViewBranchDays';
+import { ViewBranchProducts } from './components/ViewBranchProducts';
+import { ViewBranchSessions } from './components/ViewBranchSessions';
+import { ViewBranchTransactions } from './components/ViewBranchTransactions';
 import './style.scss';
 
 interface Props {
 	match: any;
 }
 
-const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Balance', dataIndex: 'balance' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+const tabs = {
+	PRODUCTS: 'Products',
+	TRANSACTIONS: 'Transactions',
+	SESSIONS: 'Sessions',
+	DAYS: 'Days',
+};
 
 const ViewBranch = ({ match }: Props) => {
 	// Routing
 	const branchId = match?.params?.id;
 
-	// States
-	const [data, setData] = useState([]);
-	const [tableData, setTableData] = useState([]);
-	const [editBranchProductModalVisible, setEditBranchProductModalVisible] = useState(false);
-	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
-	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
-
 	// Custom hooks
-	const { branchProducts, getBranchProductsByBranch, status, recentRequest } = useBranchProducts();
+	const {
+		branchProducts,
+		getBranchProductsByBranch,
+		status: branchProductsStatus,
+	} = useBranchProducts();
+	const { transactions, listTransactions, status: transactionsStatus } = useTransactions();
+	const { sessions, listSessions, status: sessionsStatus } = useSessions();
+	const { branchDays, listBranchDays, status: branchesDaysStatus } = useBranchesDays();
 	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
 	// Effect: Fetch branch products
 	useEffect(() => {
 		getBranchProductsByBranch(branchId);
+		listTransactions(branchId);
+		listSessions(branchId);
+		listBranchDays(branchId);
 	}, []);
 
-	// Effect: Format branch products to be rendered in Table
-	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH) {
-			const formattedBranchProducts = branchProducts.map((branchProduct) => {
-				const {
-					product: { barcode, name, textcode, max_balance },
-					current_balance,
-				} = branchProduct;
-
-				return {
-					_textcode: textcode,
-					_barcode: barcode,
-					barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(branchProduct)} />,
-					name,
-					balance: `${current_balance} / ${max_balance}`,
-					actions: <TableActions onEdit={() => onEdit(branchProduct)} />,
-				};
-			});
-
-			setData(formattedBranchProducts);
-			setTableData(formattedBranchProducts);
-		}
-	}, [branchProducts, status, recentRequest]);
-
 	const getFetchLoading = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH,
-		[status, recentRequest],
+		() =>
+			[branchProductsStatus, transactionsStatus, sessionsStatus, branchesDaysStatus].includes(
+				request.REQUESTING,
+			),
+		[branchProductsStatus, transactionsStatus, sessionsStatus, branchesDaysStatus],
 	);
 
 	const getBreadcrumbItems = useCallback(
 		() => [{ name: 'Branches', link: '/branches' }, { name: branch?.name }],
 		[branch],
 	);
-
-	const onView = (branchProduct) => {
-		setSelectedBranchProduct(branchProduct);
-		setViewBranchProductModalVisible(true);
-	};
-
-	const onEdit = (branch) => {
-		setSelectedBranchProduct(branch);
-		setEditBranchProductModalVisible(true);
-	};
-
-	const onSearch = (keyword) => {
-		keyword = keyword?.toLowerCase();
-		const filteredData =
-			keyword.length > 0
-				? data.filter((item) => {
-						const name = item?.name?.toLowerCase() ?? '';
-						const barcode = item?._barcode?.toLowerCase() ?? '';
-						const textcode = item?._textcode?.toLowerCase() ?? '';
-
-						return (
-							name.includes(keyword) || barcode.includes(keyword) || textcode.includes(keyword)
-						);
-				  })
-				: data;
-
-		setTableData(filteredData);
-	};
 
 	return (
 		<Container
@@ -114,28 +72,24 @@ const ViewBranch = ({ match }: Props) => {
 			loading={getFetchLoading()}
 		>
 			<section>
-				<Box>
-					<TableHeader title="Products" buttonName="Create Branch Product" onSearch={onSearch} />
+				<Box className="ViewBranch">
+					<Tabs defaultActiveKey={tabs.PRODUCTS} style={{ padding: '20px 25px' }} type="card">
+						<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
+							<ViewBranchProducts branchProducts={branchProducts} branch={branch} />
+						</Tabs.TabPane>
 
-					<Table
-						columns={columns}
-						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
-					/>
+						<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
+							<ViewBranchTransactions transactions={transactions} />
+						</Tabs.TabPane>
 
-					<ViewBranchProductModal
-						branchName={branch?.name}
-						branchProduct={selectedBranchProduct}
-						visible={viewBranchProductModalVisible}
-						onClose={() => setViewBranchProductModalVisible(false)}
-					/>
+						<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
+							<ViewBranchSessions sessions={sessions} />
+						</Tabs.TabPane>
 
-					<EditBranchProductsModal
-						branch={branch}
-						branchProduct={selectedBranchProduct}
-						visible={editBranchProductModalVisible}
-						onClose={() => setEditBranchProductModalVisible(false)}
-					/>
+						<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
+							<ViewBranchDays branchDays={branchDays} />
+						</Tabs.TabPane>
+					</Tabs>
 				</Box>
 			</section>
 		</Container>

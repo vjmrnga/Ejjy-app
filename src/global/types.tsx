@@ -90,3 +90,9 @@ export const productCheckingTypes = {
 	DAILY: 'daily',
 	RANDOM: 'random',
 };
+
+export const transactionStatus = {
+	FULLY_PAID: 'fully_paid',
+	HOLD: 'hold',
+	VOID: 'void',
+};

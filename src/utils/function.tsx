@@ -28,6 +28,7 @@ import {
 	request,
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
+	transactionStatus,
 	unitOfMeasurementTypes,
 	userTypes,
 } from '../global/types';
@@ -72,10 +73,18 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 	});
 };
 
+export const numberWithCommas = (x) => {
+	return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+};
+
 export const formatDateTime = memoize((datetime) => dayjs(datetime).format('MM/DD/YYYY h:mma'));
 
 export const formatDateTimeExtended = memoize((datetime) =>
 	dayjs(datetime).format('MMMM D, YYYY h:mma'),
+);
+
+export const formatDateTimeShortMonth = memoize((datetime) =>
+	dayjs(datetime).format('MMM D, YYYY h:mma'),
 );
 
 export const formatDate = memoize((date) => dayjs(date).format('MM/DD/YYYY'));
@@ -365,6 +374,23 @@ export const getProductType = memoize((type) => {
 		}
 		case productTypes.WET: {
 			return 'Wet';
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getTranscationStatus = memoize((status) => {
+	switch (status) {
+		case transactionStatus.FULLY_PAID: {
+			return <BadgePill label="Fully Paid" variant="primary" />;
+		}
+		case transactionStatus.VOID: {
+			return <BadgePill label="Void" />;
+		}
+		case transactionStatus.HOLD: {
+			return <BadgePill label="Hold" variant="secondary" />;
 		}
 		default: {
 			return EMPTY_CELL;

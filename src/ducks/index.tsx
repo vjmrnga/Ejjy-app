@@ -11,6 +11,8 @@ import { branchPersonnelReducers } from './BranchPersonnel';
 import { officeManagerReducers } from './OfficeManager';
 import requestReducer, { REQUEST_KEY } from './request';
 import requisitionSlipsReducer, { key as REQUISITION_SLIP_KEY } from './requisition-slips';
+import sessionsReducer, { key as SESSIONS_KEY } from './sessions';
+import transactionsReducer, { key as TRANSACTIONS_KEY } from './transactions';
 import uiReducer, { key as UI_KEY } from './ui';
 import usersReducer, { key as USERS_KEY } from './users';
 
@@ -21,6 +23,8 @@ const appReducer = combineReducers({
 	[BRANCH_PRODUCTS_KEY]: branchProductsReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
 	[BRANCHES_DAYS_KEY]: branchesDaysReducer,
+	[TRANSACTIONS_KEY]: transactionsReducer,
+	[SESSIONS_KEY]: sessionsReducer,
 	[USERS_KEY]: usersReducer,
 	[UI_KEY]: uiReducer,
 	...officeManagerReducers,
