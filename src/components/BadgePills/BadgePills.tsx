@@ -30,7 +30,7 @@ export const CompletedBadgePill = ({ classNames }: Props) => (
 );
 
 export const NewBadgePill = ({ classNames }: Props) => (
-	<BadgePill classNames={classNames} label="New" variant="secondary" />
+	<BadgePill classNames={classNames} label="New" variant="orange" />
 );
 
 export const AvailableBadgePill = ({ classNames }: Props) => (

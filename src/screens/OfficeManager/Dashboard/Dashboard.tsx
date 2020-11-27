@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '../../../components';
-import { BranchBalances } from './BranchBalances/BranchBalances';
+import { BranchBalances } from './components/BranchBalances/BranchBalances';
 import './style.scss';
 
 const Dashboard = () => {

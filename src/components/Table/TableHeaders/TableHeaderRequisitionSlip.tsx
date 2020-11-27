@@ -1,8 +1,7 @@
 import cn from 'classnames';
 import { debounce } from 'lodash';
 import React, { useCallback } from 'react';
-import { AddIcon } from '../..';
-import { Button, SearchInput, Select } from '../../elements';
+import { SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
 import { Pending } from '../../Pending/Pending';
 import './style.scss';
@@ -12,32 +11,23 @@ const SEARCH_DEBOUNCE_TIME = 250; // 250ms
 interface Props {
 	title?: string;
 	searchPlaceholder?: string;
-	buttonName?: string;
 	statuses?: Option[];
-	onOutOfStockDisabled?: boolean;
-	onOutOfStockTooltip?: string;
-	onCreateDisabled?: boolean;
-	onCreateTooltip?: string;
+	branches?: Option[];
 	onStatusSelect?: any;
-	onSearch?: any;
-	onCreate?: any;
-	onOutOfStock?: any;
 	pending?: number;
+
+	onBranchSelect?: any;
+	onSearch?: any;
 }
 
-export const TableHeaderOrderSlip = ({
+export const TableHeaderRequisitionSlip = ({
 	title,
 	searchPlaceholder,
-	buttonName,
 	onStatusSelect,
 	statuses,
-	onOutOfStockDisabled,
-	onOutOfStockTooltip,
-	onCreateDisabled,
-	onCreateTooltip,
+	branches,
+	onBranchSelect,
 	onSearch,
-	onCreate,
-	onOutOfStock,
 	pending,
 }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,48 +53,36 @@ export const TableHeaderOrderSlip = ({
 					/>
 				)}
 
-				{onStatusSelect && (
-					<Select
-						classNames="status-select"
-						options={statuses}
-						placeholder="status"
-						onChange={onStatusSelect}
-					/>
-				)}
+				<div className="selects">
+					{onStatusSelect && (
+						<Select
+							classNames="status-select"
+							options={statuses}
+							placeholder="status"
+							onChange={onStatusSelect}
+						/>
+					)}
+
+					{onBranchSelect && (
+						<Select
+							classNames="branch-select"
+							options={branches}
+							placeholder="branches"
+							onChange={onBranchSelect}
+						/>
+					)}
+				</div>
 
 				<Pending value={pending} />
-
-				{onOutOfStock && (
-					<Button
-						text="Out Of Stock"
-						variant="primary"
-						onClick={onOutOfStock}
-						iconDirection="left"
-						icon={<AddIcon />}
-						disabled={onOutOfStockDisabled}
-						tooltip={onOutOfStockTooltip}
-					/>
-				)}
-
-				{onCreate && (
-					<Button
-						text={buttonName}
-						variant="primary"
-						onClick={onCreate}
-						iconDirection="left"
-						icon={<AddIcon />}
-						disabled={onCreateDisabled}
-						tooltip={onCreateTooltip}
-					/>
-				)}
 			</div>
 		</div>
 	);
 };
 
-TableHeaderOrderSlip.defaultProps = {
+TableHeaderRequisitionSlip.defaultProps = {
 	title: null,
 	onSearch: null,
 	onCreate: null,
 	searchPlaceholder: 'Search',
+	pending: null,
 };

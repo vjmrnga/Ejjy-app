@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchManager/branches-days';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
+import { actions, selectors, types } from '../ducks/branches-days';
+import { request } from '../global/types';
+import { useActionDispatch } from './useActionDispatch';
 
 export const useBranchesDays = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -10,6 +10,8 @@ export const useBranchesDays = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const branchDay = useSelector(selectors.selectBranchDay());
+	const branchDays = useSelector(selectors.selectBranchDays());
+	const listBranchDays = useActionDispatch(actions.listBranchDays);
 	const getBranchDay = useActionDispatch(actions.getBranchDay);
 	const createBranchDay = useActionDispatch(actions.createBranchDay);
 	const editBranchDay = useActionDispatch(actions.editBranchDay);
@@ -22,6 +24,14 @@ export const useBranchesDays = () => {
 	const resetError = () => setErrors([]);
 
 	const resetStatus = () => setStatus(request.NONE);
+
+	const listBranchDaysRequest = (branchId) => {
+		setRecentRequest(types.LIST_BRANCH_DAYS);
+		listBranchDays({
+			branch_id: branchId,
+			callback,
+		});
+	};
 
 	const getBranchDayRequest = (branchId) => {
 		setRecentRequest(types.GET_BRANCH_DAY);
@@ -56,6 +66,8 @@ export const useBranchesDays = () => {
 
 	return {
 		branchDay,
+		branchDays,
+		listBranchDays: listBranchDaysRequest,
 		getBranchDay: getBranchDayRequest,
 		createBranchDay: createBranchDayRequest,
 		editBranchDay: editBranchDayRequest,

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TableHeader } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
@@ -8,7 +8,7 @@ import {
 	actions as prActions,
 	selectors as prSelectors,
 } from '../../../../../ducks/requisition-slips';
-import { requisitionSlipActions, request } from '../../../../../global/types';
+import { requisitionSlipActions, request, orderSlipStatus } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { OrderSlipsTable } from './OrderSlipsTable';
@@ -18,6 +18,8 @@ import { ViewOrderSlipModal } from './ViewOrderSlipModal';
 interface Props {
 	requisitionSlipId: number;
 }
+
+const pendingOrderSlipStatus = [orderSlipStatus.DELIVERED];
 
 export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	// State: Selection
@@ -67,9 +69,14 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 		setReceiveDeliveryReceiptVisible(true);
 	};
 
+	const getPendingCount = useCallback(
+		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		[orderSlips],
+	);
+
 	return (
 		<Box>
-			<TableHeader title="F-OS1" />
+			<TableHeader title="F-OS1" pending={getPendingCount()} />
 
 			<OrderSlipsTable
 				orderSlips={orderSlips}

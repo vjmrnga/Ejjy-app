@@ -1,17 +1,20 @@
 import { Spin } from 'antd';
+import cn from 'classnames';
 import React, { useCallback } from 'react';
 import swal from 'sweetalert';
-import { Box, Button } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { formatDateTimeExtended } from '../../../../utils/function';
+import { EMPTY_CELL } from '../../global/constants';
+import { formatDateTimeExtended } from '../../utils/function';
+import { Box, Button } from '../elements';
+import './style.scss';
 
 interface Props {
 	branchDay: any;
 	onClick: any;
 	loading: boolean;
+	classNames?: string;
 }
 
-export const CashieringCard = ({ branchDay, onClick, loading }: Props) => {
+export const CashieringCard = ({ branchDay, onClick, loading, classNames }: Props) => {
 	const getTitle = useCallback(() => {
 		if (branchDay?.datetime_ended) {
 			return 'Day has been ended.';
@@ -59,7 +62,7 @@ export const CashieringCard = ({ branchDay, onClick, loading }: Props) => {
 	};
 
 	return (
-		<Box>
+		<Box className={cn('CashieringCard', classNames)}>
 			<Spin size="large" spinning={loading}>
 				<div className="cashiering-container">
 					<div>

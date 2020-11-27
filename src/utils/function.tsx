@@ -28,6 +28,7 @@ import {
 	request,
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
+	transactionStatus,
 	unitOfMeasurementTypes,
 	userTypes,
 } from '../global/types';
@@ -72,10 +73,18 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 	});
 };
 
+export const numberWithCommas = (x) => {
+	return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+};
+
 export const formatDateTime = memoize((datetime) => dayjs(datetime).format('MM/DD/YYYY h:mma'));
 
 export const formatDateTimeExtended = memoize((datetime) =>
 	dayjs(datetime).format('MMMM D, YYYY h:mma'),
+);
+
+export const formatDateTimeShortMonth = memoize((datetime) =>
+	dayjs(datetime).format('MMM D, YYYY h:mma'),
 );
 
 export const formatDate = memoize((date) => dayjs(date).format('MM/DD/YYYY'));
@@ -132,46 +141,89 @@ export const getBranchProductStatus = memoize((status) => {
 	}
 });
 
-export const getRequisitionSlipStatus = memoize((status) => {
-	switch (status) {
-		case requisitionSlipActions.NEW: {
-			return <BadgePill label="(1/6) New" variant="secondary" />;
+export const getRequisitionSlipStatus = (status, userType) => {
+	if (userType === userTypes.OFFICE_MANAGER) {
+		switch (status) {
+			case requisitionSlipActions.NEW: {
+				return <BadgePill label="(1/6) New" variant="orange" />;
+			}
+			case requisitionSlipActions.SEEN: {
+				return <BadgePill label="(2/6) Seen" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_OS1_CREATING: {
+				return <BadgePill label="(3/6) F-OS1 Creating" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_OS1_CREATED: {
+				return <BadgePill label="(3/6) F-OS1 Created" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_OS1_PREPARING: {
+				return <BadgePill label="(4/6) F-OS1 Preparing" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_OS1_PREPARED: {
+				return <BadgePill label="(4/6) F-OS1 Prepared" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_CREATING: {
+				return <BadgePill label="(5/6) F-DS1 Creating" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_CREATED: {
+				return <BadgePill label="(5/6) F-DS1 Created" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERING: {
+				return <BadgePill label="(6/6) F-DS1 Delivering" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERED_DONE: {
+				return <BadgePill label="(6/6) F-DS1 Delivered" variant="primary" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERED_ERROR: {
+				return <BadgePill label="(6/6) F-DS1 Delivered" variant="error" />;
+			}
+			case requisitionSlipActions.OUT_OF_STOCK: {
+				return <BadgePill label="Out Of Stock" variant="secondary" />;
+			}
 		}
-		case requisitionSlipActions.SEEN: {
-			return <BadgePill label="(2/6) Seen" />;
-		}
-		case requisitionSlipActions.F_OS1_CREATING: {
-			return <BadgePill label="(3/6) F-OS1 Creating" />;
-		}
-		case requisitionSlipActions.F_OS1_CREATED: {
-			return <BadgePill label="(3/6) F-OS1 Created" />;
-		}
-		case requisitionSlipActions.F_OS1_PREPARING: {
-			return <BadgePill label="(4/6) F-OS1 Preparing" />;
-		}
-		case requisitionSlipActions.F_OS1_PREPARED: {
-			return <BadgePill label="(4/6) F-OS1 Prepared" />;
-		}
-		case requisitionSlipActions.F_DS1_CREATING: {
-			return <BadgePill label="(5/6) F-DS1 Creating" />;
-		}
-		case requisitionSlipActions.F_DS1_CREATED: {
-			return <BadgePill label="(5/6) F-DS1 Created" />;
-		}
-		case requisitionSlipActions.F_DS1_DELIVERING: {
-			return <BadgePill label="(6/6) F-DS1 Delivering" />;
-		}
-		case requisitionSlipActions.F_DS1_DELIVERED_DONE: {
-			return <BadgePill label="(6/6) F-DS1 Delivered" variant="primary" />;
-		}
-		case requisitionSlipActions.F_DS1_DELIVERED_ERROR: {
-			return <BadgePill label="(6/6) F-DS1 Delivered" variant="error" />;
-		}
-		case requisitionSlipActions.OUT_OF_STOCK: {
-			return <BadgePill label="Out Of Stock" variant="secondary" />;
+	} else if (userType === userTypes.BRANCH_MANAGER) {
+		switch (status) {
+			case requisitionSlipActions.NEW: {
+				return <BadgePill label="(1/6) New" variant="orange" />;
+			}
+			case requisitionSlipActions.SEEN: {
+				return <BadgePill label="(2/6) Seen" />;
+			}
+			case requisitionSlipActions.F_OS1_CREATING: {
+				return <BadgePill label="(3/6) F-OS1 Creating" />;
+			}
+			case requisitionSlipActions.F_OS1_CREATED: {
+				return <BadgePill label="(3/6) F-OS1 Created" />;
+			}
+			case requisitionSlipActions.F_OS1_PREPARING: {
+				return <BadgePill label="(4/6) F-OS1 Preparing" />;
+			}
+			case requisitionSlipActions.F_OS1_PREPARED: {
+				return <BadgePill label="(4/6) F-OS1 Prepared" />;
+			}
+			case requisitionSlipActions.F_DS1_CREATING: {
+				return <BadgePill label="(5/6) F-DS1 Creating" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_CREATED: {
+				return <BadgePill label="(5/6) F-DS1 Created" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERING: {
+				return <BadgePill label="(6/6) F-DS1 Delivering" variant="yellow" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERED_DONE: {
+				return <BadgePill label="(6/6) F-DS1 Delivered" />;
+			}
+			case requisitionSlipActions.F_DS1_DELIVERED_ERROR: {
+				return <BadgePill label="(6/6) F-DS1 Delivered" />;
+			}
+			case requisitionSlipActions.OUT_OF_STOCK: {
+				return <BadgePill label="Out Of Stock" />;
+			}
 		}
 	}
-});
+
+	return null;
+};
 
 export const getRequisitionSlipProductStatus = memoize((status) => {
 	switch (status) {
@@ -190,10 +242,45 @@ export const getOrderSlipStatus = (status, percentage, osdrStatus = null) => {
 			return <BadgePill label={`Preparing (${percentage}%)`} />;
 		}
 		case orderSlipStatus.PREPARED: {
+			return <BadgePill label="Prepared" variant="yellow" />;
+		}
+		case orderSlipStatus.DELIVERED: {
+			return <BadgePill label="Delivered" />;
+		}
+		case orderSlipStatus.RECEIVED: {
+			if (osdrStatus === OSDRStatus.DONE) {
+				return <BadgePill label="Received (Done)" variant="primary" />;
+			}
+
+			if (osdrStatus === OSDRStatus.ERROR) {
+				return <BadgePill label="Received (Error)" variant="error" />;
+			}
+
+			return <BadgePill label="Received" />;
+		}
+	}
+};
+
+export const getOrderSlipStatusBranchManager = (
+	status,
+	screenType,
+	percentage,
+	osdrStatus = null,
+) => {
+	switch (status) {
+		case orderSlipStatus.PREPARING: {
+			return (
+				<BadgePill
+					label={`Preparing (${percentage}%)`}
+					variant={screenType === 'RS' ? null : 'yellow'}
+				/>
+			);
+		}
+		case orderSlipStatus.PREPARED: {
 			return <BadgePill label="Prepared" />;
 		}
 		case orderSlipStatus.DELIVERED: {
-			return <BadgePill label="Delivered" variant="secondary" />;
+			return <BadgePill label="Delivered" variant={screenType === 'RS' ? 'yellow' : null} />;
 		}
 		case orderSlipStatus.RECEIVED: {
 			if (osdrStatus === OSDRStatus.DONE) {
@@ -287,6 +374,23 @@ export const getProductType = memoize((type) => {
 		}
 		case productTypes.WET: {
 			return 'Wet';
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getTranscationStatus = memoize((status) => {
+	switch (status) {
+		case transactionStatus.FULLY_PAID: {
+			return <BadgePill label="Fully Paid" variant="primary" />;
+		}
+		case transactionStatus.VOID: {
+			return <BadgePill label="Void" />;
+		}
+		case transactionStatus.HOLD: {
+			return <BadgePill label="Hold" variant="secondary" />;
 		}
 		default: {
 			return EMPTY_CELL;

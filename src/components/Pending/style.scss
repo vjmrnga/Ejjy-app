@@ -1,0 +1,10 @@
+@import '../../assets/styles/main';
+
+.Pending {
+	margin: 0;
+	padding: 8px 16px;
+	border: 1px solid $color-secondary;
+	@include font(20px, 700);
+	color: $color-secondary;
+	border-radius: 4px;
+}

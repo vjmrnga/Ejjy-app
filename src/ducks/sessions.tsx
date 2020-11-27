@@ -1,17 +1,15 @@
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 
-export const key = 'BM_BRANCHES_DAYS';
+export const key = 'CASHIERING_SESSIONS';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
-	GET_BRANCH_DAY: `${key}/GET_BRANCH_DAY`,
-	CREATE_BRANCH_DAY: `${key}/CREATE_BRANCH_DAY`,
-	EDIT_BRANCH_DAY: `${key}/EDIT_BRANCH_DAY`,
+	LIST_SESSIONS: `${key}/LIST_SESSIONS`,
 };
 
 const initialState = {
-	branchDay: null,
+	sessions: [],
 };
 
 const reducer = handleActions(
@@ -21,10 +19,8 @@ const reducer = handleActions(
 			let newData = {};
 
 			switch (type) {
-				case types.GET_BRANCH_DAY:
-				case types.CREATE_BRANCH_DAY:
-				case types.EDIT_BRANCH_DAY: {
-					newData = { branchDay: payload.branchDay };
+				case types.LIST_SESSIONS: {
+					newData = { sessions: payload.sessions };
 					break;
 				}
 			}
@@ -37,14 +33,12 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
-	getBranchDay: createAction(types.GET_BRANCH_DAY),
-	createBranchDay: createAction(types.CREATE_BRANCH_DAY),
-	editBranchDay: createAction(types.EDIT_BRANCH_DAY),
+	listSessions: createAction(types.LIST_SESSIONS),
 };
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectBranchDay: () => createSelector(selectState, (state) => state.branchDay),
+	selectSessions: () => createSelector(selectState, (state) => state.sessions),
 };
 
 export default reducer;

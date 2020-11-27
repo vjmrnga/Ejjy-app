@@ -5,7 +5,7 @@ import { orderSlipStatus as osStatus, request } from '../../../../../global/type
 import {
 	calculateTableHeight,
 	formatDateTime,
-	getOrderSlipStatus,
+	getOrderSlipStatusBranchManager,
 	sleep,
 } from '../../../../../utils/function';
 
@@ -41,7 +41,7 @@ export const OrderSlipsTable = ({
 				return {
 					id: <ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />,
 					datetime_created: formatDateTime(datetime_created),
-					status: getOrderSlipStatus(value, percentage_fulfilled * 100),
+					status: getOrderSlipStatusBranchManager(value, 'RS', percentage_fulfilled * 100),
 					actions:
 						status.value === osStatus.DELIVERED ? (
 							<AddButtonIcon

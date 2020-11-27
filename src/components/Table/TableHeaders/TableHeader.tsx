@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { AddIcon } from '../..';
 import { Button, SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
+import { Pending } from '../../Pending/Pending';
 import './style.scss';
 
 const SEARCH_DEBOUNCE_TIME = 250; // 250ms
@@ -18,6 +19,7 @@ interface Props {
 	onStatusSelect?: any;
 	onSearch?: any;
 	onCreate?: any;
+	pending?: number;
 }
 
 export const TableHeader = ({
@@ -30,6 +32,7 @@ export const TableHeader = ({
 	onCreateTooltip,
 	onSearch,
 	onCreate,
+	pending,
 }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceSearchedChange = useCallback(
@@ -46,34 +49,40 @@ export const TableHeader = ({
 					'only-button': !title && !onSearch,
 				})}
 			>
-				{onSearch && (
-					<SearchInput
-						classNames="search-input"
-						placeholder={searchPlaceholder}
-						onChange={(event) => debounceSearchedChange(event.target.value.trim())}
-					/>
-				)}
+				<div className="main-controls">
+					{onSearch && (
+						<SearchInput
+							classNames="search-input"
+							placeholder={searchPlaceholder}
+							onChange={(event) => debounceSearchedChange(event.target.value.trim())}
+						/>
+					)}
 
-				{onStatusSelect && (
-					<Select
-						classNames="status-select"
-						options={statuses}
-						placeholder="status"
-						onChange={onStatusSelect}
-					/>
-				)}
+					{onStatusSelect && (
+						<Select
+							classNames="status-select"
+							options={statuses}
+							placeholder="status"
+							onChange={onStatusSelect}
+						/>
+					)}
+				</div>
 
-				{onCreate && (
-					<Button
-						text={buttonName}
-						variant="primary"
-						onClick={onCreate}
-						iconDirection="left"
-						icon={<AddIcon />}
-						disabled={onCreateDisabled}
-						tooltip={onCreateTooltip}
-					/>
-				)}
+				<div className="pending-button">
+					{pending >= 0 && <Pending value={pending} />}
+
+					{onCreate && (
+						<Button
+							text={buttonName}
+							variant="primary"
+							onClick={onCreate}
+							iconDirection="left"
+							icon={<AddIcon />}
+							disabled={onCreateDisabled}
+							tooltip={onCreateTooltip}
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

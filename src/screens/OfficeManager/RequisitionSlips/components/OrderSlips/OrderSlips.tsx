@@ -16,6 +16,7 @@ import {
 	requisitionSlipProductStatus,
 	quantityTypes,
 	request,
+	orderSlipStatus,
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
@@ -31,6 +32,8 @@ interface Props {
 	requisitionSlipId: number;
 	fetchRequisitionSlip: any;
 }
+
+const pendingOrderSlipStatus = [orderSlipStatus.PREPARED];
 
 export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) => {
 	// State: Selection
@@ -224,6 +227,11 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 		createDeliveryReceipt(id);
 	};
 
+	const getPendingCount = useCallback(
+		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		[orderSlips],
+	);
+
 	return (
 		<Box>
 			<TableHeaderOrderSlip
@@ -237,6 +245,7 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 				}
 				onOutOfStock={onCreateOutOfStock}
 				onOutOfStockDisabled={!hasAvailableProducts()}
+				pending={getPendingCount()}
 			/>
 
 			<OrderSlipsTable

@@ -1,6 +1,6 @@
 import React from 'react';
 import { DetailsHalf, DetailsRow } from '../../../../components';
-import { formatDateTime, getOrderSlipStatus } from '../../../../utils/function';
+import { formatDateTime, getOrderSlipStatusBranchManager } from '../../../../utils/function';
 
 interface Props {
 	orderSlip: any;
@@ -25,8 +25,9 @@ export const OrderSlipDetails = ({ orderSlip }: Props) => {
 			/>
 			<DetailsHalf
 				label="Status"
-				value={getOrderSlipStatus(
+				value={getOrderSlipStatusBranchManager(
 					orderSlip?.status?.value,
+					null,
 					orderSlip?.status?.percentage_fulfilled * 100,
 					orderSlip?.delivery_receipt?.status,
 				)}
