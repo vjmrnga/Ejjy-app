@@ -32,13 +32,13 @@ export const ViewBranchSessions = ({ sessions }: Props) => {
 		setTableData(formattedBranchSession);
 	}, [sessions]);
 
-	const getDateTime = (datetime_created, datetime_ended) => {
+	const getDateTime = (datetime_started, datetime_ended) => {
 		return (
 			<div className="branch-session-column">
 				<div className="first-row">
 					<span className="label">Start: </span>
 					<span className="value">
-						{datetime_created ? formatDateTimeShortMonth(datetime_created) : EMPTY_CELL}
+						{datetime_started ? formatDateTimeShortMonth(datetime_started) : EMPTY_CELL}
 					</span>
 				</div>
 				<div>
