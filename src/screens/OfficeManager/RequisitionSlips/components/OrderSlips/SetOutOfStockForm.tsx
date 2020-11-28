@@ -58,7 +58,7 @@ export const SetOutOfStockForm = ({ products, onSubmit, onClose, loading }: Prop
 									// Select
 									getSelectRadioButton(index),
 									// Barcode
-									product?.product_barcode,
+									product?.product_barcode || product?.product_textcode,
 									// Name
 									product?.product_name,
 								])}

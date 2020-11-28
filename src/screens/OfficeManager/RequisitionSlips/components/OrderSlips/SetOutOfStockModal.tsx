@@ -60,6 +60,7 @@ export const SetOutOfStockModal = ({
 					return {
 						requisition_slip_product_id: id,
 						product_barcode: product.barcode,
+						product_textcode: product.textcode,
 						product_name: product.name,
 					};
 				});

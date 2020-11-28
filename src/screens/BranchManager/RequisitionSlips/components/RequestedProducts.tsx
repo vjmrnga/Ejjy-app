@@ -25,12 +25,12 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 		if (requisitionSlip && requisitionSlipStatus === request.SUCCESS) {
 			const formattedRequestedProducts = requisitionSlip?.products.map((requestedProduct) => {
 				const { product, quantity_piece } = requestedProduct;
-				const { barcode, name, pieces_in_bulk } = product;
+				const { barcode, textcode, name, pieces_in_bulk } = product;
 
 				return {
 					_quantity_piece: quantity_piece,
 					_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
-					barcode,
+					barcode: barcode || textcode,
 					name,
 					// quantity: quantity_piece,
 				};

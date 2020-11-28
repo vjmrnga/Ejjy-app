@@ -172,7 +172,7 @@ export const CreateEditOrderSlipForm = ({
 									// Select
 									getSelectRadioButton(index),
 									// Barcode
-									requestedProduct?.product_barcode,
+									requestedProduct?.product_barcode || requestedProduct?.product_textcode,
 									// Name
 									requestedProduct?.product_name,
 									// Quantity / Bulk | Pieces

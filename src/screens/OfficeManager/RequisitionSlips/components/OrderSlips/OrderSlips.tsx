@@ -174,7 +174,7 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 		orderedQuantityPiece,
 		assignedPersonnel,
 	) => {
-		const { id: productId, name, barcode, pieces_in_bulk } = product;
+		const { id: productId, name, barcode, textcode, pieces_in_bulk } = product;
 		const { current = '', max_balance = '' } = branchBalance;
 
 		return {
@@ -183,6 +183,7 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 			product_id: productId,
 			product_name: name,
 			product_barcode: barcode,
+			product_textcode: textcode,
 			product_pieces_in_bulk: pieces_in_bulk,
 			quantity: quantityPiece,
 			ordered_quantity_piece: orderedQuantityPiece,
@@ -271,6 +272,7 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 				selectedBranchId={selectedBranchId}
 				requestedProducts={requisitionSlipProducts}
 				onChangePreparingBranch={onChangePreparingBranch}
+				onChangePreparingBranchStatus={requisitionSlipStatus}
 				visible={createEditOrderSlipVisible}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
 			/>

@@ -21,6 +21,7 @@ interface Props {
 	selectedBranchId?: number;
 	requestedProducts: any;
 	onChangePreparingBranch: any;
+	onChangePreparingBranchStatus: any;
 	visible: boolean;
 	onClose: any;
 }
@@ -32,6 +33,7 @@ export const CreateEditOrderSlipModal = ({
 	selectedBranchId,
 	requestedProducts,
 	onChangePreparingBranch,
+	onChangePreparingBranchStatus,
 	visible,
 	onClose,
 }: Props) => {
@@ -169,7 +171,9 @@ export const CreateEditOrderSlipModal = ({
 				assignedPersonnelOptions={getAssignedPersonnelOptions()}
 				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={
+					status === request.REQUESTING || onChangePreparingBranchStatus === request.REQUESTING
+				}
 			/>
 		</Modal>
 	);
