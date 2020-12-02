@@ -1,0 +1,14 @@
+{
+    "name": "ejjy",
+    "version": "1.0.0",
+    "description": "EJJY App",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "author": "",
+    "license": "Apache-2.0",
+    "dependencies": {
+      "express": "^4.16.4"
+    }
+}
