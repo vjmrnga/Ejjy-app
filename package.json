@@ -12,6 +12,7 @@
 		"dayjs": "^1.9.4",
 		"formik": "^2.1.5",
 		"lodash": "^4.17.20",
+		"moment": "^2.29.1",
 		"rc-resize-observer": "^0.2.3",
 		"react": "^16.13.1",
 		"react-barcode-reader": "0.0.2",

@@ -1,5 +1,6 @@
 import { userTypes } from '../global/types';
 import {
+	AdminDashboard,
 	BranchManagerChecking,
 	BranchManagerDashboard,
 	BranchManagerNotifications,
@@ -25,6 +26,7 @@ import {
 } from '../screens';
 
 export const DashboardScreens = {
+	[userTypes.ADMIN]: AdminDashboard,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerDashboard,
 	[userTypes.BRANCH_MANAGER]: BranchManagerDashboard,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelDashboard,

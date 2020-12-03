@@ -37,6 +37,10 @@ const Landing = () => {
 	useEffect(() => {
 		if (user) {
 			switch (user?.user_type) {
+				case userTypes.ADMIN: {
+					history.replace('/dashboard');
+					break;
+				}
 				case userTypes.OFFICE_MANAGER: {
 					redirectOfficeManager();
 					break;

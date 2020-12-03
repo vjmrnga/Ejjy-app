@@ -4,11 +4,12 @@ import cn from 'classnames';
 
 interface Props {
 	className?: string;
+	padding?: boolean;
 	children: any;
 }
 
-const Box = ({ children, className }: Props) => (
-	<div className={cn('Box', className)}>{children}</div>
+const Box = ({ children, padding, className }: Props) => (
+	<div className={cn('Box', { padding }, className)}>{children}</div>
 );
 
 export default Box;

@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import cn from 'classnames';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,12 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-dashboard-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-dashboard.svg`),
 		link: '/dashboard',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
+		userTypes: [
+			userTypes.ADMIN,
+			userTypes.OFFICE_MANAGER,
+			userTypes.BRANCH_MANAGER,
+			userTypes.BRANCH_PERSONNEL,
+		],
 	},
 	{
 		key: 'products',
@@ -96,6 +101,13 @@ export const Sidebar = () => {
 
 	const [popupVisible, setPopupVisible] = useState(false);
 
+	const getName = useCallback(() => {
+		const firstName = user.user_type === userTypes.ADMIN ? 'Emman' : user.first_name;
+		const lastName = user.user_type === userTypes.ADMIN ? 'Fineza' : user.last_name;
+
+		return `${firstName} ${lastName}`;
+	}, [user]);
+
 	return (
 		<Layout.Sider
 			className={cn('Sidebar', { collapsed: isSidebarCollapsed })}
@@ -149,7 +161,7 @@ export const Sidebar = () => {
 						className="avatar"
 					/>
 					<div className="user-text-info">
-						<span className="name">{`${user.first_name} ${user.last_name}`}</span>
+						<span className="name">{getName()}</span>
 						<span className="role">{getUserTypeName(user.user_type)}</span>
 					</div>
 				</div>

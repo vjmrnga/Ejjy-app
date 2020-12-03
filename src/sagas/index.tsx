@@ -1,4 +1,5 @@
 import { all } from 'redux-saga/effects';
+import { adminSagas } from './Admin';
 import authSagas from './auth';
 import branchProductsSagas from './branch-products';
 import branchesDaysSagas from './branches-days';
@@ -17,6 +18,7 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...sessionsSagas,
 		...transactionsSagas,
+		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,
 		...branchPersonnelSagas,
