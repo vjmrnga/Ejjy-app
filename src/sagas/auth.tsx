@@ -1,5 +1,6 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, delay, put, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/auth';
+import { AUTH_CHECKING_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/auth';
 
@@ -37,9 +38,31 @@ function* login({ payload }: any) {
 	}
 }
 
+function* retrieve({ payload }: any) {
+	const { id, loginCount } = payload;
+	console.log('run');
+	try {
+		while (true) {
+			const { data } = yield call(service.retrieve, id);
+			if (data?.login_count !== loginCount) {
+				yield put(actions.logout());
+				break;
+			}
+
+			yield delay(AUTH_CHECKING_INTERVAL_MS);
+		}
+	} catch (e) {
+		console.error(e);
+	}
+}
+
 /* WATCHERS */
 const loginWatcherSaga = function* loginWatcherSaga() {
 	yield takeLatest(types.LOGIN, login);
 };
 
-export default [loginWatcherSaga()];
+const retrieveWatcherSaga = function* retrieveWatcherSaga() {
+	yield takeLatest(types.RETRIEVE_USER, retrieve);
+};
+
+export default [loginWatcherSaga(), retrieveWatcherSaga()];

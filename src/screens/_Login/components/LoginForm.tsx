@@ -29,7 +29,7 @@ interface ILoginForm {
 
 export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	console.log('errors', errors);
+
 	return (
 		<>
 			<div className="errors">

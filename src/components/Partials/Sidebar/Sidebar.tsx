@@ -4,11 +4,10 @@ import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { actions as uiActions, selectors as uiSelectors } from '../../../ducks/ui';
-import { actions as authActions } from '../../../ducks/auth';
 import { userTypes } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
+import { useAuth } from '../../../hooks/useAuth';
 import { getUserTypeName } from '../../../utils/function';
 import './style.scss';
 
@@ -94,10 +93,9 @@ const SidebarItems = [
 
 export const Sidebar = () => {
 	const { pathname } = useLocation();
-	const user = useSelector(authSelectors.selectUser());
 	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
 	const onCollapseSidebar = useActionDispatch(uiActions.onCollapseSidebar);
-	const logout = useActionDispatch(authActions.logout);
+	const { user, logout } = useAuth();
 
 	const [popupVisible, setPopupVisible] = useState(false);
 
