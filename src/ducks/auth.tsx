@@ -5,6 +5,7 @@ export const key = 'AUTH';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
+	RETRIEVE_USER: `${key}/RETRIEVE_USER`,
 	LOGIN: `${key}/LOGIN`,
 	LOGOUT: `${key}/LOGOUT`,
 };
@@ -27,6 +28,7 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
+	retrieveUser: createAction(types.RETRIEVE_USER),
 	login: createAction(types.LOGIN),
 	logout: createAction(types.LOGOUT),
 };
