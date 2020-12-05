@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import storage from 'redux-persist/lib/storage';
 import { STORAGE_KEY } from '../configureStore';
 import history from '../utils/history';
+import { adminReducers } from './Admin';
 import authReducer, { key as AUTH_KEY, types } from './auth';
 import branchProductsReducer, { key as BRANCH_PRODUCTS_KEY } from './branch-products';
 import branchesDaysReducer, { key as BRANCHES_DAYS_KEY } from './branches-days';
@@ -27,6 +28,7 @@ const appReducer = combineReducers({
 	[SESSIONS_KEY]: sessionsReducer,
 	[USERS_KEY]: usersReducer,
 	[UI_KEY]: uiReducer,
+	...adminReducers,
 	...officeManagerReducers,
 	...branchManagerReducers,
 	...branchPersonnelReducers,

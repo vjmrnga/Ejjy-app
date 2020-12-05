@@ -309,6 +309,9 @@ export const getPreparationSlipStatus = memoize((status) => {
 
 export const getUserTypeName = memoize((type) => {
 	switch (type) {
+		case userTypes.ADMIN: {
+			return 'Admin';
+		}
 		case userTypes.OFFICE_MANAGER: {
 			return 'Office Manager';
 		}

@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { selectors } from '../../ducks/auth';
 import { request, userTypes } from '../../global/types';
+import { useAuth } from '../../hooks/useAuth';
 import { useBranches } from '../OfficeManager/hooks/useBranches';
 import { useBranchMachines } from '../OfficeManager/hooks/useBranchMachines';
 import './style.scss';
@@ -12,7 +11,7 @@ import './style.scss';
 const Landing = () => {
 	const history = useHistory();
 
-	const user = useSelector(selectors.selectUser());
+	const { user } = useAuth();
 	const { getBranches, status: getBranchesStatus } = useBranches();
 	const { getBranchMachines, status: getBranchMachinesStatus } = useBranchMachines();
 
@@ -37,6 +36,10 @@ const Landing = () => {
 	useEffect(() => {
 		if (user) {
 			switch (user?.user_type) {
+				case userTypes.ADMIN: {
+					history.replace('/dashboard');
+					break;
+				}
 				case userTypes.OFFICE_MANAGER: {
 					redirectOfficeManager();
 					break;

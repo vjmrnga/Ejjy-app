@@ -1,11 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Layout, Spin, Tooltip } from 'antd';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { InfoIcon } from '../../Icons/Icons';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
 import { selectors as uiSelectors } from '../../../ducks/ui';
 import cn from 'classnames';
+import { useAuth } from '../../../hooks/useAuth';
 
 const { Header, Content } = Layout;
 
@@ -29,6 +31,12 @@ export const Container = ({
 	children,
 }: Props) => {
 	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+
+	const { user, retrieveUser } = useAuth();
+
+	useEffect(() => {
+		retrieveUser(user.id, user.login_count);
+	}, []);
 
 	return (
 		<Layout className={cn('Main', { 'sidebar-collapsed': isSidebarCollapsed })}>
