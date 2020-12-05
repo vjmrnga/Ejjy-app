@@ -34,9 +34,9 @@ export const useBranches = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const getBranchesRequest = () => {
+	const getBranchesRequest = (data) => {
 		setRecentRequest(types.GET_BRANCHES);
-		getBranches({ callback });
+		getBranches({ ...data, callback });
 	};
 
 	const createBranchRequest = (branch) => {

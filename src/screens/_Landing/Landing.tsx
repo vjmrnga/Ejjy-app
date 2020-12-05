@@ -19,7 +19,7 @@ const Landing = () => {
 		if (user) {
 			switch (user?.user_type) {
 				case userTypes.OFFICE_MANAGER: {
-					getBranches();
+					getBranches({ withBranchProducts: false });
 					getBranchMachines();
 					break;
 				}
