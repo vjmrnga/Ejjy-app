@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { NO_VERIFICATION_CONFIG } from '.';
+import { IGetRequest } from './interfaces';
 
 interface ILogin {
 	login: string;
@@ -13,7 +14,7 @@ interface IAcquireToken {
 
 export const service = {
 	login: async (body: ILogin) => axios.post('users/login/', body, NO_VERIFICATION_CONFIG),
-	retrieve: async (id: number) => axios.get(`users/${id}/`),
+	retrieve: async (id: number, params: IGetRequest) => axios.get(`users/${id}/`, { params }),
 	acquireToken: async (body: IAcquireToken) =>
 		axios.post('tokens/acquire/', body, NO_VERIFICATION_CONFIG),
 };

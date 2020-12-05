@@ -43,7 +43,7 @@ function* retrieve({ payload }: any) {
 	console.log('run');
 	try {
 		while (true) {
-			const { data } = yield call(service.retrieve, id);
+			const { data } = yield call(service.retrieve, id, { fields: 'login_count' });
 			if (data?.login_count !== loginCount) {
 				yield put(actions.logout());
 				break;
