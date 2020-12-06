@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TableHeader, TableNormal } from '../../../../components';
 import { ButtonLink } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
-import { getTranscationStatus, numberWithCommas } from '../../../../utils/function';
+import { getTransactionStatus, numberWithCommas } from '../../../../utils/function';
 import { ViewTransactionModal } from './ViewTransactionModal';
 
 interface Props {
@@ -29,7 +29,7 @@ export const ViewBranchTransactions = ({ transactions }: Props) => {
 				<ButtonLink text={id} onClick={() => onView(branchTransaction)} />,
 				invoice?.id || EMPTY_CELL,
 				`₱${numberWithCommas(total_amount?.toFixed(2))}`,
-				getTranscationStatus(status),
+				getTransactionStatus(status),
 			];
 		});
 

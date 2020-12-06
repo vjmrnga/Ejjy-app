@@ -384,7 +384,7 @@ export const getProductType = memoize((type) => {
 	}
 });
 
-export const getTranscationStatus = memoize((status) => {
+export const getTransactionStatus = memoize((status) => {
 	switch (status) {
 		case transactionStatus.FULLY_PAID: {
 			return <BadgePill label="Fully Paid" variant="primary" />;
@@ -394,6 +394,9 @@ export const getTranscationStatus = memoize((status) => {
 		}
 		case transactionStatus.HOLD: {
 			return <BadgePill label="Hold" variant="secondary" />;
+		}
+		case transactionStatus.VOID_CANCELLED: {
+			return <BadgePill label="Cancelled" variant="error" />;
 		}
 		default: {
 			return EMPTY_CELL;
