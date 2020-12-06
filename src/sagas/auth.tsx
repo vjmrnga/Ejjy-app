@@ -40,7 +40,7 @@ function* login({ payload }: any) {
 
 function* retrieve({ payload }: any) {
 	const { id, loginCount } = payload;
-	console.log('run');
+
 	try {
 		while (true) {
 			const { data } = yield call(service.retrieve, id, { fields: 'login_count' });

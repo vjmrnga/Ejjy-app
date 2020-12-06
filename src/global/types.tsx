@@ -16,7 +16,7 @@ export const unitOfMeasurementTypes = {
 };
 
 export const userTypes = {
-	ADMIN: null,
+	ADMIN: 'admin',
 	OFFICE_MANAGER: 'office_manager',
 	BRANCH_MANAGER: 'branch_manager',
 	BRANCH_PERSONNEL: 'branch_personnel',

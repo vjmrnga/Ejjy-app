@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/users';
+import { EMPTY_CELL } from '../../../global/constants';
 import { request, userTypes } from '../../../global/types';
 import { calculateTableHeight } from '../../../utils/function';
 import { useUsers } from '../hooks/useUsers';
@@ -37,7 +38,7 @@ const Users = () => {
 				.filter((user) => user.user_type !== userTypes.OFFICE_MANAGER)
 				.map((user) => {
 					const name = `${user.first_name} ${user.last_name}`;
-					const branch = user.branch.name;
+					const branch = user?.branch?.name || EMPTY_CELL;
 
 					return {
 						_name: name,

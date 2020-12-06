@@ -41,10 +41,10 @@ export const SiteSettings = () => {
 		editSiteSettings({
 			id: siteSettings.id,
 			close_session_deadline: closeSessionDeadline
-				? closeSessionDeadline.format('hh:mm:ss')
+				? closeSessionDeadline.format('HH:mm:ss')
 				: siteSettings?.close_session_deadline,
 			close_day_deadline: closeDayDeadline
-				? closeDayDeadline.format('hh:mm:ss')
+				? closeDayDeadline.format('HH:mm:ss')
 				: siteSettings?.close_day_deadline,
 		});
 	};
