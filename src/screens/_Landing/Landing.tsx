@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Spin } from 'antd';
+import { notification, Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { request, userTypes } from '../../global/types';
@@ -17,6 +17,14 @@ const Landing = () => {
 
 	useEffect(() => {
 		if (user) {
+			if (user.login_count > 1) {
+				notification.error({
+					duration: null,
+					message: 'Account Notification',
+					description: 'Someone else was using this account.',
+				});
+			}
+
 			switch (user?.user_type) {
 				case userTypes.OFFICE_MANAGER: {
 					getBranches({ withBranchProducts: false });

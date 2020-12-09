@@ -40,7 +40,7 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 			closable
 		>
 			<DetailsRow>
-				<DetailsSingle label="Invoice No." value={transaction?.invoice?.id || EMPTY_CELL} />
+				<DetailsSingle label="Invoice No." value={transaction?.invoice?.or_number || EMPTY_CELL} />
 				<DetailsSingle label="Transaction No." value={transaction?.id} />
 			</DetailsRow>
 
