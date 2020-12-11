@@ -10,7 +10,7 @@ const Dashboard = () => {
 		<Container title="Dashboard" loadingText="Fetching site settings...">
 			<section className="Dashboard">
 				<Row gutter={{ sm: 15, xs: 0 }}>
-					<Col xs={24} sm={12}>
+					<Col span={24}>
 						<SiteSettings />
 					</Col>
 				</Row>
