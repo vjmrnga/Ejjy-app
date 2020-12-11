@@ -34,9 +34,9 @@ export const Container = ({
 	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
 	const { user, logout, retrieveUser } = useAuth();
 
-	// useBeforeunload(() => {
-	// 	logout(user.id);
-	// });
+	useBeforeunload(() => {
+		logout(user.id);
+	});
 
 	useEffect(() => {
 		retrieveUser(user.id, user.login_count);
