@@ -9,6 +9,7 @@ import { officeManagerSagas } from './OfficeManager';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import transactionsSagas from './transactions';
+import xreadReportsSagas from './xread-reports';
 
 export default function* rootSaga() {
 	yield all([
@@ -18,6 +19,7 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...sessionsSagas,
 		...transactionsSagas,
+		...xreadReportsSagas,
 		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,

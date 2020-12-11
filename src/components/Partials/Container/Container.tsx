@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Layout, Spin, Tooltip } from 'antd';
+import cn from 'classnames';
 import React, { ReactNode, useEffect } from 'react';
+import { useBeforeunload } from 'react-beforeunload';
 import { useSelector } from 'react-redux';
+import { selectors as uiSelectors } from '../../../ducks/ui';
+import { useAuth } from '../../../hooks/useAuth';
 import { InfoIcon } from '../../Icons/Icons';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
-import { selectors as uiSelectors } from '../../../ducks/ui';
-import cn from 'classnames';
-import { useAuth } from '../../../hooks/useAuth';
 
 const { Header, Content } = Layout;
 
@@ -31,8 +32,11 @@ export const Container = ({
 	children,
 }: Props) => {
 	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+	const { user, logout, retrieveUser } = useAuth();
 
-	const { user, retrieveUser } = useAuth();
+	// useBeforeunload(() => {
+	// 	logout(user.id);
+	// });
 
 	useEffect(() => {
 		retrieveUser(user.id, user.login_count);

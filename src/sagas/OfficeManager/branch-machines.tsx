@@ -6,13 +6,14 @@ import { service } from '../../services/OfficeManager/branch-machines';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { callback } = payload;
+	const { branchId = null, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
 			page: 1,
 			page_size: MAX_PAGE_SIZE,
+			branch_id: branchId,
 		});
 
 		yield put(

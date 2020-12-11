@@ -17,7 +17,7 @@ const Landing = () => {
 
 	useEffect(() => {
 		if (user) {
-			if (user.login_count > 1) {
+			if (user.active_sessions_count > 1) {
 				notification.error({
 					duration: null,
 					message: 'Account Notification',

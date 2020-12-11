@@ -45,10 +45,10 @@ export default function configureAxios(store: any) {
 		if (error.config && error.response && error.response.status === 401) {
 			// Get refresh token when 401 response status
 			const state = store.getState();
-			const { refreshToken } = state[AUTH_KEY];
+			const { refreshToken, user } = state[AUTH_KEY];
 
 			if (!refreshToken) {
-				store.dispatch(authActions.logout());
+				store.dispatch(authActions.logout({ id: user.id }));
 				return;
 			}
 
@@ -64,7 +64,7 @@ export default function configureAxios(store: any) {
 					if (tokenStatus?.code === tokenResponseStatuses.INVALID) {
 						// if the REFRESH TOKEN has already expired as well, logout the user
 						// and throw an error to exit this Promise chain
-						store.dispatch(authActions.logout());
+						store.dispatch(authActions.logout({ id: user.id }));
 						throw new Error('refresh token has already expired');
 					}
 

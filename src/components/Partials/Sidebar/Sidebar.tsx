@@ -142,7 +142,7 @@ export const Sidebar = () => {
 						<span className="name">Account</span>
 					</div>
 
-					<div className="item" onClick={logout}>
+					<div className="item" onClick={() => logout(user.id)}>
 						<img
 							src={require(`../../../assets/images/icon-logout.svg`)}
 							alt="icon"

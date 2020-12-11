@@ -43,14 +43,28 @@ function* retrieve({ payload }: any) {
 
 	try {
 		while (true) {
-			const { data } = yield call(service.retrieve, id, { fields: 'login_count' });
-			if (data?.login_count !== loginCount) {
-				yield put(actions.logout());
+			if (id) {
+				const { data } = yield call(service.retrieve, id, { fields: 'login_count' });
+				if (data?.login_count !== loginCount) {
+					yield put(actions.logout({ id }));
+					break;
+				}
+			} else {
 				break;
 			}
 
 			yield delay(AUTH_CHECKING_INTERVAL_MS);
 		}
+	} catch (e) {
+		console.error(e);
+	}
+}
+
+function* logout({ payload }: any) {
+	const { id } = payload;
+
+	try {
+		yield call(service.logout, id);
 	} catch (e) {
 		console.error(e);
 	}
@@ -65,4 +79,8 @@ const retrieveWatcherSaga = function* retrieveWatcherSaga() {
 	yield takeLatest(types.RETRIEVE_USER, retrieve);
 };
 
-export default [loginWatcherSaga(), retrieveWatcherSaga()];
+const logoutWatcherSaga = function* logoutWatcherSaga() {
+	yield takeLatest(types.LOGOUT, logout);
+};
+
+export default [loginWatcherSaga(), retrieveWatcherSaga(), logoutWatcherSaga()];

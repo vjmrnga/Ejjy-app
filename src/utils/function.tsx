@@ -112,6 +112,12 @@ export const modifiedExtraCallback = (callback, extraCallback = null) => {
 	};
 };
 
+export const showErrorMessages = (errors = []) => {
+	if (errors.length > 0) {
+		errors.forEach((error) => message.error(error));
+	}
+};
+
 export const getColoredText = memoize((key, isDefault, x, y, isOverOnlyIfDefault = false) => {
 	let text = `${x}/${y}`;
 
