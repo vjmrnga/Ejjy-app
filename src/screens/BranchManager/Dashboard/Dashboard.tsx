@@ -7,6 +7,7 @@ import { CashieringCard } from '../../../components/CashieringCard/CashieringCar
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { request } from '../../../global/types';
 import { useBranchesDays } from '../../../hooks/useBranchesDays';
+import { MachineReportTable } from './components/MachineReportTable';
 import './style.scss';
 
 const Dashboard = () => {
@@ -47,6 +48,8 @@ const Dashboard = () => {
 					onClick={branchDay ? onEndDay : onStartDay}
 					loading={branchesDaysStatus === request.REQUESTING}
 				/>
+
+				<MachineReportTable />
 			</section>
 		</Container>
 	);

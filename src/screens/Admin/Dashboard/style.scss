@@ -7,12 +7,26 @@
 			@include font(20px, bold);
 		}
 
-		.column-close-day-deadline {
+		.spacing-top {
 			margin-top: 15px;
 		}
 
 		.btn-submit-site-settings {
-			margin-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+			max-width: 200px;
+		}
+
+		.ant-picker {
+			padding: 8px 12px;
+			color: $color-dark;
+			border: 1px solid $color-gray;
+			border-radius: $border-radius;
+
+			input {
+				@include font(1rem);
+			}
 		}
 	}
 }

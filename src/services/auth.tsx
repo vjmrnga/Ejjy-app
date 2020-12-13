@@ -17,4 +17,5 @@ export const service = {
 	retrieve: async (id: number, params: IGetRequest) => axios.get(`users/${id}/`, { params }),
 	acquireToken: async (body: IAcquireToken) =>
 		axios.post('tokens/acquire/', body, NO_VERIFICATION_CONFIG),
+	logout: async (id: number) => axios.post(`users/${id}/logout/`),
 };

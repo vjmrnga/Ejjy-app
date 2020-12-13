@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Col, Divider, message, Row, Spin, TimePicker } from 'antd';
+import { Col, DatePicker, Divider, message, Row, Spin, TimePicker } from 'antd';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Label } from '../../../../components/elements';
+import { Box, Button, ControlledInput, Label } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -11,6 +12,13 @@ export const SiteSettings = () => {
 
 	const [closeSessionDeadline, setCloseSessionDeadline] = useState(null);
 	const [closeDayDeadline, setCloseDayDeadline] = useState(null);
+	const [proprietor, setProprietor] = useState('');
+	const [tin, setTin] = useState('');
+	const [permitNumber, setPermitNumber] = useState('');
+	const [softwareDeveloper, setSoftwareDeveloper] = useState('');
+	const [softwareDeveloperTin, setSoftwareDeveloperTin] = useState('');
+	const [posAccreditationNumber, setPosAccreditationNumber] = useState('');
+	const [posAccreditationDate, setPosAccreditationDate] = useState(null);
 
 	useEffect(() => {
 		getSiteSettings();
@@ -19,33 +27,49 @@ export const SiteSettings = () => {
 	useEffect(() => {
 		setCloseSessionDeadline(moment(siteSettings?.close_session_deadline, 'hh:mm:ss'));
 		setCloseDayDeadline(moment(siteSettings?.close_day_deadline, 'hh:mm:ss'));
+
+		setProprietor(siteSettings?.proprietor || '');
+		setTin(siteSettings?.tin || '');
+		setPermitNumber(siteSettings?.permit_number || '');
+		setSoftwareDeveloper(siteSettings?.software_developer || '');
+		setSoftwareDeveloperTin(siteSettings?.software_developer_tin || '');
+		setPosAccreditationNumber(siteSettings?.pos_accreditation_number || '');
+		setPosAccreditationDate(
+			siteSettings?.pos_accreditation_date
+				? moment(siteSettings?.pos_accreditation_date, 'YYYY-MM-DD')
+				: null,
+		);
 	}, [siteSettings]);
 
-	const onPickSession = (time) => {
-		setCloseSessionDeadline(time);
-	};
-
-	const onPickDay = (time) => {
-		setCloseDayDeadline(time);
-	};
-
 	const onUpdateSiteSettings = () => {
-		if (
-			moment(siteSettings?.close_session_deadline, 'hh:mm:ss').isSame(closeSessionDeadline) &&
-			moment(siteSettings?.close_day_deadline, 'hh:mm:ss').isSame(closeDayDeadline)
-		) {
-			message.error('You have not updated any of the time yet.');
+		const data = [
+			closeSessionDeadline,
+			closeDayDeadline,
+			proprietor,
+			tin,
+			permitNumber,
+			softwareDeveloper,
+			softwareDeveloperTin,
+			posAccreditationNumber,
+			posAccreditationDate,
+		];
+
+		if (data.some((value) => isEmpty(value))) {
+			message.error('Please make sure to fill all the fields.');
 			return;
 		}
 
 		editSiteSettings({
 			id: siteSettings.id,
-			close_session_deadline: closeSessionDeadline
-				? closeSessionDeadline.format('HH:mm:ss')
-				: siteSettings?.close_session_deadline,
-			close_day_deadline: closeDayDeadline
-				? closeDayDeadline.format('HH:mm:ss')
-				: siteSettings?.close_day_deadline,
+			close_session_deadline: closeSessionDeadline.format('HH:mm:ss'),
+			close_day_deadline: closeDayDeadline.format('HH:mm:ss'),
+			proprietor: proprietor,
+			tin: tin,
+			permit_number: permitNumber,
+			software_developer: softwareDeveloper,
+			software_developer_tin: softwareDeveloperTin,
+			pos_accreditation_number: posAccreditationNumber,
+			pos_accreditation_date: posAccreditationDate.format('YYYY-MM-DD'),
 		});
 	};
 
@@ -55,32 +79,98 @@ export const SiteSettings = () => {
 				<div className="site-settings-container">
 					<p className="title">SITE SETTINGS</p>
 					<Divider />
-					<Row gutter={{ sm: 15, xs: 0 }}>
-						<Col span={24}>
-							<Label label="Close Day Session" spacing />
+					<Row gutter={[15, 15]}>
+						<Col xs={24} sm={12}>
+							<Label label="Close Session Deadline" spacing />
 							<TimePicker
 								value={closeSessionDeadline}
 								style={{ width: '100%' }}
 								format="h:mm a"
 								minuteStep={5}
-								onChange={onPickSession}
+								onSelect={(value) => setCloseSessionDeadline(value)}
+								size="large"
+								allowClear={false}
 								hideDisabledOptions
 								use12Hours
 							/>
 						</Col>
-						<Col span={24} className="column-close-day-deadline">
+						<Col xs={24} sm={12}>
 							<Label label="Close Day Deadline" spacing />
 							<TimePicker
 								value={closeDayDeadline}
 								style={{ width: '100%' }}
 								format="h:mm a"
 								minuteStep={5}
-								onChange={onPickDay}
+								onSelect={(value) => setCloseDayDeadline(value)}
+								size="large"
+								allowClear={false}
 								hideDisabledOptions
 								use12Hours
 							/>
 						</Col>
 					</Row>
+
+					<Divider />
+
+					<Row gutter={[15, 15]}>
+						<Col xs={24} sm={12} md={8}>
+							<Label label="Proprietor" spacing />
+							<ControlledInput
+								value={proprietor}
+								onChange={(value) => setProprietor(value)}
+								max={75}
+							/>
+						</Col>
+						<Col xs={24} sm={12} md={8}>
+							<Label label="Tin" spacing />
+							<ControlledInput value={tin} onChange={(value) => setTin(value)} max={40} />
+						</Col>
+						<Col xs={24} sm={12} md={8}>
+							<Label label="Permit Number" spacing />
+							<ControlledInput
+								value={permitNumber}
+								onChange={(value) => setPermitNumber(value)}
+								max={40}
+							/>
+						</Col>
+						<Col xs={24} sm={12}>
+							<Label label="Software Developer" spacing />
+							<ControlledInput
+								value={softwareDeveloper}
+								onChange={(value) => setSoftwareDeveloper(value)}
+								max={75}
+							/>
+						</Col>
+						<Col xs={24} sm={12}>
+							<Label label="Software Developer Tin" spacing />
+							<ControlledInput
+								value={softwareDeveloperTin}
+								onChange={(value) => setSoftwareDeveloperTin(value)}
+								max={40}
+							/>
+						</Col>
+						<Col xs={24} sm={12}>
+							<Label label="POS Accreditation Number" spacing />
+							<ControlledInput
+								value={posAccreditationNumber}
+								onChange={(value) => setPosAccreditationNumber(value)}
+								max={40}
+							/>
+						</Col>
+						<Col xs={24} sm={12}>
+							<Label label="POS Accreditation Date" spacing />
+							<DatePicker
+								value={posAccreditationDate}
+								format="YYYY-MM-DD"
+								onSelect={(value) => setPosAccreditationDate(value)}
+								style={{ width: '100%' }}
+								size="large"
+								allowClear={false}
+							/>
+						</Col>
+					</Row>
+
+					<Divider />
 
 					<Button
 						classNames="btn-submit-site-settings"

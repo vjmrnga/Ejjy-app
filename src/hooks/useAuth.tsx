@@ -20,6 +20,10 @@ export const useAuth = () => {
 		login({ ...data, callback });
 	};
 
+	const logoutRequest = (id: number) => {
+		logout({ id });
+	};
+
 	const retrieveUserRequest = (id, loginCount) => {
 		retrieveUser({ id, loginCount });
 	};
@@ -34,7 +38,7 @@ export const useAuth = () => {
 		accessToken,
 		refreshToken,
 		login: loginRequest,
-		logout,
+		logout: logoutRequest,
 		retrieveUser: retrieveUserRequest,
 		status,
 		errors,

@@ -112,6 +112,12 @@ export const modifiedExtraCallback = (callback, extraCallback = null) => {
 	};
 };
 
+export const showErrorMessages = (errors = []) => {
+	if (errors.length > 0) {
+		errors.forEach((error) => message.error(error));
+	}
+};
+
 export const getColoredText = memoize((key, isDefault, x, y, isOverOnlyIfDefault = false) => {
 	let text = `${x}/${y}`;
 
@@ -396,7 +402,10 @@ export const getTransactionStatus = memoize((status) => {
 			return <BadgePill label="Hold" variant="secondary" />;
 		}
 		case transactionStatus.VOID_CANCELLED: {
-			return <BadgePill label="Cancelled" variant="error" />;
+			return <BadgePill label="Cancelled" />;
+		}
+		case transactionStatus.VOID_EDITED: {
+			return <BadgePill label="Edited" />;
 		}
 		default: {
 			return EMPTY_CELL;
