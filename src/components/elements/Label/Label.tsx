@@ -4,12 +4,13 @@ import './style.scss';
 
 interface Props {
 	id?: string;
-	label: string;
+	label: string | React.ReactNode;
 	spacing?: boolean;
+	classNames?: string;
 }
 
-const Label = ({ id, label: inputLabel, spacing }: Props) => (
-	<label htmlFor={id} className={cn('Label', { spacing })}>
+const Label = ({ id, label: inputLabel, spacing, classNames }: Props) => (
+	<label htmlFor={id} className={cn('Label', classNames, { spacing })}>
 		{inputLabel}
 	</label>
 );

@@ -7,17 +7,26 @@ interface Props {
 	label: string;
 	labelSpan?: number;
 	valueSpan?: number;
+	classNamesLabel?: string;
+	classNamesValue?: string;
 }
 
-export const DetailsSingle = ({ value, label, labelSpan, valueSpan }: Props) => {
+export const DetailsSingle = ({
+	value,
+	label,
+	labelSpan,
+	valueSpan,
+	classNamesLabel,
+	classNamesValue,
+}: Props) => {
 	return (
 		<Col span={24}>
 			<Row gutter={{ sm: 15, xs: 0 }}>
 				<Col sm={labelSpan} xs={24}>
-					<Label label={label} />
+					<Label classNames={classNamesLabel} label={label} />
 				</Col>
 				<Col sm={valueSpan} xs={24}>
-					<span>{value}</span>
+					<span className={classNamesValue}>{value}</span>
 				</Col>
 			</Row>
 		</Col>

@@ -395,9 +395,6 @@ export const getTransactionStatus = memoize((status) => {
 		case transactionStatus.FULLY_PAID: {
 			return <BadgePill label="Fully Paid" variant="primary" />;
 		}
-		case transactionStatus.VOID: {
-			return <BadgePill label="Void" />;
-		}
 		case transactionStatus.HOLD: {
 			return <BadgePill label="Hold" variant="secondary" />;
 		}

@@ -53,3 +53,15 @@
 		}
 	}
 }
+
+.ViewTransactionModal {
+	.official-receipt-label {
+		@include font(20px, bold);
+		text-align: center;
+	}
+
+	.value-center {
+		display: block;
+		text-align: center;
+	}
+}
