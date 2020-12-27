@@ -2,6 +2,7 @@ import { Divider, Modal } from 'antd';
 import React from 'react';
 import { DetailsHalf, DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
+import { numberWithCommas } from '../../../../../utils/function';
 
 interface Props {
 	visible: boolean;
@@ -40,13 +41,48 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 				/>
 				<DetailsHalf label="Reorder Point" value={branchProduct?.reorder_point} />
 				<DetailsHalf label="Max Balance" value={branchProduct?.max_balance} />
-				<DetailsHalf label="Price (Piece)" value={branchProduct?.price_per_piece} />
-				<DetailsHalf label="Price (Bulk)" value={branchProduct?.price_per_bulk} />
+
 				<DetailsHalf
 					label="Allowable Spoilage (%)"
 					value={branchProduct?.allowable_spoilage * 100}
 				/>
 				<DetailsHalf label="Current Balance" value={branchProduct?.current_balance} />
+
+				<Divider />
+
+				<DetailsSingle
+					label="Price (Piece)"
+					value={`₱${numberWithCommas(Number(branchProduct?.price_per_piece).toFixed(2))}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 1 (Piece)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_piece1).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 2 (Piece)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_piece2).toFixed(2),
+					)}`}
+				/>
+
+				<DetailsSingle
+					label="Price (Bulk)"
+					value={`₱${numberWithCommas(Number(branchProduct?.price_per_bulk).toFixed(2))}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 1 (Bulk)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_bulk1).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 2 (Bulk)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_bulk2).toFixed(2),
+					)}`}
+				/>
 			</DetailsRow>
 		</Modal>
 	);
