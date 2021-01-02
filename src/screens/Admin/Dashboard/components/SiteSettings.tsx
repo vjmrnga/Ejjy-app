@@ -19,6 +19,7 @@ export const SiteSettings = () => {
 	const [softwareDeveloperTin, setSoftwareDeveloperTin] = useState('');
 	const [posAccreditationNumber, setPosAccreditationNumber] = useState('');
 	const [posAccreditationDate, setPosAccreditationDate] = useState(null);
+	const [thankYouMessage, setThankYouMessage] = useState('');
 
 	useEffect(() => {
 		getSiteSettings();
@@ -39,6 +40,7 @@ export const SiteSettings = () => {
 				? moment(siteSettings?.pos_accreditation_date, 'YYYY-MM-DD')
 				: null,
 		);
+		setThankYouMessage(siteSettings?.thank_you_message || '');
 	}, [siteSettings]);
 
 	const onUpdateSiteSettings = () => {
@@ -52,6 +54,7 @@ export const SiteSettings = () => {
 			softwareDeveloperTin,
 			posAccreditationNumber,
 			posAccreditationDate,
+			thankYouMessage,
 		];
 
 		if (data.some((value) => isEmpty(value))) {
@@ -70,6 +73,7 @@ export const SiteSettings = () => {
 			software_developer_tin: softwareDeveloperTin,
 			pos_accreditation_number: posAccreditationNumber,
 			pos_accreditation_date: posAccreditationDate.format('YYYY-MM-DD'),
+			thank_you_message: thankYouMessage,
 		});
 	};
 
@@ -166,6 +170,19 @@ export const SiteSettings = () => {
 								style={{ width: '100%' }}
 								size="large"
 								allowClear={false}
+							/>
+						</Col>
+					</Row>
+
+					<Divider />
+
+					<Row gutter={[15, 15]}>
+						<Col span={24}>
+							<Label label="Thank You Message" spacing />
+							<ControlledInput
+								value={thankYouMessage}
+								onChange={(value) => setThankYouMessage(value)}
+								max={40}
 							/>
 						</Col>
 					</Row>
