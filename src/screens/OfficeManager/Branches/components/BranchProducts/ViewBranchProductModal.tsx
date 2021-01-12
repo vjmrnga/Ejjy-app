@@ -35,10 +35,6 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 					label="Checking"
 					value={branchProduct?.is_daily_checked ? 'Daily' : 'Random'}
 				/>
-				<DetailsHalf
-					label="Is Vat Exempted?"
-					value={branchProduct?.is_vat_exempted ? 'Yes' : 'No'}
-				/>
 				<DetailsHalf label="Reorder Point" value={branchProduct?.reorder_point} />
 				<DetailsHalf label="Max Balance" value={branchProduct?.max_balance} />
 

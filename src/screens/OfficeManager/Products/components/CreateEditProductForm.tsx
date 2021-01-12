@@ -29,6 +29,7 @@ interface ICreateProduct {
 	max_balance: number;
 	price_per_piece: number;
 	price_per_bulk: number;
+	is_vat_exempted: boolean;
 }
 
 interface Props {
@@ -59,6 +60,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				max_balance: product?.max_balance || '',
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
+				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 			},
 			Schema: Yup.object().shape(
 				{
@@ -145,6 +147,19 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 		},
 	];
 
+	const isVatExemptedTypes = [
+		{
+			id: 'no',
+			label: 'No',
+			value: 'false',
+		},
+		{
+			id: 'yes',
+			label: 'Yes',
+			value: 'true',
+		},
+	];
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -212,6 +227,14 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Divider dashed />
+
+						<Col sm={12} xs={24}>
+							<Label label="Is Vat Exempted?" spacing />
+							<FormRadioButton name="is_vat_exempted" items={isVatExemptedTypes} />
+							{errors.is_vat_exempted && touched.is_vat_exempted ? (
+								<FieldError error={errors.is_vat_exempted} />
+							) : null}
+						</Col>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />

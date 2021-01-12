@@ -34,6 +34,7 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 
 				<Divider dashed />
 
+				<DetailsHalf label="Is Vat Exempted?" value={product?.is_vat_exempted ? 'Yes' : 'No'} />
 				<DetailsHalf label="Reorder Point" value={product?.reorder_point} />
 				<DetailsHalf label="Max Balance" value={product?.max_balance} />
 				<DetailsHalf label="Pieces in Bulk" value={product?.pieces_in_bulk} />
