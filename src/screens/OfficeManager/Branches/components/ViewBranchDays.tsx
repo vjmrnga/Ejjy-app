@@ -23,7 +23,7 @@ export const ViewBranchDays = ({ branchDays }: Props) => {
 			const { branch, started_by, ended_by, datetime_created, datetime_ended } = branchDay;
 
 			return [
-				{ isHidden: true },
+				{ isHidden: true }, // TODO: For searching functionality (payload)
 				branch.name,
 				getUser(started_by, ended_by),
 				getDateTime(datetime_created, datetime_ended),

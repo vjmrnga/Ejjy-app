@@ -10,7 +10,9 @@ import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useSessions } from '../../../hooks/useSessions';
 import { useTransactions } from '../../../hooks/useTransactions';
+import { useBranchMachines } from '../hooks/useBranchMachines';
 import { ViewBranchDays } from './components/ViewBranchDays';
+import { ViewBranchMachines } from './components/ViewBranchMachines';
 import { ViewBranchProducts } from './components/ViewBranchProducts';
 import { ViewBranchSessions } from './components/ViewBranchSessions';
 import { ViewBranchTransactions } from './components/ViewBranchTransactions';
@@ -22,6 +24,7 @@ interface Props {
 
 const tabs = {
 	PRODUCTS: 'Products',
+	MACHINES: 'Machines',
 	TRANSACTIONS: 'Transactions',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
@@ -40,11 +43,14 @@ const ViewBranch = ({ match }: Props) => {
 	const { transactions, listTransactions, status: transactionsStatus } = useTransactions();
 	const { sessions, listSessions, status: sessionsStatus } = useSessions();
 	const { branchDays, listBranchDays, status: branchesDaysStatus } = useBranchesDays();
+	const { branchMachines, getBranchMachines, status: branchesMachinesStatus } = useBranchMachines();
+
 	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
 	// Effect: Fetch branch products
 	useEffect(() => {
 		getBranchProductsByBranch(branchId);
+		getBranchMachines({ branchId });
 		listTransactions(branchId);
 		listSessions(branchId);
 		listBranchDays(branchId);
@@ -52,10 +58,20 @@ const ViewBranch = ({ match }: Props) => {
 
 	const getFetchLoading = useCallback(
 		() =>
-			[branchProductsStatus, transactionsStatus, sessionsStatus, branchesDaysStatus].includes(
-				request.REQUESTING,
-			),
-		[branchProductsStatus, transactionsStatus, sessionsStatus, branchesDaysStatus],
+			[
+				branchProductsStatus,
+				transactionsStatus,
+				sessionsStatus,
+				branchesDaysStatus,
+				branchesMachinesStatus,
+			].includes(request.REQUESTING),
+		[
+			branchProductsStatus,
+			transactionsStatus,
+			sessionsStatus,
+			branchesDaysStatus,
+			branchesMachinesStatus,
+		],
 	);
 
 	const getBreadcrumbItems = useCallback(
@@ -76,6 +92,10 @@ const ViewBranch = ({ match }: Props) => {
 					<Tabs defaultActiveKey={tabs.PRODUCTS} style={{ padding: '20px 25px' }} type="card">
 						<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
 							<ViewBranchProducts branchProducts={branchProducts} branch={branch} />
+						</Tabs.TabPane>
+
+						<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES}>
+							<ViewBranchMachines branchMachines={branchMachines} />
 						</Tabs.TabPane>
 
 						<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>

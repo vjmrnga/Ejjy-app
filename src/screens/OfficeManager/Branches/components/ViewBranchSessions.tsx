@@ -21,7 +21,7 @@ export const ViewBranchSessions = ({ sessions }: Props) => {
 			const { user, branch_machine, datetime_started, datetime_ended } = session;
 
 			return [
-				{ isHidden: true },
+				{ isHidden: true }, // TODO: For searching functionality (payload)
 				`${user.first_name} ${user.last_name}`,
 				branch_machine.name,
 				getDateTime(datetime_started, datetime_ended),

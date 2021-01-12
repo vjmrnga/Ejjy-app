@@ -25,7 +25,7 @@ export const ViewBranchTransactions = ({ transactions }: Props) => {
 			const { id, invoice, total_amount, status } = branchTransaction;
 
 			return [
-				{ isHidden: true },
+				{ isHidden: true }, // TODO: For searching functionality (payload)
 				<ButtonLink text={id} onClick={() => onView(branchTransaction)} />,
 				invoice?.or_number || EMPTY_CELL,
 				`₱${numberWithCommas(total_amount?.toFixed(2))}`,
