@@ -29,7 +29,6 @@ interface IEditBranchProduct {
 	checking?: string;
 	is_daily_checked?: boolean;
 	is_randomly_checked?: boolean;
-	is_vat_exempted?: boolean;
 }
 
 interface Props {
@@ -56,7 +55,6 @@ export const EditBranchProductsForm = ({
 				checking: branchProduct?.is_daily_checked
 					? productCheckingTypes.DAILY
 					: productCheckingTypes.RANDOM,
-				is_vat_exempted: branchProduct?.is_vat_exempted?.toString() || 'false',
 				type: branchProduct?.product?.type,
 				unit_of_measurement: branchProduct?.product?.unit_of_measurement,
 				reorder_point: branchProduct?.reorder_point || '',
@@ -122,19 +120,6 @@ export const EditBranchProductsForm = ({
 		},
 	];
 
-	const isVatExemptedTypes = [
-		{
-			id: 'no',
-			label: 'No',
-			value: 'false',
-		},
-		{
-			id: 'yes',
-			label: 'Yes',
-			value: 'true',
-		},
-	];
-
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -167,14 +152,6 @@ export const EditBranchProductsForm = ({
 							<Label label="Checking" spacing />
 							<FormRadioButton name="checking" items={checkingTypes} />
 							{errors.checking && touched.checking ? <FieldError error={errors.checking} /> : null}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="Is Vat Exempted?" spacing />
-							<FormRadioButton name="is_vat_exempted" items={isVatExemptedTypes} />
-							{errors.checking && touched.is_vat_exempted ? (
-								<FieldError error={errors.is_vat_exempted} />
-							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
