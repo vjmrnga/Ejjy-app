@@ -5,9 +5,11 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { actions as uiActions, selectors as uiSelectors } from '../../../ducks/ui';
+import { ONLINE_ROUTES } from '../../../global/constants';
 import { userTypes } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { useAuth } from '../../../hooks/useAuth';
+import { useNetwork } from '../../../hooks/useNetwork';
 import { getUserTypeName } from '../../../utils/function';
 import './style.scss';
 
@@ -92,13 +94,17 @@ const SidebarItems = [
 ];
 
 export const Sidebar = () => {
-	const { pathname } = useLocation();
-	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
-	const onCollapseSidebar = useActionDispatch(uiActions.onCollapseSidebar);
-	const { user, logout } = useAuth();
-
+	// STATES
 	const [popupVisible, setPopupVisible] = useState(false);
 
+	// CUSTOM HOOKS
+	const { pathname } = useLocation();
+	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+	const { user, logout } = useAuth();
+	const { hasInternetConnection } = useNetwork();
+	const onCollapseSidebar = useActionDispatch(uiActions.onCollapseSidebar);
+
+	// METHODS
 	const getName = useCallback(() => {
 		const firstName = user.user_type === userTypes.ADMIN ? 'Emman' : user.first_name;
 		const lastName = user.user_type === userTypes.ADMIN ? 'Fineza' : user.last_name;
@@ -123,6 +129,14 @@ export const Sidebar = () => {
 							<img src={item.defaultIcon} alt={item.name} className="icon" />
 							<img src={item.activeIcon} alt={item.name} className="icon icon-active" />
 							<span className="name">{item.name}</span>
+
+							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
+								<img
+									src={require('../../../assets/images/icon-lock.svg')}
+									alt={item.name}
+									className="icon-lock"
+								/>
+							)}
 						</div>
 					</Link>
 				))}

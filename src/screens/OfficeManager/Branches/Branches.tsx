@@ -11,6 +11,7 @@ import './style.scss';
 
 const columns = [
 	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Online URL', dataIndex: 'url' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -24,10 +25,11 @@ const Branches = () => {
 	// Effect: Format branches to be rendered in Table
 	useEffect(() => {
 		const formattedBranches = branches.map((branch) => {
-			const { id, name } = branch;
+			const { id, name, online_url } = branch;
 
 			return {
 				name: <Link to={`/branches/${id}`}>{name}</Link>,
+				url: online_url,
 				actions: <TableActions onEdit={() => onEdit(branch)} onRemove={() => removeBranch(id)} />,
 			};
 		});

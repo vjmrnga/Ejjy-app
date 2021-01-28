@@ -17,6 +17,7 @@ import transactionsReducer, { key as TRANSACTIONS_KEY } from './transactions';
 import uiReducer, { key as UI_KEY } from './ui';
 import usersReducer, { key as USERS_KEY } from './users';
 import xreadReportsReducer, { key as XREAD_REPORTS_KEY } from './xread-reports';
+import networkReducer, { key as NETWORK_KEY } from './network';
 
 const appReducer = combineReducers({
 	router: connectRouter(history),
@@ -30,6 +31,7 @@ const appReducer = combineReducers({
 	[XREAD_REPORTS_KEY]: xreadReportsReducer,
 	[USERS_KEY]: usersReducer,
 	[UI_KEY]: uiReducer,
+	[NETWORK_KEY]: networkReducer,
 	...adminReducers,
 	...officeManagerReducers,
 	...branchManagerReducers,

@@ -9,3 +9,5 @@ export const RETRY_INTERVAL_MS = 300;
 export const NOT_FOUND_INDEX = -1;
 
 export const EMPTY_CELL = '—';
+
+export const ONLINE_ROUTES = ['/requisition-slips', '/order-slips', '/preparation-slips'];

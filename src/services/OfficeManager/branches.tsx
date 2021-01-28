@@ -3,11 +3,13 @@ import { IGetRequest } from '../interfaces';
 
 interface ICreateBranch {
 	name: string;
+	online_url?: string;
 }
 
 interface IEditBranch {
 	id: number;
 	name?: string;
+	online_url?: string;
 }
 
 export const service = {
