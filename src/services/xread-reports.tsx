@@ -6,5 +6,6 @@ interface ICreateXreadReport {
 }
 
 export const service = {
-	create: async (body: ICreateXreadReport) => axios.post('/xread-reports/', body),
+	create: async (body: ICreateXreadReport, baseURL) =>
+		axios.post('/xread-reports/', body, { baseURL }),
 };

@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/branch-products';
 import { EMPTY_CELL } from '../../../global/constants';
 import { request } from '../../../global/types';
@@ -27,12 +25,11 @@ const Products = () => {
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// Custom hooks
-	const user = useSelector(authSelectors.selectUser());
 	const { branchProducts, getBranchProductsByBranch, status, recentRequest } = useBranchProducts();
 
 	// Effect: Fetch branch products
 	useEffect(() => {
-		getBranchProductsByBranch(user?.branch?.id);
+		getBranchProductsByBranch(null);
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table

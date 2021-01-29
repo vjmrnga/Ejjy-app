@@ -2,6 +2,7 @@ import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/BranchManager/product-checks';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
+import { ONLINE_API_URL } from '../../services';
 import { service } from '../../services/BranchManager/product-checks';
 
 /* WORKERS */
@@ -10,13 +11,19 @@ function* getDailyCheck({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			type,
-			assigned_store_id,
-			is_filled_up,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				type,
+				assigned_store_id,
+				is_filled_up,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({ type: types.GET_DAILY_CHECK, productCheck: response.data.results?.[0] }),
@@ -32,13 +39,19 @@ function* getRandomChecks({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			type,
-			assigned_store_id,
-			is_filled_up,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				type,
+				assigned_store_id,
+				is_filled_up,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({ type: types.GET_RANDOM_CHECKS, productChecks: response.data.results }),
@@ -54,7 +67,7 @@ function* fulfill({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.fulfill, id, { products });
+		yield call(service.fulfill, id, { products }, ONLINE_API_URL);
 		yield put(actions.save({ type: types.FULFILL_PRODUCT_CHECK, productCheckType: type, id }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {

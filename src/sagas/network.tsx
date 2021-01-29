@@ -1,14 +1,13 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/network';
-import { service } from '../services/auth';
+import { selectors as authSelectors } from '../ducks/auth';
+import { service } from '../services/network';
 
 /* WORKERS */
-
-function* testConnection({ payload }: any) {
-	const { id } = payload;
-
+function* testConnection() {
 	try {
-		yield call(service.retrieve, id, { fields: 'login_count' });
+		const token = yield select(authSelectors.selectAccessToken());
+		yield call(service.test, { token });
 		yield put(actions.updateInternetConnection(true));
 	} catch (e) {
 		yield put(actions.updateInternetConnection(false));

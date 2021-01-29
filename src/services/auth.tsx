@@ -13,9 +13,14 @@ interface IAcquireToken {
 }
 
 export const service = {
-	login: async (body: ILogin) => axios.post('users/login/', body, NO_VERIFICATION_CONFIG),
-	retrieve: async (id: number, params: IGetRequest) => axios.get(`users/${id}/`, { params }),
-	acquireToken: async (body: IAcquireToken) =>
-		axios.post('tokens/acquire/', body, NO_VERIFICATION_CONFIG),
-	logout: async (id: number) => axios.post(`users/${id}/logout/`),
+	login: async (body: ILogin, baseURL) =>
+		axios.post('users/login/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
+
+	retrieve: async (id: number, params: IGetRequest, baseURL) =>
+		axios.get(`users/${id}/`, { baseURL, params }),
+
+	acquireToken: async (body: IAcquireToken, baseURL) =>
+		axios.post('tokens/acquire/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
+
+	logout: async (id: number, baseURL) => axios.post(`users/${id}/logout/`, null, { baseURL }),
 };

@@ -21,9 +21,9 @@ export const useNetwork = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const testConnectionRequest = (id) => {
+	const testConnectionRequest = () => {
 		setRecentRequest(types.TEST_CONNECTION);
-		testConnection({ id });
+		testConnection();
 	};
 
 	return {

@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Tabs } from 'antd';
+import { message, Tabs } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
@@ -31,10 +32,12 @@ const tabs = {
 };
 
 const ViewBranch = ({ match }: Props) => {
-	// Routing
+	// VARIABLES
 	const branchId = match?.params?.id;
+	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
 
-	// Custom hooks
+	// CUSTOM HOOKS
+	const history = useHistory();
 	const {
 		branchProducts,
 		getBranchProductsByBranch,
@@ -45,16 +48,19 @@ const ViewBranch = ({ match }: Props) => {
 	const { branchDays, listBranchDays, status: branchesDaysStatus } = useBranchesDays();
 	const { branchMachines, getBranchMachines, status: branchesMachinesStatus } = useBranchMachines();
 
-	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
-
 	// Effect: Fetch branch products
 	useEffect(() => {
-		getBranchProductsByBranch(branchId);
-		getBranchMachines({ branchId });
-		listTransactions(branchId);
-		listSessions(branchId);
-		listBranchDays(branchId);
-	}, []);
+		if (!branch?.online_url) {
+			history.replace('/branches');
+			message.error('Branch has no online url.');
+		} else {
+			getBranchProductsByBranch(branchId);
+			getBranchMachines(branchId);
+			listTransactions(branchId);
+			listSessions(branchId);
+			listBranchDays(branchId);
+		}
+	}, [branchId, branch]);
 
 	const getFetchLoading = useCallback(
 		() =>
@@ -90,23 +96,27 @@ const ViewBranch = ({ match }: Props) => {
 			<section>
 				<Box className="ViewBranch">
 					<Tabs defaultActiveKey={tabs.PRODUCTS} style={{ padding: '20px 25px' }} type="card">
-						<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
+						<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS} disabled={!branch?.online_url}>
 							<ViewBranchProducts branchProducts={branchProducts} branch={branch} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES}>
+						<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES} disabled={!branch?.online_url}>
 							<ViewBranchMachines branchMachines={branchMachines} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
+						<Tabs.TabPane
+							key={tabs.TRANSACTIONS}
+							tab={tabs.TRANSACTIONS}
+							disabled={!branch?.online_url}
+						>
 							<ViewBranchTransactions transactions={transactions} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
+						<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS} disabled={!branch?.online_url}>
 							<ViewBranchSessions sessions={sessions} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
+						<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS} disabled={!branch?.online_url}>
 							<ViewBranchDays branchDays={branchDays} />
 						</Tabs.TabPane>
 					</Tabs>

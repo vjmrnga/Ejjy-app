@@ -44,7 +44,7 @@ export const Container = ({
 	// });
 
 	useEffect(() => {
-		testConnection(user.id);
+		testConnection();
 		retrieveUser(user.id, user.login_count);
 	}, []);
 

@@ -409,3 +409,7 @@ export const getTransactionStatus = memoize((status) => {
 		}
 	}
 });
+
+export const isUserFromBranch = memoize((user_role) => {
+	return [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user_role);
+});

@@ -3,7 +3,6 @@ import { IGetRequest } from './interfaces';
 
 interface IEditBranchProduct {
 	id?: number;
-	branch_id?: number;
 	product_id?: number;
 	reorder_point?: number;
 	max_balance?: number;
@@ -17,13 +16,13 @@ interface IEditBranchProduct {
 	allowable_spoilage?: number;
 }
 
-interface IGetBranchProductsByBranchRequest extends IGetRequest {
-	branch_id: number;
-}
-
 export const service = {
-	list: async (params: IGetRequest) => axios.get('/branches-products/extended/', { params }),
-	listByBranch: async (params: IGetBranchProductsByBranchRequest) =>
-		axios.get('branches-products/with-branch-manager-details/', { params }),
-	edit: async (body: IEditBranchProduct) => axios.patch(`/branches-products/${body.id}/`, body),
+	list: async (params: IGetRequest, baseURL) =>
+		axios.get('/branches-products/extended/', { baseURL, params }),
+
+	listByBranch: async (params: IGetRequest, baseURL) =>
+		axios.get('branches-products/with-branch-manager-details/', { baseURL, params }),
+
+	edit: async (body: IEditBranchProduct, baseURL) =>
+		axios.patch(`/branches-products/${body.id}/`, body, { baseURL }),
 };

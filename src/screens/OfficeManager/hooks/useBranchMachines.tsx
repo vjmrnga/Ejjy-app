@@ -21,9 +21,9 @@ export const useBranchMachines = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const getBranchMachinesRequest = (data = {}) => {
+	const getBranchMachinesRequest = (branchId) => {
 		setRecentRequest(types.GET_BRANCH_MACHINES);
-		getBranchMachines({ ...data, callback });
+		getBranchMachines({ branchId, callback });
 	};
 
 	const callback = ({ status, errors = [] }) => {

@@ -17,11 +17,16 @@ interface IListCashieringAssignmentsByUserIdRequest extends IGetRequest {
 }
 
 export const service = {
-	listByUserId: async (params: IListCashieringAssignmentsByUserIdRequest) =>
-		axios.get('/cashiering-assignments/', { params }),
-	getById: async (id) => axios.get(`/branches/${id}/`),
-	create: async (body: ICreateCashieringAssignment) => axios.post('/cashiering-assignments/', body),
-	edit: async (body: IEditCashieringAssignment) =>
-		axios.patch(`/cashiering-assignments/${body.id}/`, body),
-	remove: async (id) => axios.delete(`/cashiering-assignments/${id}/`),
+	listByUserId: async (params: IListCashieringAssignmentsByUserIdRequest, baseURL) =>
+		axios.get('/cashiering-assignments/', { baseURL, params }),
+
+	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
+
+	create: async (body: ICreateCashieringAssignment, baseURL) =>
+		axios.post('/cashiering-assignments/', body, { baseURL }),
+
+	edit: async (body: IEditCashieringAssignment, baseURL) =>
+		axios.patch(`/cashiering-assignments/${body.id}/`, body, { baseURL }),
+
+	remove: async (id, baseURL) => axios.delete(`/cashiering-assignments/${id}/`, { baseURL }),
 };

@@ -4,6 +4,7 @@ import { actions as orderSlipActions } from '../../ducks/order-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/delivery-receipts';
+import { ONLINE_API_URL } from '../../services/index';
 
 /* WORKERS */
 function* getById({ payload }: any) {
@@ -11,7 +12,7 @@ function* getById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id);
+		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
 
 		yield put(
 			actions.save({ type: types.GET_DELIVERY_RECEIPT_BY_ID, deliveryReceipt: response.data }),
@@ -27,7 +28,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, { order_slip_id });
+		const response = yield call(service.create, { order_slip_id }, ONLINE_API_URL);
 
 		yield put(
 			orderSlipActions.save({

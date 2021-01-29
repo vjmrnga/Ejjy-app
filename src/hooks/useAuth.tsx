@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors } from '../ducks/auth';
 import { request } from '../global/types';
-import { IFormValues } from '../screens/_Login/components/LoginForm';
 import { useActionDispatch } from './useActionDispatch';
 
 export const useAuth = () => {
@@ -16,7 +15,7 @@ export const useAuth = () => {
 	const logout = useActionDispatch(actions.logout);
 	const retrieveUser = useActionDispatch(actions.retrieveUser);
 
-	const loginRequest = (data: IFormValues) => {
+	const loginRequest = (data) => {
 		login({ ...data, callback });
 	};
 

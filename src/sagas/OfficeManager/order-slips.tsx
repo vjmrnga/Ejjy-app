@@ -4,6 +4,7 @@ import { actions as requisitionSlipActions } from '../../ducks/requisition-slips
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/order-slips';
+import { ONLINE_API_URL } from '../../services/index';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -11,12 +12,18 @@ function* list({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			requisition_slip_id,
-			assigned_store_id,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				requisition_slip_id,
+				assigned_store_id,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(actions.save({ type: types.GET_ORDER_SLIPS, orderSlips: response.data.results }));
 		callback({ status: request.SUCCESS });
@@ -30,12 +37,18 @@ function* listExtended({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.listExtended, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			requisition_slip_id,
-			assigned_store_id,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.listExtended,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				requisition_slip_id,
+				assigned_store_id,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({ type: types.GET_ORDER_SLIPS_EXTENDED, orderSlips: response.data.results }),
@@ -51,7 +64,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data);
+		const response = yield call(service.create, data, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
 		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
@@ -66,7 +79,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data);
+		const response = yield call(service.edit, data, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }));
 		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
@@ -81,7 +94,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.remove, id);
+		yield call(service.remove, id, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.REMOVE_ORDER_SLIP, id }));
 		callback({ status: request.SUCCESS });

@@ -1,16 +1,7 @@
 import axios from 'axios';
 import { IGetRequest } from './interfaces';
 
-interface IListBranchDays extends IGetRequest {
-	branch_id: number;
-}
-
-interface IGetBranchDay {
-	branch_id: number;
-}
-
 interface ICreateBranchDay {
-	branch_id: number;
 	started_by_id: number;
 }
 
@@ -19,8 +10,14 @@ interface IEditBranchDay {
 }
 
 export const service = {
-	list: async (params: IListBranchDays) => axios.get('/branches-days/', { params }),
-	get: async (params: IGetBranchDay) => axios.get('/branches-days/latest/', { params }),
-	create: async (body: ICreateBranchDay) => axios.post('/branches-days/', body),
-	edit: async (id: number, body: IEditBranchDay) => axios.patch(`/branches-days/${id}/`, body),
+	list: async (params: IGetRequest, baseURL) => axios.get('/branches-days/', { baseURL, params }),
+
+	get: async (params: IGetRequest, baseURL) =>
+		axios.get('/branches-days/latest/', { baseURL, params }),
+
+	create: async (body: ICreateBranchDay, baseURL) =>
+		axios.post('/branches-days/', body, { baseURL }),
+
+	edit: async (id: number, body: IEditBranchDay, baseURL) =>
+		axios.patch(`/branches-days/${id}/`, body, baseURL),
 };

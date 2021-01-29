@@ -1,4 +1,6 @@
-export const API_URL = process.env.REACT_APP_API_URL;
+export const ONLINE_API_URL = process.env.REACT_APP_ONLINE_API_URL;
+
+export const LOCAL_API_URL = process.env.REACT_APP_LOCAL_API_URL;
 
 export const API_TIMEOUT = 0;
 

@@ -19,7 +19,9 @@ interface IGetByDeliveryReceiptId extends IGetRequest {
 }
 
 export const service = {
-	getByDeliveryReceiptId: async (params: IGetByDeliveryReceiptId) =>
-		axios.get('/adjustment-slips/', { params }),
-	create: async (body: ICreateAdjustmentSlip) => axios.post('/adjustment-slips/', body),
+	getByDeliveryReceiptId: async (params: IGetByDeliveryReceiptId, baseURL) =>
+		axios.get('/adjustment-slips/', { baseURL, params }),
+
+	create: async (body: ICreateAdjustmentSlip, baseURL) =>
+		axios.post('/adjustment-slips/', body, { baseURL }),
 };
