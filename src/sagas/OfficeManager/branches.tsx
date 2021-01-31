@@ -1,14 +1,9 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
-import {
-	actions as branchProductsActions,
-	types as branchProductsTypes,
-} from '../../ducks/branch-products';
 import { actions, types } from '../../ducks/OfficeManager/branches';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { service as branchProductsService } from '../../services/branch-products';
-import { service } from '../../services/OfficeManager/branches';
 import { ONLINE_API_URL } from '../../services/index';
+import { service } from '../../services/OfficeManager/branches';
 
 /* WORKERS */
 function* list({ payload }: any) {

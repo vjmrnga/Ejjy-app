@@ -7,6 +7,7 @@ export const types = {
 	SAVE: `${key}/SAVE`,
 	RETRIEVE_USER: `${key}/RETRIEVE_USER`,
 	LOGIN: `${key}/LOGIN`,
+	LOGIN_ONLINE: `${key}/LOGIN_ONLINE`,
 	LOGOUT: `${key}/LOGOUT`,
 };
 
@@ -30,6 +31,7 @@ export const actions = {
 	save: createAction(types.SAVE),
 	retrieveUser: createAction(types.RETRIEVE_USER),
 	login: createAction(types.LOGIN),
+	loginOnline: createAction(types.LOGIN_ONLINE),
 	logout: createAction(types.LOGOUT),
 };
 

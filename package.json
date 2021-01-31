@@ -10,6 +10,7 @@
 		"connected-react-router": "^6.8.0",
 		"craco-less": "^1.17.0",
 		"dayjs": "^1.9.4",
+		"electron-is-dev": "^1.2.0",
 		"formik": "^2.1.5",
 		"lodash": "^4.17.20",
 		"moment": "^2.29.1",
@@ -37,7 +38,10 @@
 		"build": "react-scripts build",
 		"deploy": "python3 deploy.py",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+		"ebuild": "npm run build && node_modules/.bin/build",
+		"pack": "electron-packager ./ EJJY-Cashiering --platform=win32"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
@@ -68,8 +72,13 @@
 		"@types/react-router-dom": "^5.1.5",
 		"@types/redux-actions": "^2.6.1",
 		"@types/yup": "^0.29.6",
+		"concurrently": "^5.3.0",
 		"copy-webpack-plugin": "^6.1.0",
+		"electron": "^11.2.1",
+		"electron-builder": "^22.9.1",
+		"electron-packager": "^15.2.0",
 		"node-sass": "^4.14.1",
-		"react-app-rewired": "^2.1.6"
+		"react-app-rewired": "^2.1.6",
+		"wait-on": "^5.2.1"
 	}
 }

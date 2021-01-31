@@ -1,6 +1,6 @@
 import { call, delay, put, select, takeLatest } from 'redux-saga/effects';
 import { actions, selectors, types } from '../ducks/auth';
-import { AUTH_CHECKING_INTERVAL_MS } from '../global/constants';
+import { AUTH_CHECKING_INTERVAL_MS, IS_LIVE_APP } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/auth';
 import { LOCAL_API_URL, ONLINE_API_URL } from '../services/index';
@@ -13,7 +13,9 @@ function* login({ payload }: any) {
 
 	try {
 		const loginBaseURL = isFromBranch ? LOCAL_API_URL : ONLINE_API_URL;
-		const loginResponse = yield call(service.login, { login: username, password }, loginBaseURL);
+
+		const endpoint = IS_LIVE_APP ? service.loginOnline : service.login;
+		const loginResponse = yield call(endpoint, { login: username, password }, loginBaseURL);
 
 		if (loginResponse) {
 			const user = loginResponse.data;

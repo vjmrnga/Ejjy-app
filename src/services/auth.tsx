@@ -16,6 +16,9 @@ export const service = {
 	login: async (body: ILogin, baseURL) =>
 		axios.post('users/login/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
 
+	loginOnline: async (body: ILogin, baseURL) =>
+		axios.post('users/login_online/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
+
 	retrieve: async (id: number, params: IGetRequest, baseURL) =>
 		axios.get(`users/${id}/`, { baseURL, params }),
 

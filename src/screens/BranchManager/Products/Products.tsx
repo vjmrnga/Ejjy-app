@@ -6,6 +6,7 @@ import { Box, ButtonLink } from '../../../components/elements';
 import { types } from '../../../ducks/branch-products';
 import { EMPTY_CELL } from '../../../global/constants';
 import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { calculateTableHeight, getBranchProductStatus } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
@@ -25,11 +26,12 @@ const Products = () => {
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// Custom hooks
+	const { user } = useAuth();
 	const { branchProducts, getBranchProductsByBranch, status, recentRequest } = useBranchProducts();
 
 	// Effect: Fetch branch products
 	useEffect(() => {
-		getBranchProductsByBranch(null);
+		getBranchProductsByBranch(user?.branch?.id);
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
