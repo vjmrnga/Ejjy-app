@@ -36,10 +36,16 @@ interface IGetOrderSlipsRequest extends IGetRequest {
 }
 
 export const service = {
-	list: async (params: IGetOrderSlipsRequest) => axios.get('/order-slips/', { params }),
-	listExtended: async (params: IGetOrderSlipsRequest) =>
-		axios.get('/order-slips/extended/', { params }),
-	create: async (body: ICreateOrderSlip) => axios.post('/order-slips/', body),
-	edit: async (body: IEditOrderSlip) => axios.patch(`/order-slips/${body.id}/`, body),
-	remove: async (id: number) => axios.delete(`/order-slips/${id}/`),
+	list: async (params: IGetOrderSlipsRequest, baseURL) =>
+		axios.get('/order-slips/', { baseURL, params }),
+
+	listExtended: async (params: IGetOrderSlipsRequest, baseURL) =>
+		axios.get('/order-slips/extended/', { baseURL, params }),
+
+	create: async (body: ICreateOrderSlip, baseURL) => axios.post('/order-slips/', body, { baseURL }),
+
+	edit: async (body: IEditOrderSlip, baseURL) =>
+		axios.patch(`/order-slips/${body.id}/`, body, { baseURL }),
+
+	remove: async (id: number, baseURL) => axios.delete(`/order-slips/${id}/`, { baseURL }),
 };

@@ -1,17 +1,16 @@
 import axios from 'axios';
 import { flatten, values } from 'lodash';
 import { actions as authActions, key as AUTH_KEY } from './ducks/auth';
-import { API_TIMEOUT, API_URL, NO_VERIFICATION_NEEDED } from './services';
+import { API_TIMEOUT, LOCAL_API_URL, NO_VERIFICATION_NEEDED } from './services';
 
-const VERIFY_TOKEN_URL = `${API_URL}/tokens/access/verify/`;
-const RENEW_ACCESS_TOKEN_URL = `${API_URL}/tokens/renew/`;
+const VERIFY_TOKEN_URL = `${LOCAL_API_URL}/tokens/access/verify/`;
+const RENEW_ACCESS_TOKEN_URL = `${LOCAL_API_URL}/tokens/renew/`;
 
 const tokenResponseStatuses = {
 	INVALID: 'token_not_valid',
 };
 
 export default function configureAxios(store: any) {
-	axios.defaults.baseURL = API_URL;
 	axios.defaults.timeout = API_TIMEOUT;
 
 	// add a request interceptor to all the axios requests

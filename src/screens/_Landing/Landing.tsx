@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import { request, userTypes } from '../../global/types';
 import { useAuth } from '../../hooks/useAuth';
 import { useBranches } from '../OfficeManager/hooks/useBranches';
-import { useBranchMachines } from '../OfficeManager/hooks/useBranchMachines';
 import './style.scss';
 
 const Landing = () => {
@@ -13,7 +12,6 @@ const Landing = () => {
 
 	const { user } = useAuth();
 	const { getBranches, status: getBranchesStatus } = useBranches();
-	const { getBranchMachines, status: getBranchMachinesStatus } = useBranchMachines();
 
 	useEffect(() => {
 		if (user) {
@@ -27,8 +25,7 @@ const Landing = () => {
 
 			switch (user?.user_type) {
 				case userTypes.OFFICE_MANAGER: {
-					getBranches({ withBranchProducts: false });
-					getBranchMachines();
+					getBranches();
 					break;
 				}
 				case userTypes.BRANCH_MANAGER: {
@@ -62,10 +59,10 @@ const Landing = () => {
 				}
 			}
 		}
-	}, [user, getBranchesStatus, getBranchMachinesStatus]);
+	}, [user, getBranchesStatus]);
 
 	const redirectOfficeManager = () => {
-		const requests = [getBranchesStatus, getBranchMachinesStatus];
+		const requests = [getBranchesStatus];
 
 		if (requests.includes(request.REQUESTING)) {
 			return;

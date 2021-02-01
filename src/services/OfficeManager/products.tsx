@@ -35,8 +35,12 @@ interface IEditProduct {
 }
 
 export const service = {
-	list: async (params: IGetRequest) => axios.get('/products/', { params }),
-	create: async (body: ICreateProduct) => axios.post('/products/', body),
-	edit: async (body: IEditProduct) => axios.patch(`/products/${body.id}/`, body),
-	remove: async (id) => axios.delete(`/products/${id}/`),
+	list: async (params: IGetRequest, baseURL) => axios.get('/products/', { baseURL, params }),
+
+	create: async (body: ICreateProduct, baseURL) => axios.post('/products/', body, { baseURL }),
+
+	edit: async (body: IEditProduct, baseURL) =>
+		axios.patch(`/products/${body.id}/`, body, { baseURL }),
+
+	remove: async (id, baseURL) => axios.delete(`/products/${id}/`, { baseURL }),
 };

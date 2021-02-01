@@ -21,7 +21,7 @@ import {
 
 const App = () => (
 	<Switch>
-		<CommonRoute path={['/', '/login']} exact component={Login} />
+		<CommonRoute path={['/', '/login', '/login/branch']} exact component={Login} />
 		<CommonRoute path="/landing" exact component={Landing} />
 		<CommonRoute path="/dashboard" exact component={DashboardScreens} />
 		<CommonRoute path="/products" exact component={ProductsScreens} />

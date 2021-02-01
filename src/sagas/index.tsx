@@ -10,6 +10,7 @@ import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import transactionsSagas from './transactions';
 import xreadReportsSagas from './xread-reports';
+import networkSagas from './network';
 
 export default function* rootSaga() {
 	yield all([
@@ -18,6 +19,7 @@ export default function* rootSaga() {
 		...requisitionSlipsSagas,
 		...branchesDaysSagas,
 		...sessionsSagas,
+		...networkSagas,
 		...transactionsSagas,
 		...xreadReportsSagas,
 		...adminSagas,

@@ -13,6 +13,8 @@ interface IEditSiteSettings {
 }
 
 export const service = {
-	get: async () => axios.get('/site-settings/single/'),
-	edit: async (id: number, body: IEditSiteSettings) => axios.patch(`/site-settings/${id}/`, body),
+	get: async (baseURL) => axios.get('/site-settings/single/', { baseURL }),
+
+	edit: async (id: number, body: IEditSiteSettings, baseURL) =>
+		axios.patch(`/site-settings/${id}/`, body, { baseURL }),
 };

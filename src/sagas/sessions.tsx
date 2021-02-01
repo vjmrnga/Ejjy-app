@@ -1,4 +1,5 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/sessions';
 import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
@@ -10,11 +11,21 @@ function* list({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			branch_id,
-		});
+		// Required: Branch must have an online URL (Requested by Office)
+		const baseURL = yield select(branchesSelectors.selectURLByBranchId(branch_id));
+		if (!baseURL && branch_id) {
+			callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+			return;
+		}
+
+		const response = yield call(
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+			},
+			baseURL,
+		);
 
 		yield put(actions.save({ type: types.LIST_SESSIONS, sessions: response.data.results }));
 		callback({ status: request.SUCCESS });

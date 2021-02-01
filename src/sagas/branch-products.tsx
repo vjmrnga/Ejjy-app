@@ -1,7 +1,9 @@
-import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/branch-products';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
+import { LOCAL_API_URL } from '../services';
 import { service } from '../services/branch-products';
 
 /* WORKERS */
@@ -10,10 +12,16 @@ function* list({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+			},
+			LOCAL_API_URL,
+		);
 
 		yield put(
 			actions.save({ type: types.GET_BRANCH_PRODUCTS, branchProducts: response.data.results }),
@@ -29,11 +37,23 @@ function* listByBranch({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.listByBranch, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			branch_id: branchId,
-		});
+		// Required: Branch must have an online URL (Requested by Office)
+		const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+		if (!baseURL && branchId) {
+			callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+			return;
+		}
+
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.listByBranch,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+			},
+			baseURL || LOCAL_API_URL,
+		);
 
 		yield put(
 			actions.save({
@@ -52,7 +72,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data);
+		const response = yield call(service.edit, data, LOCAL_API_URL);
 
 		yield put(actions.save({ type: types.EDIT_BRANCH_PRODUCT, branchProduct: response.data }));
 		callback({ status: request.SUCCESS });

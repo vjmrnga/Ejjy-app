@@ -64,6 +64,11 @@
 					display: none;
 				}
 			}
+
+			.icon-lock {
+				margin-left: auto;
+			}
+
 			.name {
 				@include font(16px, 600);
 				color: $color-dark-gray;

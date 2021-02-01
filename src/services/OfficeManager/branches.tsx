@@ -3,17 +3,24 @@ import { IGetRequest } from '../interfaces';
 
 interface ICreateBranch {
 	name: string;
+	online_url?: string;
 }
 
 interface IEditBranch {
 	id: number;
 	name?: string;
+	online_url?: string;
 }
 
 export const service = {
-	list: async (params: IGetRequest) => axios.get('/branches/', { params }),
-	getById: async (id) => axios.get(`/branches/${id}/`),
-	create: async (body: ICreateBranch) => axios.post('/branches/', body),
-	edit: async (body: IEditBranch) => axios.patch(`/branches/${body.id}/`, body),
-	remove: async (id) => axios.delete(`/branches/${id}/`),
+	list: async (params: IGetRequest, baseURL) => axios.get('/branches/', { baseURL, params }),
+
+	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
+
+	create: async (body: ICreateBranch, baseURL) => axios.post('/branches/', body, { baseURL }),
+
+	edit: async (body: IEditBranch, baseURL) =>
+		axios.patch(`/branches/${body.id}/`, body, { baseURL }),
+
+	remove: async (id, baseURL) => axios.delete(`/branches/${id}/`, { baseURL }),
 };

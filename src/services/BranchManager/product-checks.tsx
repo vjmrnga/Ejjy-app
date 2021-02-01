@@ -17,7 +17,9 @@ interface IGetProductChecks extends IGetRequest {
 }
 
 export const service = {
-	list: async (params: IGetProductChecks) => axios.get('/product-checks/', { params }),
-	fulfill: async (id: number, body: IFulfillProductCheck) =>
-		axios.post(`/product-checks/${id}/fulfill/`, body),
+	list: async (params: IGetProductChecks, baseURL) =>
+		axios.get('/product-checks/', { baseURL, params }),
+
+	fulfill: async (id: number, body: IFulfillProductCheck, baseURL) =>
+		axios.post(`/product-checks/${id}/fulfill/`, body, { baseURL }),
 };

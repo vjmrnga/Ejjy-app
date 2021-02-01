@@ -30,12 +30,20 @@ interface IBranchIdGetRequestRequisitionSlip {
 }
 
 export const service = {
-	list: async (params: IGetRequest) => axios.get('/requisition-slips/', { params }),
-	listExtended: async (params: IGetRequest) =>
-		axios.get('/requisition-slips/extended/', { params }),
-	getById: async (id) => axios.get(`/requisition-slips/${id}/extended/`),
-	getByIdAndBranch: async (params: IBranchIdGetRequestRequisitionSlip, id: number) =>
-		axios.get(`/requisition-slips/${id}/with-preparing-branch-details/`, { params }),
-	create: async (body: ICreateRequisitionSlip) => axios.post('/requisition-slips/', body),
-	edit: async (body: IEditRequisitionSlip) => axios.patch(`/requisition-slips/${body.id}/`, body),
+	list: async (params: IGetRequest, baseURL) =>
+		axios.get('/requisition-slips/', { baseURL, params }),
+
+	listExtended: async (params: IGetRequest, baseURL) =>
+		axios.get('/requisition-slips/extended/', { baseURL, params }),
+
+	getById: async (id, baseURL) => axios.get(`/requisition-slips/${id}/extended/`),
+
+	getByIdAndBranch: async (params: IBranchIdGetRequestRequisitionSlip, id: number, baseURL) =>
+		axios.get(`/requisition-slips/${id}/with-preparing-branch-details/`, { baseURL, params }),
+
+	create: async (body: ICreateRequisitionSlip, baseURL) =>
+		axios.post('/requisition-slips/', body, { baseURL }),
+
+	edit: async (body: IEditRequisitionSlip, baseURL) =>
+		axios.patch(`/requisition-slips/${body.id}/`, body, { baseURL }),
 };

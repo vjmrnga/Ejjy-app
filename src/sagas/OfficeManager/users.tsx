@@ -3,6 +3,7 @@ import { actions, types } from '../../ducks/OfficeManager/users';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/users';
+import { ONLINE_API_URL } from '../../services/index';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -10,11 +11,17 @@ function* list({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.list, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			fields,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.list,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				fields,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(actions.save({ type: types.GET_USERS, users: response.data.results }));
 		callback({ status: request.SUCCESS });
@@ -28,7 +35,7 @@ function* getById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id);
+		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.GET_USER_BY_ID, user: response.data }));
 		callback({ status: request.SUCCESS });

@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { IGetRequest } from './interfaces';
 
-interface IListSessions extends IGetRequest {
-	branch_id: number;
-}
-
 export const service = {
-	list: async (params: IListSessions) => axios.get('/cashiering-sessions/', { params }),
+	list: async (params: IGetRequest, baseURL) =>
+		axios.get('/cashiering-sessions/', { baseURL, params }),
 };

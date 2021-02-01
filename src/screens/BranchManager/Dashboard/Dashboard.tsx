@@ -22,7 +22,7 @@ const Dashboard = () => {
 	const user = useSelector(authSelectors.selectUser());
 
 	useEffect(() => {
-		getBranchDay(user.branch.id);
+		getBranchDay(user?.branch?.id);
 	}, []);
 
 	// Effect: Display errors from branch cashiering
@@ -33,7 +33,7 @@ const Dashboard = () => {
 	}, [branchesDaysErrors, branchesDaysStatus]);
 
 	const onStartDay = () => {
-		createBranchDay(user.branch.id, user.id);
+		createBranchDay(user?.branch?.id, user.id);
 	};
 
 	const onEndDay = () => {

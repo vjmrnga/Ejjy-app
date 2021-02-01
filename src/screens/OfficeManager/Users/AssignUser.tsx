@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Divider } from 'antd';
+import cn from 'classnames';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
 	AddButtonIcon,
 	CancelButtonIcon,
@@ -11,15 +13,13 @@ import {
 	Table,
 } from '../../../components';
 import { Box, Select } from '../../../components/elements';
+import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
 import { request } from '../../../global/types';
 import { calculateTableHeight } from '../../../utils/function';
 import { useBranchMachines } from '../hooks/useBranchMachines';
 import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
 import { useUsers } from '../hooks/useUsers';
-import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
 import './style.scss';
-import { useHistory } from 'react-router-dom';
-import cn from 'classnames';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'date' },
@@ -28,11 +28,13 @@ const columns = [
 ];
 
 const AssignUser = ({ match }) => {
-	const userId = match?.params?.id;
-	const history = useHistory();
-
+	// STATES
 	const [data, setData] = useState([]);
 
+	// CUSTOM HOOKS
+	const userId = match?.params?.id;
+	const history = useHistory();
+	const { branchMachines } = useBranchMachines();
 	const { user, getUserById, status: userStatus } = useUsers();
 	const {
 		cashieringAssignments,
@@ -43,8 +45,8 @@ const AssignUser = ({ match }) => {
 		status: cashieringAssignmentsStatus,
 		recentRequest: cashieringAssignmentsRecentRequest,
 	} = useCashieringAssignments();
-	const { branchMachines } = useBranchMachines();
 
+	// METHODS
 	useEffect(() => {
 		getUserById(userId, userDoesNotExistCallback);
 		getCashieringAssignmentsByUserId(userId);

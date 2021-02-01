@@ -1,25 +1,27 @@
-import { call, delay, put, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../ducks/auth';
-import { AUTH_CHECKING_INTERVAL_MS } from '../global/constants';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { actions, selectors, types } from '../ducks/auth';
+import { IS_LIVE_APP } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/auth';
+import { LOCAL_API_URL, ONLINE_API_URL } from '../services/index';
+import { isUserFromBranch } from '../utils/function';
 
 /* WORKERS */
 function* login({ payload }: any) {
-	const { username, password, callback } = payload;
+	const { username, password, isFromBranch, callback } = payload;
 	callback(request.REQUESTING);
 
 	try {
-		const loginResponse = yield call(service.login, {
-			login: username,
-			password,
-		});
+		const loginBaseURL = isFromBranch ? LOCAL_API_URL : ONLINE_API_URL;
+
+		const endpoint = IS_LIVE_APP ? service.loginOnline : service.login;
+		const loginResponse = yield call(endpoint, { login: username, password }, loginBaseURL);
 
 		if (loginResponse) {
-			const tokenResponse = yield call(service.acquireToken, {
-				username,
-				password,
-			});
+			const user = loginResponse.data;
+			let tokenBaseURL = isUserFromBranch(user.user_type) ? LOCAL_API_URL : ONLINE_API_URL;
+			console.log('tokenBaseURL', tokenBaseURL);
+			const tokenResponse = yield call(service.acquireToken, { username, password }, tokenBaseURL);
 
 			yield put(
 				actions.save({
@@ -42,19 +44,20 @@ function* retrieve({ payload }: any) {
 	const { id, loginCount } = payload;
 
 	try {
-		while (true) {
-			if (id) {
-				const { data } = yield call(service.retrieve, id, { fields: 'login_count' });
-				if (data?.login_count !== loginCount) {
-					yield put(actions.logout({ id }));
-					break;
-				}
-			} else {
-				break;
-			}
-
-			yield delay(AUTH_CHECKING_INTERVAL_MS);
-		}
+		// while (true) {
+		// 	if (id) {
+		// 		const user = yield select(selectors.selectUser());
+		// 		const baseURL = isUserFromBranch(user.user_type) ? LOCAL_API_URL : ONLINE_API_URL;
+		// 		const { data } = yield call(service.retrieve, id, { fields: 'login_count' }, baseURL);
+		// 		if (data?.login_count !== loginCount) {
+		// 			yield put(actions.logout({ id }));
+		// 			break;
+		// 		}
+		// 	} else {
+		// 		break;
+		// 	}
+		// 	yield delay(AUTH_CHECKING_INTERVAL_MS);
+		// }
 	} catch (e) {
 		console.error(e);
 	}
@@ -64,7 +67,9 @@ function* logout({ payload }: any) {
 	const { id } = payload;
 
 	try {
-		yield call(service.logout, id);
+		const user = yield select(selectors.selectUser());
+		const baseURL = isUserFromBranch(user.user_type) ? LOCAL_API_URL : ONLINE_API_URL;
+		yield call(service.logout, id, baseURL);
 	} catch (e) {
 		console.error(e);
 	}

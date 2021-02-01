@@ -24,7 +24,7 @@ export const MachineReportTable = () => {
 	const { xreadReport, createXreadReport, status: xReadReportStatus } = useXreadReports();
 
 	useEffect(() => {
-		getBranchMachines({ branchId: user.branch.id });
+		getBranchMachines(user?.branch?.id);
 	}, []);
 
 	// Effect: Format products to be rendered in Table

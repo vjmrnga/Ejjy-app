@@ -2,6 +2,7 @@ import { put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/delivery-receipt-products';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
+import { ONLINE_API_URL } from '../../services';
 import { service } from '../../services/OfficeManager/delivery-receipt-producs';
 
 /* WORKERS */
@@ -10,7 +11,7 @@ function* getDeliveryReceiptById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id);
+		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
 
 		yield put(
 			actions.save({

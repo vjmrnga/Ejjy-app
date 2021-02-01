@@ -11,6 +11,7 @@
 	}
 
 	.site-layout {
+		min-height: 100vh;
 		margin-left: 280px;
 		width: calc(100% - 281px);
 		overflow-x: hidden;
@@ -23,6 +24,11 @@
 			height: auto;
 			padding: 0;
 			background: transparent;
+		}
+
+		&.disabled {
+			pointer-events: none;
+			opacity: 0.45;
 		}
 	}
 

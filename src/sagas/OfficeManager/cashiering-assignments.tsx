@@ -2,6 +2,7 @@ import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/cashiering-assignments';
 import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
+import { ONLINE_API_URL } from '../../services/index';
 import { service } from '../../services/OfficeManager/cashiering-assignments';
 
 /* WORKERS */
@@ -10,11 +11,17 @@ function* listByUserId({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.listByUserId, {
-			page: 1,
-			page_size: MAX_PAGE_SIZE,
-			user_id: userId,
-		});
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.listByUserId,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				user_id: userId,
+			},
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({
@@ -33,7 +40,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data);
+		const response = yield call(service.create, data, ONLINE_API_URL);
 
 		yield put(
 			actions.save({
@@ -52,7 +59,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data);
+		const response = yield call(service.edit, data, ONLINE_API_URL);
 
 		yield put(
 			actions.save({ type: types.EDIT_CASHIERING_ASSIGNMENT, cashieringAssignment: response.data }),
@@ -68,7 +75,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.remove, id);
+		yield call(service.remove, id, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.REMOVE_CASHIERING_ASSIGNMENT, id }));
 		callback({ status: request.SUCCESS });

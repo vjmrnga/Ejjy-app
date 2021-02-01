@@ -1,29 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Spin, Tabs } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Box } from '../../../../../components/elements';
-import { selectors as branchSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { request } from '../../../../../global/types';
 import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { getBranchProductStatus } from '../../../../../utils/function';
+import { useBranches } from '../../../hooks/useBranches';
 import { BranchBalanceItem } from './BranchBalanceItem';
 
 const { TabPane } = Tabs;
 
 export const BranchBalances = () => {
+	// STATES
 	const [data, setData] = useState([]);
 	const [queriedBranches, setQueriedBranches] = useState([]);
+	const [recentQueriedBranchId, setRecentQueriedBranchId] = useState(null);
 
-	const branches = useSelector(branchSelectors.selectBranches());
+	// CUSTTOM HOOKS
+	const { branches } = useBranches();
+	const { getBranchDay, status: branchesDaysStatus } = useBranchesDays();
 	const {
 		branchProducts,
 		getBranchProductsByBranch,
 		status: branchProductsStatus,
 	} = useBranchProducts();
-	const { getBranchDay, status: branchesDaysStatus } = useBranchesDays();
-
+	// METHODS
 	useEffect(() => {
 		if (branches) {
 			onTabClick(branches?.[0]?.id);
@@ -31,12 +33,12 @@ export const BranchBalances = () => {
 	}, [branches]);
 
 	useEffect(() => {
-		if (branchProducts) {
+		if (branchProducts && recentQueriedBranchId) {
 			const newBranchProducts = branchProducts
 				?.filter((branchProduct) => !data.find((item) => item.id === branchProduct.id))
 				?.map((branchProduct) => ({
 					id: branchProduct.id,
-					branch_id: branchProduct.branch.id,
+					branch_id: recentQueriedBranchId,
 					textcode: branchProduct.product.textcode,
 					barcode: branchProduct.product.barcode,
 					name: branchProduct.product.name,
@@ -44,7 +46,6 @@ export const BranchBalances = () => {
 					max_balance: branchProduct.max_balance,
 					status: branchProduct.product_status,
 				}));
-
 			setData((value) => [...value, ...newBranchProducts]);
 		}
 	}, [branchProducts]);
@@ -66,6 +67,8 @@ export const BranchBalances = () => {
 	};
 
 	const onTabClick = (branchId) => {
+		setRecentQueriedBranchId(branchId);
+
 		if (!queriedBranches.includes(branchId) && branchId) {
 			setQueriedBranches((value) => [...value, branchId.toString()]);
 			getBranchProductsByBranch(branchId);
@@ -88,8 +91,8 @@ export const BranchBalances = () => {
 					type="card"
 					onTabClick={onTabClick}
 				>
-					{branches.map(({ name, id }) => (
-						<TabPane key={id} tab={name}>
+					{branches.map(({ name, id, online_url }) => (
+						<TabPane key={id} tab={name} disabled={!online_url}>
 							<BranchBalanceItem branchId={id} dataSource={getTableDataSource(id)} />
 						</TabPane>
 					))}

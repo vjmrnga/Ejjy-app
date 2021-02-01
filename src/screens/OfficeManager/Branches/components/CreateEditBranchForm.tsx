@@ -8,6 +8,7 @@ import { sleep } from '../../../../utils/function';
 interface ICreateBranch {
 	id?: number;
 	name: string;
+	online_url: string;
 }
 
 interface Props {
@@ -24,9 +25,11 @@ export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Pro
 		() => ({
 			DefaultValues: {
 				name: branch?.name || '',
+				online_url: branch?.online_url || '',
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(50).label('Name'),
+				online_url: Yup.string().required().max(75).label('Online URL'),
 			}),
 		}),
 		[branch],
@@ -52,6 +55,13 @@ export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Pro
 						<Col span={24}>
 							<FormInputLabel id="name" label="Name" />
 							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
+						</Col>
+
+						<Col span={24}>
+							<FormInputLabel id="online_url" label="Online URL" />
+							{errors.online_url && touched.online_url ? (
+								<FieldError error={errors.online_url} />
+							) : null}
 						</Col>
 					</Row>
 

@@ -74,7 +74,12 @@ const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
 	selectBranches: () => createSelector(selectState, (state) => state.branches),
 	selectBranchById: (id) =>
-		createSelector(selectState, (state) => state.branches.find((branch) => branch.id === id)),
+		createSelector(selectState, (state) => state.branches.find((branch) => branch.id == id)),
+	selectURLByBranchId: (id) =>
+		createSelector(
+			selectState,
+			(state) => state.branches.find((branch) => branch.id == id)?.online_url ?? undefined,
+		),
 };
 
 export default reducer;

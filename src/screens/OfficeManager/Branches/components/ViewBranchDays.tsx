@@ -7,7 +7,7 @@ interface Props {
 	branchDays: any;
 }
 
-const columns = [{ name: 'Branch' }, { name: 'User' }, { name: 'Date & Time' }];
+const columns = [{ name: 'User' }, { name: 'Date & Time' }];
 
 export const ViewBranchDays = ({ branchDays }: Props) => {
 	// States
@@ -20,11 +20,10 @@ export const ViewBranchDays = ({ branchDays }: Props) => {
 	// Effect: Format branch days to be rendered in Table
 	useEffect(() => {
 		const formattedBranchDays = branchDays.map((branchDay) => {
-			const { branch, started_by, ended_by, datetime_created, datetime_ended } = branchDay;
+			const { started_by, ended_by, datetime_created, datetime_ended } = branchDay;
 
 			return [
 				{ isHidden: true }, // TODO: For searching functionality (payload)
-				branch.name,
 				getUser(started_by, ended_by),
 				getDateTime(datetime_created, datetime_ended),
 			];
