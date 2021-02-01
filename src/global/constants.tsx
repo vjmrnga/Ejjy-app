@@ -12,4 +12,4 @@ export const EMPTY_CELL = '—';
 
 export const ONLINE_ROUTES = ['/requisition-slips', '/order-slips', '/preparation-slips'];
 
-export const IS_LIVE_APP = false;
+export const IS_LIVE_APP = true;
