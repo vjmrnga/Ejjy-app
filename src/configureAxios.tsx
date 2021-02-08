@@ -2,6 +2,7 @@ import axios from 'axios';
 import { flatten, values } from 'lodash';
 import { actions as authActions, key as AUTH_KEY } from './ducks/auth';
 import { API_TIMEOUT, LOCAL_API_URL, NO_VERIFICATION_NEEDED } from './services';
+import { ONLINE_API_URL } from './services/index';
 
 const VERIFY_TOKEN_URL = `${LOCAL_API_URL}/tokens/access/verify/`;
 const RENEW_ACCESS_TOKEN_URL = `${LOCAL_API_URL}/tokens/renew/`;
@@ -93,10 +94,14 @@ export default function configureAxios(store: any) {
 		const modifiedError = { ...error };
 
 		if (error.isAxiosError) {
-			if (typeof error.response.data === 'string') {
+			if (typeof error?.response?.data === 'string') {
 				modifiedError.errors = [error.response.data];
+			} else if (typeof error?.response?.data === 'object') {
+				modifiedError.errors = flatten(values(error?.response?.data));
+			} else if (error?.config.baseURL !== ONLINE_API_URL && error?.isAxiosError) {
+				modifiedError.errors = ['An error occurred while requesting on a local branch'];
 			} else {
-				modifiedError.errors = flatten(values(error.response.data));
+				modifiedError.errors = ['An error occurred while executing your request'];
 			}
 		}
 

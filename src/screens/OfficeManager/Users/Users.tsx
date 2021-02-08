@@ -1,83 +1,210 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { lowerCase } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import { message, Tabs } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Table, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { types } from '../../../ducks/OfficeManager/users';
-import { EMPTY_CELL } from '../../../global/constants';
-import { request, userTypes } from '../../../global/types';
-import { calculateTableHeight } from '../../../utils/function';
+import { pendingTransactionTypes, request } from '../../../global/types';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	getUserTypeName,
+	showErrorMessages,
+} from '../../../utils/function';
+import { useBranches } from '../hooks/useBranches';
+import { usePendingTransactions } from '../hooks/usePendingTransactions';
 import { useUsers } from '../hooks/useUsers';
+import { BranchUsers } from './components/BranchUsers';
+import { EditUserModal } from './components/EditUserModal';
 import './style.scss';
+import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
 
-const columns = [
+const { TabPane } = Tabs;
+
+const pendingTransactionColumns = [
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Branch', dataIndex: 'branch' },
+	{ title: 'Datetime', dataIndex: 'datetime_created' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 const Users = () => {
+	// STATES
+	const [pendingTransactionsData, setPendingTransactionsTableData] = useState([]);
+	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
+	const [selectedUser, setSelectedUser] = useState(null);
+
+	// CUSTOM HOOKS
 	const history = useHistory();
+	const { branches } = useBranches();
+	const { users, getUsers, status: usersStatus, errors, reset } = useUsers();
+	const {
+		pendingTransactions,
+		listPendingTransactions,
+		executePendingTransactions,
+		removePendingTransactions,
+		status: pendingTransactionsStatus,
+		recentRequest: pendingTransactionRecentRequest,
+	} = usePendingTransactions();
 
-	const [data, setData] = useState([]);
-	const [tableData, setTableData] = useState([]);
-
-	const { users, getUsers, status, recentRequest } = useUsers();
-
+	// METHODS
 	useEffect(() => {
-		getUsers({
-			fields: 'id,first_name,last_name,user_type,branch',
-		});
+		listPendingTransactions(null);
 	}, []);
 
-	// Effect: Format users to be rendered in Table
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.GET_USERS && users) {
-			const formattedUsers = users
-				.filter((user) => user.user_type !== userTypes.OFFICE_MANAGER)
-				.map((user) => {
-					const name = `${user.first_name} ${user.last_name}`;
-					const branch = user?.branch?.name || EMPTY_CELL;
-
-					return {
-						_name: name,
-						_branch: branch,
-						name,
-						branch,
-						actions: <TableActions onEdit={() => history.push(`/users/assign/${user.id}`)} />,
-					};
-				});
-
-			setData(formattedUsers);
-			setTableData(formattedUsers);
+		if (branches?.length) {
+			onTabClick(branches?.[0]?.id);
 		}
-	}, [users, status, recentRequest]);
+	}, [branches]);
 
-	const onSearch = (keyword) => {
-		keyword = lowerCase(keyword);
-		const filteredData =
-			keyword.length > 0
-				? data.filter(({ _barcode, name }) => _barcode.includes(keyword) || name.includes(keyword))
-				: data;
+	// Effect: Format pending transactions to be rendered in Table
+	useEffect(() => {
+		const formattedPendingTransactions = pendingTransactions
+			.filter(({ request_model }) => request_model === pendingTransactionTypes.USERS)
+			.map((pendingTransaction) => {
+				const { name, branch, datetime_created } = pendingTransaction;
 
-		setTableData(filteredData);
+				return {
+					name,
+					branch: branch?.name,
+					datetime_created: formatDateTime(datetime_created),
+					actions: (
+						<TableActions
+							onExecutePendingTransaction={() => onExecutePendingTransaction(pendingTransaction)}
+							onRemove={() => onRemovePendingTransaction(pendingTransaction.id, true)}
+						/>
+					),
+				};
+			});
+
+		setPendingTransactionsTableData(formattedPendingTransactions);
+	}, [pendingTransactions]);
+
+	useEffect(() => {
+		if (usersStatus === request.ERROR && errors?.length) {
+			errors?.forEach((error) => {
+				message.error(error);
+			});
+
+			reset();
+		}
+	}, [usersStatus, errors]);
+
+	const getFetchLoading = useCallback(
+		() =>
+			usersStatus === request.REQUESTING ||
+			(pendingTransactionsStatus === request.REQUESTING &&
+				pendingTransactionRecentRequest === pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
+		[usersStatus, pendingTransactionsStatus, pendingTransactionRecentRequest],
+	);
+
+	const getTableDataSource = (branchId) => {
+		let newData =
+			usersStatus === request.SUCCESS
+				? users
+						?.filter(({ branch }) => branch?.id === branchId)
+						?.map((user) => {
+							const { id, first_name, last_name, user_type } = user;
+							return [
+								`${first_name} ${last_name}`,
+								getUserTypeName(user_type),
+								pendingTransactionsData?.length ? null : (
+									<TableActions
+										onAssign={() => history.push(`/users/assign/${id}`)}
+										onEdit={() => onEditUser(user)}
+										// onRemove={() => removeUser(id)} Note: Removing of user not supported for now
+									/>
+								),
+							];
+						})
+				: [];
+
+		return newData;
+	};
+
+	const onTabClick = (branchId) => {
+		getUsers({ branchId });
+	};
+
+	const onEditUser = (user) => {
+		setEditUserModalVisible(true);
+		setSelectedUser(user);
+	};
+
+	const onSuccessEditUser = (branchId) => {
+		onTabClick(branchId);
+	};
+
+	const onExecutePendingTransaction = (pendingTransaction) => {
+		executePendingTransactions(
+			{
+				...pendingTransaction,
+				request_body: JSON.parse(pendingTransaction?.request_body || '{}'),
+				request_query_params: JSON.parse(pendingTransaction?.request_query_params || '{}'),
+			},
+			({ status, error }) => {
+				if (status === request.SUCCESS) {
+					onRemovePendingTransaction(pendingTransaction.id, false);
+				} else if (status === request.ERROR) {
+					console.log('error', error);
+					showErrorMessages(error);
+				}
+			},
+			true,
+		);
+	};
+
+	const onRemovePendingTransaction = (pendingTransactionId, showFeedbackMessage) => {
+		removePendingTransactions(
+			{ id: pendingTransactionId },
+			({ status, error }) => {
+				if (status === request.SUCCESS) {
+					listPendingTransactions(null);
+				} else if (status === request.ERROR) {
+					showErrorMessages(error);
+				}
+			},
+			showFeedbackMessage,
+		);
 	};
 
 	return (
-		<Container
-			title="Users"
-			loading={status === request.REQUESTING}
-			loadingText="Fetching users..."
-		>
+		<Container title="Users" loading={getFetchLoading()}>
 			<section>
 				<Box>
-					<TableHeader onSearch={onSearch} />
+					<Tabs
+						defaultActiveKey={branches?.[0]?.id}
+						style={{ padding: '20px 25px' }}
+						type="card"
+						onTabClick={onTabClick}
+					>
+						{branches.map(({ name, id, online_url }) => (
+							<TabPane key={id} tab={name} disabled={!online_url}>
+								<BranchUsers dataSource={getTableDataSource(id)} />
+							</TabPane>
+						))}
+					</Tabs>
+				</Box>
+			</section>
+
+			<section className="PendingProductTransactions">
+				<Box>
+					<TableHeader title="Pending User Transactions" />
 
 					<Table
-						columns={columns}
-						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
+						columns={pendingTransactionColumns}
+						dataSource={pendingTransactionsData}
+						scroll={{ y: calculateTableHeight(pendingTransactionsData.length), x: '100%' }}
+						loading={pendingTransactionsStatus === request.REQUESTING}
+					/>
+
+					<EditUserModal
+						user={selectedUser}
+						visible={editUserModalVisible}
+						onFetchPendingTransactions={listPendingTransactions}
+						onSuccess={onSuccessEditUser}
+						onClose={() => setEditUserModalVisible(false)}
 					/>
 				</Box>
 			</section>
