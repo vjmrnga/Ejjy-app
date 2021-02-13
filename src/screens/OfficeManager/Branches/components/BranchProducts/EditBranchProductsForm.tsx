@@ -51,22 +51,23 @@ export const EditBranchProductsForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				product_id: branchProduct?.product_id || '',
+				product_id: branchProduct?.product_id,
 				checking: branchProduct?.is_daily_checked
 					? productCheckingTypes.DAILY
 					: productCheckingTypes.RANDOM,
 				type: branchProduct?.product?.type,
 				unit_of_measurement: branchProduct?.product?.unit_of_measurement,
-				reorder_point: branchProduct?.reorder_point || '',
-				max_balance: branchProduct?.max_balance || '',
-				price_per_piece: branchProduct?.price_per_piece || '',
-				discounted_price_per_piece1: branchProduct?.discounted_price_per_piece1 || '',
-				discounted_price_per_piece2: branchProduct?.discounted_price_per_piece2 || '',
-				price_per_bulk: branchProduct?.price_per_bulk || '',
-				discounted_price_per_bulk1: branchProduct?.discounted_price_per_bulk1 || '',
-				discounted_price_per_bulk2: branchProduct?.discounted_price_per_bulk2 || '',
-				current_balance: branchProduct?.current_balance || '',
-				allowable_spoilage: branchProduct?.allowable_spoilage * 100 || '',
+				reorder_point: branchProduct?.reorder_point,
+				max_balance: branchProduct?.max_balance,
+				price_per_piece: branchProduct?.price_per_piece,
+				discounted_price_per_piece1: branchProduct?.discounted_price_per_piece1,
+				discounted_price_per_piece2: branchProduct?.discounted_price_per_piece2,
+				price_per_bulk: branchProduct?.price_per_bulk,
+				discounted_price_per_bulk1: branchProduct?.discounted_price_per_bulk1,
+				discounted_price_per_bulk2: branchProduct?.discounted_price_per_bulk2,
+				current_balance: branchProduct?.current_balance,
+				allowable_spoilage: branchProduct?.allowable_spoilage * 100,
+				is_shown_in_scale_list: branchProduct?.is_shown_in_scale_list ? 'true' : 'false',
 			},
 			Schema: Yup.object().shape({
 				checking: Yup.string().required().label('Checking'),
@@ -107,7 +108,7 @@ export const EditBranchProductsForm = ({
 		[branchProduct],
 	);
 
-	const checkingTypes = [
+	const checkingTypesOptions = [
 		{
 			id: productCheckingTypes.DAILY,
 			label: 'Daily',
@@ -117,6 +118,19 @@ export const EditBranchProductsForm = ({
 			id: productCheckingTypes.RANDOM,
 			label: 'Random',
 			value: productCheckingTypes.RANDOM,
+		},
+	];
+
+	const isShownInScaleListOptions = [
+		{
+			id: 'no',
+			label: 'No',
+			value: 'false',
+		},
+		{
+			id: 'yes',
+			label: 'Yes',
+			value: 'true',
 		},
 	];
 
@@ -150,8 +164,16 @@ export const EditBranchProductsForm = ({
 
 						<Col sm={12} xs={24}>
 							<Label label="Checking" spacing />
-							<FormRadioButton name="checking" items={checkingTypes} />
+							<FormRadioButton name="checking" items={checkingTypesOptions} />
 							{errors.checking && touched.checking ? <FieldError error={errors.checking} /> : null}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="Is Shown in Scale List?" spacing />
+							<FormRadioButton name="is_shown_in_scale_list" items={isShownInScaleListOptions} />
+							{errors.is_shown_in_scale_list && touched.is_shown_in_scale_list ? (
+								<FieldError error={errors.is_shown_in_scale_list} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
