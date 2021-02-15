@@ -37,7 +37,7 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 				/>
 
 				<DetailsHalf
-					label="Checking"
+					label="Is Shown in Scale List?"
 					value={branchProduct?.is_shown_in_scale_list ? 'Yes' : 'No'}
 				/>
 

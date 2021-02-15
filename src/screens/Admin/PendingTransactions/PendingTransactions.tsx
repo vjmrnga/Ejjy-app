@@ -32,18 +32,22 @@ const PendingTransactions = () => {
 
 	// Effect: Format pending transactions to be rendered in Table
 	useEffect(() => {
-		const formattedPendingTransactions = pendingTransactions.map((pendingTransaction) => {
-			const { name, branch, datetime_created } = pendingTransaction;
+		const formattedPendingTransactions = pendingTransactions
+			.filter(({ is_pending_approval }) => is_pending_approval)
+			.map((pendingTransaction) => {
+				const { name, branch, datetime_created } = pendingTransaction;
 
-			return {
-				description: name,
-				branch: branch?.name,
-				datetime_created: formatDateTime(datetime_created),
-				actions: (
-					<TableActions onRemove={() => onRemovePendingTransaction(pendingTransaction.id, true)} />
-				),
-			};
-		});
+				return {
+					description: name,
+					branch: branch?.name,
+					datetime_created: formatDateTime(datetime_created),
+					actions: (
+						<TableActions
+							onRemove={() => onRemovePendingTransaction(pendingTransaction.id, true)}
+						/>
+					),
+				};
+			});
 
 		setData(formattedPendingTransactions);
 	}, [pendingTransactions]);
