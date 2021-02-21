@@ -18,20 +18,41 @@ function* listOnline({ payload }: any) {
 		return;
 	}
 
+	let data = {
+		page: 1,
+		page_size: MAX_PAGE_SIZE,
+	};
+
+	let isFetchedFromBackupURL = false;
+
 	try {
-		const response = yield retry(
-			MAX_RETRY,
-			RETRY_INTERVAL_MS,
-			service.listOnline,
-			{
-				page: 1,
-				page_size: MAX_PAGE_SIZE,
-			},
-			baseURL || ONLINE_API_URL,
-		);
+		let response = null;
+		const endpoint = baseURL ? service.list : service.listOnline;
+
+		try {
+			// Fetch in branch url
+			response = yield call(endpoint, data, baseURL || ONLINE_API_URL);
+		} catch (e) {
+			// Retry to fetch in backup branch url
+			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			if (baseURL && baseBackupURL) {
+				try {
+					// Fetch branch url
+					response = yield call(endpoint, data, baseBackupURL);
+					isFetchedFromBackupURL = true;
+				} catch (e) {
+					throw e;
+				}
+			} else {
+				throw e;
+			}
+		}
 
 		yield put(actions.save({ type: types.GET_USERS, users: response.data.results }));
-		callback({ status: request.SUCCESS });
+		callback({
+			status: request.SUCCESS,
+			warnings: isFetchedFromBackupURL ? ['Fetched data is outdated.'] : [],
+		});
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}

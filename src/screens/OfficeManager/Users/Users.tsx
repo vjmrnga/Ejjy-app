@@ -29,7 +29,7 @@ const Users = () => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const { branches } = useBranches();
-	const { users, getUsers, removeUser, status: usersStatus, errors, reset } = useUsers();
+	const { users, getUsers, removeUser, status: usersStatus, errors, warnings, reset } = useUsers();
 	const {
 		pendingTransactions,
 		listPendingTransactions,
@@ -53,6 +53,14 @@ const Users = () => {
 		}
 	}, [usersStatus, errors]);
 
+	useEffect(() => {
+		if (usersStatus === request.SUCCESS && warnings?.length) {
+			warnings?.forEach((warning) => {
+				message.warning(warning);
+			});
+		}
+	}, [usersStatus, warnings]);
+
 	const getFetchLoading = useCallback(
 		() =>
 			usersStatus === request.REQUESTING ||
@@ -70,13 +78,13 @@ const Users = () => {
 			({ request_model }) => request_model === pendingTransactionTypes.USERS,
 		);
 
+		const isBranchUsers = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
 		let newData =
 			usersStatus === request.SUCCESS
 				? users
-						?.filter(({ branch }) => branch?.id === branchId)
+						?.filter(({ user_type }) => isBranchUsers.includes(user_type))
 						?.map((user) => {
 							const { id, first_name, last_name, user_type } = user;
-							const isBranchUsers = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
 
 							return [
 								`${first_name} ${last_name}`,
