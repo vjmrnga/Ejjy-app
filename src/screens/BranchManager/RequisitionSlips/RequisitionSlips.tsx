@@ -51,7 +51,7 @@ const RequisitionSlips = () => {
 
 	useEffect(() => {
 		getRequisitionSlipsExtended(user?.branch?.id);
-		getBranchProductsByBranch(user?.branch?.id);
+		getBranchProductsByBranch({ branchId: user?.branch?.id, page: 1 });
 	}, []);
 
 	// Effect: Format requisitionSlips to be rendered in Table

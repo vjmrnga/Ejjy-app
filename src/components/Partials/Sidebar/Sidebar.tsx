@@ -1,4 +1,4 @@
-import { Layout } from 'antd';
+import { Layout, Tooltip } from 'antd';
 import cn from 'classnames';
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -49,7 +49,7 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-branches-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-branches.svg`),
 		link: '/branches',
-		userTypes: [userTypes.OFFICE_MANAGER],
+		userTypes: [userTypes.ADMIN, userTypes.OFFICE_MANAGER],
 	},
 	{
 		key: 'requisition-slips',
@@ -139,11 +139,13 @@ export const Sidebar = () => {
 							<span className="name">{item.name}</span>
 
 							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
-								<img
-									src={require('../../../assets/images/icon-lock.svg')}
-									alt={item.name}
-									className="icon-lock"
-								/>
+								<Tooltip title="Locked if no internet">
+									<img
+										src={require('../../../assets/images/icon-lock.svg')}
+										alt={item.name}
+										className="icon-lock"
+									/>
+								</Tooltip>
 							)}
 						</div>
 					</Link>

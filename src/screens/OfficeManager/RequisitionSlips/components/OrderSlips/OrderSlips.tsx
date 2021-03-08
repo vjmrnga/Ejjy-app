@@ -6,17 +6,13 @@ import { TableHeaderOrderSlip } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types as orderSlipsTypes } from '../../../../../ducks/order-slips';
+import { actions as prActions, types as prTypes } from '../../../../../ducks/requisition-slips';
 import {
-	actions as prActions,
-	selectors as prSelectors,
-	types as prTypes,
-} from '../../../../../ducks/requisition-slips';
-import {
-	requisitionSlipActions,
-	requisitionSlipProductStatus,
+	orderSlipStatus,
 	quantityTypes,
 	request,
-	orderSlipStatus,
+	requisitionSlipActions,
+	requisitionSlipProductStatus,
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
@@ -48,16 +44,15 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
 	const [createOutOfStockSlipVisible, setCreateOutOfStockVisible] = useState(false);
 
-	const branches = useSelector(branchesSelectors.selectBranches());
-
+	// CUSTOM HOOKS
 	const {
+		requisitionSlip,
+		requisitionSlipsByBranch,
 		getRequisitionSlipsByIdAndBranch,
 		status: requisitionSlipStatus,
 		recentRequest: requisitionSlipRecentRequest,
 	} = useRequisitionSlips();
-
 	const { createDeliveryReceipt, status: deliveryReceiptStatus } = useDeliveryReceipt();
-
 	const {
 		orderSlips,
 		getOrderSlipsExtended,
@@ -65,10 +60,10 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlipId }: Props) =
 		recentRequest: orderSlipRecentRequest,
 	} = useOrderSlips();
 
-	const requisitionSlip = useSelector(prSelectors.selectRequisitionSlip());
-	const requisitionSlipsByBranch = useSelector(prSelectors.selectRequisitionSlipsByBranch());
+	const branches = useSelector(branchesSelectors.selectBranches());
 	const setRequisitionSlipAction = useActionDispatch(prActions.setRequisitionSlipAction);
 
+	// METHODS
 	// Effect: Fetch order slips
 	useEffect(() => {
 		if (requisitionSlipId) {
