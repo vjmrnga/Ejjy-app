@@ -210,6 +210,11 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 			label: 'Manok',
 			value: productCategoryTypes.MANOK,
 		},
+		{
+			id: productCategoryTypes.GULAY,
+			label: 'gulay',
+			value: productCategoryTypes.GULAY,
+		},
 	];
 
 	return (
