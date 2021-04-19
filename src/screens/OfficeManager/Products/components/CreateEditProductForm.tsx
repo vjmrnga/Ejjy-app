@@ -212,7 +212,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 		},
 		{
 			id: productCategoryTypes.GULAY,
-			label: 'gulay',
+			label: 'Gulay',
 			value: productCategoryTypes.GULAY,
 		},
 	];

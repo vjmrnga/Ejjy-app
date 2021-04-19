@@ -56,6 +56,9 @@ function* listExtended({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
+		yield put(
+			actions.save({ type: types.GET_ORDER_SLIPS_EXTENDED, orderSlips: response.data.results }),
+		);
 		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
