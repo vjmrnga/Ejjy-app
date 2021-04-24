@@ -13,6 +13,7 @@ import { CreateRequisitionSlipForm } from './CreateRequisitionSlipForm';
 interface Props {
 	visible: boolean;
 	branchProducts: any;
+	onSuccess: any;
 	onClose: any;
 	loading: boolean;
 }
@@ -20,6 +21,7 @@ interface Props {
 export const CreateRequisitionSlipModal = ({
 	branchProducts,
 	visible,
+	onSuccess,
 	onClose,
 	loading,
 }: Props) => {
@@ -30,6 +32,7 @@ export const CreateRequisitionSlipModal = ({
 	useEffect(() => {
 		if (status === request.SUCCESS && recentRequest === types.CREATE_REQUISITION_SLIP) {
 			reset();
+			onSuccess();
 			onClose();
 		}
 	}, [status, recentRequest]);

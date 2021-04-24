@@ -73,6 +73,14 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 		setReceiveDeliveryReceiptVisible(true);
 	};
 
+	const onReceiveDeliveryReceiptSuccess = () => {
+		getOrderSlipsExtended({
+			assigned_store_id: null,
+			requisition_slip_id: requisitionSlipId,
+			page: 1,
+		});
+	};
+
 	const getPendingCount = useCallback(
 		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
 		[orderSlips],
@@ -100,6 +108,7 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 				requisitionSlip={requisitionSlip}
 				orderSlip={selectedOrderSlip}
 				visible={receiveDeliveryReceiptVisible}
+				onSuccess={onReceiveDeliveryReceiptSuccess}
 				onClose={() => setReceiveDeliveryReceiptVisible(false)}
 			/>
 		</Box>

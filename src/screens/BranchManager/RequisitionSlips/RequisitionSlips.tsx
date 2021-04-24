@@ -110,6 +110,18 @@ const RequisitionSlips = () => {
 		[requisitionSlips],
 	);
 
+	const onCreateRequisitionSlipSuccess = () => {
+		getRequisitionSlipsExtended(
+			{
+				branchId: user?.branch?.id,
+				status: selectedStatus === 'all' ? null : selectedStatus,
+				page: 1,
+			},
+			true,
+		);
+		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
+	};
+
 	const onPageChange = (page) => {
 		getRequisitionSlipsExtended(
 			{
@@ -137,7 +149,7 @@ const RequisitionSlips = () => {
 						columns={columns}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-						loading={status === request.REQUESTING || branchProductsStatus === request.REQUESTING}
+						loading={[status, branchProductsStatus].includes(request.REQUESTING)}
 					/>
 
 					<Pagination
@@ -152,6 +164,7 @@ const RequisitionSlips = () => {
 					<CreateRequisitionSlipModal
 						branchProducts={branchProducts}
 						visible={createModalVisible}
+						onSuccess={onCreateRequisitionSlipSuccess}
 						onClose={() => setCreateModalVisible(false)}
 						loading={branchProductsStatus === request.REQUESTING}
 					/>

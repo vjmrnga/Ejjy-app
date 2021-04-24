@@ -15,6 +15,7 @@ interface Props {
 	requisitionSlip: any;
 	orderSlip: any;
 	visible: boolean;
+	onSuccess: any;
 	onClose: any;
 }
 
@@ -23,6 +24,7 @@ export const ReceiveDeliveryReceiptModal = ({
 	requisitionSlip,
 	orderSlip,
 	visible,
+	onSuccess,
 	onClose,
 }: Props) => {
 	const [products, setProducts] = useState([]);
@@ -47,10 +49,11 @@ export const ReceiveDeliveryReceiptModal = ({
 		}
 	}, [orderSlip]);
 
-	// Effect: Close modal if create/edit success
+	// Effect: Close modal if receive delivery
 	useEffect(() => {
 		if (status === request.SUCCESS && recentRequest === types.RECEIVE_DELIVERY_RECEIPT) {
 			reset();
+			onSuccess();
 			onClose();
 		}
 	}, [status, recentRequest]);

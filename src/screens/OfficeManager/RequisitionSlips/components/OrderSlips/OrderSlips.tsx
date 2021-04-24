@@ -142,21 +142,23 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 			});
 		} else {
 			requestedProducts = requisitionSlip?.products
-				?.filter(({ is_out_of_stock, status, product }) => {
+				?.filter(({ is_out_of_stock, status, product_id }) => {
 					// Condition: Not yet added to OS
 					// Condition: Not out of stock
 					// Condition: Has branch products
-					const branchProduct = branchProducts.find((item) => item.product.id === product.id);
+					const branchProduct = branchProducts.find((item) => item.product.id === product_id);
 
 					return (
 						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
 						!is_out_of_stock &&
-						branchProduct
+						!!branchProduct
 					);
 				})
 				?.map((product) => {
-					const branchProduct = branchProducts.find((item) => item.product.id === product.id);
-
+					const branchProduct = branchProducts.find(
+						(item) => item.product.id === product.product_id,
+					);
+					console.log('product', product);
 					return processedOrderSlipProduct(
 						null,
 						product.product,
