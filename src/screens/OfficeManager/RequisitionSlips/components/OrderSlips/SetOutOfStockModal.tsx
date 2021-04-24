@@ -1,61 +1,38 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Col, message, Modal, Row, Spin } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { FieldError, Label } from '../../../../../components/elements';
-import { selectors, types } from '../../../../../ducks/requisition-slips';
+import { types } from '../../../../../ducks/requisition-slips';
 import { request, requisitionSlipProductStatus } from '../../../../../global/types';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
 import { SetOutOfStockForm } from './SetOutOfStockForm';
 
 interface Props {
 	updateRequisitionSlipByFetching: any;
-	requisitionSlipId: number;
+	requisitionSlip: any;
 	visible: boolean;
 	onClose: any;
 }
 
 export const SetOutOfStockModal = ({
 	updateRequisitionSlipByFetching,
-	requisitionSlipId,
+	requisitionSlip,
 	visible,
 	onClose,
 }: Props) => {
-	const {
-		getRequisitionSlipsByIdAndBranch,
-		setOutOfStock,
-		status,
-		errors,
-		recentRequest,
-		reset,
-	} = useRequisitionSlips();
-	const requisitionSlip = useSelector(selectors.selectRequisitionSlipForOutOfStock());
-
+	const { setOutOfStock, status, errors, recentRequest, reset } = useRequisitionSlips();
 	const [products, setProducts] = useState([]);
-
-	// Effect: Fetch requisition slip products
-	useEffect(() => {
-		if (visible && requisitionSlipId) {
-			getRequisitionSlipsByIdAndBranch(requisitionSlipId, null);
-		}
-	}, [visible, requisitionSlipId]);
 
 	// Effect: Format product
 	useEffect(() => {
-		if (
-			visible &&
-			requisitionSlip &&
-			status === request.SUCCESS &&
-			recentRequest === types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH
-		) {
+		if (visible && requisitionSlip) {
 			const formattedProducts = requisitionSlip?.products
 				?.filter(
-					({ product }) =>
-						product.status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
-						!product.is_out_of_stock,
+					({ status, is_out_of_stock }) =>
+						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS && !is_out_of_stock,
 				)
 				?.map((item) => {
-					const { id, product } = item?.product;
+					const { id, product } = item;
 
 					return {
 						requisition_slip_product_id: id,
@@ -99,12 +76,10 @@ export const SetOutOfStockModal = ({
 			}));
 
 		if (products?.length > 0) {
-			const data = {
-				id: requisitionSlipId,
+			setOutOfStock({
+				id: requisitionSlip.id,
 				requisition_slip_products,
-			};
-
-			setOutOfStock(data);
+			});
 		} else {
 			message.error('Must have at least 1 product marked as out of stock.');
 		}

@@ -54,11 +54,7 @@ const RequisitionSlips = () => {
 	} = useRequisitionSlips({
 		pageSize: PAGE_SIZE,
 	});
-	const {
-		branchProducts,
-		getBranchProductsByBranch,
-		status: branchProductsStatus,
-	} = useBranchProducts();
+	const { branchProducts, getBranchProducts, status: branchProductsStatus } = useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
@@ -70,7 +66,7 @@ const RequisitionSlips = () => {
 			},
 			true,
 		);
-		getBranchProductsByBranch({ branchId: user?.branch?.id, page: 1 });
+		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
 	}, []);
 
 	// Effect: Format requisitionSlips to be rendered in Table

@@ -22,7 +22,7 @@ interface IGetBranchProducts extends IGetRequest {
 
 export const service = {
 	list: async (params: IGetBranchProducts, baseURL) =>
-		axios.get('/branches-products/extended/', { baseURL, params }),
+		axios.get('/branches-products/', { baseURL, params }),
 
 	listByBranch: async (params: IGetBranchProducts, baseURL) =>
 		axios.get('branches-products/with-branch-manager-details/', { baseURL, params }),

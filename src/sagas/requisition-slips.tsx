@@ -56,7 +56,7 @@ function* listExtended({ payload }: any) {
 }
 
 function* getByIdAndBranch({ payload }: any) {
-	const { id, branchId, callback } = payload;
+	const { id, branchId, isForOutOfStock, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -79,6 +79,7 @@ function* getByIdAndBranch({ payload }: any) {
 				type: types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH,
 				branchId,
 				requisitionSlip: response.data,
+				isForOutOfStock,
 			}),
 		);
 		callback({ status: request.SUCCESS });

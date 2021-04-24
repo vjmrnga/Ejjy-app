@@ -39,11 +39,12 @@ const reducer = handleActions(
 				}
 				case types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH: {
 					const requisitionSlipsByBranch = cloneDeep(state.requisitionSlipsByBranch);
-					if (payload?.branchId) {
-						requisitionSlipsByBranch[payload?.branchId] = payload.requisitionSlip;
-					} else {
+
+					if (payload?.isForOutOfStock) {
 						newData = { requisitionSlipForOutOfStock: payload.requisitionSlip };
 						break;
+					} else if (payload?.branchId) {
+						requisitionSlipsByBranch[payload?.branchId] = payload.requisitionSlip;
 					}
 
 					newData = { requisitionSlipsByBranch };

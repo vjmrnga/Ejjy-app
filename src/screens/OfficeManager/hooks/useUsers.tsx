@@ -23,6 +23,7 @@ export const useUsers = () => {
 	const users = useSelector(selectors.selectUsers());
 	const user = useSelector(selectors.selectUser());
 	const getUsers = useActionDispatch(actions.getUsers);
+	const getOnlineUsers = useActionDispatch(actions.getOnlineUsers);
 	const getUserById = useActionDispatch(actions.getUserById);
 	const createUser = useActionDispatch(actions.createUser);
 	const editUser = useActionDispatch(actions.editUser);
@@ -40,6 +41,11 @@ export const useUsers = () => {
 	const getUsersRequest = (data: any = {}) => {
 		setRecentRequest(types.GET_USERS);
 		getUsers({ ...data, callback });
+	};
+
+	const getOnlineUsersRequest = (data: any = {}) => {
+		setRecentRequest(types.GET_ONLINE_USERS);
+		getOnlineUsers({ ...data, callback });
 	};
 
 	const getUserByIdRequest = (id = 0, extraCallback = null) => {
@@ -90,6 +96,7 @@ export const useUsers = () => {
 		users,
 		user,
 		getUsers: getUsersRequest,
+		getOnlineUsers: getOnlineUsersRequest,
 		getUserById: getUserByIdRequest,
 		createUser: createUserRequest,
 		editUser: editUserRequest,

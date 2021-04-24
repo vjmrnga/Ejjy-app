@@ -6,7 +6,6 @@ import { FieldError, Label, Select } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types } from '../../../../../ducks/order-slips';
-import { selectors } from '../../../../../ducks/requisition-slips';
 import { quantityTypes, request } from '../../../../../global/types';
 import { convertToPieces } from '../../../../../utils/function';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
@@ -21,25 +20,27 @@ interface Props {
 	selectedBranchId?: number;
 	requestedProducts: any;
 	onChangePreparingBranch: any;
-	onChangePreparingBranchStatus: any;
 	visible: boolean;
 	onClose: any;
+	loading: any;
+	branchPersonnels: any;
 }
 
 export const CreateEditOrderSlipModal = ({
+	branchPersonnels,
+
 	updateRequisitionSlipByFetching,
 	requisitionSlip,
 	orderSlip,
 	selectedBranchId,
 	requestedProducts,
 	onChangePreparingBranch,
-	onChangePreparingBranchStatus,
 	visible,
 	onClose,
+	loading,
 }: Props) => {
 	const user = useSelector(authSelectors.selectUser());
 	const branches = useSelector(branchesSelectors.selectBranches());
-	const requisitionSlipsByBranch = useSelector(selectors.selectRequisitionSlipsByBranch());
 	const { createOrderSlip, editOrderSlip, status, errors, recentRequest, reset } = useOrderSlips();
 
 	// Effect: Close modal if create/edit success
@@ -67,18 +68,13 @@ export const CreateEditOrderSlipModal = ({
 	);
 
 	const getAssignedPersonnelOptions = useCallback(() => {
-		const branchData = requisitionSlipsByBranch?.[selectedBranchId];
-		let personnelOptions = [];
-
-		if (branchData) {
-			personnelOptions = branchData.branch_personnels.map((personnel) => ({
+		return (
+			branchPersonnels?.map((personnel) => ({
 				value: personnel.id,
 				name: `${personnel.first_name} ${personnel.last_name}`,
-			}));
-		}
-
-		return personnelOptions;
-	}, [selectedBranchId, requisitionSlipsByBranch]);
+			})) || []
+		);
+	}, [branchPersonnels]);
 
 	const onCreateOrderSlipSubmit = (values) => {
 		const products = values.requestedProducts
@@ -173,9 +169,7 @@ export const CreateEditOrderSlipModal = ({
 				assignedPersonnelOptions={getAssignedPersonnelOptions()}
 				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={
-					status === request.REQUESTING || onChangePreparingBranchStatus === request.REQUESTING
-				}
+				loading={status === request.REQUESTING || loading}
 			/>
 		</Modal>
 	);

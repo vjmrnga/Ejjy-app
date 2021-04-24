@@ -6,6 +6,60 @@ import { LOCAL_API_URL } from '../services';
 import { service } from '../services/branch-products';
 
 /* WORKERS */
+function* list({ payload }: any) {
+	const { page, pageSize, branchId, search, productIds, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	// Required: Branch must have an online URL (Requested by Office)
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId) {
+		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+		return;
+	}
+
+	let data = {
+		page,
+		page_size: pageSize,
+		search,
+		product_ids: productIds,
+	};
+
+	let isFetchedFromBackupURL = false;
+
+	try {
+		let response = null;
+
+		try {
+			// Fetch in branch url
+			response = yield call(service.list, data, baseURL || LOCAL_API_URL);
+		} catch (e) {
+			// Retry to fetch in backup branch url
+			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			if (baseURL && baseBackupURL) {
+				try {
+					// Fetch branch url
+					response = yield call(service.list, data, baseBackupURL);
+					isFetchedFromBackupURL = true;
+				} catch (e) {
+					throw e;
+				}
+			} else {
+				throw e;
+			}
+		}
+
+		callback({
+			status: request.SUCCESS,
+			warnings: isFetchedFromBackupURL
+				? ['Data Source: Backup Server, data might be outdated.']
+				: [],
+			data: response.data,
+		});
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 function* listByBranch({ payload }: any) {
 	const { page, pageSize, branchId, search, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -78,6 +132,10 @@ function* edit({ payload }: any) {
 	}
 }
 /* WATCHERS */
+const listWatcherSaga = function* listWatcherSaga() {
+	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
+};
+
 const listByBranchWatcherSaga = function* listByBranchWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS_BY_BRANCH, listByBranch);
 };
@@ -86,4 +144,4 @@ const editWatcherSaga = function* editWatcherSaga() {
 	yield takeLatest(types.EDIT_BRANCH_PRODUCT, edit);
 };
 
-export default [listByBranchWatcherSaga(), editWatcherSaga()];
+export default [listWatcherSaga(), listByBranchWatcherSaga(), editWatcherSaga()];

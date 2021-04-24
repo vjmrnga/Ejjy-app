@@ -32,6 +32,8 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [currentPageData, setCurrentPageData] = useState([]);
 
 	// ACTIONS
+
+	const getBranchProductsAction = useActionDispatch(actions.getBranchProducts);
 	const getBranchProductsByBranchAction = useActionDispatch(actions.getBranchProductsByBranch);
 	const editBranchProduct = useActionDispatch(actions.editBranchProduct);
 
@@ -81,6 +83,44 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	};
 
 	// REQUEST METHODS
+	const getBranchProducts = (data, shouldReset = false) => {
+		if (shouldReset) {
+			resetPagination();
+		}
+
+		const { page } = data;
+		setCurrentPage(page);
+
+		if (
+			!indexHasCachedData({
+				existingData: allData,
+				index: (page - 1) * pageSize,
+			}) ||
+			shouldReset
+		) {
+			const callback = {
+				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
+					setAllData((currentAllData) =>
+						generateNewCachedData({
+							existingData: currentAllData,
+							toBeAddedData,
+							index: (page - 1) * pageSize,
+						}),
+					);
+
+					setPageCount(count);
+				},
+				onError: () => message.error(LIST_ERROR_MESSAGE),
+			};
+
+			executeRequest(
+				{ ...data, pageSize },
+				callback,
+				getBranchProductsAction,
+				types.GET_BRANCH_PRODUCTS,
+			);
+		}
+	};
 	const getBranchProductsByBranch = (data, shouldReset = false) => {
 		if (shouldReset) {
 			resetPagination();
@@ -144,6 +184,7 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		currentPage,
 		updateItemInPagination,
 
+		getBranchProducts,
 		getBranchProductsByBranch,
 		editBranchProduct: editBranchProductRequest,
 		status,
