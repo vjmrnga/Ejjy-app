@@ -5,12 +5,13 @@ import branchProductsSagas from './branch-products';
 import branchesDaysSagas from './branches-days';
 import { branchManagerSagas } from './BranchManager';
 import { branchPersonnelSagas } from './BranchPersonnel';
+import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
+import orderSlipCreationSagas from './order-slip-creation';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import transactionsSagas from './transactions';
 import xreadReportsSagas from './xread-reports';
-import networkSagas from './network';
 
 export default function* rootSaga() {
 	yield all([
@@ -22,6 +23,7 @@ export default function* rootSaga() {
 		...networkSagas,
 		...transactionsSagas,
 		...xreadReportsSagas,
+		...orderSlipCreationSagas,
 		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,

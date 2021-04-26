@@ -18,6 +18,7 @@ interface IEditBranchProduct {
 
 interface IGetBranchProducts extends IGetRequest {
 	search?: string;
+	product_ids?: number[];
 }
 
 export const service = {

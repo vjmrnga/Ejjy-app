@@ -76,7 +76,7 @@ const RequisitionSlips = () => {
 			const { datetime_created, action } = prAction;
 			const dateTime = formatDateTime(datetime_created);
 
-			const isOwnRequisitionSlip = user?.branch?.id === requesting_user.branch.id;
+			const isOwnRequisitionSlip = user?.branch?.id === requesting_user?.branch?.id;
 			const _action = isOwnRequisitionSlip
 				? getRequisitionSlipStatus(action, userTypes.BRANCH_MANAGER)
 				: EMPTY_CELL;
@@ -90,7 +90,7 @@ const RequisitionSlips = () => {
 				_status: action,
 				id: <Link to={`/requisition-slips/${id}`}>{id}</Link>,
 				datetime_created: dateTime,
-				requestor: requesting_user.branch.name,
+				requestor: requesting_user?.branch?.name,
 				type: upperFirst(type),
 				action: _action,
 				progress: _progress,
@@ -105,7 +105,7 @@ const RequisitionSlips = () => {
 			requisitionSlips.filter(
 				({ action, requesting_user }) =>
 					pendingRequisitionSlipActions.includes(action?.action) &&
-					user?.branch?.id === requesting_user.branch.id,
+					user?.branch?.id === requesting_user?.branch?.id,
 			).length,
 		[requisitionSlips],
 	);
