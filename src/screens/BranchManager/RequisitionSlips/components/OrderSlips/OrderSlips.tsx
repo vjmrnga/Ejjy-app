@@ -74,11 +74,15 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	};
 
 	const onReceiveDeliveryReceiptSuccess = () => {
-		getOrderSlipsExtended({
-			assigned_store_id: null,
-			requisition_slip_id: requisitionSlipId,
-			page: 1,
-		});
+		getOrderSlipsExtended(
+			{
+				assigned_store_id: null,
+				requisition_slip_id: requisitionSlipId,
+				page: 1,
+			},
+			true,
+		);
+		setReceiveDeliveryReceiptVisible(false);
 	};
 
 	const getPendingCount = useCallback(

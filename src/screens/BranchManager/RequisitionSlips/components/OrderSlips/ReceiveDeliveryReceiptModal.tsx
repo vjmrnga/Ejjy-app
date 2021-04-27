@@ -54,7 +54,6 @@ export const ReceiveDeliveryReceiptModal = ({
 		if (status === request.SUCCESS && recentRequest === types.RECEIVE_DELIVERY_RECEIPT) {
 			reset();
 			onSuccess();
-			onClose();
 		}
 	}, [status, recentRequest]);
 
