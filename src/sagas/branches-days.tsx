@@ -34,6 +34,7 @@ function* list({ payload }: any) {
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+
 			if (baseURL && baseBackupURL) {
 				try {
 					// Fetch branch url

@@ -11,39 +11,40 @@ interface Props {
 	loading: boolean;
 }
 
-export const BackupServerUrlForm = ({ branch, loading }: Props) => {
+export const LocalServerUrlForm = ({ branch, loading }: Props) => {
 	// STATES
-	const [backupServerUrl, setBackupServerUrl] = useState('');
+	const [localServerUrl, setLocalServerUrl] = useState('');
 
 	// CUSTOM HOOKS
+
 	const { editBranch, status } = useBranches();
 
 	// EFFECTS
 	useEffect(() => {
-		setBackupServerUrl(branch?.backup_server_url || '');
+		setLocalServerUrl(branch?.local_ip_address || '');
 	}, [branch]);
 
 	const onSaveSettings = () => {
-		if (isEmpty(backupServerUrl)) {
+		if (isEmpty(localServerUrl)) {
 			message.error('Please make sure to fill all the fields.');
 			return;
 		}
 
 		editBranch({
 			...branch,
-			backup_server_url: backupServerUrl,
+			local_ip_address: localServerUrl,
 		});
 	};
 
 	return (
-		<Box className="BackupServerUrl">
+		<Box className="LocalServerUrl">
 			<Spin size="large" spinning={loading || status === request.REQUESTING}>
 				<Row gutter={[15, 0]}>
 					<Col xs={24} sm={20} md={20}>
-						<Label label="Backup Server URL" spacing />
+						<Label label="Local API URL" spacing />
 						<ControlledInput
-							value={backupServerUrl}
-							onChange={(value) => setBackupServerUrl(value)}
+							value={localServerUrl}
+							onChange={(value) => setLocalServerUrl(value)}
 							max={75}
 						/>
 					</Col>

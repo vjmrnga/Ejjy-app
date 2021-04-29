@@ -4,12 +4,16 @@ import { IGetRequest } from '../interfaces';
 interface ICreateBranch {
 	name: string;
 	online_url?: string;
+	backup_server_url?: string;
+	local_ip_address?: string;
 }
 
 interface IEditBranch {
 	id: number;
 	name?: string;
 	online_url?: string;
+	backup_server_url?: string;
+	local_ip_address?: string;
 }
 
 export const service = {

@@ -19,7 +19,10 @@ export const useBranches = () => {
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
+	const branch = useSelector(selectors.selectBranch());
 	const branches = useSelector(selectors.selectBranches());
+
+	const getBranch = useActionDispatch(actions.getBranch);
 	const getBranches = useActionDispatch(actions.getBranches);
 	const createBranch = useActionDispatch(actions.createBranch);
 	const editBranch = useActionDispatch(actions.editBranch);
@@ -37,6 +40,14 @@ export const useBranches = () => {
 	const getBranchesRequest = () => {
 		setRecentRequest(types.GET_BRANCHES);
 		getBranches({ callback });
+	};
+
+	const getBranchRequest = (branch) => {
+		setRecentRequest(types.GET_BRANCH);
+		getBranch({
+			id: branch,
+			callback,
+		});
 	};
 
 	const createBranchRequest = (branch) => {
@@ -69,7 +80,9 @@ export const useBranches = () => {
 	};
 
 	return {
+		branch,
 		branches,
+		getBranch: getBranchRequest,
 		getBranches: getBranchesRequest,
 		createBranch: createBranchRequest,
 		editBranch: editBranchRequest,

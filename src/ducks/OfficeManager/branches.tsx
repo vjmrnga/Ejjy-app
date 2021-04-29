@@ -73,6 +73,7 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
+	selectBranch: () => createSelector(selectState, (state) => state.branch),
 	selectBranches: () => createSelector(selectState, (state) => state.branches),
 	selectBranchById: (id) =>
 		createSelector(selectState, (state) => state.branches.find((branch) => branch.id == id)),
