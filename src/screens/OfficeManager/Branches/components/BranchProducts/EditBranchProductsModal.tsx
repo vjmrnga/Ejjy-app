@@ -24,7 +24,7 @@ export const EditBranchProductsModal = ({
 	// CUSTOM HOOKS
 	const { editBranchProduct, status, errors, reset } = useBranchProducts();
 
-	// EFFECTS
+	// METHODS
 	const onEditBranchProduct = (product) => {
 		editBranchProduct({ ...product, branchId: branch?.id }, ({ status, data }) => {
 			if (status === request.SUCCESS) {

@@ -8,7 +8,7 @@ import { service } from '../../services/OfficeManager/users';
 
 /* WORKERS */
 function* listOnline({ payload }: any) {
-	const { branchId, callback } = payload;
+	const { branchId, userType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -21,6 +21,7 @@ function* listOnline({ payload }: any) {
 	let data = {
 		page: 1,
 		page_size: MAX_PAGE_SIZE,
+		user_type: userType,
 	};
 
 	let isFetchedFromBackupURL = false;

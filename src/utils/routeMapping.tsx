@@ -2,6 +2,7 @@ import { userTypes } from '../global/types';
 import {
 	AdminBranches,
 	AdminDashboard,
+	AdminLogs,
 	AdminPendingTransactions,
 	AdminViewBranch,
 	BranchManagerChecking,
@@ -97,4 +98,8 @@ export const FulfillPreparationSlipScreens = {
 
 export const CheckingScreens = {
 	[userTypes.BRANCH_MANAGER]: BranchManagerChecking,
+};
+
+export const LogsScreens = {
+	[userTypes.ADMIN]: AdminLogs,
 };

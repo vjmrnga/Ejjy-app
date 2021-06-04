@@ -18,6 +18,9 @@ const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
 const EDIT_SUCCESS_MESSAGE = 'Branch product was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch product';
 
+const EDIT_BALANCE_SUCCESS_MESSAGE = 'Branch product balance was edited successfully';
+const EDIT_BALANCE_ERROR_MESSAGE = 'An error occurred while editing the branch product balance';
+
 export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -36,15 +39,19 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const getBranchProductsAction = useActionDispatch(actions.getBranchProducts);
 	const getBranchProductsByBranchAction = useActionDispatch(actions.getBranchProductsByBranch);
 	const editBranchProduct = useActionDispatch(actions.editBranchProduct);
+	const editBranchProductBalance = useActionDispatch(actions.editBranchProductBalance);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
+
+	const resetWarning = () => setWarnings([]);
 
 	const resetStatus = () => setStatus(request.NONE);
 
 	const reset = () => {
 		resetError();
 		resetStatus();
+		resetWarning();
 	};
 
 	const resetPagination = () => {
@@ -52,6 +59,11 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		setPageCount(0);
 		setCurrentPage(1);
 		setCurrentPageData([]);
+	};
+
+	const resetAll = () => {
+		reset();
+		resetPagination();
 	};
 
 	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
@@ -172,12 +184,23 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		});
 	};
 
+	const editBranchProductBalanceRequest = (data, extraCallback = null) => {
+		setRecentRequest(types.EDIT_BRANCH_PRODUCT);
+		editBranchProductBalance({
+			...data,
+			callback: modifiedExtraCallback(
+				modifiedCallback(callback, EDIT_BALANCE_SUCCESS_MESSAGE, EDIT_BALANCE_ERROR_MESSAGE),
+				extraCallback,
+			),
+		});
+	};
+
 	const callback = ({ status, errors = [], warnings = [] }) => {
 		setStatus(status);
 		setErrors(errors);
 		setWarnings(warnings);
 	};
-
+	
 	return {
 		branchProducts: currentPageData,
 		pageCount,
@@ -187,6 +210,7 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		getBranchProducts,
 		getBranchProductsByBranch,
 		editBranchProduct: editBranchProductRequest,
+		editBranchProductBalance: editBranchProductBalanceRequest,
 		status,
 		errors,
 		warnings,
@@ -194,5 +218,6 @@ export const useBranchProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		reset,
 		resetStatus,
 		resetError,
+		resetAll,
 	};
 };

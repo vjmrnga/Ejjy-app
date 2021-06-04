@@ -63,7 +63,6 @@ function* listUsers({ payload }: any) {
 		yield put(actions.save({ type: types.GET_USERS, branchId, users: response.data.results }));
 		callback({ status: request.SUCCESS, response: response.data.results });
 	} catch (e) {
-		console.log('e', e);
 		callback({ status: request.ERROR, errors: e.errors, response: e.response });
 	}
 }

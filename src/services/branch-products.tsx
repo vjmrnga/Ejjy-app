@@ -16,6 +16,11 @@ interface IEditBranchProduct {
 	allowable_spoilage?: number;
 }
 
+interface IEditBranchProductBalance {
+	product_id: number;
+	added_balance: number;
+	destination_branch_id: number;
+}
 interface IGetBranchProducts extends IGetRequest {
 	search?: string;
 	product_ids?: number[];
@@ -30,4 +35,7 @@ export const service = {
 
 	edit: async (body: IEditBranchProduct, baseURL) =>
 		axios.patch(`/branches-products/${body.id}/`, body, { baseURL }),
+
+	editBalance: async (body: IEditBranchProductBalance, baseURL) =>
+		axios.patch(`/branches-products/update-balance-and-retrieve/`, body, { baseURL }),
 };

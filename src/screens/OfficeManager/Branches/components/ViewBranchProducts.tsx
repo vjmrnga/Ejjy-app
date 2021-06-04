@@ -5,6 +5,7 @@ import { TableActions, TableHeader, TableNormal } from '../../../../components';
 import { ButtonLink, FieldError, FieldWarning } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
+import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
 
@@ -21,6 +22,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	const [data, setData] = useState([]);
 	const [editBranchProductModalVisible, setEditBranchProductModalVisible] = useState(false);
 	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
+	const [addBranchProductModalVisible, setAddBranchProductModalVisible] = useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 	const [searchedKeyword, setSeachedKeyword] = useState('');
 
@@ -56,7 +58,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				<ButtonLink text={barcode || textcode} onClick={() => onView(branchProduct)} />,
 				name,
 				`${current_balance} / ${max_balance}`,
-				<TableActions onEdit={() => onEdit(branchProduct)} />,
+				<TableActions onAdd={() => onAdd(branchProduct)} onEdit={() => onEdit(branchProduct)} />,
 			];
 		});
 
@@ -68,9 +70,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		setViewBranchProductModalVisible(true);
 	};
 
-	const onEdit = (branch) => {
-		setSelectedBranchProduct(branch);
+	const onEdit = (branchProduct) => {
+		setSelectedBranchProduct(branchProduct);
 		setEditBranchProductModalVisible(true);
+	};
+
+	const onAdd = (branchProduct) => {
+		setSelectedBranchProduct(branchProduct);
+		setAddBranchProductModalVisible(true);
 	};
 
 	const onPageChange = (page) => {
@@ -119,6 +126,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				updateItemInPagination={updateItemInPagination}
 				visible={editBranchProductModalVisible}
 				onClose={() => setEditBranchProductModalVisible(false)}
+			/>
+
+			<AddBranchProductBalanceModal
+				branch={branch}
+				branchProduct={selectedBranchProduct}
+				updateItemInPagination={updateItemInPagination}
+				visible={addBranchProductModalVisible}
+				onClose={() => setAddBranchProductModalVisible(false)}
 			/>
 		</>
 	);

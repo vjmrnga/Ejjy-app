@@ -52,6 +52,14 @@ const SidebarItems = [
 		userTypes: [userTypes.ADMIN, userTypes.OFFICE_MANAGER],
 	},
 	{
+		key: 'logs',
+		name: 'Logs',
+		activeIcon: require(`../../../assets/images/icon-requisition-slip-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-requisition-slip.svg`),
+		link: '/logs',
+		userTypes: [userTypes.ADMIN],
+	},
+	{
 		key: 'requisition-slips',
 		name: 'Requisition Slips',
 		activeIcon: require(`../../../assets/images/icon-requisition-slip-active.svg`),

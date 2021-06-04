@@ -5,6 +5,7 @@ import './style.scss';
 
 interface Props {
 	onExecutePendingTransaction?: any;
+	onAdd?: any;
 	onAssign?: any;
 	onEdit?: any;
 	onRemove?: any;
@@ -12,6 +13,7 @@ interface Props {
 
 export const TableActions = ({
 	onExecutePendingTransaction,
+	onAdd,
 	onAssign,
 	onEdit,
 	onRemove,
@@ -20,6 +22,7 @@ export const TableActions = ({
 		{onExecutePendingTransaction && (
 			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
 		)}
+		{onAdd && <AddButtonIcon onClick={onAdd} tooltip="Add" />}
 		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
 		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
 		{onRemove && (

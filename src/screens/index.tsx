@@ -8,6 +8,7 @@ export { default as AdminDashboard } from './Admin/Dashboard/Dashboard';
 export { default as AdminPendingTransactions } from './Admin/PendingTransactions/PendingTransactions';
 export { default as AdminBranches } from './Admin/Branches/Branches';
 export { default as AdminViewBranch } from './Admin/Branches/ViewBranch';
+export { default as AdminLogs } from './Admin/Logs/Logs';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';

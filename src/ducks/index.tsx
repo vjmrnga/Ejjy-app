@@ -36,11 +36,9 @@ const appReducer = combineReducers({
 
 export default (state, action) => {
 	if (action.type === types.LOGOUT) {
-		const newValue = { [ORDER_SLIP_CREATION_KEY]: state[ORDER_SLIP_CREATION_KEY] };
-		storage.setItem(APP_KEY, JSON.stringify(newValue));
-
-		state = newValue;
+		storage.removeItem(APP_KEY);
+		state = undefined;
 	}
-
+	
 	return appReducer(state, action);
 };

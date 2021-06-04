@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Table, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
+import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { request } from '../../../global/types';
 import { calculateTableHeight, formatDateTime, showErrorMessages } from '../../../utils/function';
 import { usePendingTransactions } from '../../OfficeManager/hooks/usePendingTransactions';
@@ -18,12 +19,8 @@ const PendingTransactions = () => {
 	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
-	const {
-		pendingTransactions,
-		listPendingTransactions,
-		removePendingTransactions,
-		status,
-	} = usePendingTransactions();
+	const { pendingTransactions, listPendingTransactions, removePendingTransactions, status } =
+		usePendingTransactions();
 
 	// METHODS
 	useEffect(() => {
@@ -70,6 +67,8 @@ const PendingTransactions = () => {
 		<Container title="Pending Transactions">
 			<section className="PendingTransactions">
 				<Box>
+					<TableHeader />
+
 					<Table
 						columns={columns}
 						dataSource={data}

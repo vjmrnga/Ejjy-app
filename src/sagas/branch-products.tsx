@@ -13,7 +13,7 @@ function* list({ payload }: any) {
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
 
@@ -67,7 +67,7 @@ function* listByBranch({ payload }: any) {
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
 
@@ -120,7 +120,7 @@ function* edit({ payload }: any) {
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
 
@@ -131,6 +131,34 @@ function* edit({ payload }: any) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
+
+function* editBalance({ payload }: any) {
+	const { callback, branchId, productId, addedBalance } = payload;
+	callback({ status: request.REQUESTING });
+
+	// Required: Branch must have an online URL (Requested by Office)
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId) {
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
+		return;
+	}
+
+	try {
+		const response = yield call(
+			service.editBalance,
+			{
+				product_id: productId,
+				added_balance: addedBalance,
+				destination_branch_id: branchId,
+			},
+			baseURL,
+		);
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
@@ -144,4 +172,13 @@ const editWatcherSaga = function* editWatcherSaga() {
 	yield takeLatest(types.EDIT_BRANCH_PRODUCT, edit);
 };
 
-export default [listWatcherSaga(), listByBranchWatcherSaga(), editWatcherSaga()];
+const editBalanceWatcherSaga = function* editBalanceWatcherSaga() {
+	yield takeLatest(types.EDIT_BRANCH_PRODUCT_BALANCE, editBalance);
+};
+
+export default [
+	listWatcherSaga(),
+	listByBranchWatcherSaga(),
+	editWatcherSaga(),
+	editBalanceWatcherSaga(),
+];

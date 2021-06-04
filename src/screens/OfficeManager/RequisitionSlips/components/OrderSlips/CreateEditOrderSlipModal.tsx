@@ -12,6 +12,7 @@ import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { RequisitionSlipDetails, requisitionSlipDetailsType } from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
+import FieldWarning from '../../../../../components/elements/FieldWarning/FieldWarning';
 
 interface Props {
 	updateRequisitionSlipByFetching: any;
@@ -19,29 +20,46 @@ interface Props {
 	orderSlip: any;
 	selectedBranchId?: number;
 	requestedProducts: any;
+	branchPersonnels: any;
+
 	onChangePreparingBranch: any;
 	visible: boolean;
 	onClose: any;
 	loading: any;
-	branchPersonnels: any;
+
+	warnings: any;
+	errors: any;
 }
 
 export const CreateEditOrderSlipModal = ({
-	branchPersonnels,
-
 	updateRequisitionSlipByFetching,
 	requisitionSlip,
 	orderSlip,
+
 	selectedBranchId,
 	requestedProducts,
+	branchPersonnels,
 	onChangePreparingBranch,
+
 	visible,
 	onClose,
 	loading,
+	warnings,
+	errors,
 }: Props) => {
+	// CUSTOM HOOKS
+	const {
+		createOrderSlip,
+		editOrderSlip,
+		status,
+		errors: orderSlipsErrors,
+		recentRequest,
+		reset,
+	} = useOrderSlips();
+
+	// SELECTORS
 	const user = useSelector(authSelectors.selectUser());
 	const branches = useSelector(branchesSelectors.selectBranches());
-	const { createOrderSlip, editOrderSlip, status, errors, recentRequest, reset } = useOrderSlips();
 
 	// Effect: Close modal if create/edit success
 	useEffect(() => {
@@ -134,8 +152,12 @@ export const CreateEditOrderSlipModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
+			{[...errors, ...orderSlipsErrors].map((error, index) => (
 				<FieldError key={index} error={error} />
+			))}
+
+			{warnings.map((warning, index) => (
+				<FieldWarning key={index} error={warning} />
 			))}
 
 			{orderSlip ? (

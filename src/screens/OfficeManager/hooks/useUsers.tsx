@@ -29,14 +29,17 @@ export const useUsers = () => {
 	const editUser = useActionDispatch(actions.editUser);
 	const removeUser = useActionDispatch(actions.removeUser);
 
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
 	const resetError = () => setErrors([]);
 
 	const resetStatus = () => setStatus(request.NONE);
+
+	const resetWarning = () => setWarnings([]);
+
+	const reset = () => {
+		resetError();
+		resetStatus();
+		resetWarning();
+	};
 
 	const getUsersRequest = (data: any = {}) => {
 		setRecentRequest(types.GET_USERS);
@@ -108,5 +111,6 @@ export const useUsers = () => {
 		reset,
 		resetStatus,
 		resetError,
+		resetWarning,
 	};
 };

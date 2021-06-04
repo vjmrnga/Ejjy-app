@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // TODO:: Enable /disable the create buttons (out of stock and order slip)
-import { message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TableHeaderOrderSlip } from '../../../../../components';
@@ -17,10 +16,11 @@ import {
 	userTypes,
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
-import { useOrderSlipCreation } from '../../../../../hooks/useOrderSlipCreation';
+import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { convertToBulk } from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
+import { useUsers } from '../../../hooks/useUsers';
 import { CreateEditOrderSlipModal } from './CreateEditOrderSlipModal';
 import { OrderSlipsTable } from './OrderSlipsTable';
 import { SetOutOfStockModal } from './SetOutOfStockModal';
@@ -37,8 +37,6 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 	// State: Selection
 	const [selectedBranchId, setSelectedBranchId] = useState(null);
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
-	const [branchPersonnels, setBranchPersonnels] = useState([]);
-	const [branchProducts, setBranchProducts] = useState([]);
 
 	// State: Table Data
 	const [requisitionSlipProducts, setRequisitionSlipProducts] = useState([]);
@@ -56,9 +54,23 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 		status: orderSlipStatus,
 		recentRequest: orderSlipRecentRequest,
 	} = useOrderSlips();
-	const { getBranchProducts, status: branchProductsStatus } = useOrderSlipCreation();
-	const { orderSlipDetails, getUsers, status: usersStatus } = useOrderSlipCreation();
-
+	const {
+		branchProducts,
+		getBranchProducts,
+		status: branchProductsStatus,
+		resetAll: branchProductsReset,
+		warnings: branchProductsWarnings,
+		errors: branchProducstErrors,
+	} = useBranchProducts();
+	const {
+		users: branchPersonnels,
+		getUsers,
+		status: usersStatus,
+		warnings: userWarnings,
+		errors: userErrors,
+		reset: userReset,
+	} = useUsers();
+	
 	const branches = useSelector(branchesSelectors.selectBranches());
 	const setRequisitionSlipAction = useActionDispatch(prActions.setRequisitionSlipAction);
 
@@ -131,13 +143,16 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				);
 			});
 		} else {
+			// const findBranchProduct = (productId) =>
+			// 	branchProducts.find((item) => item.product.id === productId);
+			
 			requestedProducts = requisitionSlip?.products
 				?.filter(({ is_out_of_stock, status, product_id }) => {
 					// Condition: Not yet added to OS
 					// Condition: Not out of stock
 					// Condition: Has branch products
 					const branchProduct = branchProducts.find((item) => item.product.id === product_id);
-
+					
 					return (
 						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
 						!is_out_of_stock &&
@@ -148,6 +163,7 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 					const branchProduct = branchProducts.find(
 						(item) => item.product.id === product.product_id,
 					);
+					
 
 					return processedOrderSlipProduct(
 						null,
@@ -159,7 +175,6 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 					);
 				});
 		}
-
 		setRequisitionSlipProducts(requestedProducts);
 	};
 
@@ -195,38 +210,17 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 	};
 
 	const onChangePreparingBranch = (branchId) => {
-		setSelectedBranchId(branchId);
-		setBranchPersonnels([]);
-		setBranchProducts([]);
-
-		const productIds = requisitionSlipProducts.map((product) => product.product_id);
-		getUsers({ branchId, userType: userTypes.BRANCH_PERSONNEL }, ({ status, response }) => {
-			if (status === request.SUCCESS) {
-				setBranchPersonnels(response);
-			} else if (status === request.ERROR) {
-				if (orderSlipDetails?.[branchId]?.users) {
-					setBranchPersonnels(orderSlipDetails[branchId].users);
-					message.warning(
-						'Can’t connect to the assigned branch,  branch personnels data might be outdated',
-					);
-				}
-			}
-		});
-
-		getBranchProducts({ productIds: productIds, branchId }, ({ status, response }) => {
-			if (status === request.SUCCESS) {
-				setBranchProducts(response);
-			} else if (status === request.ERROR) {
-				if (orderSlipDetails?.[branchId]?.branchProducts) {
-					setBranchProducts(orderSlipDetails[branchId].branchProducts);
-					message.warning(
-						'Can’t connect to the assigned branch, branch products data might be outdated',
-					);
-				} else {
-					message.error('Can’t connect to the assigned branch');
-				}
-			}
-		});
+		if(selectedBranchId !== branchId) {
+			setSelectedBranchId(branchId);
+			userReset();
+			branchProductsReset();
+	
+			getUsers({ branchId, userType: userTypes.BRANCH_PERSONNEL });
+	
+			const productIds = requisitionSlipProducts.map((product) => product.product_id);
+			getBranchProducts({ productIds: productIds, branchId, page: 1 }, true);
+		}
+		
 	};
 
 	const onCreateOrderSlip = () => {
@@ -300,6 +294,8 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				onChangePreparingBranch={onChangePreparingBranch}
 				visible={createEditOrderSlipVisible}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
+				warnings={[...branchProductsWarnings, ...userWarnings]}
+				errors={[...branchProducstErrors, ...userErrors]}
 				loading={[usersStatus, branchProductsStatus].includes(request.REQUESTING)}
 			/>
 
