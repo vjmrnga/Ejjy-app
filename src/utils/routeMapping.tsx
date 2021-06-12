@@ -2,8 +2,10 @@ import { userTypes } from '../global/types';
 import {
 	AdminBranches,
 	AdminDashboard,
+	AdminFailedTransfers,
 	AdminLogs,
 	AdminPendingTransactions,
+	AdminProducts,
 	AdminViewBranch,
 	BranchManagerChecking,
 	BranchManagerDashboard,
@@ -26,7 +28,7 @@ import {
 	OfficeManagerUsers,
 	OfficeManagerViewBranch,
 	OfficeManagerViewDeliveryReceipt,
-	OfficeManagerViewRequisitionSlip,
+	OfficeManagerViewRequisitionSlip
 } from '../screens';
 
 export const DashboardScreens = {
@@ -40,7 +42,12 @@ export const PendingTransactionsScreens = {
 	[userTypes.ADMIN]: AdminPendingTransactions,
 };
 
+export const FailedTransfersScreens = {
+	[userTypes.ADMIN]: AdminFailedTransfers,
+};
+
 export const ProductsScreens = {
+	[userTypes.ADMIN]: AdminProducts,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerProducts,
 	[userTypes.BRANCH_MANAGER]: BranchManagerProducts,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelProducts,

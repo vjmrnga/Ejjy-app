@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ControlledInput, Label } from '../../../../components/elements';
 import { request } from '../../../../global/types';
-import { useBranches } from '../../../OfficeManager/hooks/useBranches';
+import { useBranches } from '../../../../hooks/useBranches';
 
 interface Props {
 	branch: any;

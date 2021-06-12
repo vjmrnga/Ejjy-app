@@ -2,7 +2,7 @@
 import { Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Box } from '../../../../../components/elements';
-import { useBranches } from '../../../hooks/useBranches';
+import { useBranches } from '../../../../../hooks/useBranches';
 import { BranchBalanceItem } from './BranchBalanceItem';
 
 const { TabPane } = Tabs;

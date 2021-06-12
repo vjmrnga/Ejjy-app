@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { message } from 'antd';
 import { useEffect, useState } from 'react';
-import { actions, types } from '../../../ducks/OfficeManager/products';
-import { MAX_PAGE_SIZE } from '../../../global/constants';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from '../../../utils/function';
+import { actions, types } from '../ducks/OfficeManager/products';
+import { MAX_PAGE_SIZE } from '../global/constants';
+import { request } from '../global/types';
+import { useActionDispatch } from '../hooks/useActionDispatch';
+import { modifiedCallback, modifiedExtraCallback, onCallback } from '../utils/function';
 import {
 	addInCachedData,
 	generateNewCachedData,
@@ -13,7 +13,7 @@ import {
 	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
-} from '../../../utils/pagination';
+} from '../utils/pagination';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
 

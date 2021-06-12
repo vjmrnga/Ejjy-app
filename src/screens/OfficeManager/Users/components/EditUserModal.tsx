@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 import React, { useCallback } from 'react';
 import { FieldError } from '../../../../components/elements';
 import { request } from '../../../../global/types';
-import { useBranches } from '../../hooks/useBranches';
+import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../hooks/useUsers';
 import { EditUserForm } from './EditUserForm';
 

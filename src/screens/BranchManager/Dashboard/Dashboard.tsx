@@ -7,7 +7,7 @@ import { CashieringCard } from '../../../components/CashieringCard/CashieringCar
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { request } from '../../../global/types';
 import { useBranchesDays } from '../../../hooks/useBranchesDays';
-import { useBranches } from '../../OfficeManager/hooks/useBranches';
+import { useBranches } from '../../../hooks/useBranches';
 import { BackupServerUrlForm } from './components/BackupServerUrlForm';
 import { LocalServerUrlForm } from './components/LocalServerUrlForm';
 import { MachineReportTable } from './components/MachineReportTable';

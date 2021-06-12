@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { FieldError } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/OfficeManager/branches';
 import { request } from '../../../../../global/types';
-import { useBranches } from '../../../hooks/useBranches';
+import { useBranches } from '../../../../../hooks/useBranches';
 import { CreateEditBranchForm } from './CreateEditBranchForm';
 
 interface Props {

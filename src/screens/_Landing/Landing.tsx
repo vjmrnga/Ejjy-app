@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request, userTypes } from '../../global/types';
 import { useAuth } from '../../hooks/useAuth';
-import { useBranches } from '../OfficeManager/hooks/useBranches';
+import { useBranches } from '../../hooks/useBranches';
 import './style.scss';
 
 const Landing = () => {

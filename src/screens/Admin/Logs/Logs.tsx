@@ -12,6 +12,7 @@ const PAGE_SIZE = 10;
 
 const columns = [
 	{ title: 'Branch', dataIndex: 'branch' },
+	{ title: 'User', dataIndex: 'user' },
 	{ title: 'Product Name', dataIndex: 'product_name' },
 	{ title: 'Quantity', dataIndex: 'qty' },
 	{ title: 'Date & Time', dataIndex: 'datetime_created' },
@@ -41,6 +42,7 @@ const Logs = () => {
 		const formattedLogs =
 			logs?.map((log) => ({
 				branch: log.destination_branch.name,
+				user: `${log.updating_user.first_name} ${log.updating_user.last_name}`,
 				product_name: log.product_name,
 				qty: log.quantity,
 				datetime_created: formatDateTimeExtended(log.datetime_created),
@@ -57,7 +59,7 @@ const Logs = () => {
 		<Container title="Logs" loading={logsStatus === request.REQUESTING}>
 			<section className="Logs">
 				<Box>
-				<TableHeader />
+					<TableHeader />
 
 					<Table
 						columns={columns}

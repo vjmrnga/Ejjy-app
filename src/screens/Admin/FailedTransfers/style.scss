@@ -1,0 +1,14 @@
+@import '../../../assets/styles/main';
+
+.FailedTransfers {
+	.header {
+		@include flex(flex-end, center);
+		padding: 25px;
+	}
+
+	.last-updated {
+		margin-top: 5px;
+		display: block;
+		color: $color-orange;
+	}
+}

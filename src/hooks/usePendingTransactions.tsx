@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/OfficeManager/pending-transactions';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from '../../../utils/function';
+import { actions, selectors, types } from '../ducks/OfficeManager/pending-transactions';
+import { request } from '../global/types';
+import { useActionDispatch } from '../hooks/useActionDispatch';
+import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
 
 const REMOVE_SUCCESS_MESSAGE = 'Pending transaction was removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the pending transaction';

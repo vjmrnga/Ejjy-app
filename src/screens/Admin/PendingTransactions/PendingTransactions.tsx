@@ -4,8 +4,8 @@ import { Container, Table, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { request } from '../../../global/types';
+import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { calculateTableHeight, formatDateTime, showErrorMessages } from '../../../utils/function';
-import { usePendingTransactions } from '../../OfficeManager/hooks/usePendingTransactions';
 
 const columns = [
 	{ title: 'Description', dataIndex: 'description' },

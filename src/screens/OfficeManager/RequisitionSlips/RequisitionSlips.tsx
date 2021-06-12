@@ -16,7 +16,7 @@ import {
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
-import { useBranches } from '../hooks/useBranches';
+import { useBranches } from '../../../hooks/useBranches';
 import './style.scss';
 
 const columns = [
@@ -49,15 +49,10 @@ const RequisitionSlips = () => {
 
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
-	const {
-		requisitionSlips,
-		pageCount,
-		currentPage,
-		getRequisitionSlipsExtended,
-		status,
-	} = useRequisitionSlips({
-		pageSize: PAGE_SIZE,
-	});
+	const { requisitionSlips, pageCount, currentPage, getRequisitionSlipsExtended, status } =
+		useRequisitionSlips({
+			pageSize: PAGE_SIZE,
+		});
 
 	// METHODS
 	// Effect: Format requisitionSlips to be rendered in Table

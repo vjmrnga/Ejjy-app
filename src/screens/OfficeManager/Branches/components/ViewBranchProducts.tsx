@@ -58,7 +58,11 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				<ButtonLink text={barcode || textcode} onClick={() => onView(branchProduct)} />,
 				name,
 				`${current_balance} / ${max_balance}`,
-				<TableActions onAdd={() => onAdd(branchProduct)} onEdit={() => onEdit(branchProduct)} />,
+				<TableActions
+					onAddName="Supplier Delivery"
+					onAdd={() => onAdd(branchProduct)}
+					onEdit={() => onEdit(branchProduct)}
+				/>,
 			];
 		});
 

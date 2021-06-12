@@ -1,11 +1,19 @@
 import { Popconfirm } from 'antd';
 import React from 'react';
-import { AddButtonIcon, EditButtonIcon, RemoveButtonIcon } from '../../ButtonIcons/ButtonIcons';
+import {
+	AddButtonIcon,
+	EditButtonIcon,
+	RemoveButtonIcon,
+	ViewButtonIcon,
+} from '../../ButtonIcons/ButtonIcons';
 import './style.scss';
 
 interface Props {
 	onExecutePendingTransaction?: any;
+	onView?: any;
+	onViewName?: string;
 	onAdd?: any;
+	onAddName?: string;
 	onAssign?: any;
 	onEdit?: any;
 	onRemove?: any;
@@ -13,7 +21,10 @@ interface Props {
 
 export const TableActions = ({
 	onExecutePendingTransaction,
+	onView,
+	onViewName,
 	onAdd,
+	onAddName,
 	onAssign,
 	onEdit,
 	onRemove,
@@ -22,7 +33,8 @@ export const TableActions = ({
 		{onExecutePendingTransaction && (
 			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
 		)}
-		{onAdd && <AddButtonIcon onClick={onAdd} tooltip="Add" />}
+		{onAdd && <AddButtonIcon onClick={onAdd} tooltip={onAddName || 'Add'} />}
+		{onView && <ViewButtonIcon onClick={onView} tooltip={onViewName || 'View'} />}
 		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
 		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
 		{onRemove && (
