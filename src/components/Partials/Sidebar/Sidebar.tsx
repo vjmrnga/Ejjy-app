@@ -30,8 +30,8 @@ const SidebarItems = [
 	{
 		key: 'failed-transfers',
 		name: 'Failed Transfers',
-		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
+		activeIcon: require(`../../../assets/images/icon-failed-transfers-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-failed-transfers.svg`),
 		link: '/failed-transfers',
 		userTypes: [userTypes.ADMIN],
 	},
