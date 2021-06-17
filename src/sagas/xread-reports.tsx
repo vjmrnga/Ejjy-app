@@ -1,15 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { selectors as authSelectors } from '../ducks/auth';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/xread-reports';
 import { IS_APP_LIVE } from '../global/constants';
 import { request } from '../global/types';
-import { LOCAL_API_URL } from '../services';
 import { service } from '../services/xread-reports';
-import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 
 /* WORKERS */
 function* create({ payload }: any) {
 	const { branchMachineId, userId, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
+
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -25,7 +27,7 @@ function* create({ payload }: any) {
 				branch_machine_id: branchMachineId,
 				user_id: userId,
 			},
-			IS_APP_LIVE ? baseURL : LOCAL_API_URL,
+			IS_APP_LIVE ? baseURL : localURL,
 		);
 
 		yield put(actions.save({ type: types.CREATE_XREAD_REPORT, xreadReport: response.data }));

@@ -1,15 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { selectors as authSelectors } from '../../ducks/auth';
 import { actions, types } from '../../ducks/OfficeManager/branch-machines';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { MAX_PAGE_SIZE } from '../../global/constants';
 import { request } from '../../global/types';
-import { LOCAL_API_URL } from '../../services';
 import { service } from '../../services/OfficeManager/branch-machines';
 
 /* WORKERS */
 function* list({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
+
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -30,7 +32,7 @@ function* list({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.list, data, baseURL || LOCAL_API_URL);
+			response = yield call(service.list, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
@@ -63,6 +65,8 @@ function* create({ payload }: any) {
 	const { callback, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
+
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
@@ -71,7 +75,7 @@ function* create({ payload }: any) {
 	}
 
 	try {
-		const response = yield call(service.create, data, baseURL || LOCAL_API_URL);
+		const response = yield call(service.create, data, baseURL || localURL);
 
 		yield put(actions.save({ type: types.CREATE_BRANCH_MACHINE, branchMachine: response.data }));
 		callback({ status: request.SUCCESS, response: response.data });
@@ -84,6 +88,8 @@ function* edit({ payload }: any) {
 	const { callback, id, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
+
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
@@ -92,7 +98,7 @@ function* edit({ payload }: any) {
 	}
 
 	try {
-		const response = yield call(service.edit, id, data, baseURL || LOCAL_API_URL);
+		const response = yield call(service.edit, id, data, baseURL || localURL);
 
 		yield put(actions.save({ type: types.EDIT_BRANCH_MACHINE, branchMachine: response.data }));
 		callback({ status: request.SUCCESS, response: response.data });

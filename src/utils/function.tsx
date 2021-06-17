@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
-import { floor, isArray, isString, memoize } from 'lodash';
 import dayjs from 'dayjs';
+import { floor, isArray, isString, memoize } from 'lodash';
 import React from 'react';
 import {
 	AddedToOSBadgePill,
@@ -416,14 +416,38 @@ export const isUserFromBranch = memoize((user_role) => {
 	return [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user_role);
 });
 
-export const onCallback = (callback, onSuccess = null, onError = null) => (response) => {
-	callback(response);
+export const onCallback =
+	(callback, onSuccess = null, onError = null) =>
+	(response) => {
+		callback(response);
 
-	if (onSuccess && response?.status === request.SUCCESS) {
-		onSuccess(response);
+		if (onSuccess && response?.status === request.SUCCESS) {
+			onSuccess(response);
+		}
+
+		if (onError && response?.status === request.ERROR) {
+			onError(response);
+		}
+	};
+
+export const getKeyDownCombination = (keyboardEvent) => {
+	let firstKey = '';
+
+	if (keyboardEvent?.altKey) {
+		firstKey = 'alt+';
 	}
 
-	if (onError && response?.status === request.ERROR) {
-		onError(response);
+	if (keyboardEvent?.ctrlKey) {
+		firstKey = 'ctrl+';
 	}
+
+	if (keyboardEvent?.metaKey) {
+		firstKey = 'meta+';
+	}
+
+	if (keyboardEvent?.shiftKey) {
+		firstKey = 'shift+';
+	}
+
+	return firstKey + keyboardEvent?.key;
 };

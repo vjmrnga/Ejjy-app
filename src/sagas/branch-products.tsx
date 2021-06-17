@@ -2,13 +2,15 @@ import { call, select, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/branch-products';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
-import { LOCAL_API_URL } from '../services';
 import { service } from '../services/branch-products';
+import { selectors as authSelectors } from '../ducks/auth';
 
 /* WORKERS */
 function* list({ payload }: any) {
 	const { page, pageSize, branchId, search, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
+
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -31,7 +33,7 @@ function* list({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.list, data, baseURL || LOCAL_API_URL);
+			response = yield call(service.list, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
@@ -64,6 +66,8 @@ function* listByBranch({ payload }: any) {
 	const { page, pageSize, branchId, search, callback } = payload;
 	callback({ status: request.REQUESTING });
 
+	const localURL = yield select(authSelectors.selectLocalIpAddress());
+
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
@@ -84,7 +88,7 @@ function* listByBranch({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.listByBranch, data, baseURL || LOCAL_API_URL);
+			response = yield call(service.listByBranch, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));

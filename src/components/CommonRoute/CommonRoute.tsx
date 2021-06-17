@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, useLocation } from 'react-router-dom';
@@ -8,15 +9,13 @@ const not404Pages = ['/', '/login', '/landing'];
 
 export const CommonRoute = ({ path, exact, component }: any) => {
 	const { pathname: pathName } = useLocation();
-	const accessToken = useSelector(selectors.selectAccessToken());
-	const refreshToken = useSelector(selectors.selectRefreshToken());
 	const user = useSelector(selectors.selectUser());
-
-	if (portal.includes(pathName) && accessToken && refreshToken) {
+	
+	if (portal.includes(pathName) && !isEmpty(user)) {
 		return <Route render={() => <Redirect to="/landing" />} />;
 	}
 
-	if (!portal.includes(pathName) && (!accessToken || !refreshToken)) {
+	if (!portal.includes(pathName) && isEmpty(user)) {
 		return <Route render={() => <Redirect to="/" />} />;
 	}
 
