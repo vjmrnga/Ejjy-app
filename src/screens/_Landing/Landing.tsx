@@ -77,7 +77,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 
@@ -94,7 +94,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 
@@ -111,7 +111,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 

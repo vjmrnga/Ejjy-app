@@ -21,6 +21,15 @@ interface IEditBranchProductBalance {
 	added_balance: number;
 	destination_branch_id: number;
 }
+
+interface IEditBranchProductPriceCost {
+	product_id: number;
+	cost_per_piece: string;
+	cost_per_bulk: string;
+	price_per_piece: string;
+	price_per_bulk: string;
+}
+
 interface IGetBranchProducts extends IGetRequest {
 	search?: string;
 	product_ids?: number[];
@@ -38,4 +47,7 @@ export const service = {
 
 	editBalance: async (body: IEditBranchProductBalance, baseURL) =>
 		axios.patch(`/branches-products/update-balance-and-retrieve/`, body, { baseURL }),
+
+	editPriceCost: async (body: IEditBranchProductPriceCost, baseURL) =>
+		axios.patch(`/branches-products/update-price-and-cost/`, body, { baseURL }),
 };

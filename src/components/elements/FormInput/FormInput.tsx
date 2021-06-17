@@ -9,9 +9,10 @@ export interface IInputProps {
 	disabled?: boolean;
 	max?: number;
 	min?: number;
+	step?: string;
 }
 
-const FormInput = ({ type, id, max, min, placeholder, disabled }: IInputProps) => (
+const FormInput = ({ type, id, max, min, placeholder, step, disabled }: IInputProps) => (
 	<Field
 		type={type}
 		id={id}
@@ -20,7 +21,13 @@ const FormInput = ({ type, id, max, min, placeholder, disabled }: IInputProps) =
 		placeholder={placeholder}
 		max={max}
 		min={min}
+		step={step}
 		disabled={disabled}
+		onKeyDown={(evt) => {
+			if (type === 'number' && ['e', 'E', '+', '-'].includes(evt.key)) {
+				evt.preventDefault();
+			}
+		}}
 	/>
 );
 

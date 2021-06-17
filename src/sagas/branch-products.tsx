@@ -1,4 +1,4 @@
-import { call, select, takeLatest } from 'redux-saga/effects';
+import { call, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/branch-products';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
@@ -163,6 +163,36 @@ function* editBalance({ payload }: any) {
 	}
 }
 
+function* editPriceCost({ payload }: any) {
+	const { callback, branchId, productId, costPerPiece, costPerBulk, pricePerPiece, pricePerBulk } =
+		payload;
+	callback({ status: request.REQUESTING });
+
+	// Required: Branch must have an online URL (Requested by Office)
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId) {
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
+		return;
+	}
+
+	try {
+		const response = yield call(
+			service.editPriceCost,
+			{
+				product_id: productId,
+				cost_per_piece: costPerPiece,
+				cost_per_bulk: costPerBulk,
+				price_per_piece: pricePerPiece,
+				price_per_bulk: pricePerBulk,
+			},
+			baseURL,
+		);
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
@@ -180,9 +210,14 @@ const editBalanceWatcherSaga = function* editBalanceWatcherSaga() {
 	yield takeLatest(types.EDIT_BRANCH_PRODUCT_BALANCE, editBalance);
 };
 
+const editPriceCostWatcherSaga = function* editPriceCostWatcherSaga() {
+	yield takeEvery(types.EDIT_BRANCH_PRODUCT_PRICE_COST, editPriceCost);
+};
+
 export default [
 	listWatcherSaga(),
 	listByBranchWatcherSaga(),
 	editWatcherSaga(),
 	editBalanceWatcherSaga(),
+	editPriceCostWatcherSaga(),
 ];

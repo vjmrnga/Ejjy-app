@@ -11,9 +11,8 @@ import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { useProducts } from '../../../hooks/useProducts';
 import { calculateTableHeight } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
+import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
-
-const PAGE_SIZE = 10;
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
@@ -26,12 +25,14 @@ const Products = () => {
 	const [data, setData] = useState([]);
 	const [createEditProductModalVisible, setCreateEditProductModalVisible] = useState(false);
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
+	const [editPriceCostModalVisible, setEditPriceCostModalVisible] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
 		products,
 		pageCount,
+		pageSize,
 		currentPage,
 		addItemInPagination,
 		updateItemInPagination,
@@ -41,7 +42,7 @@ const Products = () => {
 		removeProduct,
 		status: productStatus,
 		recentRequest,
-	} = useProducts({ pageSize: PAGE_SIZE });
+	} = useProducts();
 
 	const {
 		pendingTransactions,
@@ -72,6 +73,8 @@ const Products = () => {
 					name,
 					actions: hasPendingTransactions ? null : (
 						<TableActions
+							onAddName="Edit Price and Cost"
+							onAdd={() => onEditPriceCost(product)}
 							onEdit={() => onEdit(product)}
 							onRemove={() => onRemoveProduct(product)}
 						/>
@@ -90,8 +93,8 @@ const Products = () => {
 		[productStatus, pendingTransactionsStatus, recentRequest, pendingTransactionRecentRequest],
 	);
 
-	const onPageChange = (page) => {
-		getProducts({ page });
+	const onPageChange = (page, newPageSize) => {
+		getProducts({ page, pageSize: newPageSize }, newPageSize !== pageSize);
 	};
 
 	const onView = (product) => {
@@ -107,6 +110,11 @@ const Products = () => {
 	const onEdit = (product) => {
 		setSelectedProduct(product);
 		setCreateEditProductModalVisible(true);
+	};
+
+	const onEditPriceCost = (product) => {
+		setSelectedProduct(product);
+		setEditPriceCostModalVisible(true);
 	};
 
 	const onSearch = (keyword) => {
@@ -146,7 +154,7 @@ const Products = () => {
 						className="table-pagination"
 						current={currentPage}
 						total={pageCount}
-						pageSize={PAGE_SIZE}
+						pageSize={pageSize}
 						onChange={onPageChange}
 						disabled={!data}
 					/>
@@ -164,6 +172,12 @@ const Products = () => {
 						visible={createEditProductModalVisible}
 						onFetchPendingTransactions={listPendingTransactions}
 						onClose={() => setCreateEditProductModalVisible(false)}
+					/>
+
+					<EditPriceCostModal
+						product={selectedProduct}
+						visible={editPriceCostModalVisible}
+						onClose={() => setEditPriceCostModalVisible(false)}
 					/>
 				</Box>
 			</section>

@@ -5,14 +5,13 @@ import { TableActions, TableHeader, TableNormal } from '../../../../components';
 import { ButtonLink, FieldError, FieldWarning } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
+import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
 
 interface Props {
 	branch: any;
 }
-
-const PAGE_SIZE = 10;
 
 const columns = [{ name: 'Barcode' }, { name: 'Name' }, { name: 'Balance' }, { name: 'Actions' }];
 
@@ -21,6 +20,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	const [data, setData] = useState([]);
 	const [editBranchProductModalVisible, setEditBranchProductModalVisible] = useState(false);
 	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
+	const [addBranchProductModalVisible, setAddBranchProductModalVisible] = useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 	const [searchedKeyword, setSeachedKeyword] = useState('');
 
@@ -28,6 +28,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	const {
 		branchProducts,
 		pageCount,
+		pageSize,
 		currentPage,
 		updateItemInPagination,
 
@@ -35,7 +36,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		status,
 		errors,
 		warnings,
-	} = useBranchProducts({ pageSize: PAGE_SIZE });
+	} = useBranchProducts();
 
 	// EFFECTS
 	useEffect(() => {
@@ -56,7 +57,11 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				<ButtonLink text={barcode || textcode} onClick={() => onView(branchProduct)} />,
 				name,
 				`${current_balance} / ${max_balance}`,
-				<TableActions onEdit={() => onEdit(branchProduct)} />,
+				<TableActions
+					onAddName="Supplier Delivery"
+					onAdd={() => onAdd(branchProduct)}
+					onEdit={() => onEdit(branchProduct)}
+				/>,
 			];
 		});
 
@@ -68,13 +73,21 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		setViewBranchProductModalVisible(true);
 	};
 
-	const onEdit = (branch) => {
-		setSelectedBranchProduct(branch);
+	const onEdit = (branchProduct) => {
+		setSelectedBranchProduct(branchProduct);
 		setEditBranchProductModalVisible(true);
 	};
 
-	const onPageChange = (page) => {
-		getBranchProductsByBranch({ search: searchedKeyword, branchId: branch?.id, page });
+	const onAdd = (branchProduct) => {
+		setSelectedBranchProduct(branchProduct);
+		setAddBranchProductModalVisible(true);
+	};
+
+	const onPageChange = (page, newPageSize) => {
+		getBranchProductsByBranch(
+			{ search: searchedKeyword, branchId: branch?.id, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	const onSearch = (keyword) => {
@@ -101,7 +114,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				className="table-pagination"
 				current={currentPage}
 				total={pageCount}
-				pageSize={PAGE_SIZE}
+				pageSize={pageSize}
 				onChange={onPageChange}
 				disabled={!data}
 			/>
@@ -119,6 +132,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				updateItemInPagination={updateItemInPagination}
 				visible={editBranchProductModalVisible}
 				onClose={() => setEditBranchProductModalVisible(false)}
+			/>
+
+			<AddBranchProductBalanceModal
+				branch={branch}
+				branchProduct={selectedBranchProduct}
+				updateItemInPagination={updateItemInPagination}
+				visible={addBranchProductModalVisible}
+				onClose={() => setAddBranchProductModalVisible(false)}
 			/>
 		</>
 	);

@@ -12,8 +12,6 @@ import { getBranchProductStatus } from '../../../../../utils/function';
 
 const columns = [{ name: 'Barcode' }, { name: 'Name' }, { name: 'Balance' }, { name: 'Status' }];
 
-const PAGE_SIZE = 10;
-
 interface Props {
 	dataSource?: any;
 	branchId: number;
@@ -34,13 +32,8 @@ export const BranchBalanceItem = ({ isActive, branchId, dataSource, disabled }: 
 		status: branchesDaysStatus,
 		errors: branchesDaysErrors,
 	} = useBranchesDays();
-	const {
-		branchProducts,
-		pageCount,
-		currentPage,
-		getBranchProductsByBranch,
-		status,
-	} = useBranchProducts({ pageSize: PAGE_SIZE });
+	const { branchProducts, pageCount, pageSize, currentPage, getBranchProductsByBranch, status } =
+		useBranchProducts();
 	const user = useSelector(authSelectors.selectUser());
 
 	// METHODS
@@ -100,8 +93,8 @@ export const BranchBalanceItem = ({ isActive, branchId, dataSource, disabled }: 
 	// 	setData(filteredData);
 	// };
 
-	const onPageChange = (page) => {
-		getBranchProductsByBranch({ page, branchId });
+	const onPageChange = (page, newPageSize) => {
+		getBranchProductsByBranch({ branchId, page, pageSize: newPageSize }, newPageSize !== pageSize);
 	};
 
 	return (
@@ -125,7 +118,7 @@ export const BranchBalanceItem = ({ isActive, branchId, dataSource, disabled }: 
 				className="table-pagination"
 				current={currentPage}
 				total={pageCount}
-				pageSize={PAGE_SIZE}
+				pageSize={pageSize}
 				onChange={onPageChange}
 				disabled={!data}
 			/>

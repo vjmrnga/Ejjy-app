@@ -1,16 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/OfficeManager/products';
-import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
 import { useActionDispatch } from '../hooks/useActionDispatch';
 import { modifiedCallback, modifiedExtraCallback, onCallback } from '../utils/function';
 import {
 	addInCachedData,
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
@@ -26,7 +22,7 @@ const EDIT_ERROR_MESSAGE = 'An error occurred while editing the product';
 const REMOVE_SUCCESS_MESSAGE = 'Product was removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the product';
 
-export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useProducts = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -37,12 +33,13 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
 	const getProductsAction = useActionDispatch(actions.getProducts);
-	const createProduct = useActionDispatch(actions.createProduct);
-	const editProduct = useActionDispatch(actions.editProduct);
-	const removeProduct = useActionDispatch(actions.removeProduct);
+	const createProductAction = useActionDispatch(actions.createProduct);
+	const editProductAction = useActionDispatch(actions.editProduct);
+	const removeProductAction = useActionDispatch(actions.removeProduct);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
@@ -59,6 +56,7 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		setPageCount(0);
 		setCurrentPage(1);
 		setCurrentPageData([]);
+		setPageSize(10);
 	};
 
 	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
@@ -83,7 +81,7 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 				pageSize,
 			}),
 		);
-	}, [allData, currentPage]);
+	}, [allData, currentPage, pageSize]);
 
 	const addItemInPagination = (item) => {
 		setAllData((data) => addInCachedData({ data, item }));
@@ -99,47 +97,29 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 
 	// REQUEST METHODS
 	const getProducts = (data, shouldReset = false) => {
-		if (shouldReset) {
-			resetPagination();
-		}
-
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			}) ||
-			shouldReset
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData((currentAllData) =>
-						generateNewCachedData({
-							existingData: currentAllData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest({ ...data, pageSize }, callback, getProductsAction, types.CREATE_PRODUCT);
-		}
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getProductsAction,
+			requestType: types.CREATE_PRODUCT,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+			resetPagination,
+		});
 	};
 
-	const createProductRequest = (product, extraCallback = null) => {
+	const createProduct = (product, extraCallback = null) => {
 		setRecentRequest(types.CREATE_PRODUCT);
 		const clonedProduct = {
 			...product,
 			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
 		};
 
-		createProduct({
+		createProductAction({
 			...clonedProduct,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
@@ -148,14 +128,14 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		});
 	};
 
-	const editProductRequest = (product, extraCallback = null) => {
+	const editProduct = (product, extraCallback = null) => {
 		setRecentRequest(types.EDIT_PRODUCT);
 		const clonedProduct = {
 			...product,
 			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
 		};
 
-		editProduct({
+		editProductAction({
 			...clonedProduct,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
@@ -164,9 +144,9 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		});
 	};
 
-	const removeProductRequest = (id, extraCallback = null) => {
+	const removeProduct = (id, extraCallback = null) => {
 		setRecentRequest(types.REMOVE_PRODUCT);
-		removeProduct({
+		removeProductAction({
 			id,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
@@ -184,14 +164,15 @@ export const useProducts = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		products: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,
 
 		getProducts,
-		createProduct: createProductRequest,
-		editProduct: editProductRequest,
-		removeProduct: removeProductRequest,
+		createProduct,
+		editProduct,
+		removeProduct,
 		status,
 		errors,
 		recentRequest,
