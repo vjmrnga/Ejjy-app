@@ -17,13 +17,14 @@ const initialState = {
 const reducer = handleActions(
 	{
 		[types.SAVE]: (state, { payload }: any) => {
-			const { type, branchId } = payload;
+			const { type, branchId, branchName } = payload;
 			let newData = {};
 
 			switch (type) {
 				case types.GET_FAILED_TRANSFER_COUNT: {
 					newData = cloneDeep(state.failedTransfers);
 					newData[branchId] = {
+						branchName,
 						count: payload.count,
 						datetime: dayjs(),
 					};

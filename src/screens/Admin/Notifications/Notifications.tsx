@@ -28,22 +28,35 @@ const Branches = () => {
 			clearInterval(intervalRef.current);
 		}
 
+		fetchFailedTransferNotifications();
+
 		intervalRef.current = setInterval(() => {
-			branches.forEach(({ id }) => {
-				getFailedTansferCount({ branchId: id });
-			});
-		}, 2500);
+			fetchFailedTransferNotifications();
+		}, 5000);
 	}, [branches]);
 
 	// Effect: Format branches to be rendered in Table
 	useEffect(() => {
-		const failedTransferNotifications = Object.keys(failedTransfers).map((key) => ({
-			message: failedTransfers?.[key]?.count,
-			datetime: formatDateTime(failedTransfers?.[key]?.datetime),
-		}));
+		const failedTransferNotifications = Object.keys(failedTransfers)
+			.filter((key) => failedTransfers?.[key]?.count > 0)
+			.map((key) => ({
+				message: (
+					<b>
+						{failedTransfers?.[key]?.branchName} has {failedTransfers?.[key]?.count} failed
+						transfers
+					</b>
+				),
+				datetime: formatDateTime(failedTransfers?.[key]?.datetime),
+			}));
 
 		setNotifications(failedTransferNotifications);
 	}, [failedTransfers]);
+
+	const fetchFailedTransferNotifications = () => {
+		branches.forEach(({ id, name }) => {
+			getFailedTansferCount({ branchId: id, branchName: name });
+		});
+	};
 
 	return (
 		<Container title="Notifications">

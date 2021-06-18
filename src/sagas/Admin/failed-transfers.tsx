@@ -1,13 +1,12 @@
-import { put, retry, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/Admin/failed-transfers';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
-import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/Admin/failed-transfers';
 
 /* WORKERS */
 function* getCount({ payload }: any) {
-	const { branchId, callback } = payload;
+	const { branchId, branchName, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -18,12 +17,13 @@ function* getCount({ payload }: any) {
 	}
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getCount, baseURL);
+		const response = yield call(service.getCount, baseURL);
 		yield put(
 			actions.save({
 				type: types.GET_FAILED_TRANSFER_COUNT,
 				count: response.data,
 				branchId,
+				branchName,
 			}),
 		);
 		callback({ status: request.SUCCESS });
@@ -34,7 +34,7 @@ function* getCount({ payload }: any) {
 
 /* WATCHERS */
 const getCountWatcherSaga = function* getCountWatcherSaga() {
-	yield takeLatest(types.GET_FAILED_TRANSFER_COUNT, getCount);
+	yield takeEvery(types.GET_FAILED_TRANSFER_COUNT, getCount);
 };
 
 export default [getCountWatcherSaga()];
