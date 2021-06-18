@@ -16,7 +16,9 @@
 		"start:electron": "PORT=3005 env-cmd -f .env.local react-scripts start",
 		"dev:electron": "concurrently \"npm run start:electron\" \"wait-on http://localhost:3005 && electron .\"",
 		"electron": "wait-on http://localhost:3005 && electron .",
-		"pack": "npm run build:local && electron-packager . EJJY-Local --no-prune --platform=win32 --ignore=/.vscode --ignore=/deployment --ignore=/node_modules --ignore=/public --ignore=/src --overwrite"
+		"pack:build": "npm run build:local && electron-packager . EJJY-Inventory --no-prune --platform=win32 --ignore=/.vscode --ignore=/deployment --ignore=/node_modules --ignore=/public --ignore=/src --ignore=/.prettierignore --ignore=/.prettierrc --ignore=/.config-overrides.js --ignore=/package-lock.json --ignore=/README.md --ignore=/tsconfig.json --ignore=/yarn.lock --ignore=/electron-dev --overwrite",
+		"pack:zip": "7z a -tzip EJJY-Inventory-win32-ia32.zip EJJY-Inventory-win32-ia32",
+		"pack": "npm run pack:build && npm run pack:zip"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
