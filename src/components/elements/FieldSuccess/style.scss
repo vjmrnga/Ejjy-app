@@ -1,0 +1,19 @@
+@import '../../../assets/styles/variables';
+@import '../../../assets/styles/mixins';
+
+.FieldSuccess {
+	@include flex($align-items: center);
+	margin-top: 8px;
+	margin-bottom: 5px;
+
+	.icon {
+		color: $color-primary;
+		font-size: 13px;
+	}
+
+	.text {
+		margin-left: 5px;
+		color: $color-primary;
+		@include font(0.75rem);
+	}
+}

@@ -2,7 +2,10 @@ import { userTypes } from '../global/types';
 import {
 	AdminBranches,
 	AdminDashboard,
+	AdminLogs,
+	AdminNotifications,
 	AdminPendingTransactions,
+	AdminProducts,
 	AdminViewBranch,
 	BranchManagerChecking,
 	BranchManagerDashboard,
@@ -40,6 +43,7 @@ export const PendingTransactionsScreens = {
 };
 
 export const ProductsScreens = {
+	[userTypes.ADMIN]: AdminProducts,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerProducts,
 	[userTypes.BRANCH_MANAGER]: BranchManagerProducts,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelProducts,
@@ -82,6 +86,7 @@ export const AssignUserScreens = {
 };
 
 export const NotificationsScreens = {
+	[userTypes.ADMIN]: AdminNotifications,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerNotifications,
 	[userTypes.BRANCH_MANAGER]: BranchManagerNotifications,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelNotifications,
@@ -97,4 +102,8 @@ export const FulfillPreparationSlipScreens = {
 
 export const CheckingScreens = {
 	[userTypes.BRANCH_MANAGER]: BranchManagerChecking,
+};
+
+export const LogsScreens = {
+	[userTypes.ADMIN]: AdminLogs,
 };

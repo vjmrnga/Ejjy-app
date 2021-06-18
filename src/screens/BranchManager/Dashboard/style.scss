@@ -1,7 +1,8 @@
 @import '../../../assets/styles/main';
 
 .Dashboard {
-	.BackupServerUrl {
+	.BackupServerUrl,
+	.LocalServerUrl {
 		padding: 20px 25px;
 
 		.button-column {

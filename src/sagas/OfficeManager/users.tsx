@@ -8,7 +8,7 @@ import { service } from '../../services/OfficeManager/users';
 
 /* WORKERS */
 function* listOnline({ payload }: any) {
-	const { branchId, callback } = payload;
+	const { branchId, userType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -21,6 +21,7 @@ function* listOnline({ payload }: any) {
 	let data = {
 		page: 1,
 		page_size: MAX_PAGE_SIZE,
+		user_type: userType,
 	};
 
 	let isFetchedFromBackupURL = false;
@@ -55,6 +56,29 @@ function* listOnline({ payload }: any) {
 		});
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* listOnlineByBranch({ payload }: any) {
+	const { branchId, userType, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(
+			service.listOnline,
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+				branch_id: branchId,
+				user_type: userType,
+			},
+			ONLINE_API_URL,
+		);
+
+		yield put(actions.save({ type: types.GET_USERS, users: response.data.results }));
+		callback({ status: request.SUCCESS, response: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors, response: e.response });
 	}
 }
 
@@ -124,6 +148,10 @@ const listOnlineWatcherSaga = function* listOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USERS, listOnline);
 };
 
+const listOnlineByBranchWatcherSaga = function* listOnlineByBranchWatcherSaga() {
+	yield takeLatest(types.GET_ONLINE_USERS, listOnlineByBranch);
+};
+
 const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USER_BY_ID, getByIdOnline);
 };
@@ -142,6 +170,7 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 
 export default [
 	listOnlineWatcherSaga(),
+	listOnlineByBranchWatcherSaga(),
 	getByIdOnlineWatcherSaga(),
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),

@@ -19,4 +19,6 @@ export const EMPTY_CELL = '—';
 
 export const ONLINE_ROUTES = ['/requisition-slips', '/order-slips', '/preparation-slips'];
 
+export const LOCAL_IP_ADDRESS_KEY = 'LOCAL_IP_ADDRESS_KEY';
+
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

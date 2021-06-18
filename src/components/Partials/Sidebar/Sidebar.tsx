@@ -30,8 +30,8 @@ const SidebarItems = [
 	{
 		key: 'pending-transactions',
 		name: 'Pending Transactions',
-		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
+		activeIcon: require(`../../../assets/images/icon-failed-transfers-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-failed-transfers.svg`),
 		link: '/pending-transactions',
 		userTypes: [userTypes.ADMIN],
 	},
@@ -41,7 +41,12 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-product-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-product.svg`),
 		link: '/products',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
+		userTypes: [
+			userTypes.ADMIN,
+			userTypes.OFFICE_MANAGER,
+			userTypes.BRANCH_MANAGER,
+			userTypes.BRANCH_PERSONNEL,
+		],
 	},
 	{
 		key: 'branches',
@@ -50,6 +55,14 @@ const SidebarItems = [
 		defaultIcon: require(`../../../assets/images/icon-branches.svg`),
 		link: '/branches',
 		userTypes: [userTypes.ADMIN, userTypes.OFFICE_MANAGER],
+	},
+	{
+		key: 'logs',
+		name: 'Logs',
+		activeIcon: require(`../../../assets/images/icon-requisition-slip-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-requisition-slip.svg`),
+		link: '/logs',
+		userTypes: [userTypes.ADMIN],
 	},
 	{
 		key: 'requisition-slips',
@@ -97,7 +110,12 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
 		link: '/notifications',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
+		userTypes: [
+			userTypes.ADMIN,
+			userTypes.OFFICE_MANAGER,
+			userTypes.BRANCH_MANAGER,
+			userTypes.BRANCH_PERSONNEL,
+		],
 	},
 ];
 

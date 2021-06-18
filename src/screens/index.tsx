@@ -6,8 +6,11 @@ export { default as Landing } from './_Landing/Landing';
 // Admin
 export { default as AdminDashboard } from './Admin/Dashboard/Dashboard';
 export { default as AdminPendingTransactions } from './Admin/PendingTransactions/PendingTransactions';
-export { default as AdminBranches } from './Admin/Branches/Branches';
-export { default as AdminViewBranch } from './Admin/Branches/ViewBranch';
+export { default as AdminBranches } from './Shared/Branches/Branches';
+export { default as AdminViewBranch } from './Shared/Branches/ViewBranch';
+export { default as AdminProducts } from './Shared/Products/Products';
+export { default as AdminNotifications } from './Admin/Notifications/Notifications';
+export { default as AdminLogs } from './Admin/Logs/Logs';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';
@@ -26,11 +29,11 @@ export { default as BranchPersonnelFulfillPreparationSlips } from './BranchPerso
 export { default as BranchPersonnelProducts } from './BranchPersonnel/Products/Products';
 
 // Office Manager
-export { default as OfficeManagerBranches } from './OfficeManager/Branches/Branches';
-export { default as OfficeManagerViewBranch } from './OfficeManager/Branches/ViewBranch';
+export { default as OfficeManagerBranches } from './Shared/Branches/Branches';
+export { default as OfficeManagerViewBranch } from './Shared/Branches/ViewBranch';
 export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Dashboard';
 export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
-export { default as OfficeManagerProducts } from './OfficeManager/Products/Products';
+export { default as OfficeManagerProducts } from './Shared/Products/Products';
 export { default as OfficeManagerRequisitionSlips } from './OfficeManager/RequisitionSlips/RequisitionSlips';
 export { default as OfficeManagerViewRequisitionSlip } from './OfficeManager/RequisitionSlips/ViewRequisitionSlip';
 export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/RequisitionSlips/ViewDeliveryReceipt';

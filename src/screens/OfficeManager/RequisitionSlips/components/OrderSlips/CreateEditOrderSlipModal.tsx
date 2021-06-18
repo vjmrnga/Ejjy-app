@@ -6,13 +6,13 @@ import { FieldError, Label, Select } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types } from '../../../../../ducks/order-slips';
-import { selectors } from '../../../../../ducks/requisition-slips';
 import { quantityTypes, request } from '../../../../../global/types';
 import { convertToPieces } from '../../../../../utils/function';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { RequisitionSlipDetails, requisitionSlipDetailsType } from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
+import FieldWarning from '../../../../../components/elements/FieldWarning/FieldWarning';
 
 interface Props {
 	updateRequisitionSlipByFetching: any;
@@ -20,27 +20,46 @@ interface Props {
 	orderSlip: any;
 	selectedBranchId?: number;
 	requestedProducts: any;
+	branchPersonnels: any;
+
 	onChangePreparingBranch: any;
-	onChangePreparingBranchStatus: any;
 	visible: boolean;
 	onClose: any;
+	loading: any;
+
+	warnings: any;
+	errors: any;
 }
 
 export const CreateEditOrderSlipModal = ({
 	updateRequisitionSlipByFetching,
 	requisitionSlip,
 	orderSlip,
+
 	selectedBranchId,
 	requestedProducts,
+	branchPersonnels,
 	onChangePreparingBranch,
-	onChangePreparingBranchStatus,
+
 	visible,
 	onClose,
+	loading,
+	warnings,
+	errors,
 }: Props) => {
+	// CUSTOM HOOKS
+	const {
+		createOrderSlip,
+		editOrderSlip,
+		status,
+		errors: orderSlipsErrors,
+		recentRequest,
+		reset,
+	} = useOrderSlips();
+
+	// SELECTORS
 	const user = useSelector(authSelectors.selectUser());
 	const branches = useSelector(branchesSelectors.selectBranches());
-	const requisitionSlipsByBranch = useSelector(selectors.selectRequisitionSlipsByBranch());
-	const { createOrderSlip, editOrderSlip, status, errors, recentRequest, reset } = useOrderSlips();
 
 	// Effect: Close modal if create/edit success
 	useEffect(() => {
@@ -56,7 +75,9 @@ export const CreateEditOrderSlipModal = ({
 	const getBranchOptions = useCallback(
 		() =>
 			branches
-				.filter((branch) => branch.id !== requisitionSlip?.requesting_user?.branch?.id)
+				.filter(
+					({ id, online_url }) => id !== requisitionSlip?.requesting_user?.branch?.id && online_url,
+				)
 				.map((branch) => ({
 					value: branch?.id,
 					name: branch?.name,
@@ -65,18 +86,13 @@ export const CreateEditOrderSlipModal = ({
 	);
 
 	const getAssignedPersonnelOptions = useCallback(() => {
-		const branchData = requisitionSlipsByBranch?.[selectedBranchId];
-		let personnelOptions = [];
-
-		if (branchData) {
-			personnelOptions = branchData.branch_personnels.map((personnel) => ({
+		return (
+			branchPersonnels?.map((personnel) => ({
 				value: personnel.id,
 				name: `${personnel.first_name} ${personnel.last_name}`,
-			}));
-		}
-
-		return personnelOptions;
-	}, [selectedBranchId, requisitionSlipsByBranch]);
+			})) || []
+		);
+	}, [branchPersonnels]);
 
 	const onCreateOrderSlipSubmit = (values) => {
 		const products = values.requestedProducts
@@ -136,8 +152,12 @@ export const CreateEditOrderSlipModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
+			{[...errors, ...orderSlipsErrors].map((error, index) => (
 				<FieldError key={index} error={error} />
+			))}
+
+			{warnings.map((warning, index) => (
+				<FieldWarning key={index} error={warning} />
 			))}
 
 			{orderSlip ? (
@@ -171,9 +191,7 @@ export const CreateEditOrderSlipModal = ({
 				assignedPersonnelOptions={getAssignedPersonnelOptions()}
 				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={
-					status === request.REQUESTING || onChangePreparingBranchStatus === request.REQUESTING
-				}
+				loading={status === request.REQUESTING || loading}
 			/>
 		</Modal>
 	);

@@ -4,12 +4,14 @@ import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branch
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/local-branch-settings';
-import { LOCAL_API_URL } from '../../services/index';
+import { getLocalIpAddress } from '../../utils/function';
 
 /* WORKERS */
 function* get({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
+
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -19,12 +21,7 @@ function* get({ payload }: any) {
 	}
 
 	try {
-		const response = yield retry(
-			MAX_RETRY,
-			RETRY_INTERVAL_MS,
-			service.get,
-			baseURL || LOCAL_API_URL,
-		);
+		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.get, baseURL || localURL);
 		yield put(
 			actions.save({
 				type: types.GET_LOCAL_BRANCH_SETTINGS,
@@ -41,6 +38,8 @@ function* edit({ payload }: any) {
 	const { callback, branchId, id, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
+	const localURL = getLocalIpAddress();
+
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
@@ -49,7 +48,7 @@ function* edit({ payload }: any) {
 	}
 
 	try {
-		const response = yield call(service.edit, id, data, baseURL || LOCAL_API_URL);
+		const response = yield call(service.edit, id, data, baseURL || localURL);
 		yield put(
 			actions.save({ type: types.EDIT_LOCAL_BRANCH_SETTINGS, localBranchSettings: response.data }),
 		);

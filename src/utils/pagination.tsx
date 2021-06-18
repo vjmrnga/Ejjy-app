@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { cloneDeep } from 'lodash';
 import { NOT_FOUND_INDEX } from '../global/constants';
 
@@ -16,7 +17,7 @@ export const generateNewCachedData = ({ existingData, toBeAddedData, index }) =>
 
 	// loop through all the items in the toBeAdded data and insert
 	// them to their respective positions
-	for (let i = 0; i < toBeAddedData.length; i++) {
+	for (let i = 0; i < toBeAddedData.length; i += 1) {
 		newCachedData[index + i] = toBeAddedData[i];
 	}
 
@@ -48,9 +49,7 @@ export const getDataForCurrentPage = ({ data, currentPage, pageSize }) => {
 	return data ? data.slice(offset, offset + pageSize) : null;
 };
 
-export const addInCachedData = ({ data, item }) => {
-	return [item, ...data];
-};
+export const addInCachedData = ({ data, item }) => [item, ...data];
 
 export const updateInCachedData = ({ data, item }) => {
 	const index = data.findIndex(({ id }) => id === item.id);
@@ -65,6 +64,67 @@ export const updateInCachedData = ({ data, item }) => {
 	return data;
 };
 
-export const removeInCachedData = ({ data, item }) => {
-	return data.filter(({ id }) => id !== item.id);
+export const removeInCachedData = ({ data, item }) => data.filter(({ id }) => id !== item.id);
+
+/**
+ * configure the pagination when sending the request
+ * @param {object} requestData - the payload for request
+ * @param {boolean} shouldReset - for forcing to reset the cached pagination data
+ * @param {object} data - the needed data and methods
+ */
+export const executePaginatedRequest = (requestData, shouldReset = false, data) => {
+	const {
+		requestAction,
+		requestType,
+		errorMessage,
+		allData,
+		pageSize,
+		executeRequest,
+		setAllData,
+		setPageCount,
+		setCurrentPage,
+		setPageSize,
+		resetPagination,
+	} = data;
+	if (shouldReset) {
+		resetPagination();
+	}
+
+	let currentPageSize = pageSize;
+	const { page, pageSize: newPageSize } = requestData;
+
+	if (newPageSize !== pageSize && newPageSize) {
+		currentPageSize = newPageSize;
+	}
+
+	setCurrentPage(page);
+
+	if (
+		!indexHasCachedData({
+			existingData: allData,
+			index: (page - 1) * currentPageSize,
+		}) ||
+		shouldReset
+	) {
+		executeRequest(
+			{ ...requestData, pageSize: currentPageSize },
+			{
+				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
+					setAllData((currentAllData) => {
+						return generateNewCachedData({
+							existingData: currentAllData,
+							toBeAddedData,
+							index: (page - 1) * currentPageSize,
+						});
+					});
+
+					setPageCount(count);
+					setPageSize(currentPageSize);
+				},
+				onError: () => message.error(errorMessage),
+			},
+			requestAction,
+			requestType,
+		);
+	}
 };

@@ -11,10 +11,12 @@ export const useAuth = () => {
 	const user = useSelector(selectors.selectUser());
 	const accessToken = useSelector(selectors.selectAccessToken());
 	const refreshToken = useSelector(selectors.selectRefreshToken());
+
 	const login = useActionDispatch(actions.login);
 	const loginOnline = useActionDispatch(actions.loginOnline);
 	const logout = useActionDispatch(actions.logout);
 	const retrieveUser = useActionDispatch(actions.retrieveUser);
+	const saveAction = useActionDispatch(actions.save);
 
 	const loginRequest = (data) => {
 		login({ ...data, callback });
@@ -32,6 +34,10 @@ export const useAuth = () => {
 		retrieveUser({ id, loginCount });
 	};
 
+	const updateLocalIpAddress = (newLocalIpAddress) => {
+		saveAction({ localIpAddress: newLocalIpAddress });
+	};
+
 	const callback = (status: number, errors: string[] = []) => {
 		setStatus(status);
 		setErrors(errors);
@@ -45,6 +51,7 @@ export const useAuth = () => {
 		loginOnline: loginOnlineRequest,
 		logout: logoutRequest,
 		retrieveUser: retrieveUserRequest,
+		updateLocalIpAddress,
 		status,
 		errors,
 	};

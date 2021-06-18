@@ -36,7 +36,7 @@ function* getById({ payload }: any) {
 	try {
 		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data.results }));
+		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data }));
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

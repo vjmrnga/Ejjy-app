@@ -194,12 +194,29 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		getRequisitionSlipsById({ id, callback: modifiedExtraCallback(callback, extraCallback) });
 	};
 
-	const getRequisitionSlipsByIdAndBranchRequest = (id, branchId, extraCallback = null) => {
+	const getRequisitionSlipsByIdAndBranchRequest = (
+		id,
+		branchId,
+		isForOutOfStock = false,
+		extraCallback = null,
+	) => {
 		setRecentRequest(types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH);
+
+		if (isForOutOfStock) {
+			getRequisitionSlipsByIdAndBranch({
+				id,
+				branchId,
+				isForOutOfStock,
+				callback: modifiedExtraCallback(callback, extraCallback),
+			});
+			return;
+		}
+
 		if (!requisitionSlipsByBranch?.[branchId]) {
 			getRequisitionSlipsByIdAndBranch({
 				id,
 				branchId,
+				isForOutOfStock,
 				callback: modifiedExtraCallback(callback, extraCallback),
 			});
 		} else {

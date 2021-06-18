@@ -16,17 +16,38 @@ interface IEditBranchProduct {
 	allowable_spoilage?: number;
 }
 
+interface IEditBranchProductBalance {
+	product_id: number;
+	added_balance: number;
+	destination_branch_id: number;
+}
+
+interface IEditBranchProductPriceCost {
+	product_id: number;
+	cost_per_piece: string;
+	cost_per_bulk: string;
+	price_per_piece: string;
+	price_per_bulk: string;
+}
+
 interface IGetBranchProducts extends IGetRequest {
 	search?: string;
+	product_ids?: number[];
 }
 
 export const service = {
 	list: async (params: IGetBranchProducts, baseURL) =>
-		axios.get('/branches-products/extended/', { baseURL, params }),
+		axios.get('/branches-products/', { baseURL, params }),
 
 	listByBranch: async (params: IGetBranchProducts, baseURL) =>
 		axios.get('branches-products/with-branch-manager-details/', { baseURL, params }),
 
 	edit: async (body: IEditBranchProduct, baseURL) =>
 		axios.patch(`/branches-products/${body.id}/`, body, { baseURL }),
+
+	editBalance: async (body: IEditBranchProductBalance, baseURL) =>
+		axios.patch(`/branches-products/update-balance-and-retrieve/`, body, { baseURL }),
+
+	editPriceCost: async (body: IEditBranchProductPriceCost, baseURL) =>
+		axios.patch(`/branches-products/update-price-and-cost/`, body, { baseURL }),
 };

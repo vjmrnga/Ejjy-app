@@ -16,7 +16,7 @@ import {
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
-import { useBranches } from '../hooks/useBranches';
+import { useBranches } from '../../../hooks/useBranches';
 import './style.scss';
 
 const columns = [
@@ -39,7 +39,7 @@ const pendingRequisitionSlipActions = [
 	requisitionSlipActions.F_DS1_CREATED,
 ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 10;
 
 const RequisitionSlips = () => {
 	// STATES
@@ -49,15 +49,10 @@ const RequisitionSlips = () => {
 
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
-	const {
-		requisitionSlips,
-		pageCount,
-		currentPage,
-		getRequisitionSlipsExtended,
-		status,
-	} = useRequisitionSlips({
-		pageSize: PAGE_SIZE,
-	});
+	const { requisitionSlips, pageCount, currentPage, getRequisitionSlipsExtended, status } =
+		useRequisitionSlips({
+			pageSize: PAGE_SIZE,
+		});
 
 	// METHODS
 	// Effect: Format requisitionSlips to be rendered in Table
@@ -72,10 +67,10 @@ const RequisitionSlips = () => {
 				_datetime_created: dateTime,
 				_type: type,
 				_status: action,
-				_branch: requesting_user.branch.id,
+				_branch: requesting_user?.branch?.id,
 				id: <Link to={`/requisition-slips/${id}`}>{id}</Link>,
 				datetime_created: dateTime,
-				requestor: requesting_user.branch.name,
+				requestor: requesting_user?.branch?.name,
 				type: upperFirst(type),
 				action: getRequisitionSlipStatus(action, userTypes.OFFICE_MANAGER),
 				progress: progress ? `${progress.current} / ${progress.total}` : EMPTY_CELL,

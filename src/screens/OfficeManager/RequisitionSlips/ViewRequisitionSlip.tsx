@@ -66,10 +66,7 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 					requisitionSlipStatus={requisitionSlipStatus}
 				/>
 
-				<OrderSlips
-					fetchRequisitionSlip={fetchRequisitionSlip}
-					requisitionSlipId={requisitionSlipId}
-				/>
+				<OrderSlips fetchRequisitionSlip={fetchRequisitionSlip} requisitionSlip={requisitionSlip} />
 			</section>
 		</Container>
 	);

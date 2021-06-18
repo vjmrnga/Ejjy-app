@@ -12,6 +12,7 @@ const FormInputLabel = ({
 	type,
 	max,
 	min,
+	step,
 	placeholder,
 	disabled,
 }: Props) => (
@@ -22,6 +23,7 @@ const FormInputLabel = ({
 			id={id}
 			max={max}
 			min={min}
+			step={step}
 			placeholder={placeholder}
 			disabled={disabled}
 		/>

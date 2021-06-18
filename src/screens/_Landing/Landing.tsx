@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request, userTypes } from '../../global/types';
 import { useAuth } from '../../hooks/useAuth';
-import { useBranches } from '../OfficeManager/hooks/useBranches';
+import { useBranches } from '../../hooks/useBranches';
 import './style.scss';
 
 const Landing = () => {
@@ -77,7 +77,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 
@@ -94,7 +94,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 
@@ -111,7 +111,7 @@ const Landing = () => {
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
-			logout(user?.id);
+			// logout(user?.id);
 		}
 	};
 

@@ -1,33 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Col, message, Row, Spin } from 'antd';
+import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ControlledInput, Label } from '../../../../components/elements';
-import { useLocalBranchSettings } from '../../hooks/useLocalBranchSettings';
 import { request } from '../../../../global/types';
-import { isEmpty } from 'lodash';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useBranches } from '../../../../hooks/useBranches';
 
-export const BackupServerUrlForm = () => {
+interface Props {
+	branch: any;
+	loading: boolean;
+}
+
+export const BackupServerUrlForm = ({ branch, loading }: Props) => {
 	// STATES
 	const [backupServerUrl, setBackupServerUrl] = useState('');
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
-	const {
-		localBranchSettings,
-		getLocalBranchSettings,
-		editLocalBranchSettings,
-		status,
-	} = useLocalBranchSettings();
+	const { editBranch, status } = useBranches();
 
 	// EFFECTS
 	useEffect(() => {
-		getLocalBranchSettings(user?.branch?.id);
-	}, []);
-
-	useEffect(() => {
-		setBackupServerUrl(localBranchSettings?.backup_server_url || '');
-	}, [localBranchSettings]);
+		setBackupServerUrl(branch?.backup_server_url || '');
+	}, [branch]);
 
 	const onSaveSettings = () => {
 		if (isEmpty(backupServerUrl)) {
@@ -35,16 +29,15 @@ export const BackupServerUrlForm = () => {
 			return;
 		}
 
-		editLocalBranchSettings({
-			...localBranchSettings,
+		editBranch({
+			...branch,
 			backup_server_url: backupServerUrl,
-			branchId: user?.branch?.id,
 		});
 	};
 
 	return (
 		<Box className="BackupServerUrl">
-			<Spin size="large" spinning={status === request.REQUESTING}>
+			<Spin size="large" spinning={loading || status === request.REQUESTING}>
 				<Row gutter={[15, 0]}>
 					<Col xs={24} sm={20} md={20}>
 						<Label label="Backup Server URL" spacing />

@@ -12,8 +12,6 @@ import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { calculateTableHeight, getBranchProductStatus } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
 
-const PAGE_SIZE = 5;
-
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
@@ -33,13 +31,12 @@ const Products = () => {
 	const {
 		branchProducts,
 		pageCount,
+		pageSize,
 		currentPage,
 		getBranchProductsByBranch,
 		status,
 		recentRequest,
-	} = useBranchProducts({
-		pageSize: PAGE_SIZE,
-	});
+	} = useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
@@ -96,8 +93,11 @@ const Products = () => {
 		setViewBranchProductModalVisible(true);
 	};
 
-	const onPageChange = (page) => {
-		getBranchProductsByBranch({ branchId: user?.branch?.id, page });
+	const onPageChange = (page, newPageSize) => {
+		getBranchProductsByBranch(
+			{ branchId: user?.branch?.id, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	// const onSearch = (keyword) => {
@@ -134,7 +134,7 @@ const Products = () => {
 						className="table-pagination"
 						current={currentPage}
 						total={pageCount}
-						pageSize={PAGE_SIZE}
+						pageSize={pageSize}
 						onChange={onPageChange}
 						disabled={!tableData}
 					/>

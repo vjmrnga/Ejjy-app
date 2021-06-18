@@ -10,6 +10,7 @@ import { branchManagerReducers } from './BranchManager';
 import { branchPersonnelReducers } from './BranchPersonnel';
 import networkReducer, { key as NETWORK_KEY } from './network';
 import { officeManagerReducers } from './OfficeManager';
+import orderSlipCreationReducer, { key as ORDER_SLIP_CREATION_KEY } from './order-slip-creation';
 import requestReducer, { REQUEST_KEY } from './request';
 import requisitionSlipsReducer, { key as REQUISITION_SLIP_KEY } from './requisition-slips';
 import uiReducer, { key as UI_KEY } from './ui';
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
 	[USERS_KEY]: usersReducer,
 	[UI_KEY]: uiReducer,
 	[NETWORK_KEY]: networkReducer,
+	[ORDER_SLIP_CREATION_KEY]: orderSlipCreationReducer,
 	...adminReducers,
 	...officeManagerReducers,
 	...branchManagerReducers,
@@ -37,5 +39,6 @@ export default (state, action) => {
 		storage.removeItem(APP_KEY);
 		state = undefined;
 	}
+	
 	return appReducer(state, action);
 };

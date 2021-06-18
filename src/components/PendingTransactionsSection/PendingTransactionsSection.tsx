@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
-import { usePendingTransactions } from '../../screens/OfficeManager/hooks/usePendingTransactions';
+import { usePendingTransactions } from '../../hooks/usePendingTransactions';
 import { calculateTableHeight, formatDateTime, showErrorMessages } from '../../utils/function';
 import Box from '../elements/Box/Box';
 import { Table } from '../Table/Table';
