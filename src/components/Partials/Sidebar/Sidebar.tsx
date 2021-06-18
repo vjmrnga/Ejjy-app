@@ -28,18 +28,10 @@ const SidebarItems = [
 		],
 	},
 	{
-		key: 'failed-transfers',
-		name: 'Failed Transfers',
-		activeIcon: require(`../../../assets/images/icon-failed-transfers-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-failed-transfers.svg`),
-		link: '/failed-transfers',
-		userTypes: [userTypes.ADMIN],
-	},
-	{
 		key: 'pending-transactions',
 		name: 'Pending Transactions',
-		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
+		activeIcon: require(`../../../assets/images/icon-failed-transfers-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-failed-transfers.svg`),
 		link: '/pending-transactions',
 		userTypes: [userTypes.ADMIN],
 	},
@@ -118,7 +110,12 @@ const SidebarItems = [
 		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
 		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
 		link: '/notifications',
-		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL],
+		userTypes: [
+			userTypes.ADMIN,
+			userTypes.OFFICE_MANAGER,
+			userTypes.BRANCH_MANAGER,
+			userTypes.BRANCH_PERSONNEL,
+		],
 	},
 ];
 

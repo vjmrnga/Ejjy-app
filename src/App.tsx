@@ -8,9 +8,7 @@ import {
 	AssignUserScreens,
 	BranchesScreens,
 	CheckingScreens,
-	DashboardScreens,
-	FailedTransfersScreens,
-	FulfillPreparationSlipScreens,
+	DashboardScreens, FulfillPreparationSlipScreens,
 	LogsScreens,
 	NotificationsScreens,
 	OrderSlipsScreens,
@@ -52,7 +50,6 @@ const App = () => (
 			<CommonRoute path="/preparation-slips/:id" exact component={FulfillPreparationSlipScreens} />
 			<CommonRoute path="/checking" exact component={CheckingScreens} />
 			<CommonRoute path="/logs" exact component={LogsScreens} />
-			<CommonRoute path="/failed-transfers" exact component={FailedTransfersScreens} />
 
 			<Route path="/404" exact component={Error404} />
 			<Route path="" render={() => <Redirect to="/404" />} />

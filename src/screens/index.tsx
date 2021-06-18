@@ -9,7 +9,7 @@ export { default as AdminPendingTransactions } from './Admin/PendingTransactions
 export { default as AdminBranches } from './Shared/Branches/Branches';
 export { default as AdminViewBranch } from './Shared/Branches/ViewBranch';
 export { default as AdminProducts } from './Shared/Products/Products';
-export { default as AdminFailedTransfers } from './Admin/FailedTransfers/FailedTransfers';
+export { default as AdminNotifications } from './Admin/Notifications/Notifications';
 export { default as AdminLogs } from './Admin/Logs/Logs';
 
 // Branch Manager
