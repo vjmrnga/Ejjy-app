@@ -1,16 +1,17 @@
-import { call, delay, put, select, takeLatest } from 'redux-saga/effects';
-import { actions, selectors as authSelectors, types } from '../ducks/auth';
+import { call, delay, put, takeLatest } from 'redux-saga/effects';
+import { actions, types } from '../ducks/auth';
 import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global/constants';
 import { request, userTypes } from '../global/types';
 import { service } from '../services/auth';
 import { ONLINE_API_URL } from '../services/index';
+import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* login({ payload }: any) {
 	const { username, password, callback } = payload;
 	callback(request.REQUESTING);
-
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	
+	const localURL = getLocalIpAddress();
 
 	try {
 		const loginBaseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
@@ -49,7 +50,7 @@ function* login({ payload }: any) {
 function* retrieve({ payload }: any) {
 	const { id, loginCount } = payload;
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	try {
 		while (true) {
@@ -76,7 +77,7 @@ function* retrieve({ payload }: any) {
 function* logout({ payload }: any) {
 	const { id } = payload;
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	try {
 		if (id) {

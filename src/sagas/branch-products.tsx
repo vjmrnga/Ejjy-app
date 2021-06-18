@@ -3,14 +3,14 @@ import { types } from '../ducks/branch-products';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
 import { service } from '../services/branch-products';
-import { selectors as authSelectors } from '../ducks/auth';
+import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* list({ payload }: any) {
 	const { page, pageSize, branchId, search, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -66,7 +66,7 @@ function* listByBranch({ payload }: any) {
 	const { page, pageSize, branchId, search, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

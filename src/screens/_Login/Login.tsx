@@ -4,7 +4,7 @@ import { Box, Button } from '../../components/elements';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
 import { useAuth } from '../../hooks/useAuth';
-import { getKeyDownCombination } from '../../utils/function';
+import { getKeyDownCombination, getLocalIpAddress } from '../../utils/function';
 import { IFormValues, LoginForm } from './components/LoginForm';
 import { SettingUrlModal } from './components/SettingUrlModal';
 import './style.scss';
@@ -16,7 +16,6 @@ const Login = () => {
 
 	// CUSTOM HOOKS
 	const { login, status, errors } = useAuth();
-	const { localIpAddress } = useAuth();
 
 	// METHODS
 	useEffect(() => {
@@ -29,9 +28,9 @@ const Login = () => {
 
 	useEffect(() => {
 		if (!IS_APP_LIVE) {
-			setSetupButtonsVisible(!localIpAddress);
+			setSetupButtonsVisible(!getLocalIpAddress());
 		}
-	}, [localIpAddress]);
+	}, []);
 
 	const onSubmit = (data: IFormValues) => {
 		login(data);

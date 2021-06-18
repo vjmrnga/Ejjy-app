@@ -33,6 +33,10 @@ const Branches = () => {
 		intervalRef.current = setInterval(() => {
 			fetchFailedTransferNotifications();
 		}, 5000);
+
+		return () => {
+			clearInterval(intervalRef.current);
+		}
 	}, [branches]);
 
 	// Effect: Format branches to be rendered in Table

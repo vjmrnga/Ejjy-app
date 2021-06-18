@@ -1,17 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { selectors as authSelectors } from '../../ducks/auth';
 import { actions, types } from '../../ducks/OfficeManager/branch-machines';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { MAX_PAGE_SIZE } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/branch-machines';
+import { getLocalIpAddress } from '../../utils/function';
 
 /* WORKERS */
 function* list({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -65,7 +65,7 @@ function* create({ payload }: any) {
 	const { callback, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -88,7 +88,7 @@ function* edit({ payload }: any) {
 	const { callback, id, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

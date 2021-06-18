@@ -1,17 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { selectors as authSelectors } from '../ducks/auth';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/xread-reports';
 import { IS_APP_LIVE } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/xread-reports';
+import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* create({ payload }: any) {
 	const { branchMachineId, userId, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

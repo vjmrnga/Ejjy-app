@@ -17,7 +17,7 @@ export const SettingUrlForm = ({ localIpAddress, onSubmit, onClose }: Props) => 
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				localIpAddress: localIpAddress,
+				localIpAddress: localIpAddress || '',
 			},
 			Schema: Yup.object().shape({
 				localIpAddress: Yup.string().required().label('Local API URL'),

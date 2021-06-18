@@ -1,5 +1,4 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { selectors as authSelectors } from '../ducks/auth';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/order-slip-creation';
 import { MAX_PAGE_SIZE } from '../global/constants';
@@ -7,13 +6,14 @@ import { request } from '../global/types';
 import { ONLINE_API_URL } from '../services';
 import { service as branchProductsService } from '../services/branch-products';
 import { service as usersService } from '../services/OfficeManager/users';
+import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* listBranchProducts({ payload }: any) {
 	const { branchId, search, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

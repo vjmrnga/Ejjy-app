@@ -1,17 +1,17 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
-import { selectors as authSelectors } from '../../ducks/auth';
 import { actions, types } from '../../ducks/BranchManager/local-branch-settings';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/local-branch-settings';
+import { getLocalIpAddress } from '../../utils/function';
 
 /* WORKERS */
 function* get({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -38,7 +38,7 @@ function* edit({ payload }: any) {
 	const { callback, branchId, id, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

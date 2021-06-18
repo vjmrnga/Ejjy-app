@@ -1,17 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { selectors as authSelectors } from '../ducks/auth';
 import { actions, types } from '../ducks/branches-days';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { IS_APP_LIVE, MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/branches-days';
+import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* list({ payload }: any) {
 	const { page, pageSize, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -64,7 +64,7 @@ function* getBranchDay({ payload }: any) {
 	const { branch_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branch_id));
@@ -116,7 +116,7 @@ function* create({ payload }: any) {
 	const { callback, branch_id, started_by_id } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branch_id));
@@ -143,7 +143,7 @@ function* edit({ payload }: any) {
 	const { callback, id, ended_by_id, branch_id } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = yield select(authSelectors.selectLocalIpAddress());
+	const localURL = getLocalIpAddress();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branch_id));

@@ -1,8 +1,9 @@
 import { message, Modal } from 'antd';
 import React from 'react';
-import { useAuth } from '../../../hooks/useAuth';
-import { SettingUrlForm } from './SettingUrlForm';
+import { LOCAL_IP_ADDRESS_KEY } from '../../../global/constants';
+import { getLocalIpAddress } from '../../../utils/function';
 import '../style.scss';
+import { SettingUrlForm } from './SettingUrlForm';
 
 interface Props {
 	visible: boolean;
@@ -10,12 +11,8 @@ interface Props {
 }
 
 export const SettingUrlModal = ({ visible, onClose }: Props) => {
-	// CUSTOM HOOKS
-	const { localIpAddress, updateLocalIpAddress } = useAuth();
-
-	// METHODS
 	const onSubmit = (data) => {
-		updateLocalIpAddress(data.localIpAddress);
+		localStorage.setItem(LOCAL_IP_ADDRESS_KEY, data.localIpAddress);
 		message.success('Successfully updated the API URL.');
 		onClose();
 	};
@@ -30,7 +27,7 @@ export const SettingUrlModal = ({ visible, onClose }: Props) => {
 			centered
 			closable
 		>
-			<SettingUrlForm localIpAddress={localIpAddress} onSubmit={onSubmit} onClose={onClose} />
+			<SettingUrlForm localIpAddress={getLocalIpAddress()} onSubmit={onSubmit} onClose={onClose} />
 		</Modal>
 	);
 };

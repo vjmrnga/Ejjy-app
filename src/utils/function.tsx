@@ -17,7 +17,7 @@ import {
 	ROW_HEIGHT,
 } from '../components';
 import { BadgePill, UncontrolledInput } from '../components/elements';
-import { EMPTY_CELL } from '../global/constants';
+import { EMPTY_CELL, LOCAL_IP_ADDRESS_KEY } from '../global/constants';
 import {
 	branchProductStatus,
 	deliveryReceiptStatus,
@@ -32,6 +32,8 @@ import {
 	unitOfMeasurementTypes,
 	userTypes,
 } from '../global/types';
+
+export const getLocalIpAddress = () => localStorage.getItem(LOCAL_IP_ADDRESS_KEY);
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
