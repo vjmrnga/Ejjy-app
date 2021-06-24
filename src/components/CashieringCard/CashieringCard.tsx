@@ -9,13 +9,13 @@ import './style.scss';
 
 interface Props {
 	branchDay: any;
-	onClick: any;
+	onConfirm: any;
 	loading: boolean;
 	classNames?: string;
 	disabled: boolean;
 }
 
-export const CashieringCard = ({ branchDay, onClick, loading, disabled, classNames }: Props) => {
+export const CashieringCard = ({ branchDay, onConfirm, loading, disabled, classNames }: Props) => {
 	const getTitle = useCallback(() => {
 		if (branchDay?.datetime_ended) {
 			return 'Day has been ended.';
@@ -57,7 +57,7 @@ export const CashieringCard = ({ branchDay, onClick, loading, disabled, classNam
 			},
 		}).then((value) => {
 			if (value) {
-				onClick();
+				onConfirm();
 			}
 		});
 	};

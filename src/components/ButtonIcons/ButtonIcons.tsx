@@ -4,12 +4,18 @@ import { ButtonIcon } from '../elements';
 interface Props {
 	tooltip: string;
 	onClick: any;
+	imgSrc?: any;
 	classNames?: any;
 }
 
-export const AddButtonIcon = ({ tooltip, onClick, classNames }: Props) => (
+export const AddButtonIcon = ({
+	tooltip,
+	onClick,
+	classNames,
+	imgSrc = require('../../assets/images/icon-add.svg'),
+}: Props) => (
 	<ButtonIcon
-		icon={<img src={require('../../assets/images/icon-add.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}

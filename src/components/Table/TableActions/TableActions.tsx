@@ -14,6 +14,7 @@ interface Props {
 	onViewName?: string;
 	onAdd?: any;
 	onAddName?: string;
+	onAddIcon?: any;
 	onAssign?: any;
 	onEdit?: any;
 	onRemove?: any;
@@ -25,6 +26,7 @@ export const TableActions = ({
 	onViewName,
 	onAdd,
 	onAddName,
+	onAddIcon,
 	onAssign,
 	onEdit,
 	onRemove,
@@ -33,7 +35,7 @@ export const TableActions = ({
 		{onExecutePendingTransaction && (
 			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
 		)}
-		{onAdd && <AddButtonIcon onClick={onAdd} tooltip={onAddName || 'Add'} />}
+		{onAdd && <AddButtonIcon onClick={onAdd} tooltip={onAddName || 'Add'} imgSrc={onAddIcon} />}
 		{onView && <ViewButtonIcon onClick={onView} tooltip={onViewName || 'View'} />}
 		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
 		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}

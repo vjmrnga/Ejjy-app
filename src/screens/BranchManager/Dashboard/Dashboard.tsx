@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 import { Container } from '../../../components';
 import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
 import { selectors as authSelectors } from '../../../ducks/auth';
+import { IS_APP_LIVE } from '../../../global/constants';
 import { request } from '../../../global/types';
-import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { useBranches } from '../../../hooks/useBranches';
+import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { BackupServerUrlForm } from './components/BackupServerUrlForm';
 import { LocalServerUrlForm } from './components/LocalServerUrlForm';
 import { MachineReportTable } from './components/MachineReportTable';
@@ -40,11 +41,13 @@ const Dashboard = () => {
 	}, [branchDayErrors, branchDayStatus]);
 
 	const onStartDay = () => {
-		createBranchDay(user?.branch?.id, user.id);
+		const onlineStartedById = IS_APP_LIVE ? user.id : null;
+		createBranchDay(user?.branch?.id, user.id, onlineStartedById);
 	};
 
 	const onEndDay = () => {
-		editBranchDay(user?.branch?.id, branchDay.id, user.id);
+		const onlineStartedById = IS_APP_LIVE ? user.id : null;
+		editBranchDay(user?.branch?.id, branchDay.id, user.id, onlineStartedById);
 	};
 
 	return (
@@ -56,7 +59,7 @@ const Dashboard = () => {
 
 				<CashieringCard
 					branchDay={branchDay}
-					onClick={branchDay ? onEndDay : onStartDay}
+					onConfirm={branchDay ? onEndDay : onStartDay}
 					loading={branchDayStatus === request.REQUESTING}
 				/>
 

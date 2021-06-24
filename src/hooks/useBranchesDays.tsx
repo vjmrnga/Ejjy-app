@@ -129,21 +129,23 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		});
 	};
 
-	const createBranchDayRequest = (branchId, startedById) => {
+	const createBranchDayRequest = (branchId, startedById, onlineStartedById) => {
 		setRecentRequest(types.CREATE_BRANCH_DAY);
 		createBranchDay({
 			branch_id: branchId,
 			started_by_id: startedById,
+			online_started_by_id: onlineStartedById,
 			callback,
 		});
 	};
 
-	const editBranchDayRequest = (branchId, branchDayId, endedById) => {
+	const editBranchDayRequest = (branchId, branchDayId, endedById, onlineStartedById) => {
 		setRecentRequest(types.EDIT_BRANCH_DAY);
 		editBranchDay({
 			id: branchDayId,
 			branch_id: branchId,
 			ended_by_id: endedById,
+			online_started_by_id: onlineStartedById,
 			callback,
 		});
 	};

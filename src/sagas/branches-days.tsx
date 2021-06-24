@@ -113,7 +113,7 @@ function* getBranchDay({ payload }: any) {
 }
 
 function* create({ payload }: any) {
-	const { callback, branch_id, started_by_id } = payload;
+	const { callback, branch_id, started_by_id, online_started_by_id } = payload;
 	callback({ status: request.REQUESTING });
 
 	const localURL = getLocalIpAddress();
@@ -128,7 +128,7 @@ function* create({ payload }: any) {
 	try {
 		const response = yield call(
 			service.create,
-			{ started_by_id },
+			{ started_by_id, online_started_by_id },
 			IS_APP_LIVE ? baseURL : localURL,
 		);
 
@@ -140,7 +140,7 @@ function* create({ payload }: any) {
 }
 
 function* edit({ payload }: any) {
-	const { callback, id, ended_by_id, branch_id } = payload;
+	const { callback, id, ended_by_id, branch_id, online_started_by_id } = payload;
 	callback({ status: request.REQUESTING });
 
 	const localURL = getLocalIpAddress();
@@ -156,7 +156,7 @@ function* edit({ payload }: any) {
 		const response = yield call(
 			service.edit,
 			id,
-			{ ended_by_id },
+			{ ended_by_id, online_started_by_id },
 			IS_APP_LIVE ? baseURL : localURL,
 		);
 

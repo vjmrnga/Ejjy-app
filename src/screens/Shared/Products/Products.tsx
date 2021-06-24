@@ -74,6 +74,7 @@ const Products = () => {
 					actions: hasPendingTransactions ? null : (
 						<TableActions
 							onAddName="Edit Price and Cost"
+							onAddIcon={require('../../../assets/images/icon-money.svg')}
 							onAdd={() => onEditPriceCost(product)}
 							onEdit={() => onEdit(product)}
 							onRemove={() => onRemoveProduct(product)}

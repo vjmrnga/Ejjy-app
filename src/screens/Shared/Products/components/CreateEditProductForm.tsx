@@ -354,28 +354,52 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="cost_per_piece" label="Cost (Piece)" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="cost_per_piece"
+								label="Cost (Piece)"
+								step=".001"
+							/>
 							{errors.cost_per_piece && touched.cost_per_piece ? (
 								<FieldError error={errors.cost_per_piece} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="cost_per_bulk" label="Cost (Bulk)" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="cost_per_bulk"
+								label="Cost (Bulk)"
+								step=".001"
+							/>
 							{errors.cost_per_bulk && touched.cost_per_bulk ? (
 								<FieldError error={errors.cost_per_bulk} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="price_per_piece" label="Price (Piece)" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="price_per_piece"
+								label="Price (Piece)"
+								step=".001"
+							/>
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="price_per_bulk" label="Price (Bulk)" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="price_per_bulk"
+								label="Price (Bulk)"
+								step=".001"
+							/>
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />
 							) : null}

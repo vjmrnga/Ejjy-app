@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { TableNormal } from '../../../../../components';
 import { CashieringCard } from '../../../../../components/CashieringCard/CashieringCard';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
+import { IS_APP_LIVE } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
 import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
@@ -67,11 +68,13 @@ export const BranchBalanceItem = ({ isActive, branchId, dataSource, disabled }: 
 	}, [branchesDaysErrors, branchesDaysStatus]);
 
 	const onStartDay = () => {
-		createBranchDay(branchId, user.id);
+		const onlineStartedById = IS_APP_LIVE ? user.id : null;
+		createBranchDay(branchId, user.id, onlineStartedById);
 	};
 
 	const onEndDay = () => {
-		editBranchDay(branchId, branchDay.id, user.id);
+		const onlineStartedById = IS_APP_LIVE ? user.id : null;
+		editBranchDay(branchId, branchDay.id, user.id, onlineStartedById);
 	};
 
 	// const onSearch = (keyword) => {
@@ -102,7 +105,7 @@ export const BranchBalanceItem = ({ isActive, branchId, dataSource, disabled }: 
 			<CashieringCard
 				classNames="bordered cashiering-card-office"
 				branchDay={branchDay}
-				onClick={branchDay ? onEndDay : onStartDay}
+				onConfirm={branchDay ? onEndDay : onStartDay}
 				loading={branchesDaysStatus === request.REQUESTING}
 				disabled={disabled}
 			/>

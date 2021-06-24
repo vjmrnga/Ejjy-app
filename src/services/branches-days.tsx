@@ -3,10 +3,12 @@ import { IGetRequest } from './interfaces';
 
 interface ICreateBranchDay {
 	started_by_id: number;
+	online_started_by_id?: number;
 }
 
 interface IEditBranchDay {
 	ended_by_id: number;
+	online_started_by_id?: number;
 }
 
 export const service = {
