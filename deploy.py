@@ -16,6 +16,6 @@ if __name__ == '__main__':
 
   print('4. Deploying to Cloud Run...')
   os.chdir('deployment')
-  os.system('gcloud builds submit --tag gcr.io/code-chum/ejjy-app-production')
-  os.system('gcloud run deploy ejjy-app-production --platform managed --region asia-southeast1 --image gcr.io/code-chum/ejjy-app-production:latest')
+  os.system('gcloud builds submit --tag gcr.io/ejjy-311409/ejjy-app-production')
+  os.system('gcloud run deploy ejjy-app-production --platform managed --region asia-southeast1 --image gcr.io/ejjy-311409/ejjy-app-production:latest')
   print('DEPLOYMENT DONE\n')
