@@ -86,10 +86,6 @@ export const executePaginatedRequest = (requestData, shouldReset = false, data) 
 		setPageSize,
 		resetPagination,
 	} = data;
-	if (shouldReset) {
-		resetPagination();
-	}
-
 	let currentPageSize = pageSize;
 	const { page, pageSize: newPageSize } = requestData;
 
@@ -110,6 +106,10 @@ export const executePaginatedRequest = (requestData, shouldReset = false, data) 
 			{ ...requestData, pageSize: currentPageSize },
 			{
 				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
+					if (shouldReset) {
+						setAllData([]);
+					}
+
 					setAllData((currentAllData) => {
 						return generateNewCachedData({
 							existingData: currentAllData,

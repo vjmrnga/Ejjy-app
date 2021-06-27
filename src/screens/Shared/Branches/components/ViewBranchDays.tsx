@@ -12,8 +12,6 @@ interface Props {
 	branchId: any;
 }
 
-const PAGE_SIZE = 10;
-
 const columns = [{ name: 'User' }, { name: 'Date & Time' }];
 
 export const ViewBranchDays = ({ branchId }: Props) => {
@@ -24,15 +22,14 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 	const {
 		branchDays,
 		pageCount,
+		pageSize,
 		currentPage,
 
 		listBranchDays,
 		status,
 		errors,
 		warnings,
-	} = useBranchesDays({
-		pageSize: PAGE_SIZE,
-	});
+	} = useBranchesDays();
 
 	// METHODS
 	useEffect(() => {
@@ -91,8 +88,8 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 		);
 	};
 
-	const onPageChange = (page) => {
-		listBranchDays({ branchId, page });
+	const onPageChange = (page, newPageSize) => {
+		listBranchDays({ branchId, page, pageSize: newPageSize }, newPageSize !== pageSize);
 	};
 
 	return (
@@ -112,7 +109,7 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 				className="table-pagination"
 				current={currentPage}
 				total={pageCount}
-				pageSize={PAGE_SIZE}
+				pageSize={pageSize}
 				onChange={onPageChange}
 				disabled={!tableData}
 			/>

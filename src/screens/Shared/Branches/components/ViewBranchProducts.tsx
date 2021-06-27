@@ -32,7 +32,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		currentPage,
 		updateItemInPagination,
 
-		getBranchProductsByBranch,
+		getBranchProducts,
 		status,
 		errors,
 		warnings,
@@ -40,7 +40,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	// EFFECTS
 	useEffect(() => {
-		getBranchProductsByBranch({ branchId: branch?.id, page: 1 });
+		getBranchProducts({ branchId: branch?.id, page: 1 });
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
@@ -84,7 +84,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	};
 
 	const onPageChange = (page, newPageSize) => {
-		getBranchProductsByBranch(
+		getBranchProducts(
 			{ search: searchedKeyword, branchId: branch?.id, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
 		);
@@ -92,7 +92,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	const onSearch = (keyword) => {
 		keyword = keyword?.toLowerCase();
-		getBranchProductsByBranch({ search: keyword, branchId: branch?.id, page: 1 }, true);
+		getBranchProducts({ search: keyword, branchId: branch?.id, page: 1 }, true);
 
 		setSeachedKeyword(keyword);
 	};

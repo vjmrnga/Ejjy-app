@@ -62,8 +62,8 @@ function* list({ payload }: any) {
 	}
 }
 
-function* listByBranch({ payload }: any) {
-	const { page, pageSize, branchId, search, callback } = payload;
+function* get({ payload }: any) {
+	const { page, pageSize, branchId, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	const localURL = getLocalIpAddress();
@@ -78,7 +78,7 @@ function* listByBranch({ payload }: any) {
 	let data = {
 		page,
 		page_size: pageSize,
-		search,
+		product_ids: productIds,
 	};
 
 	let isFetchedFromBackupURL = false;
@@ -88,14 +88,14 @@ function* listByBranch({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.listByBranch, data, baseURL || localURL);
+			response = yield call(service.list, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
 			if (baseURL && baseBackupURL) {
 				try {
 					// Fetch branch url
-					response = yield call(service.listByBranch, data, baseBackupURL);
+					response = yield call(service.list, data, baseBackupURL);
 					isFetchedFromBackupURL = true;
 				} catch (e) {
 					throw e;
@@ -198,8 +198,8 @@ const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
 };
 
-const listByBranchWatcherSaga = function* listByBranchWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS_BY_BRANCH, listByBranch);
+const getWatcherSaga = function* getWatcherSaga() {
+	yield takeEvery(types.GET_BRANCH_PRODUCT, get);
 };
 
 const editWatcherSaga = function* editWatcherSaga() {
@@ -216,7 +216,7 @@ const editPriceCostWatcherSaga = function* editPriceCostWatcherSaga() {
 
 export default [
 	listWatcherSaga(),
-	listByBranchWatcherSaga(),
+	getWatcherSaga(),
 	editWatcherSaga(),
 	editBalanceWatcherSaga(),
 	editPriceCostWatcherSaga(),

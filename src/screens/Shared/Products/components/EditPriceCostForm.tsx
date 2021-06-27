@@ -2,9 +2,11 @@ import { Col, Divider, Row, Spin, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
+import { FetchButtonIcon } from '../../../../components';
 import { Button, FieldError, FieldSuccess, FormInputLabel } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
+import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
 
 const { Title } = Typography;
 
@@ -12,6 +14,7 @@ interface Props {
 	product: any;
 	branches: any;
 	branchResponse: any;
+	onFetchBranchProduct: any;
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
@@ -21,6 +24,7 @@ export const EditPriceCostForm = ({
 	product,
 	branches,
 	branchResponse,
+	onFetchBranchProduct,
 	onSubmit,
 	onClose,
 	loading,
@@ -33,19 +37,19 @@ export const EditPriceCostForm = ({
 
 	// METHODS
 	useEffect(() => {
-		branchResponse?.forEach((status, index) => {
-			formRef?.current?.setFieldError(`${index}.status`, status);
+		branchResponse?.forEach((response, index) => {
+			formRef?.current?.setFieldError(`${index}.response`, response);
 		});
 	}, [formRef, branchResponse, branches]);
 
 	const getFormDetails = useCallback(
 		() => ({
-			DefaultValues: branches.map(({ id }) => ({
-				branchId: id,
-				cost_per_piece: '',
-				cost_per_bulk: '',
-				price_per_piece: '',
-				price_per_bulk: '',
+			DefaultValues: branches.map((branch) => ({
+				branchId: branch.id,
+				cost_per_piece: branch?.cost_per_piece || '',
+				cost_per_bulk: branch?.cost_per_bulk || '',
+				price_per_piece: branch?.price_per_piece || '',
+				price_per_bulk: branch?.price_per_bulk || '',
 				loading: request.NONE,
 			})),
 			Schema: Yup.array()
@@ -83,17 +87,41 @@ export const EditPriceCostForm = ({
 						const touched: any = formTouched[index];
 
 						return (
-							<Spin spinning={branchResponse?.[index] === request.REQUESTING}>
+							<Spin
+								tip={branchResponse?.[index]?.message}
+								spinning={[
+									branchResponse?.[index]?.updateStatus,
+									branchResponse?.[index]?.fetchStatus,
+								].includes(request.REQUESTING)}
+							>
 								<Row key={id} gutter={[15, 15]}>
 									<Col span={24}>
-										<Title level={4}>{name}</Title>
+										<div className="header">
+											<Title className="branch-name" level={4}>
+												{name}
+											</Title>
+											<FetchButtonIcon
+												type="button"
+												tooltip="Fetch Product Price and Cost"
+												onClick={() => {
+													onFetchBranchProduct(id, index);
+												}}
+											/>
+										</div>
 
-										{errors?.status === request.ERROR && (
+										{errors?.response?.updateStatus === request.ERROR && (
 											<FieldError error="An error occurred while updating branch product." />
 										)}
-										{errors?.status === request.SUCCESS && (
+										{errors?.response?.updateStatus === request.SUCCESS && (
 											<FieldSuccess message="Successfully updated branch product." />
 										)}
+										{errors?.response?.fetchStatus === request.ERROR && (
+											<FieldError error="An error occurred while fetching branch product." />
+										)}
+
+										{errors?.response?.warnings?.map((warnings) => (
+											<FieldWarning error={warnings} />
+										))}
 									</Col>
 									<Col sm={12} xs={24}>
 										<FormInputLabel

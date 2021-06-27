@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Table, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { types } from '../../../ducks/branch-products';
 import { EMPTY_CELL } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
@@ -28,65 +27,51 @@ const Products = () => {
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProductsByBranch,
-		status,
-		recentRequest,
-	} = useBranchProducts();
+	const { branchProducts, pageCount, pageSize, currentPage, getBranchProducts, status } =
+		useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
-		getBranchProductsByBranch({ branchId: user?.branch?.id, page: 1 });
+		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH) {
-			const formattedBranchProducts = branchProducts.map((branchProduct) => {
-				const {
-					product: { barcode, textcode, name },
-					requisition_slip,
-					product_status,
-				} = branchProduct;
+		const formattedBranchProducts = branchProducts.map((branchProduct) => {
+			const {
+				product: { barcode, textcode, name },
+				requisition_slip,
+				product_status,
+			} = branchProduct;
 
-				const product = {
-					...branchProduct?.product,
-					max_balance: branchProduct?.max_balance,
-					reorder_point: branchProduct?.reorder_point,
-					price_per_piece: branchProduct?.price_per_piece,
-					price_per_bulk: branchProduct?.price_per_bulk,
-					allowable_spoilage: branchProduct?.allowable_spoilage,
-					is_daily_checked: branchProduct?.is_daily_checked,
-					is_vat_exempted: branchProduct?.is_vat_exempted,
-				};
+			const product = {
+				...branchProduct?.product,
+				max_balance: branchProduct?.max_balance,
+				reorder_point: branchProduct?.reorder_point,
+				price_per_piece: branchProduct?.price_per_piece,
+				price_per_bulk: branchProduct?.price_per_bulk,
+				allowable_spoilage: branchProduct?.allowable_spoilage,
+				is_daily_checked: branchProduct?.is_daily_checked,
+				is_vat_exempted: branchProduct?.is_vat_exempted,
+			};
 
-				return {
-					_textcode: textcode,
-					_barcode: barcode,
-					barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(product)} />,
-					name,
-					status: getBranchProductStatus(product_status),
-					requisitionSlip: requisition_slip ? (
-						<Link to={`/requisition-slips/${requisition_slip?.id}`}>{requisition_slip?.id}</Link>
-					) : (
-						EMPTY_CELL
-					),
-				};
-			});
+			return {
+				_textcode: textcode,
+				_barcode: barcode,
+				barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(product)} />,
+				name,
+				status: getBranchProductStatus(product_status),
+				requisitionSlip: requisition_slip ? (
+					<Link to={`/requisition-slips/${requisition_slip?.id}`}>{requisition_slip?.id}</Link>
+				) : (
+					EMPTY_CELL
+				),
+			};
+		});
 
-			// setData(formattedBranchProducts);
-			setTableData(formattedBranchProducts);
-		}
-	}, [branchProducts, status, recentRequest]);
-
-	const getFetchLoading = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.GET_BRANCH_PRODUCTS_BY_BRANCH,
-		[status, recentRequest],
-	);
+		// setData(formattedBranchProducts);
+		setTableData(formattedBranchProducts);
+	}, [branchProducts]);
 
 	const onView = (branchProduct) => {
 		setSelectedBranchProduct(branchProduct);
@@ -94,7 +79,7 @@ const Products = () => {
 	};
 
 	const onPageChange = (page, newPageSize) => {
-		getBranchProductsByBranch(
+		getBranchProducts(
 			{ branchId: user?.branch?.id, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
 		);
@@ -119,7 +104,11 @@ const Products = () => {
 	// };
 
 	return (
-		<Container title="Products" loadingText="Fetching products..." loading={getFetchLoading()}>
+		<Container
+			title="Products"
+			loadingText="Fetching products..."
+			loading={status === request.REQUESTING}
+		>
 			<section>
 				<Box>
 					<TableHeader title="Products" buttonName="Create Branch Product" />

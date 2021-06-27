@@ -15,9 +15,14 @@ const Landing = () => {
 	const { getBranches, status: getBranchesStatus } = useBranches();
 
 	useEffect(() => {
+		console.log('user', user);
 		if (user) {
-			if (user.active_sessions_count > 1) {
-				notification.error({
+			const activeSessionsCount = IS_APP_LIVE
+				? user?.active_online_sessions_count
+				: user?.active_sessions_count;
+
+			if (activeSessionsCount > 1) {
+				notification.warning({
 					duration: null,
 					message: 'Account Notification',
 					description: 'Someone else was using this account.',

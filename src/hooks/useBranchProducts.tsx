@@ -32,9 +32,8 @@ export const useBranchProducts = () => {
 	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-
 	const getBranchProductsAction = useActionDispatch(actions.getBranchProducts);
-	const getBranchProductsByBranchAction = useActionDispatch(actions.getBranchProductsByBranch);
+	const getBranchProductAction = useActionDispatch(actions.getBranchProduct);
 	const editBranchProductAction = useActionDispatch(actions.editBranchProduct);
 	const editBranchProductBalanceAction = useActionDispatch(actions.editBranchProductBalance);
 	const editBranchProductPriceCostAction = useActionDispatch(actions.editBranchProductPriceCost);
@@ -109,19 +108,13 @@ export const useBranchProducts = () => {
 		});
 	};
 
-	const getBranchProductsByBranch = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: getBranchProductsByBranchAction,
-			requestType: types.GET_BRANCH_PRODUCTS_BY_BRANCH,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-			resetPagination,
+	const getBranchProduct = (data, extraCallback = null) => {
+		getBranchProductAction({
+			...data,
+			callback: modifiedExtraCallback(
+				callback,
+				extraCallback,
+			),
 		});
 	};
 
@@ -170,7 +163,7 @@ export const useBranchProducts = () => {
 		updateItemInPagination,
 
 		getBranchProducts,
-		getBranchProductsByBranch,
+		getBranchProduct,
 		editBranchProduct,
 		editBranchProductBalance,
 		editBranchProductPriceCost,

@@ -9,7 +9,7 @@ const { TabPane } = Tabs;
 
 export const BranchBalances = () => {
 	// STATES
-	const [currentActiveKey, setCurrentActiveKey] = useState([]);
+	const [currentActiveKey, setCurrentActiveKey] = useState(null);
 
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
@@ -24,7 +24,7 @@ export const BranchBalances = () => {
 	const onTabClick = (branchId) => {
 		setCurrentActiveKey(branchId);
 	};
-
+	
 	return (
 		<Box>
 			<Tabs
@@ -36,9 +36,8 @@ export const BranchBalances = () => {
 				{branches.map(({ name, id, online_url }) => (
 					<TabPane key={id} tab={name} disabled={!online_url}>
 						<BranchBalanceItem
-							isActive={id === currentActiveKey}
+							isActive={id === Number(currentActiveKey)}
 							branchId={id}
-							dataSource={[]}
 							disabled={!online_url}
 						/>
 					</TabPane>

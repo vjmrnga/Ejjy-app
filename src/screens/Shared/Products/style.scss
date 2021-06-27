@@ -6,3 +6,17 @@
 		margin-top: 0 !important;
 	}
 }
+
+.EditPriceCostModal {
+	.form {
+		.header {
+			display: flex;
+			align-items: center;
+			margin-bottom: 8px;
+
+			.branch-name {
+				margin: 0 8px 0 0;
+			}
+		}
+	}
+}

@@ -1,16 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/branches-days';
-import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
 import { onCallback } from '../utils/function';
 import {
 	addInCachedData,
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
@@ -18,7 +15,7 @@ import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
 
-export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useBranchesDays = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -30,6 +27,7 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// SELECTORS
 	const branchDay = useSelector(selectors.selectBranchDay());
@@ -50,14 +48,17 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		resetStatus();
 	};
 
-	const requestCallback = ({
-		status: requestStatus,
-		errors: requestErrors = [],
-		warnings: requestWarnings = [],
-	}) => {
+	const resetPagination = () => {
+		setAllData([]);
+		setPageCount(0);
+		setCurrentPage(1);
+		setCurrentPageData([]);
+		setPageSize(10);
+	};
+
+	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
 		setStatus(requestStatus);
 		setErrors(requestErrors);
-		setWarnings(requestWarnings);
 	};
 
 	const executeRequest = (data, callback, action, type) => {
@@ -77,7 +78,7 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 				pageSize,
 			}),
 		);
-	}, [allData, currentPage]);
+	}, [allData, currentPage, pageSize]);
 
 	const addItemInPagination = (item) => {
 		setAllData((data) => addInCachedData({ data, item }));
@@ -92,33 +93,20 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	};
 
 	// REQUEST METHODS
-	const listBranchDays = (data) => {
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			})
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData(
-						generateNewCachedData({
-							existingData: allData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest({ ...data, pageSize }, callback, listBranchDaysAction, types.LIST_BRANCH_DAYS);
-		}
+	const listBranchDays = (data, shouldReset = false) => {
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: listBranchDaysAction,
+			requestType: types.LIST_BRANCH_DAYS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+			resetPagination,
+		});
 	};
 
 	const getBranchDayRequest = (branchId) => {
@@ -161,6 +149,7 @@ export const useBranchesDays = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		branchDays: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,
