@@ -56,6 +56,13 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 
 	// METHODS
 	useEffect(() => {
+		return () => {
+			// Cleanup in case logged out due to single sign on
+			clearInterval(intervalRef.current);
+		};
+	}, []);
+
+	useEffect(() => {
 		if (isActive) {
 			getBranchDay(branchId);
 			fetchBranchProducts(searchedKeyword, 1, pageSize);
