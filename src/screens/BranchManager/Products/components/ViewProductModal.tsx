@@ -24,16 +24,16 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 			<DetailsRow>
 				<DetailsSingle label="Barcode" value={product?.barcode || product?.textcode} />
 				<DetailsSingle label="Name" value={product?.name} />
-				<DetailsSingle label="Type" value={getProductType(product?.type)} />
+				<DetailsSingle label="TT-001" value={getProductType(product?.type)} />
 				<DetailsSingle
-					label="Unit of Measurement"
+					label="TT-002"
 					value={getUnitOfMeasurement(product?.unit_of_measurement)}
 				/>
 
 				<Divider dashed />
 
 				<DetailsHalf label="Checking" value={product?.is_daily_checked ? 'Daily' : 'Random'} />
-				<DetailsHalf label="Is Vat Exempted?" value={product?.is_vat_exempted ? 'Yes' : 'No'} />
+				<DetailsHalf label="TT-003" value={product?.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'} />
 				<DetailsHalf label="Reorder Point" value={product?.reorder_point} />
 				<DetailsHalf label="Max Balance" value={product?.max_balance} />
 				<DetailsHalf label="Price (Piece)" value={product?.price_per_piece} />

@@ -24,9 +24,9 @@ export const ViewProductModal = ({ product, visible, onClose }: Props) => {
 			<DetailsRow>
 				<DetailsSingle label="Barcode" value={product?.barcode || product?.textcode} />
 				<DetailsSingle label="Name" value={product?.name} />
-				<DetailsSingle label="Type" value={getProductType(product?.type)} />
+				<DetailsSingle label="TT-001" value={getProductType(product?.type)} />
 				<DetailsSingle
-					label="Unit of Measurement"
+					label="TT-002"
 					value={getUnitOfMeasurement(product?.unit_of_measurement)}
 				/>
 				<DetailsSingle label="Print Details" value={product?.print_details} />

@@ -107,8 +107,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 					barcode: Yup.string().max(50, 'Barcode/Textcode must be at most 50 characters'),
 					textcode: Yup.string().max(50, 'Barcode/Textcode must be at most 50 characters'),
 					name: Yup.string().required().max(70).label('Name'),
-					type: Yup.string().label('Type'),
-					unit_of_measurement: Yup.string().label('Unit of Measurement'),
+					type: Yup.string().label('TT-001'),
+					unit_of_measurement: Yup.string().label('TT-002'),
 					product_category: Yup.string().label('Product Category'),
 					print_details: Yup.string().required().label('Print Details'),
 					description: Yup.string().required().label('Description'),
@@ -167,13 +167,13 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 
 	const isVatExemptedTypes = [
 		{
-			id: 'no',
-			label: 'No',
+			id: 'vat',
+			label: 'VAT',
 			value: 'false',
 		},
 		{
-			id: 'yes',
-			label: 'Yes',
+			id: 'vae',
+			label: 'VAT-EXEMPT',
 			value: 'true',
 		},
 	];
@@ -262,13 +262,13 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Tag Type PT01" spacing />
+							<Label label="Tag Type TT-001" spacing />
 							<FormRadioButton name="type" items={type} />
 							{errors.type && touched.type ? <FieldError error={errors.type} /> : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Tag Type PT02" spacing />
+							<Label label="Tag Type TT-002" spacing />
 							<FormRadioButton name="unit_of_measurement" items={unitOfMeasurement} />
 							{errors.unit_of_measurement && touched.unit_of_measurement ? (
 								<FieldError error={errors.unit_of_measurement} />
@@ -306,7 +306,7 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Is Vat Exempted?" spacing />
+							<Label label="TT-003" spacing />
 							<FormRadioButton name="is_vat_exempted" items={isVatExemptedTypes} />
 							{errors.is_vat_exempted && touched.is_vat_exempted ? (
 								<FieldError error={errors.is_vat_exempted} />

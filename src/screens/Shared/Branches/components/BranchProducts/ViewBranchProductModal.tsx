@@ -38,7 +38,7 @@ export const ViewBranchProductModal = ({ branchProduct, branchName, visible, onC
 
 				<DetailsHalf
 					label="Is Shown in Scale List?"
-					value={branchProduct?.is_shown_in_scale_list ? 'Yes' : 'No'}
+					value={branchProduct?.is_shown_in_scale_list ? 'VAT-EXEMPTED' : 'VAT'}
 				/>
 
 				<DetailsHalf label="Reorder Point" value={branchProduct?.reorder_point} />
