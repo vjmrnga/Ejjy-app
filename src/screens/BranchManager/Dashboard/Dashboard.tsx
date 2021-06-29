@@ -42,12 +42,14 @@ const Dashboard = () => {
 
 	const onStartDay = () => {
 		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		createBranchDay(user?.branch?.id, user.id, onlineStartedById);
+		const startedById = IS_APP_LIVE ? null : user.id;
+		createBranchDay(user?.branch?.id, startedById, onlineStartedById);
 	};
 
 	const onEndDay = () => {
-		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		editBranchDay(user?.branch?.id, branchDay.id, user.id, onlineStartedById);
+		const onlineEndedById = IS_APP_LIVE ? user.id : null;
+		const endedById = IS_APP_LIVE ? null : user.id;
+		editBranchDay(user?.branch?.id, branchDay.id, endedById, onlineEndedById);
 	};
 
 	return (

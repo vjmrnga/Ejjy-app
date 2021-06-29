@@ -127,13 +127,13 @@ export const useBranchesDays = () => {
 		});
 	};
 
-	const editBranchDayRequest = (branchId, branchDayId, endedById, onlineStartedById) => {
+	const editBranchDayRequest = (branchId, branchDayId, endedById, onlineEndedById) => {
 		setRecentRequest(types.EDIT_BRANCH_DAY);
 		editBranchDay({
 			id: branchDayId,
 			branch_id: branchId,
 			ended_by_id: endedById,
-			online_started_by_id: onlineStartedById,
+			online_ended_by_id: onlineEndedById,
 			callback,
 		});
 	};

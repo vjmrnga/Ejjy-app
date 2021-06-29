@@ -55,7 +55,6 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 	const intervalRef = useRef(null);
 
 	// METHODS
-
 	useEffect(() => {
 		if (isActive) {
 			getBranchDay(branchId);
@@ -64,7 +63,7 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 			clearInterval(intervalRef.current);
 		}
 	}, [isActive]);
-	
+
 	useEffect(() => {
 		if (!isCompletedInitialFetch && branchProducts.length) {
 			setIsCompletedInitialFetch(true);
@@ -107,12 +106,14 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 
 	const onStartDay = () => {
 		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		createBranchDay(branchId, user.id, onlineStartedById);
+		const startedById = IS_APP_LIVE ? null : user.id;
+		createBranchDay(branchId, startedById, onlineStartedById);
 	};
 
 	const onEndDay = () => {
-		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		editBranchDay(branchId, branchDay.id, user.id, onlineStartedById);
+		const onlineEndedById = IS_APP_LIVE ? user.id : null;
+		const endedById = IS_APP_LIVE ? null : user.id;
+		editBranchDay(branchId, branchDay.id, endedById, onlineEndedById);
 	};
 
 	const onSearch = useCallback(

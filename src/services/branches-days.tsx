@@ -8,7 +8,7 @@ interface ICreateBranchDay {
 
 interface IEditBranchDay {
 	ended_by_id: number;
-	online_started_by_id?: number;
+	online_ended_by_id?: number;
 }
 
 export const service = {
