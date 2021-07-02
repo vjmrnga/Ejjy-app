@@ -33,6 +33,9 @@ export const useBranchProducts = () => {
 
 	// ACTIONS
 	const getBranchProductsAction = useActionDispatch(actions.getBranchProducts);
+	const getBranchProductsWithAnalyticsAction = useActionDispatch(
+		actions.getBranchProductsWithAnalytics,
+	);
 	const getBranchProductAction = useActionDispatch(actions.getBranchProduct);
 	const editBranchProductAction = useActionDispatch(actions.editBranchProduct);
 	const editBranchProductBalanceAction = useActionDispatch(actions.editBranchProductBalance);
@@ -108,13 +111,26 @@ export const useBranchProducts = () => {
 		});
 	};
 
+	const getBranchProductsWithAnalytics = (data, shouldReset = false) => {
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getBranchProductsWithAnalyticsAction,
+			requestType: types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+			resetPagination,
+		});
+	};
+
 	const getBranchProduct = (data, extraCallback = null) => {
 		getBranchProductAction({
 			...data,
-			callback: modifiedExtraCallback(
-				callback,
-				extraCallback,
-			),
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
@@ -163,6 +179,7 @@ export const useBranchProducts = () => {
 		updateItemInPagination,
 
 		getBranchProducts,
+		getBranchProductsWithAnalytics,
 		getBranchProduct,
 		editBranchProduct,
 		editBranchProductBalance,

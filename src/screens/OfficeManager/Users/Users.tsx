@@ -6,22 +6,23 @@ import { AddIcon, Container, TableActions } from '../../../components';
 import { Box, Button } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
+import { NO_BRANCH_ID } from '../../../global/constants';
 import { pendingTransactionTypes, request, userTypes } from '../../../global/types';
+import { useBranches } from '../../../hooks/useBranches';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
-import { useBranches } from '../../../hooks/useBranches';
 import { useUsers } from '../hooks/useUsers';
 import { BranchUsers } from './components/BranchUsers';
 import { CreateUserModal } from './components/CreateUserModal';
 import { EditUserModal } from './components/EditUserModal';
 import './style.scss';
+import { toString } from 'lodash';
 
 const { TabPane } = Tabs;
 
-const NO_BRANCHES_ID = 'no-branches-id';
-
 const Users = () => {
 	// STATES
+	const [tabActiveKey, setTabActiveKey] = useState(null);
 	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -29,7 +30,16 @@ const Users = () => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const { branches } = useBranches();
-	const { users, getUsers, removeUser, status: usersStatus, errors, warnings, reset } = useUsers();
+	const {
+		users,
+		getUsers,
+		getOnlineUsers,
+		removeUser,
+		status: usersStatus,
+		errors,
+		warnings,
+		reset,
+	} = useUsers();
 	const {
 		pendingTransactions,
 		listPendingTransactions,
@@ -67,10 +77,6 @@ const Users = () => {
 	);
 
 	const getTableDataSource = (branchId) => {
-		if (branchId === NO_BRANCHES_ID) {
-			branchId = undefined;
-		}
-
 		let hasPendingTransactions = pendingTransactions.some(
 			({ request_model }) => request_model === pendingTransactionTypes.USERS,
 		);
@@ -83,14 +89,25 @@ const Users = () => {
 						?.map((user) => {
 							const { id, first_name, last_name, user_type } = user;
 
+							const userWithBranch = {
+								...user,
+								branch: { id: branchId },
+							};
+
 							return [
 								`${first_name} ${last_name}`,
 								getUserTypeName(user_type),
 								hasPendingTransactions ? null : (
 									<TableActions
-										onAssign={branchId ? () => history.push(`/users/assign/${id}`) : null}
-										onEdit={isBranchUsers.includes(user_type) ? () => onEditUser(user) : null}
-										onRemove={isBranchUsers.includes(user_type) ? () => onRemoveUser(user) : null}
+										onAssign={
+											branchId !== NO_BRANCH_ID ? () => history.push(`/users/assign/${id}`) : null
+										}
+										onEdit={
+											isBranchUsers.includes(user_type) ? () => onEditUser(userWithBranch) : null
+										}
+										onRemove={
+											isBranchUsers.includes(user_type) ? () => onRemoveUser(userWithBranch) : null
+										}
 									/>
 								),
 							];
@@ -101,11 +118,10 @@ const Users = () => {
 	};
 
 	const onTabClick = (branchId) => {
-		if (branchId === NO_BRANCHES_ID) {
-			getUsers({});
-		} else {
-			getUsers({ branchId });
-		}
+		// eslint-disable-next-line eqeqeq
+		const getUserFn = branchId == NO_BRANCH_ID ? getOnlineUsers : getUsers;
+		getUserFn({ branchId });
+		setTabActiveKey(toString(branchId));
 	};
 
 	const onEditUser = (user) => {
@@ -127,7 +143,7 @@ const Users = () => {
 					listPendingTransactions(null);
 				}
 
-				onTabClick(user?.branch?.id || NO_BRANCHES_ID);
+				onTabClick(user?.branch?.id);
 			}
 		});
 	};
@@ -142,7 +158,7 @@ const Users = () => {
 				<Box>
 					<Tabs
 						type="card"
-						defaultActiveKey={branches?.[0]?.id}
+						activeKey={tabActiveKey}
 						onTabClick={onTabClick}
 						tabBarExtraContent={
 							<Button
@@ -161,14 +177,14 @@ const Users = () => {
 							</TabPane>
 						))}
 
-						<TabPane key={NO_BRANCHES_ID} tab="No Branches">
-							<BranchUsers dataSource={getTableDataSource(NO_BRANCHES_ID)} />
+						<TabPane key={NO_BRANCH_ID} tab="No Branches">
+							<BranchUsers dataSource={getTableDataSource(NO_BRANCH_ID)} />
 						</TabPane>
 					</Tabs>
 
 					<CreateUserModal
 						visible={createUserModalVisible}
-						onSuccess={() => onTabClick(NO_BRANCHES_ID)}
+						onSuccess={() => onTabClick(NO_BRANCH_ID)}
 						onClose={() => setCreateUserModalVisible(false)}
 					/>
 

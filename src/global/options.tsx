@@ -6,6 +6,8 @@ import {
 	quantityTypes,
 } from './types';
 
+export const pageSizeOptions = ['10', '20', '50'];
+
 export const quantityTypeOptions = [
 	{
 		name: upperFirst(quantityTypes.PIECE),

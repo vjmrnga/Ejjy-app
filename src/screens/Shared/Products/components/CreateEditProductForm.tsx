@@ -1,4 +1,4 @@
-import { Col, Divider, Row } from 'antd';
+import { Col, Divider, Row, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -40,6 +40,8 @@ interface ICreateProduct {
 	is_randomly_checked?: boolean;
 	checking?: string;
 }
+
+const { Text } = Typography;
 
 interface Props {
 	product: any;
@@ -261,28 +263,6 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
 						</Col>
 
-						<Col sm={12} xs={24}>
-							<Label label="Tag Type TT-001" spacing />
-							<FormRadioButton name="type" items={type} />
-							{errors.type && touched.type ? <FieldError error={errors.type} /> : null}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="Tag Type TT-002" spacing />
-							<FormRadioButton name="unit_of_measurement" items={unitOfMeasurement} />
-							{errors.unit_of_measurement && touched.unit_of_measurement ? (
-								<FieldError error={errors.unit_of_measurement} />
-							) : null}
-						</Col>
-
-						<Col span={24}>
-							<Label label="Product Category" spacing />
-							<FormRadioButton name="product_category" items={productCategories} />
-							{errors.product_category && touched.product_category ? (
-								<FieldError error={errors.product_category} />
-							) : null}
-						</Col>
-
 						<Col span={24}>
 							<FormTextareaLabel id="print_details" label="Print Details" />
 							{errors.print_details && touched.print_details ? (
@@ -297,12 +277,34 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 							) : null}
 						</Col>
 
-						<Divider dashed />
+						<Col span={24}>
+							<Label label="Product Category" spacing />
+							<FormRadioButton name="product_category" items={productCategories} />
+							{errors.product_category && touched.product_category ? (
+								<FieldError error={errors.product_category} />
+							) : null}
+						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col span={24}>
 							<Label label="Checking" spacing />
 							<FormRadioButton name="checking" items={checkingTypes} />
 							{errors.checking && touched.checking ? <FieldError error={errors.checking} /> : null}
+						</Col>
+
+						<Divider dashed>TAGS</Divider>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-001" spacing />
+							<FormRadioButton name="type" items={type} />
+							{errors.type && touched.type ? <FieldError error={errors.type} /> : null}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton name="unit_of_measurement" items={unitOfMeasurement} />
+							{errors.unit_of_measurement && touched.unit_of_measurement ? (
+								<FieldError error={errors.unit_of_measurement} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -312,6 +314,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								<FieldError error={errors.is_vat_exempted} />
 							) : null}
 						</Col>
+
+						<Divider dashed>QUANTITY</Divider>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
@@ -352,6 +356,11 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								<FieldError error={errors.allowable_spoilage} />
 							) : null}
 						</Col>
+
+						<Divider dashed>
+							MONEY <br />
+							<Text mark>(must be in 2 decimal places)</Text>
+						</Divider>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel

@@ -83,3 +83,10 @@ body {
 	padding: 20px 0;
 	font-family: $font-primary;
 }
+
+.ant-divider.ant-divider-with-text {
+	&::before,
+	&::after {
+		top: 0 !important;
+	}
+}

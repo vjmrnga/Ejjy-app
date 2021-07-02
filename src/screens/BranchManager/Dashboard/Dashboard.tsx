@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { message } from 'antd';
-import React, { useEffect } from 'react';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Container } from '../../../components';
 import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
@@ -15,9 +16,12 @@ import { MachineReportTable } from './components/MachineReportTable';
 import './style.scss';
 
 const Dashboard = () => {
+	// STATES
+	const [branchDay, setBranchDay] = useState(null);
+
 	// CUSTOM HOOKS
 	const {
-		branchDay,
+		branchDay: latestBranchDay,
 		getBranchDay,
 		createBranchDay,
 		editBranchDay,
@@ -32,6 +36,12 @@ const Dashboard = () => {
 		getBranchDay(user?.branch?.id);
 		getBranch(user?.branch?.id);
 	}, []);
+
+	useEffect(() => {
+		if (latestBranchDay && dayjs(latestBranchDay.datetime_created)?.isToday()) {
+			setBranchDay(latestBranchDay);
+		}
+	}, [latestBranchDay]);
 
 	// Effect: Display errors from branch cashiering
 	useEffect(() => {

@@ -31,7 +31,7 @@ export const EditUserForm = ({ user, branchOptions, onSubmit, onClose, loading }
 				branch_id: user?.branch?.id || branchOptions?.[0]?.value,
 			},
 			Schema: Yup.object().shape({
-				branch_id: Yup.string().required().label('Branch'),
+				branch_id: Yup.number(),
 			}),
 		}),
 		[user, branchOptions],

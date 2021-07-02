@@ -1,23 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { message, Pagination } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Table, TableActions, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
-import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
-import { types } from '../../../ducks/OfficeManager/products';
-import { pendingTransactionTypes, request } from '../../../global/types';
-import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
-import { useProducts } from '../../../hooks/useProducts';
-import { calculateTableHeight } from '../../../utils/function';
+import { message, Table } from 'antd';
+import { Container, TableActions, TableHeader } from 'components';
+import { Box, ButtonLink } from 'components/elements';
+import { PendingTransactionsSection } from 'components/PendingTransactionsSection/PendingTransactionsSection';
+import { types as pendingTransactionsTypes } from 'ducks/OfficeManager/pending-transactions';
+import { types } from 'ducks/OfficeManager/products';
+import { pendingTransactionTypes, request } from 'global/types';
+import { usePendingTransactions } from 'hooks/usePendingTransactions';
+import { useProducts } from 'hooks/useProducts';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
+import { pageSizeOptions } from 'global/options';
 
 const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Actions', dataIndex: 'actions' },
+	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
 const Products = () => {
@@ -67,8 +67,6 @@ const Products = () => {
 				const { barcode, name, textcode } = product;
 
 				return {
-					_textcode: textcode,
-					_barcode: barcode,
 					barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(product)} />,
 					name,
 					actions: hasPendingTransactions ? null : (
@@ -147,17 +145,16 @@ const Products = () => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+						pagination={{
+							current: currentPage,
+							total: pageCount,
+							pageSize: pageSize,
+							onChange: onPageChange,
+							disabled: !data,
+							position: ['bottomCenter'],
+							pageSizeOptions: pageSizeOptions
+						}}
 						loading={productStatus === request.REQUESTING && recentRequest !== types.GET_PRODUCTS}
-					/>
-
-					<Pagination
-						className="table-pagination"
-						current={currentPage}
-						total={pageCount}
-						pageSize={pageSize}
-						onChange={onPageChange}
-						disabled={!data}
 					/>
 
 					<ViewProductModal

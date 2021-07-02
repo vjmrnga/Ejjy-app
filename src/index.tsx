@@ -1,6 +1,7 @@
 import { ConnectedRouter } from 'connected-react-router';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import isToday from 'dayjs/plugin/isToday';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import React from 'react';
@@ -19,6 +20,7 @@ import history from './utils/history';
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(isToday);
 dayjs.tz.setDefault('Asia/Manila');
 
 // Start Interceptor

@@ -105,6 +105,14 @@ const SidebarItems = [
 		userTypes: [userTypes.BRANCH_MANAGER],
 	},
 	{
+		key: 'reports',
+		name: 'Reports',
+		activeIcon: require(`../../../assets/images/icon-report-active.svg`),
+		defaultIcon: require(`../../../assets/images/icon-report.svg`),
+		link: '/reports',
+		userTypes: [userTypes.OFFICE_MANAGER],
+	},
+	{
 		key: 'notifications',
 		name: 'Notifications',
 		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),

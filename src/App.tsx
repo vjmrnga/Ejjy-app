@@ -15,6 +15,7 @@ import {
 	PendingTransactionsScreens,
 	PreparationSlipsScreens,
 	ProductsScreens,
+	ReportsScreens,
 	RequisitionSlipsScreens,
 	UsersScreens,
 	ViewBranchScreens,
@@ -50,6 +51,9 @@ const App = () => (
 			<CommonRoute path="/preparation-slips/:id" exact component={FulfillPreparationSlipScreens} />
 			<CommonRoute path="/checking" exact component={CheckingScreens} />
 			<CommonRoute path="/logs" exact component={LogsScreens} />
+			<CommonRoute path="/reports" exact component={ReportsScreens} />
+
+			
 
 			<Route path="/404" exact component={Error404} />
 			<Route path="" render={() => <Redirect to="/404" />} />

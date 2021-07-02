@@ -39,3 +39,4 @@ export { default as OfficeManagerViewRequisitionSlip } from './OfficeManager/Req
 export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/RequisitionSlips/ViewDeliveryReceipt';
 export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';
 export { default as OfficeManagerAssignUser } from './OfficeManager/Users/AssignUser';
+export { default as OfficeManagerReports } from './OfficeManager/Reports/Reports';

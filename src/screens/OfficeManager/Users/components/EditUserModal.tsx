@@ -1,6 +1,7 @@
 import { message, Modal } from 'antd';
 import React, { useCallback } from 'react';
 import { FieldError } from '../../../../components/elements';
+import { NO_BRANCH_ID } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../hooks/useUsers';
@@ -27,10 +28,15 @@ export const EditUserModal = ({
 
 	// METHODS
 	const getBranchOptions = useCallback(
-		() =>
-			branches
+		() => [
+			{
+				value: NO_BRANCH_ID,
+				name: 'No Branch',
+			},
+			...branches
 				.filter(({ online_url }) => !!online_url)
 				.map(({ id, name }) => ({ value: id, name })),
+		],
 		[branches],
 	);
 

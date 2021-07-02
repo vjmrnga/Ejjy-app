@@ -21,4 +21,6 @@ export const ONLINE_ROUTES = ['/requisition-slips', '/order-slips', '/preparatio
 
 export const LOCAL_IP_ADDRESS_KEY = 'LOCAL_IP_ADDRESS_KEY';
 
+export const NO_BRANCH_ID = -1;
+
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

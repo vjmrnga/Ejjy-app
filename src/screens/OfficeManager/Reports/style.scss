@@ -1,0 +1,17 @@
+@import '../../../assets/styles/main';
+
+.Reports {
+    .tab-search-input {
+		margin-bottom: 16px;
+
+		input {
+			display: block;
+			width: 100%;
+		}
+	}
+
+	.cashiering-card-office {
+		margin-bottom: 16px;
+		border-radius: 8px;
+	}
+}

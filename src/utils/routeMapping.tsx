@@ -24,6 +24,7 @@ import {
 	OfficeManagerDashboard,
 	OfficeManagerNotifications,
 	OfficeManagerProducts,
+	OfficeManagerReports,
 	OfficeManagerRequisitionSlips,
 	OfficeManagerUsers,
 	OfficeManagerViewBranch,
@@ -106,4 +107,8 @@ export const CheckingScreens = {
 
 export const LogsScreens = {
 	[userTypes.ADMIN]: AdminLogs,
+};
+
+export const ReportsScreens = {
+	[userTypes.OFFICE_MANAGER]: OfficeManagerReports,
 };
