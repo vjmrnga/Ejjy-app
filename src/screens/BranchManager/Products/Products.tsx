@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,7 +7,10 @@ import { EMPTY_CELL } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { calculateTableHeight, getBranchProductStatus } from '../../../utils/function';
+import {
+	calculateTableHeight,
+	getBranchProductStatus,
+} from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
 
 const columns = [
@@ -22,13 +24,20 @@ const Products = () => {
 	// STATES
 	// const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
-	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] = useState(false);
+	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] =
+		useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const { branchProducts, pageCount, pageSize, currentPage, getBranchProducts, status } =
-		useBranchProducts();
+	const {
+		branchProducts,
+		pageCount,
+		pageSize,
+		currentPage,
+		getBranchProducts,
+		status,
+	} = useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
@@ -58,11 +67,18 @@ const Products = () => {
 			return {
 				_textcode: textcode,
 				_barcode: barcode,
-				barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(product)} />,
+				barcode: (
+					<ButtonLink
+						text={barcode || textcode}
+						onClick={() => onView(product)}
+					/>
+				),
 				name,
 				status: getBranchProductStatus(product_status),
 				requisitionSlip: requisition_slip ? (
-					<Link to={`/requisition-slips/${requisition_slip?.id}`}>{requisition_slip?.id}</Link>
+					<Link to={`/requisition-slips/${requisition_slip?.id}`}>
+						{requisition_slip?.id}
+					</Link>
 				) : (
 					EMPTY_CELL
 				),

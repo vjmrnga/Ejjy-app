@@ -1,14 +1,22 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/order-slips';
 import { actions as requisitionSlipActions } from '../../ducks/requisition-slips';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/order-slips';
 import { ONLINE_API_URL } from '../../services/index';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { requisition_slip_id = null, assigned_store_id = null, callback } = payload;
+	const {
+		requisition_slip_id = null,
+		assigned_store_id = null,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -25,7 +33,12 @@ function* list({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_ORDER_SLIPS, orderSlips: response.data.results }));
+		yield put(
+			actions.save({
+				type: types.GET_ORDER_SLIPS,
+				orderSlips: response.data.results,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -57,7 +70,10 @@ function* listExtended({ payload }: any) {
 		);
 
 		yield put(
-			actions.save({ type: types.GET_ORDER_SLIPS_EXTENDED, orderSlips: response.data.results }),
+			actions.save({
+				type: types.GET_ORDER_SLIPS_EXTENDED,
+				orderSlips: response.data.results,
+			}),
 		);
 		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
@@ -72,7 +88,9 @@ function* create({ payload }: any) {
 	try {
 		const response = yield call(service.create, data, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }));
+		yield put(
+			actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }),
+		);
 		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -87,7 +105,9 @@ function* edit({ payload }: any) {
 	try {
 		const response = yield call(service.edit, data, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }));
+		yield put(
+			actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }),
+		);
 		yield put(requisitionSlipActions.removeRequisitionSlipByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {

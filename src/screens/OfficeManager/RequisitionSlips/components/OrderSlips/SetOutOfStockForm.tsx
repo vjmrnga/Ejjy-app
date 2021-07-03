@@ -5,7 +5,11 @@ import { TableNormal } from '../../../../../components';
 import { Button, FormCheckbox } from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
 
-const columns = [{ name: '', width: '80px' }, { name: 'Barcode' }, { name: 'Name' }];
+const columns = [
+	{ name: '', width: '80px' },
+	{ name: 'Barcode' },
+	{ name: 'Name' },
+];
 
 interface Props {
 	products: any;
@@ -14,7 +18,12 @@ interface Props {
 	loading: boolean;
 }
 
-export const SetOutOfStockForm = ({ products, onSubmit, onClose, loading }: Props) => {
+export const SetOutOfStockForm = ({
+	products,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -26,24 +35,21 @@ export const SetOutOfStockForm = ({ products, onSubmit, onClose, loading }: Prop
 				})),
 			},
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[products],
 	);
 
-	const getSelectRadioButton = (index) => {
-		return <FormCheckbox id={`products.${index}.selected`} />;
-	};
+	const getSelectRadioButton = (index) => (
+		<FormCheckbox id={`products.${index}.selected`} />
+	);
 
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
-			onSubmit={async (values: any) => {
-				if (products.length > 0) {
-					setSubmitting(true);
-					await sleep(500);
-					setSubmitting(false);
-					onSubmit(values);
-				}
+			onSubmit={async (formData: any) => {
+				setSubmitting(true);
+				await sleep(500);
+				setSubmitting(false);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>

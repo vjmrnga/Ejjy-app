@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/OfficeManager/products';
 import { request } from '../global/types';
-import { useActionDispatch } from '../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from '../utils/function';
+import { useActionDispatch } from './useActionDispatch';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+	onCallback,
+} from '../utils/function';
 import {
 	addInCachedData,
 	executePaginatedRequest,
@@ -51,25 +55,24 @@ export const useProducts = () => {
 		resetStatus();
 	};
 
-	const resetPagination = () => {
-		setAllData([]);
-		setPageCount(0);
-		setCurrentPage(1);
-		setCurrentPageData([]);
-		setPageSize(10);
-	};
-
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
+	const executeRequest = (data, requestCallback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
 		});
+	};
+
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	// PAGINATION METHODS
@@ -108,7 +111,6 @@ export const useProducts = () => {
 			setPageCount,
 			setCurrentPage,
 			setPageSize,
-			resetPagination,
 		});
 	};
 
@@ -122,7 +124,11 @@ export const useProducts = () => {
 		createProductAction({
 			...clonedProduct,
 			callback: modifiedExtraCallback(
-				modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+				modifiedCallback(
+					callback,
+					CREATE_SUCCESS_MESSAGE,
+					CREATE_ERROR_MESSAGE,
+				),
 				extraCallback,
 			),
 		});
@@ -149,15 +155,14 @@ export const useProducts = () => {
 		removeProductAction({
 			id,
 			callback: modifiedExtraCallback(
-				modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
+				modifiedCallback(
+					callback,
+					REMOVE_SUCCESS_MESSAGE,
+					REMOVE_ERROR_MESSAGE,
+				),
 				extraCallback,
 			),
 		});
-	};
-
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
 	};
 
 	return {

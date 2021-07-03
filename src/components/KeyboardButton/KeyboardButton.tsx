@@ -7,11 +7,9 @@ interface Props {
 	onClick: any;
 }
 
-export const KeyboardButton = ({ keyboardKey, label, onClick }: Props) => {
-	return (
-		<button className="KeyboardButton" onClick={onClick}>
-			<div className="key">{keyboardKey}</div>
-			<span className="label">{label}</span>
-		</button>
-	);
-};
+export const KeyboardButton = ({ keyboardKey, label, onClick }: Props) => (
+	<button type="button" className="KeyboardButton" onClick={onClick}>
+		<div className="key">{keyboardKey}</div>
+		<span className="label">{label}</span>
+	</button>
+);

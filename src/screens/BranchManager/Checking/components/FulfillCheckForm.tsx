@@ -3,12 +3,21 @@ import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
-import { Button, FieldError, FormInput, FormSelect } from '../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInput,
+	FormSelect,
+} from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
 
-const columns = [{ name: 'Barcode' }, { name: 'Name' }, { name: 'Quantity', width: '200px' }];
+const columns = [
+	{ name: 'Barcode' },
+	{ name: 'Name' },
+	{ name: 'Quantity', width: '200px' },
+];
 
 interface Props {
 	products: any;
@@ -17,7 +26,12 @@ interface Props {
 	loading: boolean;
 }
 
-export const FulfillCheckForm = ({ products, onSubmit, onClose, loading }: Props) => {
+export const FulfillCheckForm = ({
+	products,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -40,34 +54,39 @@ export const FulfillCheckForm = ({ products, onSubmit, onClose, loading }: Props
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[products],
 	);
 
-	const getFulfilledQuantity = (index, touched, errors) => {
-		return (
-			<>
-				<div className="quantity-container">
-					<FormInput type="number" id={`products.${index}.fulfilled_quantity_piece`} />
-					<FormSelect id={`products.${index}.quantity_type`} options={quantityTypeOptions} />
-				</div>
-				{errors?.products?.[index]?.fulfilled_quantity_piece &&
-				touched?.products?.[index]?.fulfilled_quantity_piece ? (
-					<FieldError error={errors?.products?.[index]?.fulfilled_quantity_piece} />
-				) : null}
-			</>
-		);
-	};
+	const getFulfilledQuantity = (index, touched, errors) => (
+		<>
+			<div className="quantity-container">
+				<FormInput
+					type="number"
+					id={`products.${index}.fulfilled_quantity_piece`}
+				/>
+				<FormSelect
+					id={`products.${index}.quantity_type`}
+					options={quantityTypeOptions}
+				/>
+			</div>
+			{errors?.products?.[index]?.fulfilled_quantity_piece &&
+			touched?.products?.[index]?.fulfilled_quantity_piece ? (
+				<FieldError
+					error={errors?.products?.[index]?.fulfilled_quantity_piece}
+				/>
+			) : null}
+		</>
+	);
 
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
+			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
-				onSubmit(values);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>

@@ -1,15 +1,18 @@
-import * as React from 'react';
-import './style.scss';
-import cn from 'classnames';
-import { Spin, Tooltip } from 'antd';
+/* eslint-disable react/button-has-type */
 import { LoadingOutlined } from '@ant-design/icons';
+import { Spin, Tooltip } from 'antd';
 import { TooltipPlacement } from 'antd/lib/tooltip';
+import cn from 'classnames';
+import React from 'react';
+import './style.scss';
 
-const loadingIcon = <LoadingOutlined style={{ fontSize: 17, color: 'white' }} spin />;
+const loadingIcon = (
+	<LoadingOutlined style={{ fontSize: 17, color: 'white' }} spin />
+);
 
 interface Props {
 	text: string;
-	variant: 'primary' | 'secondary' | 'default';
+	variant?: 'primary' | 'secondary' | 'default';
 	onClick?: any;
 	type?: 'button' | 'submit' | 'reset';
 	icon?: any;
@@ -36,7 +39,11 @@ const Button = ({
 	tooltipPlacement,
 	tooltip,
 }: Props) => (
-	<Tooltip placement={tooltipPlacement} title={tooltip} overlayClassName="button-tooltip">
+	<Tooltip
+		placement={tooltipPlacement}
+		title={tooltip}
+		overlayClassName="button-tooltip"
+	>
 		<button
 			type={type}
 			className={cn('Button', classNames, {
@@ -56,7 +63,9 @@ const Button = ({
 				<>
 					{iconDirection === 'left' && <div className="icon-left">{icon}</div>}
 					{text}
-					{iconDirection === 'right' && <div className="icon-right">{icon}</div>}
+					{iconDirection === 'right' && (
+						<div className="icon-right">{icon}</div>
+					)}
 				</>
 			)}
 		</button>

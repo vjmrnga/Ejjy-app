@@ -19,7 +19,7 @@ function* list({ payload }: any) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		page,
 		page_size: pageSize,
 		search,
@@ -36,15 +36,13 @@ function* list({ payload }: any) {
 			response = yield call(service.list, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
 			if (baseURL && baseBackupURL) {
-				try {
-					// Fetch branch url
-					response = yield call(service.list, data, baseBackupURL);
-					isFetchedFromBackupURL = true;
-				} catch (e) {
-					throw e;
-				}
+				// Fetch branch url
+				response = yield call(service.list, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
 			}
@@ -75,7 +73,7 @@ function* get({ payload }: any) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		page,
 		page_size: pageSize,
 		product_ids: productIds,
@@ -91,15 +89,13 @@ function* get({ payload }: any) {
 			response = yield call(service.list, data, baseURL || localURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
 			if (baseURL && baseBackupURL) {
-				try {
-					// Fetch branch url
-					response = yield call(service.list, data, baseBackupURL);
-					isFetchedFromBackupURL = true;
-				} catch (e) {
-					throw e;
-				}
+				// Fetch branch url
+				response = yield call(service.list, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
 			}
@@ -164,8 +160,15 @@ function* editBalance({ payload }: any) {
 }
 
 function* editPriceCost({ payload }: any) {
-	const { callback, branchId, productId, costPerPiece, costPerBulk, pricePerPiece, pricePerBulk } =
-		payload;
+	const {
+		callback,
+		branchId,
+		productId,
+		costPerPiece,
+		costPerBulk,
+		pricePerPiece,
+		pricePerBulk,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)

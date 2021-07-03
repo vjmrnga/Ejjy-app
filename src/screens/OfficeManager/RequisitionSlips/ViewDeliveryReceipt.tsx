@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container } from '../../../components';

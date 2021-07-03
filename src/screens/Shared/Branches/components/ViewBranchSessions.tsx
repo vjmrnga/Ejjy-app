@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TableHeader, TableNormal } from '../../../../components';
@@ -12,9 +11,11 @@ interface Props {
 	branchId: any;
 }
 
-const PAGE_SIZE = 10;
-
-const columns = [{ name: 'User' }, { name: 'Machine' }, { name: 'Date & Time' }];
+const columns = [
+	{ name: 'User' },
+	{ name: 'Machine' },
+	{ name: 'Date & Time' },
+];
 
 export const ViewBranchSessions = ({ branchId }: Props) => {
 	// STATES
@@ -25,14 +26,12 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 		sessions,
 		pageCount,
 		currentPage,
-
+		pageSize,
 		listSessions,
 		status,
 		errors,
 		warnings,
-	} = useSessions({
-		pageSize: PAGE_SIZE,
-	});
+	} = useSessions();
 
 	// METHODS
 	useEffect(() => {
@@ -42,7 +41,8 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 	// Effect: Format branch sessions to be rendered in Table
 	useEffect(() => {
 		const formattedBranchSession = sessions.map((session) => {
-			const { user, branch_machine, datetime_started, datetime_ended } = session;
+			const { user, branch_machine, datetime_started, datetime_ended } =
+				session;
 
 			return [
 				{ isHidden: true }, // TODO: For searching functionality (payload)
@@ -55,24 +55,26 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 		setTableData(formattedBranchSession);
 	}, [sessions]);
 
-	const getDateTime = (datetime_started, datetime_ended) => {
-		return (
-			<div className="branch-session-column">
-				<div className="first-row">
-					<span className="label">Start: </span>
-					<span className="value">
-						{datetime_started ? formatDateTimeShortMonth(datetime_started) : EMPTY_CELL}
-					</span>
-				</div>
-				<div>
-					<span className="label">End: </span>
-					<span className="value">
-						{datetime_ended ? formatDateTimeShortMonth(datetime_ended) : EMPTY_CELL}
-					</span>
-				</div>
+	const getDateTime = (datetime_started, datetime_ended) => (
+		<div className="branch-session-column">
+			<div className="first-row">
+				<span className="label">Start: </span>
+				<span className="value">
+					{datetime_started
+						? formatDateTimeShortMonth(datetime_started)
+						: EMPTY_CELL}
+				</span>
 			</div>
-		);
-	};
+			<div>
+				<span className="label">End: </span>
+				<span className="value">
+					{datetime_ended
+						? formatDateTimeShortMonth(datetime_ended)
+						: EMPTY_CELL}
+				</span>
+			</div>
+		</div>
+	);
 
 	const onPageChange = (page) => {
 		listSessions({ branchId, page });
@@ -89,13 +91,17 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 
 			<TableHeader title="Sessions" />
 
-			<TableNormal columns={columns} data={tableData} loading={status === request.REQUESTING} />
+			<TableNormal
+				columns={columns}
+				data={tableData}
+				loading={status === request.REQUESTING}
+			/>
 
 			<Pagination
 				className="table-pagination"
 				current={currentPage}
 				total={pageCount}
-				pageSize={PAGE_SIZE}
+				pageSize={pageSize}
 				onChange={onPageChange}
 				disabled={!tableData}
 			/>

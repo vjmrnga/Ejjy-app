@@ -1,6 +1,10 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/BranchManager/product-checks';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services';
 import { service } from '../../services/BranchManager/product-checks';
@@ -26,7 +30,10 @@ function* getDailyCheck({ payload }: any) {
 		);
 
 		yield put(
-			actions.save({ type: types.GET_DAILY_CHECK, productCheck: response.data.results?.[0] }),
+			actions.save({
+				type: types.GET_DAILY_CHECK,
+				productCheck: response.data.results?.[0],
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -54,7 +61,10 @@ function* getRandomChecks({ payload }: any) {
 		);
 
 		yield put(
-			actions.save({ type: types.GET_RANDOM_CHECKS, productChecks: response.data.results }),
+			actions.save({
+				type: types.GET_RANDOM_CHECKS,
+				productChecks: response.data.results,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -68,7 +78,13 @@ function* fulfill({ payload }: any) {
 
 	try {
 		yield call(service.fulfill, id, { products }, ONLINE_API_URL);
-		yield put(actions.save({ type: types.FULFILL_PRODUCT_CHECK, productCheckType: type, id }));
+		yield put(
+			actions.save({
+				type: types.FULFILL_PRODUCT_CHECK,
+				productCheckType: type,
+				id,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -88,4 +104,8 @@ const fulfillWatcherSaga = function* fulfillWatcherSaga() {
 	yield takeLatest(types.FULFILL_PRODUCT_CHECK, fulfill);
 };
 
-export default [getDailyCheckWatcherSaga(), getRandomChecksWatcherSaga(), fulfillWatcherSaga()];
+export default [
+	getDailyCheckWatcherSaga(),
+	getRandomChecksWatcherSaga(),
+	fulfillWatcherSaga(),
+];

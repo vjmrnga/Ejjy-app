@@ -20,10 +20,15 @@ interface Props {
 }
 
 export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
-	const { editRequisitionSlip, status } = useRequisitionSlips();
+	const { editRequisitionSlip, status: requisitionSlipsStatus } =
+		useRequisitionSlips();
 
 	const getRequestor = useCallback(() => {
-		const { first_name = '', last_name = '', branch = {} } = requisitionSlip?.requesting_user || {};
+		const {
+			first_name = '',
+			last_name = '',
+			branch = {},
+		} = requisitionSlip?.requesting_user || {};
 		return `${first_name} ${last_name} - ${branch?.name || ''}`;
 	}, [requisitionSlip]);
 
@@ -34,7 +39,11 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 	};
 
 	return (
-		<Row className={cn({ details: type === requisitionSlipDetailsType.SINGLE_VIEW })}>
+		<Row
+			className={cn({
+				details: type === requisitionSlipDetailsType.SINGLE_VIEW,
+			})}
+		>
 			<Col span={24} lg={12}>
 				<Row gutter={[15, 15]} align="middle">
 					<Col span={12}>
@@ -77,7 +86,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 								placeholder="status"
 								value={requisitionSlip?.action?.action}
 								onChange={onStatusChange}
-								disabled={status === request.REQUESTING}
+								disabled={requisitionSlipsStatus === request.REQUESTING}
 							/>
 						</Col>
 					</Row>

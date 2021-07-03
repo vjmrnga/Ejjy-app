@@ -22,71 +22,86 @@ export const useBranches = () => {
 	const branch = useSelector(selectors.selectBranch());
 	const branches = useSelector(selectors.selectBranches());
 
-	const getBranch = useActionDispatch(actions.getBranch);
-	const getBranches = useActionDispatch(actions.getBranches);
-	const createBranch = useActionDispatch(actions.createBranch);
-	const editBranch = useActionDispatch(actions.editBranch);
-	const removeBranch = useActionDispatch(actions.removeBranch);
+	const getBranchAction = useActionDispatch(actions.getBranch);
+	const getBranchesAction = useActionDispatch(actions.getBranches);
+	const createBranchAction = useActionDispatch(actions.createBranch);
+	const editBranchAction = useActionDispatch(actions.editBranch);
+	const removeBranchAction = useActionDispatch(actions.removeBranch);
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
 
 	const reset = () => {
 		resetError();
 		resetStatus();
 	};
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const getBranchesRequest = () => {
-		setRecentRequest(types.GET_BRANCHES);
-		getBranches({ callback });
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
-	const getBranchRequest = (branch) => {
+	const getBranches = () => {
+		setRecentRequest(types.GET_BRANCHES);
+		getBranchesAction({ callback });
+	};
+
+	const getBranch = (branchId) => {
 		setRecentRequest(types.GET_BRANCH);
-		getBranch({
-			id: branch,
+		getBranchAction({
+			id: branchId,
 			callback,
 		});
 	};
 
-	const createBranchRequest = (branch) => {
+	const createBranch = (branchData) => {
 		setRecentRequest(types.CREATE_BRANCH);
-		createBranch({
-			...branch,
-			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+		createBranchAction({
+			...branchData,
+			callback: modifiedCallback(
+				callback,
+				CREATE_SUCCESS_MESSAGE,
+				CREATE_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const editBranchRequest = (branch) => {
+	const editBranch = (branchData) => {
 		setRecentRequest(types.EDIT_BRANCH);
-		editBranch({
-			...branch,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+		editBranchAction({
+			...branchData,
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const removeBranchRequest = (id) => {
+	const removeBranch = (branchId) => {
 		setRecentRequest(types.REMOVE_BRANCH);
-		removeBranch({
-			id,
-			callback: modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
+		removeBranchAction({
+			id: branchId,
+			callback: modifiedCallback(
+				callback,
+				REMOVE_SUCCESS_MESSAGE,
+				REMOVE_ERROR_MESSAGE,
+			),
 		});
-	};
-
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
 	};
 
 	return {
 		branch,
 		branches,
-		getBranch: getBranchRequest,
-		getBranches: getBranchesRequest,
-		createBranch: createBranchRequest,
-		editBranch: editBranchRequest,
-		removeBranch: removeBranchRequest,
+		getBranch,
+		getBranches,
+		createBranch,
+		editBranch,
+		removeBranch,
 		status,
 		errors,
 		recentRequest,

@@ -13,9 +13,10 @@ const initialState = {
 
 const reducer = handleActions(
 	{
-		[types.ON_COLLAPSE_SIDEBAR]: (state, { payload }: any) => {
-			return { ...state, isSidebarCollapsed: payload };
-		},
+		[types.ON_COLLAPSE_SIDEBAR]: (state, { payload }: any) => ({
+			...state,
+			isSidebarCollapsed: payload,
+		}),
 	},
 	initialState,
 );
@@ -26,7 +27,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectIsSidebarCollapsed: () => createSelector(selectState, (state) => state.isSidebarCollapsed),
+	selectIsSidebarCollapsed: () =>
+		createSelector(selectState, (state) => state.isSidebarCollapsed),
 };
 
 export default reducer;

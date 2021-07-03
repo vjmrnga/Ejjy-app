@@ -3,7 +3,10 @@ import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/OfficeManager/users';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from '../../../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+} from '../../../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'User was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the user';
@@ -53,7 +56,10 @@ export const useUsers = () => {
 
 	const getUserByIdRequest = (id = 0, extraCallback = null) => {
 		setRecentRequest(types.GET_USER_BY_ID);
-		getUserById({ id, callback: modifiedExtraCallback(callback, extraCallback) });
+		getUserById({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	const createUserRequest = (data, extraCallback = null) => {
@@ -61,7 +67,11 @@ export const useUsers = () => {
 		createUser({
 			...data,
 			callback: modifiedExtraCallback(
-				modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+				modifiedCallback(
+					callback,
+					CREATE_SUCCESS_MESSAGE,
+					CREATE_ERROR_MESSAGE,
+				),
 				extraCallback,
 			),
 		});
@@ -83,16 +93,24 @@ export const useUsers = () => {
 		removeUser({
 			id,
 			callback: modifiedExtraCallback(
-				modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
+				modifiedCallback(
+					callback,
+					REMOVE_SUCCESS_MESSAGE,
+					REMOVE_ERROR_MESSAGE,
+				),
 				extraCallback,
 			),
 		});
 	};
 
-	const callback = ({ status, errors = [], warnings = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-		setWarnings(warnings);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
 	};
 
 	return {

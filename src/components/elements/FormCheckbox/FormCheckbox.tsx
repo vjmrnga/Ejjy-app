@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { Field, FieldProps } from 'formik';
 import * as React from 'react';
 import './style.scss';
@@ -13,7 +15,7 @@ const FormCheckbox = ({ id }: Props) => (
 			<div className="FormCheckbox">
 				<label>
 					<input id={id} {...field} type="checkbox" checked={field.value} />
-					<span></span>
+					<span />
 				</label>
 			</div>
 		)}

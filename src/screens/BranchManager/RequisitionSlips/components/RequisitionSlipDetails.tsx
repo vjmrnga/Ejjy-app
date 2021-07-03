@@ -4,7 +4,10 @@ import { upperFirst } from 'lodash';
 import React, { useCallback } from 'react';
 import { Label } from '../../../../components/elements';
 import { userTypes } from '../../../../global/types';
-import { formatDateTime, getRequisitionSlipStatus } from '../../../../utils/function';
+import {
+	formatDateTime,
+	getRequisitionSlipStatus,
+} from '../../../../utils/function';
 import '../style.scss';
 
 export const requisitionSlipDetailsType = {
@@ -19,12 +22,20 @@ interface Props {
 
 export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 	const getRequestor = useCallback(() => {
-		const { first_name = '', last_name = '', branch = {} } = requisitionSlip?.requesting_user || {};
+		const {
+			first_name = '',
+			last_name = '',
+			branch = {},
+		} = requisitionSlip?.requesting_user || {};
 		return `${first_name} ${last_name} - ${branch?.name || ''}`;
 	}, [requisitionSlip]);
 
 	return (
-		<Row className={cn({ details: type === requisitionSlipDetailsType.SINGLE_VIEW })}>
+		<Row
+			className={cn({
+				details: type === requisitionSlipDetailsType.SINGLE_VIEW,
+			})}
+		>
 			<Col span={24} lg={12}>
 				<Row gutter={[15, 15]} align="middle">
 					<Col span={12}>
@@ -61,7 +72,10 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 							<Label label="Status" />
 						</Col>
 						<Col span={12}>
-							{getRequisitionSlipStatus(requisitionSlip?.action?.action, userTypes.BRANCH_MANAGER)}
+							{getRequisitionSlipStatus(
+								requisitionSlip?.action?.action,
+								userTypes.BRANCH_MANAGER,
+							)}
 						</Col>
 					</Row>
 				)}

@@ -3,7 +3,12 @@ import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../../components';
-import { Button, FieldError, FormCheckbox, FormInput } from '../../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormCheckbox,
+	FormInput,
+} from '../../../../../components/elements';
 import { getDeliveryReceiptStatus, sleep } from '../../../../../utils/function';
 
 const columns = [
@@ -28,7 +33,7 @@ export const CreateAdjustmentSlipForm = ({
 	onSubmit,
 	onClose,
 	loading,
-}) => {
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -65,41 +70,36 @@ export const CreateAdjustmentSlipForm = ({
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[deliveryReceiptProducts],
 	);
 
-	const getSelectRadioButton = (index) => {
-		return <FormCheckbox id={`deliveryReceiptProducts.${index}.selected`} />;
-	};
+	const getSelectRadioButton = (index) => (
+		<FormCheckbox id={`deliveryReceiptProducts.${index}.selected`} />
+	);
 
-	const getQuantity = (index, key, values, touched, errors) => {
-		return (
-			<>
-				<FormInput
-					type="number"
-					id={`deliveryReceiptProducts.${index}.${key}`}
-					disabled={!values?.deliveryReceiptProducts?.[index]?.selected}
-				/>
-				{errors?.deliveryReceiptProducts?.[index]?.[key] &&
-				touched?.deliveryReceiptProducts?.[index]?.[key] ? (
-					<FieldError error={errors?.deliveryReceiptProducts?.[index]?.[key]} />
-				) : null}
-			</>
-		);
-	};
+	const getQuantity = (index, key, values, touched, errors) => (
+		<>
+			<FormInput
+				type="number"
+				id={`deliveryReceiptProducts.${index}.${key}`}
+				disabled={!values?.deliveryReceiptProducts?.[index]?.selected}
+			/>
+			{errors?.deliveryReceiptProducts?.[index]?.[key] &&
+			touched?.deliveryReceiptProducts?.[index]?.[key] ? (
+				<FieldError error={errors?.deliveryReceiptProducts?.[index]?.[key]} />
+			) : null}
+		</>
+	);
 
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
-				if (deliveryReceiptProducts.length > 0) {
-					setSubmitting(true);
-					await sleep(500);
-					setSubmitting(false);
-					onSubmit(values);
-				}
+			onSubmit={async (formData: any) => {
+				setSubmitting(true);
+				await sleep(500);
+				setSubmitting(false);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
@@ -124,11 +124,23 @@ export const CreateAdjustmentSlipForm = ({
 									// Current Delivered
 									drProduct?.delivered_quantity_piece,
 									// New Delivered
-									getQuantity(index, 'new_delivered_quantity_piece', values, touched, errors),
+									getQuantity(
+										index,
+										'new_delivered_quantity_piece',
+										values,
+										touched,
+										errors,
+									),
 									// Current Received
 									drProduct?.received_quantity_piece,
 									// New Received
-									getQuantity(index, 'new_received_quantity_piece', values, touched, errors),
+									getQuantity(
+										index,
+										'new_received_quantity_piece',
+										values,
+										touched,
+										errors,
+									),
 								])}
 								loading={loading}
 							/>

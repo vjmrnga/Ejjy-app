@@ -1,10 +1,15 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Layout, Tooltip } from 'antd';
 import cn from 'classnames';
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { actions as uiActions, selectors as uiSelectors } from '../../../ducks/ui';
+import {
+	actions as uiActions,
+	selectors as uiSelectors,
+} from '../../../ducks/ui';
 import { ONLINE_ROUTES } from '../../../global/constants';
 import { userTypes } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
@@ -17,8 +22,8 @@ const SidebarItems = [
 	{
 		key: 'dashboard',
 		name: 'Dashboard',
-		activeIcon: require(`../../../assets/images/icon-dashboard-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-dashboard.svg`),
+		activeIcon: require('../../../assets/images/icon-dashboard-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-dashboard.svg'),
 		link: '/dashboard',
 		userTypes: [
 			userTypes.ADMIN,
@@ -30,16 +35,16 @@ const SidebarItems = [
 	{
 		key: 'pending-transactions',
 		name: 'Pending Transactions',
-		activeIcon: require(`../../../assets/images/icon-failed-transfers-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-failed-transfers.svg`),
+		activeIcon: require('../../../assets/images/icon-failed-transfers-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-failed-transfers.svg'),
 		link: '/pending-transactions',
 		userTypes: [userTypes.ADMIN],
 	},
 	{
 		key: 'products',
 		name: 'Products',
-		activeIcon: require(`../../../assets/images/icon-product-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-product.svg`),
+		activeIcon: require('../../../assets/images/icon-product-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-product.svg'),
 		link: '/products',
 		userTypes: [
 			userTypes.ADMIN,
@@ -51,72 +56,72 @@ const SidebarItems = [
 	{
 		key: 'branches',
 		name: 'Branches',
-		activeIcon: require(`../../../assets/images/icon-branches-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-branches.svg`),
+		activeIcon: require('../../../assets/images/icon-branches-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-branches.svg'),
 		link: '/branches',
 		userTypes: [userTypes.ADMIN, userTypes.OFFICE_MANAGER],
 	},
 	{
 		key: 'logs',
 		name: 'Logs',
-		activeIcon: require(`../../../assets/images/icon-requisition-slip-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-requisition-slip.svg`),
+		activeIcon: require('../../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-requisition-slip.svg'),
 		link: '/logs',
 		userTypes: [userTypes.ADMIN],
 	},
 	{
 		key: 'requisition-slips',
 		name: 'Requisition Slips',
-		activeIcon: require(`../../../assets/images/icon-requisition-slip-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-requisition-slip.svg`),
+		activeIcon: require('../../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-requisition-slip.svg'),
 		link: '/requisition-slips',
 		userTypes: [userTypes.OFFICE_MANAGER, userTypes.BRANCH_MANAGER],
 	},
 	{
 		key: 'users',
 		name: 'Users',
-		activeIcon: require(`../../../assets/images/icon-users-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-users.svg`),
+		activeIcon: require('../../../assets/images/icon-users-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-users.svg'),
 		link: '/users',
 		userTypes: [userTypes.OFFICE_MANAGER],
 	},
 	{
 		key: 'order-slips',
 		name: 'Order Slips',
-		activeIcon: require(`../../../assets/images/icon-order-slips-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-order-slips.svg`),
+		activeIcon: require('../../../assets/images/icon-order-slips-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-order-slips.svg'),
 		link: '/order-slips',
 		userTypes: [userTypes.BRANCH_MANAGER],
 	},
 	{
 		key: 'preparation-slips',
 		name: 'Preparation Slips',
-		activeIcon: require(`../../../assets/images/icon-order-slips-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-order-slips.svg`),
+		activeIcon: require('../../../assets/images/icon-order-slips-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-order-slips.svg'),
 		link: '/preparation-slips',
 		userTypes: [userTypes.BRANCH_PERSONNEL],
 	},
 	{
 		key: 'checking',
 		name: 'Checking',
-		activeIcon: require(`../../../assets/images/icon-checking-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-checking.svg`),
+		activeIcon: require('../../../assets/images/icon-checking-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-checking.svg'),
 		link: '/checking',
 		userTypes: [userTypes.BRANCH_MANAGER],
 	},
 	{
 		key: 'reports',
 		name: 'Reports',
-		activeIcon: require(`../../../assets/images/icon-report-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-report.svg`),
+		activeIcon: require('../../../assets/images/icon-report-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-report.svg'),
 		link: '/reports',
 		userTypes: [userTypes.OFFICE_MANAGER],
 	},
 	{
 		key: 'notifications',
 		name: 'Notifications',
-		activeIcon: require(`../../../assets/images/icon-notifications-active.svg`),
-		defaultIcon: require(`../../../assets/images/icon-notifications.svg`),
+		activeIcon: require('../../../assets/images/icon-notifications-active.svg'),
+		defaultIcon: require('../../../assets/images/icon-notifications.svg'),
 		link: '/notifications',
 		userTypes: [
 			userTypes.ADMIN,
@@ -133,15 +138,19 @@ export const Sidebar = () => {
 
 	// CUSTOM HOOKS
 	const { pathname } = useLocation();
-	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
+	const isSidebarCollapsed = useSelector(
+		uiSelectors.selectIsSidebarCollapsed(),
+	);
 	const { user, logout } = useAuth();
 	const { hasInternetConnection } = useNetwork();
 	const onCollapseSidebar = useActionDispatch(uiActions.onCollapseSidebar);
 
 	// METHODS
 	const getName = useCallback(() => {
-		const firstName = user.user_type === userTypes.ADMIN ? 'Emman' : user.first_name;
-		const lastName = user.user_type === userTypes.ADMIN ? 'Fineza' : user.last_name;
+		const firstName =
+			user.user_type === userTypes.ADMIN ? 'Emman' : user.first_name;
+		const lastName =
+			user.user_type === userTypes.ADMIN ? 'Fineza' : user.last_name;
 
 		return `${firstName} ${lastName}`;
 	}, [user]);
@@ -155,13 +164,25 @@ export const Sidebar = () => {
 			collapsedWidth="0"
 			onCollapse={(collapsed) => onCollapseSidebar(collapsed)}
 		>
-			<img src={require('../../../assets/images/logo.jpg')} alt="logo" className="logo" />
+			<img
+				src={require('../../../assets/images/logo.jpg')}
+				alt="logo"
+				className="logo"
+			/>
 			<div className="sidebar-items">
-				{SidebarItems.filter((item) => item.userTypes.includes(user.user_type)).map((item) => (
+				{SidebarItems.filter((item) =>
+					item.userTypes.includes(user.user_type),
+				).map((item) => (
 					<Link tabIndex={-1} to={item.link} key={item.key}>
-						<div className={cn('item', { active: pathname.startsWith(item.link) })}>
+						<div
+							className={cn('item', { active: pathname.startsWith(item.link) })}
+						>
 							<img src={item.defaultIcon} alt={item.name} className="icon" />
-							<img src={item.activeIcon} alt={item.name} className="icon icon-active" />
+							<img
+								src={item.activeIcon}
+								alt={item.name}
+								className="icon icon-active"
+							/>
 							<span className="name">{item.name}</span>
 
 							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
@@ -185,7 +206,7 @@ export const Sidebar = () => {
 				<div className="menu">
 					<div className="item">
 						<img
-							src={require(`../../../assets/images/icon-account.svg`)}
+							src={require('../../../assets/images/icon-account.svg')}
 							alt="icon"
 							className="icon"
 						/>
@@ -194,7 +215,7 @@ export const Sidebar = () => {
 
 					<div className="item" onClick={() => logout(user.id)}>
 						<img
-							src={require(`../../../assets/images/icon-logout.svg`)}
+							src={require('../../../assets/images/icon-logout.svg')}
 							alt="icon"
 							className="icon"
 						/>

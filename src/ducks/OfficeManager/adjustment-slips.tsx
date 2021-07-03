@@ -25,9 +25,13 @@ const reducer = handleActions(
 					break;
 				}
 				case types.CREATE_ADJUSTMENT_SLIP: {
-					newData = { adjustmentSlips: [payload.adjustmentSlip, ...state.adjustmentSlips] };
+					newData = {
+						adjustmentSlips: [payload.adjustmentSlip, ...state.adjustmentSlips],
+					};
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -46,7 +50,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectAdjustmentSlips: () => createSelector(selectState, (state) => state.adjustmentSlips),
+	selectAdjustmentSlips: () =>
+		createSelector(selectState, (state) => state.adjustmentSlips),
 };
 
 export default reducer;

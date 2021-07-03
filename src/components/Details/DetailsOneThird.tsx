@@ -18,20 +18,18 @@ export const DetailsOneThird = ({
 	valueSpan,
 	classNamesLabel,
 	classNamesValue,
-}: Props) => {
-	return (
-		<Col md={8} sm={12} xs={24}>
-			<Row gutter={{ sm: 15, xs: 0 }}>
-				<Col sm={labelSpan} xs={24}>
-					<Label classNames={classNamesLabel} label={label} />
-				</Col>
-				<Col sm={valueSpan} xs={24}>
-					<span className={classNamesValue}>{value}</span>
-				</Col>
-			</Row>
-		</Col>
-	);
-};
+}: Props) => (
+	<Col md={8} sm={12} xs={24}>
+		<Row gutter={{ sm: 15, xs: 0 }}>
+			<Col sm={labelSpan} xs={24}>
+				<Label classNames={classNamesLabel} label={label} />
+			</Col>
+			<Col sm={valueSpan} xs={24}>
+				<span className={classNamesValue}>{value}</span>
+			</Col>
+		</Row>
+	</Col>
+);
 
 DetailsOneThird.defaultProps = {
 	labelSpan: 8,

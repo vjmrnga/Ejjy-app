@@ -77,13 +77,15 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: ICreateUser, { resetForm }) => {
+			onSubmit={async (formData: ICreateUser, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				values.confirm_password = undefined;
-				onSubmit(values);
+				onSubmit({
+					...formData,
+					confirm_password: undefined,
+				});
 				resetForm();
 			}}
 			enableReinitialize
@@ -103,11 +105,13 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 							{errors.last_name && touched.last_name ? (
 								<FieldError error={errors.last_name} />
 							) : null}
-						</Col>	
+						</Col>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="email" label="Email Address" />
-							{errors.email && touched.email ? <FieldError error={errors.email} /> : null}
+							{errors.email && touched.email ? (
+								<FieldError error={errors.email} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -122,16 +126,24 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 
 						<Col span={24}>
 							<FormInputLabel id="username" label="Username" />
-							{errors.username && touched.username ? <FieldError error={errors.username} /> : null}
+							{errors.username && touched.username ? (
+								<FieldError error={errors.username} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="password" label="Password" type="password" />
-							{errors.password && touched.password ? <FieldError error={errors.password} /> : null}
+							{errors.password && touched.password ? (
+								<FieldError error={errors.password} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel id="confirm_password" label="Confirm Password" type="password" />
+							<FormInputLabel
+								id="confirm_password"
+								label="Confirm Password"
+								type="password"
+							/>
 							{errors.confirm_password && touched.confirm_password ? (
 								<FieldError error={errors.confirm_password} />
 							) : null}

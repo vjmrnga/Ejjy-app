@@ -1,12 +1,11 @@
 {
 	"bracketSpacing": true,
-	"printWidth": 100,
 	"useTabs": true,
 	"semi": true,
 	"singleQuote": true,
 	"trailingComma": "all",
 	"endOfLine": "auto",
-	"prettier.overrides": [
+	"overrides": [
 		{
 			"files": ["*.css", "*.scss", ".prettierrc"],
 			"options": {
@@ -14,7 +13,7 @@
 			}
 		},
 		{
-			"files": ["*.tsx"],
+			"files": ["*.tsx", "*.ts"],
 			"options": {
 				"tabWidth": 2
 			}

@@ -1,7 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AddButtonIcon, Container, Table, TableHeader } from '../../../components';
+import {
+	AddButtonIcon,
+	Container,
+	Table,
+	TableHeader,
+} from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { request } from '../../../global/types';
@@ -18,7 +22,8 @@ const columns = [
 
 const Checking = () => {
 	const user = useSelector(authSelectors.selectUser());
-	const { dailyCheck, randomChecks, getDailyCheck, getRandomChecks, status } = useProductChecks();
+	const { dailyCheck, randomChecks, getDailyCheck, getRandomChecks, status } =
+		useProductChecks();
 
 	const [randomChecksDataSource, setRandomChecksDataSource] = useState([]);
 	const [selectedProductCheck, setSelectedProductCheck] = useState(null);
@@ -79,7 +84,10 @@ const Checking = () => {
 					<Table
 						columns={columns}
 						dataSource={randomChecksDataSource}
-						scroll={{ y: calculateTableHeight(randomChecksDataSource.length), x: '100%' }}
+						scroll={{
+							y: calculateTableHeight(randomChecksDataSource.length),
+							x: '100%',
+						}}
 					/>
 				</Box>
 

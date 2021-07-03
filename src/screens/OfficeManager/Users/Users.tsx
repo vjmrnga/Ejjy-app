@@ -1,5 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/jsx-wrap-multilines */
 import { message, Tabs } from 'antd';
+import { toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AddIcon, Container, TableActions } from '../../../components';
@@ -7,7 +8,11 @@ import { Box, Button } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
 import { NO_BRANCH_ID } from '../../../global/constants';
-import { pendingTransactionTypes, request, userTypes } from '../../../global/types';
+import {
+	pendingTransactionTypes,
+	request,
+	userTypes,
+} from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
@@ -16,7 +21,6 @@ import { BranchUsers } from './components/BranchUsers';
 import { CreateUserModal } from './components/CreateUserModal';
 import { EditUserModal } from './components/EditUserModal';
 import './style.scss';
-import { toString } from 'lodash';
 
 const { TabPane } = Tabs;
 
@@ -72,17 +76,21 @@ const Users = () => {
 		() =>
 			usersStatus === request.REQUESTING ||
 			(pendingTransactionsStatus === request.REQUESTING &&
-				pendingTransactionRecentRequest === pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
+				pendingTransactionRecentRequest ===
+					pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
 		[usersStatus, pendingTransactionsStatus, pendingTransactionRecentRequest],
 	);
 
 	const getTableDataSource = (branchId) => {
-		let hasPendingTransactions = pendingTransactions.some(
+		const hasPendingTransactions = pendingTransactions.some(
 			({ request_model }) => request_model === pendingTransactionTypes.USERS,
 		);
 
-		const isBranchUsers = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
-		let newData =
+		const isBranchUsers = [
+			userTypes.BRANCH_MANAGER,
+			userTypes.BRANCH_PERSONNEL,
+		];
+		const newData =
 			usersStatus === request.SUCCESS
 				? users
 						?.filter(({ user_type }) => isBranchUsers.includes(user_type))
@@ -100,13 +108,19 @@ const Users = () => {
 								hasPendingTransactions ? null : (
 									<TableActions
 										onAssign={
-											branchId !== NO_BRANCH_ID ? () => history.push(`/users/assign/${id}`) : null
+											branchId !== NO_BRANCH_ID
+												? () => history.push(`/users/assign/${id}`)
+												: null
 										}
 										onEdit={
-											isBranchUsers.includes(user_type) ? () => onEditUser(userWithBranch) : null
+											isBranchUsers.includes(user_type)
+												? () => onEditUser(userWithBranch)
+												: null
 										}
 										onRemove={
-											isBranchUsers.includes(user_type) ? () => onRemoveUser(userWithBranch) : null
+											isBranchUsers.includes(user_type)
+												? () => onRemoveUser(userWithBranch)
+												: null
 										}
 									/>
 								),

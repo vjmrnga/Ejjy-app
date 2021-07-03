@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/branch-products';
 import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from '../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+	onCallback,
+} from '../utils/function';
 import {
 	executePaginatedRequest,
 	getDataForCurrentPage,
@@ -14,8 +18,10 @@ const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
 const EDIT_SUCCESS_MESSAGE = 'Branch product was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch product';
 
-const EDIT_BALANCE_SUCCESS_MESSAGE = 'Branch product balance was edited successfully';
-const EDIT_BALANCE_ERROR_MESSAGE = 'An error occurred while editing the branch product balance';
+const EDIT_BALANCE_SUCCESS_MESSAGE =
+	'Branch product balance was edited successfully';
+const EDIT_BALANCE_ERROR_MESSAGE =
+	'An error occurred while editing the branch product balance';
 
 export const useBranchProducts = () => {
 	// STATES
@@ -38,8 +44,12 @@ export const useBranchProducts = () => {
 	);
 	const getBranchProductAction = useActionDispatch(actions.getBranchProduct);
 	const editBranchProductAction = useActionDispatch(actions.editBranchProduct);
-	const editBranchProductBalanceAction = useActionDispatch(actions.editBranchProductBalance);
-	const editBranchProductPriceCostAction = useActionDispatch(actions.editBranchProductPriceCost);
+	const editBranchProductBalanceAction = useActionDispatch(
+		actions.editBranchProductBalance,
+	);
+	const editBranchProductPriceCostAction = useActionDispatch(
+		actions.editBranchProductPriceCost,
+	);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
@@ -66,17 +76,26 @@ export const useBranchProducts = () => {
 		resetPagination();
 	};
 
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
+	const executeRequest = (data, requestCallback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
 		});
+	};
+
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
 	};
 
 	// PAGINATION METHODS
@@ -107,7 +126,6 @@ export const useBranchProducts = () => {
 			setPageCount,
 			setCurrentPage,
 			setPageSize,
-			resetPagination,
 		});
 	};
 
@@ -123,7 +141,6 @@ export const useBranchProducts = () => {
 			setPageCount,
 			setCurrentPage,
 			setPageSize,
-			resetPagination,
 		});
 	};
 
@@ -151,7 +168,11 @@ export const useBranchProducts = () => {
 		editBranchProductBalanceAction({
 			...data,
 			callback: modifiedExtraCallback(
-				modifiedCallback(callback, EDIT_BALANCE_SUCCESS_MESSAGE, EDIT_BALANCE_ERROR_MESSAGE),
+				modifiedCallback(
+					callback,
+					EDIT_BALANCE_SUCCESS_MESSAGE,
+					EDIT_BALANCE_ERROR_MESSAGE,
+				),
 				extraCallback,
 			),
 		});
@@ -163,12 +184,6 @@ export const useBranchProducts = () => {
 			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
-	};
-
-	const callback = ({ status, errors = [], warnings = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-		setWarnings(warnings);
 	};
 
 	return {

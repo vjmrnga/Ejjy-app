@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -33,9 +32,13 @@ const OrderSlips = () => {
 
 	// CUSTOM HOOKS
 	const user = useSelector(authSelectors.selectUser());
-	const { orderSlips, getOrderSlipsExtended, pageCount, currentPage, status } = useOrderSlips({
-		pageSize: PAGE_SIZE,
-	});
+	const {
+		orderSlips,
+		getOrderSlipsExtended,
+		pageCount,
+		currentPage,
+		status: orderSlipsStatus,
+	} = useOrderSlips();
 
 	// METHODS
 	// Effect: Fetch order slips
@@ -55,7 +58,9 @@ const OrderSlips = () => {
 				const { value, percentage_fulfilled } = status;
 
 				return {
-					id: <ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />,
+					id: (
+						<ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />
+					),
 					datetime_created: formatDateTime(datetime_created),
 					status: getOrderSlipStatusBranchManager(
 						value,
@@ -75,7 +80,10 @@ const OrderSlips = () => {
 	};
 
 	const getPendingCount = useCallback(
-		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		() =>
+			orderSlips.filter(({ status }) =>
+				pendingOrderSlipStatus.includes(status?.value),
+			).length,
 		[orderSlips],
 	);
 
@@ -96,8 +104,11 @@ const OrderSlips = () => {
 					<Table
 						columns={columns}
 						dataSource={orderSlipsData}
-						scroll={{ y: calculateTableHeight(orderSlipsData.length), x: '100%' }}
-						loading={status === request.REQUESTING}
+						scroll={{
+							y: calculateTableHeight(orderSlipsData.length),
+							x: '100%',
+						}}
+						loading={orderSlipsStatus === request.REQUESTING}
 					/>
 
 					<Pagination

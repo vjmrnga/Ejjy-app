@@ -1,9 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
-import { calculateTableHeight, formatDateTime, showErrorMessages } from '../../utils/function';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	showErrorMessages,
+} from '../../utils/function';
 import Box from '../elements/Box/Box';
 import { Table } from '../Table/Table';
 import { TableHeader } from '../Table/TableHeaders/TableHeader';
@@ -20,7 +23,10 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const PendingTransactionsSection = ({ title, transactionType }: Props) => {
+export const PendingTransactionsSection = ({
+	title,
+	transactionType,
+}: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -31,7 +37,7 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 		editPendingTransactions,
 		executePendingTransactions,
 		removePendingTransactions,
-		status,
+		status: pendingTransactionsStatus,
 	} = usePendingTransactions();
 
 	// METHODS
@@ -44,7 +50,8 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 		const formattedPendingTransactions = pendingTransactions
 			.filter(({ request_model }) => request_model === transactionType)
 			.map((pendingTransaction) => {
-				const { name, branch, datetime_created, is_pending_approval } = pendingTransaction;
+				const { name, branch, datetime_created, is_pending_approval } =
+					pendingTransaction;
 
 				return {
 					description: name,
@@ -54,8 +61,12 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 						<PendingApprovalBadgePill />
 					) : (
 						<TableActions
-							onExecutePendingTransaction={() => onExecutePendingTransaction(pendingTransaction)}
-							onRemove={() => onAskApprovalPendingTransaction(pendingTransaction.id)}
+							onExecutePendingTransaction={() => {
+								onExecutePendingTransaction(pendingTransaction);
+							}}
+							onRemove={() => {
+								onAskApprovalPendingTransaction(pendingTransaction.id);
+							}}
 						/>
 					),
 				};
@@ -69,7 +80,9 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 			{
 				...pendingTransaction,
 				request_body: JSON.parse(pendingTransaction?.request_body || '{}'),
-				request_query_params: JSON.parse(pendingTransaction?.request_query_params || '{}'),
+				request_query_params: JSON.parse(
+					pendingTransaction?.request_query_params || '{}',
+				),
 			},
 			({ status, error }) => {
 				if (status === request.SUCCESS) {
@@ -95,7 +108,10 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 		);
 	};
 
-	const onRemovePendingTransaction = (pendingTransactionId, showFeedbackMessage) => {
+	const onRemovePendingTransaction = (
+		pendingTransactionId,
+		showFeedbackMessage,
+	) => {
 		removePendingTransactions(
 			{ id: pendingTransactionId },
 			({ status, error }) => {
@@ -118,7 +134,7 @@ export const PendingTransactionsSection = ({ title, transactionType }: Props) =>
 					columns={columns}
 					dataSource={data}
 					scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-					loading={status === request.REQUESTING}
+					loading={pendingTransactionsStatus === request.REQUESTING}
 				/>
 			</Box>
 		</section>

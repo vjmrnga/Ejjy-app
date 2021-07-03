@@ -22,7 +22,11 @@ export default function configureStore(initialState = {}, history: any): any {
 	const enhancers = [applyMiddleware(...middlewares)];
 	const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-	const store = createStore(persistedReducer, initialState, compose(...enhancers));
+	const store = createStore(
+		persistedReducer,
+		initialState,
+		compose(...enhancers),
+	);
 
 	// run saga middleware
 	sagaMiddleware.run(rootSaga);

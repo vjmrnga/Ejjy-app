@@ -21,7 +21,9 @@ export const useOrderSlips = () => {
 
 	const orderSlips = useSelector(selectors.selectOrderSlips());
 	const getOrderSlips = useActionDispatch(actions.getOrderSlips);
-	const getOrderSlipsExtended = useActionDispatch(actions.getOrderSlipsExtended);
+	const getOrderSlipsExtended = useActionDispatch(
+		actions.getOrderSlipsExtended,
+	);
 	const createOrderSlip = useActionDispatch(actions.createOrderSlip);
 	const editOrderSlip = useActionDispatch(actions.editOrderSlip);
 	const removeOrderSlip = useActionDispatch(actions.removeOrderSlip);
@@ -49,7 +51,11 @@ export const useOrderSlips = () => {
 		setRecentRequest(types.CREATE_ORDER_SLIP);
 		createOrderSlip({
 			...orderSlip,
-			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				CREATE_SUCCESS_MESSAGE,
+				CREATE_ERROR_MESSAGE,
+			),
 		});
 	};
 
@@ -57,7 +63,11 @@ export const useOrderSlips = () => {
 		setRecentRequest(types.EDIT_ORDER_SLIP);
 		editOrderSlip({
 			...orderSlip,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
@@ -65,13 +75,20 @@ export const useOrderSlips = () => {
 		setRecentRequest(types.REMOVE_ORDER_SLIP);
 		removeOrderSlip({
 			id,
-			callback: modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				REMOVE_SUCCESS_MESSAGE,
+				REMOVE_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

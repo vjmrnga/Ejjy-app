@@ -5,7 +5,7 @@ import { IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
 import { useAuth } from '../../hooks/useAuth';
 import { getKeyDownCombination, getLocalIpAddress } from '../../utils/function';
-import { IFormValues, LoginForm } from './components/LoginForm';
+import { LoginForm } from './components/LoginForm';
 import { SettingUrlModal } from './components/SettingUrlModal';
 import './style.scss';
 
@@ -32,10 +32,6 @@ const Login = () => {
 		}
 	}, []);
 
-	const onSubmit = (data: IFormValues) => {
-		login(data);
-	};
-
 	const handleKeyDown = (event) => {
 		const key = getKeyDownCombination(event);
 
@@ -48,9 +44,19 @@ const Login = () => {
 	return (
 		<section className="Login">
 			<Box className="container">
-				<img src={require('../../assets/images/logo.jpg')} alt="logo" className="logo" />
+				<img
+					src={require('../../assets/images/logo.jpg')}
+					alt="logo"
+					className="logo"
+				/>
 
-				<LoginForm onSubmit={onSubmit} loading={status === request.REQUESTING} errors={errors} />
+				<LoginForm
+					onSubmit={(formData) => {
+						login(formData);
+					}}
+					errors={errors}
+					loading={status === request.REQUESTING}
+				/>
 
 				{isSetupButtonsVisible && (
 					<>
@@ -64,7 +70,10 @@ const Login = () => {
 							block
 						/>
 
-						<SettingUrlModal visible={urlModalVisible} onClose={() => setUrlModalVisible(false)} />
+						<SettingUrlModal
+							visible={urlModalVisible}
+							onClose={() => setUrlModalVisible(false)}
+						/>
 					</>
 				)}
 			</Box>

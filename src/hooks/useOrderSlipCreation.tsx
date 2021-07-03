@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/order-slip-creation';
@@ -30,6 +29,16 @@ export const useOrderSlipCreation = () => {
 		resetStatus();
 	};
 
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
+	};
+
 	// REQUEST METHODS
 	const getBranchProducts = (data, extraCallback = null) => {
 		setRecentRequest(types.GET_BRANCH_PRODUCTS);
@@ -45,12 +54,6 @@ export const useOrderSlipCreation = () => {
 			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
-	};
-
-	const callback = ({ status, errors = [], warnings = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-		setWarnings(warnings);
 	};
 
 	return {

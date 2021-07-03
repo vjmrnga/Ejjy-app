@@ -1,12 +1,20 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchPersonnel/preparation-slips';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/BranchPersonnel/preparation-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from '../../../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+} from '../../../utils/function';
 
 const FULFILL_SUCCESS_MESSAGE = 'Preparation slip was fulfilled successfully';
-const FULFILL_ERROR_MESSAGE = 'An error occurred while fulfilling the preparation slip';
+const FULFILL_ERROR_MESSAGE =
+	'An error occurred while fulfilling the preparation slip';
 
 export const usePreparationSlips = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -16,8 +24,12 @@ export const usePreparationSlips = () => {
 	const preparationSlip = useSelector(selectors.selectPreparationSlip());
 	const preparationSlips = useSelector(selectors.selectPreparationSlips());
 	const getPreparationSlips = useActionDispatch(actions.getPreparationSlips);
-	const getPreparationSlipById = useActionDispatch(actions.getPreparationSlipById);
-	const fulfillPreparationSlip = useActionDispatch(actions.fulfillPreparationSlip);
+	const getPreparationSlipById = useActionDispatch(
+		actions.getPreparationSlipById,
+	);
+	const fulfillPreparationSlip = useActionDispatch(
+		actions.fulfillPreparationSlip,
+	);
 
 	const reset = () => {
 		resetError();
@@ -33,7 +45,11 @@ export const usePreparationSlips = () => {
 		getPreparationSlips({ assigned_personnel_id, callback });
 	};
 
-	const getPreparationSlipByIdRequest = (id, assigned_personnel_id, extraCallback = null) => {
+	const getPreparationSlipByIdRequest = (
+		id,
+		assigned_personnel_id,
+		extraCallback = null,
+	) => {
 		setRecentRequest(types.GET_PREPARATION_SLIP_BY_ID);
 		getPreparationSlipById({
 			id,
@@ -46,13 +62,20 @@ export const usePreparationSlips = () => {
 		setRecentRequest(types.FULFILL_PREPARATION_SLIP);
 		fulfillPreparationSlip({
 			...data,
-			callback: modifiedCallback(callback, FULFILL_SUCCESS_MESSAGE, FULFILL_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				FULFILL_SUCCESS_MESSAGE,
+				FULFILL_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

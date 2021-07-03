@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
 import { Container } from '../../../components';
 import { useBranches } from '../../../hooks/useBranches';
@@ -36,7 +35,7 @@ const Branches = () => {
 
 		return () => {
 			clearInterval(intervalRef.current);
-		}
+		};
 	}, [branches]);
 
 	// Effect: Format branches to be rendered in Table
@@ -46,8 +45,7 @@ const Branches = () => {
 			.map((key) => ({
 				message: (
 					<b>
-						{failedTransfers?.[key]?.branchName} has {failedTransfers?.[key]?.count} failed
-						transfers
+						{`${failedTransfers?.[key]?.branchName} has ${failedTransfers?.[key]?.count} failed transfers.`}
 					</b>
 				),
 				datetime: formatDateTime(failedTransfers?.[key]?.datetime),

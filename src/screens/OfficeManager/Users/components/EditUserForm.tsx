@@ -2,7 +2,12 @@ import { Divider } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormSelect, Label } from '../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormSelect,
+	Label,
+} from '../../../../components/elements';
 import { Option } from '../../../../components/elements/Select/Select';
 import { sleep } from '../../../../utils/function';
 
@@ -19,7 +24,13 @@ interface Props {
 	loading: boolean;
 }
 
-export const EditUserForm = ({ user, branchOptions, onSubmit, onClose, loading }: Props) => {
+export const EditUserForm = ({
+	user,
+	branchOptions,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 
@@ -41,12 +52,11 @@ export const EditUserForm = ({ user, branchOptions, onSubmit, onClose, loading }
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: ICreateEditUser) => {
+			onSubmit={async (formData: ICreateEditUser) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
-
-				onSubmit(values);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
@@ -54,7 +64,9 @@ export const EditUserForm = ({ user, branchOptions, onSubmit, onClose, loading }
 				<Form className="form">
 					<Label label="Branch" spacing />
 					<FormSelect id="branch_id" options={branchOptions} />
-					{errors.branch_id && touched.branch_id ? <FieldError error={errors.branch_id} /> : null}
+					{errors.branch_id && touched.branch_id ? (
+						<FieldError error={errors.branch_id} />
+					) : null}
 
 					<Divider />
 
@@ -66,7 +78,12 @@ export const EditUserForm = ({ user, branchOptions, onSubmit, onClose, loading }
 							classNames="mr-10"
 							disabled={loading || isSubmitting}
 						/>
-						<Button type="submit" text="Edit" variant="primary" loading={loading || isSubmitting} />
+						<Button
+							type="submit"
+							text="Edit"
+							variant="primary"
+							loading={loading || isSubmitting}
+						/>
 					</div>
 				</Form>
 			)}

@@ -1,26 +1,36 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TableHeader, TableNormal } from '../../../../components';
-import { ButtonLink, FieldError, FieldWarning } from '../../../../components/elements';
+import {
+	ButtonLink,
+	FieldError,
+	FieldWarning,
+} from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useTransactions } from '../../../../hooks/useTransactions';
-import { getTransactionStatus, numberWithCommas } from '../../../../utils/function';
+import {
+	getTransactionStatus,
+	numberWithCommas,
+} from '../../../../utils/function';
 import { ViewTransactionModal } from './ViewTransactionModal';
 
 interface Props {
 	branchId: any;
 }
 
-const PAGE_SIZE = 10;
-
-const columns = [{ name: 'ID' }, { name: 'Invoice' }, { name: 'Amount' }, { name: 'Status' }];
+const columns = [
+	{ name: 'ID' },
+	{ name: 'Invoice' },
+	{ name: 'Amount' },
+	{ name: 'Status' },
+];
 
 export const ViewBranchTransactions = ({ branchId }: Props) => {
 	// STATES
 	const [tableData, setTableData] = useState([]);
-	const [viewTransactionModalVisible, setViewTransactionModalVisible] = useState(false);
+	const [viewTransactionModalVisible, setViewTransactionModalVisible] =
+		useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
@@ -28,14 +38,13 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		transactions,
 		pageCount,
 		currentPage,
+		pageSize,
 
 		listTransactions,
-		status,
+		status: transactionStatus,
 		errors,
 		warnings,
-	} = useTransactions({
-		pageSize: PAGE_SIZE,
-	});
+	} = useTransactions();
 
 	// METHODS
 	useEffect(() => {
@@ -44,17 +53,18 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 	// Effect: Format branch transactions to be rendered in Table
 	useEffect(() => {
-		const formattedBranchTransactions = transactions.map((branchTransaction) => {
-			const { id, invoice, total_amount, status } = branchTransaction;
+		const formattedBranchTransactions = transactions.map(
+			(branchTransaction) => {
+				const { id, invoice, total_amount, status } = branchTransaction;
 
-			return [
-				{ isHidden: true }, // TODO: For searching functionality (payload)
-				<ButtonLink text={id} onClick={() => onView(branchTransaction)} />,
-				invoice?.or_number || EMPTY_CELL,
-				`₱${numberWithCommas(total_amount?.toFixed(2))}`,
-				getTransactionStatus(status),
-			];
-		});
+				return [
+					<ButtonLink text={id} onClick={() => onView(branchTransaction)} />,
+					invoice?.or_number || EMPTY_CELL,
+					`₱${numberWithCommas(total_amount?.toFixed(2))}`,
+					getTransactionStatus(status),
+				];
+			},
+		);
 
 		setTableData(formattedBranchTransactions);
 	}, [transactions]);
@@ -79,13 +89,17 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 			<TableHeader title="Transactions" />
 
-			<TableNormal columns={columns} data={tableData} loading={status === request.REQUESTING} />
+			<TableNormal
+				columns={columns}
+				data={tableData}
+				loading={transactionStatus === request.REQUESTING}
+			/>
 
 			<Pagination
 				className="table-pagination"
 				current={currentPage}
 				total={pageCount}
-				pageSize={PAGE_SIZE}
+				pageSize={pageSize}
 				onChange={onPageChange}
 				disabled={!tableData}
 			/>

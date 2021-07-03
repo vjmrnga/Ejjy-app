@@ -1,7 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle, TableNormal } from '../../../../../components';
+import {
+	DetailsRow,
+	DetailsSingle,
+	TableNormal,
+} from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { request } from '../../../../../global/types';
 import { formatDate } from '../../../../../utils/function';
@@ -46,20 +49,21 @@ export const ViewProductAdjustmentSlipsModal = ({
 
 	useEffect(() => {
 		if (visible && deliveryReceiptProduct && status === request.SUCCESS) {
-			const formattedAdjustmentProducts = deliveryReceiptProduct?.adjustment_slips?.map((item) => {
-				const { id, datetime_created, remarks } = item?.adjustment_slip;
-				const {
-					current_delivered_quantity_piece,
-					current_received_quantity_piece,
-				} = item?.current_quantities;
+			const formattedAdjustmentProducts =
+				deliveryReceiptProduct?.adjustment_slips?.map((item) => {
+					const { id, datetime_created, remarks } = item?.adjustment_slip;
+					const {
+						current_delivered_quantity_piece,
+						current_received_quantity_piece,
+					} = item?.current_quantities;
 
-				return [
-					id,
-					formatDate(datetime_created),
-					`${current_delivered_quantity_piece}/${current_received_quantity_piece}`,
-					remarks,
-				];
-			});
+					return [
+						id,
+						formatDate(datetime_created),
+						`${current_delivered_quantity_piece}/${current_received_quantity_piece}`,
+						remarks,
+					];
+				});
 
 			setAdjustmentProducts(formattedAdjustmentProducts);
 		}

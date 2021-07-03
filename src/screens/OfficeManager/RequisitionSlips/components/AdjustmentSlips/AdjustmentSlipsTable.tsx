@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from '../../../../../components';
 import { ButtonLink } from '../../../../../components/elements';
-import { calculateTableHeight, formatDateTime, sleep } from '../../../../../utils/function';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	sleep,
+} from '../../../../../utils/function';
 
 const columns = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -14,7 +18,11 @@ interface Props {
 	loading: boolean;
 }
 
-export const AdjustmentSlipsTable = ({ adjustmentSlips, onViewAdjustmentSlip, loading }: Props) => {
+export const AdjustmentSlipsTable = ({
+	adjustmentSlips,
+	onViewAdjustmentSlip,
+	loading,
+}: Props) => {
 	const [adjustmentSlipsData, setAdjustmentSlipsData] = useState([]);
 
 	// Effect: Format order slips to be rendered in Table
@@ -24,7 +32,12 @@ export const AdjustmentSlipsTable = ({ adjustmentSlips, onViewAdjustmentSlip, lo
 				const { id, datetime_created } = adjustmentSlip;
 
 				return {
-					id: <ButtonLink text={id} onClick={() => onViewAdjustmentSlip(adjustmentSlip)} />,
+					id: (
+						<ButtonLink
+							text={id}
+							onClick={() => onViewAdjustmentSlip(adjustmentSlip)}
+						/>
+					),
 					datetime_created: formatDateTime(datetime_created),
 				};
 			});
@@ -36,7 +49,10 @@ export const AdjustmentSlipsTable = ({ adjustmentSlips, onViewAdjustmentSlip, lo
 		<Table
 			columns={columns}
 			dataSource={adjustmentSlipsData}
-			scroll={{ y: calculateTableHeight(adjustmentSlipsData.length), x: '100%' }}
+			scroll={{
+				y: calculateTableHeight(adjustmentSlipsData.length),
+				x: '100%',
+			}}
 			loading={loading}
 		/>
 	);

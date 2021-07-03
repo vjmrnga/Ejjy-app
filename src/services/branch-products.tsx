@@ -43,8 +43,10 @@ export const service = {
 		axios.patch(`/branches-products/${body.id}/`, body, { baseURL }),
 
 	editBalance: async (body: IEditBranchProductBalance, baseURL) =>
-		axios.patch(`/branches-products/update-balance-and-retrieve/`, body, { baseURL }),
+		axios.patch('/branches-products/update-balance-and-retrieve/', body, {
+			baseURL,
+		}),
 
 	editPriceCost: async (body: IEditBranchProductPriceCost, baseURL) =>
-		axios.patch(`/branches-products/update-price-and-cost/`, body, { baseURL }),
+		axios.patch('/branches-products/update-price-and-cost/', body, { baseURL }),
 };

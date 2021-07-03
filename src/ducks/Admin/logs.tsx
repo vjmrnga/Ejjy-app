@@ -7,5 +7,7 @@ export const types = {
 };
 
 export const actions = {
-	getUpdateBranchProductBalanceLogs: createAction(types.GET_UPDATE_BRANCH_PRODUCT_BALANCE_LOGS),
+	getUpdateBranchProductBalanceLogs: createAction(
+		types.GET_UPDATE_BRANCH_PRODUCT_BALANCE_LOGS,
+	),
 };

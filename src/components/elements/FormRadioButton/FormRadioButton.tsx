@@ -17,9 +17,18 @@ const FormRadioButton = ({ items, name }: Props) => (
 	<div className="FormRadioButton">
 		{items.map(({ id, value, label }) => (
 			<div className="item" key={id}>
-				<Field type="radio" id={id} name={name} value={value} className="radio-button" />
+				<Field
+					type="radio"
+					id={id}
+					name={name}
+					value={value}
+					className="radio-button"
+				/>
 				<label htmlFor={id}>
-					<img src={require('../../../assets/images/icon-check-white.svg')} alt="check icon" />
+					<img
+						src={require('../../../assets/images/icon-check-white.svg')}
+						alt="check icon"
+					/>
 					{label}
 				</label>
 			</div>

@@ -29,10 +29,16 @@ interface IGetPreparationSlipByIdRequest {
 
 export const service = {
 	list: async (params: IGetPreparationSlipsRequest, baseURL) =>
-		axios.get('/order-slips/with-assigned-personnel-details/', { baseURL, params }),
+		axios.get('/order-slips/with-assigned-personnel-details/', {
+			baseURL,
+			params,
+		}),
 
 	getById: async (id, params: IGetPreparationSlipByIdRequest, baseURL) =>
-		axios.get(`/order-slips/${id}/with-assigned-personnel-details/`, { baseURL, params }),
+		axios.get(`/order-slips/${id}/with-assigned-personnel-details/`, {
+			baseURL,
+			params,
+		}),
 
 	fulfill: async (body: IFulfillPreparationSlip, baseURL) =>
 		axios.patch(`/order-slips/${body.id}/`, body, { baseURL }),

@@ -39,7 +39,9 @@ const reducer = handleActions(
 				}
 				case types.EDIT_ORDER_SLIP: {
 					const { orderSlip: editedOrderSlip } = payload;
-					const index = state.orderSlips.findIndex(({ id }) => id === editedOrderSlip.id);
+					const index = state.orderSlips.findIndex(
+						({ id }) => id === editedOrderSlip.id,
+					);
 
 					if (index !== NOT_FOUND_INDEX) {
 						const orderSlips = cloneDeep(state.orderSlips);
@@ -50,7 +52,9 @@ const reducer = handleActions(
 				}
 				case OMDeliveryReceiptTypes.CREATE_DELIVERY_RECEIPT: {
 					const { orderSlipId, deliveryReceiptId } = payload;
-					const index = state.orderSlips.findIndex(({ id }) => id === orderSlipId);
+					const index = state.orderSlips.findIndex(
+						({ id }) => id === orderSlipId,
+					);
 
 					if (index !== NOT_FOUND_INDEX) {
 						const orderSlips = cloneDeep(state.orderSlips);
@@ -62,7 +66,9 @@ const reducer = handleActions(
 				}
 				case BMDeliveryReceiptTypes.RECEIVE_DELIVERY_RECEIPT: {
 					const { orderSlipId } = payload;
-					const index = state.orderSlips.findIndex(({ id }) => id === orderSlipId);
+					const index = state.orderSlips.findIndex(
+						({ id }) => id === orderSlipId,
+					);
 
 					if (index !== NOT_FOUND_INDEX) {
 						const orderSlips = cloneDeep(state.orderSlips);
@@ -71,6 +77,8 @@ const reducer = handleActions(
 					}
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -90,7 +98,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectOrderSlips: () => createSelector(selectState, (state) => state.orderSlips),
+	selectOrderSlips: () =>
+		createSelector(selectState, (state) => state.orderSlips),
 };
 
 export default reducer;

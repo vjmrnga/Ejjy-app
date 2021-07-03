@@ -41,10 +41,18 @@ export const service = {
 	listExtended: async (params: IGetRequisitionSlip, baseURL) =>
 		axios.get('/requisition-slips/extended/', { baseURL, params }),
 
-	getById: async (id, baseURL) => axios.get(`/requisition-slips/${id}/extended/`, { baseURL }),
+	getById: async (id, baseURL) =>
+		axios.get(`/requisition-slips/${id}/extended/`, { baseURL }),
 
-	getByIdAndBranch: async (params: IGetRequestRequisitionSlipBranchId, id: number, baseURL) =>
-		axios.get(`/requisition-slips/${id}/with-preparing-branch-details/`, { baseURL, params }),
+	getByIdAndBranch: async (
+		params: IGetRequestRequisitionSlipBranchId,
+		id: number,
+		baseURL,
+	) =>
+		axios.get(`/requisition-slips/${id}/with-preparing-branch-details/`, {
+			baseURL,
+			params,
+		}),
 
 	create: async (body: ICreateRequisitionSlip, baseURL) =>
 		axios.post('/requisition-slips/', body, { baseURL }),

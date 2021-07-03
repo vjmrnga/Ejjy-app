@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Divider, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, TableNormal } from '../../../../../components';
@@ -14,7 +15,9 @@ interface Props {
 
 export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
-	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState([]);
+	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
+		[],
+	);
 
 	useEffect(() => {
 		if (orderSlip) {
@@ -52,6 +55,8 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 					),
 					`${first_name} ${last_name}`,
 				]);
+
+				return requestedProduct;
 			});
 
 			setRequestedProducts(formattedPreparationSlip);
@@ -62,21 +67,30 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 	const onQuantityTypeChange = useCallback(
 		(quantityType) => {
 			const QUANTITY_INDEX = 2;
-			const formattedRequestedProducts = requestedProducts.map((requestedProduct, index) => {
-				const quantity = requestedProductsQuantity[index];
-				const isPiece = quantityType === quantityTypes.PIECE;
-				const inputted = isPiece ? quantity.piecesInputted : quantity.bulkInputted;
-				const ordered = isPiece ? quantity.piecesOrdered : quantity.bulkOrdered;
-				const key = `${orderSlip?.id}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
+			const formattedRequestedProducts = requestedProducts.map(
+				(requestedProduct, index) => {
+					const requestedProd = requestedProduct;
+					const quantity = requestedProductsQuantity[index];
+					const isPiece = quantityType === quantityTypes.PIECE;
+					const inputted = isPiece
+						? quantity.piecesInputted
+						: quantity.bulkInputted;
+					const ordered = isPiece
+						? quantity.piecesOrdered
+						: quantity.bulkOrdered;
+					const key = `${
+						orderSlip?.id
+					}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
 
-				requestedProduct[QUANTITY_INDEX] = getColoredText(
-					key,
-					!quantity.isFulfilled,
-					inputted,
-					ordered,
-				);
-				return requestedProduct;
-			});
+					requestedProd[QUANTITY_INDEX] = getColoredText(
+						key,
+						!quantity.isFulfilled,
+						inputted,
+						ordered,
+					);
+					return requestedProd;
+				},
+			);
 			setRequestedProducts(formattedRequestedProducts);
 		},
 		[requestedProducts, requestedProductsQuantity, orderSlip],
@@ -112,7 +126,11 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 				</Col>
 			</Row>
 
-			<TableNormal columns={getColumns()} data={requestedProducts} hasCustomHeaderComponent />
+			<TableNormal
+				columns={getColumns()}
+				data={requestedProducts}
+				hasCustomHeaderComponent
+			/>
 		</Modal>
 	);
 };

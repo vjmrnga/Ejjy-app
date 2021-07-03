@@ -1,9 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
-import { FieldError, Label, Textarea } from '../../../../../components/elements';
+import {
+	FieldError,
+	Label,
+	Textarea,
+} from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/OfficeManager/adjustment-slips';
 import { deliveryReceiptStatus, request } from '../../../../../global/types';
@@ -28,32 +31,41 @@ export const CreateAdjustmentSlipModal = ({
 	const [deliveryReceiptProducts, setDeliveryReceiptProducts] = useState([]);
 
 	const user = useSelector(authSelectors.selectUser());
-	const { createAdjustmentSlip, status, errors, recentRequest, reset } = useAdjustmentSlips();
+	const {
+		createAdjustmentSlip,
+		status: adjustmentSlipsStatus,
+		errors,
+		recentRequest,
+		reset,
+	} = useAdjustmentSlips();
 
 	// Effect: Format delivery receipt products
 	useEffect(() => {
 		if (deliveryReceipt && visible) {
-			const formattedDeliveryReceiptProducts = deliveryReceipt.delivery_receipt_products
-				.filter(({ status }) => status === deliveryReceiptStatus.INVESTIGATION)
-				.map((product) => {
-					const {
-						id,
-						status,
-						is_adjusted,
-						received_quantity_piece,
-						delivered_quantity_piece,
-						order_slip_product,
-					} = product;
+			const formattedDeliveryReceiptProducts =
+				deliveryReceipt.delivery_receipt_products
+					.filter(
+						({ status }) => status === deliveryReceiptStatus.INVESTIGATION,
+					)
+					.map((product) => {
+						const {
+							id,
+							status,
+							is_adjusted,
+							received_quantity_piece,
+							delivered_quantity_piece,
+							order_slip_product,
+						} = product;
 
-					return {
-						id,
-						name: order_slip_product?.product?.name,
-						status,
-						is_adjusted,
-						delivered_quantity_piece,
-						received_quantity_piece,
-					};
-				});
+						return {
+							id,
+							name: order_slip_product?.product?.name,
+							status,
+							is_adjusted,
+							delivered_quantity_piece,
+							received_quantity_piece,
+						};
+					});
 
 			setDeliveryReceiptProducts(formattedDeliveryReceiptProducts);
 		}
@@ -61,12 +73,15 @@ export const CreateAdjustmentSlipModal = ({
 
 	// Effect: Close modal if create/edit success
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.CREATE_ADJUSTMENT_SLIP) {
+		if (
+			adjustmentSlipsStatus === request.SUCCESS &&
+			recentRequest === types.CREATE_ADJUSTMENT_SLIP
+		) {
 			reset();
 			onClose();
 			fetchDeliveryReceipt();
 		}
-	}, [status, recentRequest]);
+	}, [adjustmentSlipsStatus, recentRequest]);
 
 	const hasErrors = (values) => {
 		if (!remarks.length) {
@@ -77,7 +92,8 @@ export const CreateAdjustmentSlipModal = ({
 		const productLength = values.deliveryReceiptProducts.filter(
 			(product) =>
 				product.selected &&
-				(product.new_delivered_quantity_piece || product.new_received_quantity_piece),
+				(product.new_delivered_quantity_piece ||
+					product.new_received_quantity_piece),
 		)?.length;
 		if (!productLength) {
 			message.error('Must have at least one (1) adjusted product');
@@ -101,7 +117,9 @@ export const CreateAdjustmentSlipModal = ({
 			});
 		};
 
-		const requiresPassword = values.deliveryReceiptProducts.some(({ is_adjusted }) => is_adjusted);
+		const requiresPassword = values.deliveryReceiptProducts.some(
+			({ is_adjusted }) => is_adjusted,
+		);
 		if (requiresPassword) {
 			confirmPassword({ onSuccess: submit });
 		} else {
@@ -109,19 +127,21 @@ export const CreateAdjustmentSlipModal = ({
 		}
 	};
 
-	const getProducts = (values) => {
-		return values.deliveryReceiptProducts
+	const getProducts = (values) =>
+		values.deliveryReceiptProducts
 			.filter(
 				(product) =>
 					product.selected &&
-					(product.new_delivered_quantity_piece || product.new_received_quantity_piece),
+					(product.new_delivered_quantity_piece ||
+						product.new_received_quantity_piece),
 			)
 			.map((product) => ({
 				delivery_receipt_product_id: product.delivery_receipt_product_id,
-				new_delivered_quantity_piece: product?.new_delivered_quantity_piece || undefined,
-				new_received_quantity_piece: product?.new_received_quantity_piece || undefined,
+				new_delivered_quantity_piece:
+					product?.new_delivered_quantity_piece || undefined,
+				new_received_quantity_piece:
+					product?.new_received_quantity_piece || undefined,
 			}));
-	};
 
 	return (
 		<Modal
@@ -152,12 +172,8 @@ export const CreateAdjustmentSlipModal = ({
 				deliveryReceiptProducts={deliveryReceiptProducts}
 				onSubmit={onCreateAdjustmentSlipSubmit}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={adjustmentSlipsStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);
-};
-
-CreateAdjustmentSlipModal.defaultProps = {
-	loading: false,
 };

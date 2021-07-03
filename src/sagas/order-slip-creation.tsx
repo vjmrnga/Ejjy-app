@@ -63,7 +63,13 @@ function* listUsers({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_USERS, branchId, users: response.data.results }));
+		yield put(
+			actions.save({
+				type: types.GET_USERS,
+				branchId,
+				users: response.data.results,
+			}),
+		);
 		callback({ status: request.SUCCESS, response: response.data.results });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors, response: e.response });
@@ -71,9 +77,10 @@ function* listUsers({ payload }: any) {
 }
 
 /* WATCHERS */
-const listBranchProductsWatcherSaga = function* listBranchProductsWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS, listBranchProducts);
-};
+const listBranchProductsWatcherSaga =
+	function* listBranchProductsWatcherSaga() {
+		yield takeLatest(types.GET_BRANCH_PRODUCTS, listBranchProducts);
+	};
 
 const listUsersWatcherSaga = function* listUsersWatcherSaga() {
 	yield takeLatest(types.GET_USERS, listUsers);

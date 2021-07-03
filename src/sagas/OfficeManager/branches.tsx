@@ -1,6 +1,10 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/branches';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services/index';
 import { service } from '../../services/OfficeManager/branches';
@@ -22,7 +26,12 @@ function* list({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_BRANCHES, branches: branchesResponse.data.results }));
+		yield put(
+			actions.save({
+				type: types.GET_BRANCHES,
+				branches: branchesResponse.data.results,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -34,7 +43,13 @@ function* getById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.getById,
+			id,
+			ONLINE_API_URL,
+		);
 
 		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data }));
 		callback({ status: request.SUCCESS });
@@ -50,7 +65,9 @@ function* create({ payload }: any) {
 	try {
 		const response = yield call(service.create, data, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.CREATE_BRANCH, branch: response.data }));
+		yield put(
+			actions.save({ type: types.CREATE_BRANCH, branch: response.data }),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

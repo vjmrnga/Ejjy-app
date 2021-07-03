@@ -26,56 +26,68 @@ export const TableNormal = ({
 	loading,
 	displayInPage,
 	hasCustomHeaderComponent,
-}: Props) => {
-	return (
-		<Spin size="large" spinning={loading}>
-			<div
-				className={cn('TableNormal', { page: displayInPage, hasCustomHeaderComponent })}
-				style={{ height: calculateTableHeight(data?.length + 1) + 25 }}
-			>
-				<table>
-					<thead>
-						<tr>
-							{columns.map(({ name, width, center = false, tooltip = null }, index) => (
-								<th key={`th-${index}`} style={{ width, textAlign: center ? 'center' : 'left' }}>
+}: Props) => (
+	<Spin size="large" spinning={loading}>
+		<div
+			className={cn('TableNormal', {
+				page: displayInPage,
+				hasCustomHeaderComponent,
+			})}
+			style={{ height: calculateTableHeight(data?.length + 1) + 25 }}
+		>
+			<table>
+				<thead>
+					<tr>
+						{columns.map(
+							({ name, width, center = false, tooltip = null }, index) => (
+								<th
+									key={`th-${index}`}
+									style={{ width, textAlign: center ? 'center' : 'left' }}
+								>
 									{tooltip ? <Tooltip title={tooltip}>{name}</Tooltip> : name}
 								</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						{data?.map((row, index) => {
-							if (row?.isCustom) {
-								return (
-									<tr key={`tr-${index}`} style={{ height: `${row?.height || ROW_HEIGHT}px` }}>
-										<td colSpan={row.span} key={`td-${index}`}>
-											{row.content}
+							),
+						)}
+					</tr>
+				</thead>
+				<tbody>
+					{data?.map((row, rowIndex) => {
+						if (row?.isCustom) {
+							return (
+								<tr
+									key={`tr-${rowIndex}`}
+									style={{ height: `${row?.height || ROW_HEIGHT}px` }}
+								>
+									<td colSpan={row.span} key={`td-${rowIndex}`}>
+										{row.content}
+									</td>
+								</tr>
+							);
+						}
+						return (
+							<tr key={`tr-${rowIndex}`} style={{ height: `${ROW_HEIGHT}px` }}>
+								{row
+									.filter((item) => !item?.isHidden)
+									.map((item, columnIndex) => (
+										<td
+											key={`td-${columnIndex}`}
+											style={{
+												textAlign: columns?.[columnIndex].center
+													? 'center'
+													: 'left',
+											}}
+										>
+											{item}
 										</td>
-									</tr>
-								);
-							} else {
-								return (
-									<tr key={`tr-${index}`} style={{ height: `${ROW_HEIGHT}px` }}>
-										{row
-											.filter((item) => !item?.isHidden)
-											.map((item, index) => (
-												<td
-													key={`td-${index}`}
-													style={{ textAlign: columns?.[index].center ? 'center' : 'left' }}
-												>
-													{item}
-												</td>
-											))}
-									</tr>
-								);
-							}
-						})}
-					</tbody>
-				</table>
-			</div>
-		</Spin>
-	);
-};
+									))}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
+	</Spin>
+);
 
 TableNormal.defaultProps = {
 	loading: false,

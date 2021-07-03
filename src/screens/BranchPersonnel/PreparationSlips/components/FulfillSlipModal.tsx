@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { message, Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
@@ -28,13 +27,17 @@ export const FulfillSlipModal = ({
 	onClose,
 }: Props) => {
 	const user = useSelector(authSelectors.selectUser());
-	const { fulfillPreparationSlip, status, recentRequest, reset } = usePreparationSlips();
+	const { fulfillPreparationSlip, status, recentRequest, reset } =
+		usePreparationSlips();
 
 	const [quantity, setQuantity] = useState('');
 
 	// Effect: Close modal if fulfill success
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.FULFILL_PREPARATION_SLIP) {
+		if (
+			status === request.SUCCESS &&
+			recentRequest === types.FULFILL_PREPARATION_SLIP
+		) {
 			updatePreparationSlipsByFetching();
 			reset();
 			close();
@@ -49,7 +52,9 @@ export const FulfillSlipModal = ({
 
 		const newQuantity =
 			(preparationSlipProduct?.fulfilled_quantity_piece || 0) +
-			Number(preparationSlipProduct.type === fulfillType.ADD ? quantity : -quantity);
+			Number(
+				preparationSlipProduct.type === fulfillType.ADD ? quantity : -quantity,
+			);
 
 		if (newQuantity < 0) {
 			message.error('Total quantity must be greater than or equals to zero');
@@ -70,7 +75,8 @@ export const FulfillSlipModal = ({
 				product_id: product?.product_id,
 				assigned_person_id: product?.assigned_person_id,
 				quantity_piece: product?.quantity_piece,
-				fulfilled_quantity_piece: product?.fulfilled_quantity_piece || undefined,
+				fulfilled_quantity_piece:
+					product?.fulfilled_quantity_piece || undefined,
 			}));
 
 		fulfillPreparationSlip({
@@ -116,10 +122,14 @@ export const FulfillSlipModal = ({
 			<Spin spinning={status === request.REQUESTING}>
 				<KeyboardEventHandler
 					handleKeys={['enter', 'esc']}
-					onKeyEvent={(key, e) => handleKeyPress(key)}
+					onKeyEvent={(key) => handleKeyPress(key)}
 				>
 					<div className="keyboard-keys">
-						<KeyboardButton keyboardKey="Enter" label="Submit" onClick={() => {}} />
+						<KeyboardButton
+							keyboardKey="Enter"
+							label="Submit"
+							onClick={() => {}}
+						/>
 						<KeyboardButton keyboardKey="Esc" label="Exit" onClick={close} />
 					</div>
 
@@ -137,7 +147,9 @@ export const FulfillSlipModal = ({
 
 						<Label
 							label={`${
-								preparationSlipProduct?.type === fulfillType.ADD ? 'Add' : 'Deduct'
+								preparationSlipProduct?.type === fulfillType.ADD
+									? 'Add'
+									: 'Deduct'
 							} Quantity`}
 							spacing
 						/>

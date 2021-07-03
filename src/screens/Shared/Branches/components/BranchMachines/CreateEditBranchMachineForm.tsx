@@ -3,7 +3,11 @@ import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow } from '../../../../../components';
-import { Button, FieldError, FormInputLabel } from '../../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInputLabel,
+} from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
 
 interface ICreateEditBranchMachine {
@@ -35,7 +39,8 @@ export const CreateEditBranchMachineForm = ({
 				id: branchMachine?.id || null,
 				name: branchMachine?.name || '',
 				machine_id: branchMachine?.machine_id || '',
-				machine_printer_serial_number: branchMachine?.machine_printer_serial_number || '',
+				machine_printer_serial_number:
+					branchMachine?.machine_printer_serial_number || '',
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(30).label('Name'),
@@ -53,21 +58,22 @@ export const CreateEditBranchMachineForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: ICreateEditBranchMachine) => {
+			onSubmit={async (formData: ICreateEditBranchMachine) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
-
-				onSubmit(values);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ errors, touched }) => (
 				<Form className="form">
 					<DetailsRow>
 						<Col xs={24}>
 							<FormInputLabel id="name" label="Name" />
-							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
+							{errors.name && touched.name ? (
+								<FieldError error={errors.name} />
+							) : null}
 						</Col>
 
 						<Col xs={24}>
@@ -82,7 +88,8 @@ export const CreateEditBranchMachineForm = ({
 								id="machine_printer_serial_number"
 								label="Machine Printer Serial Number"
 							/>
-							{errors.machine_printer_serial_number && touched.machine_printer_serial_number ? (
+							{errors.machine_printer_serial_number &&
+							touched.machine_printer_serial_number ? (
 								<FieldError error={errors.machine_printer_serial_number} />
 							) : null}
 						</Col>

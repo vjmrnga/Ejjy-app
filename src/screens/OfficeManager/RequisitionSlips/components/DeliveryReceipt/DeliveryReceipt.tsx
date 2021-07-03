@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -13,7 +12,10 @@ import {
 	ViewButtonIcon,
 } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
-import { formatDateTime, getDeliveryReceiptStatus } from '../../../../../utils/function';
+import {
+	formatDateTime,
+	getDeliveryReceiptStatus,
+} from '../../../../../utils/function';
 import { ViewProductAdjustmentSlipsModal } from './ViewProductAdjustmentSlipsModal';
 
 const columns = [
@@ -30,49 +32,63 @@ interface Props {
 
 export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 	const [receivedProducts, setReceivedProducts] = useState([]);
-	const [selectedDeliveryReceiptProduct, setSelectedDeliveryReceiptProduct] = useState(null);
-	const [viewProductAdjustmentsSlipVisible, setViewProductAdjustmentsSlipVisible] = useState(false);
+	const [selectedDeliveryReceiptProduct, setSelectedDeliveryReceiptProduct] =
+		useState(null);
+	const [
+		viewProductAdjustmentsSlipVisible,
+		setViewProductAdjustmentsSlipVisible,
+	] = useState(false);
 
 	// Effect: Format received products
 	useEffect(() => {
 		if (deliveryReceipt) {
-			const formattedProducts = deliveryReceipt?.delivery_receipt_products?.map((drProduct) => {
-				const {
-					id,
-					status,
-					is_match,
-					delivered_quantity_piece,
-					received_quantity_piece,
-					extra_message,
-					order_slip_product,
-					is_adjusted,
-				} = drProduct;
-				const { product } = order_slip_product;
+			const formattedProducts = deliveryReceipt?.delivery_receipt_products?.map(
+				(drProduct) => {
+					const {
+						id,
+						status,
+						is_match,
+						delivered_quantity_piece,
+						received_quantity_piece,
+						extra_message,
+						order_slip_product,
+						is_adjusted,
+					} = drProduct;
+					const { product } = order_slip_product;
 
-				const action = is_adjusted ? (
-					<ViewButtonIcon
-						tooltip="View Adjustment Slips"
-						onClick={() =>
-							onViewAdjustmentSlips({
-								id,
-								barcode: product?.barcode,
-								name: product?.name,
-							})
-						}
-					/>
-				) : null;
+					const action = is_adjusted ? (
+						<ViewButtonIcon
+							tooltip="View Adjustment Slips"
+							onClick={() => {
+								onViewAdjustmentSlips({
+									id,
+									barcode: product?.barcode,
+									name: product?.name,
+								});
+							}}
+						/>
+					) : null;
 
-				return [
-					<>
-						<span>{product.name}</span>
-						{getMessage(is_match, extra_message?.is_under, extra_message?.message)}
-					</>,
-					delivered_quantity_piece,
-					received_quantity_piece,
-					getDeliveryReceiptStatus(`${status}-${is_adjusted}`, status, is_adjusted),
-					action,
-				];
-			});
+					return [
+						<>
+							<span>{product.name}</span>
+							{getMessage(
+								is_match,
+								extra_message?.is_under,
+								extra_message?.message,
+							)}
+						</>,
+						delivered_quantity_piece,
+						received_quantity_piece,
+						getDeliveryReceiptStatus(
+							`${status}-${is_adjusted}`,
+							status,
+							is_adjusted,
+						),
+						action,
+					];
+				},
+			);
 
 			setReceivedProducts(formattedProducts);
 		}
@@ -101,7 +117,11 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 				<span style={{ marginRight: '5px' }}>
 					{isMatch ? <CheckIcon size="small" /> : <ErrorIcon size="small" />}
 				</span>
-				<ColoredText size="small" text={`${mainMessage} ${extraMessage}`} type={colorType} />
+				<ColoredText
+					size="small"
+					text={`${mainMessage} ${extraMessage}`}
+					type={colorType}
+				/>
 			</div>
 		);
 	};

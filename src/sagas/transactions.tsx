@@ -16,7 +16,7 @@ function* list({ payload }: any) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		page,
 		page_size: pageSize,
 	};
@@ -31,15 +31,13 @@ function* list({ payload }: any) {
 			response = yield call(service.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
 			if (baseURL && baseBackupURL) {
-				try {
-					// Fetch branch url
-					response = yield call(service.list, data, baseBackupURL);
-					isFetchedFromBackupURL = true;
-				} catch (e) {
-					throw e;
-				}
+				// Fetch branch url
+				response = yield call(service.list, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
 			}
@@ -47,7 +45,9 @@ function* list({ payload }: any) {
 
 		callback({
 			status: request.SUCCESS,
-			warnings: isFetchedFromBackupURL ? ['Data was fetched from a backup server.'] : [],
+			warnings: isFetchedFromBackupURL
+				? ['Data was fetched from a backup server.']
+				: [],
 			data: response.data,
 		});
 	} catch (e) {

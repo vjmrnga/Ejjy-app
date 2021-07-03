@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useDispatch } from 'react-redux';
 
 export const useActionDispatch = (action) => {

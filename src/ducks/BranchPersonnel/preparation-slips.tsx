@@ -46,6 +46,8 @@ const reducer = handleActions(
 				// 	}
 				// 	break;
 				// }
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -63,8 +65,10 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectPreparationSlips: () => createSelector(selectState, (state) => state.preparationSlips),
-	selectPreparationSlip: () => createSelector(selectState, (state) => state.preparationSlip),
+	selectPreparationSlips: () =>
+		createSelector(selectState, (state) => state.preparationSlips),
+	selectPreparationSlip: () =>
+		createSelector(selectState, (state) => state.preparationSlip),
 };
 
 export default reducer;

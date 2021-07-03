@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container } from '../../../components';
@@ -21,13 +20,16 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 		requisitionSlip,
 		getRequisitionSlipsById,
 		removeRequisitionSlipByBranch,
-		status,
+		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
 
 	// Effect: Fetch requisition slip
 	useEffect(() => {
 		removeRequisitionSlipByBranch();
-		getRequisitionSlipsById(requisitionSlipId, requisitionSlipDoesNotExistCallback);
+		getRequisitionSlipsById(
+			requisitionSlipId,
+			requisitionSlipDoesNotExistCallback,
+		);
 	}, []);
 
 	const requisitionSlipDoesNotExistCallback = ({ status }) => {
@@ -51,7 +53,10 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
 			<section className="ViewRequisitionSlip">
-				<RequestedProducts requisitionSlip={requisitionSlip} requisitionSlipStatus={status} />
+				<RequestedProducts
+					requisitionSlip={requisitionSlip}
+					requisitionSlipStatus={requisitionSlipsStatus}
+				/>
 
 				<OrderSlips requisitionSlipId={requisitionSlipId} />
 			</section>

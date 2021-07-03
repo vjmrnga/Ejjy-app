@@ -1,23 +1,27 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, message, Table } from 'antd';
-import { CashieringCard } from 'components/CashieringCard/CashieringCard';
-import SearchInput from 'components/elements/SearchInput/SearchInput';
 import dayjs from 'dayjs';
-import { selectors as authSelectors } from 'ducks/auth';
-import { IS_APP_LIVE } from 'global/constants';
-import { pageSizeOptions } from 'global/options';
-import { request } from 'global/types';
-import { useBranchesDays } from 'hooks/useBranchesDays';
-import { useBranchProducts } from 'hooks/useBranchProducts';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getBranchProductStatus } from 'utils/function';
+import { CashieringCard } from '../../../../../components/CashieringCard/CashieringCard';
+import SearchInput from '../../../../../components/elements/SearchInput/SearchInput';
+import { selectors as authSelectors } from '../../../../../ducks/auth';
+import { IS_APP_LIVE } from '../../../../../global/constants';
+import { pageSizeOptions } from '../../../../../global/options';
+import { request } from '../../../../../global/types';
+import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
+import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
+import { getBranchProductStatus } from '../../../../../utils/function';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
-	{ title: 'Balance', dataIndex: 'balance', key: 'balance', align: 'center' as 'center' },
+	{
+		title: 'Balance',
+		dataIndex: 'balance',
+		key: 'balance',
+		align: 'center' as 'center',
+	},
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
@@ -46,20 +50,27 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		status: branchesDaysStatus,
 		errors: branchesDaysErrors,
 	} = useBranchesDays();
-	const { branchProducts, pageCount, pageSize, currentPage, getBranchProducts, status } =
-		useBranchProducts();
+	const {
+		branchProducts,
+		pageCount,
+		pageSize,
+		currentPage,
+		getBranchProducts,
+		status,
+	} = useBranchProducts();
 	const user = useSelector(authSelectors.selectUser());
 
 	// REFS
 	const intervalRef = useRef(null);
 
 	// METHODS
-	useEffect(() => {
-		return () => {
+	useEffect(
+		() => () => {
 			// Cleanup in case logged out due to single sign on
 			clearInterval(intervalRef.current);
-		};
-	}, []);
+		},
+		[],
+	);
 
 	useEffect(() => {
 		if (isActive) {
@@ -76,7 +87,8 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		}
 
 		const newBranchProducts = branchProducts?.map((branchProduct) => {
-			const { product, max_balance, current_balance, product_status } = branchProduct;
+			const { product, max_balance, current_balance, product_status } =
+				branchProduct;
 			const { barcode, name, textcode } = product;
 
 			return {
@@ -117,9 +129,9 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 
 	const onSearch = useCallback(
 		debounce((keyword) => {
-			keyword = keyword?.toLowerCase();
-			setSearchedKeyword(keyword);
-			fetchBranchProducts(keyword, 1, pageSize);
+			const lowerCaseKeyword = keyword?.toLowerCase();
+			setSearchedKeyword(lowerCaseKeyword);
+			fetchBranchProducts(lowerCaseKeyword, 1, pageSize);
 		}, SEARCH_DEBOUNCE_TIME),
 		[],
 	);
@@ -128,12 +140,15 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		fetchBranchProducts(searchedKeyword, page, newPageSize);
 	};
 
-	const fetchBranchProducts = (search, page, pageSize) => {
-		getBranchProducts({ search, branchId, page, pageSize }, true);
+	const fetchBranchProducts = (search, page, newPageSize) => {
+		getBranchProducts({ search, branchId, page, pageSize: newPageSize }, true);
 
 		clearInterval(intervalRef.current);
 		intervalRef.current = setInterval(() => {
-			getBranchProducts({ search, branchId, page, pageSize }, true);
+			getBranchProducts(
+				{ search, branchId, page, pageSize: newPageSize },
+				true,
+			);
 		}, INTERVAL_MS);
 	};
 
@@ -162,13 +177,15 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 				pagination={{
 					current: currentPage,
 					total: pageCount,
-					pageSize: pageSize,
+					pageSize,
 					onChange: onPageChange,
 					disabled: !data,
 					position: ['bottomCenter'],
-					pageSizeOptions: pageSizeOptions,
+					pageSizeOptions,
 				}}
-				loading={isCompletedInitialFetch ? false : status === request.REQUESTING}
+				loading={
+					isCompletedInitialFetch ? false : status === request.REQUESTING
+				}
 			/>
 		</>
 	);

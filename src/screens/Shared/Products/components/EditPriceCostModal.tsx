@@ -37,9 +37,10 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 		}
 	}, [visible, branchesData]);
 
-	const isLoading = useCallback(() => {
-		return response.some((status) => status === request.REQUESTING);
-	}, [response]);
+	const isLoading = useCallback(
+		() => response.some((status) => status === request.REQUESTING),
+		[response],
+	);
 
 	const onEditPriceCost = (formData) => {
 		formData.forEach((data, index) => {
@@ -150,16 +151,16 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 		);
 	};
 
-	const isValid = (data) => {
-		return (
-			toString(data.cost_per_piece) ||
-			toString(data.cost_per_bulk) ||
-			toString(data.price_per_piece) ||
-			toString(data.price_per_bulk)
-		);
-	};
+	const isValid = (data) =>
+		toString(data.cost_per_piece) ||
+		toString(data.cost_per_bulk) ||
+		toString(data.price_per_piece) ||
+		toString(data.price_per_bulk);
 
-	const getValue = memoize((value) => (toString(value).length ? toString(value) : undefined));
+	const getValue = memoize((value) => {
+		const valueString = toString(value);
+		return valueString.length ? valueString : undefined;
+	});
 
 	return (
 		<Modal

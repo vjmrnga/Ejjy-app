@@ -1,5 +1,9 @@
-import deliveryReceiptsReducer, { key as DELIVERY_RECEIPTS_KEY } from './delivery-receipts';
-import productChecksReducer, { key as PRODUCT_CHECKS_KEY } from './product-checks';
+import deliveryReceiptsReducer, {
+	key as DELIVERY_RECEIPTS_KEY,
+} from './delivery-receipts';
+import productChecksReducer, {
+	key as PRODUCT_CHECKS_KEY,
+} from './product-checks';
 import localBranchSettingsReducer, {
 	key as LOCAL_BRANCH_SETTINGS_KEY,
 } from './local-branch-settings';

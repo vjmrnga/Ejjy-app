@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Container, Table } from '../../../components';
@@ -6,9 +5,10 @@ import { Box } from '../../../components/elements';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { request } from '../../../global/types';
 import { useLogs } from '../../../hooks/useLogs';
-import { calculateTableHeight, formatDateTimeExtended } from '../../../utils/function';
-
-const PAGE_SIZE = 10;
+import {
+	calculateTableHeight,
+	formatDateTimeExtended,
+} from '../../../utils/function';
 
 const columns = [
 	{ title: 'Branch', dataIndex: 'branch' },
@@ -27,10 +27,11 @@ const Logs = () => {
 		logs,
 		pageCount,
 		currentPage,
+		pageSize,
 
 		getUpdateBranchProductBalanceLogs,
 		status: logsStatus,
-	} = useLogs({ pageSize: PAGE_SIZE });
+	} = useLogs();
 
 	useEffect(() => {
 		getUpdateBranchProductBalanceLogs({ page: 1 });
@@ -51,8 +52,11 @@ const Logs = () => {
 		setData(formattedLogs);
 	}, [logs]);
 
-	const onPageChange = (page) => {
-		getUpdateBranchProductBalanceLogs({ page });
+	const onPageChange = (page, newPageSize) => {
+		getUpdateBranchProductBalanceLogs(
+			{ page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	return (
@@ -72,7 +76,7 @@ const Logs = () => {
 						className="table-pagination"
 						current={currentPage}
 						total={pageCount}
-						pageSize={PAGE_SIZE}
+						pageSize={pageSize}
 						onChange={onPageChange}
 						disabled={!data}
 					/>

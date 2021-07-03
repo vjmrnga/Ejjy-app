@@ -1,8 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
 import { TableHeader } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
-import { deliveryReceiptProductStatus, request } from '../../../../../global/types';
+import {
+	deliveryReceiptProductStatus,
+	request,
+} from '../../../../../global/types';
 import { useAdjustmentSlips } from '../../../hooks/useAdjustmentSlips';
 import { AdjustmentSlipsTable } from './AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './CreateAdjustmentSlipModal';
@@ -13,13 +15,18 @@ interface Props {
 	fetchDeliveryReceipt: any;
 }
 
-export const AdjustmentSlips = ({ fetchDeliveryReceipt, deliveryReceipt }: Props) => {
+export const AdjustmentSlips = ({
+	fetchDeliveryReceipt,
+	deliveryReceipt,
+}: Props) => {
 	// State: Selection
 	const [selectedAdjustmentSlip, setSelectedAdjustmentSlip] = useState(null);
 
 	// State: Modal
-	const [viewAdjustmentSlipVisible, setViewAdjustmentSlipVisible] = useState(false);
-	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] = useState(false);
+	const [viewAdjustmentSlipVisible, setViewAdjustmentSlipVisible] =
+		useState(false);
+	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
+		useState(false);
 
 	const {
 		adjustmentSlips,
@@ -34,11 +41,13 @@ export const AdjustmentSlips = ({ fetchDeliveryReceipt, deliveryReceipt }: Props
 		}
 	}, [deliveryReceipt]);
 
-	const hasProductUnderInvestigation = useCallback(() => {
-		return deliveryReceipt?.delivery_receipt_products?.some(
-			({ status }) => status === deliveryReceiptProductStatus.INVESTIGATION,
-		);
-	}, [deliveryReceipt]);
+	const hasProductUnderInvestigation = useCallback(
+		() =>
+			deliveryReceipt?.delivery_receipt_products?.some(
+				({ status }) => status === deliveryReceiptProductStatus.INVESTIGATION,
+			),
+		[deliveryReceipt],
+	);
 
 	const onCreateAdjustmentSlip = () => {
 		setSelectedAdjustmentSlip(null);

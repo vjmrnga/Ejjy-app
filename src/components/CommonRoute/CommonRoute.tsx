@@ -10,7 +10,7 @@ const not404Pages = ['/', '/login', '/landing'];
 export const CommonRoute = ({ path, exact, component }: any) => {
 	const { pathname: pathName } = useLocation();
 	const user = useSelector(selectors.selectUser());
-	
+
 	if (portal.includes(pathName) && !isEmpty(user)) {
 		return <Route render={() => <Redirect to="/landing" />} />;
 	}
@@ -23,5 +23,11 @@ export const CommonRoute = ({ path, exact, component }: any) => {
 		return <Route render={() => <Redirect to="404" />} />;
 	}
 
-	return <Route path={path} exact={exact} component={component[user.user_type] || component} />;
+	return (
+		<Route
+			path={path}
+			exact={exact}
+			component={component[user.user_type] || component}
+		/>
+	);
 };

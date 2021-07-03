@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchManager/local-branch-settings';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/BranchManager/local-branch-settings';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
@@ -13,9 +17,15 @@ export const useLocalBranchSettings = () => {
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const localBranchSettings = useSelector(selectors.selectLocalBranchSettings());
-	const getLocalBranchSettings = useActionDispatch(actions.getLocalBranchSettings);
-	const editLocalBranchSettings = useActionDispatch(actions.editLocalBranchSettings);
+	const localBranchSettings = useSelector(
+		selectors.selectLocalBranchSettings(),
+	);
+	const getLocalBranchSettings = useActionDispatch(
+		actions.getLocalBranchSettings,
+	);
+	const editLocalBranchSettings = useActionDispatch(
+		actions.editLocalBranchSettings,
+	);
 
 	const reset = () => {
 		resetError();
@@ -35,13 +45,20 @@ export const useLocalBranchSettings = () => {
 		setRecentRequest(types.EDIT_LOCAL_BRANCH_SETTINGS);
 		editLocalBranchSettings({
 			...data,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

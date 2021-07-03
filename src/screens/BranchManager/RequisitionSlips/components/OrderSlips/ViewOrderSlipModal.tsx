@@ -1,7 +1,11 @@
 import { Col, Divider, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TableNormal } from '../../../../../components';
-import { Button, Label, UncontrolledInput } from '../../../../../components/elements';
+import {
+	Button,
+	Label,
+	UncontrolledInput,
+} from '../../../../../components/elements';
 import { OrderSlipDetails } from '../../../../OfficeManager/RequisitionSlips/components/OrderSlips/OrderSlipDetails';
 
 interface Props {
@@ -17,76 +21,25 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 	useEffect(() => {
 		if (orderSlip) {
 			// const formattedQuantities = [];
-			const formattedPreparationSlip = [];
 
-			orderSlip?.products?.forEach((requestedProduct) => {
-				const {
-					product,
-					assigned_person,
-					// quantity_piece,
-					// fulfilled_quantity_piece = 0,
-				} = requestedProduct;
-				const { barcode, name } = product;
-				const { first_name, last_name } = assigned_person;
+			const formattedPreparationSlip = orderSlip?.products?.map(
+				(requestedProduct) => {
+					const { product, assigned_person } = requestedProduct;
+					const { barcode, name } = product;
+					const { first_name, last_name } = assigned_person;
 
-				// const quantity = {
-				// 	barcode,
-				// 	isFulfilled: fulfilled_quantity_piece !== null,
-				// 	piecesInputted: fulfilled_quantity_piece || 0,
-				// 	piecesOrdered: quantity_piece,
-				// 	bulkInputted: convertToBulk(fulfilled_quantity_piece, pieces_in_bulk),
-				// 	bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
-				// };
-
-				// formattedQuantities.push(quantity);
-				formattedPreparationSlip.push([
-					barcode,
-					name,
-					// getColoredText(
-					// 	`${orderSlip?.id}-${barcode}-${quantity.isFulfilled}`, // key
-					// 	!quantity.isFulfilled,
-					// 	quantity.piecesInputted,
-					// 	quantity.piecesOrdered,
-					// ),
-					`${first_name} ${last_name}`,
-				]);
-
-				return;
-			});
+					return [barcode, name, `${first_name} ${last_name}`];
+				},
+			);
 
 			setRequestedProducts(formattedPreparationSlip);
-			// setRequestedProductsQuantity(formattedQuantities);
 		}
 	}, [orderSlip]);
-
-	// const onQuantityTypeChange = useCallback(
-	// 	(quantityType) => {
-	// 		const QUANTITY_INDEX = 2;
-	// 		const formattedRequestedProducts = requestedProducts.map((requestedProduct, index) => {
-	// 			const quantity = requestedProductsQuantity[index];
-	// 			const isPiece = quantityType === quantityType.PIECE;
-	// 			const inputted = isPiece ? quantity.piecesInputted : quantity.bulkInputted;
-	// 			const ordered = isPiece ? quantity.piecesOrdered : quantity.bulkOrdered;
-	// 			const key = `${orderSlip?.id}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
-
-	// 			requestedProduct[QUANTITY_INDEX] = getColoredText(
-	// 				key,
-	// 				!quantity.isFulfilled,
-	// 				inputted,
-	// 				ordered,
-	// 			);
-	// 			return requestedProduct;
-	// 		});
-	// 		setRequestedProducts(formattedRequestedProducts);
-	// 	},
-	// 	[requestedProducts, requestedProductsQuantity, orderSlip],
-	// );
 
 	const getColumns = useCallback(
 		() => [
 			{ name: 'Barcode' },
 			{ name: 'Name' },
-			// { name: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} /> },
 			{ name: 'Assigned Personnel' },
 		],
 		[],

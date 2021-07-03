@@ -12,7 +12,8 @@ interface IEditBranchDay {
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) => axios.get('/branches-days/', { baseURL, params }),
+	list: async (params: IGetRequest, baseURL) =>
+		axios.get('/branches-days/', { baseURL, params }),
 
 	get: async (params: IGetRequest, baseURL) =>
 		axios.get('/branches-days/latest/', { baseURL, params }),

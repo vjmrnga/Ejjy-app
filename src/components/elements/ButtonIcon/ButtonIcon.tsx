@@ -4,7 +4,9 @@ import cn from 'classnames';
 import { Spin, Tooltip } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-const loadingIcon = <LoadingOutlined style={{ fontSize: 24, color: 'white' }} spin />;
+const loadingIcon = (
+	<LoadingOutlined style={{ fontSize: 24, color: 'white' }} spin />
+);
 
 interface Props {
 	type?: 'button' | 'submit' | 'reset';
@@ -16,9 +18,18 @@ interface Props {
 	classNames?: any;
 }
 
-const ButtonIcon = ({ type, icon, tooltip, loading, disabled, onClick, classNames }: Props) => (
+const ButtonIcon = ({
+	type,
+	icon,
+	tooltip,
+	loading,
+	disabled,
+	onClick,
+	classNames,
+}: Props) => (
 	<Tooltip placement="top" title={tooltip}>
 		<button
+			// eslint-disable-next-line react/button-has-type
 			type={type}
 			onClick={onClick}
 			className={cn('ButtonIcon', classNames, { disabled, loading })}
@@ -30,7 +41,6 @@ const ButtonIcon = ({ type, icon, tooltip, loading, disabled, onClick, className
 
 ButtonIcon.defaultProps = {
 	type: 'button',
-	onClick: null,
 };
 
 export default ButtonIcon;

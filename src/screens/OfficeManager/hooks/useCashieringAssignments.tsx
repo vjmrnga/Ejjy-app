@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/OfficeManager/cashiering-assignments';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/OfficeManager/cashiering-assignments';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
@@ -20,13 +24,21 @@ export const useCashieringAssignments = () => {
 	const [warnings, setWarnings] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const cashieringAssignments = useSelector(selectors.selectCashieringAssignments());
+	const cashieringAssignments = useSelector(
+		selectors.selectCashieringAssignments(),
+	);
 	const getCashieringAssignmentsByUserId = useActionDispatch(
 		actions.getCashieringAssignmentsByUserId,
 	);
-	const createCashieringAssignment = useActionDispatch(actions.createCashieringAssignment);
-	const editCashieringAssignment = useActionDispatch(actions.editCashieringAssignment);
-	const removeCashieringAssignment = useActionDispatch(actions.removeCashieringAssignment);
+	const createCashieringAssignment = useActionDispatch(
+		actions.createCashieringAssignment,
+	);
+	const editCashieringAssignment = useActionDispatch(
+		actions.editCashieringAssignment,
+	);
+	const removeCashieringAssignment = useActionDispatch(
+		actions.removeCashieringAssignment,
+	);
 
 	const reset = () => {
 		resetError();
@@ -46,7 +58,11 @@ export const useCashieringAssignments = () => {
 		setRecentRequest(types.CREATE_CASHIERING_ASSIGNMENT);
 		createCashieringAssignment({
 			...data,
-			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				CREATE_SUCCESS_MESSAGE,
+				CREATE_ERROR_MESSAGE,
+			),
 		});
 	};
 
@@ -54,7 +70,11 @@ export const useCashieringAssignments = () => {
 		setRecentRequest(types.EDIT_CASHIERING_ASSIGNMENT);
 		editCashieringAssignment({
 			...data,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
@@ -62,14 +82,22 @@ export const useCashieringAssignments = () => {
 		setRecentRequest(types.REMOVE_CASHIERING_ASSIGNMENT);
 		removeCashieringAssignment({
 			...data,
-			callback: modifiedCallback(callback, REMOVE_SUCCESS_MESSAGE, REMOVE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				REMOVE_SUCCESS_MESSAGE,
+				REMOVE_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [], warnings = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-		setWarnings(warnings);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
 	};
 
 	return {

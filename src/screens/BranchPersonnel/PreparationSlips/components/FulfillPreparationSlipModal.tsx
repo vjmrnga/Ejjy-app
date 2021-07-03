@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -27,7 +26,8 @@ export const FulfillPreparationSlipModal = ({
 	const [preparationSlipProducts, setPreparationSlipProducts] = useState([]);
 
 	const user = useSelector(authSelectors.selectUser());
-	const { fulfillPreparationSlip, status, errors, recentRequest, reset } = usePreparationSlips();
+	const { fulfillPreparationSlip, status, errors, recentRequest, reset } =
+		usePreparationSlips();
 
 	useEffect(() => {
 		if (preparationSlip) {
@@ -65,7 +65,10 @@ export const FulfillPreparationSlipModal = ({
 
 	// Effect: Close modal if fulfill success
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.FULFILL_PREPARATION_SLIP) {
+		if (
+			status === request.SUCCESS &&
+			recentRequest === types.FULFILL_PREPARATION_SLIP
+		) {
 			updatePreparationSlipsByFetching();
 			reset();
 			onClose();

@@ -28,6 +28,8 @@ const reducer = handleActions(
 					newData = { branchDay: payload.branchDay };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -46,7 +48,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectBranchDay: () => createSelector(selectState, (state) => state.branchDay),
+	selectBranchDay: () =>
+		createSelector(selectState, (state) => state.branchDay),
 };
 
 export default reducer;

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Box } from '../../../../../components/elements';
@@ -24,7 +23,7 @@ export const BranchBalances = () => {
 	const onTabClick = (branchId) => {
 		setCurrentActiveKey(branchId);
 	};
-	
+
 	return (
 		<Box>
 			<Tabs

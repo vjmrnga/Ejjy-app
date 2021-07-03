@@ -41,7 +41,9 @@ const reducer = handleActions(
 				}
 				case types.EDIT_BRANCH: {
 					const { branch: editedBranch } = payload;
-					const index = state.branches.findIndex(({ id }) => id === editedBranch.id);
+					const index = state.branches.findIndex(
+						({ id }) => id === editedBranch.id,
+					);
 
 					if (index !== NOT_FOUND_INDEX) {
 						const branches = cloneDeep(state.branches);
@@ -51,9 +53,13 @@ const reducer = handleActions(
 					break;
 				}
 				case types.REMOVE_BRANCH: {
-					newData = { branches: state.branches.filter(({ id }) => id !== payload.id) };
+					newData = {
+						branches: state.branches.filter(({ id }) => id !== payload.id),
+					};
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -76,16 +82,22 @@ export const selectors = {
 	selectBranch: () => createSelector(selectState, (state) => state.branch),
 	selectBranches: () => createSelector(selectState, (state) => state.branches),
 	selectBranchById: (id) =>
-		createSelector(selectState, (state) => state.branches.find((branch) => branch.id == id)),
+		createSelector(selectState, (state) =>
+			state.branches.find((branch) => branch.id == id),
+		),
 	selectURLByBranchId: (id) =>
 		createSelector(
 			selectState,
-			(state) => state.branches.find((branch) => branch.id == id)?.online_url ?? undefined,
+			(state) =>
+				state.branches.find((branch) => branch.id == id)?.online_url ??
+				undefined,
 		),
 	selectBackUpURLByBranchId: (id) =>
 		createSelector(
 			selectState,
-			(state) => state.branches.find((branch) => branch.id == id)?.backup_server_url ?? undefined,
+			(state) =>
+				state.branches.find((branch) => branch.id == id)?.backup_server_url ??
+				undefined,
 		),
 };
 

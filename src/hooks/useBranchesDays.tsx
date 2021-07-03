@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/branches-days';
@@ -48,25 +47,26 @@ export const useBranchesDays = () => {
 		resetStatus();
 	};
 
-	const resetPagination = () => {
-		setAllData([]);
-		setPageCount(0);
-		setCurrentPage(1);
-		setCurrentPageData([]);
-		setPageSize(10);
-	};
-
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
+	const executeRequest = (data, requestCallback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
 		});
+	};
+
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
 	};
 
 	// PAGINATION METHODS
@@ -105,7 +105,6 @@ export const useBranchesDays = () => {
 			setPageCount,
 			setCurrentPage,
 			setPageSize,
-			resetPagination,
 		});
 	};
 
@@ -127,7 +126,12 @@ export const useBranchesDays = () => {
 		});
 	};
 
-	const editBranchDayRequest = (branchId, branchDayId, endedById, onlineEndedById) => {
+	const editBranchDayRequest = (
+		branchId,
+		branchDayId,
+		endedById,
+		onlineEndedById,
+	) => {
 		setRecentRequest(types.EDIT_BRANCH_DAY);
 		editBranchDay({
 			id: branchDayId,
@@ -136,12 +140,6 @@ export const useBranchesDays = () => {
 			online_ended_by_id: onlineEndedById,
 			callback,
 		});
-	};
-
-	const callback = ({ status, errors = [], warnings = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-		setWarnings(warnings);
 	};
 
 	return {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, TableNormal } from '../../../../components';
@@ -12,9 +13,15 @@ interface Props {
 	onClose: any;
 }
 
-export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: Props) => {
+export const ViewPreparationSlipModal = ({
+	preparationSlip,
+	visible,
+	onClose,
+}: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
-	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState([]);
+	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
+		[],
+	);
 
 	useEffect(() => {
 		if (preparationSlip) {
@@ -22,7 +29,11 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 			const formattedPreparationSlip = [];
 
 			preparationSlip?.products?.forEach((requestedProduct) => {
-				const { product, quantity_piece, fulfilled_quantity_piece = 0 } = requestedProduct;
+				const {
+					product,
+					quantity_piece,
+					fulfilled_quantity_piece = 0,
+				} = requestedProduct;
 				const { barcode, name, pieces_in_bulk } = product;
 
 				const quantity = {
@@ -55,21 +66,31 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 	const onQuantityTypeChange = useCallback(
 		(quantityType) => {
 			const QUANTITY_INDEX = 2;
-			const formattedRequestedProducts = requestedProducts.map((requestedProduct, index) => {
-				const quantity = requestedProductsQuantity[index];
-				const isPiece = quantityType === quantityTypes.PIECE;
-				const inputted = isPiece ? quantity.piecesInputted : quantity.bulkInputted;
-				const ordered = isPiece ? quantity.piecesOrdered : quantity.bulkOrdered;
-				const key = `${preparationSlip?.id}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
+			const formattedRequestedProducts = requestedProducts.map(
+				(requestedProduct, index) => {
+					const requestedProd = requestedProduct;
+					const quantity = requestedProductsQuantity[index];
+					const isPiece = quantityType === quantityTypes.PIECE;
+					const inputted = isPiece
+						? quantity.piecesInputted
+						: quantity.bulkInputted;
+					const ordered = isPiece
+						? quantity.piecesOrdered
+						: quantity.bulkOrdered;
+					const key = `${
+						preparationSlip?.id
+					}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
 
-				requestedProduct[QUANTITY_INDEX] = getColoredText(
-					key,
-					!quantity.isFulfilled,
-					inputted,
-					ordered,
-				);
-				return requestedProduct;
-			});
+					requestedProd[QUANTITY_INDEX] = getColoredText(
+						key,
+						!quantity.isFulfilled,
+						inputted,
+						ordered,
+					);
+
+					return requestedProd;
+				},
+			);
 			setRequestedProducts(formattedRequestedProducts);
 		},
 		[requestedProducts, requestedProductsQuantity, preparationSlip],
@@ -104,7 +125,11 @@ export const ViewPreparationSlipModal = ({ preparationSlip, visible, onClose }: 
 				</Row>
 			</div>
 
-			<TableNormal columns={getColumns()} data={requestedProducts} hasCustomHeaderComponent />
+			<TableNormal
+				columns={getColumns()}
+				data={requestedProducts}
+				hasCustomHeaderComponent
+			/>
 		</Modal>
 	);
 };

@@ -12,7 +12,11 @@ import {
 } from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, getBranchProductStatus, sleep } from '../../../../utils/function';
+import {
+	convertToBulk,
+	getBranchProductStatus,
+	sleep,
+} from '../../../../utils/function';
 
 const columns = [
 	{ name: '', width: '80px' },
@@ -63,7 +67,6 @@ export const CreateRequisitionSlipForm = ({
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[branchProducts],
 	);
 
@@ -71,33 +74,41 @@ export const CreateRequisitionSlipForm = ({
 		<Field type="hidden" name={`branchProducts.${index}.product_id`} />
 	);
 
-	const getSelectRadioButton = (index) => <FormCheckbox id={`branchProducts.${index}.selected`} />;
+	const getSelectRadioButton = (index) => (
+		<FormCheckbox id={`branchProducts.${index}.selected`} />
+	);
 
-	const getQuantity = (index, values, touched, errors) => {
-		return (
-			<>
-				<div className="quantity-container">
-					<FormInput
-						type="number"
-						id={`branchProducts.${index}.quantity`}
-						min={1}
-						disabled={!values?.branchProducts?.[index]?.selected}
-					/>
-					<FormSelect
-						id={`branchProducts.${index}.quantity_type`}
-						options={quantityTypeOptions}
-						disabled={!values?.branchProducts?.[index]?.selected}
-					/>
-				</div>
-				{errors?.branchProducts?.[index]?.quantity && touched?.branchProducts?.[index]?.quantity ? (
-					<FieldError error={errors?.branchProducts?.[index]?.quantity} />
-				) : null}
-			</>
-		);
-	};
+	const getQuantity = (index, values, touched, errors) => (
+		<>
+			<div className="quantity-container">
+				<FormInput
+					type="number"
+					id={`branchProducts.${index}.quantity`}
+					min={1}
+					disabled={!values?.branchProducts?.[index]?.selected}
+				/>
+				<FormSelect
+					id={`branchProducts.${index}.quantity_type`}
+					options={quantityTypeOptions}
+					disabled={!values?.branchProducts?.[index]?.selected}
+				/>
+			</div>
+			{errors?.branchProducts?.[index]?.quantity &&
+			touched?.branchProducts?.[index]?.quantity ? (
+				<FieldError error={errors?.branchProducts?.[index]?.quantity} />
+			) : null}
+		</>
+	);
 
-	const getCurrentBalance = (index, current_balance, pieces_in_bulk, values) => {
-		return values?.branchProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+	const getCurrentBalance = (
+		index,
+		current_balance,
+		pieces_in_bulk,
+		values,
+	) => {
+		const quantityType = values?.branchProducts?.[index]?.quantity_type;
+
+		return quantityType === quantityTypes.PIECE ? (
 			<span>{current_balance}</span>
 		) : (
 			<span>{convertToBulk(current_balance, pieces_in_bulk)}</span>
@@ -108,12 +119,12 @@ export const CreateRequisitionSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any, { resetForm }) => {
+			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit(values);
+				onSubmit(formData);
 				resetForm();
 			}}
 			enableReinitialize

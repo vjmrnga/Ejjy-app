@@ -1,11 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Container, Table, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { request } from '../../../global/types';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
-import { calculateTableHeight, formatDateTime, showErrorMessages } from '../../../utils/function';
+import {
+	calculateTableHeight,
+	formatDateTime,
+	showErrorMessages,
+} from '../../../utils/function';
 
 const columns = [
 	{ title: 'Description', dataIndex: 'description' },
@@ -19,8 +22,12 @@ const PendingTransactions = () => {
 	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
-	const { pendingTransactions, listPendingTransactions, removePendingTransactions, status } =
-		usePendingTransactions();
+	const {
+		pendingTransactions,
+		listPendingTransactions,
+		removePendingTransactions,
+		status: pendingTransactionsStatus,
+	} = usePendingTransactions();
 
 	// METHODS
 	useEffect(() => {
@@ -40,7 +47,9 @@ const PendingTransactions = () => {
 					datetime_created: formatDateTime(datetime_created),
 					actions: (
 						<TableActions
-							onRemove={() => onRemovePendingTransaction(pendingTransaction.id, true)}
+							onRemove={() => {
+								onRemovePendingTransaction(pendingTransaction.id, true);
+							}}
 						/>
 					),
 				};
@@ -49,7 +58,10 @@ const PendingTransactions = () => {
 		setData(formattedPendingTransactions);
 	}, [pendingTransactions]);
 
-	const onRemovePendingTransaction = (pendingTransactionId, showFeedbackMessage) => {
+	const onRemovePendingTransaction = (
+		pendingTransactionId,
+		showFeedbackMessage,
+	) => {
 		removePendingTransactions(
 			{ id: pendingTransactionId },
 			({ status, error }) => {
@@ -73,7 +85,7 @@ const PendingTransactions = () => {
 						columns={columns}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-						loading={status === request.REQUESTING}
+						loading={pendingTransactionsStatus === request.REQUESTING}
 					/>
 				</Box>
 			</section>

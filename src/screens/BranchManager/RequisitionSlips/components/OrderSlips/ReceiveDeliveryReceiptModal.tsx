@@ -1,13 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, Modal } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FieldError } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/BranchManager/delivery-receipts';
-import { orderSlipStatus, requisitionSlipActions, request } from '../../../../../global/types';
+import {
+	orderSlipStatus,
+	request,
+	requisitionSlipActions,
+} from '../../../../../global/types';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
-import { RequisitionSlipDetails, requisitionSlipDetailsType } from '../RequisitionSlipDetails';
+import {
+	RequisitionSlipDetails,
+	requisitionSlipDetailsType,
+} from '../RequisitionSlipDetails';
 import { ReceiveDeliveryReceiptForm } from './ReceiveDeliveryReceiptForm';
 
 interface Props {
@@ -30,7 +36,13 @@ export const ReceiveDeliveryReceiptModal = ({
 	const [products, setProducts] = useState([]);
 
 	const user = useSelector(authSelectors.selectUser());
-	const { receiveDeliveryReceipt, status, errors, recentRequest, reset } = useDeliveryReceipt();
+	const {
+		receiveDeliveryReceipt,
+		status: deliveryReceiptStatus,
+		errors,
+		recentRequest,
+		reset,
+	} = useDeliveryReceipt();
 
 	// Effect: Fetch delivery receipt
 	useEffect(() => {
@@ -51,15 +63,20 @@ export const ReceiveDeliveryReceiptModal = ({
 
 	// Effect: Close modal if receive delivery
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.RECEIVE_DELIVERY_RECEIPT) {
+		if (
+			deliveryReceiptStatus === request.SUCCESS &&
+			recentRequest === types.RECEIVE_DELIVERY_RECEIPT
+		) {
 			reset();
 			onSuccess();
 		}
-	}, [status, recentRequest]);
+	}, [deliveryReceiptStatus, recentRequest]);
 
 	const isReceiving = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.RECEIVE_DELIVERY_RECEIPT,
-		[status, recentRequest],
+		() =>
+			deliveryReceiptStatus === request.REQUESTING &&
+			recentRequest === types.RECEIVE_DELIVERY_RECEIPT,
+		[deliveryReceiptStatus, recentRequest],
 	);
 
 	const onReceiveDeliveryReceiptSubmit = (values) => {

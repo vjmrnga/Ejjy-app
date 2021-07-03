@@ -13,9 +13,13 @@ export const types = {
 
 export const actions = {
 	getBranchProducts: createAction(types.GET_BRANCH_PRODUCTS),
-	getBranchProductsWithAnalytics: createAction(types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS),
+	getBranchProductsWithAnalytics: createAction(
+		types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS,
+	),
 	getBranchProduct: createAction(types.GET_BRANCH_PRODUCT),
 	editBranchProduct: createAction(types.EDIT_BRANCH_PRODUCT),
 	editBranchProductBalance: createAction(types.EDIT_BRANCH_PRODUCT_BALANCE),
-	editBranchProductPriceCost: createAction(types.EDIT_BRANCH_PRODUCT_PRICE_COST),
+	editBranchProductPriceCost: createAction(
+		types.EDIT_BRANCH_PRODUCT_PRICE_COST,
+	),
 };

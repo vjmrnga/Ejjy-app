@@ -24,7 +24,7 @@ export const EditUserModal = ({
 }: Props) => {
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
-	const { editUser, status, errors, reset } = useUsers();
+	const { editUser, status: userStatus, errors, reset } = useUsers();
 
 	// METHODS
 	const getBranchOptions = useCallback(
@@ -58,7 +58,14 @@ export const EditUserModal = ({
 	};
 
 	return (
-		<Modal title="Edit User" visible={visible} footer={null} onCancel={onClose} centered closable>
+		<Modal
+			title="Edit User"
+			visible={visible}
+			footer={null}
+			onCancel={onClose}
+			centered
+			closable
+		>
 			{errors.map((error, index) => (
 				<FieldError key={index} error={error} />
 			))}
@@ -68,12 +75,8 @@ export const EditUserModal = ({
 				branchOptions={getBranchOptions()}
 				onSubmit={onEditUser}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={userStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);
-};
-
-EditUserModal.defaultProps = {
-	loading: false,
 };

@@ -23,6 +23,8 @@ const reducer = handleActions(
 					newData = { users: payload.users };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };

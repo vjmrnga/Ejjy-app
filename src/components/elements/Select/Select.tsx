@@ -17,7 +17,14 @@ interface Props {
 	disabled?: boolean;
 }
 
-const Select = ({ options, placeholder, onChange, classNames, value, disabled }: Props) => (
+const Select = ({
+	options,
+	placeholder,
+	onChange,
+	classNames,
+	value,
+	disabled,
+}: Props) => (
 	<select
 		className={cn('Select', classNames, { disabled })}
 		onChange={(event) => onChange(event.target.value)}
@@ -29,7 +36,11 @@ const Select = ({ options, placeholder, onChange, classNames, value, disabled }:
 		)}
 
 		{options.map(({ name, value: optionValue }) => (
-			<option key={optionValue} selected={optionValue === value} value={optionValue}>
+			<option
+				key={optionValue}
+				selected={optionValue === value}
+				value={optionValue}
+			>
 				{name}
 			</option>
 		))}

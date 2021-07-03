@@ -1,11 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { FieldError, Label } from '../../../../components/elements';
 import { selectors as authSelectors } from '../../../../ducks/auth';
 import { types } from '../../../../ducks/requisition-slips';
-import { requisitionSlipTypes, quantityTypes, request } from '../../../../global/types';
+import {
+	requisitionSlipTypes,
+	quantityTypes,
+	request,
+} from '../../../../global/types';
 import { useRequisitionSlips } from '../../../../hooks/useRequisitionSlips';
 import { convertToPieces } from '../../../../utils/function';
 import { CreateRequisitionSlipForm } from './CreateRequisitionSlipForm';
@@ -26,11 +29,15 @@ export const CreateRequisitionSlipModal = ({
 	loading,
 }: Props) => {
 	const user = useSelector(authSelectors.selectUser());
-	const { createRequisitionSlip, status, errors, recentRequest, reset } = useRequisitionSlips();
+	const { createRequisitionSlip, status, errors, recentRequest, reset } =
+		useRequisitionSlips();
 
 	// Effect: Close modal if recent requests are Create, Edit or Remove
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.CREATE_REQUISITION_SLIP) {
+		if (
+			status === request.SUCCESS &&
+			recentRequest === types.CREATE_REQUISITION_SLIP
+		) {
 			reset();
 			onSuccess();
 			onClose();
@@ -79,8 +86,4 @@ export const CreateRequisitionSlipModal = ({
 			/>
 		</Modal>
 	);
-};
-
-CreateRequisitionSlipModal.defaultProps = {
-	loading: false,
 };

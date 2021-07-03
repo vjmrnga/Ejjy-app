@@ -25,7 +25,8 @@ export const service = {
 	edit: async (id, body: IEditPendingTransaction, baseURL) =>
 		axios.patch(`/pending-database-transactions/${id}/`, body, { baseURL }),
 
-	remove: async (id, baseURL) => axios.delete(`/pending-database-transactions/${id}/`, { baseURL }),
+	remove: async (id, baseURL) =>
+		axios.delete(`/pending-database-transactions/${id}/`, { baseURL }),
 
 	execute: async (configuration) => axios(configuration),
 };

@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Modal } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -11,9 +12,18 @@ interface Props {
 	onClose: any;
 }
 
-const columns = [{ name: 'Item' }, { name: 'Qty' }, { name: 'Rate' }, { name: 'Amount' }];
+const columns = [
+	{ name: 'Item' },
+	{ name: 'Qty' },
+	{ name: 'Rate' },
+	{ name: 'Amount' },
+];
 
-export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) => {
+export const ViewTransactionModal = ({
+	transaction,
+	visible,
+	onClose,
+}: Props) => {
 	const [data, setData] = useState([]);
 
 	// Effect: Format product data
@@ -75,7 +85,10 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 					labelSpan={8}
 					valueSpan={16}
 					label="Serial No (of printer)"
-					value={transaction?.branch_machine?.machine_printer_serial_number || EMPTY_CELL}
+					value={
+						transaction?.branch_machine?.machine_printer_serial_number ||
+						EMPTY_CELL
+					}
 				/>
 			</DetailsRow>
 
@@ -94,37 +107,49 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 					labelSpan={8}
 					valueSpan={16}
 					label="Subtotal"
-					value={`₱${numberWithCommas(Number(transaction?.total_amount).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.total_amount).toFixed(2),
+					)}`}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="Amount Received"
-					value={`₱${numberWithCommas(Number(transaction?.total_paid_amount).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.total_paid_amount).toFixed(2),
+					)}`}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="Amount Due"
-					value={`₱${numberWithCommas(Number(transaction?.total_amount).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.total_amount).toFixed(2),
+					)}`}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="VAT Exempt"
-					value={`₱${numberWithCommas(Number(transaction?.invoice?.vat_exempt).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.invoice?.vat_exempt).toFixed(2),
+					)}`}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="VAT Sales"
-					value={`₱${numberWithCommas(Number(transaction?.invoice?.vat_sales).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.invoice?.vat_sales).toFixed(2),
+					)}`}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="12% VAT"
-					value={`₱${numberWithCommas(Number(transaction?.invoice?.vat_12_percent).toFixed(2))}`}
+					value={`₱${numberWithCommas(
+						Number(transaction?.invoice?.vat_12_percent).toFixed(2),
+					)}`}
 				/>
 			</DetailsRow>
 
@@ -137,7 +162,9 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 					label="Generated"
 					value={
 						transaction?.invoice?.datetime_created
-							? moment(transaction?.invoice?.datetime_created).format('YYYY-MM-DD')
+							? moment(transaction?.invoice?.datetime_created).format(
+									'YYYY-MM-DD',
+							  )
 							: EMPTY_CELL
 					}
 				/>
@@ -146,7 +173,8 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 					valueSpan={16}
 					label="Cashier"
 					value={
-						`${transaction?.teller?.first_name} ${transaction?.teller?.last_name}` || EMPTY_CELL
+						`${transaction?.teller?.first_name} ${transaction?.teller?.last_name}` ||
+						EMPTY_CELL
 					}
 				/>
 				<DetailsSingle
@@ -160,9 +188,24 @@ export const ViewTransactionModal = ({ transaction, visible, onClose }: Props) =
 			<br />
 
 			<DetailsRow>
-				<DetailsSingle labelSpan={8} valueSpan={16} label="Name" value={EMPTY_CELL} />
-				<DetailsSingle labelSpan={8} valueSpan={16} label="TIN" value={EMPTY_CELL} />
-				<DetailsSingle labelSpan={8} valueSpan={16} label="Address" value={EMPTY_CELL} />
+				<DetailsSingle
+					labelSpan={8}
+					valueSpan={16}
+					label="Name"
+					value={EMPTY_CELL}
+				/>
+				<DetailsSingle
+					labelSpan={8}
+					valueSpan={16}
+					label="TIN"
+					value={EMPTY_CELL}
+				/>
+				<DetailsSingle
+					labelSpan={8}
+					valueSpan={16}
+					label="Address"
+					value={EMPTY_CELL}
+				/>
 			</DetailsRow>
 
 			<Divider />

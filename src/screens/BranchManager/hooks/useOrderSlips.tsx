@@ -1,23 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { actions, types } from '../../../ducks/order-slips';
-import { MAX_PAGE_SIZE } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { onCallback } from '../../../utils/function';
 import {
 	addInCachedData,
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
 } from '../../../utils/pagination';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching order slips';
 
-export const useOrderSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useOrderSlips = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -28,9 +24,12 @@ export const useOrderSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-	const getOrderSlipsExtendedAction = useActionDispatch(actions.getOrderSlipsExtended);
+	const getOrderSlipsExtendedAction = useActionDispatch(
+		actions.getOrderSlipsExtended,
+	);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
@@ -42,23 +41,23 @@ export const useOrderSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		resetStatus();
 	};
 
-	const resetPagination = () => {
-		setAllData([]);
-		setPageCount(0);
-		setCurrentPage(1);
-		setCurrentPageData([]);
-	};
-
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
+	const requestCallback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	const executeRequest = (data, callback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				requestCallback,
+				callback?.onSuccess,
+				callback?.onError,
+			),
 		});
 	};
 
@@ -88,42 +87,18 @@ export const useOrderSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	// REQUEST METHODS
 
 	const getOrderSlipsExtended = (data, shouldReset = false) => {
-		if (shouldReset) {
-			resetPagination();
-		}
-
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			}) ||
-			shouldReset
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData((currentAllData) =>
-						generateNewCachedData({
-							existingData: currentAllData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest(
-				{ ...data, pageSize },
-				callback,
-				getOrderSlipsExtendedAction,
-				types.GET_ORDER_SLIPS_EXTENDED,
-			);
-		}
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getOrderSlipsExtendedAction,
+			requestType: types.GET_ORDER_SLIPS_EXTENDED,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	return {
@@ -133,7 +108,6 @@ export const useOrderSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,
-		resetPagination,
 
 		getOrderSlipsExtended,
 		status,

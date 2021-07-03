@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Tabs } from 'antd';
-import { Box } from 'components/elements';
-import { useBranches } from 'hooks/useBranches';
 import React, { useEffect, useState } from 'react';
+import { Box } from '../../../../components/elements';
+import { useBranches } from '../../../../hooks/useBranches';
 import { BranchBalanceItem } from './BranchBalanceItem';
 
 const { TabPane } = Tabs;
@@ -35,7 +34,10 @@ export const BranchBalances = () => {
 			>
 				{branches.map(({ name, id, online_url }) => (
 					<TabPane key={id} tab={name} disabled={!online_url}>
-						<BranchBalanceItem isActive={id === Number(currentActiveKey)} branchId={id} />
+						<BranchBalanceItem
+							isActive={id === Number(currentActiveKey)}
+							branchId={id}
+						/>
 					</TabPane>
 				))}
 			</Tabs>

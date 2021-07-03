@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TableHeader } from '../../../../../components';
@@ -8,7 +7,11 @@ import {
 	actions as prActions,
 	selectors as prSelectors,
 } from '../../../../../ducks/requisition-slips';
-import { orderSlipStatus, request, requisitionSlipActions } from '../../../../../global/types';
+import {
+	orderSlipStatus,
+	request,
+	requisitionSlipActions,
+} from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { OrderSlipsTable } from './OrderSlipsTable';
@@ -25,18 +28,21 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	// STATES
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
-	const [receiveDeliveryReceiptVisible, setReceiveDeliveryReceiptVisible] = useState(false);
+	const [receiveDeliveryReceiptVisible, setReceiveDeliveryReceiptVisible] =
+		useState(false);
 
 	// CUSTOM HOOKS
 	const {
 		orderSlips,
 		getOrderSlipsExtended,
-		status: orderSlipStatus,
+		status: orderSlipRequestStatus,
 		recentRequest: orderSlipRecentRequest,
 	} = useOrderSlips();
 
 	const requisitionSlip = useSelector(prSelectors.selectRequisitionSlip());
-	const setRequisitionSlipAction = useActionDispatch(prActions.setRequisitionSlipAction);
+	const setRequisitionSlipAction = useActionDispatch(
+		prActions.setRequisitionSlipAction,
+	);
 
 	// METHODS
 	// Effect: Fetch requisition slip
@@ -53,15 +59,20 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	// Effect: Update requisition slip status if status is "New/Seen" after creating order slip
 	useEffect(() => {
 		if (
-			orderSlipStatus === request.SUCCESS &&
+			orderSlipRequestStatus === request.SUCCESS &&
 			orderSlipRecentRequest === orderSlipsTypes.CREATE_ORDER_SLIP
 		) {
-			const actionRequiresUpdate = [requisitionSlipActions.NEW, requisitionSlipActions.SEEN];
+			const actionRequiresUpdate = [
+				requisitionSlipActions.NEW,
+				requisitionSlipActions.SEEN,
+			];
 			if (actionRequiresUpdate.includes(requisitionSlip?.action?.action)) {
-				setRequisitionSlipAction({ action: requisitionSlipActions.F_OS1_CREATED });
+				setRequisitionSlipAction({
+					action: requisitionSlipActions.F_OS1_CREATED,
+				});
 			}
 		}
-	}, [orderSlipStatus, orderSlipRecentRequest]);
+	}, [orderSlipRequestStatus, orderSlipRecentRequest]);
 
 	const onViewOrderSlip = (orderSlip) => {
 		setSelectedOrderSlip(orderSlip);
@@ -86,7 +97,10 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	};
 
 	const getPendingCount = useCallback(
-		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		() =>
+			orderSlips.filter(({ status }) =>
+				pendingOrderSlipStatus.includes(status?.value),
+			).length,
 		[orderSlips],
 	);
 
@@ -96,7 +110,7 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 
 			<OrderSlipsTable
 				orderSlips={orderSlips}
-				orderSlipStatus={orderSlipStatus}
+				orderSlipStatus={orderSlipRequestStatus}
 				onViewOrderSlip={onViewOrderSlip}
 				onReceiveDeliveryReceipt={onReceiveDeliveryReceipt}
 			/>

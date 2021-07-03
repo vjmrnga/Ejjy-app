@@ -27,7 +27,11 @@ export const SettingUrlModal = ({ visible, onClose }: Props) => {
 			centered
 			closable
 		>
-			<SettingUrlForm localIpAddress={getLocalIpAddress()} onSubmit={onSubmit} onClose={onClose} />
+			<SettingUrlForm
+				localIpAddress={getLocalIpAddress()}
+				onSubmit={onSubmit}
+				onClose={onClose}
+			/>
 		</Modal>
 	);
 };

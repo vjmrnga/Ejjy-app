@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { call, delay, put, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../ducks/auth';
 import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global/constants';
@@ -9,26 +10,39 @@ import { getLocalIpAddress } from '../utils/function';
 /* WORKERS */
 function* login({ payload }: any) {
 	const { username, password, callback } = payload;
-	callback(request.REQUESTING);
-	
+	callback({ status: request.REQUESTING });
+
 	const localURL = getLocalIpAddress();
 
 	try {
 		const loginBaseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
 		const endpoint = IS_APP_LIVE ? service.loginOnline : service.login;
-		const loginResponse = yield call(endpoint, { login: username, password }, loginBaseURL);
+		const loginResponse = yield call(
+			endpoint,
+			{ login: username, password },
+			loginBaseURL,
+		);
 
 		if (
-			[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(loginResponse?.data?.user_type) &&
+			[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(
+				loginResponse?.data?.user_type,
+			) &&
 			!IS_APP_LIVE
 		) {
-			callback(request.ERROR, ['Only branch manager and personnels can use the local app.']);
+			callback({
+				status: request.ERROR,
+				errors: ['Only branch manager and personnels can use the local app.'],
+			});
 			return;
 		}
 
 		if (loginResponse) {
 			// let tokenBaseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
-			// const tokenResponse = yield call(service.acquireToken, { username, password }, tokenBaseURL);
+			// const tokenResponse = yield call(
+			// 	service.acquireToken,
+			// 	{ username, password },
+			// 	tokenBaseURL,
+			// );
 
 			yield put(
 				actions.save({
@@ -38,12 +52,15 @@ function* login({ payload }: any) {
 				}),
 			);
 
-			callback(request.SUCCESS);
+			callback({ status: request.SUCCESS });
 		} else {
-			callback(request.ERROR, ['Username or password is invalid.']);
+			callback({
+				status: request.ERROR,
+				errors: ['Username or password is invalid.'],
+			});
 		}
 	} catch (e) {
-		callback(request.ERROR, e.errors);
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
@@ -56,10 +73,14 @@ function* retrieve({ payload }: any) {
 		while (true) {
 			if (id) {
 				const baseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
-				const endpoint = IS_APP_LIVE ? service.retrieveOnline : service.retrieve;
+				const endpoint = IS_APP_LIVE
+					? service.retrieveOnline
+					: service.retrieve;
 				const { data } = yield call(endpoint, id, {}, baseURL);
 
-				const newLoginCount = IS_APP_LIVE ? data.online_login_count : data.login_count;
+				const newLoginCount = IS_APP_LIVE
+					? data.online_login_count
+					: data.login_count;
 				if (newLoginCount !== loginCount) {
 					yield put(actions.logout({ id }));
 					break;

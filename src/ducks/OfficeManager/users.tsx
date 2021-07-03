@@ -34,9 +34,13 @@ const reducer = handleActions(
 					break;
 				}
 				case types.REMOVE_USER: {
-					newData = { products: state.users.filter(({ id }) => id !== payload.id) };
+					newData = {
+						products: state.users.filter(({ id }) => id !== payload.id),
+					};
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };

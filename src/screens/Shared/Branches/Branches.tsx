@@ -1,7 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Table, TableActions, TableHeader } from '../../../components';
+import {
+	Container,
+	Table,
+	TableActions,
+	TableHeader,
+} from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { calculateTableHeight, sleep } from '../../../utils/function';
@@ -18,7 +22,8 @@ const columns = [
 const Branches = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] = useState(false);
+	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] =
+		useState(false);
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
 	// CUSTOM HOOKS
@@ -37,7 +42,12 @@ const Branches = () => {
 			return {
 				name: <Link to={`/branches/${id}`}>{name}</Link>,
 				url: online_url,
-				actions: <TableActions onEdit={() => onEdit(branch)} onRemove={() => removeBranch(id)} />,
+				actions: (
+					<TableActions
+						onEdit={() => onEdit(branch)}
+						onRemove={() => removeBranch(id)}
+					/>
+				),
 			};
 		});
 

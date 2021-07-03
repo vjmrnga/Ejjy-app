@@ -50,7 +50,12 @@ interface Props {
 	loading: boolean;
 }
 
-export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: Props) => {
+export const CreateEditProductForm = ({
+	product,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -60,7 +65,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				textcode: product?.textcode || '',
 				name: product?.name || '',
 				type: product?.type || productTypes.WET,
-				unit_of_measurement: product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
+				unit_of_measurement:
+					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
 				checking: product?.is_daily_checked
 					? productCheckingTypes.DAILY
 					: productCheckingTypes.RANDOM,
@@ -75,7 +81,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
-				product_category: product?.product_category || productCategoryTypes.NONE,
+				product_category:
+					product?.product_category || productCategoryTypes.NONE,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -106,15 +113,24 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 					// 		is: (value) => !value?.length,
 					// 		then: Yup.string().required('Barcode/Textcode is a required field'),
 					// 	}),
-					barcode: Yup.string().max(50, 'Barcode/Textcode must be at most 50 characters'),
-					textcode: Yup.string().max(50, 'Barcode/Textcode must be at most 50 characters'),
+					barcode: Yup.string().max(
+						50,
+						'Barcode/Textcode must be at most 50 characters',
+					),
+					textcode: Yup.string().max(
+						50,
+						'Barcode/Textcode must be at most 50 characters',
+					),
 					name: Yup.string().required().max(70).label('Name'),
 					type: Yup.string().label('TT-001'),
 					unit_of_measurement: Yup.string().label('TT-002'),
 					product_category: Yup.string().label('Product Category'),
 					print_details: Yup.string().required().label('Print Details'),
 					description: Yup.string().required().label('Description'),
-					pieces_in_bulk: Yup.number().required().min(0).label('Pieces in Bulk'),
+					pieces_in_bulk: Yup.number()
+						.required()
+						.min(0)
+						.label('Pieces in Bulk'),
 					allowable_spoilage: Yup.number()
 						.integer()
 						.min(0)
@@ -128,12 +144,29 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						})
 						.nullable()
 						.label('Allowable Spoilage'),
-					cost_per_piece: Yup.number().required().min(0).label('Cost per Piece'),
+					cost_per_piece: Yup.number()
+						.required()
+						.min(0)
+						.label('Cost per Piece'),
 					cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
-					reorder_point: Yup.number().required().min(0).max(65535).label('Reorder Point'),
-					max_balance: Yup.number().required().min(0).max(65535).label('Max Balance'),
-					price_per_piece: Yup.number().required().min(0).label('Price per Piece'),
-					price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
+					reorder_point: Yup.number()
+						.required()
+						.min(0)
+						.max(65535)
+						.label('Reorder Point'),
+					max_balance: Yup.number()
+						.required()
+						.min(0)
+						.max(65535)
+						.label('Max Balance'),
+					price_per_piece: Yup.number()
+						.required()
+						.min(0)
+						.label('Price per Piece'),
+					price_per_bulk: Yup.number()
+						.required()
+						.min(0)
+						.label('Price per Bulk'),
 				},
 				[['barcode', 'textcode']],
 			),
@@ -225,17 +258,22 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: ICreateProduct) => {
+			onSubmit={async (formData: ICreateProduct) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				values.id = product?.id;
-				values.is_daily_checked = values.checking === productCheckingTypes.DAILY;
-				values.is_randomly_checked = values.checking === productCheckingTypes.RANDOM;
-				values.product_category =
-					values.product_category === productCategoryTypes.NONE ? null : values.product_category;
-				onSubmit(values);
+				onSubmit({
+					...formData,
+					id: product?.id,
+					is_daily_checked: formData.checking === productCheckingTypes.DAILY,
+					is_randomly_checked:
+						formData.checking === productCheckingTypes.RANDOM,
+					product_category:
+						formData.product_category !== productCategoryTypes.NONE
+							? formData.product_category
+							: null,
+				});
 			}}
 			enableReinitialize
 		>
@@ -250,7 +288,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								<Col xs={24} md={12}>
 									<FormInputLabel id="textcode" label="Textcode" />
 								</Col>
-								{(errors.textcode || errors.barcode) && (touched.textcode || touched.barcode) ? (
+								{(errors.textcode || errors.barcode) &&
+								(touched.textcode || touched.barcode) ? (
 									<FieldError
 										classNames="custom-field-error"
 										error={errors.textcode || errors.barcode}
@@ -260,7 +299,9 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="name" label="Name" />
-							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
+							{errors.name && touched.name ? (
+								<FieldError error={errors.name} />
+							) : null}
 						</Col>
 
 						<Col span={24}>
@@ -279,7 +320,10 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 
 						<Col span={24}>
 							<Label label="Product Category" spacing />
-							<FormRadioButton name="product_category" items={productCategories} />
+							<FormRadioButton
+								name="product_category"
+								items={productCategories}
+							/>
 							{errors.product_category && touched.product_category ? (
 								<FieldError error={errors.product_category} />
 							) : null}
@@ -288,7 +332,9 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						<Col span={24}>
 							<Label label="Checking" spacing />
 							<FormRadioButton name="checking" items={checkingTypes} />
-							{errors.checking && touched.checking ? <FieldError error={errors.checking} /> : null}
+							{errors.checking && touched.checking ? (
+								<FieldError error={errors.checking} />
+							) : null}
 						</Col>
 
 						<Divider dashed>TAGS</Divider>
@@ -296,12 +342,17 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						<Col sm={12} xs={24}>
 							<Label label="TT-001" spacing />
 							<FormRadioButton name="type" items={type} />
-							{errors.type && touched.type ? <FieldError error={errors.type} /> : null}
+							{errors.type && touched.type ? (
+								<FieldError error={errors.type} />
+							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<Label label="TT-002" spacing />
-							<FormRadioButton name="unit_of_measurement" items={unitOfMeasurement} />
+							<FormRadioButton
+								name="unit_of_measurement"
+								items={unitOfMeasurement}
+							/>
 							{errors.unit_of_measurement && touched.unit_of_measurement ? (
 								<FieldError error={errors.unit_of_measurement} />
 							) : null}
@@ -309,7 +360,10 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 
 						<Col sm={12} xs={24}>
 							<Label label="TT-003" spacing />
-							<FormRadioButton name="is_vat_exempted" items={isVatExemptedTypes} />
+							<FormRadioButton
+								name="is_vat_exempted"
+								items={isVatExemptedTypes}
+							/>
 							{errors.is_vat_exempted && touched.is_vat_exempted ? (
 								<FieldError error={errors.is_vat_exempted} />
 							) : null}
@@ -318,21 +372,36 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						<Divider dashed>QUANTITY</Divider>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="reorder_point" label="Reorder Point" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="reorder_point"
+								label="Reorder Point"
+							/>
 							{errors.reorder_point && touched.reorder_point ? (
 								<FieldError error={errors.reorder_point} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="max_balance" label="Max Balance" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="max_balance"
+								label="Max Balance"
+							/>
 							{errors.max_balance && touched.max_balance ? (
 								<FieldError error={errors.max_balance} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel min={0} type="number" id="pieces_in_bulk" label="Pieces in Bulk" />
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="pieces_in_bulk"
+								label="Pieces in Bulk"
+							/>
 							{errors.pieces_in_bulk && touched.pieces_in_bulk ? (
 								<FieldError error={errors.pieces_in_bulk} />
 							) : null}
@@ -348,7 +417,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 								disabled={
 									!(
 										values?.type === productTypes.WET &&
-										values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+										values?.unit_of_measurement ===
+											unitOfMeasurementTypes.WEIGHING
 									)
 								}
 							/>
@@ -358,7 +428,8 @@ export const CreateEditProductForm = ({ product, onSubmit, onClose, loading }: P
 						</Col>
 
 						<Divider dashed>
-							MONEY <br />
+							MONEY
+							<br />
 							<Text mark>(must be in 2 decimal places)</Text>
 						</Divider>
 

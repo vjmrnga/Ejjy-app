@@ -1,12 +1,20 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/OfficeManager/delivery-receipts';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/OfficeManager/delivery-receipts';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from '../../../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+} from '../../../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Delivery receipt was created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the delivery receipt';
+const CREATE_ERROR_MESSAGE =
+	'An error occurred while creating the delivery receipt';
 
 export const useDeliveryReceipt = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -14,8 +22,12 @@ export const useDeliveryReceipt = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const deliveryReceipt = useSelector(selectors.selectDeliveryReceipt());
-	const getDeliveryReceiptById = useActionDispatch(actions.getDeliveryReceiptById);
-	const createDeliveryReceipt = useActionDispatch(actions.createDeliveryReceipt);
+	const getDeliveryReceiptById = useActionDispatch(
+		actions.getDeliveryReceiptById,
+	);
+	const createDeliveryReceipt = useActionDispatch(
+		actions.createDeliveryReceipt,
+	);
 
 	const reset = () => {
 		resetError();
@@ -28,20 +40,30 @@ export const useDeliveryReceipt = () => {
 
 	const getDeliveryReceiptByIdRequest = (id, extraCallback = null) => {
 		setRecentRequest(types.GET_DELIVERY_RECEIPT_BY_ID);
-		getDeliveryReceiptById({ id, callback: modifiedExtraCallback(callback, extraCallback) });
+		getDeliveryReceiptById({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	const createDeliveryReceiptRequest = (order_slip_id) => {
 		setRecentRequest(types.CREATE_DELIVERY_RECEIPT);
 		createDeliveryReceipt({
 			order_slip_id,
-			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				CREATE_SUCCESS_MESSAGE,
+				CREATE_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

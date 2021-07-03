@@ -35,14 +35,22 @@ export const TableActions = ({
 		{onExecutePendingTransaction && (
 			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
 		)}
-		{onAdd && <AddButtonIcon onClick={onAdd} tooltip={onAddName || 'Add'} imgSrc={onAddIcon} />}
-		{onView && <ViewButtonIcon onClick={onView} tooltip={onViewName || 'View'} />}
+		{onAdd && (
+			<AddButtonIcon
+				onClick={onAdd}
+				tooltip={onAddName || 'Add'}
+				imgSrc={onAddIcon}
+			/>
+		)}
+		{onView && (
+			<ViewButtonIcon onClick={onView} tooltip={onViewName || 'View'} />
+		)}
 		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
 		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
 		{onRemove && (
 			<Popconfirm
 				placement="topLeft"
-				title={'Are you sure to remove this?'}
+				title="Are you sure to remove this?"
 				onConfirm={onRemove}
 				okText="Yes"
 				cancelText="No"

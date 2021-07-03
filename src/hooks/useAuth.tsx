@@ -18,6 +18,14 @@ export const useAuth = () => {
 	const retrieveUser = useActionDispatch(actions.retrieveUser);
 	const saveAction = useActionDispatch(actions.save);
 
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+	};
+
 	const loginRequest = (data) => {
 		login({ ...data, callback });
 	};
@@ -36,11 +44,6 @@ export const useAuth = () => {
 
 	const updateLocalIpAddress = (newLocalIpAddress) => {
 		saveAction({ localIpAddress: newLocalIpAddress });
-	};
-
-	const callback = (status: number, errors: string[] = []) => {
-		setStatus(status);
-		setErrors(errors);
 	};
 
 	return {

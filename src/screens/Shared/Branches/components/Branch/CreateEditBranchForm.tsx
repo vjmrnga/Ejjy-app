@@ -2,14 +2,12 @@ import { Col, Divider, Row } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel } from '../../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInputLabel,
+} from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
-
-interface ICreateBranch {
-	id?: number;
-	name: string;
-	online_url: string;
-}
 
 interface Props {
 	branch: any;
@@ -18,7 +16,12 @@ interface Props {
 	loading: boolean;
 }
 
-export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Props) => {
+export const CreateEditBranchForm = ({
+	branch,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -39,13 +42,14 @@ export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Pro
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: ICreateBranch) => {
+			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
-
-				values.id = branch?.id;
-				onSubmit(values);
+				onSubmit({
+					...formData,
+					id: branch?.id,
+				});
 			}}
 			enableReinitialize
 		>
@@ -54,7 +58,9 @@ export const CreateEditBranchForm = ({ branch, onSubmit, onClose, loading }: Pro
 					<Row gutter={[15, 15]}>
 						<Col span={24}>
 							<FormInputLabel id="name" label="Name" />
-							{errors.name && touched.name ? <FieldError error={errors.name} /> : null}
+							{errors.name && touched.name ? (
+								<FieldError error={errors.name} />
+							) : null}
 						</Col>
 
 						<Col span={24}>

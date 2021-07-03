@@ -17,11 +17,13 @@ interface IEditBranch {
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) => axios.get('/branches/', { baseURL, params }),
+	list: async (params: IGetRequest, baseURL) =>
+		axios.get('/branches/', { baseURL, params }),
 
 	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
 
-	create: async (body: ICreateBranch, baseURL) => axios.post('/branches/', body, { baseURL }),
+	create: async (body: ICreateBranch, baseURL) =>
+		axios.post('/branches/', body, { baseURL }),
 
 	edit: async (body: IEditBranch, baseURL) =>
 		axios.patch(`/branches/${body.id}/`, body, { baseURL }),

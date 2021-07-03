@@ -1,18 +1,17 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
 import { message, Table } from 'antd';
-import { Container, TableActions, TableHeader } from 'components';
-import { Box, ButtonLink } from 'components/elements';
-import { PendingTransactionsSection } from 'components/PendingTransactionsSection/PendingTransactionsSection';
-import { types as pendingTransactionsTypes } from 'ducks/OfficeManager/pending-transactions';
-import { types } from 'ducks/OfficeManager/products';
-import { pendingTransactionTypes, request } from 'global/types';
-import { usePendingTransactions } from 'hooks/usePendingTransactions';
-import { useProducts } from 'hooks/useProducts';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Container, TableActions, TableHeader } from '../../../components';
+import { Box, ButtonLink } from '../../../components/elements';
+import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
+import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
+import { types } from '../../../ducks/OfficeManager/products';
+import { pageSizeOptions } from '../../../global/options';
+import { pendingTransactionTypes, request } from '../../../global/types';
+import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
+import { useProducts } from '../../../hooks/useProducts';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
-import { pageSizeOptions } from 'global/options';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
@@ -23,9 +22,11 @@ const columns = [
 const Products = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [createEditProductModalVisible, setCreateEditProductModalVisible] = useState(false);
+	const [createEditProductModalVisible, setCreateEditProductModalVisible] =
+		useState(false);
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
-	const [editPriceCostModalVisible, setEditPriceCostModalVisible] = useState(false);
+	const [editPriceCostModalVisible, setEditPriceCostModalVisible] =
+		useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
 	// CUSTOM HOOKS
@@ -58,7 +59,7 @@ const Products = () => {
 	// METHODS
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
-		let hasPendingTransactions = pendingTransactions.some(
+		const hasPendingTransactions = pendingTransactions.some(
 			({ request_model }) => request_model === pendingTransactionTypes.PRODUCTS,
 		);
 
@@ -67,7 +68,12 @@ const Products = () => {
 				const { barcode, name, textcode } = product;
 
 				return {
-					barcode: <ButtonLink text={barcode || textcode} onClick={() => onView(product)} />,
+					barcode: (
+						<ButtonLink
+							text={barcode || textcode}
+							onClick={() => onView(product)}
+						/>
+					),
 					name,
 					actions: hasPendingTransactions ? null : (
 						<TableActions
@@ -86,10 +92,17 @@ const Products = () => {
 
 	const getFetchLoading = useCallback(
 		() =>
-			(productStatus === request.REQUESTING && recentRequest === types.GET_PRODUCTS) ||
+			(productStatus === request.REQUESTING &&
+				recentRequest === types.GET_PRODUCTS) ||
 			(pendingTransactionsStatus === request.REQUESTING &&
-				pendingTransactionRecentRequest === pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
-		[productStatus, pendingTransactionsStatus, recentRequest, pendingTransactionRecentRequest],
+				pendingTransactionRecentRequest ===
+					pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
+		[
+			productStatus,
+			pendingTransactionsStatus,
+			recentRequest,
+			pendingTransactionRecentRequest,
+		],
 	);
 
 	const onPageChange = (page, newPageSize) => {
@@ -117,8 +130,7 @@ const Products = () => {
 	};
 
 	const onSearch = (keyword) => {
-		keyword = keyword?.toLowerCase();
-		getProducts({ search: keyword, page: 1 }, true);
+		getProducts({ search: keyword?.toLowerCase(), page: 1 }, true);
 	};
 
 	const onRemoveProduct = (product) => {
@@ -137,10 +149,18 @@ const Products = () => {
 	};
 
 	return (
-		<Container title="Products" loading={getFetchLoading()} loadingText="Fetching data...">
+		<Container
+			title="Products"
+			loading={getFetchLoading()}
+			loadingText="Fetching data..."
+		>
 			<section className="Products">
 				<Box>
-					<TableHeader buttonName="Create Product" onSearch={onSearch} onCreate={onCreate} />
+					<TableHeader
+						buttonName="Create Product"
+						onSearch={onSearch}
+						onCreate={onCreate}
+					/>
 
 					<Table
 						columns={columns}
@@ -148,13 +168,16 @@ const Products = () => {
 						pagination={{
 							current: currentPage,
 							total: pageCount,
-							pageSize: pageSize,
+							pageSize,
 							onChange: onPageChange,
 							disabled: !data,
 							position: ['bottomCenter'],
-							pageSizeOptions: pageSizeOptions
+							pageSizeOptions,
 						}}
-						loading={productStatus === request.REQUESTING && recentRequest !== types.GET_PRODUCTS}
+						loading={
+							productStatus === request.REQUESTING &&
+							recentRequest !== types.GET_PRODUCTS
+						}
 					/>
 
 					<ViewProductModal

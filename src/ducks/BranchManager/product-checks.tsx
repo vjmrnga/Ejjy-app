@@ -40,12 +40,16 @@ const reducer = handleActions(
 
 					if (productCheckType === productCheckingTypes.RANDOM && id) {
 						newData = {
-							randomChecks: state.randomChecks.filter((randomCheck) => randomCheck.id !== id),
+							randomChecks: state.randomChecks.filter(
+								(randomCheck) => randomCheck.id !== id,
+							),
 						};
 					}
 
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -63,8 +67,10 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectDailyChecks: () => createSelector(selectState, (state) => state.dailyCheck),
-	selectRandomChecks: () => createSelector(selectState, (state) => state.randomChecks),
+	selectDailyChecks: () =>
+		createSelector(selectState, (state) => state.dailyCheck),
+	selectRandomChecks: () =>
+		createSelector(selectState, (state) => state.randomChecks),
 };
 
 export default reducer;

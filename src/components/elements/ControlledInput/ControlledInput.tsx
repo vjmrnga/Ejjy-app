@@ -37,6 +37,7 @@ const ControlledInput = ({
 		min={min}
 		disabled={disabled}
 		onChange={(event) => onChange(event.target.value)}
+		// eslint-disable-next-line jsx-a11y/no-autofocus
 		autoFocus={autoFocus}
 		value={value}
 	/>

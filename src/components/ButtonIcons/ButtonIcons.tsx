@@ -12,9 +12,9 @@ interface Props {
 export const AddButtonIcon = ({
 	type,
 	tooltip,
+	imgSrc = require('../../assets/images/icon-add.svg'),
 	onClick,
 	classNames,
-	imgSrc = require('../../assets/images/icon-add.svg'),
 }: Props) => (
 	<ButtonIcon
 		type={type}
@@ -25,60 +25,96 @@ export const AddButtonIcon = ({
 	/>
 );
 
-export const EditButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const EditButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-edit.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-edit.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const RemoveButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const RemoveButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-remove.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-remove.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const ViewButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const ViewButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-view.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-view.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const DeliverButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const DeliverButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-deliver.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-deliver.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const CancelButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const CancelButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-cancel.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-cancel.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}
 	/>
 );
 
-export const FetchButtonIcon = ({ type, tooltip, onClick, classNames }: Props) => (
+export const FetchButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-download.svg'),
+	onClick,
+	classNames,
+}: Props) => (
 	<ButtonIcon
 		type={type}
-		icon={<img src={require('../../assets/images/icon-download.svg')} alt="icon" />}
+		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
 		tooltip={tooltip}
 		classNames={classNames}

@@ -23,6 +23,8 @@ const reducer = handleActions(
 					newData = { deliveryReceiptProduct: payload.deliveryReceiptProduct };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -33,7 +35,9 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
-	getDeliveryReceiptProductById: createAction(types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID),
+	getDeliveryReceiptProductById: createAction(
+		types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID,
+	),
 };
 
 const selectState = (state: any) => state[key] || initialState;

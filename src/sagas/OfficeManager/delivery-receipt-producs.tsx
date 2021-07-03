@@ -1,5 +1,8 @@
 import { put, retry, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/OfficeManager/delivery-receipt-products';
+import {
+	actions,
+	types,
+} from '../../ducks/OfficeManager/delivery-receipt-products';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services';
@@ -11,7 +14,13 @@ function* getDeliveryReceiptById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.getById,
+			id,
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({
@@ -26,8 +35,12 @@ function* getDeliveryReceiptById({ payload }: any) {
 }
 
 /* WATCHERS */
-const getDeliveryReceiptByIdWatcherSaga = function* getDeliveryReceiptByIdSaga() {
-	yield takeLatest(types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID, getDeliveryReceiptById);
-};
+const getDeliveryReceiptByIdWatcherSaga =
+	function* getDeliveryReceiptByIdSaga() {
+		yield takeLatest(
+			types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID,
+			getDeliveryReceiptById,
+		);
+	};
 
 export default [getDeliveryReceiptByIdWatcherSaga()];

@@ -77,45 +77,45 @@ export const CreateEditOrderSlipForm = ({
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[requestedProducts],
 	);
 
-	const getSelectRadioButton = (index) => {
-		return <FormCheckbox id={`requestedProducts.${index}.selected`} />;
-	};
+	const getSelectRadioButton = (index) => (
+		<FormCheckbox id={`requestedProducts.${index}.selected`} />
+	);
 
-	const getQuantity = (index, values, touched, errors, maxPiece, maxBulk) => {
-		return (
-			<>
-				<div className="quantity-container">
-					<FormInput
-						type="number"
-						id={`requestedProducts.${index}.quantity`}
-						min={0}
-						max={
-							values?.requestedProducts?.[index]?.quantity_type === quantityTypes.PIECE
-								? maxPiece
-								: maxBulk
-						}
-						disabled={!values?.requestedProducts?.[index]?.selected}
-					/>
-					<FormSelect
-						id={`requestedProducts.${index}.quantity_type`}
-						options={quantityTypeOptions}
-						disabled={!values?.requestedProducts?.[index]?.selected}
-					/>
-				</div>
-				{errors?.requestedProducts?.[index]?.quantity &&
-				touched?.requestedProducts?.[index]?.quantity ? (
-					<FieldError error={errors?.requestedProducts?.[index]?.quantity} />
-				) : null}
-			</>
-		);
-	};
+	const getQuantity = (index, values, touched, errors, maxPiece, maxBulk) => (
+		<>
+			<div className="quantity-container">
+				<FormInput
+					type="number"
+					id={`requestedProducts.${index}.quantity`}
+					min={0}
+					max={
+						values?.requestedProducts?.[index]?.quantity_type ===
+						quantityTypes.PIECE
+							? maxPiece
+							: maxBulk
+					}
+					disabled={!values?.requestedProducts?.[index]?.selected}
+				/>
+				<FormSelect
+					id={`requestedProducts.${index}.quantity_type`}
+					options={quantityTypeOptions}
+					disabled={!values?.requestedProducts?.[index]?.selected}
+				/>
+			</div>
+			{errors?.requestedProducts?.[index]?.quantity &&
+			touched?.requestedProducts?.[index]?.quantity ? (
+				<FieldError error={errors?.requestedProducts?.[index]?.quantity} />
+			) : null}
+		</>
+	);
 
 	const getOrdered = (index, quantity_piece, quantity_bulk, values) => {
-		return values?.requestedProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+		const quantityType = values?.requestedProducts?.[index]?.quantity_type;
+
+		return quantityType === quantityTypes.PIECE ? (
 			<span>{quantity_piece}</span>
 		) : (
 			<span>{quantity_bulk}</span>
@@ -130,34 +130,32 @@ export const CreateEditOrderSlipForm = ({
 		branch_max_balance_bulk,
 		values,
 	) => {
-		return values?.requestedProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+		const quantityType = values?.requestedProducts?.[index]?.quantity_type;
+
+		return quantityType === quantityTypes.PIECE ? (
 			<span>{`${branch_current} / ${branch_max_balance}`}</span>
 		) : (
 			<span>{`${branch_current_bulk} / ${branch_max_balance_bulk}`}</span>
 		);
 	};
 
-	const getAssignedPersonnel = (index, values) => {
-		return (
-			<FormSelect
-				id={`requestedProducts.${index}.assigned_personnel`}
-				options={assignedPersonnelOptions}
-				disabled={!values?.requestedProducts?.[index]?.selected}
-			/>
-		);
-	};
+	const getAssignedPersonnel = (index, values) => (
+		<FormSelect
+			id={`requestedProducts.${index}.assigned_personnel`}
+			options={assignedPersonnelOptions}
+			disabled={!values?.requestedProducts?.[index]?.selected}
+		/>
+	);
 
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
-				if (requestedProducts.length > 0) {
-					setSubmitting(true);
-					await sleep(500);
-					setSubmitting(false);
-					onSubmit(values);
-				}
+			onSubmit={async (formData: any) => {
+				setSubmitting(true);
+				await sleep(500);
+				setSubmitting(false);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
@@ -172,7 +170,8 @@ export const CreateEditOrderSlipForm = ({
 									// Select
 									getSelectRadioButton(index),
 									// Barcode
-									requestedProduct?.product_barcode || requestedProduct?.product_textcode,
+									requestedProduct?.product_barcode ||
+										requestedProduct?.product_textcode,
 									// Name
 									requestedProduct?.product_name,
 									// Quantity / Bulk | Pieces

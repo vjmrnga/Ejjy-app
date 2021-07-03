@@ -18,7 +18,9 @@ const reducer = handleActions(
 	{
 		[types.SAVE]: (state, { payload }: any) => {
 			const { type, branchId } = payload;
-			const orderSlipDetails = state.orderSlipDetails ? cloneDeep(state.orderSlipDetails) : {};
+			const orderSlipDetails = state.orderSlipDetails
+				? cloneDeep(state.orderSlipDetails)
+				: {};
 			let newData = {};
 
 			if (orderSlipDetails[branchId] === undefined) {
@@ -27,15 +29,17 @@ const reducer = handleActions(
 
 			switch (type) {
 				case types.GET_USERS: {
-					orderSlipDetails[branchId]['users'] = payload.users;
+					orderSlipDetails[branchId].users = payload.users;
 					newData = { orderSlipDetails };
 					break;
 				}
 				case types.GET_BRANCH_PRODUCTS: {
-					orderSlipDetails[branchId]['branchProducts'] = payload.branchProducts;
+					orderSlipDetails[branchId].branchProducts = payload.branchProducts;
 					newData = { orderSlipDetails };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -52,7 +56,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectOrderSlipDetails: () => createSelector(selectState, (state) => state.orderSlipDetails),
+	selectOrderSlipDetails: () =>
+		createSelector(selectState, (state) => state.orderSlipDetails),
 };
 
 export default reducer;

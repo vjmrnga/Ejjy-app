@@ -25,6 +25,8 @@ const reducer = handleActions(
 					newData = { siteSettings: payload.siteSettings };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -41,7 +43,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectSiteSettings: () => createSelector(selectState, (state) => state.siteSettings),
+	selectSiteSettings: () =>
+		createSelector(selectState, (state) => state.siteSettings),
 };
 
 export default reducer;

@@ -13,7 +13,7 @@ interface Props {
 
 export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { createUser, status, errors, reset } = useUsers();
+	const { createUser, status: userStatus, errors, reset } = useUsers();
 
 	// METHODS
 	const onCreateUser = (data) => {
@@ -27,7 +27,14 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 	};
 
 	return (
-		<Modal title="Create User" visible={visible} footer={null} onCancel={onClose} centered closable>
+		<Modal
+			title="Create User"
+			visible={visible}
+			footer={null}
+			onCancel={onClose}
+			centered
+			closable
+		>
 			{errors.map((error, index) => (
 				<FieldError key={index} error={error} />
 			))}
@@ -35,7 +42,7 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 			<CreateUserForm
 				onSubmit={onCreateUser}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={userStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

@@ -27,6 +27,8 @@ const reducer = handleActions(
 					newData = { pendingTransactions: payload.pendingTransactions };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };

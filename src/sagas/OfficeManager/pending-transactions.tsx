@@ -1,6 +1,10 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/pending-transactions';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services/index';
 import { service } from '../../services/OfficeManager/pending-transactions';
@@ -41,7 +45,12 @@ function* create({ payload }: any) {
 	try {
 		const response = yield call(service.create, data, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.CREATE_PENDING_TRANSACTIONS, branch: response.data }));
+		yield put(
+			actions.save({
+				type: types.CREATE_PENDING_TRANSACTIONS,
+				branch: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -74,7 +83,8 @@ function* remove({ payload }: any) {
 }
 
 function* execute({ payload }: any) {
-	const { callback, url, request_body, request_query_params, request_type } = payload;
+	const { callback, url, request_body, request_query_params, request_type } =
+		payload;
 	callback({ status: request.REQUESTING });
 
 	try {

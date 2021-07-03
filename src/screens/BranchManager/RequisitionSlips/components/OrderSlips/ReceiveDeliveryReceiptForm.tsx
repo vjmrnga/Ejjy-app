@@ -18,7 +18,12 @@ interface Props {
 	loading: boolean;
 }
 
-export const ReceiveDeliveryReceiptForm = ({ products, onSubmit, onClose, loading }) => {
+export const ReceiveDeliveryReceiptForm = ({
+	products,
+	onSubmit,
+	onClose,
+	loading,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -32,50 +37,53 @@ export const ReceiveDeliveryReceiptForm = ({ products, onSubmit, onClose, loadin
 			Schema: Yup.object().shape({
 				products: Yup.array().of(
 					Yup.object().shape({
-						received_quantity_piece: Yup.number().min(0).required().label('Quantity'),
+						received_quantity_piece: Yup.number()
+							.min(0)
+							.required()
+							.label('Quantity'),
 					}),
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[products],
 	);
 
-	const getRow = (name, index, touched, errors) => {
-		return (
-			<Row gutter={[25, 8]}>
-				<Col xs={24} sm={12}>
-					<Label label="Product" spacing />
-					<UncontrolledInput placeholder={name} onChange={null} disabled />
-				</Col>
+	const getRow = (name, index, touched, errors) => (
+		<Row gutter={[25, 8]}>
+			<Col xs={24} sm={12}>
+				<Label label="Product" spacing />
+				<UncontrolledInput placeholder={name} onChange={null} disabled />
+			</Col>
 
-				<Col xs={24} sm={12}>
-					<Label label="Quantity" spacing />
-					<FormInput type="number" id={`products.${index}.received_quantity_piece`} />
-					{errors?.products?.[index]?.received_quantity_piece &&
-					touched?.products?.[index]?.received_quantity_piece ? (
-						<FieldError error={errors?.products?.[index]?.received_quantity_piece} />
-					) : null}
-				</Col>
-			</Row>
-		);
-	};
+			<Col xs={24} sm={12}>
+				<Label label="Quantity" spacing />
+				<FormInput
+					type="number"
+					id={`products.${index}.received_quantity_piece`}
+				/>
+				{errors?.products?.[index]?.received_quantity_piece &&
+				touched?.products?.[index]?.received_quantity_piece ? (
+					<FieldError
+						error={errors?.products?.[index]?.received_quantity_piece}
+					/>
+				) : null}
+			</Col>
+		</Row>
+	);
 
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
-				if (products.length > 0) {
-					setSubmitting(true);
-					await sleep(500);
-					setSubmitting(false);
-					onSubmit(values);
-				}
+			onSubmit={async (formData) => {
+				setSubmitting(true);
+				await sleep(500);
+				setSubmitting(false);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ errors, touched }) => (
 				<FieldArray
 					name="products"
 					render={() => (

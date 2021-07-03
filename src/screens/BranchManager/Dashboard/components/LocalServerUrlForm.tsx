@@ -1,8 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, message, Row, Spin } from 'antd';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { Box, Button, ControlledInput, Label } from '../../../../components/elements';
+import {
+	Box,
+	Button,
+	ControlledInput,
+	Label,
+} from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 
@@ -49,7 +53,11 @@ export const LocalServerUrlForm = ({ branch, loading }: Props) => {
 						/>
 					</Col>
 					<Col xs={24} sm={4} md={4} className="button-column">
-						<Button text="Save Settings" variant="primary" onClick={onSaveSettings} />
+						<Button
+							text="Save Settings"
+							variant="primary"
+							onClick={onSaveSettings}
+						/>
 					</Col>
 				</Row>
 			</Spin>

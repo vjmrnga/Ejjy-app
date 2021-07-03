@@ -4,7 +4,12 @@ import { min } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
-import { Button, FieldError, FormInput, FormSelect } from '../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInput,
+	FormSelect,
+} from '../../../../components/elements';
 import { quantityTypeOptions } from '../../../../global/options';
 import { quantityTypes } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
@@ -55,38 +60,48 @@ export const FulfillPreparationSlipForm = ({
 				),
 			}),
 		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[preparationSlipProducts],
 	);
 
-	const getFulfilledQuantity = (index, values, touched, errors, maxPiece, maxBulk) => {
-		return (
-			<>
-				<div className="quantity-container">
-					<FormInput
-						type="number"
-						id={`preparationSlipProducts.${index}.fulfilled_quantity`}
-						max={
-							values?.preparationSlipProducts?.[index]?.quantity_type === quantityTypes.PIECE
-								? maxPiece
-								: maxBulk
-						}
-					/>
-					<FormSelect
-						id={`preparationSlipProducts.${index}.quantity_type`}
-						options={quantityTypeOptions}
-					/>
-				</div>
-				{errors?.preparationSlipProducts?.[index]?.fulfilled_quantity &&
-				touched?.preparationSlipProducts?.[index]?.fulfilled_quantity ? (
-					<FieldError error={errors?.preparationSlipProducts?.[index]?.fulfilled_quantity} />
-				) : null}
-			</>
-		);
-	};
+	const getFulfilledQuantity = (
+		index,
+		values,
+		touched,
+		errors,
+		maxPiece,
+		maxBulk,
+	) => (
+		<>
+			<div className="quantity-container">
+				<FormInput
+					type="number"
+					id={`preparationSlipProducts.${index}.fulfilled_quantity`}
+					max={
+						values?.preparationSlipProducts?.[index]?.quantity_type ===
+						quantityTypes.PIECE
+							? maxPiece
+							: maxBulk
+					}
+				/>
+				<FormSelect
+					id={`preparationSlipProducts.${index}.quantity_type`}
+					options={quantityTypeOptions}
+				/>
+			</div>
+			{errors?.preparationSlipProducts?.[index]?.fulfilled_quantity &&
+			touched?.preparationSlipProducts?.[index]?.fulfilled_quantity ? (
+				<FieldError
+					error={errors?.preparationSlipProducts?.[index]?.fulfilled_quantity}
+				/>
+			) : null}
+		</>
+	);
 
 	const getOrdered = (index, values, ordered, ordered_bulk) => {
-		return values?.preparationSlipProducts?.[index]?.quantity_type === quantityTypes.PIECE ? (
+		const quantityType =
+			values?.preparationSlipProducts?.[index]?.quantity_type;
+
+		return quantityType === quantityTypes.PIECE ? (
 			<span>{ordered}</span>
 		) : (
 			<span>{ordered_bulk}</span>
@@ -97,11 +112,11 @@ export const FulfillPreparationSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (values: any) => {
+			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
-				onSubmit(values);
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
@@ -116,9 +131,19 @@ export const FulfillPreparationSlipForm = ({
 									// Name
 									product?.name,
 									// Ordered
-									getOrdered(index, values, product?.quantity, product?.quantity_bulk),
+									getOrdered(
+										index,
+										values,
+										product?.quantity,
+										product?.quantity_bulk,
+									),
 									// Balance
-									getOrdered(index, values, product?.branch_current, product?.branch_current_bulk),
+									getOrdered(
+										index,
+										values,
+										product?.branch_current,
+										product?.branch_current_bulk,
+									),
 									// Barcode
 									product?.barcode,
 									// Fulfilled quantity / Bulk | Pieces

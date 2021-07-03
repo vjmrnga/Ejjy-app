@@ -12,10 +12,19 @@ function* getById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.getById,
+			id,
+			ONLINE_API_URL,
+		);
 
 		yield put(
-			actions.save({ type: types.GET_DELIVERY_RECEIPT_BY_ID, deliveryReceipt: response.data }),
+			actions.save({
+				type: types.GET_DELIVERY_RECEIPT_BY_ID,
+				deliveryReceipt: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -28,7 +37,11 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, { order_slip_id }, ONLINE_API_URL);
+		const response = yield call(
+			service.create,
+			{ order_slip_id },
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			orderSlipActions.save({

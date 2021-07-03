@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-underscore-dangle */
 import { Pagination } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,7 +9,11 @@ import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import { request, requisitionSlipActions, userTypes } from '../../../global/types';
+import {
+	request,
+	requisitionSlipActions,
+	userTypes,
+} from '../../../global/types';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -50,11 +54,13 @@ const RequisitionSlips = () => {
 		pageCount,
 		currentPage,
 		getRequisitionSlipsExtended,
-		status,
-	} = useRequisitionSlips({
-		pageSize: PAGE_SIZE,
-	});
-	const { branchProducts, getBranchProducts, status: branchProductsStatus } = useBranchProducts();
+		status: requisitionSlipsStatus,
+	} = useRequisitionSlips();
+	const {
+		branchProducts,
+		getBranchProducts,
+		status: branchProductsStatus,
+	} = useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
@@ -72,15 +78,24 @@ const RequisitionSlips = () => {
 	// Effect: Format requisitionSlips to be rendered in Table
 	useEffect(() => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
-			const { id, type, requesting_user, progress, action: prAction } = requisitionSlip;
+			const {
+				id,
+				type,
+				requesting_user,
+				progress,
+				action: prAction,
+			} = requisitionSlip;
 			const { datetime_created, action } = prAction;
 			const dateTime = formatDateTime(datetime_created);
 
-			const isOwnRequisitionSlip = user?.branch?.id === requesting_user?.branch?.id;
+			const isOwnRequisitionSlip =
+				user?.branch?.id === requesting_user?.branch?.id;
 			const _action = isOwnRequisitionSlip
 				? getRequisitionSlipStatus(action, userTypes.BRANCH_MANAGER)
 				: EMPTY_CELL;
-			let _progress = progress ? `${progress.current} / ${progress.total}` : EMPTY_CELL;
+			let _progress = progress
+				? `${progress.current} / ${progress.total}`
+				: EMPTY_CELL;
 			_progress = isOwnRequisitionSlip ? _progress : EMPTY_CELL;
 
 			return {
@@ -149,7 +164,9 @@ const RequisitionSlips = () => {
 						columns={columns}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-						loading={[status, branchProductsStatus].includes(request.REQUESTING)}
+						loading={[requisitionSlipsStatus, branchProductsStatus].includes(
+							request.REQUESTING,
+						)}
 					/>
 
 					<Pagination

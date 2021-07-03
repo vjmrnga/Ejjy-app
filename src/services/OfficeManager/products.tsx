@@ -48,5 +48,6 @@ export const service = {
 	edit: async (body: IEditProduct, baseURL) =>
 		axios.patch(`/online-products/${body.id}/`, body, { baseURL }),
 
-	remove: async (id, baseURL) => axios.delete(`/online-products/${id}/`, { baseURL }),
+	remove: async (id, baseURL) =>
+		axios.delete(`/online-products/${id}/`, { baseURL }),
 };

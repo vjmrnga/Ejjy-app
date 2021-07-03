@@ -3,9 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { Table } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { request } from '../../../../global/types';
-import { calculateTableHeight, convertToBulk, sleep } from '../../../../utils/function';
+import {
+	calculateTableHeight,
+	convertToBulk,
+	sleep,
+} from '../../../../utils/function';
 import '../style.scss';
-import { RequisitionSlipDetails, requisitionSlipDetailsType } from './RequisitionSlipDetails';
+import {
+	RequisitionSlipDetails,
+	requisitionSlipDetailsType,
+} from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;
@@ -17,24 +24,29 @@ const columns = [
 	{ title: 'Name', dataIndex: 'name' },
 ];
 
-export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Props) => {
+export const RequestedProducts = ({
+	requisitionSlip,
+	requisitionSlipStatus,
+}: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
 		if (requisitionSlip && requisitionSlipStatus === request.SUCCESS) {
-			const formattedRequestedProducts = requisitionSlip?.products.map((requestedProduct) => {
-				const { product, quantity_piece } = requestedProduct;
-				const { barcode, textcode, name, pieces_in_bulk } = product;
+			const formattedRequestedProducts = requisitionSlip?.products.map(
+				(requestedProduct) => {
+					const { product, quantity_piece } = requestedProduct;
+					const { barcode, textcode, name, pieces_in_bulk } = product;
 
-				return {
-					_quantity_piece: quantity_piece,
-					_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
-					barcode: barcode || textcode,
-					name,
-					// quantity: quantity_piece,
-				};
-			});
+					return {
+						_quantity_piece: quantity_piece,
+						_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
+						barcode: barcode || textcode,
+						name,
+						// quantity: quantity_piece,
+					};
+				},
+			);
 
 			sleep(500).then(() => setRequestedProducts(formattedRequestedProducts));
 		}
@@ -59,7 +71,10 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 			<Table
 				columns={columns}
 				dataSource={requestedProducts}
-				scroll={{ y: calculateTableHeight(requestedProducts.length), x: '100%' }}
+				scroll={{
+					y: calculateTableHeight(requestedProducts.length),
+					x: '100%',
+				}}
 			/>
 		</Box>
 	);

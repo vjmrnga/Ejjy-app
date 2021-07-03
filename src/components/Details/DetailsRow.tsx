@@ -5,6 +5,6 @@ interface Props {
 	children: ReactNode;
 }
 
-export const DetailsRow = ({ children }: Props) => {
-	return <Row gutter={[15, 15]}>{children}</Row>;
-};
+export const DetailsRow = ({ children }: Props) => (
+	<Row gutter={[15, 15]}>{children}</Row>
+);

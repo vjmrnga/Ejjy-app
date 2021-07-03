@@ -1,7 +1,7 @@
+import React from 'react';
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { floor, isArray, isString, memoize } from 'lodash';
-import React from 'react';
 import {
 	AddedToOSBadgePill,
 	AvailableBadgePill,
@@ -33,13 +33,16 @@ import {
 	userTypes,
 } from '../global/types';
 
-export const getLocalIpAddress = () => localStorage.getItem(LOCAL_IP_ADDRESS_KEY);
+export const getLocalIpAddress = () =>
+	localStorage.getItem(LOCAL_IP_ADDRESS_KEY);
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const calculateTableHeight = (listLength) => {
 	const MAX_ROW_COUNT = 6;
-	return ROW_HEIGHT * (listLength <= MAX_ROW_COUNT ? listLength : MAX_ROW_COUNT);
+	return (
+		ROW_HEIGHT * (listLength <= MAX_ROW_COUNT ? listLength : MAX_ROW_COUNT)
+	);
 };
 
 export const showMessage = (status, successMessage, errorMessage) => {
@@ -55,7 +58,10 @@ interface ConfirmPassword {
 	label?: string;
 	onSuccess: any;
 }
-export const confirmPassword = ({ title = 'Input Password', onSuccess }: ConfirmPassword) => {
+export const confirmPassword = ({
+	title = 'Input Password',
+	onSuccess,
+}: ConfirmPassword) => {
 	let password = '';
 
 	Modal.confirm({
@@ -63,7 +69,14 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 		centered: true,
 		className: 'ConfirmPassword',
 		okText: 'Submit',
-		content: <UncontrolledInput type="password" onChange={(value) => (password = value)} />,
+		content: (
+			<UncontrolledInput
+				type="password"
+				onChange={(value) => {
+					password = value;
+				}}
+			/>
+		),
 		onOk: (close) => {
 			if (password === 'generic123') {
 				onSuccess();
@@ -75,11 +88,12 @@ export const confirmPassword = ({ title = 'Input Password', onSuccess }: Confirm
 	});
 };
 
-export const numberWithCommas = (x) => {
-	return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
-};
+export const numberWithCommas = (x) =>
+	x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 
-export const formatDateTime = memoize((datetime) => dayjs(datetime).format('MM/DD/YYYY h:mma'));
+export const formatDateTime = memoize((datetime) =>
+	dayjs(datetime).format('MM/DD/YYYY h:mma'),
+);
 
 export const formatDateTimeExtended = memoize((datetime) =>
 	dayjs(datetime).format('MMMM D, YYYY h:mma'),
@@ -91,28 +105,29 @@ export const formatDateTimeShortMonth = memoize((datetime) =>
 
 export const formatDate = memoize((date) => dayjs(date).format('MM/DD/YYYY'));
 
-export const convertToBulk = (pieces, piecesInBulk) => floor(pieces / piecesInBulk);
+export const convertToBulk = (pieces, piecesInBulk) =>
+	floor(pieces / piecesInBulk);
 
 export const convertToPieces = (bulk, piecesInBulk) => bulk * piecesInBulk;
 
-export const modifiedCallback = (callback, successMessage, errorMessage, extraCallback = null) => {
-	return (response) => {
+export const modifiedCallback =
+	(callback, successMessage, errorMessage, extraCallback = null) =>
+	(response) => {
 		showMessage(response?.status, successMessage, errorMessage);
 		callback(response);
 		if (extraCallback) {
 			extraCallback(response);
 		}
 	};
-};
 
-export const modifiedExtraCallback = (callback, extraCallback = null) => {
-	return (response) => {
+export const modifiedExtraCallback =
+	(callback, extraCallback = null) =>
+	(response) => {
 		callback(response);
 		if (extraCallback) {
 			extraCallback(response);
 		}
 	};
-};
 
 export const showErrorMessages = (errors) => {
 	if (isString(errors)) {
@@ -122,20 +137,24 @@ export const showErrorMessages = (errors) => {
 	}
 };
 
-export const getColoredText = memoize((key, isDefault, x, y, isOverOnlyIfDefault = false) => {
-	let text = `${x}/${y}`;
+export const getColoredText = memoize(
+	(key, isDefault, x, y, isOverOnlyIfDefault = false) => {
+		let text = `${x}/${y}`;
 
-	if (isDefault) {
-		text = isOverOnlyIfDefault ? text : y;
-		return <ColoredText type={coloredTextType.DEFAULT} text={text} />;
-	} else if (x !== y) {
-		return <ColoredText type={coloredTextType.ERROR} text={text} />;
-	} else if (x === y) {
-		return <ColoredText type={coloredTextType.PRIMARY} text={text} />;
-	}
+		if (isDefault) {
+			text = isOverOnlyIfDefault ? text : y;
+			return <ColoredText type={coloredTextType.DEFAULT} text={text} />;
+		}
+		if (x !== y) {
+			return <ColoredText type={coloredTextType.ERROR} text={text} />;
+		}
+		if (x === y) {
+			return <ColoredText type={coloredTextType.PRIMARY} text={text} />;
+		}
 
-	return null;
-});
+		return null;
+	},
+);
 
 export const getBranchProductStatus = memoize((status) => {
 	switch (status) {
@@ -148,6 +167,8 @@ export const getBranchProductStatus = memoize((status) => {
 		case branchProductStatus.OUT_OF_STOCK: {
 			return <OutOfStocksBadgePill />;
 		}
+		default:
+			return null;
 	}
 });
 
@@ -190,6 +211,8 @@ export const getRequisitionSlipStatus = (status, userType) => {
 			case requisitionSlipActions.OUT_OF_STOCK: {
 				return <BadgePill label="Out Of Stock" variant="secondary" />;
 			}
+			default:
+				return null;
 		}
 	} else if (userType === userTypes.BRANCH_MANAGER) {
 		switch (status) {
@@ -229,6 +252,8 @@ export const getRequisitionSlipStatus = (status, userType) => {
 			case requisitionSlipActions.OUT_OF_STOCK: {
 				return <BadgePill label="Out Of Stock" />;
 			}
+			default:
+				return null;
 		}
 	}
 
@@ -243,6 +268,8 @@ export const getRequisitionSlipProductStatus = memoize((status) => {
 		case requisitionSlipProductStatus.NOT_ADDED_TO_OS: {
 			return <NotAddedToOSBadgePill />;
 		}
+		default:
+			return null;
 	}
 });
 
@@ -268,6 +295,8 @@ export const getOrderSlipStatus = (status, percentage, osdrStatus = null) => {
 
 			return <BadgePill label="Received" />;
 		}
+		default:
+			return null;
 	}
 };
 
@@ -290,7 +319,12 @@ export const getOrderSlipStatusBranchManager = (
 			return <BadgePill label="Prepared" />;
 		}
 		case orderSlipStatus.DELIVERED: {
-			return <BadgePill label="Delivered" variant={screenType === 'RS' ? 'yellow' : null} />;
+			return (
+				<BadgePill
+					label="Delivered"
+					variant={screenType === 'RS' ? 'yellow' : null}
+				/>
+			);
 		}
 		case orderSlipStatus.RECEIVED: {
 			if (osdrStatus === OSDRStatus.DONE) {
@@ -303,6 +337,8 @@ export const getOrderSlipStatusBranchManager = (
 
 			return <BadgePill label="Received" />;
 		}
+		default:
+			return null;
 	}
 };
 
@@ -314,6 +350,8 @@ export const getPreparationSlipStatus = memoize((status) => {
 		case preparationSlipStatus.COMPLETED: {
 			return <CompletedBadgePill />;
 		}
+		default:
+			return null;
 	}
 });
 
@@ -331,6 +369,8 @@ export const getUserTypeName = memoize((type) => {
 		case userTypes.BRANCH_PERSONNEL: {
 			return 'Branch Personnel';
 		}
+		default:
+			return null;
 	}
 });
 
@@ -352,13 +392,20 @@ export const getDeliveryReceiptStatus = memoize((key, status, isAdjusted) => {
 	const isAdjustedText = isAdjusted ? '(Adjusted)' : '';
 	switch (status) {
 		case deliveryReceiptStatus.RESOLVED: {
-			return <BadgePill label={`Resolved ${isAdjustedText}`} variant="primary" />;
+			return (
+				<BadgePill label={`Resolved ${isAdjustedText}`} variant="primary" />
+			);
 		}
 		case deliveryReceiptStatus.DONE: {
 			return <BadgePill label={`Done ${isAdjustedText}`} variant="primary" />;
 		}
 		case deliveryReceiptStatus.INVESTIGATION: {
-			return <BadgePill label={`Investigation ${isAdjustedText}`} variant="secondary" />;
+			return (
+				<BadgePill
+					label={`Investigation ${isAdjustedText}`}
+					variant="secondary"
+				/>
+			);
 		}
 		default: {
 			return EMPTY_CELL;
@@ -414,9 +461,9 @@ export const getTransactionStatus = memoize((status) => {
 	}
 });
 
-export const isUserFromBranch = memoize((user_role) => {
-	return [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user_role);
-});
+export const isUserFromBranch = memoize((user_role) =>
+	[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user_role),
+);
 
 export const onCallback =
 	(callback, onSuccess = null, onError = null) =>

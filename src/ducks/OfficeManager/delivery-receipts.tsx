@@ -28,6 +28,8 @@ const reducer = handleActions(
 					// newData = { branch: payload.branch };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -44,7 +46,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectDeliveryReceipt: () => createSelector(selectState, (state) => state.deliveryReceipt),
+	selectDeliveryReceipt: () =>
+		createSelector(selectState, (state) => state.deliveryReceipt),
 };
 
 export default reducer;

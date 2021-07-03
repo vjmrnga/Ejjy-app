@@ -35,13 +35,20 @@ export const useSiteSettings = () => {
 		setRecentRequest(types.EDIT_SITE_SETTINGS);
 		editSiteSettings({
 			...data,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

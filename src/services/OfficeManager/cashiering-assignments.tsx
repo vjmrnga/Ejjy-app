@@ -17,8 +17,10 @@ interface IListCashieringAssignmentsByUserIdRequest extends IGetRequest {
 }
 
 export const service = {
-	listByUserId: async (params: IListCashieringAssignmentsByUserIdRequest, baseURL) =>
-		axios.get('/cashiering-assignments/', { baseURL, params }),
+	listByUserId: async (
+		params: IListCashieringAssignmentsByUserIdRequest,
+		baseURL,
+	) => axios.get('/cashiering-assignments/', { baseURL, params }),
 
 	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
 
@@ -28,5 +30,6 @@ export const service = {
 	edit: async (body: IEditCashieringAssignment, baseURL) =>
 		axios.patch(`/cashiering-assignments/${body.id}/`, body, { baseURL }),
 
-	remove: async (id, baseURL) => axios.delete(`/cashiering-assignments/${id}/`, { baseURL }),
+	remove: async (id, baseURL) =>
+		axios.delete(`/cashiering-assignments/${id}/`, { baseURL }),
 };

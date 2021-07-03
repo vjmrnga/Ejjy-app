@@ -1,11 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Divider, message, Row } from 'antd';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { BarcodeTable, CheckIcon, Container, TableNormal } from '../../../components';
+import BarcodeReader from 'react-barcode-reader';
+import {
+	BarcodeTable,
+	CheckIcon,
+	Container,
+	TableNormal,
+} from '../../../components';
 import { Box, Button, SearchInput } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
 import { selectors as authSelectors } from '../../../ducks/auth';
@@ -15,7 +20,6 @@ import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
 import { PreparationSlipDetails } from './components/PreparationSlipDetails';
 import './style.scss';
-import BarcodeReader from 'react-barcode-reader';
 
 const SEARCH_DEBOUNCE_TIME = 500;
 
@@ -27,7 +31,11 @@ export const fulfillType = {
 	DEDUCT: 2,
 };
 
-const PreparationSlips = ({ match }) => {
+interface Props {
+	match: any;
+}
+
+const PreparationSlips = ({ match }: Props) => {
 	const preparationSlipId = match?.params?.id;
 	const history = useHistory();
 
@@ -36,7 +44,7 @@ const PreparationSlips = ({ match }) => {
 		preparationSlip,
 		fulfillPreparationSlip,
 		getPreparationSlipById,
-		status,
+		status: prepSlipStatus,
 		recentRequest,
 		reset,
 	} = usePreparationSlips();
@@ -45,9 +53,10 @@ const PreparationSlips = ({ match }) => {
 	const [allProducts, setAllProducts] = useState([]);
 	const [inputtedProducts, setInputtedProducts] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line no-unused-vars
 	const [selectedProductIndex, setSelectedProductIndex] = useState(null);
-	const [fulfillPreparationSlipVisible, setFulfillPreparationSlipVisible] = useState(false);
+	const [fulfillPreparationSlipVisible, setFulfillPreparationSlipVisible] =
+		useState(false);
 
 	useEffect(() => {
 		fetchPreparationSlip();
@@ -56,7 +65,7 @@ const PreparationSlips = ({ match }) => {
 	// Effect: Format preparation slip products
 	useEffect(() => {
 		if (
-			status === request.SUCCESS &&
+			prepSlipStatus === request.SUCCESS &&
 			recentRequest === types.GET_PREPARATION_SLIP_BY_ID &&
 			preparationSlip
 		) {
@@ -70,17 +79,20 @@ const PreparationSlips = ({ match }) => {
 			formatAllProducts();
 			formatOrderedProducts();
 		}
-	}, [preparationSlip, recentRequest, status]);
+	}, [preparationSlip, recentRequest, prepSlipStatus]);
 
 	// Effect: Fulfill success
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.FULFILL_PREPARATION_SLIP) {
+		if (
+			prepSlipStatus === request.SUCCESS &&
+			recentRequest === types.FULFILL_PREPARATION_SLIP
+		) {
 			fetchPreparationSlip();
 		}
-	}, [status, recentRequest]);
+	}, [prepSlipStatus, recentRequest]);
 
 	const getFetchLoadingText = useCallback(() => {
-		if (status === request.REQUESTING) {
+		if (prepSlipStatus === request.REQUESTING) {
 			if (recentRequest === types.GET_PREPARATION_SLIP_BY_ID) {
 				return 'Fetching preparation slip...';
 			}
@@ -91,7 +103,7 @@ const PreparationSlips = ({ match }) => {
 		}
 
 		return '';
-	}, [status, recentRequest]);
+	}, [prepSlipStatus, recentRequest]);
 
 	const fetchPreparationSlip = () => {
 		getPreparationSlipById(preparationSlipId, user?.id, ({ status }) => {
@@ -102,7 +114,7 @@ const PreparationSlips = ({ match }) => {
 	};
 
 	const searchProducts = (keyword) => {
-		keyword = keyword?.toLowerCase();
+		const lowerCaseKeyword = keyword?.toLowerCase();
 
 		const formattedProducts = preparationSlip?.products
 			?.filter(({ product }) => {
@@ -110,7 +122,11 @@ const PreparationSlips = ({ match }) => {
 				const barcode = product?.barcode?.toLowerCase() ?? '';
 				const textcode = product?.textcode?.toLowerCase() ?? '';
 
-				return name.includes(keyword) || barcode.includes(keyword) || textcode.includes(keyword);
+				return (
+					name.includes(lowerCaseKeyword) ||
+					barcode.includes(lowerCaseKeyword) ||
+					textcode.includes(lowerCaseKeyword)
+				);
 			})
 			?.sort((a, b) => a.fulfilled_quantity_piece - b.fulfilled_quantity_piece)
 			?.map((requestedProduct) => {
@@ -152,27 +168,29 @@ const PreparationSlips = ({ match }) => {
 	};
 
 	const formatAllProducts = () => {
-		const formattedProducts = preparationSlip?.products?.map((requestedProduct) => {
-			const {
-				id,
-				product,
-				quantity_piece,
-				fulfilled_quantity_piece = 0,
-				assigned_person,
-			} = requestedProduct;
-			const { id: product_id, name } = product;
+		const formattedProducts = preparationSlip?.products?.map(
+			(requestedProduct) => {
+				const {
+					id,
+					product,
+					quantity_piece,
+					fulfilled_quantity_piece = 0,
+					assigned_person,
+				} = requestedProduct;
+				const { id: product_id, name } = product;
 
-			return {
-				preparation_slip_id: preparationSlip.id,
-				id,
-				name,
-				order_slip_product_id: id,
-				product_id,
-				assigned_person_id: assigned_person?.id,
-				quantity_piece,
-				fulfilled_quantity_piece,
-			};
-		});
+				return {
+					preparation_slip_id: preparationSlip.id,
+					id,
+					name,
+					order_slip_product_id: id,
+					product_id,
+					assigned_person_id: assigned_person?.id,
+					quantity_piece,
+					fulfilled_quantity_piece,
+				};
+			},
+		);
 
 		setAllProducts(formattedProducts);
 	};
@@ -196,14 +214,14 @@ const PreparationSlips = ({ match }) => {
 	const handleKeyPress = (key) => {
 		if (key === 'up') {
 			setSelectedProductIndex((value) => {
-				let newValue = value > 0 ? value - 1 : value;
+				const newValue = value > 0 ? value - 1 : value;
 				setSelectedProduct(products?.[newValue]?.payload);
 				return newValue;
 			});
 		} else if (key === 'down') {
 			setSelectedProductIndex((value) => {
 				if (products?.length > 0) {
-					let newValue = value < products.length - 1 ? value + 1 : value;
+					const newValue = value < products.length - 1 ? value + 1 : value;
 					setSelectedProduct(products?.[newValue]?.payload);
 
 					return newValue;
@@ -227,7 +245,7 @@ const PreparationSlips = ({ match }) => {
 	};
 
 	const onFulfill = () => {
-		const products = allProducts?.map((product) => ({
+		const fulfilledPrepSlipProducts = allProducts?.map((product) => ({
 			order_slip_product_id: product?.order_slip_product_id,
 			product_id: product?.product_id,
 			assigned_person_id: product?.assigned_person_id,
@@ -239,7 +257,7 @@ const PreparationSlips = ({ match }) => {
 			id: preparationSlip.id,
 			is_prepared: true,
 			assigned_store_id: user.branch.id,
-			products,
+			products: fulfilledPrepSlipProducts,
 		});
 	};
 
@@ -249,12 +267,14 @@ const PreparationSlips = ({ match }) => {
 			data = 'PRODUCT0002';
 		}
 
-		const product = preparationSlip.products.find(({ product }) => {
-			const barcode = product?.barcode?.toLowerCase() || '';
-			const scannedBarcode = data?.toLowerCase() || '';
+		const product = preparationSlip.products.find(
+			({ product: prepSlipProduct }) => {
+				const barcode = prepSlipProduct?.barcode?.toLowerCase() || '';
+				const scannedBarcode = data?.toLowerCase() || '';
 
-			return barcode === scannedBarcode;
-		});
+				return barcode === scannedBarcode;
+			},
+		);
 
 		if (product) {
 			const newQuantity = product?.fulfilled_quantity_piece
@@ -262,18 +282,21 @@ const PreparationSlips = ({ match }) => {
 				: 1;
 
 			if (newQuantity > product.quantity_piece) {
-				message.error(`Total quantity must not be greater than ${product.quantity_piece}`);
+				message.error(
+					`Total quantity must not be greater than ${product.quantity_piece}`,
+				);
 				return;
 			}
 
-			const products = preparationSlip.products
+			const prepSlipProducts = preparationSlip.products
 				?.filter(({ id }) => id !== product.id)
-				?.map((product) => ({
-					order_slip_product_id: product?.id,
-					product_id: product?.product?.id,
-					assigned_person_id: product?.assigned_person?.id,
-					quantity_piece: product?.quantity_piece,
-					fulfilled_quantity_piece: product?.fulfilled_quantity_piece || undefined,
+				?.map((prepSlipProduct) => ({
+					order_slip_product_id: prepSlipProduct?.id,
+					product_id: prepSlipProduct?.product?.id,
+					assigned_person_id: prepSlipProduct?.assigned_person?.id,
+					quantity_piece: prepSlipProduct?.quantity_piece,
+					fulfilled_quantity_piece:
+						prepSlipProduct?.fulfilled_quantity_piece || undefined,
 				}));
 
 			reset();
@@ -290,7 +313,7 @@ const PreparationSlips = ({ match }) => {
 						quantity_piece: product?.quantity_piece,
 						fulfilled_quantity_piece: newQuantity,
 					},
-					...products,
+					...prepSlipProducts,
 				],
 			});
 		} else {
@@ -305,13 +328,13 @@ const PreparationSlips = ({ match }) => {
 	return (
 		<Container
 			title="Fulfill Preparation Slip"
-			loading={status === request.REQUESTING}
+			loading={prepSlipStatus === request.REQUESTING}
 			loadingText={getFetchLoadingText()}
 		>
 			<BarcodeReader onError={handleError} onScan={handleScan} />
 			<KeyboardEventHandler
 				handleKeys={['up', 'down', 'f1', 'f2']}
-				onKeyEvent={(key, e) => handleKeyPress(key)}
+				onKeyEvent={(key) => handleKeyPress(key)}
 			>
 				<section className="FulfillPreparationSlip">
 					<Box>
@@ -336,7 +359,9 @@ const PreparationSlips = ({ match }) => {
 							<SearchInput
 								classNames="search-input"
 								placeholder="Search product"
-								onChange={(event) => debounceSearched(event.target.value.trim())}
+								onChange={(event) => {
+									debounceSearched(event.target.value.trim());
+								}}
 								autoFocus={false}
 							/>
 						</div>
@@ -352,7 +377,11 @@ const PreparationSlips = ({ match }) => {
 							</Col>
 
 							<Col xs={24} md={12}>
-								<TableNormal columns={columnsRight} data={inputtedProducts} displayInPage />
+								<TableNormal
+									columns={columnsRight}
+									data={inputtedProducts}
+									displayInPage
+								/>
 							</Col>
 						</Row>
 
@@ -364,7 +393,9 @@ const PreparationSlips = ({ match }) => {
 								text="Fulfill"
 								variant="primary"
 								onClick={onFulfill}
-								disabled={preparationSlip?.status === preparationSlipStatus.COMPLETED}
+								disabled={
+									preparationSlip?.status === preparationSlipStatus.COMPLETED
+								}
 							/>
 						</div>
 					</Box>

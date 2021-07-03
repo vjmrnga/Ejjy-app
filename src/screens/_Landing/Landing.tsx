@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { notification, Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -11,11 +10,10 @@ import './style.scss';
 const Landing = () => {
 	const history = useHistory();
 
-	const { user, logout } = useAuth();
+	const { user } = useAuth();
 	const { getBranches, status: getBranchesStatus } = useBranches();
 
 	useEffect(() => {
-		console.log('user', user);
 		if (user) {
 			const activeSessionsCount = IS_APP_LIVE
 				? user?.active_online_sessions_count
@@ -46,6 +44,8 @@ const Landing = () => {
 					}
 					break;
 				}
+				default:
+					break;
 			}
 		}
 	}, [user]);
@@ -70,6 +70,8 @@ const Landing = () => {
 					history.replace('dashboard');
 					break;
 				}
+				default:
+					break;
 			}
 		}
 	}, [user, getBranchesStatus]);
@@ -78,7 +80,7 @@ const Landing = () => {
 		const requests = [getBranchesStatus];
 
 		if (requests.includes(request.REQUESTING)) {
-			return;
+			// Do nothing
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
@@ -95,7 +97,7 @@ const Landing = () => {
 		const requests = [getBranchesStatus];
 
 		if (requests.includes(request.REQUESTING)) {
-			return;
+			// Do nothing
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {
@@ -112,7 +114,7 @@ const Landing = () => {
 		const requests = [getBranchesStatus];
 
 		if (requests.includes(request.REQUESTING)) {
-			return;
+			// Do nothing
 		} else if (requests.every((value) => value === request.SUCCESS)) {
 			history.replace('dashboard');
 		} else if (requests.some((value) => value === request.ERROR)) {

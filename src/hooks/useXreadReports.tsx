@@ -13,23 +13,29 @@ export const useXreadReports = () => {
 
 	const createXreadReport = useActionDispatch(actions.createXreadReport);
 
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
+
 	const reset = () => {
 		resetError();
 		resetStatus();
 	};
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
 	const createXreadReportRequest = (data, extraCallback = null) => {
 		setRecentRequest(types.CREATE_XREAD_REPORT);
-		createXreadReport({ ...data, callback: modifiedExtraCallback(callback, extraCallback) });
+		createXreadReport({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

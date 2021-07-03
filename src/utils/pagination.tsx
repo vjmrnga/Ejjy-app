@@ -10,7 +10,11 @@ import { NOT_FOUND_INDEX } from '../global/constants';
  *                         start adding the new data
  * @return {Object[]} an array of updated cached data
  */
-export const generateNewCachedData = ({ existingData, toBeAddedData, index }) => {
+export const generateNewCachedData = ({
+	existingData,
+	toBeAddedData,
+	index,
+}) => {
 	// if the existing data is null, create a new empty array,
 	// otherwise, copy the contents of the existing data
 	const newCachedData = existingData === null ? [] : [...existingData];
@@ -64,7 +68,8 @@ export const updateInCachedData = ({ data, item }) => {
 	return data;
 };
 
-export const removeInCachedData = ({ data, item }) => data.filter(({ id }) => id !== item.id);
+export const removeInCachedData = ({ data, item }) =>
+	data.filter(({ id }) => id !== item.id);
 
 /**
  * configure the pagination when sending the request
@@ -72,7 +77,11 @@ export const removeInCachedData = ({ data, item }) => data.filter(({ id }) => id
  * @param {boolean} shouldReset - for forcing to reset the cached pagination data
  * @param {object} data - the needed data and methods
  */
-export const executePaginatedRequest = (requestData, shouldReset = false, data) => {
+export const executePaginatedRequest = (
+	requestData,
+	shouldReset = false,
+	data,
+) => {
 	const {
 		requestAction,
 		requestType,
@@ -84,7 +93,6 @@ export const executePaginatedRequest = (requestData, shouldReset = false, data) 
 		setPageCount,
 		setCurrentPage,
 		setPageSize,
-		resetPagination,
 	} = data;
 	let currentPageSize = pageSize;
 	const { page, pageSize: newPageSize } = requestData;
@@ -110,13 +118,13 @@ export const executePaginatedRequest = (requestData, shouldReset = false, data) 
 						setAllData([]);
 					}
 
-					setAllData((currentAllData) => {
-						return generateNewCachedData({
+					setAllData((currentAllData) =>
+						generateNewCachedData({
 							existingData: currentAllData,
 							toBeAddedData,
 							index: (page - 1) * currentPageSize,
-						});
-					});
+						}),
+					);
 
 					setPageCount(count);
 					setPageSize(currentPageSize);

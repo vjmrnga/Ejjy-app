@@ -1,5 +1,8 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/BranchManager/local-branch-settings';
+import {
+	actions,
+	types,
+} from '../../ducks/BranchManager/local-branch-settings';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
@@ -21,7 +24,12 @@ function* get({ payload }: any) {
 	}
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.get, baseURL || localURL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.get,
+			baseURL || localURL,
+		);
 		yield put(
 			actions.save({
 				type: types.GET_LOCAL_BRANCH_SETTINGS,
@@ -50,7 +58,10 @@ function* edit({ payload }: any) {
 	try {
 		const response = yield call(service.edit, id, data, baseURL || localURL);
 		yield put(
-			actions.save({ type: types.EDIT_LOCAL_BRANCH_SETTINGS, localBranchSettings: response.data }),
+			actions.save({
+				type: types.EDIT_LOCAL_BRANCH_SETTINGS,
+				localBranchSettings: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {

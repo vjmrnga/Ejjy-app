@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchManager/product-checks';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/BranchManager/product-checks';
 import { productCheckingTypes, request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
 
-const FULFILL_PRODUCT_CHECK_SUCCESS_MESSAGE = 'Product check was fulfilled successfully';
-const FULFILL_PRODUCT_CHECK_ERROR_MESSAGE = 'An error occurred while fulfilling the product checks';
+const FULFILL_PRODUCT_CHECK_SUCCESS_MESSAGE =
+	'Product check was fulfilled successfully';
+const FULFILL_PRODUCT_CHECK_ERROR_MESSAGE =
+	'An error occurred while fulfilling the product checks';
 
 export const useProductChecks = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -30,7 +36,12 @@ export const useProductChecks = () => {
 
 	const getDailyCheckRequest = (assigned_store_id, is_filled_up = false) => {
 		setRecentRequest(types.GET_DAILY_CHECK);
-		getDailyCheck({ type: productCheckingTypes.DAILY, assigned_store_id, is_filled_up, callback });
+		getDailyCheck({
+			type: productCheckingTypes.DAILY,
+			assigned_store_id,
+			is_filled_up,
+			callback,
+		});
 	};
 
 	const getRandomChecksRequest = (assigned_store_id, is_filled_up = false) => {
@@ -55,9 +66,12 @@ export const useProductChecks = () => {
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

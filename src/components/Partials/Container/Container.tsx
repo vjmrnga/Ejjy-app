@@ -1,18 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Layout, Spin, Tooltip } from 'antd';
 import cn from 'classnames';
 import React, { ReactNode, useCallback, useEffect } from 'react';
-import { useBeforeunload } from 'react-beforeunload';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 import { selectors as uiSelectors } from '../../../ducks/ui';
+import { IS_APP_LIVE, ONLINE_ROUTES } from '../../../global/constants';
 import { useAuth } from '../../../hooks/useAuth';
+import { useNetwork } from '../../../hooks/useNetwork';
 import { InfoIcon } from '../../Icons/Icons';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
-import { useNetwork } from '../../../hooks/useNetwork';
-import { useLocation } from 'react-router';
-import { ONLINE_ROUTES } from '../../../global/constants';
-import { IS_APP_LIVE } from '../../../global/constants';
 
 const { Header, Content } = Layout;
 
@@ -35,8 +32,10 @@ export const Container = ({
 	loadingText,
 	children,
 }: Props) => {
-	const isSidebarCollapsed = useSelector(uiSelectors.selectIsSidebarCollapsed());
-	const { user, logout, retrieveUser } = useAuth();
+	const isSidebarCollapsed = useSelector(
+		uiSelectors.selectIsSidebarCollapsed(),
+	);
+	const { user, retrieveUser } = useAuth();
 	const { hasInternetConnection, testConnection } = useNetwork();
 	const { pathname: pathName } = useLocation();
 
@@ -46,7 +45,10 @@ export const Container = ({
 
 	useEffect(() => {
 		testConnection();
-		retrieveUser(user.id, IS_APP_LIVE ? user.online_login_count : user.login_count);
+		retrieveUser(
+			user.id,
+			IS_APP_LIVE ? user.online_login_count : user.login_count,
+		);
 	}, []);
 
 	const isDisabled = useCallback(() => {
@@ -60,7 +62,12 @@ export const Container = ({
 
 	return (
 		<Layout className={cn('Main', { 'sidebar-collapsed': isSidebarCollapsed })}>
-			<Spin size="large" spinning={loading} tip={loadingText} className="container-spinner">
+			<Spin
+				size="large"
+				spinning={loading}
+				tip={loadingText}
+				className="container-spinner"
+			>
 				<Sidebar />
 				<Layout className={cn('site-layout', { disabled: isDisabled() })}>
 					<Header className="site-layout-background">
@@ -71,7 +78,7 @@ export const Container = ({
 									{description && (
 										<Tooltip title={description} placement="right">
 											<InfoIcon classNames="icon-info" />
-											<span></span>
+											<span />
 										</Tooltip>
 									)}
 								</h3>

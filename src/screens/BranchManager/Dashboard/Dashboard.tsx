@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -65,14 +64,21 @@ const Dashboard = () => {
 	return (
 		<Container title="Dashboard">
 			<section className="Dashboard">
-				<BackupServerUrlForm branch={branch} loading={branchStatus === request.REQUESTING} />
+				<BackupServerUrlForm
+					branch={branch}
+					loading={branchStatus === request.REQUESTING}
+				/>
 
-				<LocalServerUrlForm branch={branch} loading={branchStatus === request.REQUESTING} />
+				<LocalServerUrlForm
+					branch={branch}
+					loading={branchStatus === request.REQUESTING}
+				/>
 
 				<CashieringCard
 					branchDay={branchDay}
 					onConfirm={branchDay ? onEndDay : onStartDay}
 					loading={branchDayStatus === request.REQUESTING}
+					disabled={false}
 				/>
 
 				<MachineReportTable />

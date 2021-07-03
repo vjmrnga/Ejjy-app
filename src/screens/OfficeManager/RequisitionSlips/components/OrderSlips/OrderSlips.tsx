@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-// TODO:: Enable /disable the create buttons (out of stock and order slip)
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TableHeaderOrderSlip } from '../../../../../components';
@@ -33,7 +31,10 @@ interface Props {
 
 const pendingOrderSlipStatus = [orderSlipStatus.PREPARED];
 
-export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => {
+export const OrderSlips = ({
+	fetchRequisitionSlip,
+	requisitionSlip,
+}: Props) => {
 	// State: Selection
 	const [selectedBranchId, setSelectedBranchId] = useState(null);
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
@@ -43,15 +44,17 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 
 	// State: Modal
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
-	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(false);
+	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] =
+		useState(false);
 	const [createOutOfStockVisible, setCreateOutOfStockVisible] = useState(false);
 
 	// CUSTOM HOOKS
-	const { createDeliveryReceipt, status: deliveryReceiptStatus } = useDeliveryReceipt();
+	const { createDeliveryReceipt, status: deliveryReceiptStatus } =
+		useDeliveryReceipt();
 	const {
 		orderSlips,
 		getOrderSlipsExtended,
-		status: orderSlipStatus,
+		status: orderSlipRequestStatus,
 		recentRequest: orderSlipRecentRequest,
 	} = useOrderSlips();
 	const {
@@ -70,9 +73,11 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 		errors: userErrors,
 		reset: userReset,
 	} = useUsers();
-	
+
 	const branches = useSelector(branchesSelectors.selectBranches());
-	const setRequisitionSlipAction = useActionDispatch(prActions.setRequisitionSlipAction);
+	const setRequisitionSlipAction = useActionDispatch(
+		prActions.setRequisitionSlipAction,
+	);
 
 	// METHODS
 	// Effect: Fetch order slips
@@ -84,24 +89,43 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 
 	// Effect: Format requested products in Create/Edit Order Slip form
 	useEffect(() => {
-		processOrderSlip(requisitionSlip, branchProducts, branchPersonnels, selectedOrderSlip);
-	}, [requisitionSlip, branchProducts, branchPersonnels, selectedBranchId, selectedOrderSlip]);
+		processOrderSlip(
+			requisitionSlip,
+			branchProducts,
+			branchPersonnels,
+			selectedOrderSlip,
+		);
+	}, [
+		requisitionSlip,
+		branchProducts,
+		branchPersonnels,
+		selectedBranchId,
+		selectedOrderSlip,
+	]);
 
 	// Effect: Update requisition slip status if status is "New/Seen" after creating order slip
 	useEffect(() => {
 		if (
-			orderSlipStatus === request.SUCCESS &&
+			orderSlipRequestStatus === request.SUCCESS &&
 			orderSlipRecentRequest === orderSlipsTypes.CREATE_ORDER_SLIP
 		) {
-			const actionRequiresUpdate = [requisitionSlipActions.NEW, requisitionSlipActions.SEEN];
+			const actionRequiresUpdate = [
+				requisitionSlipActions.NEW,
+				requisitionSlipActions.SEEN,
+			];
 			if (actionRequiresUpdate.includes(requisitionSlip?.action?.action)) {
-				setRequisitionSlipAction({ action: requisitionSlipActions.F_OS1_CREATED });
+				setRequisitionSlipAction({
+					action: requisitionSlipActions.F_OS1_CREATED,
+				});
 			}
 		}
-	}, [orderSlipStatus, orderSlipRecentRequest]);
+	}, [orderSlipRequestStatus, orderSlipRecentRequest]);
 
 	const getFirstBranchOptionId = useCallback(
-		() => branches.find((branch) => branch.id !== requisitionSlip?.requesting_user?.branch?.id)?.id,
+		() =>
+			branches.find(
+				(branch) => branch.id !== requisitionSlip?.requesting_user?.branch?.id,
+			)?.id,
 		[branches, requisitionSlip],
 	);
 
@@ -109,25 +133,28 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 		() =>
 			!!requisitionSlip?.products?.filter(
 				({ is_out_of_stock, status }) =>
-					status === requisitionSlipProductStatus.NOT_ADDED_TO_OS && !is_out_of_stock,
+					status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
+					!is_out_of_stock,
 			).length,
 		[requisitionSlip],
 	);
 
 	const processOrderSlip = (
-		requisitionSlip,
-		branchProducts,
-		branchPersonnels,
+		reqSlip,
+		bProducts,
+		bPersonnels,
 		orderSlip = null,
 	) => {
 		let requestedProducts = [];
 
 		if (selectedOrderSlip) {
 			const findBranchProduct = (productId) =>
-				branchProducts.find((item) => item.product.id === productId);
+				bProducts.find((item) => item.product.id === productId);
 
 			const findRequisitionSlipProduct = (productId) =>
-				orderSlip.requisition_slip.products.find(({ product_id }) => product_id === productId);
+				orderSlip.requisition_slip.products.find(
+					({ product_id }) => product_id === productId,
+				);
 
 			requestedProducts = orderSlip.products.map((product) => {
 				const { id: productId } = product.product;
@@ -136,7 +163,10 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				return processedOrderSlipProduct(
 					product.id,
 					product.product,
-					{ current: branchProduct?.current_balance, max_balance: branchProduct?.max_balance },
+					{
+						current: branchProduct?.current_balance,
+						max_balance: branchProduct?.max_balance,
+					},
 					product.quantity_piece,
 					findRequisitionSlipProduct(productId).quantity_piece,
 					product.assigned_person?.id,
@@ -145,14 +175,16 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 		} else {
 			// const findBranchProduct = (productId) =>
 			// 	branchProducts.find((item) => item.product.id === productId);
-			
-			requestedProducts = requisitionSlip?.products
+
+			requestedProducts = reqSlip?.products
 				?.filter(({ is_out_of_stock, status, product_id }) => {
 					// Condition: Not yet added to OS
 					// Condition: Not out of stock
 					// Condition: Has branch products
-					const branchProduct = branchProducts.find((item) => item.product.id === product_id);
-					
+					const branchProduct = bProducts.find(
+						(item) => item.product.id === product_id,
+					);
+
 					return (
 						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
 						!is_out_of_stock &&
@@ -160,18 +192,20 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 					);
 				})
 				?.map((product) => {
-					const branchProduct = branchProducts.find(
+					const branchProduct = bProducts.find(
 						(item) => item.product.id === product.product_id,
 					);
-					
 
 					return processedOrderSlipProduct(
 						null,
 						product.product,
-						{ current: branchProduct.current_balance, max_balance: branchProduct.max_balance },
+						{
+							current: branchProduct.current_balance,
+							max_balance: branchProduct.max_balance,
+						},
 						'',
 						product.quantity_piece,
-						branchPersonnels?.[0]?.id,
+						bPersonnels?.[0]?.id,
 					);
 				});
 		}
@@ -199,7 +233,10 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 			product_pieces_in_bulk: pieces_in_bulk,
 			quantity: quantityPiece,
 			ordered_quantity_piece: orderedQuantityPiece,
-			ordered_quantity_bulk: convertToBulk(orderedQuantityPiece, pieces_in_bulk),
+			ordered_quantity_bulk: convertToBulk(
+				orderedQuantityPiece,
+				pieces_in_bulk,
+			),
 			quantity_type: quantityTypes.PIECE,
 			branch_current: current,
 			branch_max_balance: max_balance,
@@ -210,17 +247,18 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 	};
 
 	const onChangePreparingBranch = (branchId) => {
-		if(selectedBranchId !== branchId) {
+		if (selectedBranchId !== branchId) {
 			setSelectedBranchId(branchId);
 			userReset();
 			branchProductsReset();
-	
+
 			getUsers({ branchId, userType: userTypes.BRANCH_PERSONNEL });
-	
-			const productIds = requisitionSlipProducts.map((product) => product.product_id);
-			getBranchProducts({ productIds: productIds, branchId, page: 1 }, true);
+
+			const productIds = requisitionSlipProducts.map(
+				(product) => product.product_id,
+			);
+			getBranchProducts({ productIds, branchId, page: 1 }, true);
 		}
-		
 	};
 
 	const onCreateOrderSlip = () => {
@@ -250,7 +288,10 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 	};
 
 	const getPendingCount = useCallback(
-		() => orderSlips.filter(({ status }) => pendingOrderSlipStatus.includes(status?.value)).length,
+		() =>
+			orderSlips.filter(({ status }) =>
+				pendingOrderSlipStatus.includes(status?.value),
+			).length,
 		[orderSlips],
 	);
 
@@ -261,9 +302,10 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				buttonName="Create Order Slip"
 				onCreate={onCreateOrderSlip}
 				onCreateDisabled={
-					![requisitionSlipActions.SEEN, requisitionSlipActions.F_OS1_CREATING].includes(
-						requisitionSlip?.action?.action,
-					) || !hasAvailableProducts()
+					![
+						requisitionSlipActions.SEEN,
+						requisitionSlipActions.F_OS1_CREATING,
+					].includes(requisitionSlip?.action?.action) || !hasAvailableProducts()
 				}
 				onOutOfStock={onCreateOutOfStock}
 				onOutOfStockDisabled={!hasAvailableProducts()}
@@ -275,7 +317,9 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				onViewOrderSlip={onViewOrderSlip}
 				onEditOrderSlip={onEditOrderSlip}
 				onCreateDeliveryReceipt={onCreateDeliveryReceipt}
-				loading={[deliveryReceiptStatus, orderSlipStatus].includes(request.REQUESTING)}
+				loading={[deliveryReceiptStatus, orderSlipRequestStatus].includes(
+					request.REQUESTING,
+				)}
 			/>
 
 			<ViewOrderSlipModal
@@ -296,7 +340,9 @@ export const OrderSlips = ({ fetchRequisitionSlip, requisitionSlip }: Props) => 
 				onClose={() => setCreateEditOrderSlipVisible(false)}
 				warnings={[...branchProductsWarnings, ...userWarnings]}
 				errors={[...branchProducstErrors, ...userErrors]}
-				loading={[usersStatus, branchProductsStatus].includes(request.REQUESTING)}
+				loading={[usersStatus, branchProductsStatus].includes(
+					request.REQUESTING,
+				)}
 			/>
 
 			<SetOutOfStockModal

@@ -1,9 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { AddButtonIcon, Container, Table, TableHeader } from '../../../components';
+import {
+	AddButtonIcon,
+	Container,
+	Table,
+	TableHeader,
+} from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
@@ -28,14 +33,22 @@ const columns = [
 const pendingPreparationSlipStatus = [preparationSlipStatus.NEW];
 
 const PreparationSlips = () => {
-	let history = useHistory();
-	const user = useSelector(authSelectors.selectUser());
-	const { preparationSlips, getPreparationSlips, status, recentRequest } = usePreparationSlips();
-
+	// STATES
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
-	const [viewPreparationSlipModalVisible, setViewPreparationSlipModalVisible] = useState(false);
+	const [viewPreparationSlipModalVisible, setViewPreparationSlipModalVisible] =
+		useState(false);
 	const [selectedPreparationSlip, setSelectedPreparationSlip] = useState(null);
+
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const user = useSelector(authSelectors.selectUser());
+	const {
+		preparationSlips,
+		getPreparationSlips,
+		status: preparationSlipsStatus,
+		recentRequest,
+	} = usePreparationSlips();
 
 	useEffect(() => {
 		getPreparationSlips(user?.id);
@@ -43,36 +56,42 @@ const PreparationSlips = () => {
 
 	// Effect: Format preparation slips to be rendered in Table
 	useEffect(() => {
-		const formattedPreparationSlips = preparationSlips.map((preparationSlip) => {
-			const { id, datetime_created, status } = preparationSlip;
-			const dateTime = formatDateTime(datetime_created);
+		const formattedPreparationSlips = preparationSlips.map(
+			(preparationSlip) => {
+				const { id, datetime_created, status } = preparationSlip;
+				const dateTime = formatDateTime(datetime_created);
 
-			const action =
-				status === preparationSlipStatus.NEW ? (
-					<AddButtonIcon
-						onClick={() => history.push(`/preparation-slips/${preparationSlip.id}`)}
-						tooltip="Fulfill"
-					/>
-				) : null;
+				const action =
+					status === preparationSlipStatus.NEW ? (
+						<AddButtonIcon
+							onClick={() => {
+								history.push(`/preparation-slips/${preparationSlip.id}`);
+							}}
+							tooltip="Fulfill"
+						/>
+					) : null;
 
-			return {
-				_id: id,
-				_datetime_created: dateTime,
-				_status: status,
-				id: <ButtonLink text={id} onClick={() => onView(preparationSlip)} />,
-				datetime_created: dateTime,
-				status: getPreparationSlipStatus(status),
-				action,
-			};
-		});
+				return {
+					_id: id,
+					_datetime_created: dateTime,
+					_status: status,
+					id: <ButtonLink text={id} onClick={() => onView(preparationSlip)} />,
+					datetime_created: dateTime,
+					status: getPreparationSlipStatus(status),
+					action,
+				};
+			},
+		);
 
 		setData(formattedPreparationSlips);
 		setTableData(formattedPreparationSlips);
 	}, [preparationSlips]);
 
 	const getFetchLoading = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.GET_PREPARATION_SLIPS,
-		[status, recentRequest],
+		() =>
+			preparationSlipsStatus === request.REQUESTING &&
+			recentRequest === types.GET_PREPARATION_SLIPS,
+		[preparationSlipsStatus, recentRequest],
 	);
 
 	const onView = (preparationSlip) => {
@@ -81,12 +100,13 @@ const PreparationSlips = () => {
 	};
 
 	const onSearch = (keyword) => {
-		keyword = lowerCase(keyword);
+		const lowerCaseKeyword = lowerCase(keyword);
 		const filteredData =
-			keyword.length > 0
+			lowerCaseKeyword.length > 0
 				? data.filter(
 						({ _id, _datetime_created }) =>
-							_id.toString() === keyword || _datetime_created.includes(keyword),
+							_id.toString() === lowerCaseKeyword ||
+							_datetime_created.includes(lowerCaseKeyword),
 				  )
 				: data;
 
@@ -94,13 +114,18 @@ const PreparationSlips = () => {
 	};
 
 	const onStatusSelect = (status) => {
-		const filteredData = status !== 'all' ? data.filter(({ _status }) => _status === status) : data;
+		const filteredData =
+			status !== 'all'
+				? data.filter(({ _status }) => _status === status)
+				: data;
 		setTableData(filteredData);
 	};
 
 	const getPendingCount = useCallback(
 		() =>
-			preparationSlips.filter(({ status }) => pendingPreparationSlipStatus.includes(status)).length,
+			preparationSlips.filter(({ status }) =>
+				pendingPreparationSlipStatus.includes(status),
+			).length,
 		[preparationSlips],
 	);
 

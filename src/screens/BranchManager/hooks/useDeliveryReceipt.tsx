@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/BranchManager/delivery-receipts';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/BranchManager/delivery-receipts';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedCallback } from '../../../utils/function';
 
 const RECEIVE_SUCCESS_MESSAGE = 'Delivery receipt was received successfully';
-const RECEIVE_ERROR_MESSAGE = 'An error occurred while receiving the delivery receipt';
+const RECEIVE_ERROR_MESSAGE =
+	'An error occurred while receiving the delivery receipt';
 
 export const useDeliveryReceipt = () => {
 	const [status, setStatus] = useState<any>(request.NONE);
@@ -14,17 +19,29 @@ export const useDeliveryReceipt = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const deliveryReceipt = useSelector(selectors.selectDeliveryReceipt());
-	const getDeliveryReceiptById = useActionDispatch(actions.getDeliveryReceiptById);
-	const receiveDeliveryReceipt = useActionDispatch(actions.receiveDeliveryReceipt);
+	const getDeliveryReceiptById = useActionDispatch(
+		actions.getDeliveryReceiptById,
+	);
+	const receiveDeliveryReceipt = useActionDispatch(
+		actions.receiveDeliveryReceipt,
+	);
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
 
 	const reset = () => {
 		resetError();
 		resetStatus();
 	};
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+	};
 
 	const getDeliveryReceiptByIdRequest = (id) => {
 		setRecentRequest(types.GET_DELIVERY_RECEIPT_BY_ID);
@@ -35,13 +52,12 @@ export const useDeliveryReceipt = () => {
 		setRecentRequest(types.RECEIVE_DELIVERY_RECEIPT);
 		receiveDeliveryReceipt({
 			...data,
-			callback: modifiedCallback(callback, RECEIVE_SUCCESS_MESSAGE, RECEIVE_ERROR_MESSAGE),
+			callback: modifiedCallback(
+				callback,
+				RECEIVE_SUCCESS_MESSAGE,
+				RECEIVE_ERROR_MESSAGE,
+			),
 		});
-	};
-
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
 	};
 
 	return {

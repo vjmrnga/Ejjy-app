@@ -40,7 +40,6 @@ export const TableHeaderOrderSlip = ({
 	onOutOfStock,
 	pending,
 }: Props) => {
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceSearchedChange = useCallback(
 		debounce((keyword) => onSearch(keyword), SEARCH_DEBOUNCE_TIME),
 		[onSearch],
@@ -59,7 +58,9 @@ export const TableHeaderOrderSlip = ({
 					<SearchInput
 						classNames="search-input"
 						placeholder={searchPlaceholder}
-						onChange={(event) => debounceSearchedChange(event.target.value.trim())}
+						onChange={(event) => {
+							debounceSearchedChange(event.target.value.trim());
+						}}
 					/>
 				)}
 

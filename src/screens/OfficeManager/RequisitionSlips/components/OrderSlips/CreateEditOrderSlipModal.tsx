@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Divider, message, Modal, Row } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,7 +8,10 @@ import { types } from '../../../../../ducks/order-slips';
 import { quantityTypes, request } from '../../../../../global/types';
 import { convertToPieces } from '../../../../../utils/function';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import { RequisitionSlipDetails, requisitionSlipDetailsType } from '../RequisitionSlipDetails';
+import {
+	RequisitionSlipDetails,
+	requisitionSlipDetailsType,
+} from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
 import FieldWarning from '../../../../../components/elements/FieldWarning/FieldWarning';
@@ -76,7 +78,8 @@ export const CreateEditOrderSlipModal = ({
 		() =>
 			branches
 				.filter(
-					({ id, online_url }) => id !== requisitionSlip?.requesting_user?.branch?.id && online_url,
+					({ id, online_url }) =>
+						id !== requisitionSlip?.requesting_user?.branch?.id && online_url,
 				)
 				.map((branch) => ({
 					value: branch?.id,
@@ -85,14 +88,14 @@ export const CreateEditOrderSlipModal = ({
 		[branches, requisitionSlip],
 	);
 
-	const getAssignedPersonnelOptions = useCallback(() => {
-		return (
+	const getAssignedPersonnelOptions = useCallback(
+		() =>
 			branchPersonnels?.map((personnel) => ({
 				value: personnel.id,
 				name: `${personnel.first_name} ${personnel.last_name}`,
-			})) || []
-		);
-	}, [branchPersonnels]);
+			})) || [],
+		[branchPersonnels],
+	);
 
 	const onCreateOrderSlipSubmit = (values) => {
 		const products = values.requestedProducts
@@ -195,8 +198,4 @@ export const CreateEditOrderSlipModal = ({
 			/>
 		</Modal>
 	);
-};
-
-CreateEditOrderSlipModal.defaultProps = {
-	loading: false,
 };

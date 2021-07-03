@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { message, Tabs } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -30,7 +29,9 @@ const tabs = {
 const ViewBranch = ({ match }: Props) => {
 	// VARIABLES
 	const branchId = match?.params?.id;
-	const branch = useSelector(branchesSelectors.selectBranchById(Number(branchId)));
+	const branch = useSelector(
+		branchesSelectors.selectBranchById(Number(branchId)),
+	);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
@@ -52,9 +53,10 @@ const ViewBranch = ({ match }: Props) => {
 		}
 	}, [branchId, branch]);
 
-	const getFetchLoading = useCallback(() => [branchesMachinesStatus].includes(request.REQUESTING), [
-		branchesMachinesStatus,
-	]);
+	const getFetchLoading = useCallback(
+		() => [branchesMachinesStatus].includes(request.REQUESTING),
+		[branchesMachinesStatus],
+	);
 
 	const getBreadcrumbItems = useCallback(
 		() => [{ name: 'Branches', link: '/branches' }, { name: branch?.name }],
@@ -71,12 +73,24 @@ const ViewBranch = ({ match }: Props) => {
 		>
 			<section>
 				<Box className="ViewBranch">
-					<Tabs defaultActiveKey={tabs.PRODUCTS} style={{ padding: '20px 25px' }} type="card">
-						<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS} disabled={!branch?.online_url}>
+					<Tabs
+						defaultActiveKey={tabs.PRODUCTS}
+						style={{ padding: '20px 25px' }}
+						type="card"
+					>
+						<Tabs.TabPane
+							key={tabs.PRODUCTS}
+							tab={tabs.PRODUCTS}
+							disabled={!branch?.online_url}
+						>
 							<ViewBranchProducts branch={branch} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES} disabled={!branch?.online_url}>
+						<Tabs.TabPane
+							key={tabs.MACHINES}
+							tab={tabs.MACHINES}
+							disabled={!branch?.online_url}
+						>
 							<>
 								{branchesMachinesErrors.map((error, index) => (
 									<FieldError key={index} error={error} />
@@ -85,7 +99,10 @@ const ViewBranch = ({ match }: Props) => {
 									<FieldWarning key={index} error={warning} />
 								))}
 								{branchesMachinesStatus === request.SUCCESS && (
-									<ViewBranchMachines branchId={branchId} branchMachines={branchMachines} />
+									<ViewBranchMachines
+										branchId={branchId}
+										branchMachines={branchMachines}
+									/>
 								)}
 							</>
 						</Tabs.TabPane>
@@ -98,11 +115,19 @@ const ViewBranch = ({ match }: Props) => {
 							<ViewBranchTransactions branchId={branchId} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS} disabled={!branch?.online_url}>
+						<Tabs.TabPane
+							key={tabs.SESSIONS}
+							tab={tabs.SESSIONS}
+							disabled={!branch?.online_url}
+						>
 							<ViewBranchSessions branchId={branchId} />
 						</Tabs.TabPane>
 
-						<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS} disabled={!branch?.online_url}>
+						<Tabs.TabPane
+							key={tabs.DAYS}
+							tab={tabs.DAYS}
+							disabled={!branch?.online_url}
+						>
 							<ViewBranchDays branchId={branchId} />
 						</Tabs.TabPane>
 					</Tabs>

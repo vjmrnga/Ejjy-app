@@ -1,21 +1,17 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/Admin/logs';
-import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
 import { onCallback } from '../utils/function';
 import {
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching logs';
 
-export const useLogs = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useLogs = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -26,6 +22,7 @@ export const useLogs = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
 	const getUpdateBranchProductBalanceLogsAction = useActionDispatch(
@@ -54,17 +51,21 @@ export const useLogs = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		resetPagination();
 	};
 
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
+	const executeRequest = (data, requestCallback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
 		});
+	};
+
+	const callback = ({ status: requestStatus, errors: requestErrors = [] }) => {
+		setStatus(requestStatus);
+		setErrors(requestErrors);
 	};
 
 	// PAGINATION METHODS
@@ -84,48 +85,25 @@ export const useLogs = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 
 	// REQUEST METHODS
 	const getUpdateBranchProductBalanceLogs = (data, shouldReset = false) => {
-		if (shouldReset) {
-			resetPagination();
-		}
-
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			}) ||
-			shouldReset
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData((currentAllData) =>
-						generateNewCachedData({
-							existingData: currentAllData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest(
-				{ ...data, pageSize },
-				callback,
-				getUpdateBranchProductBalanceLogsAction,
-				types.GET_UPDATE_BRANCH_PRODUCT_BALANCE_LOGS,
-			);
-		}
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getUpdateBranchProductBalanceLogsAction,
+			requestType: types.GET_UPDATE_BRANCH_PRODUCT_BALANCE_LOGS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	return {
 		logs: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		updateItemInPagination,
 
 		getUpdateBranchProductBalanceLogs,

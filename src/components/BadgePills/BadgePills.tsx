@@ -46,5 +46,9 @@ export const OutOfStocksBadgePill = ({ classNames }: Props) => (
 );
 
 export const PendingApprovalBadgePill = ({ classNames }: Props) => (
-	<BadgePill classNames={classNames} label="Pending Approval" variant="secondary" />
+	<BadgePill
+		classNames={classNames}
+		label="Pending Approval"
+		variant="secondary"
+	/>
 );

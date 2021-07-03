@@ -38,13 +38,16 @@ const reducer = handleActions(
 					break;
 				}
 				case types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH: {
-					const requisitionSlipsByBranch = cloneDeep(state.requisitionSlipsByBranch);
+					const requisitionSlipsByBranch = cloneDeep(
+						state.requisitionSlipsByBranch,
+					);
 
 					if (payload?.isForOutOfStock) {
 						newData = { requisitionSlipForOutOfStock: payload.requisitionSlip };
 						break;
 					} else if (payload?.branchId) {
-						requisitionSlipsByBranch[payload?.branchId] = payload.requisitionSlip;
+						requisitionSlipsByBranch[payload?.branchId] =
+							payload.requisitionSlip;
 					}
 
 					newData = { requisitionSlipsByBranch };
@@ -57,14 +60,17 @@ const reducer = handleActions(
 					newData = { requisitionSlip };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
 		},
 
-		[types.REMOVE_REQUISITION_SLIP_BY_BRANCH]: (state) => {
-			return { ...state, requisitionSlipsByBranch: {} };
-		},
+		[types.REMOVE_REQUISITION_SLIP_BY_BRANCH]: (state) => ({
+			...state,
+			requisitionSlipsByBranch: {},
+		}),
 
 		[types.SET_REQUISITION_SLIP_ACTION]: (state, { payload }: any) => {
 			const requisitionSlip = cloneDeep(state.requisitionSlip);
@@ -79,21 +85,28 @@ const reducer = handleActions(
 export const actions = {
 	save: createAction(types.SAVE),
 	getRequisitionSlips: createAction(types.GET_REQUISITION_SLIPS),
-	getRequisitionSlipsExtended: createAction(types.GET_REQUISITION_SLIPS_EXTENDED),
+	getRequisitionSlipsExtended: createAction(
+		types.GET_REQUISITION_SLIPS_EXTENDED,
+	),
 
 	getRequisitionSlipById: createAction(types.GET_REQUISITION_SLIP_BY_ID),
-	getRequisitionSlipByIdAndBranch: createAction(types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH),
+	getRequisitionSlipByIdAndBranch: createAction(
+		types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH,
+	),
 	createRequisitionSlip: createAction(types.CREATE_REQUISITION_SLIP),
 	editRequisitionSlip: createAction(types.EDIT_REQUISITION_SLIP),
 	setOutOfStock: createAction(types.SET_OUT_OF_STOCK),
 
-	removeRequisitionSlipByBranch: createAction(types.REMOVE_REQUISITION_SLIP_BY_BRANCH),
+	removeRequisitionSlipByBranch: createAction(
+		types.REMOVE_REQUISITION_SLIP_BY_BRANCH,
+	),
 	setRequisitionSlipAction: createAction(types.SET_REQUISITION_SLIP_ACTION),
 };
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectRequisitionSlip: () => createSelector(selectState, (state) => state.requisitionSlip),
+	selectRequisitionSlip: () =>
+		createSelector(selectState, (state) => state.requisitionSlip),
 	selectRequisitionSlipsByBranch: () =>
 		createSelector(selectState, (state) => state.requisitionSlipsByBranch),
 	selectRequisitionSlipForOutOfStock: () =>

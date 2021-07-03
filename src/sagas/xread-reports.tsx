@@ -30,7 +30,12 @@ function* create({ payload }: any) {
 			IS_APP_LIVE ? baseURL : localURL,
 		);
 
-		yield put(actions.save({ type: types.CREATE_XREAD_REPORT, xreadReport: response.data }));
+		yield put(
+			actions.save({
+				type: types.CREATE_XREAD_REPORT,
+				xreadReport: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

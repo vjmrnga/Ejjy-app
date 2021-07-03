@@ -13,7 +13,8 @@ interface Props {
 }
 
 export const CreateEditBranchModal = ({ branch, visible, onClose }: Props) => {
-	const { createBranch, editBranch, status, errors, recentRequest, reset } = useBranches();
+	const { createBranch, editBranch, status, errors, recentRequest, reset } =
+		useBranches();
 
 	// Effect: Close modal if recent requests are Create or Edit
 	useEffect(() => {
@@ -45,8 +46,4 @@ export const CreateEditBranchModal = ({ branch, visible, onClose }: Props) => {
 			/>
 		</Modal>
 	);
-};
-
-CreateEditBranchModal.defaultProps = {
-	loading: false,
 };

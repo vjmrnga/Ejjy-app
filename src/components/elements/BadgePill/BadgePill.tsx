@@ -8,9 +8,9 @@ interface Props {
 	classNames?: any;
 }
 
-const BadgePill = ({ label, variant, classNames }: Props) => {
-	return <p className={cn('BadgePill', variant, classNames)}>{label}</p>;
-};
+const BadgePill = ({ label, variant, classNames }: Props) => (
+	<p className={cn('BadgePill', variant, classNames)}>{label}</p>
+);
 
 BadgePill.defaultProps = {
 	variant: 'default',

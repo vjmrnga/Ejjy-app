@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal } from 'antd';
 import React from 'react';
 import { FieldError } from '../../../../../components/elements';
@@ -22,22 +21,32 @@ export const EditBranchProductsModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { editBranchProduct, status, errors, reset } = useBranchProducts();
+	const {
+		editBranchProduct,
+		status: branchProductStatus,
+		errors,
+		reset,
+	} = useBranchProducts();
 
 	// METHODS
 	const onEditBranchProduct = (product) => {
-		editBranchProduct({ ...product, branchId: branch?.id }, ({ status, data }) => {
-			if (status === request.SUCCESS) {
-				updateItemInPagination(data);
-				reset();
-				onClose();
-			}
-		});
+		editBranchProduct(
+			{ ...product, branchId: branch?.id },
+			({ status, data }) => {
+				if (status === request.SUCCESS) {
+					updateItemInPagination(data);
+					reset();
+					onClose();
+				}
+			},
+		);
 	};
 
 	return (
 		<Modal
-			title={`${branchProduct ? '[EDIT]' : '[CREATE]'} Product Details (${branch?.name})`}
+			title={`${branchProduct ? '[EDIT]' : '[CREATE]'} Product Details (${
+				branch?.name
+			})`}
 			className="modal-large"
 			visible={visible}
 			footer={null}
@@ -53,7 +62,7 @@ export const EditBranchProductsModal = ({
 				branchProduct={branchProduct}
 				onSubmit={onEditBranchProduct}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={branchProductStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

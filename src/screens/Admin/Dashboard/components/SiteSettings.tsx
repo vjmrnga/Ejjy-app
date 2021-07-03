@@ -1,14 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, DatePicker, Divider, message, Row, Spin, TimePicker } from 'antd';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Box, Button, ControlledInput, Label } from '../../../../components/elements';
+import {
+	Box,
+	Button,
+	ControlledInput,
+	Label,
+} from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export const SiteSettings = () => {
-	const { siteSettings, getSiteSettings, editSiteSettings, status } = useSiteSettings();
+	const { siteSettings, getSiteSettings, editSiteSettings, status } =
+		useSiteSettings();
 
 	const [closeSessionDeadline, setCloseSessionDeadline] = useState(null);
 	const [closeDayDeadline, setCloseDayDeadline] = useState(null);
@@ -26,7 +31,9 @@ export const SiteSettings = () => {
 	}, []);
 
 	useEffect(() => {
-		setCloseSessionDeadline(moment(siteSettings?.close_session_deadline, 'hh:mm:ss'));
+		setCloseSessionDeadline(
+			moment(siteSettings?.close_session_deadline, 'hh:mm:ss'),
+		);
 		setCloseDayDeadline(moment(siteSettings?.close_day_deadline, 'hh:mm:ss'));
 
 		setProprietor(siteSettings?.proprietor || '');
@@ -66,8 +73,8 @@ export const SiteSettings = () => {
 			id: siteSettings.id,
 			close_session_deadline: closeSessionDeadline.format('HH:mm:ss'),
 			close_day_deadline: closeDayDeadline.format('HH:mm:ss'),
-			proprietor: proprietor,
-			tin: tin,
+			proprietor,
+			tin,
 			permit_number: permitNumber,
 			software_developer: softwareDeveloper,
 			software_developer_tin: softwareDeveloperTin,
@@ -127,7 +134,11 @@ export const SiteSettings = () => {
 						</Col>
 						<Col xs={24} sm={12} md={8}>
 							<Label label="Tin" spacing />
-							<ControlledInput value={tin} onChange={(value) => setTin(value)} max={40} />
+							<ControlledInput
+								value={tin}
+								onChange={(value) => setTin(value)}
+								max={40}
+							/>
 						</Col>
 						<Col xs={24} sm={12} md={8}>
 							<Label label="Permit Number" spacing />

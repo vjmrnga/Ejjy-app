@@ -9,26 +9,28 @@ export const useNetwork = () => {
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const hasInternetConnection = useSelector(selectors.selectHasInternetConnection());
-	const testConnection = useActionDispatch(actions.testConnection);
+	const hasInternetConnection = useSelector(
+		selectors.selectHasInternetConnection(),
+	);
+	const testConnectionAction = useActionDispatch(actions.testConnection);
+
+	const resetError = () => setErrors([]);
+
+	const resetStatus = () => setStatus(request.NONE);
 
 	const reset = () => {
 		resetError();
 		resetStatus();
 	};
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const testConnectionRequest = () => {
+	const testConnection = () => {
 		setRecentRequest(types.TEST_CONNECTION);
-		testConnection();
+		testConnectionAction();
 	};
 
 	return {
 		hasInternetConnection,
-		testConnection: testConnectionRequest,
+		testConnection,
 		status,
 		errors,
 		recentRequest,

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { FieldError } from '../../../../../components/elements';
@@ -33,7 +32,9 @@ export const CreateEditBranchMachineModal = ({
 	useEffect(() => {
 		if (
 			status === request.SUCCESS &&
-			[types.CREATE_BRANCH_MACHINE, types.EDIT_BRANCH_MACHINE].includes(recentRequest)
+			[types.CREATE_BRANCH_MACHINE, types.EDIT_BRANCH_MACHINE].includes(
+				recentRequest,
+			)
 		) {
 			onClose();
 			reset();

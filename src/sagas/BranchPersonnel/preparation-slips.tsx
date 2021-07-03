@@ -1,6 +1,10 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/BranchPersonnel/preparation-slips';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services';
 import { service } from '../../services/BranchPersonnel/preparation-slips';
@@ -31,7 +35,12 @@ function* list({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_PREPARATION_SLIPS, preparationSlips: response.data }));
+		yield put(
+			actions.save({
+				type: types.GET_PREPARATION_SLIPS,
+				preparationSlips: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -53,7 +62,10 @@ function* getById({ payload }: any) {
 		);
 
 		yield put(
-			actions.save({ type: types.GET_PREPARATION_SLIP_BY_ID, preparationSlip: response.data }),
+			actions.save({
+				type: types.GET_PREPARATION_SLIP_BY_ID,
+				preparationSlip: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -69,7 +81,10 @@ function* fulfill({ payload }: any) {
 		const response = yield call(service.fulfill, data, ONLINE_API_URL);
 
 		yield put(
-			actions.save({ type: types.FULFILL_PREPARATION_SLIP, preparationSlip: response.data }),
+			actions.save({
+				type: types.FULFILL_PREPARATION_SLIP,
+				preparationSlip: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {

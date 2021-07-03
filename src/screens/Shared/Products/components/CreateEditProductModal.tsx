@@ -27,28 +27,28 @@ export const CreateEditProductModal = ({
 	const { createProduct, editProduct, status, errors, reset } = useProducts();
 
 	// METHODS
-	const onCreateProduct = (product) => {
-		createProduct(product, ({ status, response }) => {
-			if (status === request.SUCCESS) {
+	const onCreateProduct = (data) => {
+		createProduct(data, ({ status: requestStatus, response }) => {
+			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
 					onPendingTransactions();
 				}
 
-				addItemInPagination(product);
+				addItemInPagination(data);
 				reset();
 				onClose();
 			}
 		});
 	};
 
-	const onEditProduct = (product) => {
-		editProduct(product, ({ status, response }) => {
-			if (status === request.SUCCESS) {
+	const onEditProduct = (data) => {
+		editProduct(data, ({ status: requestStatus, response }) => {
+			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
 					onPendingTransactions();
 				}
 
-				updateItemInPagination(product);
+				updateItemInPagination(data);
 				reset();
 				onClose();
 			}
@@ -84,8 +84,4 @@ export const CreateEditProductModal = ({
 			/>
 		</Modal>
 	);
-};
-
-CreateEditProductModal.defaultProps = {
-	loading: false,
 };

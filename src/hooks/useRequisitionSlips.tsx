@@ -1,16 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/requisition-slips';
-import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from '../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+	onCallback,
+} from '../utils/function';
 import {
 	addInCachedData,
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
@@ -19,16 +19,19 @@ import { useActionDispatch } from './useActionDispatch';
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching requisition slips';
 
 const CREATE_SUCCESS_MESSAGE = 'Requisition slip was created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the requisition slip';
+const CREATE_ERROR_MESSAGE =
+	'An error occurred while creating the requisition slip';
 
 const EDIT_SUCCESS_MESSAGE = 'Requisition slip was edited successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while updating the requisition slip';
+const EDIT_ERROR_MESSAGE =
+	'An error occurred while updating the requisition slip';
 
-const SET_OUT_OF_STOCK_SUCCESS_MESSAGE = 'Products were set to out of stocks successfully';
+const SET_OUT_OF_STOCK_SUCCESS_MESSAGE =
+	'Products were set to out of stocks successfully';
 const SET_OUT_OF_STOCK_ERROR_MESSAGE =
 	'An error occurred while setting the products as out of stock';
 
-export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useRequisitionSlips = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -39,23 +42,38 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// SELECTORS
 	const requisitionSlip = useSelector(selectors.selectRequisitionSlip());
-	const requisitionSlipsByBranch = useSelector(selectors.selectRequisitionSlipsByBranch());
-	const requisitionSlipForOutOfStock = useSelector(selectors.selectRequisitionSlipForOutOfStock());
+	const requisitionSlipsByBranch = useSelector(
+		selectors.selectRequisitionSlipsByBranch(),
+	);
+	const requisitionSlipForOutOfStock = useSelector(
+		selectors.selectRequisitionSlipForOutOfStock(),
+	);
 
 	// ACTIONS
-	const getRequisitionSlipsAction = useActionDispatch(actions.getRequisitionSlips);
-	const getRequisitionSlipsExtendedAction = useActionDispatch(actions.getRequisitionSlipsExtended);
+	const getRequisitionSlipsAction = useActionDispatch(
+		actions.getRequisitionSlips,
+	);
+	const getRequisitionSlipsExtendedAction = useActionDispatch(
+		actions.getRequisitionSlipsExtended,
+	);
 
-	const getRequisitionSlipsById = useActionDispatch(actions.getRequisitionSlipById);
+	const getRequisitionSlipsById = useActionDispatch(
+		actions.getRequisitionSlipById,
+	);
 	const getRequisitionSlipsByIdAndBranch = useActionDispatch(
 		actions.getRequisitionSlipByIdAndBranch,
 	);
-	const createRequisitionSlip = useActionDispatch(actions.createRequisitionSlip);
+	const createRequisitionSlip = useActionDispatch(
+		actions.createRequisitionSlip,
+	);
 	const editRequisitionSlip = useActionDispatch(actions.editRequisitionSlip);
-	const removeRequisitionSlipByBranch = useActionDispatch(actions.removeRequisitionSlipByBranch);
+	const removeRequisitionSlipByBranch = useActionDispatch(
+		actions.removeRequisitionSlipByBranch,
+	);
 	const setOutOfStock = useActionDispatch(actions.setOutOfStock);
 
 	// GENERAL METHODS
@@ -68,24 +86,21 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		resetStatus();
 	};
 
-	const resetPagination = () => {
-		setAllData([]);
-		setPageCount(0);
-		setCurrentPage(1);
-		setCurrentPageData([]);
-	};
-
-	const requestCallback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
+	const executeRequest = (data, requestCallback, action, type) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
 		});
+	};
+
+	const callback = ({ status: requestStatus, errors: requestErrors = [] }) => {
+		setStatus(requestStatus);
+		setErrors(requestErrors);
 	};
 
 	// PAGINATION METHODS
@@ -113,85 +128,41 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 
 	// REQUEST METHODS
 	const getRequisitionSlips = (data, shouldReset = false) => {
-		if (shouldReset) {
-			resetPagination();
-		}
-
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			}) ||
-			shouldReset
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData((currentAllData) =>
-						generateNewCachedData({
-							existingData: currentAllData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest(
-				{ ...data, pageSize },
-				callback,
-				getRequisitionSlipsAction,
-				types.GET_REQUISITION_SLIPS,
-			);
-		}
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getRequisitionSlipsAction,
+			requestType: types.GET_REQUISITION_SLIPS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	const getRequisitionSlipsExtended = (data, shouldReset = false) => {
-		if (shouldReset) {
-			resetPagination();
-		}
-
-		const { page } = data;
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			}) ||
-			shouldReset
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData((currentAllData) =>
-						generateNewCachedData({
-							existingData: currentAllData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest(
-				{ ...data, pageSize },
-				callback,
-				getRequisitionSlipsExtendedAction,
-				types.GET_REQUISITION_SLIPS_EXTENDED,
-			);
-		}
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getRequisitionSlipsExtendedAction,
+			requestType: types.GET_REQUISITION_SLIPS_EXTENDED,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	const getRequisitionSlipsByIdRequest = (id, extraCallback = null) => {
 		setRecentRequest(types.GET_REQUISITION_SLIP_BY_ID);
-		getRequisitionSlipsById({ id, callback: modifiedExtraCallback(callback, extraCallback) });
+		getRequisitionSlipsById({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	const getRequisitionSlipsByIdAndBranchRequest = (
@@ -225,20 +196,28 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		}
 	};
 
-	const createRequisitionSlipRequest = (requisitionSlip) => {
+	const createRequisitionSlipRequest = (requisitionSlipData) => {
 		setRecentRequest(types.CREATE_REQUISITION_SLIP);
 		createRequisitionSlip({
-			...requisitionSlip,
-			callback: modifiedCallback(callback, CREATE_SUCCESS_MESSAGE, CREATE_ERROR_MESSAGE),
+			...requisitionSlipData,
+			callback: modifiedCallback(
+				callback,
+				CREATE_SUCCESS_MESSAGE,
+				CREATE_ERROR_MESSAGE,
+			),
 		});
 	};
 
-	const editRequisitionSlipRequest = (id, status) => {
+	const editRequisitionSlipRequest = (id, action) => {
 		setRecentRequest(types.EDIT_REQUISITION_SLIP);
 		editRequisitionSlip({
 			id,
-			action: status,
-			callback: modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
+			action,
+			callback: modifiedCallback(
+				callback,
+				EDIT_SUCCESS_MESSAGE,
+				EDIT_ERROR_MESSAGE,
+			),
 		});
 	};
 
@@ -254,11 +233,6 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
-	};
-
 	return {
 		requisitionSlip,
 		requisitionSlipsByBranch,
@@ -270,7 +244,6 @@ export const useRequisitionSlips = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,
-		resetPagination,
 
 		getRequisitionSlips,
 		getRequisitionSlipsExtended,

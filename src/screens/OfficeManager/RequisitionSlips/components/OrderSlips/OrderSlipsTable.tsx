@@ -45,17 +45,31 @@ export const OrderSlipsTable = ({
 
 				const deliveryReceipt =
 					value === osStatus.RECEIVED ? (
-						<Link to={`/requisition-slips/delivery-receipt/${delivery_receipt?.id}`}>
+						<Link
+							to={`/requisition-slips/delivery-receipt/${delivery_receipt?.id}`}
+						>
 							{delivery_receipt?.id}
 						</Link>
 					) : null;
-				const onEdit = value === osStatus.PREPARING ? () => onEditOrderSlip(orderSlip) : null;
-				const onCreateDR = value === osStatus.PREPARED ? () => onCreateDeliveryReceipt(id) : null;
+				const onEdit =
+					value === osStatus.PREPARING
+						? () => onEditOrderSlip(orderSlip)
+						: null;
+				const onCreateDR =
+					value === osStatus.PREPARED
+						? () => onCreateDeliveryReceipt(id)
+						: null;
 
 				return {
-					id: <ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />,
+					id: (
+						<ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />
+					),
 					datetime_created: formatDateTime(datetime_created),
-					status: getOrderSlipStatus(value, percentage_fulfilled * 100, delivery_receipt?.status),
+					status: getOrderSlipStatus(
+						value,
+						percentage_fulfilled * 100,
+						delivery_receipt?.status,
+					),
 					dr: deliveryReceipt,
 					actions: <OrderSlipActions onEdit={onEdit} onCreateDR={onCreateDR} />,
 				};

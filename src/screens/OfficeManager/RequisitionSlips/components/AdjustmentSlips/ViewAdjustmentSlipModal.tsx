@@ -1,6 +1,10 @@
 import { Divider, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle, TableNormal } from '../../../../../components';
+import {
+	DetailsRow,
+	DetailsSingle,
+	TableNormal,
+} from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
 import { formatDateTime } from '../../../../../utils/function';
@@ -19,30 +23,39 @@ const columns = [
 	{ name: 'Current Received' },
 ];
 
-export const ViewAdjustmentSlipModal = ({ adjustmentSlip, visible, onClose }: Props) => {
+export const ViewAdjustmentSlipModal = ({
+	adjustmentSlip,
+	visible,
+	onClose,
+}: Props) => {
 	const [adjustmentProducts, setAdjustmentProducts] = useState([]);
 
 	useEffect(() => {
 		if (visible && adjustmentSlip) {
-			const formatQuantity = (quantity) => (quantity === null ? EMPTY_CELL : quantity);
-			const formattedAdjustmentProducts = adjustmentSlip?.products?.map((adjustmentSlipProduct) => {
-				const {
-					delivery_receipt_product,
-					previous_delivered_quantity_piece,
-					new_delivered_quantity_piece,
-					previous_received_quantity_piece,
-					new_received_quantity_piece,
-				} = adjustmentSlipProduct;
-				const { product_name } = delivery_receipt_product;
+			// eslint-disable-next-line no-confusing-arrow
+			const formatQuantity = (quantity) =>
+				quantity === null ? EMPTY_CELL : quantity;
 
-				return [
-					product_name,
-					formatQuantity(previous_delivered_quantity_piece),
-					formatQuantity(new_delivered_quantity_piece),
-					formatQuantity(previous_received_quantity_piece),
-					formatQuantity(new_received_quantity_piece),
-				];
-			});
+			const formattedAdjustmentProducts = adjustmentSlip?.products?.map(
+				(adjustmentSlipProduct) => {
+					const {
+						delivery_receipt_product,
+						previous_delivered_quantity_piece,
+						new_delivered_quantity_piece,
+						previous_received_quantity_piece,
+						new_received_quantity_piece,
+					} = adjustmentSlipProduct;
+					const { product_name } = delivery_receipt_product;
+
+					return [
+						product_name,
+						formatQuantity(previous_delivered_quantity_piece),
+						formatQuantity(new_delivered_quantity_piece),
+						formatQuantity(previous_received_quantity_piece),
+						formatQuantity(new_received_quantity_piece),
+					];
+				},
+			);
 
 			setAdjustmentProducts(formattedAdjustmentProducts);
 		}

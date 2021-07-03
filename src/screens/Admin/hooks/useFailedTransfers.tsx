@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/Admin/failed-transfers';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/Admin/failed-transfers';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedExtraCallback } from '../../../utils/function';
@@ -11,7 +15,9 @@ export const useFailedTransfers = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const failedTransfers = useSelector(selectors.selectFailedTransfers());
-	const getFailedTansferCountAction = useActionDispatch(actions.getFailedTansferCount);
+	const getFailedTansferCountAction = useActionDispatch(
+		actions.getFailedTansferCount,
+	);
 
 	const reset = () => {
 		resetError();
@@ -30,9 +36,12 @@ export const useFailedTransfers = () => {
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
 	return {

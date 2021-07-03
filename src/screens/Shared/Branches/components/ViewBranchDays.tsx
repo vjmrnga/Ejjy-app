@@ -1,12 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TableHeader, TableNormal } from '../../../../components';
 import { FieldError, FieldWarning } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
-import { formatDateTimeShortMonth } from '../../../../utils/function';
-import { useBranchesDays } from '../../../../hooks/useBranchesDays';
 import { request } from '../../../../global/types';
+import { useBranchesDays } from '../../../../hooks/useBranchesDays';
+import { formatDateTimeShortMonth } from '../../../../utils/function';
 
 interface Props {
 	branchId: any;
@@ -39,7 +38,8 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 	// Effect: Format branch days to be rendered in Table
 	useEffect(() => {
 		const formattedBranchDays = branchDays.map((branchDay) => {
-			const { started_by, ended_by, datetime_created, datetime_ended } = branchDay;
+			const { started_by, ended_by, datetime_created, datetime_ended } =
+				branchDay;
 
 			return [
 				{ isHidden: true }, // TODO: For searching functionality (payload)
@@ -59,7 +59,9 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 			<div className="branch-day-column">
 				<div className="first-row">
 					<span className="label">Start: </span>
-					<span className="value">{startedBy ? startedByUser : EMPTY_CELL}</span>
+					<span className="value">
+						{startedBy ? startedByUser : EMPTY_CELL}
+					</span>
 				</div>
 				<div>
 					<span className="label">End: </span>
@@ -69,27 +71,32 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 		);
 	};
 
-	const getDateTime = (datetime_created, datetime_ended) => {
-		return (
-			<div className="branch-day-column">
-				<div className="first-row">
-					<span className="label">Start: </span>
-					<span className="value">
-						{datetime_created ? formatDateTimeShortMonth(datetime_created) : EMPTY_CELL}
-					</span>
-				</div>
-				<div>
-					<span className="label">End: </span>
-					<span className="value">
-						{datetime_ended ? formatDateTimeShortMonth(datetime_ended) : EMPTY_CELL}
-					</span>
-				</div>
+	const getDateTime = (datetime_created, datetime_ended) => (
+		<div className="branch-day-column">
+			<div className="first-row">
+				<span className="label">Start: </span>
+				<span className="value">
+					{datetime_created
+						? formatDateTimeShortMonth(datetime_created)
+						: EMPTY_CELL}
+				</span>
 			</div>
-		);
-	};
+			<div>
+				<span className="label">End: </span>
+				<span className="value">
+					{datetime_ended
+						? formatDateTimeShortMonth(datetime_ended)
+						: EMPTY_CELL}
+				</span>
+			</div>
+		</div>
+	);
 
 	const onPageChange = (page, newPageSize) => {
-		listBranchDays({ branchId, page, pageSize: newPageSize }, newPageSize !== pageSize);
+		listBranchDays(
+			{ branchId, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	return (
@@ -103,7 +110,11 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 
 			<TableHeader title="Days" />
 
-			<TableNormal columns={columns} data={tableData} loading={status === request.REQUESTING} />
+			<TableNormal
+				columns={columns}
+				data={tableData}
+				loading={status === request.REQUESTING}
+			/>
 
 			<Pagination
 				className="table-pagination"

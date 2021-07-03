@@ -13,7 +13,9 @@ export const DailyCheckCard = ({ onDailyCheck, dateTimeRequested }: Props) => (
 		<div className="daily-check-container">
 			<div>
 				<p className="title">Daily Check</p>
-				<span className="date">{formatDateTimeExtended(dateTimeRequested)}</span>
+				<span className="date">
+					{formatDateTimeExtended(dateTimeRequested)}
+				</span>
 			</div>
 
 			<Button

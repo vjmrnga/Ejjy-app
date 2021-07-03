@@ -42,10 +42,12 @@ export const service = {
 	listExtended: async (params: IGetOrderSlipsRequest, baseURL) =>
 		axios.get('/order-slips/extended/', { baseURL, params }),
 
-	create: async (body: ICreateOrderSlip, baseURL) => axios.post('/order-slips/', body, { baseURL }),
+	create: async (body: ICreateOrderSlip, baseURL) =>
+		axios.post('/order-slips/', body, { baseURL }),
 
 	edit: async (body: IEditOrderSlip, baseURL) =>
 		axios.patch(`/order-slips/${body.id}/`, body, { baseURL }),
 
-	remove: async (id: number, baseURL) => axios.delete(`/order-slips/${id}/`, { baseURL }),
+	remove: async (id: number, baseURL) =>
+		axios.delete(`/order-slips/${id}/`, { baseURL }),
 };

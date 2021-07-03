@@ -23,6 +23,8 @@ const reducer = handleActions(
 					newData = { xreadReport: payload.xreadReport };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -38,7 +40,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectXreadReport: () => createSelector(selectState, (state) => state.xreadReport),
+	selectXreadReport: () =>
+		createSelector(selectState, (state) => state.xreadReport),
 };
 
 export default reducer;

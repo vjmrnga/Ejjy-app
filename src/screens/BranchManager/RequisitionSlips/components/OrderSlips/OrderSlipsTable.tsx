@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { AddButtonIcon, Table } from '../../../../../components';
 import { ButtonLink } from '../../../../../components/elements';
-import { orderSlipStatus as osStatus, request } from '../../../../../global/types';
+import {
+	orderSlipStatus as osStatus,
+	request,
+} from '../../../../../global/types';
 import {
 	calculateTableHeight,
 	formatDateTime,
@@ -39,9 +42,15 @@ export const OrderSlipsTable = ({
 				const { value, percentage_fulfilled } = status;
 
 				return {
-					id: <ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />,
+					id: (
+						<ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />
+					),
 					datetime_created: formatDateTime(datetime_created),
-					status: getOrderSlipStatusBranchManager(value, 'RS', percentage_fulfilled * 100),
+					status: getOrderSlipStatusBranchManager(
+						value,
+						'RS',
+						percentage_fulfilled * 100,
+					),
 					actions:
 						status.value === osStatus.DELIVERED ? (
 							<AddButtonIcon

@@ -5,7 +5,8 @@ interface ICreateDeliveryReceipt {
 }
 
 export const service = {
-	getById: async (id, baseURL) => axios.get(`/delivery-receipts/${id}/`, { baseURL }),
+	getById: async (id, baseURL) =>
+		axios.get(`/delivery-receipts/${id}/`, { baseURL }),
 
 	create: async (body: ICreateDeliveryReceipt, baseURL) =>
 		axios.post('/delivery-receipts/', body, { baseURL }),

@@ -100,7 +100,13 @@ function* getById({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.getById, id, ONLINE_API_URL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.getById,
+			id,
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({
@@ -122,7 +128,10 @@ function* create({ payload }: any) {
 		const response = yield call(service.create, data, ONLINE_API_URL);
 
 		yield put(
-			actions.save({ type: types.CREATE_REQUISITION_SLIP, requisitionSlip: response.data }),
+			actions.save({
+				type: types.CREATE_REQUISITION_SLIP,
+				requisitionSlip: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
@@ -137,7 +146,12 @@ function* edit({ payload }: any) {
 	try {
 		const response = yield call(service.edit, data, ONLINE_API_URL);
 
-		yield put(actions.save({ type: types.EDIT_REQUISITION_SLIP, requisitionSlip: response.data }));
+		yield put(
+			actions.save({
+				type: types.EDIT_REQUISITION_SLIP,
+				requisitionSlip: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -171,7 +185,10 @@ const getByIdWatcherSaga = function* getByIdWatcherSaga() {
 };
 
 const getByIdAndBranchWatcherSaga = function* getByIdAndBranchWatcherSaga() {
-	yield takeLatest(types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH, getByIdAndBranch);
+	yield takeLatest(
+		types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH,
+		getByIdAndBranch,
+	);
 };
 
 const createWatcherSaga = function* createWatcherSaga() {

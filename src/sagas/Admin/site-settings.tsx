@@ -11,8 +11,18 @@ function* get({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield retry(MAX_RETRY, RETRY_INTERVAL_MS, service.get, ONLINE_API_URL);
-		yield put(actions.save({ type: types.GET_SITE_SETTINGS, siteSettings: response.data }));
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.get,
+			ONLINE_API_URL,
+		);
+		yield put(
+			actions.save({
+				type: types.GET_SITE_SETTINGS,
+				siteSettings: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -25,7 +35,12 @@ function* edit({ payload }: any) {
 
 	try {
 		const response = yield call(service.edit, id, data, ONLINE_API_URL);
-		yield put(actions.save({ type: types.EDIT_SITE_SETTINGS, siteSettings: response.data }));
+		yield put(
+			actions.save({
+				type: types.EDIT_SITE_SETTINGS,
+				siteSettings: response.data,
+			}),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

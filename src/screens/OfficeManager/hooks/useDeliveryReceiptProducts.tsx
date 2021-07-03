@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/OfficeManager/delivery-receipt-products';
+import {
+	actions,
+	selectors,
+	types,
+} from '../../../ducks/OfficeManager/delivery-receipt-products';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedExtraCallback } from '../../../utils/function';
@@ -10,8 +14,12 @@ export const useDeliveryReceiptProducts = () => {
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const deliveryReceiptProduct = useSelector(selectors.selectDeliveryReceiptProduct());
-	const getDeliveryReceiptProductById = useActionDispatch(actions.getDeliveryReceiptProductById);
+	const deliveryReceiptProduct = useSelector(
+		selectors.selectDeliveryReceiptProduct(),
+	);
+	const getDeliveryReceiptProductById = useActionDispatch(
+		actions.getDeliveryReceiptProductById,
+	);
 
 	const reset = () => {
 		resetError();
@@ -30,9 +38,12 @@ export const useDeliveryReceiptProducts = () => {
 		});
 	};
 
-	const callback = ({ status, errors = [] }) => {
-		setStatus(status);
-		setErrors(errors);
+	const callback = ({
+		status: callbackStauts,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStauts);
+		setErrors(callbackErrors);
 	};
 
 	return {

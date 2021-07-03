@@ -17,10 +17,15 @@ export const NOT_FOUND_INDEX = -1;
 
 export const EMPTY_CELL = '—';
 
-export const ONLINE_ROUTES = ['/requisition-slips', '/order-slips', '/preparation-slips'];
+export const ONLINE_ROUTES = [
+	'/requisition-slips',
+	'/order-slips',
+	'/preparation-slips',
+];
 
 export const LOCAL_IP_ADDRESS_KEY = 'LOCAL_IP_ADDRESS_KEY';
 
 export const NO_BRANCH_ID = -1;
 
+// eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Divider, message } from 'antd';
 import cn from 'classnames';
 import dayjs from 'dayjs';
@@ -27,7 +26,11 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const AssignUser = ({ match }) => {
+interface Props {
+	match: any;
+}
+
+const AssignUser = ({ match }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -35,7 +38,11 @@ const AssignUser = ({ match }) => {
 	const userId = match?.params?.id;
 	const history = useHistory();
 	const { user, getUserById, status: userStatus } = useUsers();
-	const { branchMachines, getBranchMachines, status: branchesMachinesStatus } = useBranchMachines();
+	const {
+		branchMachines,
+		getBranchMachines,
+		status: branchesMachinesStatus,
+	} = useBranchMachines();
 	const {
 		cashieringAssignments,
 		getCashieringAssignmentsByUserId,
@@ -53,7 +60,10 @@ const AssignUser = ({ match }) => {
 	}, []);
 
 	useEffect(() => {
-		if (cashieringAssignmentsStatus === request.SUCCESS && cashieringAssignmentsWarnings?.length) {
+		if (
+			cashieringAssignmentsStatus === request.SUCCESS &&
+			cashieringAssignmentsWarnings?.length
+		) {
 			cashieringAssignmentsWarnings?.forEach((warning) => {
 				message.warning(warning);
 			});
@@ -61,14 +71,19 @@ const AssignUser = ({ match }) => {
 	}, [cashieringAssignmentsStatus, cashieringAssignmentsWarnings]);
 
 	const userDoesNotExistCallback = ({ status }) => {
-		console.log('user?.user_type', user?.user_type);
 		if (status === request.ERROR) {
 			history.replace('/404');
 		} else if (status === request.SUCCESS) {
-			if ([userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user?.user_type)) {
-				console.log('test');
+			if (
+				[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(
+					user?.user_type,
+				)
+			) {
 				getBranchMachines(user?.branch?.id);
-				getCashieringAssignmentsByUserId({ userId, branchId: user?.branch?.id });
+				getCashieringAssignmentsByUserId({
+					userId,
+					branchId: user?.branch?.id,
+				});
 			}
 		}
 	};
@@ -121,7 +136,6 @@ const AssignUser = ({ match }) => {
 	}, [user, cashieringAssignments, branchMachines]);
 
 	const onAssign = (date) => {
-		console.log('branch machines', branchMachines.length);
 		if (branchMachines.length) {
 			createCashieringAssignment({
 				user_id: userId,
@@ -141,7 +155,10 @@ const AssignUser = ({ match }) => {
 	};
 
 	const onRemoveAssignment = (assignmentId) => {
-		removeCashieringAssignment({ id: assignmentId, branchId: user?.branch?.id });
+		removeCashieringAssignment({
+			id: assignmentId,
+			branchId: user?.branch?.id,
+		});
 	};
 
 	const getDays = useCallback(() => {
@@ -149,7 +166,7 @@ const AssignUser = ({ match }) => {
 		const days = [];
 		const today = dayjs().date();
 
-		for (let i = today; i <= numberOfDays; i++) {
+		for (let i = today; i <= numberOfDays; i += 1) {
 			const date = dayjs().date(i);
 			days.push({
 				date,
@@ -158,7 +175,7 @@ const AssignUser = ({ match }) => {
 			});
 		}
 
-		for (let i = 1; i < today; i++) {
+		for (let i = 1; i < today; i += 1) {
 			const date = dayjs().date(i);
 			days.push({
 				date,
@@ -170,17 +187,20 @@ const AssignUser = ({ match }) => {
 		return days;
 	}, []);
 
-	const getMachineOptions = useCallback(() => {
-		return branchMachines.map((machine) => ({
-			name: machine.name,
-			value: machine.id,
-		}));
-	}, [branchMachines]);
+	const getMachineOptions = useCallback(
+		() =>
+			branchMachines.map((machine) => ({
+				name: machine.name,
+				value: machine.id,
+			})),
+		[branchMachines],
+	);
 
 	const isFetching = useCallback(
 		() =>
 			(cashieringAssignmentsStatus === request.REQUESTING &&
-				cashieringAssignmentsRecentRequest === types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID) ||
+				cashieringAssignmentsRecentRequest ===
+					types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID) ||
 			userStatus === request.REQUESTING ||
 			branchesMachinesStatus === request.REQUESTING,
 		[
@@ -194,22 +214,36 @@ const AssignUser = ({ match }) => {
 	const isChangingAssignments = useCallback(
 		() =>
 			cashieringAssignmentsStatus === request.REQUESTING &&
-			cashieringAssignmentsRecentRequest !== types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID,
-		[cashieringAssignmentsStatus, cashieringAssignmentsRecentRequest, userStatus],
+			cashieringAssignmentsRecentRequest !==
+				types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID,
+		[
+			cashieringAssignmentsStatus,
+			cashieringAssignmentsRecentRequest,
+			userStatus,
+		],
 	);
 
 	return (
-		<Container title="Assign User" loading={isFetching()} loadingText="Fetching user details...">
+		<Container
+			title="Assign User"
+			loading={isFetching()}
+			loadingText="Fetching user details..."
+		>
 			<section className="AssignUsers">
 				<Box>
 					<div className="details">
 						<DetailsRow>
-							<DetailsSingle label="Name" value={`${user?.first_name} ${user?.last_name}`} />
+							<DetailsSingle
+								label="Name"
+								value={`${user?.first_name} ${user?.last_name}`}
+							/>
 							<DetailsSingle label="Branch" value={user?.branch?.name} />
 						</DetailsRow>
 					</div>
 
-					{[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user?.user_type) && (
+					{[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(
+						user?.user_type,
+					) && (
 						<>
 							<div className="cashiering-assignments">
 								<Divider dashed />

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { TableActions, TableHeader, TableNormal } from '../../../../components';
 import { EMPTY_CELL } from '../../../../global/constants';
@@ -20,9 +19,10 @@ export const ViewBranchMachines = ({ branchId, branchMachines }: Props) => {
 	// States
 	const [tableData, setTableData] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [createEditBranchMachineModalVisible, setCreateEditBranchMachineModalVisible] = useState(
-		false,
-	);
+	const [
+		createEditBranchMachineModalVisible,
+		setCreateEditBranchMachineModalVisible,
+	] = useState(false);
 
 	// Effect: Format branch machines to be rendered in Table
 	useEffect(() => {
@@ -52,7 +52,11 @@ export const ViewBranchMachines = ({ branchId, branchMachines }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Machines" buttonName="Create Branch Machine" onCreate={onCreate} />
+			<TableHeader
+				title="Machines"
+				buttonName="Create Branch Machine"
+				onCreate={onCreate}
+			/>
 
 			<TableNormal columns={columns} data={tableData} />
 

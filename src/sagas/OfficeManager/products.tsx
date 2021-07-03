@@ -81,4 +81,9 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 	yield takeLatest(types.REMOVE_PRODUCT, remove);
 };
 
-export default [listWatcherSaga(), createWatcherSaga(), editWatcherSaga(), removeWatcherSaga()];
+export default [
+	listWatcherSaga(),
+	createWatcherSaga(),
+	editWatcherSaga(),
+	removeWatcherSaga(),
+];

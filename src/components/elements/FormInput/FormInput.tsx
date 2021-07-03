@@ -12,7 +12,15 @@ export interface IInputProps {
 	step?: string;
 }
 
-const FormInput = ({ type, id, max, min, placeholder, step, disabled }: IInputProps) => (
+const FormInput = ({
+	type,
+	id,
+	max,
+	min,
+	placeholder,
+	step,
+	disabled,
+}: IInputProps) => (
 	<Field
 		type={type}
 		id={id}

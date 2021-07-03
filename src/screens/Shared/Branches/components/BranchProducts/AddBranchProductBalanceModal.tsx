@@ -24,7 +24,12 @@ export const AddBranchProductBalanceModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { editBranchProductBalance, status, errors, reset } = useBranchProducts();
+	const {
+		editBranchProductBalance,
+		status: branchProductStatus,
+		errors,
+		reset,
+	} = useBranchProducts();
 
 	// METHODS
 	const onAddBranchProductBalance = (value) => {
@@ -62,11 +67,16 @@ export const AddBranchProductBalanceModal = ({
 			<DetailsRow>
 				<DetailsSingle
 					label="Barcode"
-					value={branchProduct?.product?.barcode || branchProduct?.product?.textcode}
+					value={
+						branchProduct?.product?.barcode || branchProduct?.product?.textcode
+					}
 				/>
 				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 				<DetailsSingle label="Max Balance" value={branchProduct?.max_balance} />
-				<DetailsSingle label="Current Balance" value={branchProduct?.current_balance} />
+				<DetailsSingle
+					label="Current Balance"
+					value={branchProduct?.current_balance}
+				/>
 			</DetailsRow>
 
 			<Divider dashed />
@@ -74,7 +84,7 @@ export const AddBranchProductBalanceModal = ({
 			<AddBranchProductBalanceForm
 				onSubmit={onAddBranchProductBalance}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={branchProductStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

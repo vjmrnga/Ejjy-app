@@ -97,9 +97,13 @@ export const actions = {
 
 const selectRequest = (state: any) => state[REQUEST_KEY] || initialState;
 export const selectors = {
-	selectErrors: (key: string) => createSelector(selectRequest, (state) => state.errors[key] || []),
+	selectErrors: (key: string) =>
+		createSelector(selectRequest, (state) => state.errors[key] || []),
 	selectRequestStatus: (key: string) =>
-		createSelector(selectRequest, (state) => state.requestStatus[key] || request.NONE),
+		createSelector(
+			selectRequest,
+			(state) => state.requestStatus[key] || request.NONE,
+		),
 
 	selectManyErrors: (keys: string[]) =>
 		createSelector(selectRequest, (state) => {
@@ -115,7 +119,8 @@ export const selectors = {
 		createSelector(selectRequest, (state) => {
 			const status: any = {};
 			keys.forEach((key: string) => {
-				status[key] = key in state.requestStatus ? state.requestStatus[key] : request.NONE;
+				status[key] =
+					key in state.requestStatus ? state.requestStatus[key] : request.NONE;
 			});
 
 			return status;

@@ -15,25 +15,31 @@ interface Props {
 	disabled: boolean;
 }
 
-export const CashieringCard = ({ branchDay, onConfirm, loading, disabled, classNames }: Props) => {
+export const CashieringCard = ({
+	branchDay,
+	onConfirm,
+	loading,
+	disabled,
+	classNames,
+}: Props) => {
 	const getTitle = useCallback(() => {
 		if (branchDay?.datetime_ended) {
 			return 'Day has been ended.';
-		} else if (branchDay) {
-			return 'Day has been started.';
-		} else {
-			return EMPTY_CELL;
 		}
+		if (branchDay) {
+			return 'Day has been started.';
+		}
+		return EMPTY_CELL;
 	}, [branchDay]);
 
 	const getDate = useCallback(() => {
 		if (branchDay?.datetime_ended) {
 			return formatDateTimeExtended(branchDay?.datetime_ended);
-		} else if (branchDay) {
-			return formatDateTimeExtended(branchDay?.datetime_created);
-		} else {
-			return null;
 		}
+		if (branchDay) {
+			return formatDateTimeExtended(branchDay?.datetime_created);
+		}
+		return null;
 	}, [branchDay]);
 
 	const confirm = () => {
@@ -83,8 +89,4 @@ export const CashieringCard = ({ branchDay, onConfirm, loading, disabled, classN
 			</Spin>
 		</Box>
 	);
-};
-
-CashieringCard.defaultProps = {
-	disabled: false,
 };

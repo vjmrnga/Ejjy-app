@@ -1,15 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/sessions';
-import { MAX_PAGE_SIZE } from '../global/constants';
 import { request } from '../global/types';
 import { onCallback } from '../utils/function';
 import {
 	addInCachedData,
-	generateNewCachedData,
+	executePaginatedRequest,
 	getDataForCurrentPage,
-	indexHasCachedData,
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
@@ -17,7 +13,7 @@ import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
 
-export const useSessions = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
+export const useSessions = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -29,6 +25,7 @@ export const useSessions = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
 	const listSessionsAction = useActionDispatch(actions.listSessions);
@@ -57,7 +54,11 @@ export const useSessions = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 		setRecentRequest(type);
 		action({
 			...data,
-			callback: onCallback(requestCallback, callback?.onSuccess, callback?.onError),
+			callback: onCallback(
+				requestCallback,
+				callback?.onSuccess,
+				callback?.onError,
+			),
 		});
 	};
 
@@ -85,39 +86,26 @@ export const useSessions = ({ pageSize = MAX_PAGE_SIZE } = {}) => {
 	};
 
 	// REQUEST METHODS
-	const listSessions = (data) => {
-		const { page } = data;
-		setCurrentPage(page);
-
-		if (
-			!indexHasCachedData({
-				existingData: allData,
-				index: (page - 1) * pageSize,
-			})
-		) {
-			const callback = {
-				onSuccess: ({ data: { results: toBeAddedData, count } }) => {
-					setAllData(
-						generateNewCachedData({
-							existingData: allData,
-							toBeAddedData,
-							index: (page - 1) * pageSize,
-						}),
-					);
-
-					setPageCount(count);
-				},
-				onError: () => message.error(LIST_ERROR_MESSAGE),
-			};
-
-			executeRequest({ ...data, pageSize }, callback, listSessionsAction, types.LIST_SESSIONS);
-		}
+	const listSessions = (data, shouldReset = false) => {
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: listSessionsAction,
+			requestType: types.LIST_SESSIONS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	return {
 		sessions: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,

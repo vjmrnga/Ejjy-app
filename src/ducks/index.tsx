@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { connectRouter } from 'connected-react-router';
 import { combineReducers } from 'redux';
 import storage from 'redux-persist/lib/storage';
@@ -10,9 +11,13 @@ import { branchManagerReducers } from './BranchManager';
 import { branchPersonnelReducers } from './BranchPersonnel';
 import networkReducer, { key as NETWORK_KEY } from './network';
 import { officeManagerReducers } from './OfficeManager';
-import orderSlipCreationReducer, { key as ORDER_SLIP_CREATION_KEY } from './order-slip-creation';
+import orderSlipCreationReducer, {
+	key as ORDER_SLIP_CREATION_KEY,
+} from './order-slip-creation';
 import requestReducer, { REQUEST_KEY } from './request';
-import requisitionSlipsReducer, { key as REQUISITION_SLIP_KEY } from './requisition-slips';
+import requisitionSlipsReducer, {
+	key as REQUISITION_SLIP_KEY,
+} from './requisition-slips';
 import uiReducer, { key as UI_KEY } from './ui';
 import usersReducer, { key as USERS_KEY } from './users';
 import xreadReportsReducer, { key as XREAD_REPORTS_KEY } from './xread-reports';
@@ -39,6 +44,6 @@ export default (state, action) => {
 		storage.removeItem(APP_KEY);
 		state = undefined;
 	}
-	
+
 	return appReducer(state, action);
 };

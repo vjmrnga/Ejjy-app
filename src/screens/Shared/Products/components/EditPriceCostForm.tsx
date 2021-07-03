@@ -1,9 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Divider, Row, Spin, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { FetchButtonIcon } from '../../../../components';
-import { Button, FieldError, FieldSuccess, FormInputLabel } from '../../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FieldSuccess,
+	FormInputLabel,
+} from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';

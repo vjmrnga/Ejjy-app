@@ -7,16 +7,14 @@ interface Props {
 	preparationSlip: any;
 }
 
-export const PreparationSlipDetails = ({ preparationSlip }: Props) => {
-	return (
-		<DetailsRow>
-			<DetailsSingle label="ID" value={preparationSlip?.id} />
-			<DetailsSingle
-				label="Date & Time Created"
-				value={formatDateTime(preparationSlip?.datetime_created)}
-			/>
+export const PreparationSlipDetails = ({ preparationSlip }: Props) => (
+	<DetailsRow>
+		<DetailsSingle label="ID" value={preparationSlip?.id} />
+		<DetailsSingle
+			label="Date & Time Created"
+			value={formatDateTime(preparationSlip?.datetime_created)}
+		/>
 
-			<Divider dashed style={{ marginTop: '12px', marginBottom: '17px' }} />
-		</DetailsRow>
-	);
-};
+		<Divider dashed style={{ marginTop: '12px', marginBottom: '17px' }} />
+	</DetailsRow>
+);

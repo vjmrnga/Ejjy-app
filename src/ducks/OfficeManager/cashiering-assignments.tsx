@@ -30,7 +30,10 @@ const reducer = handleActions(
 				}
 				case types.CREATE_CASHIERING_ASSIGNMENT: {
 					newData = {
-						cashieringAssignments: [payload.cashieringAssignment, ...state.cashieringAssignments],
+						cashieringAssignments: [
+							payload.cashieringAssignment,
+							...state.cashieringAssignments,
+						],
 					};
 					break;
 				}
@@ -41,7 +44,9 @@ const reducer = handleActions(
 					);
 
 					if (index !== NOT_FOUND_INDEX) {
-						const cashieringAssignments = cloneDeep(state.cashieringAssignments);
+						const cashieringAssignments = cloneDeep(
+							state.cashieringAssignments,
+						);
 						cashieringAssignments[index] = editedcashieringAssignment;
 						newData = { cashieringAssignments };
 					}
@@ -55,6 +60,8 @@ const reducer = handleActions(
 					};
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -65,7 +72,9 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
-	getCashieringAssignmentsByUserId: createAction(types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID),
+	getCashieringAssignmentsByUserId: createAction(
+		types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID,
+	),
 	createCashieringAssignment: createAction(types.CREATE_CASHIERING_ASSIGNMENT),
 	editCashieringAssignment: createAction(types.EDIT_CASHIERING_ASSIGNMENT),
 	removeCashieringAssignment: createAction(types.REMOVE_CASHIERING_ASSIGNMENT),

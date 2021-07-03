@@ -1,6 +1,9 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
-import { actions, types } from '../../ducks/OfficeManager/cashiering-assignments';
+import {
+	actions,
+	types,
+} from '../../ducks/OfficeManager/cashiering-assignments';
 import { MAX_PAGE_SIZE } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/cashiering-assignments';
@@ -17,7 +20,7 @@ function* listByUserId({ payload }: any) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		page: 1,
 		page_size: MAX_PAGE_SIZE,
 		user_id: userId,
@@ -33,15 +36,13 @@ function* listByUserId({ payload }: any) {
 			response = yield call(service.listByUserId, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
 			if (baseURL && baseBackupURL) {
-				try {
-					// Fetch branch url
-					response = yield call(service.listByUserId, data, baseBackupURL);
-					isFetchedFromBackupURL = true;
-				} catch (e) {
-					throw e;
-				}
+				// Fetch branch url
+				response = yield call(service.listByUserId, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
 			}
@@ -55,7 +56,9 @@ function* listByUserId({ payload }: any) {
 		);
 		callback({
 			status: request.SUCCESS,
-			warnings: isFetchedFromBackupURL ? ['Data was fetched from a backup server.'] : [],
+			warnings: isFetchedFromBackupURL
+				? ['Data was fetched from a backup server.']
+				: [],
 		});
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -103,7 +106,10 @@ function* edit({ payload }: any) {
 		const response = yield call(service.edit, data, baseURL);
 
 		yield put(
-			actions.save({ type: types.EDIT_CASHIERING_ASSIGNMENT, cashieringAssignment: response.data }),
+			actions.save({
+				type: types.EDIT_CASHIERING_ASSIGNMENT,
+				cashieringAssignment: response.data,
+			}),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {

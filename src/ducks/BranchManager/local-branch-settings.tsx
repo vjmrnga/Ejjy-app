@@ -25,6 +25,8 @@ const reducer = handleActions(
 					newData = { localBranchSettings: payload.localBranchSettings };
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };

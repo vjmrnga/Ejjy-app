@@ -1,5 +1,5 @@
 import { Table as AntdTable } from 'antd';
-import { default as classNames, default as cn } from 'classnames';
+import cn from 'classnames';
 import ResizeObserver from 'rc-resize-observer';
 import React, { useEffect, useRef, useState } from 'react';
 import { VariableSizeGrid as Grid } from 'react-window';
@@ -55,7 +55,11 @@ export const Table = (props: Props) => {
 
 	useEffect(() => resetVirtualGrid, [tableWidth]);
 
-	const renderVirtualList = (rawData: object[], { scrollbarSize, ref, onScroll }: any) => {
+	const renderVirtualList = (
+		rawData: object[],
+		{ scrollbarSize, ref, onScroll }: any,
+	) => {
+		// eslint-disable-next-line no-param-reassign
 		ref.current = connectObject;
 
 		return (
@@ -65,7 +69,9 @@ export const Table = (props: Props) => {
 				columnCount={mergedColumns.length}
 				columnWidth={(index) => {
 					const { width } = mergedColumns[index];
-					return index === mergedColumns.length - 1 ? width - scrollbarSize - 1 : width;
+					return index === mergedColumns.length - 1
+						? width - scrollbarSize - 1
+						: width;
 				}}
 				height={scroll.y}
 				rowCount={rawData.length}
@@ -77,8 +83,9 @@ export const Table = (props: Props) => {
 			>
 				{({ columnIndex, rowIndex, style }) => (
 					<div
-						className={classNames('virtual-table-cell', {
-							'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+						className={cn('virtual-table-cell', {
+							'virtual-table-cell-last':
+								columnIndex === mergedColumns.length - 1,
 						})}
 						style={style}
 					>
@@ -96,6 +103,7 @@ export const Table = (props: Props) => {
 			}}
 		>
 			<AntdTable
+				// eslint-disable-next-line react/jsx-props-no-spreading
 				{...props}
 				className={cn('VirtualTable', { hasCustomHeaderComponent })}
 				columns={mergedColumns}

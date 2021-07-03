@@ -1,9 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, message, Modal, Row, Spin } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FieldError, Label } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/requisition-slips';
-import { request, requisitionSlipProductStatus } from '../../../../../global/types';
+import {
+	request,
+	requisitionSlipProductStatus,
+} from '../../../../../global/types';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
 import { SetOutOfStockForm } from './SetOutOfStockForm';
 
@@ -20,7 +22,13 @@ export const SetOutOfStockModal = ({
 	visible,
 	onClose,
 }: Props) => {
-	const { setOutOfStock, status, errors, recentRequest, reset } = useRequisitionSlips();
+	const {
+		setOutOfStock,
+		status: requisitionSlipsStatus,
+		errors,
+		recentRequest,
+		reset,
+	} = useRequisitionSlips();
 	const [products, setProducts] = useState([]);
 
 	// Effect: Format product
@@ -29,7 +37,8 @@ export const SetOutOfStockModal = ({
 			const formattedProducts = requisitionSlip?.products
 				?.filter(
 					({ status, is_out_of_stock }) =>
-						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS && !is_out_of_stock,
+						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
+						!is_out_of_stock,
 				)
 				?.map((item) => {
 					const { id, product } = item;
@@ -44,27 +53,32 @@ export const SetOutOfStockModal = ({
 
 			setProducts(formattedProducts);
 		}
-	}, [visible, status, recentRequest, requisitionSlip]);
+	}, [visible, requisitionSlipsStatus, recentRequest, requisitionSlip]);
 
 	// Effect: Close modal if success
 	useEffect(() => {
-		if (status === request.SUCCESS && recentRequest === types.SET_OUT_OF_STOCK) {
+		if (
+			requisitionSlipsStatus === request.SUCCESS &&
+			recentRequest === types.SET_OUT_OF_STOCK
+		) {
 			updateRequisitionSlipByFetching();
 			reset();
 			onClose();
 		}
-	}, [status, recentRequest]);
+	}, [requisitionSlipsStatus, recentRequest]);
 
 	const isFetching = useCallback(
 		() =>
-			status === request.REQUESTING &&
+			requisitionSlipsStatus === request.REQUESTING &&
 			recentRequest === types.GET_REQUISITION_SLIP_BY_ID_AND_BRANCH,
-		[status, recentRequest],
+		[requisitionSlipsStatus, recentRequest],
 	);
 
 	const isSettingOutOfStock = useCallback(
-		() => status === request.REQUESTING && recentRequest === types.SET_OUT_OF_STOCK,
-		[status, recentRequest],
+		() =>
+			requisitionSlipsStatus === request.REQUESTING &&
+			recentRequest === types.SET_OUT_OF_STOCK,
+		[requisitionSlipsStatus, recentRequest],
 	);
 
 	const onSetOutOfStockSubmit = (values) => {

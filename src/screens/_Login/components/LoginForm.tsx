@@ -1,14 +1,13 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel } from '../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInputLabel,
+} from '../../../components/elements';
 import { sleep } from '../../../utils/function';
 import '../style.scss';
-
-export interface IFormValues {
-	username: string;
-	password: string;
-}
 
 const FormDetails = {
 	DefaultValues: {
@@ -34,6 +33,7 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 		<>
 			<div className="errors">
 				{errors.map((error, index) => (
+					// eslint-disable-next-line react/no-array-index-key
 					<FieldError key={index} error={error} />
 				))}
 			</div>
@@ -41,23 +41,27 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 			<Formik
 				initialValues={FormDetails.DefaultValues}
 				validationSchema={FormDetails.Schema}
-				onSubmit={async (values: IFormValues) => {
+				onSubmit={async (formData) => {
 					setIsSubmitting(true);
 					await sleep(500);
 					setIsSubmitting(false);
-					onSubmit(values);
+					onSubmit(formData);
 				}}
 			>
-				{({ errors, touched }) => (
+				{({ errors: formErrors, touched }) => (
 					<Form className="form">
 						<div className="input-field">
 							<FormInputLabel id="username" label="Username" />
-							{errors.username && touched.username ? <FieldError error={errors.username} /> : null}
+							{formErrors.username && touched.username ? (
+								<FieldError error={formErrors.username} />
+							) : null}
 						</div>
 
 						<div className="input-field">
 							<FormInputLabel type="password" id="password" label="Password" />
-							{errors.password && touched.password ? <FieldError error={errors.password} /> : null}
+							{formErrors.password && touched.password ? (
+								<FieldError error={formErrors.password} />
+							) : null}
 						</div>
 
 						<Button

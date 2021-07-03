@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -48,7 +47,10 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 	const fetchRequisitionSlip = () => {
 		if (requisitionSlipId) {
 			removeRequisitionSlipByBranch();
-			getRequisitionSlipsById(requisitionSlipId, requisitionSlipDoesNotExistCallback);
+			getRequisitionSlipsById(
+				requisitionSlipId,
+				requisitionSlipDoesNotExistCallback,
+			);
 		}
 	};
 
@@ -66,7 +68,10 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 					requisitionSlipStatus={requisitionSlipStatus}
 				/>
 
-				<OrderSlips fetchRequisitionSlip={fetchRequisitionSlip} requisitionSlip={requisitionSlip} />
+				<OrderSlips
+					fetchRequisitionSlip={fetchRequisitionSlip}
+					requisitionSlip={requisitionSlip}
+				/>
 			</section>
 		</Container>
 	);

@@ -1,7 +1,11 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { actions, types } from '../../ducks/OfficeManager/users';
-import { MAX_PAGE_SIZE, MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services/index';
 import { service } from '../../services/OfficeManager/users';
@@ -18,7 +22,7 @@ function* listOnline({ payload }: any) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		page: 1,
 		page_size: MAX_PAGE_SIZE,
 		user_type: userType,
@@ -35,24 +39,26 @@ function* listOnline({ payload }: any) {
 			response = yield call(endpoint, data, baseURL || ONLINE_API_URL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(branchesSelectors.selectBackUpURLByBranchId(branchId));
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
 			if (baseURL && baseBackupURL) {
-				try {
-					// Fetch branch url
-					response = yield call(endpoint, data, baseBackupURL);
-					isFetchedFromBackupURL = true;
-				} catch (e) {
-					throw e;
-				}
+				// Fetch branch url
+				response = yield call(endpoint, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
 			}
 		}
 
-		yield put(actions.save({ type: types.GET_USERS, users: response.data.results }));
+		yield put(
+			actions.save({ type: types.GET_USERS, users: response.data.results }),
+		);
 		callback({
 			status: request.SUCCESS,
-			warnings: isFetchedFromBackupURL ? ['Data was fetched from a backup server.'] : [],
+			warnings: isFetchedFromBackupURL
+				? ['Data was fetched from a backup server.']
+				: [],
 		});
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -75,7 +81,9 @@ function* listOnlineByBranch({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_USERS, users: response.data.results }));
+		yield put(
+			actions.save({ type: types.GET_USERS, users: response.data.results }),
+		);
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors, response: e.response });
@@ -95,7 +103,9 @@ function* getByIdOnline({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		yield put(actions.save({ type: types.GET_USER_BY_ID, user: response.data }));
+		yield put(
+			actions.save({ type: types.GET_USER_BY_ID, user: response.data }),
+		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -120,7 +130,12 @@ function* editOnline({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.editOnline, id, { branch_id }, ONLINE_API_URL);
+		const response = yield call(
+			service.editOnline,
+			id,
+			{ branch_id },
+			ONLINE_API_URL,
+		);
 
 		yield put(actions.save({ type: types.EDIT_USER, id }));
 		callback({ status: request.SUCCESS, response: response.data });
@@ -148,9 +163,10 @@ const listOnlineWatcherSaga = function* listOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USERS, listOnline);
 };
 
-const listOnlineByBranchWatcherSaga = function* listOnlineByBranchWatcherSaga() {
-	yield takeLatest(types.GET_ONLINE_USERS, listOnlineByBranch);
-};
+const listOnlineByBranchWatcherSaga =
+	function* listOnlineByBranchWatcherSaga() {
+		yield takeLatest(types.GET_ONLINE_USERS, listOnlineByBranch);
+	};
 
 const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USER_BY_ID, getByIdOnline);

@@ -10,20 +10,22 @@ interface Props {
 	onQuantityTypeChange: any;
 }
 
-export const QuantitySelect = ({ quantityText, quantityValue, onQuantityTypeChange }: Props) => {
-	return (
-		<div className="QuantitySelect">
-			<span>{quantityText}</span>
-			<Select
-				classNames="quantity-select"
-				options={quantityTypeOptions}
-				placeholder="quantity"
-				value={quantityValue}
-				onChange={onQuantityTypeChange}
-			/>
-		</div>
-	);
-};
+export const QuantitySelect = ({
+	quantityText,
+	quantityValue,
+	onQuantityTypeChange,
+}: Props) => (
+	<div className="QuantitySelect">
+		<span>{quantityText}</span>
+		<Select
+			classNames="quantity-select"
+			options={quantityTypeOptions}
+			placeholder="quantity"
+			value={quantityValue}
+			onChange={onQuantityTypeChange}
+		/>
+	</div>
+);
 
 QuantitySelect.defaultProps = {
 	quantityValue: quantityTypes.PIECE,

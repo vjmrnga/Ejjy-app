@@ -7,6 +7,9 @@ interface Props {
 	classNames?: string;
 }
 
-export const Pending = ({ value, classNames }: Props) => {
-	return <p className={cn('Pending', classNames)}>Pending: {value}</p>;
-};
+export const Pending = ({ value, classNames }: Props) => (
+	<p className={cn('Pending', classNames)}>
+		Pending:
+		{value}
+	</p>
+);

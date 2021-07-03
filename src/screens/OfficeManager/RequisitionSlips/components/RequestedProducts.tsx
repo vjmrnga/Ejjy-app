@@ -1,35 +1,48 @@
+/* eslint-disable no-underscore-dangle */
 import { Col, Divider, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, Table } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { quantityTypes, request } from '../../../../global/types';
-import { calculateTableHeight, convertToBulk, sleep } from '../../../../utils/function';
+import {
+	calculateTableHeight,
+	convertToBulk,
+	sleep,
+} from '../../../../utils/function';
 import '../style.scss';
-import { RequisitionSlipDetails, requisitionSlipDetailsType } from './RequisitionSlipDetails';
+import {
+	RequisitionSlipDetails,
+	requisitionSlipDetailsType,
+} from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;
 	requisitionSlipStatus: number;
 }
 
-export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Props) => {
+export const RequestedProducts = ({
+	requisitionSlip,
+	requisitionSlipStatus,
+}: Props) => {
 	const [requestedProducts, setRequestedProducts] = useState([]);
 
 	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
 		if (requisitionSlip && requisitionSlipStatus === request.SUCCESS) {
-			const formattedRequestedProducts = requisitionSlip?.products.map((requestedProduct) => {
-				const { product, quantity_piece } = requestedProduct;
-				const { barcode, textcode, name, pieces_in_bulk } = product;
+			const formattedRequestedProducts = requisitionSlip?.products.map(
+				(requestedProduct) => {
+					const { product, quantity_piece } = requestedProduct;
+					const { barcode, textcode, name, pieces_in_bulk } = product;
 
-				return {
-					_quantity_piece: quantity_piece,
-					_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
-					barcode: barcode || textcode,
-					name,
-					quantity: quantity_piece,
-				};
-			});
+					return {
+						_quantity_piece: quantity_piece,
+						_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
+						barcode: barcode || textcode,
+						name,
+						quantity: quantity_piece,
+					};
+				},
+			);
 
 			sleep(500).then(() => setRequestedProducts(formattedRequestedProducts));
 		}
@@ -37,13 +50,15 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 
 	const onQuantityTypeChange = useCallback(
 		(quantityType) => {
-			const formattedRequestedProducts = requestedProducts.map((requestProduct) => ({
-				...requestProduct,
-				quantity:
-					quantityType === quantityTypes.PIECE
-						? requestProduct._quantity_piece
-						: requestProduct._quantity_bulk,
-			}));
+			const formattedRequestedProducts = requestedProducts.map(
+				(requestProduct) => ({
+					...requestProduct,
+					quantity:
+						quantityType === quantityTypes.PIECE
+							? requestProduct._quantity_piece
+							: requestProduct._quantity_bulk,
+				}),
+			);
 			setRequestedProducts(formattedRequestedProducts);
 		},
 		[requestedProducts],
@@ -85,7 +100,10 @@ export const RequestedProducts = ({ requisitionSlip, requisitionSlipStatus }: Pr
 			<Table
 				columns={getColumns()}
 				dataSource={requestedProducts}
-				scroll={{ y: calculateTableHeight(requestedProducts.length), x: '100%' }}
+				scroll={{
+					y: calculateTableHeight(requestedProducts.length),
+					x: '100%',
+				}}
 				hasCustomHeaderComponent
 			/>
 		</Box>

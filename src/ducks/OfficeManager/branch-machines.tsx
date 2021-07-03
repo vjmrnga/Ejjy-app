@@ -28,12 +28,16 @@ const reducer = handleActions(
 					break;
 				}
 				case types.CREATE_BRANCH_MACHINE: {
-					newData = { branchMachines: [payload.branchMachine, ...state.branchMachines] };
+					newData = {
+						branchMachines: [payload.branchMachine, ...state.branchMachines],
+					};
 					break;
 				}
 				case types.EDIT_BRANCH_MACHINE: {
 					const { branchMachine: editedBranchMachine } = payload;
-					const index = state.branchMachines.findIndex(({ id }) => id === editedBranchMachine.id);
+					const index = state.branchMachines.findIndex(
+						({ id }) => id === editedBranchMachine.id,
+					);
 
 					if (index !== NOT_FOUND_INDEX) {
 						const branchMachines = cloneDeep(state.branchMachines);
@@ -42,6 +46,8 @@ const reducer = handleActions(
 					}
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { ...state, ...newData };
@@ -59,7 +65,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectBranchMachines: () => createSelector(selectState, (state) => state.branchMachines),
+	selectBranchMachines: () =>
+		createSelector(selectState, (state) => state.branchMachines),
 };
 
 export default reducer;

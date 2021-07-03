@@ -6,7 +6,12 @@ interface Props extends ITextareaProps {
 	label: string;
 }
 
-const FormTextareaLabel = ({ id, label: inputLabel, placeholder, disabled }: Props) => (
+const FormTextareaLabel = ({
+	id,
+	label: inputLabel,
+	placeholder,
+	disabled,
+}: Props) => (
 	<>
 		<Label id={id} label={inputLabel} spacing />
 		<Textarea id={id} placeholder={placeholder} disabled={disabled} />

@@ -25,7 +25,7 @@ dayjs.tz.setDefault('Asia/Manila');
 
 // Start Interceptor
 const store = configureStore({}, history);
-configureAxios(store);
+configureAxios();
 
 ReactDOM.render(
 	<React.StrictMode>

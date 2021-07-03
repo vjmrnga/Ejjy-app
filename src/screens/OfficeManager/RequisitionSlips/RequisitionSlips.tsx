@@ -1,5 +1,5 @@
 /* eslint-disable eqeqeq */
-/* eslint-disable react-hooks/exhaustive-deps */
+
 import { Pagination } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,14 +9,18 @@ import { Box } from '../../../components/elements';
 import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeaders/TableHeaderRequisitionSlip';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import { request, requisitionSlipActions, userTypes } from '../../../global/types';
+import {
+	request,
+	requisitionSlipActions,
+	userTypes,
+} from '../../../global/types';
+import { useBranches } from '../../../hooks/useBranches';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	calculateTableHeight,
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
-import { useBranches } from '../../../hooks/useBranches';
 import './style.scss';
 
 const columns = [
@@ -49,16 +53,25 @@ const RequisitionSlips = () => {
 
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
-	const { requisitionSlips, pageCount, currentPage, getRequisitionSlipsExtended, status } =
-		useRequisitionSlips({
-			pageSize: PAGE_SIZE,
-		});
+	const {
+		requisitionSlips,
+		pageCount,
+		currentPage,
+		getRequisitionSlipsExtended,
+		status: requisitionSlipsStatus,
+	} = useRequisitionSlips();
 
 	// METHODS
 	// Effect: Format requisitionSlips to be rendered in Table
 	useEffect(() => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
-			const { id, type, requesting_user, progress, action: prAction } = requisitionSlip;
+			const {
+				id,
+				type,
+				requesting_user,
+				progress,
+				action: prAction,
+			} = requisitionSlip;
 			const { datetime_created, action } = prAction;
 			const dateTime = formatDateTime(datetime_created);
 
@@ -73,7 +86,9 @@ const RequisitionSlips = () => {
 				requestor: requesting_user?.branch?.name,
 				type: upperFirst(type),
 				action: getRequisitionSlipStatus(action, userTypes.OFFICE_MANAGER),
-				progress: progress ? `${progress.current} / ${progress.total}` : EMPTY_CELL,
+				progress: progress
+					? `${progress.current} / ${progress.total}`
+					: EMPTY_CELL,
 			};
 		});
 
@@ -135,7 +150,7 @@ const RequisitionSlips = () => {
 						columns={columns}
 						dataSource={data}
 						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-						loading={status === request.REQUESTING}
+						loading={requisitionSlipsStatus === request.REQUESTING}
 					/>
 
 					<Pagination

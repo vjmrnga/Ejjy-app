@@ -17,7 +17,10 @@ export const service = {
 		axios.post('users/login/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
 
 	loginOnline: async (body: ILogin, baseURL) =>
-		axios.post('users/login_online/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
+		axios.post('users/login_online/', body, {
+			baseURL,
+			...NO_VERIFICATION_CONFIG,
+		}),
 
 	retrieve: async (id: number, params: IGetRequest, baseURL) =>
 		axios.get(`users/${id}/`, { baseURL, params }),
@@ -28,7 +31,8 @@ export const service = {
 	acquireToken: async (body: IAcquireToken, baseURL) =>
 		axios.post('tokens/acquire/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
 
-	logout: async (id: number, baseURL) => axios.post(`users/${id}/logout/`, null, { baseURL }),
+	logout: async (id: number, baseURL) =>
+		axios.post(`users/${id}/logout/`, null, { baseURL }),
 
 	logoutOnline: async (id: number, baseURL) =>
 		axios.post(`users/${id}/logout_online/`, null, { baseURL }),

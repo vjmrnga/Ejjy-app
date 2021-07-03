@@ -14,9 +14,10 @@ const initialState = {
 
 const reducer = handleActions(
 	{
-		[types.UPDATE_INTERNET_CONNECTION]: (state, { payload }: any) => {
-			return { ...state, hasInternetConnection: payload };
-		},
+		[types.UPDATE_INTERNET_CONNECTION]: (state, { payload }: any) => ({
+			...state,
+			hasInternetConnection: payload,
+		}),
 	},
 	initialState,
 );

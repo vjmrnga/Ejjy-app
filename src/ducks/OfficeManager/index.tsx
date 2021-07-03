@@ -1,6 +1,10 @@
 import orderSlipsReducer, { key as ORDER_SLIPS_KEY } from '../order-slips';
-import adjustmentSlipsReducer, { key as ADJUSTMENT_SLIPS_KEY } from './adjustment-slips';
-import branchMachinesReducer, { key as BRANCH_MACHINES_KEY } from './branch-machines';
+import adjustmentSlipsReducer, {
+	key as ADJUSTMENT_SLIPS_KEY,
+} from './adjustment-slips';
+import branchMachinesReducer, {
+	key as BRANCH_MACHINES_KEY,
+} from './branch-machines';
 import branchesReducer, { key as BRANCHES_KEY } from './branches';
 import cashieringAssignmentsReducer, {
 	key as CASHIERING_ASSIGNMENTS_KEY,
@@ -8,7 +12,9 @@ import cashieringAssignmentsReducer, {
 import deliveryReceiptProductsReducer, {
 	key as DELIVERY_RECEIPT_PRODUCTS_KEY,
 } from './delivery-receipt-products';
-import deliveryReceiptsReducer, { key as DELIVERY_RECEIPTS_KEY } from './delivery-receipts';
+import deliveryReceiptsReducer, {
+	key as DELIVERY_RECEIPTS_KEY,
+} from './delivery-receipts';
 import pendingTransactionsReducer, {
 	key as PENDING_TRANSACTIONS_KEY,
 } from './pending-transactions';

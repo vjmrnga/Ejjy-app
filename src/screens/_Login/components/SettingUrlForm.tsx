@@ -2,7 +2,12 @@ import { Divider } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInput, Label } from '../../../components/elements';
+import {
+	Button,
+	FieldError,
+	FormInput,
+	Label,
+} from '../../../components/elements';
 import { sleep } from '../../../utils/function';
 
 interface Props {
@@ -11,7 +16,11 @@ interface Props {
 	onClose: any;
 }
 
-export const SettingUrlForm = ({ localIpAddress, onSubmit, onClose }: Props) => {
+export const SettingUrlForm = ({
+	localIpAddress,
+	onSubmit,
+	onClose,
+}: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
@@ -58,7 +67,12 @@ export const SettingUrlForm = ({ localIpAddress, onSubmit, onClose }: Props) => 
 							classNames="btn-cancel"
 							disabled={isSubmitting}
 						/>
-						<Button type="submit" text="Submit" variant="primary" loading={isSubmitting} />
+						<Button
+							type="submit"
+							text="Submit"
+							variant="primary"
+							loading={isSubmitting}
+						/>
 					</div>
 				</Form>
 			)}

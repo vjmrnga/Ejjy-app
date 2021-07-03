@@ -13,7 +13,7 @@ export const OrderSlipActions = ({ onEdit, onCreateDR }: Props) => (
 		{onCreateDR && (
 			<Popconfirm
 				placement="topLeft"
-				title={'Please confirm the creation of delivery receipt for this order slip'}
+				title="Please confirm the creation of delivery receipt for this order slip"
 				onConfirm={onCreateDR}
 				okText="Confirm"
 				cancelText="Cancel"

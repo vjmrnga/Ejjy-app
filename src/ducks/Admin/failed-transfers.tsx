@@ -30,6 +30,8 @@ const reducer = handleActions(
 					};
 					break;
 				}
+				default:
+					break;
 			}
 
 			return { failedTransfers: newData };
@@ -45,7 +47,8 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectFailedTransfers: () => createSelector(selectState, (state) => state.failedTransfers),
+	selectFailedTransfers: () =>
+		createSelector(selectState, (state) => state.failedTransfers),
 };
 
 export default reducer;
