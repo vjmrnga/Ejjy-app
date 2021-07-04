@@ -5,13 +5,13 @@ import { SiteSettings } from './components/SiteSettings';
 import './style.scss';
 
 const Dashboard = () => (
-	<Container title="Dashboard" loadingText="Fetching site settings...">
+	<Container title="Dashboard">
 		<section className="Dashboard">
-			<Row gutter={{ sm: 15, xs: 0 }}>
+			{/* <Row gutter={{ sm: 15, xs: 0 }}>
 				<Col span={24}>
 					<SiteSettings />
 				</Col>
-			</Row>
+			</Row> */}
 		</section>
 	</Container>
 );
