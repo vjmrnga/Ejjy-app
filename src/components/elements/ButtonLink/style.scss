@@ -1,6 +1,7 @@
 @import '../../../assets/styles/main';
 
 .ButtonLink {
+	padding: 0;
 	@include font(1rem, 600);
 	color: $color-link !important;
 	cursor: pointer;

@@ -1,4 +1,4 @@
-import { Divider, message } from 'antd';
+import { Divider, message, Table } from 'antd';
 import cn from 'classnames';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,12 +9,10 @@ import {
 	Container,
 	DetailsRow,
 	DetailsSingle,
-	Table,
 } from '../../../components';
 import { Box, Select } from '../../../components/elements';
 import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
 import { request, userTypes } from '../../../global/types';
-import { calculateTableHeight } from '../../../utils/function';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
 import { useUsers } from '../hooks/useUsers';
@@ -216,11 +214,7 @@ const AssignUser = ({ match }: Props) => {
 			cashieringAssignmentsStatus === request.REQUESTING &&
 			cashieringAssignmentsRecentRequest !==
 				types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID,
-		[
-			cashieringAssignmentsStatus,
-			cashieringAssignmentsRecentRequest,
-			userStatus,
-		],
+		[cashieringAssignmentsStatus, cashieringAssignmentsRecentRequest],
 	);
 
 	return (
@@ -251,11 +245,12 @@ const AssignUser = ({ match }: Props) => {
 									<DetailsSingle label="Assignments" value="" />
 								</DetailsRow>
 							</div>
+
 							<Table
 								columns={columns}
 								dataSource={data}
-								scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
 								loading={isChangingAssignments()}
+								pagination={false}
 							/>
 						</>
 					)}

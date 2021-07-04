@@ -59,7 +59,8 @@
 				"allowTernary": true,
 				"allowTaggedTemplates": true
 			}
-		]
+		],
+		"react-hooks/exhaustive-deps": 0
 	},
 	"settings": {
 		"import/resolver": {

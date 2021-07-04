@@ -60,6 +60,75 @@ function* list({ payload }: any) {
 	}
 }
 
+function* listWithAnalytics({ payload }: any) {
+	const {
+		page,
+		pageSize,
+		branchId,
+		productIds,
+		sorting,
+		productCategory,
+		timeRange,
+		callback,
+	} = payload;
+	callback({ status: request.REQUESTING });
+
+	const localURL = getLocalIpAddress();
+
+	// Required: Branch must have an online URL (Requested by Office)
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId) {
+		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
+		return;
+	}
+
+	const data = {
+		page,
+		page_size: pageSize,
+		product_ids: productIds,
+		sorting,
+		product_category: productCategory,
+		time_range: timeRange,
+	};
+
+	let isFetchedFromBackupURL = false;
+
+	try {
+		let response = null;
+
+		try {
+			// Fetch in branch url
+			response = yield call(
+				service.listWithAnalytics,
+				data,
+				baseURL || localURL,
+			);
+		} catch (e) {
+			// Retry to fetch in backup branch url
+			const baseBackupURL = yield select(
+				branchesSelectors.selectBackUpURLByBranchId(branchId),
+			);
+			if (baseURL && baseBackupURL) {
+				// Fetch branch url
+				response = yield call(service.listWithAnalytics, data, baseBackupURL);
+				isFetchedFromBackupURL = true;
+			} else {
+				throw e;
+			}
+		}
+
+		callback({
+			status: request.SUCCESS,
+			warnings: isFetchedFromBackupURL
+				? ['Data Source: Backup Server, data might be outdated.']
+				: [],
+			data: response.data,
+		});
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 function* get({ payload }: any) {
 	const { page, pageSize, branchId, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -201,6 +270,10 @@ const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
 };
 
+const listWithAnalyticsWatcherSaga = function* listWithAnalyticsWatcherSaga() {
+	yield takeLatest(types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS, listWithAnalytics);
+};
+
 const getWatcherSaga = function* getWatcherSaga() {
 	yield takeEvery(types.GET_BRANCH_PRODUCT, get);
 };
@@ -219,6 +292,7 @@ const editPriceCostWatcherSaga = function* editPriceCostWatcherSaga() {
 
 export default [
 	listWatcherSaga(),
+	listWithAnalyticsWatcherSaga(),
 	getWatcherSaga(),
 	editWatcherSaga(),
 	editBalanceWatcherSaga(),

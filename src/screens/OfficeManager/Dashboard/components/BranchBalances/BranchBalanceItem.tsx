@@ -171,6 +171,7 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 			/>
 
 			<Table
+				className="table-no-padding"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 600 }}

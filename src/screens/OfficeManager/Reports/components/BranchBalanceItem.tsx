@@ -1,68 +1,91 @@
-import { Select, Table } from 'antd';
-import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import SearchInput from '../../../../components/elements/SearchInput/SearchInput';
+import { Col, DatePicker, Radio, Row, Select, Space, Spin, Table } from 'antd';
+import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
+import { Label } from 'components/elements';
+import React, { useEffect, useRef, useState } from 'react';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { getBranchProductStatus } from '../../../../utils/function';
+import debounce from 'lodash/debounce';
+import { useProducts } from '../../../../hooks/useProducts';
 
-const columns = [
-	{
-		title: 'Barcode',
-		dataIndex: 'barcode',
-		key: 'barcode',
-		width: 100,
-		fixed: 'left' as 'left',
-	},
+const { Option } = Select;
+const { RangePicker } = DatePicker;
+
+const columns: ColumnsType = [
 	{
 		title: 'Name',
 		dataIndex: 'name',
 		key: 'name',
 		width: 150,
-		fixed: 'left' as 'left',
+		fixed: 'left',
+	},
+	{
+		title: 'Barcode',
+		dataIndex: 'barcode',
+		key: 'barcode',
 	},
 	{
 		title: 'Balance',
 		dataIndex: 'balance',
 		key: 'balance',
-		align: 'center' as 'center',
+		align: 'center',
+		sorter: true,
 	},
 	{
 		title: 'Remaining Bal',
 		dataIndex: 'remaining_balance',
 		key: 'remaining_balance',
-		align: 'center' as 'center',
+		align: 'center',
 	},
 	{
 		title: 'Quantity Sold',
 		dataIndex: 'quantity_sold',
 		key: 'quantity_sold',
-		align: 'center' as 'center',
+		align: 'center',
+		sorter: true,
 	},
 	{
 		title: 'Daily Average Sold',
 		dataIndex: 'daily_average_sold',
 		key: 'daily_average_sold',
-		align: 'center' as 'center',
+		align: 'center',
+		sorter: true,
 	},
 	{
 		title: 'Daily Average Sold Percentage',
 		dataIndex: 'daily_average_sold_percentage',
 		key: 'daily_average_sold_percentage',
-		align: 'center' as 'center',
+		align: 'center',
+		sorter: true,
 	},
 	{
 		title: 'Status',
 		dataIndex: 'status',
 		key: 'status',
-		width: 100,
-		fixed: 'right' as 'right',
 	},
 ];
 
 const INTERVAL_MS = 30000;
-const SEARCH_DEBOUNCE_TIME = 500;
+const SEARCH_DEBOUNCE_TIME = 1000;
+
+const getSorting = (column, order) => {
+	if (!order) {
+		return null;
+	}
+
+	if (column === 'balance') {
+		return order === 'ascend' ? 'current_balance' : '-current_balance';
+	} else if (column === 'quantity_sold') {
+		return order === 'ascend' ? 'quantity_sold' : '-quantity_sold';
+	} else if (column === 'daily_average_sold') {
+		return order === 'ascend' ? 'daily_average_sold' : '-daily_average_sold';
+	} else if (column === 'daily_average_sold_percentage') {
+		return order === 'ascend'
+			? 'daily_average_sold_percentage'
+			: '-daily_average_sold_percentage';
+	}
+};
 
 interface Props {
 	branchId: number;
@@ -72,7 +95,12 @@ interface Props {
 export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [searchedKeyword, setSearchedKeyword] = useState('');
+	const [tags, setTags] = useState('');
+	const [timeRange, setTimeRange] = useState('daily');
+	const [timeRangeOption, setTimeRangeOption] = useState('daily');
+	const [sorting, setSorting] = useState(null);
+	const [productCategory, setProductCategory] = useState(null);
+	const [productOptions, setProductOptions] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 
 	// CUSTOM HOOKS
@@ -82,8 +110,9 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 		pageSize,
 		currentPage,
 		getBranchProductsWithAnalytics,
-		status,
+		status: branchProductsStatus,
 	} = useBranchProducts();
+	const { products, getProducts, status: productsStatus } = useProducts();
 
 	// REFS
 	const intervalRef = useRef(null);
@@ -99,11 +128,20 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 
 	useEffect(() => {
 		if (isActive) {
-			fetchBranchProducts(searchedKeyword, 1, pageSize);
+			fetchBranchProducts(null, null, null, 'daily', 1, pageSize);
 		} else {
 			clearInterval(intervalRef.current);
 		}
 	}, [isActive]);
+
+	useEffect(() => {
+		setProductOptions(
+			products.map((product) => ({
+				label: product.name,
+				value: product.id,
+			})),
+		);
+	}, [products]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && branchProducts.length) {
@@ -139,69 +177,212 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 		setData(newBranchProducts);
 	}, [branchProducts]);
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
-			setSearchedKeyword(lowerCaseKeyword);
-			fetchBranchProducts(lowerCaseKeyword, 1, pageSize);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
-
-	const onPageChange = (page, newPageSize) => {
-		fetchBranchProducts(searchedKeyword, page, newPageSize);
-	};
-
-	const fetchBranchProducts = (search, page, newPageSize) => {
+	const fetchBranchProducts = (
+		productIds,
+		sorting,
+		productCategory,
+		timeRange,
+		page,
+		newPageSize,
+	) => {
 		getBranchProductsWithAnalytics(
-			{ search, branchId, page, pageSize: newPageSize },
+			{
+				branchId,
+				productIds: productIds?.length ? productIds : null,
+				sorting,
+				productCategory,
+				timeRange,
+				page,
+				pageSize: newPageSize,
+			},
 			true,
 		);
 
 		clearInterval(intervalRef.current);
 		intervalRef.current = setInterval(() => {
 			getBranchProductsWithAnalytics(
-				{ search, branchId, page, pageSize: newPageSize },
+				{
+					branchId,
+					productIds: productIds?.length ? productIds : null,
+					sorting,
+					productCategory,
+					timeRange,
+					page,
+					pageSize: newPageSize,
+				},
 				true,
 			);
 		}, INTERVAL_MS);
 	};
 
-	return (
-		<>
-			<Select
-				mode="tags"
-				style={{ width: '100%' }}
-				placeholder="Tags Mode"
-				onChange={(value) => {
-					console.log('value', value);
-				}}
-				open={false}
-			/>
+	const debounceFetchProducts = React.useMemo(() => {
+		const loadOptions = (value: string) => {
+			setProductOptions([]);
 
-			<SearchInput
-				classNames="tab-search-input"
-				placeholder="Search product"
-				onChange={(event) => onSearch(event.target.value.trim())}
-			/>
+			getProducts(
+				{
+					search: value.toLowerCase(),
+					page: 1,
+					pageSize: 500,
+				},
+				true,
+			);
+		};
+
+		return debounce(loadOptions, SEARCH_DEBOUNCE_TIME);
+	}, [SEARCH_DEBOUNCE_TIME]);
+
+	return (
+		<div className="BranchBalanceItem">
+			<Row gutter={[15, 15]}>
+				<Col lg={12} span={24}>
+					<Label label="Product Name" spacing />
+					<Select
+						mode="multiple"
+						style={{ width: '100%' }}
+						filterOption={false}
+						onSearch={debounceFetchProducts}
+						notFoundContent={
+							productsStatus === request.REQUESTING ? (
+								<Spin size="small" />
+							) : null
+						}
+						options={productOptions}
+						onChange={(value: string[]) => {
+							const joinedValue = value.join(',');
+							setTags(joinedValue);
+							setIsCompletedInitialFetch(false);
+
+							fetchBranchProducts(
+								joinedValue,
+								sorting,
+								productCategory,
+								timeRange,
+								1,
+								pageSize,
+							);
+						}}
+					/>
+				</Col>
+				<Col lg={12} span={24}>
+					<Label label="Product Category" spacing />
+					<Select
+						style={{ width: '100%' }}
+						onChange={(value) => {
+							setProductCategory(value);
+							setIsCompletedInitialFetch(false);
+
+							fetchBranchProducts(tags, sorting, value, timeRange, 1, pageSize);
+						}}
+						allowClear
+					>
+						<Option value="baboy">Baboy</Option>
+						<Option value="manok">Manok</Option>
+						<Option value="assorted">Assorted</Option>
+						<Option value="gulay">Gulay</Option>
+						<Option value="hotdog">Hotdog</Option>
+					</Select>
+				</Col>
+				<Col lg={12} span={24}>
+					<Space direction="vertical" size={15}>
+						<Label label="Quantity Sold Date" />
+						<Radio.Group
+							options={[
+								{ label: 'Daily', value: 'daily' },
+								{ label: 'Monthly', value: 'monthly' },
+								{ label: 'Select Date Range', value: 'date_range' },
+							]}
+							onChange={(e) => {
+								const { value } = e.target;
+								setTimeRange(value);
+								setTimeRangeOption(value);
+
+								if (value !== 'date_range') {
+									setIsCompletedInitialFetch(false);
+									fetchBranchProducts(
+										tags,
+										sorting,
+										productCategory,
+										value,
+										1,
+										pageSize,
+									);
+								}
+							}}
+							defaultValue="daily"
+							optionType="button"
+						/>
+						{timeRangeOption === 'date_range' && (
+							<RangePicker
+								format="MM/DD/YY"
+								onCalendarChange={(dates, dateStrings) => {
+									if (dates?.[0] && dates?.[1]) {
+										const value = dateStrings.join(',');
+										setTimeRange(value);
+										setIsCompletedInitialFetch(false);
+
+										fetchBranchProducts(
+											tags,
+											sorting,
+											productCategory,
+											value,
+											1,
+											pageSize,
+										);
+									}
+								}}
+							/>
+						)}
+					</Space>
+				</Col>
+			</Row>
 
 			<Table
+				className="table table-no-padding "
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 1100 }}
+				scroll={{ x: 1200 }}
 				pagination={{
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
-					disabled: !data,
 					position: ['bottomCenter'],
+					onChange: (page, newPageSize) => {
+						setIsCompletedInitialFetch(false);
+						fetchBranchProducts(
+							'',
+							sorting,
+							productCategory,
+							timeRange,
+							page,
+							newPageSize,
+						);
+					},
+					disabled: !data,
 					pageSizeOptions,
 				}}
+				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
+					if (extra.action === 'sort') {
+						const value = getSorting(sorter.columnKey, sorter.order);
+						setSorting(value);
+						setIsCompletedInitialFetch(false);
+
+						fetchBranchProducts(
+							tags,
+							value,
+							productCategory,
+							timeRange,
+							currentPage,
+							pageSize,
+						);
+					}
+				}}
 				loading={
-					isCompletedInitialFetch ? false : status === request.REQUESTING
+					isCompletedInitialFetch
+						? false
+						: branchProductsStatus === request.REQUESTING
 				}
 			/>
-		</>
+		</div>
 	);
 };
