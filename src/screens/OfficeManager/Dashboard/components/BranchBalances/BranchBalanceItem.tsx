@@ -1,4 +1,6 @@
-import { Divider, message, Table } from 'antd';
+import { Divider, Table } from 'antd';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,7 +13,10 @@ import { pageSizeOptions } from '../../../../../global/options';
 import { request } from '../../../../../global/types';
 import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
-import { getBranchProductStatus } from '../../../../../utils/function';
+import {
+	convertIntoArray,
+	getBranchProductStatus,
+} from '../../../../../utils/function';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
@@ -49,6 +54,7 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		editBranchDay,
 		status: branchesDaysStatus,
 		errors: branchesDaysErrors,
+		warnings: branchesDaysWarnings,
 	} = useBranchesDays();
 	const {
 		branchProducts,
@@ -57,6 +63,8 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		currentPage,
 		getBranchProducts,
 		status,
+		errors: branchProductsErrors,
+		warnings: branchProductsWarnings,
 	} = useBranchProducts();
 	const user = useSelector(authSelectors.selectUser());
 
@@ -108,13 +116,6 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 		}
 	}, [latestBranchDay]);
 
-	// Effect: Display errors from branch cashiering
-	useEffect(() => {
-		if (branchesDaysErrors?.length && branchesDaysStatus === request.ERROR) {
-			message.error(branchesDaysErrors);
-		}
-	}, [branchesDaysErrors, branchesDaysStatus]);
-
 	const onStartDay = () => {
 		const onlineStartedById = IS_APP_LIVE ? user.id : null;
 		const startedById = IS_APP_LIVE ? null : user.id;
@@ -154,6 +155,22 @@ export const BranchBalanceItem = ({ isActive, branchId, disabled }: Props) => {
 
 	return (
 		<>
+			<RequestErrors
+				errors={[
+					...convertIntoArray(branchesDaysErrors, 'Branch Day'),
+					...convertIntoArray(branchProductsErrors, 'Branch Product'),
+				]}
+				withSpaceBottom
+			/>
+
+			<RequestWarnings
+				warnings={[
+					...convertIntoArray(branchesDaysWarnings, 'Branch Day'),
+					...convertIntoArray(branchProductsWarnings, 'Branch Product'),
+				]}
+				withSpaceBottom
+			/>
+
 			<CashieringCard
 				classNames="bordered cashiering-card-office"
 				branchDay={branchDay}

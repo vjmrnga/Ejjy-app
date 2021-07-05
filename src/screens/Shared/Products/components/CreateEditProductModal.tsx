@@ -27,7 +27,7 @@ export const CreateEditProductModal = ({
 	const { createProduct, editProduct, status, errors, reset } = useProducts();
 
 	// METHODS
-	const onCreateProduct = (data) => {
+	const onCreateProduct = (data, onSuccess) => {
 		createProduct(data, ({ status: requestStatus, response }) => {
 			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
@@ -36,12 +36,13 @@ export const CreateEditProductModal = ({
 
 				addItemInPagination(data);
 				reset();
+				onSuccess();
 				onClose();
 			}
 		});
 	};
 
-	const onEditProduct = (data) => {
+	const onEditProduct = (data, onSuccess) => {
 		editProduct(data, ({ status: requestStatus, response }) => {
 			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
@@ -50,6 +51,7 @@ export const CreateEditProductModal = ({
 
 				updateItemInPagination(data);
 				reset();
+				onSuccess();
 				onClose();
 			}
 		});

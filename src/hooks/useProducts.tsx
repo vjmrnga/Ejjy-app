@@ -14,6 +14,7 @@ import {
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
 

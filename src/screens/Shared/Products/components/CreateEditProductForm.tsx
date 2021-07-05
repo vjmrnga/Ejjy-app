@@ -17,6 +17,89 @@ import {
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
+import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
+
+const { Text } = Typography;
+
+const type = [
+	{
+		id: productTypes.WET,
+		label: 'Wet',
+		value: productTypes.WET,
+	},
+	{
+		id: productTypes.DRY,
+		label: 'Dry',
+		value: productTypes.DRY,
+	},
+];
+
+const unitOfMeasurement = [
+	{
+		id: unitOfMeasurementTypes.WEIGHING,
+		label: 'Weighing',
+		value: unitOfMeasurementTypes.WEIGHING,
+	},
+	{
+		id: unitOfMeasurementTypes.NON_WEIGHING,
+		label: 'Non-Weighing',
+		value: unitOfMeasurementTypes.NON_WEIGHING,
+	},
+];
+
+const isVatExemptedTypes = [
+	{
+		id: 'vat',
+		label: 'VAT',
+		value: 'false',
+	},
+	{
+		id: 'vae',
+		label: 'VAT-EXEMPT',
+		value: 'true',
+	},
+];
+
+const checkingTypes = [
+	{
+		id: productCheckingTypes.DAILY,
+		label: 'Daily',
+		value: productCheckingTypes.DAILY,
+	},
+	{
+		id: productCheckingTypes.RANDOM,
+		label: 'Random',
+		value: productCheckingTypes.RANDOM,
+	},
+];
+
+const productCategories = [
+	{
+		id: productCategoryTypes.NONE,
+		label: 'None',
+		value: productCategoryTypes.NONE,
+	},
+	{
+		id: productCategoryTypes.ASSORTED,
+		label: 'Assorted',
+		value: productCategoryTypes.ASSORTED,
+	},
+	{
+		id: productCategoryTypes.BABOY,
+		label: 'Baboy',
+		value: productCategoryTypes.BABOY,
+	},
+	{
+		id: productCategoryTypes.MANOK,
+		label: 'Manok',
+		value: productCategoryTypes.MANOK,
+	},
+	{
+		id: productCategoryTypes.GULAY,
+		label: 'Gulay',
+		value: productCategoryTypes.GULAY,
+	},
+];
 
 interface ICreateProduct {
 	id?: number;
@@ -40,8 +123,6 @@ interface ICreateProduct {
 	is_randomly_checked?: boolean;
 	checking?: string;
 }
-
-const { Text } = Typography;
 
 interface Props {
 	product: any;
@@ -72,7 +153,7 @@ export const CreateEditProductForm = ({
 					: productCheckingTypes.RANDOM,
 				print_details: product?.name || '',
 				description: product?.name || '',
-				allowable_spoilage: product?.allowable_spoilage * 100,
+				allowable_spoilage: product?.allowable_spoilage * 100 || '',
 				pieces_in_bulk: product?.pieces_in_bulk,
 				cost_per_piece: product?.cost_per_piece || '',
 				cost_per_bulk: product?.cost_per_bulk || '',
@@ -132,17 +213,13 @@ export const CreateEditProductForm = ({
 						.min(0)
 						.label('Pieces in Bulk'),
 					allowable_spoilage: Yup.number()
-						.integer()
-						.min(0)
-						.max(99)
 						.when(['type', 'unit_of_measurement'], {
 							is: (type, unit_of_measurement) =>
 								type === productTypes.WET &&
 								unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
-							then: Yup.number().required(),
-							otherwise: Yup.number().notRequired(),
+							then: Yup.number().integer().min(0).max(100).required(),
+							otherwise: Yup.number().notRequired().nullable(),
 						})
-						.nullable()
 						.label('Allowable Spoilage'),
 					cost_per_piece: Yup.number()
 						.required()
@@ -174,106 +251,34 @@ export const CreateEditProductForm = ({
 		[product],
 	);
 
-	const type = [
-		{
-			id: productTypes.WET,
-			label: 'Wet',
-			value: productTypes.WET,
-		},
-		{
-			id: productTypes.DRY,
-			label: 'Dry',
-			value: productTypes.DRY,
-		},
-	];
-
-	const unitOfMeasurement = [
-		{
-			id: unitOfMeasurementTypes.WEIGHING,
-			label: 'Weighing',
-			value: unitOfMeasurementTypes.WEIGHING,
-		},
-		{
-			id: unitOfMeasurementTypes.NON_WEIGHING,
-			label: 'Non-Weighing',
-			value: unitOfMeasurementTypes.NON_WEIGHING,
-		},
-	];
-
-	const isVatExemptedTypes = [
-		{
-			id: 'vat',
-			label: 'VAT',
-			value: 'false',
-		},
-		{
-			id: 'vae',
-			label: 'VAT-EXEMPT',
-			value: 'true',
-		},
-	];
-
-	const checkingTypes = [
-		{
-			id: productCheckingTypes.DAILY,
-			label: 'Daily',
-			value: productCheckingTypes.DAILY,
-		},
-		{
-			id: productCheckingTypes.RANDOM,
-			label: 'Random',
-			value: productCheckingTypes.RANDOM,
-		},
-	];
-
-	const productCategories = [
-		{
-			id: productCategoryTypes.NONE,
-			label: 'None',
-			value: productCategoryTypes.NONE,
-		},
-		{
-			id: productCategoryTypes.ASSORTED,
-			label: 'Assorted',
-			value: productCategoryTypes.ASSORTED,
-		},
-		{
-			id: productCategoryTypes.BABOY,
-			label: 'Baboy',
-			value: productCategoryTypes.BABOY,
-		},
-		{
-			id: productCategoryTypes.MANOK,
-			label: 'Manok',
-			value: productCategoryTypes.MANOK,
-		},
-		{
-			id: productCategoryTypes.GULAY,
-			label: 'Gulay',
-			value: productCategoryTypes.GULAY,
-		},
-	];
-
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (formData: ICreateProduct) => {
+			onSubmit={async (formData: ICreateProduct, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit({
-					...formData,
-					id: product?.id,
-					is_daily_checked: formData.checking === productCheckingTypes.DAILY,
-					is_randomly_checked:
-						formData.checking === productCheckingTypes.RANDOM,
-					product_category:
-						formData.product_category !== productCategoryTypes.NONE
-							? formData.product_category
-							: null,
-				});
+				onSubmit(
+					{
+						...formData,
+						id: product?.id,
+						is_daily_checked: formData.checking === productCheckingTypes.DAILY,
+						is_randomly_checked:
+							formData.checking === productCheckingTypes.RANDOM,
+						product_category:
+							formData.product_category !== productCategoryTypes.NONE
+								? formData.product_category
+								: null,
+						allowable_spoilage:
+							formData.type === productTypes.WET &&
+							formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+								? formData.allowable_spoilage
+								: null,
+					},
+					resetForm,
+				);
 			}}
 			enableReinitialize
 		>
@@ -425,6 +430,12 @@ export const CreateEditProductForm = ({
 							{errors.allowable_spoilage && touched.allowable_spoilage ? (
 								<FieldError error={errors.allowable_spoilage} />
 							) : null}
+							{!(
+								values?.type === productTypes.WET &&
+								values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+							) && (
+								<FieldWarning error="Allowable Spoilage won't be included when submited" />
+							)}
 						</Col>
 
 						<Divider dashed>

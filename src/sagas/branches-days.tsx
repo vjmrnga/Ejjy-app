@@ -55,7 +55,7 @@ function* list({ payload }: any) {
 		callback({
 			status: request.SUCCESS,
 			warnings: isFetchedFromBackupURL
-				? ['Data was fetched from a backup server.']
+				? ['Data Source: Backup Server, data might be outdated.']
 				: [],
 			data: response.data,
 		});
@@ -116,7 +116,7 @@ function* getBranchDay({ payload }: any) {
 		callback({
 			status: request.SUCCESS,
 			warnings: isFetchedFromBackupURL
-				? ['Data was fetched from a backup server.']
+				? ['Data Source: Backup Server, data might be outdated.']
 				: [],
 		});
 	} catch (e) {

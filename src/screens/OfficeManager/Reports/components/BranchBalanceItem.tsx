@@ -1,13 +1,18 @@
 import { Col, DatePicker, Radio, Row, Select, Space, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
 import { Label } from 'components/elements';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
+import debounce from 'lodash/debounce';
 import React, { useEffect, useRef, useState } from 'react';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
-import { getBranchProductStatus } from '../../../../utils/function';
-import debounce from 'lodash/debounce';
 import { useProducts } from '../../../../hooks/useProducts';
+import {
+	convertIntoArray,
+	getBranchProductStatus,
+} from '../../../../utils/function';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -111,6 +116,8 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 		currentPage,
 		getBranchProductsWithAnalytics,
 		status: branchProductsStatus,
+		errors,
+		warnings,
 	} = useBranchProducts();
 	const { products, getProducts, status: productsStatus } = useProducts();
 
@@ -234,6 +241,16 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 
 	return (
 		<div className="BranchBalanceItem">
+			<RequestErrors
+				errors={convertIntoArray(errors, 'Branch Product')}
+				withSpaceBottom
+			/>
+
+			<RequestWarnings
+				warnings={convertIntoArray(warnings, 'Branch Product')}
+				withSpaceBottom
+			/>
+
 			<Row gutter={[15, 15]}>
 				<Col lg={12} span={24}>
 					<Label label="Product Name" spacing />

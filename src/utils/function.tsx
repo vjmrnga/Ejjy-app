@@ -129,6 +129,17 @@ export const modifiedExtraCallback =
 		}
 	};
 
+export const convertIntoArray = (errors, prefixMessage = null) => {
+	const prefix = prefixMessage ? `${prefixMessage}: ` : '';
+	if (isString(errors)) {
+		return [prefix + errors];
+	} else if (isArray(errors)) {
+		return errors.map((error) => prefix + error);
+	}
+
+	return [];
+};
+
 export const showErrorMessages = (errors) => {
 	if (isString(errors)) {
 		message.error(errors);
