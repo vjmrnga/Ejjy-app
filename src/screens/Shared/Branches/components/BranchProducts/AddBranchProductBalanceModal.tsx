@@ -7,6 +7,8 @@ import { request } from '../../../../../global/types';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import '../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
+import { useUsers } from '../../../../OfficeManager/hooks/useUsers';
+import { useAuth } from '../../../../../hooks/useAuth';
 
 interface Props {
 	branch: any;
@@ -24,6 +26,7 @@ export const AddBranchProductBalanceModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		editBranchProductBalance,
 		status: branchProductStatus,
@@ -38,6 +41,7 @@ export const AddBranchProductBalanceModal = ({
 				branchId: branch?.id,
 				addedBalance: value.balance,
 				productId: branchProduct.id,
+				updatingUserId: user.id,
 			},
 			({ status, data }) => {
 				if (status === request.SUCCESS) {

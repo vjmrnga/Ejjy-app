@@ -41,8 +41,11 @@ export const service = {
 	listExtended: async (params: IGetRequisitionSlip, baseURL) =>
 		axios.get('/requisition-slips/extended/', { baseURL, params }),
 
-	getById: async (id, baseURL) =>
-		axios.get(`/requisition-slips/${id}/extended/`, { baseURL }),
+	getById: async (id, requestingUserType, baseURL) =>
+		axios.get(
+			`/requisition-slips/${id}/extended/?requesting_user_type=${requestingUserType}`,
+			{ baseURL },
+		),
 
 	getByIdAndBranch: async (
 		params: IGetRequestRequisitionSlipBranchId,

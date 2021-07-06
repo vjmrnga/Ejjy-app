@@ -63,7 +63,7 @@ export const TableHeader = ({
 						<Select
 							classNames="status-select"
 							options={statuses}
-							placeholder="status"
+							placeholder="Status"
 							onChange={onStatusSelect}
 						/>
 					)}

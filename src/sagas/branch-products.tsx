@@ -202,7 +202,8 @@ function* edit({ payload }: any) {
 }
 
 function* editBalance({ payload }: any) {
-	const { callback, branchId, productId, addedBalance } = payload;
+	const { callback, branchId, productId, updatingUserId, addedBalance } =
+		payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -219,6 +220,7 @@ function* editBalance({ payload }: any) {
 				product_id: productId,
 				added_balance: addedBalance,
 				destination_branch_id: branchId,
+				updating_user_id: updatingUserId,
 			},
 			baseURL,
 		);

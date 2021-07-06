@@ -58,7 +58,7 @@ const columns: ColumnsType = [
 		sorter: true,
 	},
 	{
-		title: 'Daily Average Sold Percentage',
+		title: 'Average Quantity Sold Percentage',
 		dataIndex: 'daily_average_sold_percentage',
 		key: 'daily_average_sold_percentage',
 		align: 'center',

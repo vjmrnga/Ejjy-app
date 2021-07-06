@@ -1,23 +1,24 @@
 /* eslint-disable no-underscore-dangle */
-import { Pagination } from 'antd';
+import { Table } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Container, Table, TableHeader } from '../../../components';
+import { Container, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { EMPTY_CELL } from '../../../global/constants';
-import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
+import {
+	pageSizeOptions,
+	requisitionSlipActionsOptionsWithAll,
+} from '../../../global/options';
 import {
 	request,
 	requisitionSlipActions,
 	userTypes,
 } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
-	calculateTableHeight,
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
@@ -39,8 +40,6 @@ const pendingRequisitionSlipActions = [
 	requisitionSlipActions.F_DS1_DELIVERING,
 ];
 
-const PAGE_SIZE = 10;
-
 const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
@@ -48,11 +47,12 @@ const RequisitionSlips = () => {
 	const [createModalVisible, setCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
-	const user = useSelector(authSelectors.selectUser());
+	const { user } = useAuth();
 	const {
 		requisitionSlips,
 		pageCount,
 		currentPage,
+		pageSize,
 		getRequisitionSlipsExtended,
 		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
@@ -64,16 +64,13 @@ const RequisitionSlips = () => {
 
 	// METHODS
 	useEffect(() => {
-		getRequisitionSlipsExtended(
-			{
-				branchId: user?.branch?.id,
-				status: selectedStatus === 'all' ? null : selectedStatus,
-				page: 1,
-			},
-			true,
-		);
+		onFetchRequisitionSlips(1, pageSize, true);
 		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
 	}, []);
+
+	useEffect(() => {
+		onFetchRequisitionSlips(1, pageSize, true);
+	}, [selectedStatus]);
 
 	// Effect: Format requisitionSlips to be rendered in Table
 	useEffect(() => {
@@ -125,27 +122,25 @@ const RequisitionSlips = () => {
 		[requisitionSlips],
 	);
 
-	const onCreateRequisitionSlipSuccess = () => {
-		getRequisitionSlipsExtended(
-			{
-				branchId: user?.branch?.id,
-				status: selectedStatus === 'all' ? null : selectedStatus,
-				page: 1,
-			},
-			true,
-		);
-		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
-	};
-
-	const onPageChange = (page) => {
+	const onFetchRequisitionSlips = (page, newPageSize, shouldReset) => {
 		getRequisitionSlipsExtended(
 			{
 				branchId: user?.branch?.id,
 				status: selectedStatus === 'all' ? null : selectedStatus,
 				page,
+				pageSize: newPageSize,
 			},
-			true,
+			shouldReset,
 		);
+	};
+
+	const onCreateRequisitionSlipSuccess = () => {
+		onFetchRequisitionSlips(1, pageSize, true);
+		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
+	};
+
+	const onPageChange = (page, newPageSize) => {
+		onFetchRequisitionSlips(page, newPageSize, newPageSize !== pageSize);
 	};
 
 	return (
@@ -163,19 +158,18 @@ const RequisitionSlips = () => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+						pagination={{
+							current: currentPage,
+							total: pageCount,
+							pageSize,
+							onChange: onPageChange,
+							disabled: !data,
+							position: ['bottomCenter'],
+							pageSizeOptions,
+						}}
 						loading={[requisitionSlipsStatus, branchProductsStatus].includes(
 							request.REQUESTING,
 						)}
-					/>
-
-					<Pagination
-						className="table-pagination"
-						current={currentPage}
-						total={pageCount}
-						pageSize={PAGE_SIZE}
-						onChange={onPageChange}
-						disabled={!data}
 					/>
 
 					<CreateRequisitionSlipModal

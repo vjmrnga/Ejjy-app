@@ -89,7 +89,7 @@ function* getByIdAndBranch({ payload }: any) {
 }
 
 function* getById({ payload }: any) {
-	const { id, callback } = payload;
+	const { id, requestingUserType, callback } = payload;
 	yield put(
 		actions.save({
 			type: types.GET_REQUISITION_SLIP_BY_ID,
@@ -105,6 +105,7 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
+			requestingUserType,
 			ONLINE_API_URL,
 		);
 

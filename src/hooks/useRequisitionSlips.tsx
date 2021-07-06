@@ -61,7 +61,7 @@ export const useRequisitionSlips = () => {
 		actions.getRequisitionSlipsExtended,
 	);
 
-	const getRequisitionSlipsById = useActionDispatch(
+	const getRequisitionSlipsByIdAction = useActionDispatch(
 		actions.getRequisitionSlipById,
 	);
 	const getRequisitionSlipsByIdAndBranch = useActionDispatch(
@@ -157,10 +157,10 @@ export const useRequisitionSlips = () => {
 		});
 	};
 
-	const getRequisitionSlipsByIdRequest = (id, extraCallback = null) => {
+	const getRequisitionSlipsById = (data, extraCallback = null) => {
 		setRecentRequest(types.GET_REQUISITION_SLIP_BY_ID);
-		getRequisitionSlipsById({
-			id,
+		getRequisitionSlipsByIdAction({
+			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
@@ -241,13 +241,14 @@ export const useRequisitionSlips = () => {
 		requisitionSlips: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,
 
 		getRequisitionSlips,
 		getRequisitionSlipsExtended,
-		getRequisitionSlipsById: getRequisitionSlipsByIdRequest,
+		getRequisitionSlipsById,
 		getRequisitionSlipsByIdAndBranch: getRequisitionSlipsByIdAndBranchRequest,
 		createRequisitionSlip: createRequisitionSlipRequest,
 		editRequisitionSlip: editRequisitionSlipRequest,

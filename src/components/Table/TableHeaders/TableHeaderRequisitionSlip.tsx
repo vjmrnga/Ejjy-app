@@ -59,7 +59,7 @@ export const TableHeaderRequisitionSlip = ({
 						<Select
 							classNames="status-select"
 							options={statuses}
-							placeholder="status"
+							placeholder="Status"
 							onChange={onStatusSelect}
 						/>
 					)}
@@ -68,7 +68,7 @@ export const TableHeaderRequisitionSlip = ({
 						<Select
 							classNames="branch-select"
 							options={branches}
-							placeholder="branches"
+							placeholder="Branches"
 							onChange={onBranchSelect}
 						/>
 					)}

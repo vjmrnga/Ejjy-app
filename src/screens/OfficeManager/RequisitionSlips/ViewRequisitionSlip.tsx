@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Container } from '../../../components';
 import { selectors } from '../../../ducks/requisition-slips';
 import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import { OrderSlips } from './components/OrderSlips/OrderSlips';
 import { RequestedProducts } from './components/RequestedProducts';
@@ -14,10 +15,12 @@ interface Props {
 }
 
 const ViewRequisitionSlip = ({ match }: Props) => {
-	// Routing
+	// VARIABLES
 	const requisitionSlipId = match?.params?.id;
-	const history = useHistory();
 
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const { user } = useAuth();
 	const {
 		getRequisitionSlipsById,
 		removeRequisitionSlipByBranch,
@@ -29,12 +32,6 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 	useEffect(() => {
 		fetchRequisitionSlip();
 	}, [requisitionSlipId]);
-
-	const requisitionSlipDoesNotExistCallback = ({ status }) => {
-		if (status === request.ERROR) {
-			history.replace('/404');
-		}
-	};
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -48,8 +45,12 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 		if (requisitionSlipId) {
 			removeRequisitionSlipByBranch();
 			getRequisitionSlipsById(
-				requisitionSlipId,
-				requisitionSlipDoesNotExistCallback,
+				{ id: requisitionSlipId, requestingUserType: user.user_type },
+				({ status }) => {
+					if (status === request.ERROR) {
+						history.replace('/404');
+					}
+				},
 			);
 		}
 	};

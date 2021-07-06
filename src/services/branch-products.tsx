@@ -20,6 +20,7 @@ interface IEditBranchProductBalance {
 	product_id: number;
 	added_balance: number;
 	destination_branch_id: number;
+	updating_user_id: number;
 }
 
 interface IEditBranchProductPriceCost {

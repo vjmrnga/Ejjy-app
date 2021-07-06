@@ -1,6 +1,10 @@
 import os
 
 if __name__ == '__main__':
+  print('Setting gcloud project...')
+  os.system('gcloud config set project ejjy-311409')
+  print('DONE\n')
+
   print('1. Installing dependencies...')
   os.system('npm install')
   print('DONE\n')
