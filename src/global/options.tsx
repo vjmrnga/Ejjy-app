@@ -2,8 +2,8 @@ import { upperFirst } from 'lodash';
 import {
 	deliveryReceiptProductStatus,
 	preparationSlipStatus,
-	requisitionSlipActions,
 	quantityTypes,
+	requisitionSlipActions,
 } from './types';
 
 export const pageSizeOptions = ['10', '20', '50'];
@@ -105,5 +105,18 @@ export const deliveryReceiptProductOptions = [
 	{
 		name: upperFirst(deliveryReceiptProductStatus.INVESTIGATION),
 		value: deliveryReceiptProductStatus.INVESTIGATION,
+	},
+];
+
+export const booleanOptions = [
+	{
+		id: 'no',
+		label: 'No',
+		value: false,
+	},
+	{
+		id: 'yes',
+		label: 'Yes',
+		value: true,
 	},
 ];

@@ -52,7 +52,11 @@ export const AddBranchProductBalanceForm = ({
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col span={24}>
-							<FormInputLabel type="number" id="balance" label="Balance" />
+							<FormInputLabel
+								type="number"
+								id="balance"
+								label="Qty Delivered"
+							/>
 							{errors.balance && touched.balance ? (
 								<FieldError error={errors.balance} />
 							) : null}

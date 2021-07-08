@@ -1,6 +1,7 @@
 import { message, Modal } from 'antd';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import React from 'react';
-import { FieldError } from '../../../../components/elements';
+import { convertIntoArray } from 'utils/function';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';
 import '../style.scss';
@@ -74,10 +75,7 @@ export const CreateEditProductModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
-
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 			<CreateEditProductForm
 				product={product}
 				onSubmit={product ? onEditProduct : onCreateProduct}

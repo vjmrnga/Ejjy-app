@@ -1,5 +1,6 @@
-import { Col, Divider } from 'antd';
+import { Col, Divider, Typography } from 'antd';
 import { Form, Formik } from 'formik';
+import { booleanOptions } from 'global/options';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
@@ -12,30 +13,31 @@ import {
 } from '../../../../../components/elements';
 import {
 	productCheckingTypes,
-	productTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
+import { formatMoneyField, sleep } from '../../../../../utils/function';
 
-interface IEditBranchProduct {
-	id?: number;
-	branch_id?: number;
-	product_id?: number;
-	reorder_point?: number;
-	max_balance?: number;
-	price_per_piece?: number;
-	price_per_bulk?: number;
-	current_balance?: number;
-	checking?: string;
-	is_daily_checked?: boolean;
-	is_randomly_checked?: boolean;
-}
+const { Text } = Typography;
+
+const checkingTypesOptions = [
+	{
+		id: productCheckingTypes.DAILY,
+		label: 'Daily',
+		value: productCheckingTypes.DAILY,
+	},
+	{
+		id: productCheckingTypes.RANDOM,
+		label: 'Random',
+		value: productCheckingTypes.RANDOM,
+	},
+];
 
 interface Props {
 	branchProduct: any;
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
+	isCurrentBalanceVisible: boolean;
 }
 
 export const EditBranchProductsForm = ({
@@ -43,13 +45,13 @@ export const EditBranchProductsForm = ({
 	onSubmit,
 	onClose,
 	loading,
+	isCurrentBalanceVisible,
 }: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				product_id: branchProduct?.product_id,
 				checking: branchProduct?.is_daily_checked
 					? productCheckingTypes.DAILY
 					: productCheckingTypes.RANDOM,
@@ -64,10 +66,8 @@ export const EditBranchProductsForm = ({
 				discounted_price_per_bulk1: branchProduct?.discounted_price_per_bulk1,
 				discounted_price_per_bulk2: branchProduct?.discounted_price_per_bulk2,
 				current_balance: branchProduct?.current_balance,
-				allowable_spoilage: branchProduct?.allowable_spoilage * 100,
-				is_shown_in_scale_list: branchProduct?.is_shown_in_scale_list
-					? 'true'
-					: 'false',
+				is_shown_in_scale_list: branchProduct.is_shown_in_scale_list,
+				is_sold_in_branch: branchProduct.is_sold_in_branch,
 			},
 			Schema: Yup.object().shape({
 				checking: Yup.string().required().label('Checking'),
@@ -103,95 +103,75 @@ export const EditBranchProductsForm = ({
 					.min(0)
 					.label('Discounted Price per Bulk 2'),
 				current_balance: Yup.number().nullable().min(0).max(65535),
-				allowable_spoilage: Yup.number()
-					.integer()
-					.min(0)
-					.max(99)
-					.when(['type', 'unit_of_measurement'], {
-						is: (type, unit_of_measurement) =>
-							type === productTypes.WET &&
-							unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
-						then: Yup.number().required(),
-						otherwise: Yup.number().notRequired(),
-					})
-					.label('Allowable Spoilage'),
 			}),
 		}),
 		[branchProduct],
 	);
 
-	const checkingTypesOptions = [
-		{
-			id: productCheckingTypes.DAILY,
-			label: 'Daily',
-			value: productCheckingTypes.DAILY,
-		},
-		{
-			id: productCheckingTypes.RANDOM,
-			label: 'Random',
-			value: productCheckingTypes.RANDOM,
-		},
-	];
-
-	const isShownInScaleListOptions = [
-		{
-			id: 'no',
-			label: 'No',
-			value: 'false',
-		},
-		{
-			id: 'yes',
-			label: 'Yes',
-			value: 'true',
-		},
-	];
-
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (formData: IEditBranchProduct) => {
+			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit({
-					...formData,
-					id: branchProduct?.id,
-					is_daily_checked: formData.checking === productCheckingTypes.DAILY,
-					is_randomly_checked:
-						formData.checking === productCheckingTypes.RANDOM,
-				});
+				let data = branchProduct;
+				if (formData.is_sold_in_branch) {
+					data = {
+						...formData,
+						id: branchProduct?.id,
+						is_daily_checked: formData.checking === productCheckingTypes.DAILY,
+						is_randomly_checked:
+							formData.checking === productCheckingTypes.RANDOM,
+					};
+				}
+
+				onSubmit(
+					{
+						...data,
+						id: branchProduct?.id,
+						is_sold_in_branch: formData.is_sold_in_branch,
+					},
+					resetForm,
+				);
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ values, errors, touched, setFieldValue }) => (
 				<Form className="form">
 					<DetailsRow>
 						<DetailsSingle
 							label="Barcode"
-							value={
-								branchProduct?.product?.barcode ||
-								branchProduct?.product?.textcode
-							}
+							value={branchProduct?.product?.barcode}
 						/>
-						<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 
-						<Divider dashed />
+						<DetailsSingle
+							label="Textcode"
+							value={branchProduct?.product?.textcode}
+						/>
+
+						<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 
 						<Col sm={12} xs={24}>
 							<Label label="Checking" spacing />
-							<FormRadioButton name="checking" items={checkingTypesOptions} />
+							<FormRadioButton
+								id="checking"
+								items={checkingTypesOptions}
+								disabled={!values.is_sold_in_branch}
+							/>
 							{errors.checking && touched.checking ? (
 								<FieldError error={errors.checking} />
 							) : null}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Is Shown in Scale List?" spacing />
+							<Label label="Include In Scale" spacing />
 							<FormRadioButton
-								name="is_shown_in_scale_list"
-								items={isShownInScaleListOptions}
+								id="is_shown_in_scale_list"
+								items={booleanOptions}
+								disabled={!values.is_sold_in_branch}
 							/>
 							{errors.is_shown_in_scale_list &&
 							touched.is_shown_in_scale_list ? (
@@ -200,11 +180,22 @@ export const EditBranchProductsForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
+							<Label label="In Stock" spacing />
+							<FormRadioButton id="is_sold_in_branch" items={booleanOptions} />
+							{errors.is_sold_in_branch && touched.is_sold_in_branch ? (
+								<FieldError error={errors.is_sold_in_branch} />
+							) : null}
+						</Col>
+
+						<Divider dashed>QUANTITY</Divider>
+
+						<Col sm={12} xs={24}>
 							<FormInputLabel
 								min={0}
 								type="number"
 								id="reorder_point"
 								label="Reorder Point"
+								disabled={!values.is_sold_in_branch}
 							/>
 							{errors.reorder_point && touched.reorder_point ? (
 								<FieldError error={errors.reorder_point} />
@@ -213,78 +204,94 @@ export const EditBranchProductsForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="max_balance"
 								label="Max Balance"
+								disabled={!values.is_sold_in_branch}
 							/>
 							{errors.max_balance && touched.max_balance ? (
 								<FieldError error={errors.max_balance} />
 							) : null}
 						</Col>
 
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								min={0}
-								type="number"
-								id="allowable_spoilage"
-								label="Allowable Spoilage"
-								disabled={
-									!(
-										values?.type === productTypes.WET &&
-										values?.unit_of_measurement ===
-											unitOfMeasurementTypes.WEIGHING
-									)
-								}
-							/>
-							{errors.allowable_spoilage && touched.allowable_spoilage ? (
-								<FieldError error={errors.allowable_spoilage} />
-							) : null}
-						</Col>
+						{isCurrentBalanceVisible && (
+							<Col sm={12} xs={24}>
+								<FormInputLabel
+									type="number"
+									id="current_balance"
+									label="Current Balance"
+									step={
+										branchProduct.product.unit_of_measurement ===
+										unitOfMeasurementTypes.WEIGHING
+											? '.001'
+											: null
+									}
+									disabled={!values.is_sold_in_branch}
+								/>
+								{errors.current_balance && touched.current_balance ? (
+									<FieldError error={errors.current_balance} />
+								) : null}
+							</Col>
+						)}
 
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								min={0}
-								type="number"
-								id="current_balance"
-								label="Current Balance"
-							/>
-							{errors.current_balance && touched.current_balance ? (
-								<FieldError error={errors.current_balance} />
-							) : null}
-						</Col>
+						<Divider dashed>
+							MONEY
+							<br />
+							<Text mark>(must be in 2 decimal places)</Text>
+						</Divider>
 
-						<Divider />
-
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="price_per_piece"
 								label="Price (Piece)"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'price_per_piece')
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
 							) : null}
 						</Col>
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="discounted_price_per_piece1"
 								label="Discounted Price per Piece 1"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(
+										event,
+										setFieldValue,
+										'discounted_price_per_piece1',
+									)
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.discounted_price_per_piece1 &&
 							touched.discounted_price_per_piece1 ? (
 								<FieldError error={errors.discounted_price_per_piece1} />
 							) : null}
 						</Col>
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="discounted_price_per_piece2"
 								label="Discounted Price per Piece 2"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(
+										event,
+										setFieldValue,
+										'discounted_price_per_piece2',
+									)
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.discounted_price_per_piece2 &&
 							touched.discounted_price_per_piece2 ? (
@@ -292,35 +299,58 @@ export const EditBranchProductsForm = ({
 							) : null}
 						</Col>
 
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="price_per_bulk"
 								label="Price (Bulk)"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'price_per_bulk')
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />
 							) : null}
 						</Col>
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="discounted_price_per_bulk1"
 								label="Discounted Price per Bulk 1"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(
+										event,
+										setFieldValue,
+										'discounted_price_per_bulk1',
+									)
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.discounted_price_per_bulk1 &&
 							touched.discounted_price_per_bulk1 ? (
 								<FieldError error={errors.discounted_price_per_bulk1} />
 							) : null}
 						</Col>
-						<Col sm={8} xs={24}>
+						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
 								type="number"
 								id="discounted_price_per_bulk2"
 								label="Discounted Price per Bulk 2"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(
+										event,
+										setFieldValue,
+										'discounted_price_per_bulk2',
+									)
+								}
+								disabled={!values.is_sold_in_branch}
+								withPesoSign
 							/>
 							{errors.discounted_price_per_bulk2 &&
 							touched.discounted_price_per_bulk2 ? (

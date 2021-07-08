@@ -8,13 +8,15 @@ interface Props extends IInputProps {
 
 const FormInputLabel = ({
 	id,
-	label: inputLabel,
 	type,
+	label: inputLabel,
+	placeholder,
 	max,
 	min,
 	step,
-	placeholder,
 	disabled,
+	withPesoSign,
+	onBlur,
 }: Props) => (
 	<>
 		<Label id={id} label={inputLabel} spacing />
@@ -25,7 +27,9 @@ const FormInputLabel = ({
 			min={min}
 			step={step}
 			placeholder={placeholder}
+			onBlur={onBlur}
 			disabled={disabled}
+			withPesoSign={withPesoSign}
 		/>
 	</>
 );

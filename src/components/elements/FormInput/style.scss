@@ -1,11 +1,25 @@
 @import '../../../assets/styles/main';
 
 .FormInput {
-	@include font(1rem);
-	width: 100%;
-	padding: 8px 12px;
-	color: $color-dark;
-	border: 1px solid $color-gray;
-	border-radius: $border-radius;
-	display: block;
+	@include flex(flex-start, center);
+
+	&_input {
+		@include font(1rem);
+		width: 100%;
+		padding: 8px 12px;
+		color: $color-dark;
+		border: 1px solid $color-gray;
+		border-radius: $border-radius;
+		display: block;
+
+		&__withPesoSign {
+			padding-left: 40px;
+		}
+	}
+
+	&_pesoSign {
+		width: 20px;
+		position: absolute;
+		left: 20px;
+	}
 }

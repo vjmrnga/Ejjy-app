@@ -1,12 +1,14 @@
 import { Divider, Modal } from 'antd';
-import React from 'react';
+import { SHOW_HIDE_SHORTCUT } from 'global/constants';
+import React, { useEffect, useState } from 'react';
+import { DetailsRow, DetailsSingle } from '../../../../../components';
+import { Button, Label } from '../../../../../components/elements';
+import { unitOfMeasurementTypes } from '../../../../../global/types';
 import {
-	DetailsHalf,
-	DetailsRow,
-	DetailsSingle,
-} from '../../../../../components';
-import { Button } from '../../../../../components/elements';
-import { numberWithCommas } from '../../../../../utils/function';
+	confirmPassword,
+	getKeyDownCombination,
+	numberWithCommas,
+} from '../../../../../utils/function';
 
 interface Props {
 	visible: boolean;
@@ -20,88 +22,140 @@ export const ViewBranchProductModal = ({
 	branchName,
 	visible,
 	onClose,
-}: Props) => (
-	<Modal
-		className="ViewBranchProductModal modal-large"
-		title={`[VIEW] Product Details (${branchName})`}
-		visible={visible}
-		footer={[<Button text="Close" onClick={onClose} />]}
-		onCancel={onClose}
-		centered
-		closable
-	>
-		<DetailsRow>
-			<DetailsSingle
-				label="Barcode"
-				value={
-					branchProduct?.product?.barcode || branchProduct?.product?.textcode
-				}
-			/>
-			<DetailsSingle label="Name" value={branchProduct?.product?.name} />
+}: Props) => {
+	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
-			<Divider dashed />
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
 
-			<DetailsHalf
-				label="Checking"
-				value={branchProduct?.is_daily_checked ? 'Daily' : 'Random'}
-			/>
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
 
-			<DetailsHalf
-				label="Is Shown in Scale List?"
-				value={branchProduct?.is_shown_in_scale_list ? 'VAT-EXEMPTED' : 'VAT'}
-			/>
+	const handleKeyDown = (event) => {
+		const key = getKeyDownCombination(event);
 
-			<DetailsHalf label="Reorder Point" value={branchProduct?.reorder_point} />
-			<DetailsHalf label="Max Balance" value={branchProduct?.max_balance} />
+		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+			event.preventDefault();
+			if (isCurrentBalanceVisible) {
+				setIsCurrentBalanceVisible(false);
+			} else {
+				confirmPassword({
+					onSuccess: () => setIsCurrentBalanceVisible(true),
+				});
+			}
+		}
+	};
 
-			<DetailsHalf
-				label="Allowable Spoilage (%)"
-				value={branchProduct?.allowable_spoilage * 100}
-			/>
-			<DetailsHalf
-				label="Current Balance"
-				value={branchProduct?.current_balance}
-			/>
+	const handleClose = () => {
+		setIsCurrentBalanceVisible(false);
+		onClose();
+	};
 
-			<Divider />
+	return (
+		<Modal
+			className="ViewBranchProductModal modal-large"
+			title={`[VIEW] Product Details (${branchName})`}
+			visible={visible}
+			footer={[<Button text="Close" onClick={handleClose} />]}
+			onCancel={handleClose}
+			centered
+			closable
+		>
+			<DetailsRow>
+				<DetailsSingle
+					label="Barcode"
+					value={
+						branchProduct?.product?.barcode || branchProduct?.product?.textcode
+					}
+				/>
+				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 
-			<DetailsSingle
-				label="Price (Piece)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.price_per_piece).toFixed(2),
-				)}`}
-			/>
-			<DetailsSingle
-				label="Discounted Price 1 (Piece)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.discounted_price_per_piece1).toFixed(2),
-				)}`}
-			/>
-			<DetailsSingle
-				label="Discounted Price 2 (Piece)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.discounted_price_per_piece2).toFixed(2),
-				)}`}
-			/>
+				<DetailsSingle
+					label="Checking"
+					value={branchProduct?.is_daily_checked ? 'Daily' : 'Random'}
+				/>
 
-			<DetailsSingle
-				label="Price (Bulk)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.price_per_bulk).toFixed(2),
-				)}`}
-			/>
-			<DetailsSingle
-				label="Discounted Price 1 (Bulk)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.discounted_price_per_bulk1).toFixed(2),
-				)}`}
-			/>
-			<DetailsSingle
-				label="Discounted Price 2 (Bulk)"
-				value={`₱${numberWithCommas(
-					Number(branchProduct?.discounted_price_per_bulk2).toFixed(2),
-				)}`}
-			/>
-		</DetailsRow>
-	</Modal>
-);
+				<DetailsSingle
+					label="Include In Scale"
+					value={branchProduct?.is_shown_In_scale_list ? 'Yes' : 'No'}
+				/>
+
+				<DetailsSingle
+					label="In Stock"
+					value={branchProduct?.is_sold_in_branch ? 'Yes' : 'No'}
+				/>
+
+				<Divider dashed>
+					<Label label="Quantity" />
+				</Divider>
+
+				<DetailsSingle
+					label="Reorder Point"
+					value={branchProduct?.reorder_point}
+				/>
+				<DetailsSingle label="Max Balance" value={branchProduct?.max_balance} />
+
+				<DetailsSingle
+					label="Allowable Spoilage (%)"
+					value={branchProduct?.allowable_spoilage * 100}
+				/>
+
+				{isCurrentBalanceVisible && (
+					<DetailsSingle
+						label="Current Balance"
+						value={
+							branchProduct?.product?.unit_of_measurement ===
+							unitOfMeasurementTypes.WEIGHING
+								? Number(branchProduct?.current_balance).toFixed(3)
+								: branchProduct?.current_balance
+						}
+					/>
+				)}
+
+				<Divider dashed>
+					<Label label="MONEY" />
+				</Divider>
+
+				<DetailsSingle
+					label="Price (Piece)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.price_per_piece).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 1 (Piece)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_piece1).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 2 (Piece)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_piece2).toFixed(2),
+					)}`}
+				/>
+
+				<DetailsSingle
+					label="Price (Bulk)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.price_per_bulk).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 1 (Bulk)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_bulk1).toFixed(2),
+					)}`}
+				/>
+				<DetailsSingle
+					label="Discounted Price 2 (Bulk)"
+					value={`₱${numberWithCommas(
+						Number(branchProduct?.discounted_price_per_bulk2).toFixed(2),
+					)}`}
+				/>
+			</DetailsRow>
+		</Modal>
+	);
+};

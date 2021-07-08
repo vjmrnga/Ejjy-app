@@ -10,14 +10,13 @@ import {
 	FormTextareaLabel,
 	Label,
 } from '../../../../components/elements';
+import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
 import {
 	productCategoryTypes,
-	productCheckingTypes,
 	productTypes,
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
-import { sleep } from '../../../../utils/function';
-import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
+import { formatMoneyField, sleep } from '../../../../utils/function';
 
 const { Text } = Typography;
 
@@ -57,19 +56,6 @@ const isVatExemptedTypes = [
 		id: 'vae',
 		label: 'VAT-EXEMPT',
 		value: 'true',
-	},
-];
-
-const checkingTypes = [
-	{
-		id: productCheckingTypes.DAILY,
-		label: 'Daily',
-		value: productCheckingTypes.DAILY,
-	},
-	{
-		id: productCheckingTypes.RANDOM,
-		label: 'Random',
-		value: productCheckingTypes.RANDOM,
 	},
 ];
 
@@ -119,9 +105,6 @@ interface ICreateProduct {
 	price_per_piece: number;
 	price_per_bulk: number;
 	is_vat_exempted: boolean;
-	is_daily_checked?: boolean;
-	is_randomly_checked?: boolean;
-	checking?: string;
 }
 
 interface Props {
@@ -148,9 +131,6 @@ export const CreateEditProductForm = ({
 				type: product?.type || productTypes.WET,
 				unit_of_measurement:
 					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
-				checking: product?.is_daily_checked
-					? productCheckingTypes.DAILY
-					: productCheckingTypes.RANDOM,
 				print_details: product?.name || '',
 				description: product?.name || '',
 				allowable_spoilage: product?.allowable_spoilage * 100 || '',
@@ -167,7 +147,6 @@ export const CreateEditProductForm = ({
 			},
 			Schema: Yup.object().shape(
 				{
-					checking: Yup.string().required().label('Checking'),
 					// barcode: Yup.string()
 					// 	.max(50, 'Barcode/Textcode must be at most 50 characters')
 					// 	.test(
@@ -264,9 +243,6 @@ export const CreateEditProductForm = ({
 					{
 						...formData,
 						id: product?.id,
-						is_daily_checked: formData.checking === productCheckingTypes.DAILY,
-						is_randomly_checked:
-							formData.checking === productCheckingTypes.RANDOM,
 						product_category:
 							formData.product_category !== productCategoryTypes.NONE
 								? formData.product_category
@@ -282,7 +258,7 @@ export const CreateEditProductForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ values, errors, touched, setFieldValue }) => (
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col sm={12} xs={24}>
@@ -326,7 +302,7 @@ export const CreateEditProductForm = ({
 						<Col span={24}>
 							<Label label="Product Category" spacing />
 							<FormRadioButton
-								name="product_category"
+								id="product_category"
 								items={productCategories}
 							/>
 							{errors.product_category && touched.product_category ? (
@@ -334,19 +310,11 @@ export const CreateEditProductForm = ({
 							) : null}
 						</Col>
 
-						<Col span={24}>
-							<Label label="Checking" spacing />
-							<FormRadioButton name="checking" items={checkingTypes} />
-							{errors.checking && touched.checking ? (
-								<FieldError error={errors.checking} />
-							) : null}
-						</Col>
-
 						<Divider dashed>TAGS</Divider>
 
 						<Col sm={12} xs={24}>
 							<Label label="TT-001" spacing />
-							<FormRadioButton name="type" items={type} />
+							<FormRadioButton id="type" items={type} />
 							{errors.type && touched.type ? (
 								<FieldError error={errors.type} />
 							) : null}
@@ -355,7 +323,7 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-002" spacing />
 							<FormRadioButton
-								name="unit_of_measurement"
+								id="unit_of_measurement"
 								items={unitOfMeasurement}
 							/>
 							{errors.unit_of_measurement && touched.unit_of_measurement ? (
@@ -366,7 +334,7 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
-								name="is_vat_exempted"
+								id="is_vat_exempted"
 								items={isVatExemptedTypes}
 							/>
 							{errors.is_vat_exempted && touched.is_vat_exempted ? (
@@ -412,7 +380,7 @@ export const CreateEditProductForm = ({
 							) : null}
 						</Col>
 
-						<Col span={12}>
+						<Col sm={12} xs={24}>
 							<FormInputLabel
 								min={0}
 								max={99}
@@ -446,11 +414,15 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
-								type="number"
 								id="cost_per_piece"
+								type="number"
 								label="Cost (Piece)"
-								step=".001"
+								min={0}
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'cost_per_piece')
+								}
+								withPesoSign
 							/>
 							{errors.cost_per_piece && touched.cost_per_piece ? (
 								<FieldError error={errors.cost_per_piece} />
@@ -463,7 +435,11 @@ export const CreateEditProductForm = ({
 								type="number"
 								id="cost_per_bulk"
 								label="Cost (Bulk)"
-								step=".001"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'cost_per_bulk')
+								}
+								withPesoSign
 							/>
 							{errors.cost_per_bulk && touched.cost_per_bulk ? (
 								<FieldError error={errors.cost_per_bulk} />
@@ -476,7 +452,11 @@ export const CreateEditProductForm = ({
 								type="number"
 								id="price_per_piece"
 								label="Price (Piece)"
-								step=".001"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'price_per_piece')
+								}
+								withPesoSign
 							/>
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
@@ -489,7 +469,11 @@ export const CreateEditProductForm = ({
 								type="number"
 								id="price_per_bulk"
 								label="Price (Bulk)"
-								step=".001"
+								step=".01"
+								onBlur={(event) =>
+									formatMoneyField(event, setFieldValue, 'price_per_bulk')
+								}
+								withPesoSign
 							/>
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />

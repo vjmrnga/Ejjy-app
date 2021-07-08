@@ -1,11 +1,12 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table/interface';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
 import React, { useEffect, useState } from 'react';
-import { TableActions, TableHeader, TableNormal } from '../../../../components';
-import {
-	ButtonLink,
-	FieldError,
-	FieldWarning,
-} from '../../../../components/elements';
+import { convertIntoArray } from 'utils/function';
+import { TableActions, TableHeader } from '../../../../components';
+import { ButtonLink } from '../../../../components/elements';
+import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
@@ -16,11 +17,11 @@ interface Props {
 	branch: any;
 }
 
-const columns = [
-	{ name: 'Barcode' },
-	{ name: 'Name' },
-	{ name: 'Balance' },
-	{ name: 'Actions' },
+const columns: ColumnsType = [
+	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Balance', dataIndex: 'balance', key: 'balance' },
+	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
 export const ViewBranchProducts = ({ branch }: Props) => {
@@ -63,20 +64,23 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				max_balance,
 			} = branchProduct;
 
-			return [
-				{ isHidden: true, barcode, name, textcode },
-				<ButtonLink
-					text={barcode || textcode}
-					onClick={() => onView(branchProduct)}
-				/>,
+			return {
+				barcode: (
+					<ButtonLink
+						text={barcode || textcode}
+						onClick={() => onView(branchProduct)}
+					/>
+				),
 				name,
-				`${current_balance} / ${max_balance}`,
-				<TableActions
-					onAddName="Supplier Delivery"
-					onAdd={() => onAdd(branchProduct)}
-					onEdit={() => onEdit(branchProduct)}
-				/>,
-			];
+				balance: `${current_balance} / ${max_balance}`,
+				actions: (
+					<TableActions
+						onAddName="Supplier Delivery"
+						onAdd={() => onAdd(branchProduct)}
+						onEdit={() => onEdit(branchProduct)}
+					/>
+				),
+			};
 		});
 
 		setData(formattedBranchProducts);
@@ -121,12 +125,8 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	return (
 		<>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
-			{warnings.map((warning, index) => (
-				<FieldWarning key={index} error={warning} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} />
+			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
 			<TableHeader
 				title="Products"
@@ -134,19 +134,19 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				onSearch={onSearch}
 			/>
 
-			<TableNormal
+			<Table
 				columns={columns}
-				data={data}
+				dataSource={data}
+				pagination={{
+					current: currentPage,
+					total: pageCount,
+					pageSize,
+					onChange: onPageChange,
+					disabled: !data,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
 				loading={status === request.REQUESTING}
-			/>
-
-			<Pagination
-				className="table-pagination"
-				current={currentPage}
-				total={pageCount}
-				pageSize={pageSize}
-				onChange={onPageChange}
-				disabled={!data}
 			/>
 
 			<ViewBranchProductModal

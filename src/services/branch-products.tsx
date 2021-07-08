@@ -3,7 +3,6 @@ import { IGetRequest } from './interfaces';
 
 interface IEditBranchProduct {
 	id?: number;
-	product_id?: number;
 	reorder_point?: number;
 	max_balance?: number;
 	price_per_piece?: number;
@@ -13,7 +12,7 @@ interface IEditBranchProduct {
 	discounted_price_per_bulk1?: number;
 	discounted_price_per_bulk2?: number;
 	current_balance?: number;
-	allowable_spoilage?: number;
+	is_sold_in_branch?: boolean;
 }
 
 interface IEditBranchProductBalance {

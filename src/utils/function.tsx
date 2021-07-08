@@ -511,3 +511,16 @@ export const getKeyDownCombination = (keyboardEvent) => {
 
 	return firstKey + keyboardEvent?.key;
 };
+
+export const formatMoneyField = (event, setFieldValue, key) => {
+	event?.persist();
+	const { target } = event;
+
+	if (target && target?.value) {
+		setFieldValue(key, Number(target.value).toFixed(2));
+	}
+};
+
+export const formatMoney = (number) => Number(number).toFixed(2);
+
+// export const currentBalanceFormat = (type) => Number(number).toFixed(2);

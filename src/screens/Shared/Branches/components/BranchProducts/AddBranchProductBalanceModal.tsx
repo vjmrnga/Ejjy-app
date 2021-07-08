@@ -1,14 +1,15 @@
 import { Divider, Modal } from 'antd';
-import React from 'react';
+import { SHOW_HIDE_SHORTCUT } from 'global/constants';
+import React, { useEffect, useState } from 'react';
+import { confirmPassword, getKeyDownCombination } from 'utils/function';
 import { DetailsSingle } from '../../../../../components';
 import { DetailsRow } from '../../../../../components/Details/DetailsRow';
 import { FieldError } from '../../../../../components/elements';
 import { request } from '../../../../../global/types';
+import { useAuth } from '../../../../../hooks/useAuth';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import '../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
-import { useUsers } from '../../../../OfficeManager/hooks/useUsers';
-import { useAuth } from '../../../../../hooks/useAuth';
 
 interface Props {
 	branch: any;
@@ -25,6 +26,9 @@ export const AddBranchProductBalanceModal = ({
 	visible,
 	onClose,
 }: Props) => {
+	// STATES
+	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
+
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
@@ -35,6 +39,14 @@ export const AddBranchProductBalanceModal = ({
 	} = useBranchProducts();
 
 	// METHODS
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+
 	const onAddBranchProductBalance = (value) => {
 		editBranchProductBalance(
 			{
@@ -53,13 +65,34 @@ export const AddBranchProductBalanceModal = ({
 		);
 	};
 
+	const handleKeyDown = (event) => {
+		const key = getKeyDownCombination(event);
+
+		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+			event.preventDefault();
+
+			if (isCurrentBalanceVisible) {
+				setIsCurrentBalanceVisible(false);
+			} else {
+				confirmPassword({
+					onSuccess: () => setIsCurrentBalanceVisible(true),
+				});
+			}
+		}
+	};
+
+	const handleClose = () => {
+		setIsCurrentBalanceVisible(false);
+		onClose();
+	};
+
 	return (
 		<Modal
 			className="AddBranchProductBalanceModal"
-			title="Add Balance"
+			title="Supplier Delivery"
 			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			onCancel={handleClose}
 			centered
 			closable
 			destroyOnClose
@@ -77,17 +110,19 @@ export const AddBranchProductBalanceModal = ({
 				/>
 				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 				<DetailsSingle label="Max Balance" value={branchProduct?.max_balance} />
-				<DetailsSingle
-					label="Current Balance"
-					value={branchProduct?.current_balance}
-				/>
+				{isCurrentBalanceVisible && (
+					<DetailsSingle
+						label="Current Balance"
+						value={branchProduct?.current_balance}
+					/>
+				)}
 			</DetailsRow>
 
 			<Divider dashed />
 
 			<AddBranchProductBalanceForm
 				onSubmit={onAddBranchProductBalance}
-				onClose={onClose}
+				onClose={handleClose}
 				loading={branchProductStatus === request.REQUESTING}
 			/>
 		</Modal>

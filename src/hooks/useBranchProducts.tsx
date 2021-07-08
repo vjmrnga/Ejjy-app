@@ -155,7 +155,6 @@ export const useBranchProducts = () => {
 		setRecentRequest(types.EDIT_BRANCH_PRODUCT);
 		editBranchProductAction({
 			...branchProduct,
-			allowable_spoilage: (branchProduct.allowable_spoilage || 0) / 100,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 				extraCallback,

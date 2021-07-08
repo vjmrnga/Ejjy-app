@@ -1,6 +1,12 @@
 import { Modal } from 'antd';
-import React from 'react';
-import { FieldError } from '../../../../../components/elements';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { SHOW_HIDE_SHORTCUT } from 'global/constants';
+import React, { useEffect, useState } from 'react';
+import {
+	confirmPassword,
+	convertIntoArray,
+	getKeyDownCombination,
+} from 'utils/function';
 import { request } from '../../../../../global/types';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { EditBranchProductsForm } from './EditBranchProductsForm';
@@ -20,6 +26,9 @@ export const EditBranchProductsModal = ({
 	visible,
 	onClose,
 }: Props) => {
+	// STATES
+	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
+
 	// CUSTOM HOOKS
 	const {
 		editBranchProduct,
@@ -29,17 +38,47 @@ export const EditBranchProductsModal = ({
 	} = useBranchProducts();
 
 	// METHODS
-	const onEditBranchProduct = (product) => {
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+
+	const onEditBranchProduct = (product, resetForm) => {
 		editBranchProduct(
 			{ ...product, branchId: branch?.id },
 			({ status, data }) => {
 				if (status === request.SUCCESS) {
 					updateItemInPagination(data);
 					reset();
-					onClose();
+
+					resetForm();
+					handleClose();
 				}
 			},
 		);
+	};
+
+	const handleKeyDown = (event) => {
+		const key = getKeyDownCombination(event);
+
+		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+			event.preventDefault();
+			if (isCurrentBalanceVisible) {
+				setIsCurrentBalanceVisible(false);
+			} else {
+				confirmPassword({
+					onSuccess: () => setIsCurrentBalanceVisible(true),
+				});
+			}
+		}
+	};
+
+	const handleClose = () => {
+		setIsCurrentBalanceVisible(false);
+		onClose();
 	};
 
 	return (
@@ -50,19 +89,18 @@ export const EditBranchProductsModal = ({
 			className="modal-large"
 			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			onCancel={handleClose}
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
 				onSubmit={onEditBranchProduct}
-				onClose={onClose}
+				onClose={handleClose}
 				loading={branchProductStatus === request.REQUESTING}
+				isCurrentBalanceVisible={isCurrentBalanceVisible}
 			/>
 		</Modal>
 	);
