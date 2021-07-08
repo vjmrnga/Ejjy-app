@@ -1,4 +1,5 @@
 import { Pagination } from 'antd';
+import { EMPTY_CELL } from 'global/constants';
 import React, { useEffect, useState } from 'react';
 import { Container, Table } from '../../../components';
 import { Box } from '../../../components/elements';
@@ -43,7 +44,9 @@ const Logs = () => {
 		const formattedLogs =
 			logs?.map((log) => ({
 				branch: log.destination_branch.name,
-				user: `${log.updating_user.first_name} ${log.updating_user.last_name}`,
+				user: log.updating_user
+					? `${log.updating_user.first_name} ${log.updating_user.last_name}`
+					: EMPTY_CELL,
 				product_name: log.product_name,
 				qty: log.quantity,
 				datetime_created: formatDateTimeExtended(log.datetime_created),
