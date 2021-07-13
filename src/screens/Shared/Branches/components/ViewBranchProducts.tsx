@@ -2,8 +2,13 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
+import { SHOW_HIDE_SHORTCUT } from 'global/constants';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils/function';
+import {
+	confirmPassword,
+	convertIntoArray,
+	getKeyDownCombination,
+} from 'utils/function';
 import { TableActions, TableHeader } from '../../../../components';
 import { ButtonLink } from '../../../../components/elements';
 import { pageSizeOptions } from '../../../../global/options';
@@ -26,6 +31,7 @@ const columns: ColumnsType = [
 
 export const ViewBranchProducts = ({ branch }: Props) => {
 	// STATES
+	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 	const [data, setData] = useState([]);
 	const [editBranchProductModalVisible, setEditBranchProductModalVisible] =
 		useState(false);
@@ -52,6 +58,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	// EFFECTS
 	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+
+	useEffect(() => {
 		getBranchProducts({ branchId: branch?.id, page: 1 });
 	}, []);
 
@@ -72,7 +86,9 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 					/>
 				),
 				name,
-				balance: `${current_balance} / ${max_balance}`,
+				balance: `${
+					isCurrentBalanceVisible ? current_balance : '???'
+				} / ${max_balance}`,
 				actions: (
 					<TableActions
 						onAddName="Supplier Delivery"
@@ -84,7 +100,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		});
 
 		setData(formattedBranchProducts);
-	}, [branchProducts]);
+	}, [isCurrentBalanceVisible, branchProducts]);
 
 	const onView = (branchProduct) => {
 		setSelectedBranchProduct(branchProduct);
@@ -121,6 +137,29 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		);
 
 		setSeachedKeyword(lowerCaseKeyword);
+	};
+
+	const handleKeyDown = (event) => {
+		const key = getKeyDownCombination(event);
+
+		if (
+			SHOW_HIDE_SHORTCUT.includes(key) &&
+			![
+				viewBranchProductModalVisible,
+				editBranchProductModalVisible,
+				addBranchProductModalVisible,
+			].includes(true)
+		) {
+			event.preventDefault();
+
+			if (isCurrentBalanceVisible) {
+				setIsCurrentBalanceVisible(false);
+			} else {
+				confirmPassword({
+					onSuccess: () => setIsCurrentBalanceVisible(true),
+				});
+			}
+		}
 	};
 
 	return (

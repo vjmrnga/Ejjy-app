@@ -5,7 +5,7 @@ import { confirmPassword, getKeyDownCombination } from 'utils/function';
 import { DetailsSingle } from '../../../../../components';
 import { DetailsRow } from '../../../../../components/Details/DetailsRow';
 import { FieldError } from '../../../../../components/elements';
-import { request } from '../../../../../global/types';
+import { request, unitOfMeasurementTypes } from '../../../../../global/types';
 import { useAuth } from '../../../../../hooks/useAuth';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import '../../style.scss';
@@ -113,7 +113,12 @@ export const AddBranchProductBalanceModal = ({
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"
-						value={branchProduct?.current_balance}
+						value={
+							branchProduct?.product?.unit_of_measurement ===
+							unitOfMeasurementTypes.WEIGHING
+								? Number(branchProduct?.current_balance).toFixed(3)
+								: branchProduct?.current_balance
+						}
 					/>
 				)}
 			</DetailsRow>

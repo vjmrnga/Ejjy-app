@@ -59,12 +59,16 @@ export const EditBranchProductsForm = ({
 				unit_of_measurement: branchProduct?.product?.unit_of_measurement,
 				reorder_point: branchProduct?.reorder_point,
 				max_balance: branchProduct?.max_balance,
-				price_per_piece: branchProduct?.price_per_piece,
-				discounted_price_per_piece1: branchProduct?.discounted_price_per_piece1,
-				discounted_price_per_piece2: branchProduct?.discounted_price_per_piece2,
-				price_per_bulk: branchProduct?.price_per_bulk,
-				discounted_price_per_bulk1: branchProduct?.discounted_price_per_bulk1,
-				discounted_price_per_bulk2: branchProduct?.discounted_price_per_bulk2,
+				price_per_piece: branchProduct?.price_per_piece?.toFixed(2) || '',
+				discounted_price_per_piece1:
+					branchProduct?.discounted_price_per_piece1?.toFixed(2) || '',
+				discounted_price_per_piece2:
+					branchProduct?.discounted_price_per_piece2?.toFixed(2) || '',
+				price_per_bulk: branchProduct?.price_per_bulk?.toFixed(2) || '',
+				discounted_price_per_bulk1:
+					branchProduct?.discounted_price_per_bulk1?.toFixed(2) || '',
+				discounted_price_per_bulk2:
+					branchProduct?.discounted_price_per_bulk2?.toFixed(2) || '',
 				current_balance: branchProduct?.current_balance,
 				is_shown_in_scale_list: branchProduct.is_shown_in_scale_list,
 				is_sold_in_branch: branchProduct.is_sold_in_branch,

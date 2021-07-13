@@ -52,10 +52,10 @@ export const EditPriceCostForm = ({
 		() => ({
 			DefaultValues: branches.map((branch) => ({
 				branchId: branch.id,
-				cost_per_piece: branch?.cost_per_piece || '',
-				cost_per_bulk: branch?.cost_per_bulk || '',
-				price_per_piece: branch?.price_per_piece || '',
-				price_per_bulk: branch?.price_per_bulk || '',
+				cost_per_piece: branch?.cost_per_piece?.toFixed(2) || '',
+				cost_per_bulk: branch?.cost_per_bulk?.toFixed(2) || '',
+				price_per_piece: branch?.price_per_piece?.toFixed(2) || '',
+				price_per_bulk: branch?.price_per_bulk?.toFixed(2) || '',
 				loading: request.NONE,
 			})),
 			Schema: Yup.array()
