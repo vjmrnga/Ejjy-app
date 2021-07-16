@@ -12,9 +12,9 @@ const { RangePicker } = DatePicker;
 
 const columns: ColumnsType = [
 	{
-		title: 'Folder Name',
-		dataIndex: 'folder_name',
-		key: 'folder_name',
+		title: 'Machine Name',
+		dataIndex: 'machine_name',
+		key: 'machine_name',
 	},
 	{
 		title: 'Sales',
@@ -73,7 +73,7 @@ export const SalesBranch = ({ isActive, branchId }: Props) => {
 		const newSales = sales?.map(
 			({ id: key, folder_name, sales: branchSales }) => ({
 				key,
-				folder_name,
+				machine_name: folder_name,
 				sales: `₱${numberWithCommas(branchSales.toFixed(2))}`,
 			}),
 		);

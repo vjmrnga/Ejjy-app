@@ -6,6 +6,7 @@ import {
 	AdminNotifications,
 	AdminPendingTransactions,
 	AdminProducts,
+	AdminSales,
 	AdminViewBranch,
 	BranchManagerChecking,
 	BranchManagerDashboard,
@@ -26,7 +27,6 @@ import {
 	OfficeManagerProducts,
 	OfficeManagerReports,
 	OfficeManagerRequisitionSlips,
-	OfficeManagerSales,
 	OfficeManagerUsers,
 	OfficeManagerViewBranch,
 	OfficeManagerViewDeliveryReceipt,
@@ -115,5 +115,5 @@ export const ReportsScreens = {
 };
 
 export const SalesScreens = {
-	[userTypes.OFFICE_MANAGER]: OfficeManagerSales,
+	[userTypes.ADMIN]: AdminSales,
 };

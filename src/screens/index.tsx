@@ -11,6 +11,7 @@ export { default as AdminViewBranch } from './Shared/Branches/ViewBranch';
 export { default as AdminProducts } from './Shared/Products/Products';
 export { default as AdminNotifications } from './Admin/Notifications/Notifications';
 export { default as AdminLogs } from './Admin/Logs/Logs';
+export { default as AdminSales } from './Admin/Sales/Sales';
 
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';
@@ -40,4 +41,3 @@ export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/Req
 export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';
 export { default as OfficeManagerAssignUser } from './OfficeManager/Users/AssignUser';
 export { default as OfficeManagerReports } from './OfficeManager/Reports/Reports';
-export { default as OfficeManagerSales } from './OfficeManager/Sales/Sales';

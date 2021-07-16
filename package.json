@@ -5,8 +5,8 @@
 	"homepage": "./",
 	"main": "./electron/main.js",
 	"scripts": {
-		"lint": "cd src && eslint . --ext .tsx",
-		"lint:fix": "cd src && eslint . --ext .tsx --fix",
+		"lint": "cd src && eslint . --ext .tsx --ext .ts",
+		"lint:fix": "cd src && eslint . --ext .tsx --ext .ts --fix",
 		"prettify": "prettier --write ./src",
 		"deploy": "python3 deploy.py",
 		"start:online": "PORT=3001 env-cmd -f .env.online react-scripts start",

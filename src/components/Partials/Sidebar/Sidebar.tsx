@@ -197,7 +197,7 @@ export const Sidebar = () => {
 				activeIcon: require('../../../assets/images/icon-sales-active.svg'),
 				defaultIcon: require('../../../assets/images/icon-sales.svg'),
 				link: '/sales',
-				userTypes: [userTypes.OFFICE_MANAGER],
+				userTypes: [userTypes.ADMIN],
 			},
 			{
 				key: 'notifications',
