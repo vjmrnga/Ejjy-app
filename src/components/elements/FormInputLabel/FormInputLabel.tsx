@@ -15,8 +15,7 @@ const FormInputLabel = ({
 	min,
 	step,
 	disabled,
-	withPesoSign,
-	onBlur,
+	isMoney,
 }: Props) => (
 	<>
 		<Label id={id} label={inputLabel} spacing />
@@ -27,9 +26,8 @@ const FormInputLabel = ({
 			min={min}
 			step={step}
 			placeholder={placeholder}
-			onBlur={onBlur}
 			disabled={disabled}
-			withPesoSign={withPesoSign}
+			isMoney={isMoney}
 		/>
 	</>
 );

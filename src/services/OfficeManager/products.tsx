@@ -19,6 +19,7 @@ interface ICreateProduct {
 	max_balance: number;
 	price_per_piece: number;
 	price_per_bulk: number;
+	is_shown_in_scale_list?: boolean;
 }
 
 interface IEditProduct {
@@ -36,6 +37,7 @@ interface IEditProduct {
 	max_balance?: number;
 	price_per_piece?: number;
 	price_per_bulk?: number;
+	is_shown_in_scale_list?: boolean;
 }
 
 export const service = {

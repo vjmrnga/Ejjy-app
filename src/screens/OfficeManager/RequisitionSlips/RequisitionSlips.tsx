@@ -15,7 +15,6 @@ import {
 	requisitionSlipActions,
 	userTypes,
 } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -43,8 +42,6 @@ const pendingRequisitionSlipActions = [
 	requisitionSlipActions.F_DS1_CREATING,
 	requisitionSlipActions.F_DS1_CREATED,
 ];
-
-const PAGE_SIZE = 10;
 
 const RequisitionSlips = () => {
 	// STATES

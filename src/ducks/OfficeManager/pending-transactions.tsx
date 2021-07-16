@@ -6,14 +6,16 @@ export const key = 'PENDING_TRANSACTIONS';
 export const types = {
 	SAVE: `${key}/SAVE`,
 	LIST_PENDING_TRANSACTIONS: `${key}/LIST_PENDING_TRANSACTIONS`,
-	CREATE_PENDING_TRANSACTIONS: `${key}/CREATE_PENDING_TRANSACTIONS`,
-	EDIT_PENDING_TRANSACTIONS: `${key}/EDIT_PENDING_TRANSACTIONS`,
-	REMOVE_PENDING_TRANSACTIONS: `${key}/REMOVE_PENDING_TRANSACTIONS`,
-	EXECUTE_PENDING_TRANSACTIONS: `${key}/EXECUTE_PENDING_TRANSACTIONS`,
+	GET_PENDING_TRANSACTIONS_COUNT: `${key}/GET_PENDING_TRANSACTIONS_COUNT`,
+	CREATE_PENDING_TRANSACTION: `${key}/CREATE_PENDING_TRANSACTION`,
+	EDIT_PENDING_TRANSACTION: `${key}/EDIT_PENDING_TRANSACTION`,
+	REMOVE_PENDING_TRANSACTION: `${key}/REMOVE_PENDING_TRANSACTION`,
+	EXECUTE_PENDING_TRANSACTION: `${key}/EXECUTE_PENDING_TRANSACTION`,
 };
 
 const initialState = {
 	pendingTransactions: [],
+	pendingTransactionsCount: 0,
 };
 
 const reducer = handleActions(
@@ -25,6 +27,12 @@ const reducer = handleActions(
 			switch (type) {
 				case types.LIST_PENDING_TRANSACTIONS: {
 					newData = { pendingTransactions: payload.pendingTransactions };
+					break;
+				}
+				case types.GET_PENDING_TRANSACTIONS_COUNT: {
+					newData = {
+						pendingTransactionsCount: payload.pendingTransactionsCount,
+					};
 					break;
 				}
 				default:
@@ -40,16 +48,21 @@ const reducer = handleActions(
 export const actions = {
 	save: createAction(types.SAVE),
 	listPendingTransactions: createAction(types.LIST_PENDING_TRANSACTIONS),
-	createPendingTransactions: createAction(types.CREATE_PENDING_TRANSACTIONS),
-	editPendingTransactions: createAction(types.EDIT_PENDING_TRANSACTIONS),
-	removePendingTransactions: createAction(types.REMOVE_PENDING_TRANSACTIONS),
-	executePendingTransactions: createAction(types.EXECUTE_PENDING_TRANSACTIONS),
+	getPendingTransactionsCount: createAction(
+		types.GET_PENDING_TRANSACTIONS_COUNT,
+	),
+	createPendingTransaction: createAction(types.CREATE_PENDING_TRANSACTION),
+	editPendingTransaction: createAction(types.EDIT_PENDING_TRANSACTION),
+	removePendingTransaction: createAction(types.REMOVE_PENDING_TRANSACTION),
+	executePendingTransaction: createAction(types.EXECUTE_PENDING_TRANSACTION),
 };
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
 	selectPendingTransactions: () =>
 		createSelector(selectState, (state) => state.pendingTransactions),
+	selectPendingTransactionsCount: () =>
+		createSelector(selectState, (state) => state.pendingTransactionsCount),
 };
 
 export default reducer;

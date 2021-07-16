@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/OfficeManager/products';
 import { request } from '../global/types';
-import { useActionDispatch } from './useActionDispatch';
 import {
 	modifiedCallback,
 	modifiedExtraCallback,
@@ -14,7 +13,7 @@ import {
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
-import { ConsoleSqlOutlined } from '@ant-design/icons';
+import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
 

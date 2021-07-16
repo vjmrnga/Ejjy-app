@@ -1,6 +1,5 @@
 import { Col, Divider, Typography } from 'antd';
 import { Form, Formik } from 'formik';
-import { booleanOptions } from 'global/options';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
@@ -11,11 +10,12 @@ import {
 	FormRadioButton,
 	Label,
 } from '../../../../../components/elements';
+import { booleanOptions } from '../../../../../global/options';
 import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../global/types';
-import { formatMoneyField, sleep } from '../../../../../utils/function';
+import { sleep } from '../../../../../utils/function';
 
 const { Text } = Typography;
 
@@ -70,7 +70,6 @@ export const EditBranchProductsForm = ({
 				discounted_price_per_bulk2:
 					branchProduct?.discounted_price_per_bulk2?.toFixed(2) || '',
 				current_balance: branchProduct?.current_balance,
-				is_shown_in_scale_list: branchProduct.is_shown_in_scale_list,
 				is_sold_in_branch: branchProduct.is_sold_in_branch,
 			},
 			Schema: Yup.object().shape({
@@ -143,7 +142,7 @@ export const EditBranchProductsForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched, setFieldValue }) => (
+			{({ values, errors, touched }) => (
 				<Form className="form">
 					<DetailsRow>
 						<DetailsSingle
@@ -167,19 +166,6 @@ export const EditBranchProductsForm = ({
 							/>
 							{errors.checking && touched.checking ? (
 								<FieldError error={errors.checking} />
-							) : null}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="Include In Scale" spacing />
-							<FormRadioButton
-								id="is_shown_in_scale_list"
-								items={booleanOptions}
-								disabled={!values.is_sold_in_branch}
-							/>
-							{errors.is_shown_in_scale_list &&
-							touched.is_shown_in_scale_list ? (
-								<FieldError error={errors.is_shown_in_scale_list} />
 							) : null}
 						</Col>
 
@@ -246,15 +232,10 @@ export const EditBranchProductsForm = ({
 
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
 								id="price_per_piece"
 								label="Price (Piece)"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'price_per_piece')
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
@@ -262,19 +243,10 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
 								id="discounted_price_per_piece1"
 								label="Discounted Price per Piece 1"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(
-										event,
-										setFieldValue,
-										'discounted_price_per_piece1',
-									)
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.discounted_price_per_piece1 &&
 							touched.discounted_price_per_piece1 ? (
@@ -287,15 +259,8 @@ export const EditBranchProductsForm = ({
 								id="discounted_price_per_piece2"
 								label="Discounted Price per Piece 2"
 								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(
-										event,
-										setFieldValue,
-										'discounted_price_per_piece2',
-									)
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.discounted_price_per_piece2 &&
 							touched.discounted_price_per_piece2 ? (
@@ -308,12 +273,8 @@ export const EditBranchProductsForm = ({
 								type="number"
 								id="price_per_bulk"
 								label="Price (Bulk)"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'price_per_bulk')
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />
@@ -324,16 +285,8 @@ export const EditBranchProductsForm = ({
 								type="number"
 								id="discounted_price_per_bulk1"
 								label="Discounted Price per Bulk 1"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(
-										event,
-										setFieldValue,
-										'discounted_price_per_bulk1',
-									)
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.discounted_price_per_bulk1 &&
 							touched.discounted_price_per_bulk1 ? (
@@ -346,15 +299,8 @@ export const EditBranchProductsForm = ({
 								id="discounted_price_per_bulk2"
 								label="Discounted Price per Bulk 2"
 								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(
-										event,
-										setFieldValue,
-										'discounted_price_per_bulk2',
-									)
-								}
 								disabled={!values.is_sold_in_branch}
-								withPesoSign
+								isMoney
 							/>
 							{errors.discounted_price_per_bulk2 &&
 							touched.discounted_price_per_bulk2 ? (

@@ -1,12 +1,12 @@
 import { Divider, Table } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
-import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { CashieringCard } from '../../../../../components/CashieringCard/CashieringCard';
 import SearchInput from '../../../../../components/elements/SearchInput/SearchInput';
+import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
+import { RequestWarnings } from '../../../../../components/RequestWarnings/RequestWarnings';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { IS_APP_LIVE } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';

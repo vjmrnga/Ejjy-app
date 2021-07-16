@@ -6,7 +6,8 @@ import {
 	FieldError,
 	FormInputLabel,
 } from '../../../components/elements';
-import { sleep } from '../../../utils/function';
+import { RequestErrors } from '../../../components/RequestErrors/RequestErrors';
+import { convertIntoArray, sleep } from '../../../utils/function';
 import '../style.scss';
 
 const FormDetails = {
@@ -31,12 +32,7 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 
 	return (
 		<>
-			<div className="errors">
-				{errors.map((error, index) => (
-					// eslint-disable-next-line react/no-array-index-key
-					<FieldError key={index} error={error} />
-				))}
-			</div>
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<Formik
 				initialValues={FormDetails.DefaultValues}

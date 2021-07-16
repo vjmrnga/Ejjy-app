@@ -1,3 +1,4 @@
+/* eslint-disable newline-per-chained-call */
 import { Col, Divider, Row, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
@@ -11,12 +12,13 @@ import {
 	Label,
 } from '../../../../components/elements';
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
+import { booleanOptions } from '../../../../global/options';
 import {
 	productCategoryTypes,
 	productTypes,
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
-import { formatMoneyField, sleep } from '../../../../utils/function';
+import { sleep } from '../../../../utils/function';
 
 const { Text } = Typography;
 
@@ -105,6 +107,7 @@ interface ICreateProduct {
 	price_per_piece: number;
 	price_per_bulk: number;
 	is_vat_exempted: boolean;
+	is_shown_in_scale_list: boolean;
 }
 
 interface Props {
@@ -141,9 +144,10 @@ export const CreateEditProductForm = ({
 				max_balance: product?.max_balance,
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
-				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				product_category:
 					product?.product_category || productCategoryTypes.NONE,
+				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
+				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -193,18 +197,13 @@ export const CreateEditProductForm = ({
 						.label('Pieces in Bulk'),
 					allowable_spoilage: Yup.number()
 						.when(['type', 'unit_of_measurement'], {
-							is: (type, unit_of_measurement) =>
-								type === productTypes.WET &&
-								unit_of_measurement === unitOfMeasurementTypes.WEIGHING,
+							is: (typeValue, unitOfMeasurementValue) =>
+								typeValue === productTypes.WET &&
+								unitOfMeasurementValue === unitOfMeasurementTypes.WEIGHING,
 							then: Yup.number().integer().min(0).max(100).required(),
 							otherwise: Yup.number().notRequired().nullable(),
 						})
 						.label('Allowable Spoilage'),
-					cost_per_piece: Yup.number()
-						.required()
-						.min(0)
-						.label('Cost per Piece'),
-					cost_per_bulk: Yup.number().required().min(0).label('Cost Per Bulk'),
 					reorder_point: Yup.number()
 						.required()
 						.min(0)
@@ -215,11 +214,16 @@ export const CreateEditProductForm = ({
 						.min(0)
 						.max(65535)
 						.label('Max Balance'),
-					price_per_piece: Yup.number()
+					cost_per_piece: Yup.string()
+						.required()
+						.min(0)
+						.label('Cost per Piece'),
+					cost_per_bulk: Yup.string().required().min(0).label('Cost Per Bulk'),
+					price_per_piece: Yup.string()
 						.required()
 						.min(0)
 						.label('Price per Piece'),
-					price_per_bulk: Yup.number()
+					price_per_bulk: Yup.string()
 						.required()
 						.min(0)
 						.label('Price per Bulk'),
@@ -258,7 +262,7 @@ export const CreateEditProductForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched, setFieldValue }) => (
+			{({ values, errors, touched }) => (
 				<Form className="form">
 					<Row gutter={[15, 15]}>
 						<Col sm={12} xs={24}>
@@ -307,6 +311,18 @@ export const CreateEditProductForm = ({
 							/>
 							{errors.product_category && touched.product_category ? (
 								<FieldError error={errors.product_category} />
+							) : null}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="Include In Scale" spacing />
+							<FormRadioButton
+								id="is_shown_in_scale_list"
+								items={booleanOptions}
+							/>
+							{errors.is_shown_in_scale_list &&
+							touched.is_shown_in_scale_list ? (
+								<FieldError error={errors.is_shown_in_scale_list} />
 							) : null}
 						</Col>
 
@@ -415,14 +431,8 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<FormInputLabel
 								id="cost_per_piece"
-								type="number"
 								label="Cost (Piece)"
-								min={0}
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'cost_per_piece')
-								}
-								withPesoSign
+								isMoney
 							/>
 							{errors.cost_per_piece && touched.cost_per_piece ? (
 								<FieldError error={errors.cost_per_piece} />
@@ -430,17 +440,7 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel
-								min={0}
-								type="number"
-								id="cost_per_bulk"
-								label="Cost (Bulk)"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'cost_per_bulk')
-								}
-								withPesoSign
-							/>
+							<FormInputLabel id="cost_per_bulk" label="Cost (Bulk)" isMoney />
 							{errors.cost_per_bulk && touched.cost_per_bulk ? (
 								<FieldError error={errors.cost_per_bulk} />
 							) : null}
@@ -448,15 +448,9 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
-								type="number"
 								id="price_per_piece"
 								label="Price (Piece)"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'price_per_piece')
-								}
-								withPesoSign
+								isMoney
 							/>
 							{errors.price_per_piece && touched.price_per_piece ? (
 								<FieldError error={errors.price_per_piece} />
@@ -465,15 +459,9 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
-								type="number"
 								id="price_per_bulk"
 								label="Price (Bulk)"
-								step=".01"
-								onBlur={(event) =>
-									formatMoneyField(event, setFieldValue, 'price_per_bulk')
-								}
-								withPesoSign
+								isMoney
 							/>
 							{errors.price_per_bulk && touched.price_per_bulk ? (
 								<FieldError error={errors.price_per_bulk} />

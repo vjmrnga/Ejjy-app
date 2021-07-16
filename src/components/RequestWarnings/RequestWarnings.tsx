@@ -1,9 +1,8 @@
 import { Space } from 'antd';
 import cn from 'classnames';
 import React from 'react';
-import { FieldError } from '../elements';
-import './style.scss';
 import FieldWarning from '../elements/FieldWarning/FieldWarning';
+import './style.scss';
 
 interface Props {
 	warnings: string[];

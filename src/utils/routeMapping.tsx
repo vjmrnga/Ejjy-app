@@ -26,6 +26,7 @@ import {
 	OfficeManagerProducts,
 	OfficeManagerReports,
 	OfficeManagerRequisitionSlips,
+	OfficeManagerSales,
 	OfficeManagerUsers,
 	OfficeManagerViewBranch,
 	OfficeManagerViewDeliveryReceipt,
@@ -111,4 +112,8 @@ export const LogsScreens = {
 
 export const ReportsScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerReports,
+};
+
+export const SalesScreens = {
+	[userTypes.OFFICE_MANAGER]: OfficeManagerSales,
 };

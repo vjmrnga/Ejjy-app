@@ -17,6 +17,7 @@ const EDIT_SUCCESS_MESSAGE = 'Branch machine was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch machine';
 
 export const useBranchMachines = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [warnings, setWarnings] = useState<any>([]);
@@ -25,6 +26,13 @@ export const useBranchMachines = () => {
 	const branchMachines = useSelector(selectors.selectBranchMachines());
 
 	const getBranchMachinesAction = useActionDispatch(actions.getBranchMachines);
+	const retrieveBranchMachineSalesAction = useActionDispatch(
+		actions.retrieveBranchMachineSales,
+	);
+	const retrieveBranchMachineSalesAllAction = useActionDispatch(
+		actions.retrieveBranchMachineSalesAll,
+	);
+
 	const createBranchMachineAction = useActionDispatch(
 		actions.createBranchMachine,
 	);
@@ -54,10 +62,26 @@ export const useBranchMachines = () => {
 		getBranchMachinesAction({ branchId, callback });
 	};
 
-	const createBranchMachine = (product, extraCallback = null) => {
+	const retrieveBranchMachineSales = (data, extraCallback = null) => {
+		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES);
+		retrieveBranchMachineSalesAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
+	const retrieveBranchMachineSalesAll = (data, extraCallback = null) => {
+		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES_ALL);
+		retrieveBranchMachineSalesAllAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
+	const createBranchMachine = (branchMachine, extraCallback = null) => {
 		setRecentRequest(types.CREATE_BRANCH_MACHINE);
 		createBranchMachineAction({
-			...product,
+			...branchMachine,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
 					callback,
@@ -69,10 +93,10 @@ export const useBranchMachines = () => {
 		});
 	};
 
-	const editBranchMachine = (product, extraCallback = null) => {
+	const editBranchMachine = (branchMachine, extraCallback = null) => {
 		setRecentRequest(types.EDIT_BRANCH_MACHINE);
 		editBranchMachineAction({
-			...product,
+			...branchMachine,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
 				extraCallback,
@@ -83,6 +107,8 @@ export const useBranchMachines = () => {
 	return {
 		branchMachines,
 		getBranchMachines,
+		retrieveBranchMachineSales,
+		retrieveBranchMachineSalesAll,
 		createBranchMachine,
 		editBranchMachine,
 		status,

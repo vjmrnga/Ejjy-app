@@ -1,8 +1,8 @@
 import { Divider, Modal } from 'antd';
-import { SHOW_HIDE_SHORTCUT } from 'global/constants';
 import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
+import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
 import {
 	confirmPassword,

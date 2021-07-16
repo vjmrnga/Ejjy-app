@@ -91,6 +91,8 @@ export const confirmPassword = ({
 export const numberWithCommas = (x) =>
 	x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 
+export const removeCommas = (x) => x?.toString()?.replace(/,/g, '') || '';
+
 export const formatDateTime = memoize((datetime) =>
 	dayjs(datetime).format('MM/DD/YYYY h:mma'),
 );
@@ -131,13 +133,15 @@ export const modifiedExtraCallback =
 
 export const convertIntoArray = (errors, prefixMessage = null) => {
 	const prefix = prefixMessage ? `${prefixMessage}: ` : '';
+	let array = [];
+
 	if (isString(errors)) {
-		return [prefix + errors];
+		array = [prefix + errors];
 	} else if (isArray(errors)) {
-		return errors.map((error) => prefix + error);
+		array = errors.map((error) => prefix + error);
 	}
 
-	return [];
+	return array;
 };
 
 export const showErrorMessages = (errors) => {
@@ -151,19 +155,20 @@ export const showErrorMessages = (errors) => {
 export const getColoredText = memoize(
 	(key, isDefault, x, y, isOverOnlyIfDefault = false) => {
 		let text = `${x}/${y}`;
+		let component = null;
 
 		if (isDefault) {
 			text = isOverOnlyIfDefault ? text : y;
-			return <ColoredText type={coloredTextType.DEFAULT} text={text} />;
+			component = <ColoredText type={coloredTextType.DEFAULT} text={text} />;
 		}
 		if (x !== y) {
-			return <ColoredText type={coloredTextType.ERROR} text={text} />;
+			component = <ColoredText type={coloredTextType.ERROR} text={text} />;
 		}
 		if (x === y) {
-			return <ColoredText type={coloredTextType.PRIMARY} text={text} />;
+			component = <ColoredText type={coloredTextType.PRIMARY} text={text} />;
 		}
 
-		return null;
+		return component;
 	},
 );
 

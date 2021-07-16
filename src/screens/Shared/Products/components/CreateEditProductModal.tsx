@@ -1,11 +1,11 @@
 import { message, Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import React from 'react';
-import { convertIntoArray } from 'utils/function';
+import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';
-import '../style.scss';
+import { convertIntoArray } from '../../../../utils/function';
 import { CreateEditProductForm } from './CreateEditProductForm';
+import '../style.scss';
 
 interface Props {
 	product: any;

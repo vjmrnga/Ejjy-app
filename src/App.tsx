@@ -18,6 +18,7 @@ import {
 	ProductsScreens,
 	ReportsScreens,
 	RequisitionSlipsScreens,
+	SalesScreens,
 	UsersScreens,
 	ViewBranchScreens,
 	ViewDeliveryReceiptScreens,
@@ -81,6 +82,7 @@ const App = () => (
 			<CommonRoute path="/checking" exact component={CheckingScreens} />
 			<CommonRoute path="/logs" exact component={LogsScreens} />
 			<CommonRoute path="/reports" exact component={ReportsScreens} />
+			<CommonRoute path="/sales" exact component={SalesScreens} />
 
 			<Route path="/404" exact component={Error404} />
 			<Route path="" render={() => <Redirect to="/404" />} />

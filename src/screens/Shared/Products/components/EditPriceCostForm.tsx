@@ -12,7 +12,7 @@ import {
 } from '../../../../components/elements';
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
 import { request } from '../../../../global/types';
-import { formatMoneyField, sleep } from '../../../../utils/function';
+import { sleep } from '../../../../utils/function';
 
 const { Title } = Typography;
 
@@ -86,7 +86,7 @@ export const EditPriceCostForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors: formErrors, touched: formTouched, setFieldValue }) => (
+			{({ errors: formErrors, touched: formTouched }) => (
 				<Form className="form">
 					{branches.map(({ id, name }, index) => {
 						const errors: any = formErrors[index];
@@ -135,15 +135,7 @@ export const EditPriceCostForm = ({
 											type="number"
 											id={`${index}.cost_per_piece`}
 											label="Cost (Piece)"
-											step=".01"
-											onBlur={(event) =>
-												formatMoneyField(
-													event,
-													setFieldValue,
-													`${index}.cost_per_piece`,
-												)
-											}
-											withPesoSign
+											isMoney
 										/>
 										{errors?.cost_per_piece && touched?.cost_per_piece ? (
 											<FieldError error={errors?.cost_per_piece} />
@@ -157,14 +149,7 @@ export const EditPriceCostForm = ({
 											id={`${index}.cost_per_bulk`}
 											label="Cost (Bulk)"
 											step=".01"
-											onBlur={(event) =>
-												formatMoneyField(
-													event,
-													setFieldValue,
-													`${index}.cost_per_bulk`,
-												)
-											}
-											withPesoSign
+											isMoney
 										/>
 										{errors?.cost_per_bulk && touched?.cost_per_bulk ? (
 											<FieldError error={errors?.cost_per_bulk} />
@@ -177,15 +162,7 @@ export const EditPriceCostForm = ({
 											type="number"
 											id={`${index}.price_per_piece`}
 											label="Price (Piece)"
-											step=".01"
-											onBlur={(event) =>
-												formatMoneyField(
-													event,
-													setFieldValue,
-													`${index}.price_per_piece`,
-												)
-											}
-											withPesoSign
+											isMoney
 										/>
 										{errors?.price_per_piece && touched?.price_per_piece ? (
 											<FieldError error={errors?.price_per_piece} />
@@ -199,14 +176,7 @@ export const EditPriceCostForm = ({
 											id={`${index}.price_per_bulk`}
 											label="Price (Bulk)"
 											step=".01"
-											onBlur={(event) =>
-												formatMoneyField(
-													event,
-													setFieldValue,
-													`${index}.price_per_bulk`,
-												)
-											}
-											withPesoSign
+											isMoney
 										/>
 										{errors?.price_per_bulk && touched?.price_per_bulk ? (
 											<FieldError error={errors?.price_per_bulk} />

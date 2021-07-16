@@ -8,8 +8,7 @@
 		"lint": "cd src && eslint . --ext .tsx",
 		"lint:fix": "cd src && eslint . --ext .tsx --fix",
 		"prettify": "prettier --write ./src",
-		"d": "python3 deploy.py",
-		"du": "python3 deploy-update.py",
+		"deploy": "python3 deploy.py",
 		"start:online": "PORT=3001 env-cmd -f .env.online react-scripts start",
 		"start:local": "env-cmd -f .env.local react-scripts start",
 		"build:online": "env-cmd -f .env.online react-scripts build",
@@ -57,11 +56,7 @@
 		"yup": "^0.29.3"
 	},
 	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
+		"production": [">0.2%", "not dead", "not op_mini all"],
 		"development": [
 			"last 1 chrome version",
 			"last 1 firefox version",

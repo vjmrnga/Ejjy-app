@@ -38,17 +38,22 @@ function* list({ payload }: any) {
 	}
 }
 
-function* create({ payload }: any) {
-	const { callback, ...data } = payload;
+function* count({ payload }: any) {
+	const { callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, ONLINE_API_URL);
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.count,
+			ONLINE_API_URL,
+		);
 
 		yield put(
 			actions.save({
-				type: types.CREATE_PENDING_TRANSACTIONS,
-				branch: response.data,
+				type: types.GET_PENDING_TRANSACTIONS_COUNT,
+				pendingTransactionsCount: response.data,
 			}),
 		);
 		callback({ status: request.SUCCESS });
@@ -106,25 +111,25 @@ const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.LIST_PENDING_TRANSACTIONS, list);
 };
 
-const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_PENDING_TRANSACTIONS, create);
+const countWatcherSaga = function* countWatcherSaga() {
+	yield takeLatest(types.GET_PENDING_TRANSACTIONS_COUNT, count);
 };
 
 const editWatcherSaga = function* editWatcherSaga() {
-	yield takeLatest(types.EDIT_PENDING_TRANSACTIONS, edit);
+	yield takeLatest(types.EDIT_PENDING_TRANSACTION, edit);
 };
 
 const removeWatcherSaga = function* removeWatcherSaga() {
-	yield takeLatest(types.REMOVE_PENDING_TRANSACTIONS, remove);
+	yield takeLatest(types.REMOVE_PENDING_TRANSACTION, remove);
 };
 
 const executeWatcherSaga = function* executeWatcherSaga() {
-	yield takeLatest(types.EXECUTE_PENDING_TRANSACTIONS, execute);
+	yield takeLatest(types.EXECUTE_PENDING_TRANSACTION, execute);
 };
 
 export default [
 	listWatcherSaga(),
-	createWatcherSaga(),
+	countWatcherSaga(),
 	editWatcherSaga(),
 	removeWatcherSaga(),
 	executeWatcherSaga(),

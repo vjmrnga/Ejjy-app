@@ -16,11 +16,11 @@ interface Props {
 }
 
 const FormRadioButton = ({ id, items, disabled }: Props) => {
-	const [field, meta, helpers] = useField(id);
+	const [field, , helpers] = useField(id);
 
 	return (
 		<div className="FormRadioButton">
-			{items.map(({ id, value, label }) => (
+			{items.map(({ id: itemId, value, label }) => (
 				<button
 					type="button"
 					className={cn('FormRadioButton_button', {
@@ -29,7 +29,7 @@ const FormRadioButton = ({ id, items, disabled }: Props) => {
 						FormRadioButton_button__checked__disabled:
 							value === field.value && disabled,
 					})}
-					key={id}
+					key={itemId}
 					onClick={() => helpers.setValue(value)}
 				>
 					<span>{label}</span>

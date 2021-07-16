@@ -1,9 +1,9 @@
 import { Pagination } from 'antd';
-import { EMPTY_CELL } from 'global/constants';
 import React, { useEffect, useState } from 'react';
 import { Container, Table } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
+import { EMPTY_CELL } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useLogs } from '../../../hooks/useLogs';
 import {

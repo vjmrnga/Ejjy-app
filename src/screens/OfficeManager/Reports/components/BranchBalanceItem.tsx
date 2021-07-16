@@ -1,12 +1,12 @@
 import { Col, DatePicker, Radio, Row, Select, Space, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
-import { Label } from 'components/elements';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
-import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
 import debounce from 'lodash/debounce';
 import React, { useEffect, useRef, useState } from 'react';
+import { Label } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
+import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
 import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
+import { request, timeRangeTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProducts } from '../../../../hooks/useProducts';
 import {
@@ -75,21 +75,26 @@ const INTERVAL_MS = 30000;
 const SEARCH_DEBOUNCE_TIME = 1000;
 
 const getSorting = (column, order) => {
+	let sorting = null;
+
 	if (!order) {
-		return null;
+		return sorting;
 	}
 
 	if (column === 'balance') {
-		return order === 'ascend' ? 'current_balance' : '-current_balance';
+		sorting = order === 'ascend' ? 'current_balance' : '-current_balance';
 	} else if (column === 'quantity_sold') {
-		return order === 'ascend' ? 'quantity_sold' : '-quantity_sold';
+		sorting = order === 'ascend' ? 'quantity_sold' : '-quantity_sold';
 	} else if (column === 'daily_average_sold') {
-		return order === 'ascend' ? 'daily_average_sold' : '-daily_average_sold';
+		sorting = order === 'ascend' ? 'daily_average_sold' : '-daily_average_sold';
 	} else if (column === 'daily_average_sold_percentage') {
-		return order === 'ascend'
-			? 'daily_average_sold_percentage'
-			: '-daily_average_sold_percentage';
+		sorting =
+			order === 'ascend'
+				? 'daily_average_sold_percentage'
+				: '-daily_average_sold_percentage';
 	}
+
+	return sorting;
 };
 
 interface Props {
@@ -101,12 +106,13 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [tags, setTags] = useState('');
-	const [timeRange, setTimeRange] = useState('daily');
-	const [timeRangeOption, setTimeRangeOption] = useState('daily');
+	const [timeRange, setTimeRange] = useState(timeRangeTypes.DAILY);
+	const [timeRangeOption, setTimeRangeOption] = useState(timeRangeTypes.DAILY);
 	const [sorting, setSorting] = useState(null);
 	const [productCategory, setProductCategory] = useState(null);
 	const [productOptions, setProductOptions] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
+	const [showSoldOnly, setShowSoldOnly] = useState(true);
 
 	// CUSTOM HOOKS
 	const {
@@ -135,7 +141,15 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 
 	useEffect(() => {
 		if (isActive) {
-			fetchBranchProducts(null, null, null, 'daily', 1, pageSize);
+			fetchBranchProducts(
+				null,
+				null,
+				null,
+				timeRangeTypes.DAILY,
+				showSoldOnly,
+				1,
+				pageSize,
+			);
 		} else {
 			clearInterval(intervalRef.current);
 		}
@@ -186,9 +200,10 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 
 	const fetchBranchProducts = (
 		productIds,
-		sorting,
-		productCategory,
-		timeRange,
+		sort,
+		category,
+		range,
+		hasBeenSoldOnly,
 		page,
 		newPageSize,
 	) => {
@@ -196,9 +211,10 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 			{
 				branchId,
 				productIds: productIds?.length ? productIds : null,
-				sorting,
-				productCategory,
-				timeRange,
+				sorting: sort,
+				productCategory: category,
+				timeRange: range,
+				hasBeenSoldOnly,
 				page,
 				pageSize: newPageSize,
 			},
@@ -214,6 +230,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 					sorting,
 					productCategory,
 					timeRange,
+					hasBeenSoldOnly,
 					page,
 					pageSize: newPageSize,
 				},
@@ -275,6 +292,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 								sorting,
 								productCategory,
 								timeRange,
+								showSoldOnly,
 								1,
 								pageSize,
 							);
@@ -289,7 +307,15 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 							setProductCategory(value);
 							setIsCompletedInitialFetch(false);
 
-							fetchBranchProducts(tags, sorting, value, timeRange, 1, pageSize);
+							fetchBranchProducts(
+								tags,
+								sorting,
+								value,
+								timeRange,
+								showSoldOnly,
+								1,
+								pageSize,
+							);
 						}}
 						allowClear
 					>
@@ -305,9 +331,12 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 						<Label label="Quantity Sold Date" />
 						<Radio.Group
 							options={[
-								{ label: 'Daily', value: 'daily' },
-								{ label: 'Monthly', value: 'monthly' },
-								{ label: 'Select Date Range', value: 'date_range' },
+								{ label: 'Daily', value: timeRangeTypes.DAILY },
+								{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
+								{
+									label: 'Select Date Range',
+									value: timeRangeTypes.DATE_RANGE,
+								},
 							]}
 							onChange={(e) => {
 								const { value } = e.target;
@@ -321,6 +350,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 										sorting,
 										productCategory,
 										value,
+										showSoldOnly,
 										1,
 										pageSize,
 									);
@@ -343,6 +373,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 											sorting,
 											productCategory,
 											value,
+											showSoldOnly,
 											1,
 											pageSize,
 										);
@@ -350,6 +381,34 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 								}}
 							/>
 						)}
+					</Space>
+				</Col>
+				<Col lg={12} span={24}>
+					<Space direction="vertical" size={15}>
+						<Label label="Show Sold In Branch" />
+						<Radio.Group
+							options={[
+								{ label: 'Show All', value: false },
+								{ label: 'Sold Only', value: true },
+							]}
+							onChange={(e) => {
+								const { value } = e.target;
+								setShowSoldOnly(value);
+
+								fetchBranchProducts(
+									tags,
+									sorting,
+									productCategory,
+									timeRange,
+									value,
+									1,
+									pageSize,
+								);
+							}}
+							// eslint-disable-next-line react/jsx-boolean-value
+							defaultValue={true}
+							optionType="button"
+						/>
 					</Space>
 				</Col>
 			</Row>
@@ -371,6 +430,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 							sorting,
 							productCategory,
 							timeRange,
+							showSoldOnly,
 							page,
 							newPageSize,
 						);
@@ -389,6 +449,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 							value,
 							productCategory,
 							timeRange,
+							showSoldOnly,
 							currentPage,
 							pageSize,
 						);

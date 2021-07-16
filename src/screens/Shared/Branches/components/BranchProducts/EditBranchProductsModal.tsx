@@ -1,12 +1,12 @@
 import { Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
-import { SHOW_HIDE_SHORTCUT } from 'global/constants';
 import React, { useEffect, useState } from 'react';
 import {
 	confirmPassword,
 	convertIntoArray,
 	getKeyDownCombination,
-} from 'utils/function';
+} from '../../../../../utils/function';
+import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
+import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { EditBranchProductsForm } from './EditBranchProductsForm';

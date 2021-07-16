@@ -1,13 +1,16 @@
 import { Divider, Modal } from 'antd';
-import { SHOW_HIDE_SHORTCUT } from 'global/constants';
 import React, { useEffect, useState } from 'react';
-import { confirmPassword, getKeyDownCombination } from 'utils/function';
 import { DetailsSingle } from '../../../../../components';
 import { DetailsRow } from '../../../../../components/Details/DetailsRow';
 import { FieldError } from '../../../../../components/elements';
+import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request, unitOfMeasurementTypes } from '../../../../../global/types';
 import { useAuth } from '../../../../../hooks/useAuth';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
+import {
+	confirmPassword,
+	getKeyDownCombination,
+} from '../../../../../utils/function';
 import '../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 

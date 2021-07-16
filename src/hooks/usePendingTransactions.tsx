@@ -26,20 +26,23 @@ export const usePendingTransactions = () => {
 	const pendingTransactions = useSelector(
 		selectors.selectPendingTransactions(),
 	);
+	const pendingTransactionsCount = useSelector(
+		selectors.selectPendingTransactionsCount(),
+	);
 	const listPendingTransactionsAction = useActionDispatch(
 		actions.listPendingTransactions,
 	);
-	const createPendingTransactionsAction = useActionDispatch(
-		actions.createPendingTransactions,
-	);
 	const editPendingTransactionsAction = useActionDispatch(
-		actions.editPendingTransactions,
+		actions.editPendingTransaction,
 	);
 	const removePendingTransactionsAction = useActionDispatch(
-		actions.removePendingTransactions,
+		actions.removePendingTransaction,
 	);
 	const executePendingTransactionsAction = useActionDispatch(
-		actions.executePendingTransactions,
+		actions.executePendingTransaction,
+	);
+	const getPendingTransactionsCountAction = useActionDispatch(
+		actions.getPendingTransactionsCount,
 	);
 
 	const resetError = () => setErrors([]);
@@ -59,7 +62,7 @@ export const usePendingTransactions = () => {
 		setErrors(callbackErrors);
 	};
 
-	const listPendingTransactionsRequest = (data, extraCallback = null) => {
+	const listPendingTransactions = (data, extraCallback = null) => {
 		setRecentRequest(types.LIST_PENDING_TRANSACTIONS);
 		listPendingTransactionsAction({
 			...data,
@@ -67,28 +70,27 @@ export const usePendingTransactions = () => {
 		});
 	};
 
-	const createPendingTransactionsRequest = (data, extraCallback = null) => {
-		setRecentRequest(types.CREATE_PENDING_TRANSACTIONS);
-		createPendingTransactionsAction({
-			...data,
+	const getPendingTransactionsCount = (extraCallback = null) => {
+		setRecentRequest(types.GET_PENDING_TRANSACTIONS_COUNT);
+		getPendingTransactionsCountAction({
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const editPendingTransactionsRequest = (data, extraCallback = null) => {
-		setRecentRequest(types.EDIT_PENDING_TRANSACTIONS);
+	const editPendingTransaction = (data, extraCallback = null) => {
+		setRecentRequest(types.EDIT_PENDING_TRANSACTION);
 		editPendingTransactionsAction({
 			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const executePendingTransactionsRequest = (
+	const executePendingTransaction = (
 		data,
 		extraCallback = null,
 		showFeedbackMessage,
 	) => {
-		setRecentRequest(types.EXECUTE_PENDING_TRANSACTIONS);
+		setRecentRequest(types.EXECUTE_PENDING_TRANSACTION);
 		executePendingTransactionsAction({
 			...data,
 			callback: modifiedExtraCallback(
@@ -104,12 +106,12 @@ export const usePendingTransactions = () => {
 		});
 	};
 
-	const removePendingTransactionsRequest = (
+	const removePendingTransaction = (
 		data,
 		extraCallback = null,
 		showFeedbackMessage,
 	) => {
-		setRecentRequest(types.REMOVE_PENDING_TRANSACTIONS);
+		setRecentRequest(types.REMOVE_PENDING_TRANSACTION);
 		removePendingTransactionsAction({
 			...data,
 			callback: modifiedExtraCallback(
@@ -127,11 +129,12 @@ export const usePendingTransactions = () => {
 
 	return {
 		pendingTransactions,
-		listPendingTransactions: listPendingTransactionsRequest,
-		createPendingTransactions: createPendingTransactionsRequest,
-		editPendingTransactions: editPendingTransactionsRequest,
-		removePendingTransactions: removePendingTransactionsRequest,
-		executePendingTransactions: executePendingTransactionsRequest,
+		pendingTransactionsCount,
+		listPendingTransactions,
+		getPendingTransactionsCount,
+		editPendingTransaction,
+		removePendingTransaction,
+		executePendingTransaction,
 		status,
 		errors,
 		recentRequest,

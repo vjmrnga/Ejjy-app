@@ -111,3 +111,9 @@ export const productCategoryTypes = {
 	GULAY: 'gulay',
 	NONE: 'none',
 };
+
+export const timeRangeTypes = {
+	DAILY: 'daily',
+	MONTHLY: 'monthly',
+	DATE_RANGE: 'date_range',
+};

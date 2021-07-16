@@ -34,9 +34,9 @@ export const PendingTransactionsSection = ({
 	const {
 		pendingTransactions,
 		listPendingTransactions,
-		editPendingTransactions,
-		executePendingTransactions,
-		removePendingTransactions,
+		editPendingTransaction,
+		executePendingTransaction,
+		removePendingTransaction,
 		status: pendingTransactionsStatus,
 	} = usePendingTransactions();
 
@@ -76,7 +76,7 @@ export const PendingTransactionsSection = ({
 	}, [pendingTransactions]);
 
 	const onExecutePendingTransaction = (pendingTransaction) => {
-		executePendingTransactions(
+		executePendingTransaction(
 			{
 				...pendingTransaction,
 				request_body: JSON.parse(pendingTransaction?.request_body || '{}'),
@@ -96,7 +96,7 @@ export const PendingTransactionsSection = ({
 	};
 
 	const onAskApprovalPendingTransaction = (pendingTransactionId) => {
-		editPendingTransactions(
+		editPendingTransaction(
 			{ id: pendingTransactionId, is_pending_approval: true },
 			({ status, error }) => {
 				if (status === request.SUCCESS) {
@@ -112,7 +112,7 @@ export const PendingTransactionsSection = ({
 		pendingTransactionId,
 		showFeedbackMessage,
 	) => {
-		removePendingTransactions(
+		removePendingTransaction(
 			{ id: pendingTransactionId },
 			({ status, error }) => {
 				if (status === request.SUCCESS) {

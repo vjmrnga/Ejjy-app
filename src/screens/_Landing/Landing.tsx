@@ -28,6 +28,10 @@ const Landing = () => {
 			}
 
 			switch (user?.user_type) {
+				case userTypes.ADMIN: {
+					getBranches();
+					break;
+				}
 				case userTypes.OFFICE_MANAGER: {
 					getBranches();
 					break;

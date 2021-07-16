@@ -1,6 +1,11 @@
 import cn from 'classnames';
-import { Field } from 'formik';
+import { useField } from 'formik';
 import * as React from 'react';
+import {
+	formatMoney,
+	numberWithCommas,
+	removeCommas,
+} from '../../../utils/function';
 import './style.scss';
 
 export interface IInputProps {
@@ -10,9 +15,8 @@ export interface IInputProps {
 	max?: number;
 	min?: number;
 	step?: string;
-	withPesoSign?: boolean;
+	isMoney?: boolean;
 	disabled?: boolean;
-	onBlur?: any;
 }
 
 const FormInput = ({
@@ -23,43 +27,96 @@ const FormInput = ({
 	min,
 	step,
 	disabled,
-	withPesoSign,
-	onBlur,
-}: IInputProps) => (
-	<div className="FormInput">
-		{withPesoSign && (
-			<img
-				className="FormInput_pesoSign"
-				src={require('../../../assets/images/icon-peso.svg')}
+	isMoney,
+}: IInputProps) => {
+	const [field, , helpers] = useField(id);
+	const inputRe = /^[0-9/.\b]+\.?$/g;
+
+	const onChange = (event) => {
+		let { value } = event.target;
+
+		if (isMoney) {
+			value = removeCommas(value);
+			if (inputRe.test(value)) {
+				value = numberWithCommas(value);
+			}
+		}
+
+		helpers.setValue(value);
+	};
+
+	const onBlur = (event) => {
+		let { value } = event.target;
+
+		if (isMoney) {
+			value = removeCommas(value);
+			value = formatMoney(value);
+			value = numberWithCommas(value);
+		}
+
+		helpers.setValue(value);
+	};
+
+	const onKeyDown = (event) => {
+		const { key } = event;
+
+		const isNumber = type === 'number' || isMoney;
+		const allowedInNumberKeys = ['Backspace', 'Tab', 'ArrowRight', 'ArrowLeft'];
+
+		if (isNumber) {
+			// Disregard other keys
+			if (allowedInNumberKeys.includes(key)) {
+				return;
+			}
+
+			// Check for double period
+			if (key === '.' && (field?.value?.match(/\./g) || []).length >= 1) {
+				event.preventDefault();
+			}
+
+			// Not allowed mathematical notations
+			if (['e', 'E', '+', '-'].includes(key) || /[a-zA-Z\s]+/g.test(key)) {
+				event.preventDefault();
+			}
+		}
+	};
+
+	return (
+		<div className="FormInput">
+			{isMoney && (
+				<img
+					className="FormInput_pesoSign"
+					src={require('../../../assets/images/icon-peso.svg')}
+					alt="peso sign"
+				/>
+			)}
+			<input
+				// eslint-disable-next-line react/jsx-props-no-spreading
+				{...field}
+				type={type}
+				id={id}
+				name={id}
+				className={cn('FormInput_input', {
+					FormInput_input__isMoney: isMoney,
+				})}
+				placeholder={placeholder}
+				max={max}
+				min={min}
+				step={step}
+				disabled={disabled}
+				onChange={onChange}
+				onBlur={onBlur}
+				onKeyDown={onKeyDown}
 			/>
-		)}
-		<Field
-			type={type}
-			id={id}
-			name={id}
-			className={cn('FormInput_input', {
-				FormInput_input__withPesoSign: withPesoSign,
-			})}
-			placeholder={placeholder}
-			max={max}
-			min={min}
-			step={step}
-			disabled={disabled}
-			onBlur={onBlur}
-			onKeyDown={(evt) => {
-				if (type === 'number' && ['e', 'E', '+', '-'].includes(evt.key)) {
-					evt.preventDefault();
-				}
-			}}
-		/>
-	</div>
-);
+		</div>
+	);
+};
 
 FormInput.defaultProps = {
 	type: 'text',
 	placeholder: '',
 	disabled: false,
-	withPesoSign: false,
+	isMoney: false,
 	onBlur: () => {},
 };
 

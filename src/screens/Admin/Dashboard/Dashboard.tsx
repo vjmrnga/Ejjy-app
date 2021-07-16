@@ -1,7 +1,5 @@
-import { Col, Row } from 'antd';
 import React from 'react';
 import { Container } from '../../../components';
-import { SiteSettings } from './components/SiteSettings';
 import './style.scss';
 
 const Dashboard = () => (

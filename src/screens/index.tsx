@@ -40,3 +40,4 @@ export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/Req
 export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';
 export { default as OfficeManagerAssignUser } from './OfficeManager/Users/AssignUser';
 export { default as OfficeManagerReports } from './OfficeManager/Reports/Reports';
+export { default as OfficeManagerSales } from './OfficeManager/Sales/Sales';

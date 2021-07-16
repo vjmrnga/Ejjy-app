@@ -7,7 +7,15 @@ import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, search, productIds, callback } = payload;
+	const {
+		page,
+		pageSize,
+		branchId,
+		search,
+		isSoldInBranch,
+		productIds,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const localURL = getLocalIpAddress();
@@ -24,6 +32,7 @@ function* list({ payload }: any) {
 		page_size: pageSize,
 		search,
 		product_ids: productIds,
+		is_sold_in_branch: isSoldInBranch,
 	};
 
 	let isFetchedFromBackupURL = false;
@@ -69,6 +78,7 @@ function* listWithAnalytics({ payload }: any) {
 		sorting,
 		productCategory,
 		timeRange,
+		hasBeenSoldOnly,
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
@@ -89,6 +99,7 @@ function* listWithAnalytics({ payload }: any) {
 		sorting,
 		product_category: productCategory,
 		time_range: timeRange,
+		has_been_sold_only: hasBeenSoldOnly,
 	};
 
 	let isFetchedFromBackupURL = false;

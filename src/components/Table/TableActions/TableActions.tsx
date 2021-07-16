@@ -4,6 +4,7 @@ import {
 	AddButtonIcon,
 	EditButtonIcon,
 	RemoveButtonIcon,
+	RestoreButtonIcon,
 	ViewButtonIcon,
 } from '../../ButtonIcons/ButtonIcons';
 import './style.scss';
@@ -18,6 +19,7 @@ interface Props {
 	onAssign?: any;
 	onEdit?: any;
 	onRemove?: any;
+	onRestore?: any;
 }
 
 export const TableActions = ({
@@ -30,6 +32,7 @@ export const TableActions = ({
 	onAssign,
 	onEdit,
 	onRemove,
+	onRestore,
 }: Props) => (
 	<div className="TableActions">
 		{onExecutePendingTransaction && (
@@ -47,6 +50,7 @@ export const TableActions = ({
 		)}
 		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
 		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
+		{onRestore && <RestoreButtonIcon onClick={onRestore} tooltip="Restore" />}
 		{onRemove && (
 			<Popconfirm
 				placement="topLeft"

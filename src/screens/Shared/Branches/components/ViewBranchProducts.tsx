@@ -1,19 +1,19 @@
-import { Table } from 'antd';
+import { Radio, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
-import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
-import { SHOW_HIDE_SHORTCUT } from 'global/constants';
 import React, { useEffect, useState } from 'react';
+import { TableActions, TableHeader } from '../../../../components';
+import { ButtonLink, Label } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
+import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
+import { SHOW_HIDE_SHORTCUT } from '../../../../global/constants';
+import { pageSizeOptions } from '../../../../global/options';
+import { request } from '../../../../global/types';
+import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
 	convertIntoArray,
 	getKeyDownCombination,
-} from 'utils/function';
-import { TableActions, TableHeader } from '../../../../components';
-import { ButtonLink } from '../../../../components/elements';
-import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
-import { useBranchProducts } from '../../../../hooks/useBranchProducts';
+} from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
@@ -41,6 +41,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 	const [searchedKeyword, setSeachedKeyword] = useState('');
+	const [isSoldInBranch, setIsSoldInBranch] = useState(true);
 
 	// CUSTOM HOOKS
 	const {
@@ -66,7 +67,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	});
 
 	useEffect(() => {
-		getBranchProducts({ branchId: branch?.id, page: 1 });
+		getBranchProducts({ branchId: branch?.id, isSoldInBranch, page: 1 });
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
@@ -122,6 +123,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 			{
 				search: searchedKeyword,
 				branchId: branch?.id,
+				isSoldInBranch,
 				page,
 				pageSize: newPageSize,
 			},
@@ -132,7 +134,12 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	const onSearch = (keyword) => {
 		const lowerCaseKeyword = keyword?.toLowerCase();
 		getBranchProducts(
-			{ search: lowerCaseKeyword, branchId: branch?.id, page: 1 },
+			{
+				search: lowerCaseKeyword,
+				branchId: branch?.id,
+				isSoldInBranch,
+				page: 1,
+			},
 			true,
 		);
 
@@ -163,7 +170,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	};
 
 	return (
-		<>
+		<div className="ViewBranchProducts">
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
@@ -172,6 +179,38 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				buttonName="Create Branch Product"
 				onSearch={onSearch}
 			/>
+
+			<Space
+				className="ViewBranchProducts_filter"
+				direction="vertical"
+				size={15}
+			>
+				<Label label="Show Sold In Branch" />
+				<Radio.Group
+					options={[
+						{ label: 'Show All', value: null },
+						{ label: 'Show Not Sold', value: false },
+						{ label: 'Show Sold Only', value: true },
+					]}
+					onChange={(e) => {
+						const { value } = e.target;
+
+						getBranchProducts(
+							{
+								search: searchedKeyword,
+								branchId: branch?.id,
+								isSoldInBranch: value,
+								page: 1,
+							},
+							true,
+						);
+						setIsSoldInBranch(value);
+					}}
+					// eslint-disable-next-line react/jsx-boolean-value
+					defaultValue={true}
+					optionType="button"
+				/>
+			</Space>
 
 			<Table
 				columns={columns}
@@ -210,6 +249,6 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				visible={addBranchProductModalVisible}
 				onClose={() => setAddBranchProductModalVisible(false)}
 			/>
-		</>
+		</div>
 	);
 };

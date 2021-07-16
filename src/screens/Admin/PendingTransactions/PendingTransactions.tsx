@@ -25,7 +25,8 @@ const PendingTransactions = () => {
 	const {
 		pendingTransactions,
 		listPendingTransactions,
-		removePendingTransactions,
+		editPendingTransaction,
+		removePendingTransaction,
 		status: pendingTransactionsStatus,
 	} = usePendingTransactions();
 
@@ -39,7 +40,7 @@ const PendingTransactions = () => {
 		const formattedPendingTransactions = pendingTransactions
 			.filter(({ is_pending_approval }) => is_pending_approval)
 			.map((pendingTransaction) => {
-				const { name, branch, datetime_created } = pendingTransaction;
+				const { id, name, branch, datetime_created } = pendingTransaction;
 
 				return {
 					description: name,
@@ -47,8 +48,30 @@ const PendingTransactions = () => {
 					datetime_created: formatDateTime(datetime_created),
 					actions: (
 						<TableActions
+							onRestore={() => {
+								editPendingTransaction(
+									{ id, is_pending_approval: false },
+									({ status, error }) => {
+										if (status === request.SUCCESS) {
+											listPendingTransactions(null);
+										} else if (status === request.ERROR) {
+											showErrorMessages(error);
+										}
+									},
+								);
+							}}
 							onRemove={() => {
-								onRemovePendingTransaction(pendingTransaction.id, true);
+								removePendingTransaction(
+									{ id },
+									({ status, error }) => {
+										if (status === request.SUCCESS) {
+											listPendingTransactions(null);
+										} else if (status === request.ERROR) {
+											showErrorMessages(error);
+										}
+									},
+									true,
+								);
 							}}
 						/>
 					),
@@ -57,23 +80,6 @@ const PendingTransactions = () => {
 
 		setData(formattedPendingTransactions);
 	}, [pendingTransactions]);
-
-	const onRemovePendingTransaction = (
-		pendingTransactionId,
-		showFeedbackMessage,
-	) => {
-		removePendingTransactions(
-			{ id: pendingTransactionId },
-			({ status, error }) => {
-				if (status === request.SUCCESS) {
-					listPendingTransactions(null);
-				} else if (status === request.ERROR) {
-					showErrorMessages(error);
-				}
-			},
-			showFeedbackMessage,
-		);
-	};
 
 	return (
 		<Container title="Pending Transactions">
