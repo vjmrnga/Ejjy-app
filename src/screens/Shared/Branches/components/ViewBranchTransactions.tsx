@@ -1,34 +1,37 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { TableHeader, TableNormal } from '../../../../components';
 import {
-	ButtonLink,
-	FieldError,
-	FieldWarning,
-} from '../../../../components/elements';
+	RequestErrors,
+	RequestWarnings,
+	TableHeader,
+} from '../../../../components';
+import { ButtonLink } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
+import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useTransactions } from '../../../../hooks/useTransactions';
 import {
+	convertIntoArray,
 	getTransactionStatus,
 	numberWithCommas,
 } from '../../../../utils/function';
 import { ViewTransactionModal } from './ViewTransactionModal';
 
+const columns: ColumnsType = [
+	{ title: 'ID', dataIndex: 'id', key: 'id' },
+	{ title: 'Invoice', dataIndex: 'invoice', key: 'invoice' },
+	{ title: 'Amount', dataIndex: 'amount', key: 'amount' },
+	{ title: 'Status', dataIndex: 'status', key: 'status' },
+];
+
 interface Props {
 	branchId: any;
 }
 
-const columns = [
-	{ name: 'ID' },
-	{ name: 'Invoice' },
-	{ name: 'Amount' },
-	{ name: 'Status' },
-];
-
 export const ViewBranchTransactions = ({ branchId }: Props) => {
 	// STATES
-	const [tableData, setTableData] = useState([]);
+	const [data, setData] = useState([]);
 	const [viewTransactionModalVisible, setViewTransactionModalVisible] =
 		useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -41,7 +44,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		pageSize,
 
 		listTransactions,
-		status: transactionStatus,
+		status,
 		errors,
 		warnings,
 	} = useTransactions();
@@ -55,18 +58,25 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 	useEffect(() => {
 		const formattedBranchTransactions = transactions.map(
 			(branchTransaction) => {
-				const { id, invoice, total_amount, status } = branchTransaction;
+				const {
+					id,
+					invoice,
+					total_amount,
+					status: transactionStatus,
+				} = branchTransaction;
 
-				return [
-					<ButtonLink text={id} onClick={() => onView(branchTransaction)} />,
-					invoice?.or_number || EMPTY_CELL,
-					`₱${numberWithCommas(total_amount?.toFixed(2))}`,
-					getTransactionStatus(status),
-				];
+				return {
+					id: (
+						<ButtonLink text={id} onClick={() => onView(branchTransaction)} />
+					),
+					invoice: invoice?.or_number || EMPTY_CELL,
+					amount: `₱${numberWithCommas(total_amount?.toFixed(2))}`,
+					transactionStatus: getTransactionStatus(transactionStatus),
+				};
 			},
 		);
 
-		setTableData(formattedBranchTransactions);
+		setData(formattedBranchTransactions);
 	}, [transactions]);
 
 	const onView = (transaction) => {
@@ -80,28 +90,25 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 	return (
 		<>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
-			{warnings.map((warning, index) => (
-				<FieldWarning key={index} error={warning} />
-			))}
-
 			<TableHeader title="Transactions" />
 
-			<TableNormal
-				columns={columns}
-				data={tableData}
-				loading={transactionStatus === request.REQUESTING}
-			/>
+			<RequestErrors errors={convertIntoArray(errors)} />
+			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
-			<Pagination
-				className="table-pagination"
-				current={currentPage}
-				total={pageCount}
-				pageSize={pageSize}
-				onChange={onPageChange}
-				disabled={!tableData}
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 800 }}
+				pagination={{
+					current: currentPage,
+					total: pageCount,
+					pageSize,
+					onChange: onPageChange,
+					disabled: !data,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				loading={status === request.REQUESTING}
 			/>
 
 			<ViewTransactionModal

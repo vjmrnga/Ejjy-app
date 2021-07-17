@@ -1,25 +1,24 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { Container, Table } from '../../../components';
+import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { EMPTY_CELL } from '../../../global/constants';
+import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useLogs } from '../../../hooks/useLogs';
-import {
-	calculateTableHeight,
-	formatDateTimeExtended,
-} from '../../../utils/function';
+import { formatDateTimeExtended } from '../../../utils/function';
 
-const columns = [
-	{ title: 'Branch', dataIndex: 'branch' },
+const columns: ColumnsType = [
+	{ title: 'Branch', dataIndex: 'branch', width: 150, fixed: 'left' },
 	{ title: 'User', dataIndex: 'user' },
 	{ title: 'Product Name', dataIndex: 'product_name' },
 	{ title: 'Quantity', dataIndex: 'qty' },
 	{ title: 'Date & Time', dataIndex: 'datetime_created' },
 ];
 
-const Logs = () => {
+export const Logs = () => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -63,7 +62,7 @@ const Logs = () => {
 	};
 
 	return (
-		<Container title="Logs" loading={logsStatus === request.REQUESTING}>
+		<Content title="Logs">
 			<section className="Logs">
 				<Box>
 					<TableHeader />
@@ -71,22 +70,20 @@ const Logs = () => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+						scroll={{ x: 1000 }}
+						pagination={{
+							current: currentPage,
+							total: pageCount,
+							pageSize,
+							onChange: onPageChange,
+							disabled: !data,
+							position: ['bottomCenter'],
+							pageSizeOptions,
+						}}
 						loading={logsStatus === request.REQUESTING}
-					/>
-
-					<Pagination
-						className="table-pagination"
-						current={currentPage}
-						total={pageCount}
-						pageSize={pageSize}
-						onChange={onPageChange}
-						disabled={!data}
 					/>
 				</Box>
 			</section>
-		</Container>
+		</Content>
 	);
 };
-
-export default Logs;

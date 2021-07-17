@@ -1,21 +1,33 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { TableHeader, TableNormal } from '../../../../components';
-import { FieldError, FieldWarning } from '../../../../components/elements';
+import {
+	RequestErrors,
+	RequestWarnings,
+	TableHeader,
+} from '../../../../components';
 import { EMPTY_CELL } from '../../../../global/constants';
+import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchesDays } from '../../../../hooks/useBranchesDays';
-import { formatDateTimeShortMonth } from '../../../../utils/function';
+import {
+	convertIntoArray,
+	formatDateTimeShortMonth,
+} from '../../../../utils/function';
+
+const columns: ColumnsType = [
+	{ title: 'User', dataIndex: 'user', key: 'user' },
+
+	{ title: 'Date & Time', dataIndex: 'datetime', key: 'datetime' },
+];
 
 interface Props {
 	branchId: any;
 }
 
-const columns = [{ name: 'User' }, { name: 'Date & Time' }];
-
 export const ViewBranchDays = ({ branchId }: Props) => {
 	// STATES
-	const [tableData, setTableData] = useState([]);
+	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
 	const {
@@ -41,14 +53,13 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 			const { started_by, ended_by, datetime_created, datetime_ended } =
 				branchDay;
 
-			return [
-				{ isHidden: true }, // TODO: For searching functionality (payload)
-				getUser(started_by, ended_by),
-				getDateTime(datetime_created, datetime_ended),
-			];
+			return {
+				user: getUser(started_by, ended_by),
+				datetime: getDateTime(datetime_created, datetime_ended),
+			};
 		});
 
-		setTableData(formattedBranchDays);
+		setData(formattedBranchDays);
 	}, [branchDays]);
 
 	const getUser = (startedBy, endedBy) => {
@@ -101,28 +112,25 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 
 	return (
 		<div className="ViewBranchDays">
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
-			{warnings.map((warning, index) => (
-				<FieldWarning key={index} error={warning} />
-			))}
-
 			<TableHeader title="Days" />
 
-			<TableNormal
-				columns={columns}
-				data={tableData}
-				loading={status === request.REQUESTING}
-			/>
+			<RequestErrors errors={convertIntoArray(errors)} />
+			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
-			<Pagination
-				className="table-pagination"
-				current={currentPage}
-				total={pageCount}
-				pageSize={pageSize}
-				onChange={onPageChange}
-				disabled={!tableData}
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 650 }}
+				pagination={{
+					current: currentPage,
+					total: pageCount,
+					pageSize,
+					onChange: onPageChange,
+					disabled: !data,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				loading={status === request.REQUESTING}
 			/>
 		</div>
 	);

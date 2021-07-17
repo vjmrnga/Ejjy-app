@@ -3,16 +3,6 @@ export { default as Login } from './_Login/Login';
 export { default as Error404 } from './_404/404';
 export { default as Landing } from './_Landing/Landing';
 
-// Admin
-export { default as AdminDashboard } from './Admin/Dashboard/Dashboard';
-export { default as AdminPendingTransactions } from './Admin/PendingTransactions/PendingTransactions';
-export { default as AdminBranches } from './Shared/Branches/Branches';
-export { default as AdminViewBranch } from './Shared/Branches/ViewBranch';
-export { default as AdminProducts } from './Shared/Products/Products';
-export { default as AdminNotifications } from './Admin/Notifications/Notifications';
-export { default as AdminLogs } from './Admin/Logs/Logs';
-export { default as AdminSales } from './Admin/Sales/Sales';
-
 // Branch Manager
 export { default as BranchManagerDashboard } from './BranchManager/Dashboard/Dashboard';
 export { default as BranchManagerNotifications } from './BranchManager/Notifications/Notifications';

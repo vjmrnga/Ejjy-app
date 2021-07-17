@@ -1,25 +1,33 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { TableHeader, TableNormal } from '../../../../components';
-import { FieldError, FieldWarning } from '../../../../components/elements';
+import {
+	RequestErrors,
+	RequestWarnings,
+	TableHeader,
+} from '../../../../components';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useSessions } from '../../../../hooks/useSessions';
-import { formatDateTimeShortMonth } from '../../../../utils/function';
+import {
+	convertIntoArray,
+	formatDateTimeShortMonth,
+} from '../../../../utils/function';
+import { pageSizeOptions } from '../../../../global/options';
+
+const columns: ColumnsType = [
+	{ title: 'User', dataIndex: 'user', key: 'user' },
+	{ title: 'Machine', dataIndex: 'machine', key: 'machine' },
+	{ title: 'Date & Time', dataIndex: 'datetime', key: 'datetime' },
+];
 
 interface Props {
 	branchId: any;
 }
 
-const columns = [
-	{ name: 'User' },
-	{ name: 'Machine' },
-	{ name: 'Date & Time' },
-];
-
 export const ViewBranchSessions = ({ branchId }: Props) => {
 	// STATES
-	const [tableData, setTableData] = useState([]);
+	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
 	const {
@@ -44,15 +52,14 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 			const { user, branch_machine, datetime_started, datetime_ended } =
 				session;
 
-			return [
-				{ isHidden: true }, // TODO: For searching functionality (payload)
-				`${user.first_name} ${user.last_name}`,
-				branch_machine.name,
-				getDateTime(datetime_started, datetime_ended),
-			];
+			return {
+				user: `${user.first_name} ${user.last_name}`,
+				machine: branch_machine.name,
+				datetime: getDateTime(datetime_started, datetime_ended),
+			};
 		});
 
-		setTableData(formattedBranchSession);
+		setData(formattedBranchSession);
 	}, [sessions]);
 
 	const getDateTime = (datetime_started, datetime_ended) => (
@@ -82,28 +89,25 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 
 	return (
 		<div className="ViewBranchSessions">
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
-			{warnings.map((warning, index) => (
-				<FieldWarning key={index} error={warning} />
-			))}
-
 			<TableHeader title="Sessions" />
 
-			<TableNormal
-				columns={columns}
-				data={tableData}
-				loading={status === request.REQUESTING}
-			/>
+			<RequestErrors errors={convertIntoArray(errors)} />
+			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
-			<Pagination
-				className="table-pagination"
-				current={currentPage}
-				total={pageCount}
-				pageSize={pageSize}
-				onChange={onPageChange}
-				disabled={!tableData}
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 650 }}
+				pagination={{
+					current: currentPage,
+					total: pageCount,
+					pageSize,
+					onChange: onPageChange,
+					disabled: !data,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				loading={status === request.REQUESTING}
 			/>
 		</div>
 	);

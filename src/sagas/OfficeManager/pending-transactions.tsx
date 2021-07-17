@@ -1,4 +1,4 @@
-import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { call, put, retry, takeEvery, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/pending-transactions';
 import {
 	MAX_PAGE_SIZE,
@@ -112,7 +112,7 @@ const listWatcherSaga = function* listWatcherSaga() {
 };
 
 const countWatcherSaga = function* countWatcherSaga() {
-	yield takeLatest(types.GET_PENDING_TRANSACTIONS_COUNT, count);
+	yield takeEvery(types.GET_PENDING_TRANSACTIONS_COUNT, count);
 };
 
 const editWatcherSaga = function* editWatcherSaga() {

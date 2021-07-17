@@ -1,13 +1,5 @@
 import { userTypes } from '../global/types';
 import {
-	AdminBranches,
-	AdminDashboard,
-	AdminLogs,
-	AdminNotifications,
-	AdminPendingTransactions,
-	AdminProducts,
-	AdminSales,
-	AdminViewBranch,
 	BranchManagerChecking,
 	BranchManagerDashboard,
 	BranchManagerNotifications,
@@ -34,30 +26,22 @@ import {
 } from '../screens';
 
 export const DashboardScreens = {
-	[userTypes.ADMIN]: AdminDashboard,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerDashboard,
 	[userTypes.BRANCH_MANAGER]: BranchManagerDashboard,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelDashboard,
 };
 
-export const PendingTransactionsScreens = {
-	[userTypes.ADMIN]: AdminPendingTransactions,
-};
-
 export const ProductsScreens = {
-	[userTypes.ADMIN]: AdminProducts,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerProducts,
 	[userTypes.BRANCH_MANAGER]: BranchManagerProducts,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelProducts,
 };
 
 export const BranchesScreens = {
-	[userTypes.ADMIN]: AdminBranches,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerBranches,
 };
 
 export const ViewBranchScreens = {
-	[userTypes.ADMIN]: AdminViewBranch,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerViewBranch,
 };
 
@@ -88,7 +72,6 @@ export const AssignUserScreens = {
 };
 
 export const NotificationsScreens = {
-	[userTypes.ADMIN]: AdminNotifications,
 	[userTypes.OFFICE_MANAGER]: OfficeManagerNotifications,
 	[userTypes.BRANCH_MANAGER]: BranchManagerNotifications,
 	[userTypes.BRANCH_PERSONNEL]: BranchPersonnelNotifications,
@@ -106,14 +89,6 @@ export const CheckingScreens = {
 	[userTypes.BRANCH_MANAGER]: BranchManagerChecking,
 };
 
-export const LogsScreens = {
-	[userTypes.ADMIN]: AdminLogs,
-};
-
 export const ReportsScreens = {
 	[userTypes.OFFICE_MANAGER]: OfficeManagerReports,
-};
-
-export const SalesScreens = {
-	[userTypes.ADMIN]: AdminSales,
 };

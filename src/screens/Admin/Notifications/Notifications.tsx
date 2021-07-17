@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { useBranches } from '../../../hooks/useBranches';
 import { formatDateTime } from '../../../utils/function';
 import { useFailedTransfers } from '../hooks/useFailedTransfers';
 import { NotificationItem } from './components/NotificationItem';
 import './style.scss';
 
-const Branches = () => {
+export const Notifications = () => {
 	// STATES
 	const [notifications, setNotifications] = useState([]);
 
@@ -38,7 +38,7 @@ const Branches = () => {
 		};
 	}, [branches]);
 
-	// Effect: Format branches to be rendered in Table
+	// Effect: Format noificaions to be rendered in Table
 	useEffect(() => {
 		const failedTransferNotifications = Object.keys(failedTransfers)
 			.filter((key) => failedTransfers?.[key]?.count > 0)
@@ -61,14 +61,10 @@ const Branches = () => {
 	};
 
 	return (
-		<Container title="Notifications">
-			<section className="Notifications">
-				{notifications.map(({ message, datetime }) => (
-					<NotificationItem message={message} datetime={datetime} />
-				))}
-			</section>
-		</Container>
+		<Content className="Notifications" title="Notifications">
+			{notifications.map(({ message, datetime }) => (
+				<NotificationItem message={message} datetime={datetime} />
+			))}
+		</Content>
 	);
 };
-
-export default Branches;

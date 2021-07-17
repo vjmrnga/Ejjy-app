@@ -1,15 +1,11 @@
 import React from 'react';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { SalesBranchSection } from './components/SalesBranchSection';
 import { SalesGrandTotalSection } from './components/SalesGrandTotalSection';
 
-const Sales = () => (
-	<Container title="Sales">
-		<section>
-			<SalesGrandTotalSection />
-			<SalesBranchSection />
-		</section>
-	</Container>
+export const Sales = () => (
+	<Content title="Sales">
+		<SalesGrandTotalSection />
+		<SalesBranchSection />
+	</Content>
 );
-
-export default Sales;

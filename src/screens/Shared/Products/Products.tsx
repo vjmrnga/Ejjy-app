@@ -1,9 +1,9 @@
 import { message, Table } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Container, TableActions, TableHeader } from '../../../components';
+import { ColumnsType } from 'antd/lib/table/interface';
+import React, { useEffect, useState } from 'react';
+import { Content, TableActions, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
-import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
 import { types } from '../../../ducks/OfficeManager/products';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
@@ -13,8 +13,14 @@ import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
 
-const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
+const columns: ColumnsType = [
+	{
+		title: 'Barcode',
+		dataIndex: 'barcode',
+		key: 'barcode',
+		width: 150,
+		fixed: 'left',
+	},
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
 	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
@@ -45,12 +51,8 @@ const Products = () => {
 		recentRequest,
 	} = useProducts();
 
-	const {
-		pendingTransactions,
-		listPendingTransactions,
-		status: pendingTransactionsStatus,
-		recentRequest: pendingTransactionRecentRequest,
-	} = usePendingTransactions();
+	const { pendingTransactions, listPendingTransactions } =
+		usePendingTransactions();
 
 	useEffect(() => {
 		getProducts({ page: 1 });
@@ -89,21 +91,6 @@ const Products = () => {
 
 		setData(formattedProducts);
 	}, [products, pendingTransactions]);
-
-	const getFetchLoading = useCallback(
-		() =>
-			(productStatus === request.REQUESTING &&
-				recentRequest === types.GET_PRODUCTS) ||
-			(pendingTransactionsStatus === request.REQUESTING &&
-				pendingTransactionRecentRequest ===
-					pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
-		[
-			productStatus,
-			pendingTransactionsStatus,
-			recentRequest,
-			pendingTransactionRecentRequest,
-		],
-	);
 
 	const onPageChange = (page, newPageSize) => {
 		getProducts({ page, pageSize: newPageSize }, newPageSize !== pageSize);
@@ -149,65 +136,60 @@ const Products = () => {
 	};
 
 	return (
-		<Container
-			title="Products"
-			loading={getFetchLoading()}
-			loadingText="Fetching data..."
-		>
-			<section className="Products">
-				<Box>
-					<TableHeader
-						buttonName="Create Product"
-						onSearch={onSearch}
-						onCreate={onCreate}
-					/>
+		<Content className="Products" title="Products">
+			<Box>
+				<TableHeader
+					buttonName="Create Product"
+					onSearch={onSearch}
+					onCreate={onCreate}
+				/>
 
-					<Table
-						columns={columns}
-						dataSource={data}
-						pagination={{
-							current: currentPage,
-							total: pageCount,
-							pageSize,
-							onChange: onPageChange,
-							disabled: !data,
-							position: ['bottomCenter'],
-							pageSizeOptions,
-						}}
-						loading={
-							productStatus === request.REQUESTING &&
-							recentRequest !== types.GET_PRODUCTS
-						}
-					/>
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 650 }}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					loading={
+						productStatus === request.REQUESTING &&
+						recentRequest !== types.GET_PRODUCTS
+					}
+				/>
 
-					<ViewProductModal
-						product={selectedProduct}
-						visible={viewProductModalVisible}
-						onClose={() => setViewProductModalVisible(false)}
-					/>
+				<ViewProductModal
+					product={selectedProduct}
+					visible={viewProductModalVisible}
+					onClose={() => setViewProductModalVisible(false)}
+				/>
 
-					<CreateEditProductModal
-						product={selectedProduct}
-						addItemInPagination={addItemInPagination}
-						updateItemInPagination={updateItemInPagination}
-						visible={createEditProductModalVisible}
-						onFetchPendingTransactions={listPendingTransactions}
-						onClose={() => setCreateEditProductModalVisible(false)}
-					/>
+				<CreateEditProductModal
+					product={selectedProduct}
+					addItemInPagination={addItemInPagination}
+					updateItemInPagination={updateItemInPagination}
+					visible={createEditProductModalVisible}
+					onFetchPendingTransactions={listPendingTransactions}
+					onClose={() => setCreateEditProductModalVisible(false)}
+				/>
 
-					<EditPriceCostModal
-						product={selectedProduct}
-						visible={editPriceCostModalVisible}
-						onClose={() => setEditPriceCostModalVisible(false)}
-					/>
-				</Box>
-			</section>
+				<EditPriceCostModal
+					product={selectedProduct}
+					visible={editPriceCostModalVisible}
+					onClose={() => setEditPriceCostModalVisible(false)}
+				/>
+			</Box>
 
 			<PendingTransactionsSection
 				title="Pending Product Transactions"
 				transactionType={pendingTransactionTypes.PRODUCTS}
 			/>
-		</Container>
+		</Content>
 	);
 };
 

@@ -1,29 +1,12 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { CommonRoute } from './components';
+import { CommonRoute, NoAuthRoute } from './components';
 import { APP_TITLE } from './global/constants';
-import { Error404, Landing, Login } from './screens';
-import {
-	AssignUserScreens,
-	BranchesScreens,
-	CheckingScreens,
-	DashboardScreens,
-	FulfillPreparationSlipScreens,
-	LogsScreens,
-	NotificationsScreens,
-	OrderSlipsScreens,
-	PendingTransactionsScreens,
-	PreparationSlipsScreens,
-	ProductsScreens,
-	ReportsScreens,
-	RequisitionSlipsScreens,
-	SalesScreens,
-	UsersScreens,
-	ViewBranchScreens,
-	ViewDeliveryReceiptScreens,
-	ViewRequisitionSlipScreens,
-} from './utils/routeMapping';
+import { userTypes } from './global/types';
+import { Error404, Login } from './screens';
+import Admin from './screens/Admin';
 
 const App = () => (
 	<>
@@ -31,9 +14,15 @@ const App = () => (
 			<title>{APP_TITLE}</title>
 		</Helmet>
 		<Switch>
-			<CommonRoute path={['/', '/login']} exact component={Login} />
-			<CommonRoute path="/landing" exact component={Landing} />
-			<CommonRoute path="/dashboard" exact component={DashboardScreens} />
+			<NoAuthRoute path="/login" exact component={Login} />
+
+			<CommonRoute
+				forUserType={userTypes.ADMIN}
+				path="/admin"
+				render={(props) => <Admin {...props} />}
+			/>
+			{/* <CommonRoute path="/landing" exact component={Landing} /> */}
+			{/* <CommonRoute path="/dashboard" exact component={DashboardScreens} />
 			<CommonRoute
 				path="/pending-transactions"
 				exact
@@ -82,8 +71,9 @@ const App = () => (
 			<CommonRoute path="/checking" exact component={CheckingScreens} />
 			<CommonRoute path="/logs" exact component={LogsScreens} />
 			<CommonRoute path="/reports" exact component={ReportsScreens} />
-			<CommonRoute path="/sales" exact component={SalesScreens} />
+			<CommonRoute path="/sales" exact component={SalesScreens} /> */}
 
+			<Redirect from="/" to="/login" />
 			<Route path="/404" exact component={Error404} />
 			<Route path="" render={() => <Redirect to="/404" />} />
 		</Switch>

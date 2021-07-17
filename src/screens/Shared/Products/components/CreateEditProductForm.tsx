@@ -18,7 +18,7 @@ import {
 	productTypes,
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
-import { sleep } from '../../../../utils/function';
+import { removeCommas, sleep } from '../../../../utils/function';
 
 const { Text } = Typography;
 
@@ -247,6 +247,10 @@ export const CreateEditProductForm = ({
 					{
 						...formData,
 						id: product?.id,
+						cost_per_piece: removeCommas(formData.cost_per_piece || 0),
+						cost_per_bulk: removeCommas(formData.cost_per_bulk || 0),
+						price_per_piece: removeCommas(formData.price_per_piece || 0),
+						price_per_bulk: removeCommas(formData.price_per_bulk || 0),
 						product_category:
 							formData.product_category !== productCategoryTypes.NONE
 								? formData.product_category

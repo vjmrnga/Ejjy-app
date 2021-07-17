@@ -18,16 +18,16 @@ import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductB
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
 
-interface Props {
-	branch: any;
-}
-
 const columns: ColumnsType = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
 	{ title: 'Balance', dataIndex: 'balance', key: 'balance' },
 	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
+
+interface Props {
+	branch: any;
+}
 
 export const ViewBranchProducts = ({ branch }: Props) => {
 	// STATES
@@ -171,9 +171,6 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	return (
 		<div className="ViewBranchProducts">
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
-
 			<TableHeader
 				title="Products"
 				buttonName="Create Branch Product"
@@ -212,9 +209,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				/>
 			</Space>
 
+			<br />
+			<RequestErrors errors={convertIntoArray(errors)} />
+			<RequestWarnings warnings={convertIntoArray(warnings)} />
+
 			<Table
 				columns={columns}
 				dataSource={data}
+				scroll={{ x: 800 }}
 				pagination={{
 					current: currentPage,
 					total: pageCount,

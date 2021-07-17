@@ -1,20 +1,16 @@
+import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-	Container,
-	Table,
-	TableActions,
-	TableHeader,
-} from '../../../components';
+import { Content, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
-import { calculateTableHeight, sleep } from '../../../utils/function';
 import { useBranches } from '../../../hooks/useBranches';
+import { sleep } from '../../../utils/function';
 import { CreateEditBranchModal } from './components/Branch/CreateEditBranchModal';
 import './style.scss';
 
-const columns = [
-	{ title: 'Name', dataIndex: 'name' },
+const columns: ColumnsType = [
+	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
 	{ title: 'Online URL', dataIndex: 'url' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
@@ -40,7 +36,7 @@ const Branches = () => {
 			const { id, name, online_url } = branch;
 
 			return {
-				name: <Link to={`/branches/${id}`}>{name}</Link>,
+				name: <Link to={`branches/${id}`}>{name}</Link>,
 				url: online_url,
 				actions: (
 					<TableActions
@@ -65,26 +61,25 @@ const Branches = () => {
 	};
 
 	return (
-		<Container title="Branches">
-			<section className="Branches">
-				<Box>
-					<TableHeader buttonName="Create Branch" onCreate={onCreate} />
+		<Content className="Branches" title="Branches">
+			<Box>
+				<TableHeader buttonName="Create Branch" onCreate={onCreate} />
 
-					<Table
-						columns={columns}
-						dataSource={data}
-						scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
-						loading={status === request.REQUESTING}
-					/>
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 650 }}
+					pagination={false}
+					loading={status === request.REQUESTING}
+				/>
 
-					<CreateEditBranchModal
-						branch={selectedBranch}
-						visible={createEditBranchModalVisible}
-						onClose={() => setCreateEditBranchModalVisible(false)}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<CreateEditBranchModal
+					branch={selectedBranch}
+					visible={createEditBranchModalVisible}
+					onClose={() => setCreateEditBranchModalVisible(false)}
+				/>
+			</Box>
+		</Content>
 	);
 };
 

@@ -4,58 +4,8 @@
 	background: transparent !important;
 }
 
-.Main {
-	& > .ant-spin-nested-loading,
-	.container-spinner {
+.Container {
+	&_spinner {
 		width: 100%;
-	}
-
-	.site-layout {
-		min-height: 100vh;
-		margin-left: 280px;
-		width: calc(100% - 281px);
-		overflow-x: hidden;
-
-		@media only screen and (max-width: 768px) {
-			width: calc(100%) !important	;
-		}
-
-		.site-layout-background {
-			height: auto;
-			padding: 0;
-			background: transparent;
-		}
-
-		&.disabled {
-			pointer-events: none;
-			opacity: 0.45;
-		}
-	}
-
-	&.sidebar-collapsed {
-		.site-layout {
-			margin-left: 0 !important;
-		}
-	}
-
-	.page-header {
-		width: 100%;
-		@include flex($justify-content: space-between);
-		padding: 35px 30px 30px 30px;
-
-		.page-title {
-			@include flex(center, center);
-			@include font(1.875rem, 800);
-			margin: 0;
-
-			.icon-info {
-				margin-left: 10px;
-				cursor: pointer;
-			}
-		}
-	}
-
-	.page-content {
-		padding: 0 30px;
 	}
 }

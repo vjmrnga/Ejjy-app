@@ -60,7 +60,7 @@
 				"allowTaggedTemplates": true
 			}
 		],
-		"react-hooks/exhaustive-deps": 0
+		"react/jsx-props-no-spreading": "off"
 	},
 	"settings": {
 		"import/resolver": {

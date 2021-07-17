@@ -1,14 +1,11 @@
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
-import {
-	calculateTableHeight,
-	formatDateTime,
-	showErrorMessages,
-} from '../../utils/function';
+import { formatDateTime, showErrorMessages } from '../../utils/function';
 import Box from '../elements/Box/Box';
-import { Table } from '../Table/Table';
 import { TableHeader } from '../Table/TableHeaders/TableHeader';
 
 interface Props {
@@ -16,7 +13,7 @@ interface Props {
 	transactionType: any;
 }
 
-const columns = [
+const columns: ColumnsType = [
 	{ title: 'Description', dataIndex: 'description' },
 	{ title: 'Branch', dataIndex: 'branch' },
 	{ title: 'Datetime', dataIndex: 'datetime_created' },
@@ -133,7 +130,8 @@ export const PendingTransactionsSection = ({
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+					scroll={{ x: 800 }}
+					pagination={false}
 					loading={pendingTransactionsStatus === request.REQUESTING}
 				/>
 			</Box>
