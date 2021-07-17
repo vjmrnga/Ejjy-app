@@ -24,7 +24,7 @@ const tabs = {
 	DAYS: 'Days',
 };
 
-const ViewBranch = ({ match }: Props) => {
+export const ViewBranch = ({ match }: Props) => {
 	// VARIABLES
 	const branchId = match?.params?.id;
 	const branch = useSelector(
@@ -103,5 +103,3 @@ const ViewBranch = ({ match }: Props) => {
 		</Content>
 	);
 };
-
-export default ViewBranch;

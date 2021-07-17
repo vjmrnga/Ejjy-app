@@ -7,6 +7,7 @@ import { APP_TITLE } from './global/constants';
 import { userTypes } from './global/types';
 import { Error404, Login } from './screens';
 import Admin from './screens/Admin';
+import OfficeManager from './screens/OfficeManager';
 
 const App = () => (
 	<>
@@ -20,6 +21,12 @@ const App = () => (
 				forUserType={userTypes.ADMIN}
 				path="/admin"
 				render={(props) => <Admin {...props} />}
+			/>
+
+			<CommonRoute
+				forUserType={userTypes.OFFICE_MANAGER}
+				path="/office-manager"
+				render={(props) => <OfficeManager {...props} />}
 			/>
 			{/* <CommonRoute path="/landing" exact component={Landing} /> */}
 			{/* <CommonRoute path="/dashboard" exact component={DashboardScreens} />

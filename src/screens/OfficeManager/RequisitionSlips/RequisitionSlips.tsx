@@ -2,7 +2,7 @@ import { Table } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeaders/TableHeaderRequisitionSlip';
 import { EMPTY_CELL } from '../../../global/constants';
@@ -43,7 +43,7 @@ const pendingRequisitionSlipActions = [
 	requisitionSlipActions.F_DS1_CREATED,
 ];
 
-const RequisitionSlips = () => {
+export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('all');
@@ -135,35 +135,35 @@ const RequisitionSlips = () => {
 	};
 
 	return (
-		<Container title="F-RS1" description="Requests from branches">
-			<section className="RequisitionSlips">
-				<Box>
-					<TableHeaderRequisitionSlip
-						statuses={requisitionSlipActionsOptionsWithAll}
-						onStatusSelect={(status) => setSelectedStatus(status)}
-						branches={getBranchOptions()}
-						onBranchSelect={(branch) => setSelectedBranch(branch)}
-						pending={getPendingCount()}
-					/>
+		<Content
+			className="RequisitionSlips"
+			title="F-RS1"
+			description="Requests from branches"
+		>
+			<Box>
+				<TableHeaderRequisitionSlip
+					statuses={requisitionSlipActionsOptionsWithAll}
+					onStatusSelect={(status) => setSelectedStatus(status)}
+					branches={getBranchOptions()}
+					onBranchSelect={(branch) => setSelectedBranch(branch)}
+					pending={getPendingCount()}
+				/>
 
-					<Table
-						columns={columns}
-						dataSource={data}
-						pagination={{
-							current: currentPage,
-							total: pageCount,
-							pageSize,
-							onChange: onPageChange,
-							disabled: !data,
-							position: ['bottomCenter'],
-							pageSizeOptions,
-						}}
-						loading={requisitionSlipsStatus === request.REQUESTING}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<Table
+					columns={columns}
+					dataSource={data}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					loading={requisitionSlipsStatus === request.REQUESTING}
+				/>
+			</Box>
+		</Content>
 	);
 };
-
-export default RequisitionSlips;

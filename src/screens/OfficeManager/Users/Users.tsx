@@ -1,12 +1,11 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import { message, Tabs } from 'antd';
+import { message, Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AddIcon, Container, TableActions } from '../../../components';
+import { AddIcon, Content, TableActions } from '../../../components';
 import { Box, Button } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
-import { types as pendingTransactionsTypes } from '../../../ducks/OfficeManager/pending-transactions';
 import { NO_BRANCH_ID } from '../../../global/constants';
 import {
 	pendingTransactionTypes,
@@ -24,7 +23,7 @@ import './style.scss';
 
 const { TabPane } = Tabs;
 
-const Users = () => {
+export const Users = () => {
 	// STATES
 	const [tabActiveKey, setTabActiveKey] = useState(null);
 	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
@@ -77,7 +76,7 @@ const Users = () => {
 			usersStatus === request.REQUESTING ||
 			(pendingTransactionsStatus === request.REQUESTING &&
 				pendingTransactionRecentRequest ===
-					pendingTransactionsTypes.LIST_PENDING_TRANSACTIONS),
+					pendingTransactionsStatus.LIST_PENDING_TRANSACTIONS),
 		[usersStatus, pendingTransactionsStatus, pendingTransactionRecentRequest],
 	);
 
@@ -102,10 +101,10 @@ const Users = () => {
 								branch: { id: branchId },
 							};
 
-							return [
-								`${first_name} ${last_name}`,
-								getUserTypeName(user_type),
-								hasPendingTransactions ? null : (
+							return {
+								name: `${first_name} ${last_name}`,
+								type: getUserTypeName(user_type),
+								action: hasPendingTransactions ? null : (
 									<TableActions
 										onAssign={
 											branchId !== NO_BRANCH_ID
@@ -124,7 +123,7 @@ const Users = () => {
 										}
 									/>
 								),
-							];
+							};
 						})
 				: [];
 
@@ -167,9 +166,9 @@ const Users = () => {
 	};
 
 	return (
-		<Container title="Users" loading={getFetchLoading()}>
-			<section>
-				<Box>
+		<Content title="Users">
+			<Box>
+				<Spin spinning={getFetchLoading()}>
 					<Tabs
 						type="card"
 						activeKey={tabActiveKey}
@@ -195,29 +194,27 @@ const Users = () => {
 							<BranchUsers dataSource={getTableDataSource(NO_BRANCH_ID)} />
 						</TabPane>
 					</Tabs>
+				</Spin>
 
-					<CreateUserModal
-						visible={createUserModalVisible}
-						onSuccess={() => onTabClick(NO_BRANCH_ID)}
-						onClose={() => setCreateUserModalVisible(false)}
-					/>
+				<CreateUserModal
+					visible={createUserModalVisible}
+					onSuccess={() => onTabClick(NO_BRANCH_ID)}
+					onClose={() => setCreateUserModalVisible(false)}
+				/>
 
-					<EditUserModal
-						user={selectedUser}
-						visible={editUserModalVisible}
-						onFetchPendingTransactions={listPendingTransactions}
-						onSuccess={onSuccessEditUser}
-						onClose={() => setEditUserModalVisible(false)}
-					/>
-				</Box>
-			</section>
+				<EditUserModal
+					user={selectedUser}
+					visible={editUserModalVisible}
+					onFetchPendingTransactions={listPendingTransactions}
+					onSuccess={onSuccessEditUser}
+					onClose={() => setEditUserModalVisible(false)}
+				/>
+			</Box>
 
 			<PendingTransactionsSection
 				title="Pending User Transactions"
 				transactionType={pendingTransactionTypes.USERS}
 			/>
-		</Container>
+		</Content>
 	);
 };
-
-export default Users;

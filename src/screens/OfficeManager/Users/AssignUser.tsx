@@ -1,4 +1,4 @@
-import { Divider, message, Table } from 'antd';
+import { Divider, message, Spin, Table } from 'antd';
 import cn from 'classnames';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import {
 	AddButtonIcon,
 	CancelButtonIcon,
-	Container,
+	Content,
 	DetailsRow,
 	DetailsSingle,
 } from '../../../components';
@@ -28,7 +28,7 @@ interface Props {
 	match: any;
 }
 
-const AssignUser = ({ match }: Props) => {
+export const AssignUser = ({ match }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -103,9 +103,9 @@ const AssignUser = ({ match }: Props) => {
 					date: item.display,
 					day: item.day,
 					actions: assignment ? (
-						<div className="machine-selection">
+						<div className="AssignUsers_machineSelection">
 							<Select
-								classNames="select"
+								classNames="AssignUsers_machineSelection_select"
 								options={machineOptions}
 								placeholder="Cashiering Machines"
 								value={assignment.branch_machine_id}
@@ -218,14 +218,10 @@ const AssignUser = ({ match }: Props) => {
 	);
 
 	return (
-		<Container
-			title="Assign User"
-			loading={isFetching()}
-			loadingText="Fetching user details..."
-		>
-			<section className="AssignUsers">
+		<Content className="AssignUsers" title="Assign User">
+			<Spin size="large" spinning={isFetching()} tip="Fetching user details...">
 				<Box>
-					<div className="details">
+					<div className="AssignUsers_details">
 						<DetailsRow>
 							<DetailsSingle
 								label="Name"
@@ -239,7 +235,7 @@ const AssignUser = ({ match }: Props) => {
 						user?.user_type,
 					) && (
 						<>
-							<div className="cashiering-assignments">
+							<div className="AssignUsers_cashieringAssignments">
 								<Divider dashed />
 								<DetailsRow>
 									<DetailsSingle label="Assignments" value="" />
@@ -255,9 +251,7 @@ const AssignUser = ({ match }: Props) => {
 						</>
 					)}
 				</Box>
-			</section>
-		</Container>
+			</Spin>
+		</Content>
 	);
 };
-
-export default AssignUser;

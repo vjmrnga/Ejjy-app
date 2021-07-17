@@ -15,7 +15,7 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const Branches = () => {
+export const Branches = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] =
@@ -82,5 +82,3 @@ const Branches = () => {
 		</Content>
 	);
 };
-
-export default Branches;

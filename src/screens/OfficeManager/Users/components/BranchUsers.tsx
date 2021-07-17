@@ -1,7 +1,12 @@
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useState } from 'react';
-import { TableNormal } from '../../../../components';
 
-const columns = [{ name: 'Name' }, { name: 'Type' }, { name: 'Action' }];
+const columns: ColumnsType = [
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Type', dataIndex: 'type', key: 'type' },
+	{ title: 'Action', dataIndex: 'action', key: 'action' },
+];
 
 interface Props {
 	dataSource?: any;
@@ -16,5 +21,12 @@ export const BranchUsers = ({ dataSource }: Props) => {
 		setData(dataSource);
 	}, [dataSource]);
 
-	return <TableNormal columns={columns} data={data} />;
+	return (
+		<Table
+			columns={columns}
+			dataSource={data}
+			scroll={{ x: 800 }}
+			pagination={false}
+		/>
+	);
 };

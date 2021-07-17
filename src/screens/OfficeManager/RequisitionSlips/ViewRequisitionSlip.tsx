@@ -1,7 +1,8 @@
+import { Spin } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Container } from '../../../components';
+import { Breadcrumb, Content } from '../../../components';
 import { selectors } from '../../../ducks/requisition-slips';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
@@ -14,7 +15,7 @@ interface Props {
 	match: any;
 }
 
-const ViewRequisitionSlip = ({ match }: Props) => {
+export const ViewRequisitionSlip = ({ match }: Props) => {
 	// VARIABLES
 	const requisitionSlipId = match?.params?.id;
 
@@ -56,14 +57,17 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 	};
 
 	return (
-		<Container
+		<Content
+			className="ViewRequisitionSlip"
 			title="[VIEW] F-RS01"
 			rightTitle={`#${requisitionSlip?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
-			loading={requisitionSlipStatus === request.REQUESTING}
-			loadingText="Fetching requisition slip..."
 		>
-			<section className="ViewRequisitionSlip">
+			<Spin
+				size="large"
+				spinning={requisitionSlipStatus === request.REQUESTING}
+				tip="Fetching requisition slip..."
+			>
 				<RequestedProducts
 					requisitionSlip={requisitionSlip}
 					requisitionSlipStatus={requisitionSlipStatus}
@@ -73,9 +77,7 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 					fetchRequisitionSlip={fetchRequisitionSlip}
 					requisitionSlip={requisitionSlip}
 				/>
-			</section>
-		</Container>
+			</Spin>
+		</Content>
 	);
 };
-
-export default ViewRequisitionSlip;

@@ -1,6 +1,7 @@
+import { Spin } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Container } from '../../../components';
+import { Breadcrumb, Content } from '../../../components';
 import { request } from '../../../global/types';
 import { useDeliveryReceipt } from '../hooks/useDeliveryReceipt';
 import { AdjustmentSlips } from './components/AdjustmentSlips/AdjustmentSlips';
@@ -11,7 +12,7 @@ interface Props {
 	match: any;
 }
 
-const ViewDeliveryReceipt = ({ match }: Props) => {
+export const ViewDeliveryReceipt = ({ match }: Props) => {
 	// Routing
 	const deliveryReceiptId = match?.params?.id;
 	const history = useHistory();
@@ -50,22 +51,23 @@ const ViewDeliveryReceipt = ({ match }: Props) => {
 	};
 
 	return (
-		<Container
+		<Content
+			className="ViewDeliveryReceipt"
 			title="[VIEW] F-DS1"
 			rightTitle={`#${deliveryReceipt?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
-			loading={deliveryReceiptStatus === request.REQUESTING}
-			loadingText="Fetching delivery receipt..."
 		>
-			<section className="ViewDeliveryReceipt">
+			<Spin
+				size="large"
+				spinning={deliveryReceiptStatus === request.REQUESTING}
+				tip="Fetching delivery receipt..."
+			>
 				<DeliveryReceipt deliveryReceipt={deliveryReceipt} />
 				<AdjustmentSlips
 					deliveryReceipt={deliveryReceipt}
 					fetchDeliveryReceipt={fetchDeliveryReceipt}
 				/>
-			</section>
-		</Container>
+			</Spin>
+		</Content>
 	);
 };
-
-export default ViewDeliveryReceipt;

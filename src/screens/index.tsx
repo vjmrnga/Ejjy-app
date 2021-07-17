@@ -20,14 +20,14 @@ export { default as BranchPersonnelFulfillPreparationSlips } from './BranchPerso
 export { default as BranchPersonnelProducts } from './BranchPersonnel/Products/Products';
 
 // Office Manager
-export { default as OfficeManagerBranches } from './Shared/Branches/Branches';
-export { default as OfficeManagerViewBranch } from './Shared/Branches/ViewBranch';
-export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Dashboard';
-export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
-export { default as OfficeManagerProducts } from './Shared/Products/Products';
-export { default as OfficeManagerRequisitionSlips } from './OfficeManager/RequisitionSlips/RequisitionSlips';
-export { default as OfficeManagerViewRequisitionSlip } from './OfficeManager/RequisitionSlips/ViewRequisitionSlip';
-export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/RequisitionSlips/ViewDeliveryReceipt';
-export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';
-export { default as OfficeManagerAssignUser } from './OfficeManager/Users/AssignUser';
-export { default as OfficeManagerReports } from './OfficeManager/Reports/Reports';
+// export { default as OfficeManagerBranches } from './Shared/Branches/Branches';
+// export { default as OfficeManagerViewBranch } from './Shared/Branches/ViewBranch';
+// export { default as OfficeManagerDashboard } from './OfficeManager/Dashboard/Dashboard';
+// export { default as OfficeManagerNotifications } from './OfficeManager/Notifications/Notifications';
+// export { default as OfficeManagerProducts } from './Shared/Products/Products';
+// export { default as OfficeManagerRequisitionSlips } from './OfficeManager/RequisitionSlips/RequisitionSlips';
+// export { default as OfficeManagerViewRequisitionSlip } from './OfficeManager/RequisitionSlips/ViewRequisitionSlip';
+// export { default as OfficeManagerViewDeliveryReceipt } from './OfficeManager/RequisitionSlips/ViewDeliveryReceipt';
+// export { default as OfficeManagerUsers } from './OfficeManager/Users/Users';
+// export { default as OfficeManagerAssignUser } from './OfficeManager/Users/AssignUser';
+// export { default as OfficeManagerReports } from './OfficeManager/Reports/Reports';

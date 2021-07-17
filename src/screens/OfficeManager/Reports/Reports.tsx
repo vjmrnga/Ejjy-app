@@ -1,14 +1,10 @@
 import React from 'react';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { BranchBalances } from './components/BranchBalances';
 import './style.scss';
 
-const Reports = () => (
-	<Container title="Reports">
-		<section className="Reports">
-			<BranchBalances />
-		</section>
-	</Container>
+export const Reports = () => (
+	<Content className="Reports" title="Reports">
+		<BranchBalances />
+	</Content>
 );
-
-export default Reports;

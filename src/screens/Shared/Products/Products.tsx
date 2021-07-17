@@ -25,7 +25,7 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
-const Products = () => {
+export const Products = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [createEditProductModalVisible, setCreateEditProductModalVisible] =
@@ -192,5 +192,3 @@ const Products = () => {
 		</Content>
 	);
 };
-
-export default Products;

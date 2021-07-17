@@ -1,14 +1,10 @@
 import React from 'react';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { BranchBalances } from './components/BranchBalances/BranchBalances';
 import './style.scss';
 
-const Dashboard = () => (
-	<Container title="Dashboard">
-		<section className="Dashboard">
-			<BranchBalances />
-		</section>
-	</Container>
+export const Dashboard = () => (
+	<Content className="Dashboard" title="Dashboard">
+		<BranchBalances />
+	</Content>
 );
-
-export default Dashboard;

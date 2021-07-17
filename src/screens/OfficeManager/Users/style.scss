@@ -1,14 +1,11 @@
 @import '../../../assets/styles/main';
 
-.Users {
-}
-
 .AssignUsers {
-	.details {
+	&_details {
 		padding: 25px 25px 0 25px;
 	}
 
-	.cashiering-assignments {
+	&_cashieringAssignments {
 		padding: 0 25px 10px 25px;
 	}
 
@@ -17,10 +14,10 @@
 		background-color: rgba(0, 0, 0, 0.1) !important;
 	}
 
-	.machine-selection {
+	&_machineSelection {
 		display: flex;
 
-		.select {
+		&_select {
 			margin-right: 8px;
 		}
 

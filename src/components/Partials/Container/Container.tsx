@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unused-prop-types */
-import { Layout, Spin } from 'antd';
+import { Layout, notification, Spin } from 'antd';
 import React, { ReactNode, useEffect } from 'react';
 import { IS_APP_LIVE } from '../../../global/constants';
 import { useAuth } from '../../../hooks/useAuth';
@@ -35,6 +35,20 @@ export const Container = ({
 			IS_APP_LIVE ? user.online_login_count : user.login_count,
 		);
 	}, []);
+
+	useEffect(() => {
+		const activeSessionsCount = IS_APP_LIVE
+			? user?.active_online_sessions_count
+			: user?.active_sessions_count;
+
+		if (activeSessionsCount > 1) {
+			notification.warning({
+				duration: null,
+				message: 'Account Notification',
+				description: 'Someone else was using this account.',
+			});
+		}
+	}, [user]);
 
 	return (
 		<Layout className="Container">
