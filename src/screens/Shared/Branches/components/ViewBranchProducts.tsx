@@ -187,7 +187,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 					options={[
 						{ label: 'Show All', value: null },
 						{ label: 'Show Not Sold', value: false },
-						{ label: 'Show Sold Only', value: true },
+						{ label: 'Show In Stock', value: true },
 					]}
 					onChange={(e) => {
 						const { value } = e.target;

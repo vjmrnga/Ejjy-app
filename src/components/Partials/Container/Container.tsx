@@ -17,17 +17,15 @@ interface Props {
 	sidebarItems?: any;
 }
 
+const SINGLE_SIGN_IN_WARNINGS_KEY = 'SINGLE_SIGN_IN_WARNINGS_KEY';
+
 export const Container = ({
 	loading,
 	loadingText,
 	sidebarItems,
 	children,
 }: Props) => {
-	const { user, retrieveUser } = useAuth();
-
-	// useBeforeunload(() => {
-	// 	logout(user.id);
-	// });
+	const { user, retrieveUser, updateUserActiveSessionCount } = useAuth();
 
 	useEffect(() => {
 		retrieveUser(
@@ -43,10 +41,13 @@ export const Container = ({
 
 		if (activeSessionsCount > 1) {
 			notification.warning({
+				key: SINGLE_SIGN_IN_WARNINGS_KEY,
 				duration: null,
 				message: 'Account Notification',
 				description: 'Someone else was using this account.',
 			});
+
+			updateUserActiveSessionCount(user, 1);
 		}
 	}, [user]);
 

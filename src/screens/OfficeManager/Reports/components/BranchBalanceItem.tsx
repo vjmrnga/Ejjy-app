@@ -389,7 +389,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 						<Radio.Group
 							options={[
 								{ label: 'Show All', value: false },
-								{ label: 'Sold Only', value: true },
+								{ label: 'In Stock', value: true },
 							]}
 							onChange={(e) => {
 								const { value } = e.target;

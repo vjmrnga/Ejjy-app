@@ -1,9 +1,8 @@
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
 import { request } from '../../global/types';
-import { useAuth } from '../../hooks/useAuth';
 import { useBranches } from '../../hooks/useBranches';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
@@ -73,27 +72,12 @@ const sidebarItems = [
 
 const OfficeManager = () => {
 	// CUSTOM HOOKS
-	const history = useHistory();
-	const { user } = useAuth();
 	const { getBranches, status: getBranchesStatus } = useBranches();
 
+	// METHODS
 	useEffect(() => {
-		if (user) {
-			getBranches();
-		}
-	}, [user]);
-
-	useEffect(() => {
-		const requests = [getBranchesStatus];
-
-		if (requests.includes(request.REQUESTING)) {
-			// Do nothing
-		} else if (requests.every((value) => value === request.SUCCESS)) {
-			history.replace('dashboard');
-		} else if (requests.some((value) => value === request.ERROR)) {
-			// logout(user?.id);
-		}
-	}, [user, getBranchesStatus]);
+		getBranches();
+	}, []);
 
 	if (getBranchesStatus === request.REQUESTING) {
 		return (

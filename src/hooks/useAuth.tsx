@@ -12,10 +12,10 @@ export const useAuth = () => {
 	const accessToken = useSelector(selectors.selectAccessToken());
 	const refreshToken = useSelector(selectors.selectRefreshToken());
 
-	const login = useActionDispatch(actions.login);
-	const loginOnline = useActionDispatch(actions.loginOnline);
-	const logout = useActionDispatch(actions.logout);
-	const retrieveUser = useActionDispatch(actions.retrieveUser);
+	const loginAction = useActionDispatch(actions.login);
+	const loginOnlineAction = useActionDispatch(actions.loginOnline);
+	const logoutAction = useActionDispatch(actions.logout);
+	const retrieveUserAction = useActionDispatch(actions.retrieveUser);
 	const saveAction = useActionDispatch(actions.save);
 
 	const callback = ({
@@ -26,35 +26,46 @@ export const useAuth = () => {
 		setErrors(callbackErrors);
 	};
 
-	const loginRequest = (data) => {
-		login({ ...data, callback });
+	const login = (data) => {
+		loginAction({ ...data, callback });
 	};
 
-	const loginOnlineRequest = (data) => {
-		loginOnline({ ...data, callback });
+	const loginOnline = (data) => {
+		loginOnlineAction({ ...data, callback });
 	};
 
-	const logoutRequest = (id: number) => {
-		logout({ id });
+	const logout = (id: number) => {
+		logoutAction({ id });
 	};
 
-	const retrieveUserRequest = (id, loginCount) => {
-		retrieveUser({ id, loginCount });
+	const retrieveUser = (id, loginCount) => {
+		retrieveUserAction({ id, loginCount });
 	};
 
 	const updateLocalIpAddress = (newLocalIpAddress) => {
 		saveAction({ localIpAddress: newLocalIpAddress });
 	};
 
+	const updateUserActiveSessionCount = (loggedInUser, count) => {
+		saveAction({
+			user: {
+				...loggedInUser,
+				active_online_sessions_count: count,
+				active_sessions_count: count,
+			},
+		});
+	};
+
 	return {
 		user,
 		accessToken,
 		refreshToken,
-		login: loginRequest,
-		loginOnline: loginOnlineRequest,
-		logout: logoutRequest,
-		retrieveUser: retrieveUserRequest,
+		login,
+		loginOnline,
+		logout,
+		retrieveUser,
 		updateLocalIpAddress,
+		updateUserActiveSessionCount,
 		status,
 		errors,
 	};

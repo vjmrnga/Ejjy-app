@@ -1,10 +1,9 @@
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
-import { useAuth } from '../../hooks/useAuth';
 import { useBranches } from '../../hooks/useBranches';
 import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';
@@ -61,27 +60,14 @@ const sidebarItems = [
 
 const OfficeManager = () => {
 	// CUSTOM HOOKS
-	const history = useHistory();
-	const { user } = useAuth();
 	const { getBranches, status: getBranchesStatus } = useBranches();
 
+	// METHODS
 	useEffect(() => {
-		if (user && IS_APP_LIVE) {
+		if (IS_APP_LIVE) {
 			getBranches();
 		}
-	}, [user]);
-
-	useEffect(() => {
-		const requests = [getBranchesStatus];
-
-		if (requests.includes(request.REQUESTING)) {
-			// Do nothing
-		} else if (requests.every((value) => value === request.SUCCESS)) {
-			history.replace('dashboard');
-		} else if (requests.some((value) => value === request.ERROR)) {
-			// logout(user?.id);
-		}
-	}, [user, getBranchesStatus]);
+	}, []);
 
 	if (getBranchesStatus === request.REQUESTING) {
 		return (

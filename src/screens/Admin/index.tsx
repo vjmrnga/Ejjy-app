@@ -2,38 +2,48 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
 import { request } from '../../global/types';
+import { useBranches } from '../../hooks/useBranches';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { Products } from '../Shared/Products/Products';
 import { Dashboard } from './Dashboard/Dashboard';
+import { useFailedTransfers } from './hooks/useFailedTransfers';
 import { useUpdateBranchProductBalanceLogs } from './hooks/useUpdateBranchProductBalanceLogs';
 import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { Sales } from './Sales/Sales';
 
+const POLL_INTERVAL_MS = 5000;
+
 const Admin = () => {
 	// STATES
 	const [logsCount, setLogsCount] = useState(0);
+	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
 	const { getUpdateBranchProductBalanceLogs } =
 		useUpdateBranchProductBalanceLogs();
 	const { pendingTransactionsCount, getPendingTransactionsCount } =
 		usePendingTransactions();
+	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();
+	const { branches } = useBranches();
 
 	// REFS
 	const pendingTransactionsCountRef = useRef(null);
 	const logsCountRef = useRef(null);
+	const notificationsCountRef = useRef(null);
 
 	// METHODS
 	useEffect(() => {
+		// Pending Transactions Count
 		getPendingTransactionsCount();
 		pendingTransactionsCountRef.current = setInterval(() => {
 			getPendingTransactionsCount();
-		}, 5000);
+		}, POLL_INTERVAL_MS);
 
+		// Logs Count
 		const fetchLogsCount = () => {
 			getUpdateBranchProductBalanceLogs(({ status, data }) => {
 				if (status === request.SUCCESS) {
@@ -45,13 +55,34 @@ const Admin = () => {
 		fetchLogsCount();
 		logsCountRef.current = setInterval(() => {
 			fetchLogsCount();
-		}, 5000);
+		}, POLL_INTERVAL_MS);
+
+		// Notifications Coun
+		const fetchFailedTransferNotifications = () => {
+			branches.forEach(({ id, name }) => {
+				getFailedTansferCount({ branchId: id, branchName: name });
+			});
+		};
+
+		fetchFailedTransferNotifications();
+		notificationsCountRef.current = setInterval(() => {
+			fetchFailedTransferNotifications();
+		}, POLL_INTERVAL_MS);
 
 		return () => {
 			clearInterval(pendingTransactionsCountRef.current);
 			clearInterval(logsCountRef.current);
+			clearInterval(notificationsCountRef.current);
 		};
 	}, []);
+
+	useEffect(() => {
+		const count = Object.keys(failedTransfers)
+			.filter((key) => failedTransfers?.[key]?.count > 0)
+			.reduce((prev, key) => (failedTransfers?.[key]?.count || 0) + prev, 0);
+
+		setNotificationsCount(count);
+	}, [failedTransfers]);
 
 	const getSidebarItems = useCallback(
 		() => [
@@ -105,9 +136,10 @@ const Admin = () => {
 				activeIcon: require('../../assets/images/icon-notifications-active.svg'),
 				defaultIcon: require('../../assets/images/icon-notifications.svg'),
 				link: '/admin/notifications',
+				count: notificationsCount,
 			},
 		],
-		[logsCount, pendingTransactionsCount],
+		[pendingTransactionsCount, logsCount, notificationsCount],
 	);
 
 	return (
