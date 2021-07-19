@@ -5,7 +5,7 @@
 	.LocalServerUrl {
 		padding: 20px 25px;
 
-		.button-column {
+		&_buttonColumn {
 			@include flex(center, flex-end);
 		}
 	}

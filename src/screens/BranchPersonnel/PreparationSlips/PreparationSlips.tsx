@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import {
 	AddButtonIcon,
-	Container,
+	Content,
 	Table,
 	TableHeader,
 } from '../../../components';
@@ -32,7 +32,7 @@ const columns = [
 
 const pendingPreparationSlipStatus = [preparationSlipStatus.NEW];
 
-const PreparationSlips = () => {
+export const PreparationSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
@@ -130,35 +130,28 @@ const PreparationSlips = () => {
 	);
 
 	return (
-		<Container
-			title="Preparation Slips"
-			loading={getFetchLoading()}
-			loadingText="Fetching preparation slips..."
-		>
-			<section>
-				<Box>
-					<TableHeader
-						statuses={preparationSlipStatusOptions}
-						onStatusSelect={onStatusSelect}
-						onSearch={onSearch}
-						pending={getPendingCount()}
-					/>
+		<Content title="Preparation Slips">
+			<Box>
+				<TableHeader
+					statuses={preparationSlipStatusOptions}
+					onStatusSelect={onStatusSelect}
+					onSearch={onSearch}
+					pending={getPendingCount()}
+				/>
 
-					<Table
-						columns={columns}
-						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
-					/>
+				<Table
+					columns={columns}
+					dataSource={tableData}
+					scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
+					loading={getFetchLoading()}
+				/>
 
-					<ViewPreparationSlipModal
-						preparationSlip={selectedPreparationSlip}
-						visible={viewPreparationSlipModalVisible}
-						onClose={() => setViewPreparationSlipModalVisible(false)}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<ViewPreparationSlipModal
+					preparationSlip={selectedPreparationSlip}
+					visible={viewPreparationSlipModalVisible}
+					onClose={() => setViewPreparationSlipModalVisible(false)}
+				/>
+			</Box>
+		</Content>
 	);
 };
-
-export default PreparationSlips;

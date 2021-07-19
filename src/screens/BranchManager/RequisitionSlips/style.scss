@@ -1,14 +1,11 @@
 @import '../../../assets/styles/main';
 
-.RequisitionSlips {
-}
-
 .ViewRequisitionSlip {
-	.details {
+	&_details {
 		padding: 25px 25px 0 25px;
 	}
 
-	.requested-products {
+	&_requestedProducts {
 		padding: 0 25px 10px 25px;
 	}
 }

@@ -1,14 +1,14 @@
-import { Col, Divider, message, Row } from 'antd';
+import { Col, Divider, message, Row, Spin } from 'antd';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import BarcodeReader from 'react-barcode-reader';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import BarcodeReader from 'react-barcode-reader';
 import {
 	BarcodeTable,
 	CheckIcon,
-	Container,
+	Content,
 	TableNormal,
 } from '../../../components';
 import { Box, Button, SearchInput } from '../../../components/elements';
@@ -35,7 +35,7 @@ interface Props {
 	match: any;
 }
 
-const PreparationSlips = ({ match }: Props) => {
+export const FulfillPreparationSlips = ({ match }: Props) => {
 	const preparationSlipId = match?.params?.id;
 	const history = useHistory();
 
@@ -326,91 +326,90 @@ const PreparationSlips = ({ match }: Props) => {
 	};
 
 	return (
-		<Container
-			title="Fulfill Preparation Slip"
-			loading={prepSlipStatus === request.REQUESTING}
-			loadingText={getFetchLoadingText()}
-		>
+		<Content title="Fulfill Preparation Slip">
 			<BarcodeReader onError={handleError} onScan={handleScan} />
 			<KeyboardEventHandler
 				handleKeys={['up', 'down', 'f1', 'f2']}
 				onKeyEvent={(key) => handleKeyPress(key)}
 			>
-				<section className="FulfillPreparationSlip">
-					<Box>
-						<div className="details">
-							<PreparationSlipDetails preparationSlip={preparationSlip} />
-						</div>
+				<Spin
+					spinning={prepSlipStatus === request.REQUESTING}
+					tip={getFetchLoadingText()}
+				>
+					<section className="FulfillPreparationSlip">
+						<Box>
+							<div className="details">
+								<PreparationSlipDetails preparationSlip={preparationSlip} />
+							</div>
 
-						<div className="keyboard-keys">
-							<KeyboardButton
-								keyboardKey="F1"
-								label="Add Quantity"
-								onClick={() => onModifyQuantity(fulfillType.ADD)}
-							/>
-							<KeyboardButton
-								keyboardKey="F2"
-								label="Deduct Quantity"
-								onClick={() => onModifyQuantity(fulfillType.DEDUCT)}
-							/>
-						</div>
-
-						<div className="search-input-container">
-							<SearchInput
-								classNames="search-input"
-								placeholder="Search product"
-								onChange={(event) => {
-									debounceSearched(event.target.value.trim());
-								}}
-								autoFocus={false}
-							/>
-						</div>
-
-						<Row gutter={25}>
-							<Col xs={24} md={12}>
-								<BarcodeTable
-									columns={columnsLeft}
-									data={products}
-									selectedProduct={selectedProduct}
-									displayInPage
+							<div className="keyboard-keys">
+								<KeyboardButton
+									keyboardKey="F1"
+									label="Add Quantity"
+									onClick={() => onModifyQuantity(fulfillType.ADD)}
 								/>
-							</Col>
-
-							<Col xs={24} md={12}>
-								<TableNormal
-									columns={columnsRight}
-									data={inputtedProducts}
-									displayInPage
+								<KeyboardButton
+									keyboardKey="F2"
+									label="Deduct Quantity"
+									onClick={() => onModifyQuantity(fulfillType.DEDUCT)}
 								/>
-							</Col>
-						</Row>
+							</div>
 
-						<div className="btn-fulfill-container">
-							<Divider className="divider" dashed />
+							<div className="search-input-container">
+								<SearchInput
+									classNames="search-input"
+									placeholder="Search product"
+									onChange={(event) => {
+										debounceSearched(event.target.value.trim());
+									}}
+									autoFocus={false}
+								/>
+							</div>
 
-							<Button
-								classNames="btn-fulfill"
-								text="Fulfill"
-								variant="primary"
-								onClick={onFulfill}
-								disabled={
-									preparationSlip?.status === preparationSlipStatus.COMPLETED
-								}
-							/>
-						</div>
-					</Box>
+							<Row gutter={25}>
+								<Col xs={24} md={12}>
+									<BarcodeTable
+										columns={columnsLeft}
+										data={products}
+										selectedProduct={selectedProduct}
+										displayInPage
+									/>
+								</Col>
 
-					<FulfillSlipModal
-						preparationSlipProduct={selectedProduct}
-						otherProducts={allProducts}
-						updatePreparationSlipsByFetching={fetchPreparationSlip}
-						visible={fulfillPreparationSlipVisible}
-						onClose={() => setFulfillPreparationSlipVisible(false)}
-					/>
-				</section>
+								<Col xs={24} md={12}>
+									<TableNormal
+										columns={columnsRight}
+										data={inputtedProducts}
+										displayInPage
+									/>
+								</Col>
+							</Row>
+
+							<div className="btn-fulfill-container">
+								<Divider className="divider" dashed />
+
+								<Button
+									classNames="btn-fulfill"
+									text="Fulfill"
+									variant="primary"
+									onClick={onFulfill}
+									disabled={
+										preparationSlip?.status === preparationSlipStatus.COMPLETED
+									}
+								/>
+							</div>
+						</Box>
+
+						<FulfillSlipModal
+							preparationSlipProduct={selectedProduct}
+							otherProducts={allProducts}
+							updatePreparationSlipsByFetching={fetchPreparationSlip}
+							visible={fulfillPreparationSlipVisible}
+							onClose={() => setFulfillPreparationSlipVisible(false)}
+						/>
+					</section>
+				</Spin>
 			</KeyboardEventHandler>
-		</Container>
+		</Content>
 	);
 };
-
-export default PreparationSlips;

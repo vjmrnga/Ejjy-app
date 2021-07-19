@@ -33,7 +33,8 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 	return (
 		<Row
 			className={cn({
-				details: type === requisitionSlipDetailsType.SINGLE_VIEW,
+				ViewRequisitionSlip_details:
+					type === requisitionSlipDetailsType.SINGLE_VIEW,
 			})}
 		>
 			<Col span={24} lg={12}>

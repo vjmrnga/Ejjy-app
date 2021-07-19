@@ -1,26 +1,22 @@
+import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	AddButtonIcon,
-	Container,
-	Table,
-	TableHeader,
-} from '../../../components';
+import { AddButtonIcon, Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { request } from '../../../global/types';
-import { calculateTableHeight, formatDateTime } from '../../../utils/function';
+import { formatDateTime } from '../../../utils/function';
 import { useProductChecks } from '../hooks/useProductChecks';
 import { DailyCheckCard } from './components/DailyCheckCard';
 import { FulfillCheckModal } from './components/FulfillCheckModal';
 import './style.scss';
 
-const columns = [
+const columns: ColumnsType = [
 	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
 	{ title: 'Action', dataIndex: 'action' },
 ];
 
-const Checking = () => {
+export const Checking = () => {
 	const user = useSelector(authSelectors.selectUser());
 	const { dailyCheck, randomChecks, getDailyCheck, getRandomChecks, status } =
 		useProductChecks();
@@ -70,8 +66,8 @@ const Checking = () => {
 	};
 
 	return (
-		<Container title="Checking" loading={status === request.REQUESTING}>
-			<section className="Checking">
+		<Content className="Checking" title="Checking">
+			<section>
 				{dailyCheck && (
 					<DailyCheckCard
 						onDailyCheck={onDailyCheck}
@@ -84,10 +80,9 @@ const Checking = () => {
 					<Table
 						columns={columns}
 						dataSource={randomChecksDataSource}
-						scroll={{
-							y: calculateTableHeight(randomChecksDataSource.length),
-							x: '100%',
-						}}
+						scroll={{ x: 650 }}
+						pagination={false}
+						loading={status === request.REQUESTING}
 					/>
 				</Box>
 
@@ -97,8 +92,6 @@ const Checking = () => {
 					onClose={() => setFulfillModalVisible(false)}
 				/>
 			</section>
-		</Container>
+		</Content>
 	);
 };
-
-export default Checking;

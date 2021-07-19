@@ -59,7 +59,7 @@ export const RequestedProducts = ({
 				type={requisitionSlipDetailsType.SINGLE_VIEW}
 			/>
 
-			<div className="requested-products">
+			<div className="ViewRequisitionSlip_requestedProducts">
 				<Divider dashed />
 				<Row gutter={[15, 15]} align="middle">
 					<Col span={24}>

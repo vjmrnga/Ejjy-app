@@ -5,9 +5,9 @@ import {
 	Button,
 	FieldError,
 	FormInputLabel,
-} from '../../../components/elements';
-import { RequestErrors } from '../../../components/RequestErrors/RequestErrors';
-import { convertIntoArray, sleep } from '../../../utils/function';
+} from '../../../../components/elements';
+import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
+import { convertIntoArray, sleep } from '../../../../utils/function';
 import '../style.scss';
 
 const FormDetails = {

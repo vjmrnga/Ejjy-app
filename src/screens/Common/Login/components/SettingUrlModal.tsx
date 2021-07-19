@@ -1,7 +1,7 @@
 import { message, Modal } from 'antd';
 import React from 'react';
-import { LOCAL_IP_ADDRESS_KEY } from '../../../global/constants';
-import { getLocalIpAddress } from '../../../utils/function';
+import { LOCAL_IP_ADDRESS_KEY } from '../../../../global/constants';
+import { getLocalIpAddress } from '../../../../utils/function';
 import '../style.scss';
 import { SettingUrlForm } from './SettingUrlForm';
 

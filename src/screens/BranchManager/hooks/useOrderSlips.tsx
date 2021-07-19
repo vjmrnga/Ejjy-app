@@ -105,6 +105,7 @@ export const useOrderSlips = () => {
 		orderSlips: currentPageData,
 		pageCount,
 		currentPage,
+		pageSize,
 		addItemInPagination,
 		updateItemInPagination,
 		removeItemInPagination,

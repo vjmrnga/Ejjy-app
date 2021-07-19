@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, TableHeader } from '../../../components';
+import { Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import {
@@ -40,7 +40,7 @@ const pendingRequisitionSlipActions = [
 	requisitionSlipActions.F_DS1_DELIVERING,
 ];
 
-const RequisitionSlips = () => {
+export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('all');
@@ -96,11 +96,7 @@ const RequisitionSlips = () => {
 			_progress = isOwnRequisitionSlip ? _progress : EMPTY_CELL;
 
 			return {
-				_id: id,
-				_datetime_created: dateTime,
-				_type: type,
-				_status: action,
-				id: <Link to={`/requisition-slips/${id}`}>{id}</Link>,
+				id: <Link to={`/branch-manager/requisition-slips/${id}`}>{id}</Link>,
 				datetime_created: dateTime,
 				requestor: requesting_user?.branch?.name,
 				type: upperFirst(type),
@@ -144,45 +140,42 @@ const RequisitionSlips = () => {
 	};
 
 	return (
-		<Container title="Requisition Slips">
-			<section className="RequisitionSlips">
-				<Box>
-					<TableHeader
-						buttonName="Create Requisition Slip"
-						statuses={requisitionSlipActionsOptionsWithAll}
-						onStatusSelect={(status) => setSelectedStatus(status)}
-						onCreate={() => setCreateModalVisible(true)}
-						pending={getPendingCount()}
-					/>
+		<Content className="RequisitionSlips" title="Requisition Slips">
+			<Box>
+				<TableHeader
+					buttonName="Create Requisition Slip"
+					statuses={requisitionSlipActionsOptionsWithAll}
+					onStatusSelect={(status) => setSelectedStatus(status)}
+					onCreate={() => setCreateModalVisible(true)}
+					pending={getPendingCount()}
+				/>
 
-					<Table
-						columns={columns}
-						dataSource={data}
-						pagination={{
-							current: currentPage,
-							total: pageCount,
-							pageSize,
-							onChange: onPageChange,
-							disabled: !data,
-							position: ['bottomCenter'],
-							pageSizeOptions,
-						}}
-						loading={[requisitionSlipsStatus, branchProductsStatus].includes(
-							request.REQUESTING,
-						)}
-					/>
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 1000 }}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					loading={[requisitionSlipsStatus, branchProductsStatus].includes(
+						request.REQUESTING,
+					)}
+				/>
 
-					<CreateRequisitionSlipModal
-						branchProducts={branchProducts}
-						visible={createModalVisible}
-						onSuccess={onCreateRequisitionSlipSuccess}
-						onClose={() => setCreateModalVisible(false)}
-						loading={branchProductsStatus === request.REQUESTING}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<CreateRequisitionSlipModal
+					branchProducts={branchProducts}
+					visible={createModalVisible}
+					onSuccess={onCreateRequisitionSlipSuccess}
+					onClose={() => setCreateModalVisible(false)}
+					loading={branchProductsStatus === request.REQUESTING}
+				/>
+			</Box>
+		</Content>
 	);
 };
-
-export default RequisitionSlips;

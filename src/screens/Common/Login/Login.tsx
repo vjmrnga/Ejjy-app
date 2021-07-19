@@ -1,10 +1,13 @@
 import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Box, Button } from '../../components/elements';
-import { IS_APP_LIVE } from '../../global/constants';
-import { request } from '../../global/types';
-import { useAuth } from '../../hooks/useAuth';
-import { getKeyDownCombination, getLocalIpAddress } from '../../utils/function';
+import { Box, Button } from '../../../components/elements';
+import { IS_APP_LIVE } from '../../../global/constants';
+import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
+import {
+	getKeyDownCombination,
+	getLocalIpAddress,
+} from '../../../utils/function';
 import { LoginForm } from './components/LoginForm';
 import { SettingUrlModal } from './components/SettingUrlModal';
 import './style.scss';
@@ -45,7 +48,7 @@ const Login = () => {
 		<section className="Login">
 			<Box className="container">
 				<img
-					src={require('../../assets/images/logo.jpg')}
+					src={require('../../../assets/images/logo.jpg')}
 					alt="logo"
 					className="logo"
 				/>

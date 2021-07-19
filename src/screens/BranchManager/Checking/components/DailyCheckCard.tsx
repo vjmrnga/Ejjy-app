@@ -9,22 +9,20 @@ interface Props {
 }
 
 export const DailyCheckCard = ({ onDailyCheck, dateTimeRequested }: Props) => (
-	<Box>
-		<div className="daily-check-container">
-			<div>
-				<p className="title">Daily Check</p>
-				<span className="date">
-					{formatDateTimeExtended(dateTimeRequested)}
-				</span>
-			</div>
-
-			<Button
-				text="Input Daily Check"
-				variant="primary"
-				onClick={onDailyCheck}
-				iconDirection="left"
-				icon={<AddIcon />}
-			/>
+	<Box className="DailyCheckCard">
+		<div>
+			<p className="DailyCheckCard_title">Daily Check</p>
+			<span className="DailyCheckCard_date">
+				{formatDateTimeExtended(dateTimeRequested)}
+			</span>
 		</div>
+
+		<Button
+			text="Input Daily Check"
+			variant="primary"
+			onClick={onDailyCheck}
+			iconDirection="left"
+			icon={<AddIcon />}
+		/>
 	</Box>
 );

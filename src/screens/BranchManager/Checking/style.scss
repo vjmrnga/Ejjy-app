@@ -1,18 +1,18 @@
 @import '../../../assets/styles/main';
 
 .Checking {
-	.daily-check-container {
+	.DailyCheckCard {
 		@include flex(space-between, center);
 		padding: 20px 25px;
 
-		.title {
+		&_title {
 			@include font(1.25rem, bold);
 			margin: 0;
 			color: $color-dark;
 			flex: 1;
 		}
 
-		.date {
+		&_date {
 			color: $color-dark-gray;
 			font-size: 18px;
 		}

@@ -2,7 +2,7 @@ import { message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Container } from '../../../components';
+import { Content } from '../../../components';
 import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { IS_APP_LIVE } from '../../../global/constants';
@@ -14,7 +14,7 @@ import { LocalServerUrlForm } from './components/LocalServerUrlForm';
 import { MachineReportTable } from './components/MachineReportTable';
 import './style.scss';
 
-const Dashboard = () => {
+export const Dashboard = () => {
 	// STATES
 	const [branchDay, setBranchDay] = useState(null);
 
@@ -62,29 +62,25 @@ const Dashboard = () => {
 	};
 
 	return (
-		<Container title="Dashboard">
-			<section className="Dashboard">
-				<BackupServerUrlForm
-					branch={branch}
-					loading={branchStatus === request.REQUESTING}
-				/>
+		<Content className="Dashboard" title="Dashboard">
+			<BackupServerUrlForm
+				branch={branch}
+				loading={branchStatus === request.REQUESTING}
+			/>
 
-				<LocalServerUrlForm
-					branch={branch}
-					loading={branchStatus === request.REQUESTING}
-				/>
+			<LocalServerUrlForm
+				branch={branch}
+				loading={branchStatus === request.REQUESTING}
+			/>
 
-				<CashieringCard
-					branchDay={branchDay}
-					onConfirm={branchDay ? onEndDay : onStartDay}
-					loading={branchDayStatus === request.REQUESTING}
-					disabled={false}
-				/>
+			<CashieringCard
+				branchDay={branchDay}
+				onConfirm={branchDay ? onEndDay : onStartDay}
+				loading={branchDayStatus === request.REQUESTING}
+				disabled={false}
+			/>
 
-				<MachineReportTable />
-			</section>
-		</Container>
+			<MachineReportTable />
+		</Content>
 	);
 };
-
-export default Dashboard;

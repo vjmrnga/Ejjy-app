@@ -1,16 +1,14 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Table, TableHeader } from '../../../components';
+import { Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
+import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import {
-	calculateTableHeight,
-	getBranchProductStatus,
-} from '../../../utils/function';
+import { getBranchProductStatus } from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
 
 const columns = [
@@ -20,10 +18,9 @@ const columns = [
 	{ title: 'RS ID', dataIndex: 'requisitionSlip' },
 ];
 
-const Products = () => {
+export const Products = () => {
 	// STATES
-	// const [data, setData] = useState([]);
-	const [tableData, setTableData] = useState([]);
+	const [data, setData] = useState([]);
 	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] =
 		useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
@@ -85,8 +82,7 @@ const Products = () => {
 			};
 		});
 
-		// setData(formattedBranchProducts);
-		setTableData(formattedBranchProducts);
+		setData(formattedBranchProducts);
 	}, [branchProducts]);
 
 	const onView = (branchProduct) => {
@@ -101,58 +97,33 @@ const Products = () => {
 		);
 	};
 
-	// const onSearch = (keyword) => {
-	// 	keyword = keyword?.toLowerCase();
-	// 	const filteredData =
-	// 		keyword.length > 0
-	// 			? data.filter((item) => {
-	// 					const name = item?.name?.toLowerCase() ?? '';
-	// 					const barcode = item?._barcode?.toLowerCase() ?? '';
-	// 					const textcode = item?._textcode?.toLowerCase() ?? '';
-
-	// 					return (
-	// 						name.includes(keyword) || barcode.includes(keyword) || textcode.includes(keyword)
-	// 					);
-	// 			  })
-	// 			: data;
-
-	// 	setTableData(filteredData);
-	// };
-
 	return (
-		<Container
-			title="Products"
-			loadingText="Fetching products..."
-			loading={status === request.REQUESTING}
-		>
-			<section>
-				<Box>
-					<TableHeader title="Products" buttonName="Create Branch Product" />
+		<Content title="Products">
+			<Box>
+				<TableHeader title="Products" buttonName="Create Branch Product" />
 
-					<Table
-						columns={columns}
-						dataSource={tableData}
-						scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
-					/>
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 650 }}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					loading={status === request.REQUESTING}
+				/>
 
-					<Pagination
-						className="table-pagination"
-						current={currentPage}
-						total={pageCount}
-						pageSize={pageSize}
-						onChange={onPageChange}
-						disabled={!tableData}
-					/>
-
-					<ViewProductModal
-						product={selectedBranchProduct}
-						visible={viewBranchProductModalVisible}
-						onClose={() => setViewBranchProductModalVisible(false)}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<ViewProductModal
+					product={selectedBranchProduct}
+					visible={viewBranchProductModalVisible}
+					onClose={() => setViewBranchProductModalVisible(false)}
+				/>
+			</Box>
+		</Content>
 	);
 };
-
-export default Products;

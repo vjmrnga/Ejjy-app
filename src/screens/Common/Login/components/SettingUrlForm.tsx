@@ -7,8 +7,8 @@ import {
 	FieldError,
 	FormInput,
 	Label,
-} from '../../../components/elements';
-import { sleep } from '../../../utils/function';
+} from '../../../../components/elements';
+import { sleep } from '../../../../utils/function';
 
 interface Props {
 	localIpAddress: string;

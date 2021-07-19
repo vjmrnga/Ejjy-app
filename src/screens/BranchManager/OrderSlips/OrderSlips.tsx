@@ -1,12 +1,12 @@
-import { Pagination } from 'antd';
+import { Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Container, Table, TableHeader } from '../../../components';
+import { Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { selectors as authSelectors } from '../../../ducks/auth';
+import { pageSizeOptions } from '../../../global/options';
 import { orderSlipStatus, request } from '../../../global/types';
 import {
-	calculateTableHeight,
 	formatDateTime,
 	getOrderSlipStatusBranchManager,
 	sleep,
@@ -22,11 +22,9 @@ const columns = [
 
 const pendingOrderSlipStatus = [orderSlipStatus.PREPARING];
 
-const PAGE_SIZE = 10;
-
-const OrderSlips = () => {
+export const OrderSlips = () => {
 	// STATES
-	const [orderSlipsData, setOrderSlipsData] = useState([]);
+	const [data, setData] = useState([]);
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
 
@@ -37,6 +35,7 @@ const OrderSlips = () => {
 		getOrderSlipsExtended,
 		pageCount,
 		currentPage,
+		pageSize,
 		status: orderSlipsStatus,
 	} = useOrderSlips();
 
@@ -70,7 +69,7 @@ const OrderSlips = () => {
 					),
 				};
 			});
-			sleep(500).then(() => setOrderSlipsData(formattedOrderSlips));
+			sleep(500).then(() => setData(formattedOrderSlips));
 		}
 	}, [orderSlips]);
 
@@ -96,39 +95,32 @@ const OrderSlips = () => {
 	};
 
 	return (
-		<Container title="Order Slips">
-			<section className="OrderSlips">
-				<Box>
-					<TableHeader title="F-OS1" pending={getPendingCount()} />
+		<Content className="OrderSlips" title="Order Slips">
+			<Box>
+				<TableHeader title="F-OS1" pending={getPendingCount()} />
 
-					<Table
-						columns={columns}
-						dataSource={orderSlipsData}
-						scroll={{
-							y: calculateTableHeight(orderSlipsData.length),
-							x: '100%',
-						}}
-						loading={orderSlipsStatus === request.REQUESTING}
-					/>
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 650 }}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					loading={orderSlipsStatus === request.REQUESTING}
+				/>
 
-					<Pagination
-						className="table-pagination"
-						current={currentPage}
-						total={pageCount}
-						pageSize={PAGE_SIZE}
-						onChange={onPageChange}
-						disabled={!orderSlips?.length}
-					/>
-
-					<ViewOrderSlipModal
-						visible={viewOrderSlipVisible}
-						orderSlip={selectedOrderSlip}
-						onClose={() => setViewOrderSlipVisible(false)}
-					/>
-				</Box>
-			</section>
-		</Container>
+				<ViewOrderSlipModal
+					visible={viewOrderSlipVisible}
+					orderSlip={selectedOrderSlip}
+					onClose={() => setViewOrderSlipVisible(false)}
+				/>
+			</Box>
+		</Content>
 	);
 };
-
-export default OrderSlips;

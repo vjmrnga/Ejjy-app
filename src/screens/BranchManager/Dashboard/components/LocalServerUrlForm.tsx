@@ -52,7 +52,7 @@ export const LocalServerUrlForm = ({ branch, loading }: Props) => {
 							max={75}
 						/>
 					</Col>
-					<Col xs={24} sm={4} md={4} className="button-column">
+					<Col xs={24} sm={4} md={4} className="LocalServerUrl_buttonColumn">
 						<Button
 							text="Save Settings"
 							variant="primary"

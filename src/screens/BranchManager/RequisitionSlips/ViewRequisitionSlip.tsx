@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Container } from '../../../components';
+import { Breadcrumb, Content } from '../../../components';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
@@ -12,7 +12,7 @@ interface Props {
 	match: any;
 }
 
-const ViewRequisitionSlip = ({ match }: Props) => {
+export const ViewRequisitionSlip = ({ match }: Props) => {
 	// VARIABLES
 	const requisitionSlipId = match?.params?.id;
 
@@ -44,28 +44,25 @@ const ViewRequisitionSlip = ({ match }: Props) => {
 
 	const getBreadcrumbItems = useCallback(
 		() => [
-			{ name: 'Requisition Slips', link: '/requisition-slips' },
+			{ name: 'Requisition Slips', link: '/branch-manager/requisition-slips' },
 			{ name: `#${requisitionSlip?.id}` },
 		],
 		[requisitionSlip],
 	);
 
 	return (
-		<Container
+		<Content
+			className="ViewRequisitionSlip"
 			title="[VIEW] F-RS01"
 			rightTitle={`#${requisitionSlip?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<section className="ViewRequisitionSlip">
-				<RequestedProducts
-					requisitionSlip={requisitionSlip}
-					requisitionSlipStatus={requisitionSlipsStatus}
-				/>
+			<RequestedProducts
+				requisitionSlip={requisitionSlip}
+				requisitionSlipStatus={requisitionSlipsStatus}
+			/>
 
-				<OrderSlips requisitionSlipId={requisitionSlipId} />
-			</section>
-		</Container>
+			<OrderSlips requisitionSlipId={requisitionSlipId} />
+		</Content>
 	);
 };
-
-export default ViewRequisitionSlip;
