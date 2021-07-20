@@ -87,6 +87,11 @@ const productCategories = [
 		label: 'Gulay',
 		value: productCategoryTypes.GULAY,
 	},
+	{
+		id: productCategoryTypes.HOTDOG,
+		label: 'Hotdog',
+		value: productCategoryTypes.HOTDOG,
+	},
 ];
 
 interface ICreateProduct {

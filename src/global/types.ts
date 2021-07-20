@@ -109,6 +109,7 @@ export const productCategoryTypes = {
 	BABOY: 'baboy',
 	MANOK: 'manok',
 	GULAY: 'gulay',
+	HOTDOG: 'hotdog',
 	NONE: 'none',
 };
 
