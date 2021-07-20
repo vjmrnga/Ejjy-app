@@ -39,7 +39,7 @@ function* list({ payload }: any) {
 }
 
 function* count({ payload }: any) {
-	const { callback } = payload;
+	const { isPendingApproval, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -47,6 +47,9 @@ function* count({ payload }: any) {
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
 			service.count,
+			{
+				is_pending_approval: isPendingApproval,
+			},
 			ONLINE_API_URL,
 		);
 

@@ -28,7 +28,7 @@ const Admin = () => {
 	const { pendingTransactionsCount, getPendingTransactionsCount } =
 		usePendingTransactions();
 	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();
-	const { branches } = useBranches();
+	const { branches, getBranches } = useBranches();
 
 	// REFS
 	const pendingTransactionsCountRef = useRef(null);
@@ -36,11 +36,14 @@ const Admin = () => {
 	const notificationsCountRef = useRef(null);
 
 	// METHODS
+
 	useEffect(() => {
+		getBranches();
+
 		// Pending Transactions Count
-		getPendingTransactionsCount();
+		getPendingTransactionsCount({ isPendingApproval: true });
 		pendingTransactionsCountRef.current = setInterval(() => {
-			getPendingTransactionsCount();
+			getPendingTransactionsCount({ isPendingApproval: true });
 		}, POLL_INTERVAL_MS);
 
 		// Logs Count

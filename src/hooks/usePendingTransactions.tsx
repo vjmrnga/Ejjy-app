@@ -70,9 +70,10 @@ export const usePendingTransactions = () => {
 		});
 	};
 
-	const getPendingTransactionsCount = (extraCallback = null) => {
+	const getPendingTransactionsCount = (data, extraCallback = null) => {
 		setRecentRequest(types.GET_PENDING_TRANSACTIONS_COUNT);
 		getPendingTransactionsCountAction({
+			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};

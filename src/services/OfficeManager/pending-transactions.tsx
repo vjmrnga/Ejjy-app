@@ -9,8 +9,8 @@ export const service = {
 	list: async (params: IGetRequest, baseURL) =>
 		axios.get('/pending-database-transactions/', { baseURL, params }),
 
-	count: async (baseURL) =>
-		axios.get('/pending-database-transactions/count/', { baseURL }),
+	count: async (params, baseURL) =>
+		axios.get('/pending-database-transactions/count/', { baseURL, params }),
 
 	edit: async (id, body: IEditPendingTransaction, baseURL) =>
 		axios.patch(`/pending-database-transactions/${id}/`, body, { baseURL }),
