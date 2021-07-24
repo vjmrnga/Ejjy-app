@@ -196,14 +196,17 @@ export const useRequisitionSlips = () => {
 		}
 	};
 
-	const createRequisitionSlipRequest = (requisitionSlipData) => {
+	const createRequisitionSlipRequest = (data, extraCallback = null) => {
 		setRecentRequest(types.CREATE_REQUISITION_SLIP);
 		createRequisitionSlip({
-			...requisitionSlipData,
-			callback: modifiedCallback(
-				callback,
-				CREATE_SUCCESS_MESSAGE,
-				CREATE_ERROR_MESSAGE,
+			...data,
+			callback: modifiedExtraCallback(
+				modifiedCallback(
+					callback,
+					CREATE_SUCCESS_MESSAGE,
+					CREATE_ERROR_MESSAGE,
+				),
+				extraCallback,
 			),
 		});
 	};

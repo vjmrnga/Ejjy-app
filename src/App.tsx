@@ -1,13 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Switch } from 'react-router-dom';
 import { CommonRoute, NoAuthRoute } from './components';
 import { APP_TITLE } from './global/constants';
 import { userTypes } from './global/types';
 import Admin from './screens/Admin';
 import BranchManager from './screens/BranchManager';
 import BranchPersonnel from './screens/BranchPersonnel';
-import Error404 from './screens/Common/404/404';
 import Login from './screens/Common/Login/Login';
 import OfficeManager from './screens/OfficeManager';
 

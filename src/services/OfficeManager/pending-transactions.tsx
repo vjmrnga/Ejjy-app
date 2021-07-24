@@ -6,7 +6,7 @@ interface IEditPendingTransaction {
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) =>
+	list: async (params, baseURL) =>
 		axios.get('/pending-database-transactions/', { baseURL, params }),
 
 	count: async (params, baseURL) =>

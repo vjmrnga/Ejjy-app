@@ -1,6 +1,12 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
+import React, {
+	forwardRef,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useState,
+} from 'react';
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
@@ -11,25 +17,25 @@ import { TableHeader } from '../Table/TableHeaders/TableHeader';
 interface Props {
 	title: string;
 	transactionType: any;
+	setHasPendingTransactions?: any;
+	withActionColumn?: boolean;
 }
 
-const columns: ColumnsType = [
-	{ title: 'Description', dataIndex: 'description' },
-	{ title: 'Branch', dataIndex: 'branch' },
-	{ title: 'Datetime', dataIndex: 'datetime_created' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
-
-export const PendingTransactionsSection = ({
-	title,
-	transactionType,
-}: Props) => {
+const PendingTransactionsSectionComponent = (
+	{
+		title,
+		transactionType,
+		setHasPendingTransactions,
+		withActionColumn,
+	}: Props,
+	ref,
+) => {
 	// STATES
+	const [pendingTransactions, setPendingTransactions] = useState([]);
 	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
 	const {
-		pendingTransactions,
 		listPendingTransactions,
 		editPendingTransaction,
 		executePendingTransaction,
@@ -39,38 +45,67 @@ export const PendingTransactionsSection = ({
 
 	// METHODS
 	useEffect(() => {
-		listPendingTransactions(null);
+		fetchPendingTransactions();
 	}, []);
 
 	// Effect: Format pending transactions to be rendered in Table
 	useEffect(() => {
+		setHasPendingTransactions?.(pendingTransactions.length > 0);
+
 		const formattedPendingTransactions = pendingTransactions
 			.filter(({ request_model }) => request_model === transactionType)
 			.map((pendingTransaction) => {
 				const { name, branch, datetime_created, is_pending_approval } =
 					pendingTransaction;
 
+				const actions = is_pending_approval ? (
+					<PendingApprovalBadgePill />
+				) : (
+					<TableActions
+						onExecutePendingTransaction={() => {
+							onExecutePendingTransaction(pendingTransaction);
+						}}
+						onRemove={() => {
+							onAskApprovalPendingTransaction(pendingTransaction.id);
+						}}
+					/>
+				);
+
 				return {
 					description: name,
 					branch: branch?.name,
 					datetime_created: formatDateTime(datetime_created),
-					actions: is_pending_approval ? (
-						<PendingApprovalBadgePill />
-					) : (
-						<TableActions
-							onExecutePendingTransaction={() => {
-								onExecutePendingTransaction(pendingTransaction);
-							}}
-							onRemove={() => {
-								onAskApprovalPendingTransaction(pendingTransaction.id);
-							}}
-						/>
-					),
+					actions: withActionColumn ? actions : null,
 				};
 			});
 
 		setData(formattedPendingTransactions);
 	}, [pendingTransactions]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Description', dataIndex: 'description' },
+			{ title: 'Branch', dataIndex: 'branch' },
+			{ title: 'Datetime', dataIndex: 'datetime_created' },
+		];
+
+		if (withActionColumn) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [withActionColumn]);
+
+	const fetchPendingTransactions = () => {
+		listPendingTransactions(
+			{ requestModel: transactionType },
+			({ status, data: responseData }) => {
+				if (status === request.SUCCESS) {
+					setPendingTransactions(responseData.results);
+				}
+			},
+		);
+	};
 
 	const onExecutePendingTransaction = (pendingTransaction) => {
 		executePendingTransaction(
@@ -97,7 +132,7 @@ export const PendingTransactionsSection = ({
 			{ id: pendingTransactionId, is_pending_approval: true },
 			({ status, error }) => {
 				if (status === request.SUCCESS) {
-					listPendingTransactions(null);
+					fetchPendingTransactions();
 				} else if (status === request.ERROR) {
 					showErrorMessages(error);
 				}
@@ -113,7 +148,7 @@ export const PendingTransactionsSection = ({
 			{ id: pendingTransactionId },
 			({ status, error }) => {
 				if (status === request.SUCCESS) {
-					listPendingTransactions(null);
+					fetchPendingTransactions();
 				} else if (status === request.ERROR) {
 					showErrorMessages(error);
 				}
@@ -122,13 +157,23 @@ export const PendingTransactionsSection = ({
 		);
 	};
 
+	useImperativeHandle(
+		ref,
+		() => ({
+			refreshList: () => {
+				fetchPendingTransactions();
+			},
+		}),
+		[pendingTransactions],
+	);
+
 	return (
 		<section className="PendingTransactions">
 			<Box>
 				<TableHeader title={title} />
 
 				<Table
-					columns={columns}
+					columns={getColumns()}
 					dataSource={data}
 					scroll={{ x: 800 }}
 					pagination={false}
@@ -138,3 +183,7 @@ export const PendingTransactionsSection = ({
 		</section>
 	);
 };
+
+export const PendingTransactionsSection = forwardRef(
+	PendingTransactionsSectionComponent,
+);

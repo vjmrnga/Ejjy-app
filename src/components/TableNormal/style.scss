@@ -15,6 +15,7 @@
 				@include font(1rem, bold);
 				color: $color-dark;
 				background-color: $color-main-background;
+				z-index: 1;
 			}
 		}
 

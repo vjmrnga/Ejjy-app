@@ -36,7 +36,7 @@ function* listOnline({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(endpoint, data, baseURL || ONLINE_API_URL);
+			response = yield call(endpoint, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -66,7 +66,7 @@ function* listOnline({ payload }: any) {
 }
 
 function* listOnlineByBranch({ payload }: any) {
-	const { branchId, userType, callback } = payload;
+	const { branchId, userType, isPendingApproval, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -77,6 +77,7 @@ function* listOnlineByBranch({ payload }: any) {
 				page_size: MAX_PAGE_SIZE,
 				branch_id: branchId,
 				user_type: userType,
+				is_pending_approval: isPendingApproval,
 			},
 			ONLINE_API_URL,
 		);
@@ -158,6 +159,19 @@ function* remove({ payload }: any) {
 	}
 }
 
+function* approve({ payload }: any) {
+	const { id, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(service.approveOnline, id, ONLINE_API_URL);
+
+		callback({ status: request.SUCCESS, response: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+	}
+}
+
 /* WATCHERS */
 const listOnlineWatcherSaga = function* listOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USERS, listOnline);
@@ -184,6 +198,10 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 	yield takeLatest(types.REMOVE_USER, remove);
 };
 
+const approveWatcherSaga = function* approveWatcherSaga() {
+	yield takeLatest(types.APPROVE_USER, approve);
+};
+
 export default [
 	listOnlineWatcherSaga(),
 	listOnlineByBranchWatcherSaga(),
@@ -191,4 +209,5 @@ export default [
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),
 	removeWatcherSaga(),
+	approveWatcherSaga(),
 ];

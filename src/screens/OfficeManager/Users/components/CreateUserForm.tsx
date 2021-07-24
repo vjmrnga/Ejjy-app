@@ -71,6 +71,14 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 			name: 'Branch Personel',
 			value: userTypes.BRANCH_PERSONNEL,
 		},
+		{
+			name: 'Office Manager',
+			value: userTypes.OFFICE_MANAGER,
+		},
+		{
+			name: 'Admin',
+			value: userTypes.ADMIN,
+		},
 	];
 
 	return (

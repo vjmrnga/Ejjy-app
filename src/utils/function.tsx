@@ -172,7 +172,7 @@ export const getColoredText = memoize(
 	},
 );
 
-export const getBranchProductStatus = memoize((status) => {
+export const getBranchProductStatus = memoize((status: string) => {
 	switch (status) {
 		case branchProductStatus.AVAILABLE: {
 			return <AvailableBadgePill />;

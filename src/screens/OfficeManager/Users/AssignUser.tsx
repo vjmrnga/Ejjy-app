@@ -15,7 +15,7 @@ import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
 import { request, userTypes } from '../../../global/types';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
-import { useUsers } from '../hooks/useUsers';
+import { useUsers } from '../../../hooks/useUsers';
 import './style.scss';
 
 const columns = [

@@ -11,6 +11,7 @@ export const types = {
 	REMOVE_USER: `${key}/REMOVE_USER`,
 	CREATE_USER: `${key}/CREATE_USER`,
 	EDIT_USER: `${key}/EDIT_USER`,
+	APPROVE_USER: `${key}/APPROVE_USER`,
 };
 
 const initialState = {
@@ -57,6 +58,7 @@ export const actions = {
 	createUser: createAction(types.CREATE_USER),
 	editUser: createAction(types.EDIT_USER),
 	removeUser: createAction(types.REMOVE_USER),
+	approveUser: createAction(types.APPROVE_USER),
 };
 
 const selectState = (state: any) => state[key] || initialState;

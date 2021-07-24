@@ -1,25 +1,28 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import { Field, FieldProps } from 'formik';
+import { Checkbox } from 'antd';
+import { useField } from 'formik';
 import * as React from 'react';
 import './style.scss';
 
 interface Props {
 	id: string;
+	label?: string;
+	onChange?: any;
 }
 
-const FormCheckbox = ({ id }: Props) => (
-	<Field
-		name={id}
-		render={({ field }: FieldProps) => (
-			<div className="FormCheckbox">
-				<label>
-					<input id={id} {...field} type="checkbox" checked={field.value} />
-					<span />
-				</label>
-			</div>
-		)}
-	/>
-);
+const FormCheckbox = ({ id, label, onChange }: Props) => {
+	const [field, , helpers] = useField(id);
+
+	const onChangeField = (e) => {
+		helpers.setValue(e.target.checked);
+
+		onChange?.(e.target.checked);
+	};
+
+	return (
+		<Checkbox checked={field.value} onChange={onChangeField}>
+			{label}
+		</Checkbox>
+	);
+};
 
 export default FormCheckbox;

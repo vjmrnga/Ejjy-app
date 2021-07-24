@@ -56,19 +56,27 @@ export const Sidebar = ({ items }: Props) => {
 					<Link tabIndex={-1} to={item.link} key={item.key}>
 						<div
 							className={cn('Sidebar_sidebarList_item', {
-								active: pathname.startsWith(item.link),
+								Sidebar_sidebarList_item__active: pathname.startsWith(
+									item.link,
+								),
 							})}
 						>
-							<img src={item.defaultIcon} alt={item.name} className="icon" />
+							<img
+								src={item.defaultIcon}
+								alt={item.name}
+								className="Sidebar_sidebarList_item_icon"
+							/>
 							<img
 								src={item.activeIcon}
 								alt={item.name}
-								className="icon icon-active"
+								className="Sidebar_sidebarList_item_icon Sidebar_sidebarList_item_icon__active"
 							/>
-							<span className="name">{item.name}</span>
+							<span className="Sidebar_sidebarList_item_name">{item.name}</span>
 
 							{item?.count > 0 && (
-								<span className="item-count">{item?.count}</span>
+								<span className="Sidebar_sidebarList_item_itemCount">
+									{item?.count}
+								</span>
 							)}
 
 							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
@@ -76,7 +84,7 @@ export const Sidebar = ({ items }: Props) => {
 									<img
 										src={require('../../../assets/images/icon-lock.svg')}
 										alt={item.name}
-										className="icon-lock"
+										className="Sidebar_sidebarList_item_iconLock"
 									/>
 								</Tooltip>
 							)}

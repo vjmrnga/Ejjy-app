@@ -2,6 +2,7 @@ import { Popconfirm } from 'antd';
 import React from 'react';
 import {
 	AddButtonIcon,
+	CheckButtonIcon,
 	EditButtonIcon,
 	RemoveButtonIcon,
 	RestoreButtonIcon,
@@ -10,6 +11,7 @@ import {
 import './style.scss';
 
 interface Props {
+	onApprove?: any;
 	onExecutePendingTransaction?: any;
 	onView?: any;
 	onViewName?: string;
@@ -23,6 +25,7 @@ interface Props {
 }
 
 export const TableActions = ({
+	onApprove,
 	onExecutePendingTransaction,
 	onView,
 	onViewName,
@@ -35,6 +38,7 @@ export const TableActions = ({
 	onRestore,
 }: Props) => (
 	<div className="TableActions">
+		{onApprove && <CheckButtonIcon onClick={onApprove} tooltip="Approve" />}
 		{onExecutePendingTransaction && (
 			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
 		)}

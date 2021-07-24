@@ -9,12 +9,12 @@ import {
 	Label,
 } from '../../../../components/elements';
 import { request } from '../../../../global/types';
-import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useSiteSettings } from '../../../../hooks/useSiteSettings';
 
 export const SiteSettings = () => {
-	const { siteSettings, getSiteSettings, editSiteSettings, status } =
-		useSiteSettings();
-
+	// STATES
+	const [siteSettings, setSiteSettings] = useState(null);
 	const [closeSessionDeadline, setCloseSessionDeadline] = useState(null);
 	const [closeDayDeadline, setCloseDayDeadline] = useState(null);
 	const [proprietor, setProprietor] = useState('');
@@ -26,8 +26,21 @@ export const SiteSettings = () => {
 	const [posAccreditationDate, setPosAccreditationDate] = useState(null);
 	const [thankYouMessage, setThankYouMessage] = useState('');
 
+	// CUSTOM HOOKS
+	const { user } = useAuth();
+	const {
+		getSiteSettings,
+		editSiteSettings,
+		status: siteSettingsStatus,
+	} = useSiteSettings();
+
+	// METHODS
 	useEffect(() => {
-		getSiteSettings();
+		getSiteSettings({ branchId: user?.branch?.id }, ({ status, data }) => {
+			if (status === request.SUCCESS) {
+				setSiteSettings(data);
+			}
+		});
 	}, []);
 
 	useEffect(() => {
@@ -70,6 +83,7 @@ export const SiteSettings = () => {
 		}
 
 		editSiteSettings({
+			branchId: user?.branch?.id,
 			id: siteSettings.id,
 			close_session_deadline: closeSessionDeadline.format('HH:mm:ss'),
 			close_day_deadline: closeDayDeadline.format('HH:mm:ss'),
@@ -86,7 +100,7 @@ export const SiteSettings = () => {
 
 	return (
 		<Box padding>
-			<Spin size="large" spinning={status === request.REQUESTING}>
+			<Spin size="large" spinning={siteSettingsStatus === request.REQUESTING}>
 				<div className="site-settings-container">
 					<p className="title">SITE SETTINGS</p>
 					<Divider />

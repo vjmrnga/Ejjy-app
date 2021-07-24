@@ -11,7 +11,7 @@ import { service } from '../../services/OfficeManager/pending-transactions';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { callback } = payload;
+	const { requestModel, isPendingApproval, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -22,17 +22,13 @@ function* list({ payload }: any) {
 			{
 				page: 1,
 				page_size: MAX_PAGE_SIZE,
+				is_pending_approval: isPendingApproval,
+				request_model: requestModel,
 			},
 			ONLINE_API_URL,
 		);
 
-		yield put(
-			actions.save({
-				type: types.LIST_PENDING_TRANSACTIONS,
-				pendingTransactions: response.data.results,
-			}),
-		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -111,7 +107,7 @@ function* execute({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.LIST_PENDING_TRANSACTIONS, list);
+	yield takeEvery(types.LIST_PENDING_TRANSACTIONS, list);
 };
 
 const countWatcherSaga = function* countWatcherSaga() {

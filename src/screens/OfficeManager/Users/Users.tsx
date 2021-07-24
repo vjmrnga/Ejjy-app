@@ -1,21 +1,24 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable react/jsx-wrap-multilines */
 import { message, Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AddIcon, Content, TableActions } from '../../../components';
 import { Box, Button } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
-import { NO_BRANCH_ID } from '../../../global/constants';
+import {
+	NO_BRANCH_ID,
+	PENDING_USERS_BRANCH_ID,
+} from '../../../global/constants';
 import {
 	pendingTransactionTypes,
 	request,
 	userTypes,
 } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
-import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
+import { useUsers } from '../../../hooks/useUsers';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
-import { useUsers } from '../hooks/useUsers';
 import { BranchUsers } from './components/BranchUsers';
 import { CreateUserModal } from './components/CreateUserModal';
 import { EditUserModal } from './components/EditUserModal';
@@ -23,12 +26,19 @@ import './style.scss';
 
 const { TabPane } = Tabs;
 
+const NOT_BRANCH_IDS = [NO_BRANCH_ID, PENDING_USERS_BRANCH_ID];
+const BRANCH_USERS = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
+
 export const Users = () => {
 	// STATES
 	const [tabActiveKey, setTabActiveKey] = useState(null);
 	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
+	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
+
+	// REFS
+	const pendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
@@ -43,13 +53,8 @@ export const Users = () => {
 		warnings,
 		reset,
 	} = useUsers();
-	const {
-		pendingTransactions,
-		listPendingTransactions,
-		status: pendingTransactionsStatus,
-		recentRequest: pendingTransactionRecentRequest,
-	} = usePendingTransactions();
 
+	// METHODS
 	useEffect(() => {
 		if (branches?.length) {
 			onTabClick(branches?.[0]?.id);
@@ -71,69 +76,54 @@ export const Users = () => {
 		}
 	}, [usersStatus, warnings]);
 
-	const getFetchLoading = useCallback(
-		() =>
-			usersStatus === request.REQUESTING ||
-			(pendingTransactionsStatus === request.REQUESTING &&
-				pendingTransactionRecentRequest ===
-					pendingTransactionsStatus.LIST_PENDING_TRANSACTIONS),
-		[usersStatus, pendingTransactionsStatus, pendingTransactionRecentRequest],
-	);
-
 	const getTableDataSource = (branchId) => {
-		const hasPendingTransactions = pendingTransactions.some(
-			({ request_model }) => request_model === pendingTransactionTypes.USERS,
-		);
-
-		const isBranchUsers = [
-			userTypes.BRANCH_MANAGER,
-			userTypes.BRANCH_PERSONNEL,
-		];
 		const newData =
 			usersStatus === request.SUCCESS
-				? users
-						?.filter(({ user_type }) => isBranchUsers.includes(user_type))
-						?.map((user) => {
-							const { id, first_name, last_name, user_type } = user;
+				? users?.map((user) => {
+						const { id, first_name, last_name, user_type } = user;
 
-							const userWithBranch = {
-								...user,
-								branch: { id: branchId },
-							};
+						const userWithBranch = {
+							...user,
+							branch: { id: branchId },
+						};
 
-							return {
-								name: `${first_name} ${last_name}`,
-								type: getUserTypeName(user_type),
-								action: hasPendingTransactions ? null : (
-									<TableActions
-										onAssign={
-											branchId !== NO_BRANCH_ID
-												? () => history.push(`/users/assign/${id}`)
-												: null
-										}
-										onEdit={
-											isBranchUsers.includes(user_type)
-												? () => onEditUser(userWithBranch)
-												: null
-										}
-										onRemove={
-											isBranchUsers.includes(user_type)
-												? () => onRemoveUser(userWithBranch)
-												: null
-										}
-									/>
-								),
-							};
-						})
+						return {
+							name: `${first_name} ${last_name}`,
+							type: getUserTypeName(user_type),
+							action: hasPendingTransactions ? null : (
+								<TableActions
+									onAssign={
+										BRANCH_USERS.includes(user_type)
+											? () => history.push(`/office-manager/users/assign/${id}`)
+											: null
+									}
+									onEdit={
+										BRANCH_USERS.includes(user_type)
+											? () => onEditUser(userWithBranch)
+											: null
+									}
+									onRemove={
+										BRANCH_USERS.includes(user_type)
+											? () => onRemoveUser(userWithBranch)
+											: null
+									}
+								/>
+							),
+						};
+				  })
 				: [];
 
 		return newData;
 	};
 
 	const onTabClick = (branchId) => {
-		// eslint-disable-next-line eqeqeq
-		const getUserFn = branchId == NO_BRANCH_ID ? getOnlineUsers : getUsers;
-		getUserFn({ branchId });
+		const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
+
+		const getUserFn = isNotBranchId ? getOnlineUsers : getUsers;
+		getUserFn({
+			branchId: isNotBranchId ? null : branchId,
+			isPendingApproval: Number(branchId) === PENDING_USERS_BRANCH_ID,
+		});
 		setTabActiveKey(toString(branchId));
 	};
 
@@ -153,7 +143,7 @@ export const Users = () => {
 					message.warning(
 						'We found an error while deleting the user in local branch. Please check the pending transaction table below.',
 					);
-					listPendingTransactions(null);
+					pendingTransactionsRef.current?.refreshList();
 				}
 
 				onTabClick(user?.branch?.id);
@@ -168,7 +158,7 @@ export const Users = () => {
 	return (
 		<Content title="Users">
 			<Box>
-				<Spin spinning={getFetchLoading()}>
+				<Spin spinning={usersStatus === request.REQUESTING}>
 					<Tabs
 						type="card"
 						activeKey={tabActiveKey}
@@ -193,27 +183,42 @@ export const Users = () => {
 						<TabPane key={NO_BRANCH_ID} tab="No Branches">
 							<BranchUsers dataSource={getTableDataSource(NO_BRANCH_ID)} />
 						</TabPane>
+
+						<TabPane key={PENDING_USERS_BRANCH_ID} tab="Pending Users">
+							<BranchUsers
+								dataSource={getTableDataSource(PENDING_USERS_BRANCH_ID)}
+							/>
+						</TabPane>
 					</Tabs>
 				</Spin>
 
 				<CreateUserModal
 					visible={createUserModalVisible}
-					onSuccess={() => onTabClick(NO_BRANCH_ID)}
+					onSuccess={(userType) => {
+						[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(userType)
+							? onTabClick(PENDING_USERS_BRANCH_ID)
+							: onTabClick(NO_BRANCH_ID);
+					}}
 					onClose={() => setCreateUserModalVisible(false)}
 				/>
 
 				<EditUserModal
 					user={selectedUser}
 					visible={editUserModalVisible}
-					onFetchPendingTransactions={listPendingTransactions}
+					onFetchPendingTransactions={
+						pendingTransactionsRef.current?.refreshList
+					}
 					onSuccess={onSuccessEditUser}
 					onClose={() => setEditUserModalVisible(false)}
 				/>
 			</Box>
 
 			<PendingTransactionsSection
+				ref={pendingTransactionsRef}
 				title="Pending User Transactions"
 				transactionType={pendingTransactionTypes.USERS}
+				setHasPendingTransactions={setHasPendingTransactions}
+				withActionColumn
 			/>
 		</Content>
 	);

@@ -19,4 +19,7 @@ export const service = {
 
 	removeOnline: async (id, baseURL) =>
 		axios.delete(`/online-users/${id}/`, { baseURL }),
+
+	approveOnline: async (id, baseURL) =>
+		axios.post(`/online-users/${id}/approve/`, {}, { baseURL }),
 };

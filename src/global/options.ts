@@ -1,5 +1,6 @@
 import { upperFirst } from 'lodash';
 import {
+	branchProductStatus,
 	deliveryReceiptProductStatus,
 	preparationSlipStatus,
 	quantityTypes,
@@ -118,5 +119,24 @@ export const booleanOptions = [
 		id: 'yes',
 		label: 'Yes',
 		value: true,
+	},
+];
+
+export const branchProductStatusOptionsWithAll = [
+	{
+		name: 'All',
+		value: 'all',
+	},
+	{
+		name: 'Available',
+		value: branchProductStatus.AVAILABLE,
+	},
+	{
+		name: 'Reorder',
+		value: branchProductStatus.REORDER,
+	},
+	{
+		name: 'Out of Stock',
+		value: branchProductStatus.OUT_OF_STOCK,
 	},
 ];

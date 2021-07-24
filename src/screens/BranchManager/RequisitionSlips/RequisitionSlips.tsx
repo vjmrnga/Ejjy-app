@@ -2,7 +2,7 @@
 import { Table } from 'antd';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
@@ -16,13 +16,11 @@ import {
 	userTypes,
 } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	formatDateTime,
 	getRequisitionSlipStatus,
 } from '../../../utils/function';
-import { CreateRequisitionSlipModal } from './components/CreateRequisitionSlipModal';
 import './style.scss';
 
 const columns = [
@@ -44,9 +42,9 @@ export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('all');
-	const [createModalVisible, setCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const { user } = useAuth();
 	const {
 		requisitionSlips,
@@ -56,16 +54,10 @@ export const RequisitionSlips = () => {
 		getRequisitionSlipsExtended,
 		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
-	const {
-		branchProducts,
-		getBranchProducts,
-		status: branchProductsStatus,
-	} = useBranchProducts();
 
 	// METHODS
 	useEffect(() => {
 		onFetchRequisitionSlips(1, pageSize, true);
-		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
 	}, []);
 
 	useEffect(() => {
@@ -130,11 +122,6 @@ export const RequisitionSlips = () => {
 		);
 	};
 
-	const onCreateRequisitionSlipSuccess = () => {
-		onFetchRequisitionSlips(1, pageSize, true);
-		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
-	};
-
 	const onPageChange = (page, newPageSize) => {
 		onFetchRequisitionSlips(page, newPageSize, newPageSize !== pageSize);
 	};
@@ -146,7 +133,9 @@ export const RequisitionSlips = () => {
 					buttonName="Create Requisition Slip"
 					statuses={requisitionSlipActionsOptionsWithAll}
 					onStatusSelect={(status) => setSelectedStatus(status)}
-					onCreate={() => setCreateModalVisible(true)}
+					onCreate={() => {
+						history.push('/branch-manager/requisition-slips/create');
+					}}
 					pending={getPendingCount()}
 				/>
 
@@ -163,17 +152,7 @@ export const RequisitionSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={[requisitionSlipsStatus, branchProductsStatus].includes(
-						request.REQUESTING,
-					)}
-				/>
-
-				<CreateRequisitionSlipModal
-					branchProducts={branchProducts}
-					visible={createModalVisible}
-					onSuccess={onCreateRequisitionSlipSuccess}
-					onClose={() => setCreateModalVisible(false)}
-					loading={branchProductsStatus === request.REQUESTING}
+					loading={requisitionSlipsStatus === request.REQUESTING}
 				/>
 			</Box>
 		</Content>

@@ -12,17 +12,27 @@ export interface Option {
 export interface ISelectProps {
 	id: string;
 	placeholder?: string;
+	onChange?: any;
 	disabled?: boolean;
 	options: Option[];
 }
 
-const FormSelect = ({ id, options, placeholder, disabled }: ISelectProps) => (
+const FormSelect = ({
+	id,
+	options,
+	placeholder,
+	onChange,
+	disabled,
+}: ISelectProps) => (
 	<Field
+		className={cn('FormSelect', { disabled })}
 		as="select"
 		id={id}
 		name={id}
-		className={cn('FormSelect', { disabled })}
 		disabled={disabled}
+		onChange={(event) => {
+			onChange?.(event.target.value);
+		}}
 	>
 		{placeholder && (
 			<option value="" selected disabled>

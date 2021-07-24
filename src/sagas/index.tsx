@@ -10,6 +10,7 @@ import { officeManagerSagas } from './OfficeManager';
 import orderSlipCreationSagas from './order-slip-creation';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
+import siteSettingsSagas from './site-settings';
 import transactionsSagas from './transactions';
 import xreadReportsSagas from './xread-reports';
 
@@ -21,6 +22,7 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...sessionsSagas,
 		...networkSagas,
+		...siteSettingsSagas,
 		...transactionsSagas,
 		...xreadReportsSagas,
 		...orderSlipCreationSagas,

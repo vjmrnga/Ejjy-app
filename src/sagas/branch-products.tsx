@@ -14,6 +14,7 @@ function* list({ payload }: any) {
 		search,
 		isSoldInBranch,
 		productIds,
+		productStatus,
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
@@ -33,6 +34,7 @@ function* list({ payload }: any) {
 		search,
 		product_ids: productIds,
 		is_sold_in_branch: isSoldInBranch,
+		product_status: productStatus,
 	};
 
 	let isFetchedFromBackupURL = false;

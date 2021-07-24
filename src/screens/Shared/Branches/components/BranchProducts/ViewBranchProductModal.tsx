@@ -79,7 +79,7 @@ export const ViewBranchProductModal = ({
 
 				<DetailsSingle
 					label="Include In Scale"
-					value={branchProduct?.is_shown_In_scale_list ? 'Yes' : 'No'}
+					value={branchProduct?.is_shown_in_scale_list ? 'Yes' : 'No'}
 				/>
 
 				<DetailsSingle

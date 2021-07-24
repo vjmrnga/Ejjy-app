@@ -14,7 +14,6 @@ export const types = {
 };
 
 const initialState = {
-	pendingTransactions: [],
 	pendingTransactionsCount: 0,
 };
 
@@ -25,10 +24,6 @@ const reducer = handleActions(
 			let newData = {};
 
 			switch (type) {
-				case types.LIST_PENDING_TRANSACTIONS: {
-					newData = { pendingTransactions: payload.pendingTransactions };
-					break;
-				}
 				case types.GET_PENDING_TRANSACTIONS_COUNT: {
 					newData = {
 						pendingTransactionsCount: payload.pendingTransactionsCount,
@@ -59,8 +54,6 @@ export const actions = {
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectPendingTransactions: () =>
-		createSelector(selectState, (state) => state.pendingTransactions),
 	selectPendingTransactionsCount: () =>
 		createSelector(selectState, (state) => state.pendingTransactionsCount),
 };

@@ -32,10 +32,10 @@ export const ViewDeliveryReceipt = ({ match }: Props) => {
 
 	const getBreadcrumbItems = useCallback(
 		() => [
-			{ name: 'Requisition Slips', link: '/requisition-slips' },
+			{ name: 'Requisition Slips', link: '/office-manager/requisition-slips' },
 			{
 				name: `#${deliveryReceipt?.order_slip?.requisition_slip?.id}`,
-				link: `/requisition-slips/${deliveryReceipt?.order_slip?.requisition_slip?.id}`,
+				link: `/office-manager/requisition-slips/${deliveryReceipt?.order_slip?.requisition_slip?.id}`,
 			},
 			{ name: `#${deliveryReceipt?.id}` },
 		],

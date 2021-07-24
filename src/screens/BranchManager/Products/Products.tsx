@@ -73,7 +73,9 @@ export const Products = () => {
 				name,
 				status: getBranchProductStatus(product_status),
 				requisitionSlip: requisition_slip ? (
-					<Link to={`/requisition-slips/${requisition_slip?.id}`}>
+					<Link
+						to={`/branch-manager/requisition-slips/${requisition_slip?.id}`}
+					>
 						{requisition_slip?.id}
 					</Link>
 				) : (

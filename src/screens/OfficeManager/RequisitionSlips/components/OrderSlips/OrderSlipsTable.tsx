@@ -46,7 +46,7 @@ export const OrderSlipsTable = ({
 				const deliveryReceipt =
 					value === osStatus.RECEIVED ? (
 						<Link
-							to={`/requisition-slips/delivery-receipt/${delivery_receipt?.id}`}
+							to={`/office-manager/requisition-slips/delivery-receipt/${delivery_receipt?.id}`}
 						>
 							{delivery_receipt?.id}
 						</Link>

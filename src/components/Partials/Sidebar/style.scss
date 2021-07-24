@@ -42,39 +42,39 @@
 			margin: 15px 0;
 			transition: 300ms;
 
-			&.active {
-				.icon {
+			&__active {
+				.Sidebar_sidebarList_item_icon {
 					display: none;
 
-					&.icon-active {
+					&__active {
 						display: block;
 					}
 				}
 
-				.name {
+				.Sidebar_sidebarList_item_name {
 					color: $color-primary;
 					font-weight: bold;
 				}
 			}
 
-			.icon {
+			&_icon {
 				margin-right: 15px;
 
-				&.icon-active {
+				&__active {
 					display: none;
 				}
 			}
 
-			.icon-lock {
-				margin-left: auto;
-			}
-
-			.name {
+			&_name {
 				@include font(16px, 600);
 				color: $color-dark-gray;
 			}
 
-			.item-count {
+			&_iconLock {
+				margin-left: auto;
+			}
+
+			&_itemCount {
 				@include flex(center, center);
 				width: 20px;
 				height: 20px;
@@ -82,7 +82,7 @@
 				right: 0;
 				border-radius: 50%;
 				background-color: $color-red;
-				@include font(0.65rem, 400);
+				font-size: 0.65rem;
 				color: white;
 			}
 		}

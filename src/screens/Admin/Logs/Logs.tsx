@@ -3,7 +3,6 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
-import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { EMPTY_CELL } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
@@ -65,8 +64,6 @@ export const Logs = () => {
 		<Content title="Logs">
 			<section className="Logs">
 				<Box>
-					<TableHeader />
-
 					<Table
 						columns={columns}
 						dataSource={data}

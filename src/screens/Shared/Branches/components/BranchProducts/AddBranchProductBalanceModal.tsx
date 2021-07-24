@@ -55,7 +55,7 @@ export const AddBranchProductBalanceModal = ({
 			{
 				branchId: branch?.id,
 				addedBalance: value.balance,
-				productId: branchProduct.id,
+				productId: branchProduct.product.id,
 				updatingUserId: user.id,
 			},
 			({ status, data }) => {

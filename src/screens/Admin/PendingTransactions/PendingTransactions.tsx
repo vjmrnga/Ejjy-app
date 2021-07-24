@@ -1,9 +1,9 @@
 import Table, { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Content, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
-import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
-import { request } from '../../../global/types';
+import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
+import { pendingTransactionTypes, request } from '../../../global/types';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { formatDateTime, showErrorMessages } from '../../../utils/function';
 
@@ -16,11 +16,15 @@ const columns: ColumnsType = [
 
 export const PendingTransactions = () => {
 	// STATES
+	const [pendingTransactions, setPendingTransactions] = useState([]);
 	const [data, setData] = useState([]);
+
+	// REFS
+	const productPendingTransactionsRef = useRef(null);
+	const userPendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
 	const {
-		pendingTransactions,
 		listPendingTransactions,
 		editPendingTransaction,
 		removePendingTransaction,
@@ -29,15 +33,30 @@ export const PendingTransactions = () => {
 
 	// METHODS
 	useEffect(() => {
-		listPendingTransactions(null);
+		fetchPendingTransactions();
 	}, []);
 
 	// Effect: Format pending transactions to be rendered in Table
 	useEffect(() => {
-		const formattedPendingTransactions = pendingTransactions
-			.filter(({ is_pending_approval }) => is_pending_approval)
-			.map((pendingTransaction) => {
-				const { id, name, branch, datetime_created } = pendingTransaction;
+		const onCallbackSuccess = ({ status, error, requestModel }) => {
+			if (status === request.SUCCESS) {
+				fetchPendingTransactions();
+
+				if (requestModel === pendingTransactionTypes.PRODUCTS) {
+					productPendingTransactionsRef.current?.refreshList();
+				}
+
+				if (requestModel === pendingTransactionTypes.USERS) {
+					userPendingTransactionsRef.current?.refreshList();
+				}
+			} else if (status === request.ERROR) {
+				showErrorMessages(error);
+			}
+		};
+		const formattedPendingTransactions = pendingTransactions.map(
+			(pendingTransaction) => {
+				const { id, name, branch, datetime_created, request_model } =
+					pendingTransaction;
 
 				return {
 					description: name,
@@ -48,41 +67,47 @@ export const PendingTransactions = () => {
 							onRestore={() => {
 								editPendingTransaction(
 									{ id, is_pending_approval: false },
-									({ status, error }) => {
-										if (status === request.SUCCESS) {
-											listPendingTransactions(null);
-										} else if (status === request.ERROR) {
-											showErrorMessages(error);
-										}
-									},
+									(response) =>
+										onCallbackSuccess({
+											requestModel: request_model,
+											...response,
+										}),
 								);
 							}}
 							onRemove={() => {
 								removePendingTransaction(
 									{ id },
-									({ status, error }) => {
-										if (status === request.SUCCESS) {
-											listPendingTransactions(null);
-										} else if (status === request.ERROR) {
-											showErrorMessages(error);
-										}
-									},
+									(response) =>
+										onCallbackSuccess({
+											requestModel: request_model,
+											...response,
+										}),
 									true,
 								);
 							}}
 						/>
 					),
 				};
-			});
+			},
+		);
 
 		setData(formattedPendingTransactions);
 	}, [pendingTransactions]);
 
+	const fetchPendingTransactions = () => {
+		listPendingTransactions(
+			{ isPendingApproval: true },
+			({ status, data: responseData }) => {
+				if (status === request.SUCCESS) {
+					setPendingTransactions(responseData.results);
+				}
+			},
+		);
+	};
+
 	return (
 		<Content className="PendingTransactions" title="Pending Transactions">
 			<Box>
-				<TableHeader />
-
 				<Table
 					columns={columns}
 					dataSource={data}
@@ -91,6 +116,18 @@ export const PendingTransactions = () => {
 					loading={pendingTransactionsStatus === request.REQUESTING}
 				/>
 			</Box>
+
+			<PendingTransactionsSection
+				ref={productPendingTransactionsRef}
+				title="Product Transactions"
+				transactionType={pendingTransactionTypes.PRODUCTS}
+			/>
+
+			<PendingTransactionsSection
+				ref={userPendingTransactionsRef}
+				title="User Transactions"
+				transactionType={pendingTransactionTypes.USERS}
+			/>
 		</Content>
 	);
 };

@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../../../ducks/OfficeManager/users';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-} from '../../../utils/function';
+import { actions, selectors, types } from '../ducks/OfficeManager/users';
+import { request } from '../global/types';
+import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
+import { useActionDispatch } from './useActionDispatch';
 
 const CREATE_SUCCESS_MESSAGE = 'User was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the user';
@@ -18,19 +15,24 @@ const REMOVE_SUCCESS_MESSAGE = 'User was removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the user';
 
 export const useUsers = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [warnings, setWarnings] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
+	// SELECTORS
 	const users = useSelector(selectors.selectUsers());
 	const user = useSelector(selectors.selectUser());
-	const getUsers = useActionDispatch(actions.getUsers);
-	const getOnlineUsers = useActionDispatch(actions.getOnlineUsers);
-	const getUserById = useActionDispatch(actions.getUserById);
-	const createUser = useActionDispatch(actions.createUser);
-	const editUser = useActionDispatch(actions.editUser);
-	const removeUser = useActionDispatch(actions.removeUser);
+
+	// ACTIONS
+	const getUsersAction = useActionDispatch(actions.getUsers);
+	const getOnlineUsersAction = useActionDispatch(actions.getOnlineUsers);
+	const getUserByIdAction = useActionDispatch(actions.getUserById);
+	const createUserAction = useActionDispatch(actions.createUser);
+	const editUserAction = useActionDispatch(actions.editUser);
+	const removeUserAction = useActionDispatch(actions.removeUser);
+	const approveUserAction = useActionDispatch(actions.approveUser);
 
 	const resetError = () => setErrors([]);
 
@@ -44,27 +46,27 @@ export const useUsers = () => {
 		resetWarning();
 	};
 
-	const getUsersRequest = (data: any = {}) => {
+	const getUsers = (data: any = {}) => {
 		setRecentRequest(types.GET_USERS);
-		getUsers({ ...data, callback });
+		getUsersAction({ ...data, callback });
 	};
 
-	const getOnlineUsersRequest = (data: any = {}) => {
+	const getOnlineUsers = (data: any = {}) => {
 		setRecentRequest(types.GET_ONLINE_USERS);
-		getOnlineUsers({ ...data, callback });
+		getOnlineUsersAction({ ...data, callback });
 	};
 
-	const getUserByIdRequest = (id = 0, extraCallback = null) => {
+	const getUserById = (id = 0, extraCallback = null) => {
 		setRecentRequest(types.GET_USER_BY_ID);
-		getUserById({
+		getUserByIdAction({
 			id,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const createUserRequest = (data, extraCallback = null) => {
+	const createUser = (data, extraCallback = null) => {
 		setRecentRequest(types.EDIT_USER);
-		createUser({
+		createUserAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
@@ -77,9 +79,9 @@ export const useUsers = () => {
 		});
 	};
 
-	const editUserRequest = (data, extraCallback = null) => {
+	const editUser = (data, extraCallback = null) => {
 		setRecentRequest(types.EDIT_USER);
-		editUser({
+		editUserAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
@@ -88,9 +90,9 @@ export const useUsers = () => {
 		});
 	};
 
-	const removeUserRequest = (id, extraCallback = null) => {
+	const removeUser = (id, extraCallback = null) => {
 		setRecentRequest(types.REMOVE_USER);
-		removeUser({
+		removeUserAction({
 			id,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
@@ -100,6 +102,14 @@ export const useUsers = () => {
 				),
 				extraCallback,
 			),
+		});
+	};
+
+	const approveUser = (id, extraCallback = null) => {
+		setRecentRequest(types.APPROVE_USER);
+		approveUserAction({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
@@ -116,12 +126,13 @@ export const useUsers = () => {
 	return {
 		users,
 		user,
-		getUsers: getUsersRequest,
-		getOnlineUsers: getOnlineUsersRequest,
-		getUserById: getUserByIdRequest,
-		createUser: createUserRequest,
-		editUser: editUserRequest,
-		removeUser: removeUserRequest,
+		getUsers,
+		getOnlineUsers,
+		getUserById,
+		createUser,
+		editUser,
+		removeUser,
+		approveUser,
 		status,
 		errors,
 		warnings,

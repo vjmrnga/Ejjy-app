@@ -1,8 +1,9 @@
 import { Modal } from 'antd';
 import React from 'react';
-import { FieldError } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components';
 import { request } from '../../../../global/types';
-import { useUsers } from '../../hooks/useUsers';
+import { convertIntoArray } from '../../../../utils/function';
+import { useUsers } from '../../../../hooks/useUsers';
 import { CreateUserForm } from './CreateUserForm';
 
 interface Props {
@@ -19,7 +20,7 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 	const onCreateUser = (data) => {
 		createUser(data, ({ status }) => {
 			if (status === request.SUCCESS) {
-				onSuccess();
+				onSuccess(data.user_type);
 				reset();
 				onClose();
 			}
@@ -35,9 +36,7 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<CreateUserForm
 				onSubmit={onCreateUser}

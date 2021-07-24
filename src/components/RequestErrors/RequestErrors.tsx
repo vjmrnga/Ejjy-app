@@ -5,6 +5,7 @@ import { FieldError } from '../elements';
 import './style.scss';
 
 interface Props {
+	className?: string;
 	errors: string[];
 	size?: number;
 	withSpaceTop?: boolean;
@@ -12,13 +13,14 @@ interface Props {
 }
 
 export const RequestErrors = ({
+	className,
 	errors,
 	size,
 	withSpaceTop,
 	withSpaceBottom,
 }: Props) => (
 	<Space
-		className={cn('RequestErrors', {
+		className={cn('RequestErrors', className, {
 			RequestErrors___spaceTop: withSpaceTop,
 			RequestErrors___spaceBottom: withSpaceBottom,
 		})}

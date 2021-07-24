@@ -75,12 +75,7 @@ export const RequisitionSlips = () => {
 			const dateTime = formatDateTime(datetime_created);
 
 			return {
-				_id: id,
-				_datetime_created: dateTime,
-				_type: type,
-				_status: action,
-				_branch: requesting_user?.branch?.id,
-				id: <Link to={`/requisition-slips/${id}`}>{id}</Link>,
+				id: <Link to={`/office-manager/requisition-slips/${id}`}>{id}</Link>,
 				datetime_created: dateTime,
 				requestor: requesting_user?.branch?.name,
 				type: upperFirst(type),

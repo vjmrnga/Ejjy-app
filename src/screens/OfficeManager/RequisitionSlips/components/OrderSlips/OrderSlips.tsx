@@ -18,7 +18,7 @@ import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { convertToBulk } from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import { useUsers } from '../../../hooks/useUsers';
+import { useUsers } from '../../../../../hooks/useUsers';
 import { CreateEditOrderSlipModal } from './CreateEditOrderSlipModal';
 import { OrderSlipsTable } from './OrderSlipsTable';
 import { SetOutOfStockModal } from './SetOutOfStockModal';

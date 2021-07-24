@@ -5,6 +5,7 @@ export { default as ButtonIcon } from './ButtonIcon/ButtonIcon';
 export { default as ButtonLink } from './ButtonLink/ButtonLink';
 export { default as ControlledInput } from './ControlledInput/ControlledInput';
 export { default as FieldError } from './FieldError/FieldError';
+export { default as FieldInfo } from './FieldInfo/FieldInfo';
 export { default as FieldSuccess } from './FieldSuccess/FieldSuccess';
 export { default as FieldWarning } from './FieldWarning/FieldWarning';
 export { default as FormCheckbox } from './FormCheckbox/FormCheckbox';

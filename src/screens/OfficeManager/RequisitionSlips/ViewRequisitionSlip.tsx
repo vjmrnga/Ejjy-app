@@ -36,7 +36,7 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 
 	const getBreadcrumbItems = useCallback(
 		() => [
-			{ name: 'Requisition Slips', link: '/requisition-slips' },
+			{ name: 'Requisition Slips', link: '/office-manager/requisition-slips' },
 			{ name: `#${requisitionSlip?.id}` },
 		],
 		[requisitionSlip],

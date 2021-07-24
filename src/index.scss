@@ -20,12 +20,13 @@ body {
 	@include flex(center, center, column);
 }
 
-.ml-10 {
-	margin-left: 10px;
-}
-
 .mr-10 {
 	margin-right: 10px;
+}
+
+.PaddingHorizontal {
+	padding-left: 25px;
+	padding-right: 25px;
 }
 
 .ant-modal-root {
@@ -82,12 +83,6 @@ body {
 		width: 80px;
 		font-size: 12px;
 	}
-}
-
-.table-pagination {
-	@include flex(center, center);
-	padding: 20px 0;
-	font-family: $font-primary;
 }
 
 .ant-divider.ant-divider-with-text {

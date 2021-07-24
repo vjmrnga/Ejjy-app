@@ -136,3 +136,19 @@ export const RestoreButtonIcon = ({
 		classNames={classNames}
 	/>
 );
+
+export const CheckButtonIcon = ({
+	type,
+	tooltip,
+	imgSrc = require('../../assets/images/icon-check.svg'),
+	onClick,
+	classNames,
+}: Props) => (
+	<ButtonIcon
+		type={type}
+		icon={<img src={imgSrc} alt="icon" />}
+		onClick={onClick}
+		tooltip={tooltip}
+		classNames={classNames}
+	/>
+);

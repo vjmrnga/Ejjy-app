@@ -15,6 +15,7 @@ export interface IInputProps {
 	max?: number;
 	min?: number;
 	step?: string;
+	onChange?: any;
 	isMoney?: boolean;
 	disabled?: boolean;
 }
@@ -26,13 +27,14 @@ const FormInput = ({
 	max,
 	min,
 	step,
+	onChange,
 	disabled,
 	isMoney,
 }: IInputProps) => {
 	const [field, , helpers] = useField(id);
 	const inputRe = /^[0-9/.\b]+\.?$/g;
 
-	const onChange = (event) => {
+	const onChangeField = (event) => {
 		let { value } = event.target;
 
 		if (isMoney) {
@@ -43,6 +45,7 @@ const FormInput = ({
 		}
 
 		helpers.setValue(value);
+		onChange?.(value);
 	};
 
 	const onBlur = (event) => {
@@ -104,7 +107,7 @@ const FormInput = ({
 				min={min}
 				step={step}
 				disabled={disabled}
-				onChange={onChange}
+				onChange={onChangeField}
 				onBlur={onBlur}
 				onKeyDown={onKeyDown}
 			/>

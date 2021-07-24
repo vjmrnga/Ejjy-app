@@ -14,6 +14,7 @@ import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { Sales } from './Sales/Sales';
+import { Users } from './Users/Users';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -36,7 +37,6 @@ const Admin = () => {
 	const notificationsCountRef = useRef(null);
 
 	// METHODS
-
 	useEffect(() => {
 		getBranches();
 
@@ -96,14 +96,7 @@ const Admin = () => {
 				defaultIcon: require('../../assets/images/icon-dashboard.svg'),
 				link: '/admin/dashboard',
 			},
-			{
-				key: 'pending-transactions',
-				name: 'Pending Transactions',
-				activeIcon: require('../../assets/images/icon-failed-transfers-active.svg'),
-				defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
-				link: '/admin/pending-transactions',
-				count: pendingTransactionsCount,
-			},
+
 			{
 				key: 'products',
 				name: 'Products',
@@ -119,12 +112,11 @@ const Admin = () => {
 				link: '/admin/branches',
 			},
 			{
-				key: 'logs',
-				name: 'Logs',
-				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-				link: '/admin/logs',
-				count: logsCount,
+				key: 'users',
+				name: 'Users',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/admin/users',
 			},
 			{
 				key: 'sales',
@@ -133,6 +125,23 @@ const Admin = () => {
 				defaultIcon: require('../../assets/images/icon-sales.svg'),
 				link: '/admin/sales',
 			},
+			{
+				key: 'pending-transactions',
+				name: 'Pending Transactions',
+				activeIcon: require('../../assets/images/icon-failed-transfers-active.svg'),
+				defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
+				link: '/admin/pending-transactions',
+				count: pendingTransactionsCount,
+			},
+			{
+				key: 'logs',
+				name: 'Logs',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/admin/logs',
+				count: logsCount,
+			},
+
 			{
 				key: 'notifications',
 				name: 'Notifications',
@@ -158,8 +167,10 @@ const Admin = () => {
 					<Route path="/admin/products" component={Products} />
 					<Route path="/admin/branches" exact component={Branches} />
 					<Route path="/admin/branches/:id" component={ViewBranch} />
+					<Route path="/admin/users" component={Users} />
 					<Route path="/admin/logs" component={Logs} />
 					<Route path="/admin/sales" component={Sales} />
+
 					<Route path="/admin/notifications" component={Notifications} />
 
 					<Redirect to="/admin/dashboard" />

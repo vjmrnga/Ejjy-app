@@ -19,16 +19,18 @@ const EXECUTE_ERROR_MESSAGE =
 	'An error occurred while executing the pending transaction';
 
 export const usePendingTransactions = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const pendingTransactions = useSelector(
-		selectors.selectPendingTransactions(),
-	);
+	// SELECTORS
+
 	const pendingTransactionsCount = useSelector(
 		selectors.selectPendingTransactionsCount(),
 	);
+
+	// ACTIONS
 	const listPendingTransactionsAction = useActionDispatch(
 		actions.listPendingTransactions,
 	);
@@ -129,7 +131,6 @@ export const usePendingTransactions = () => {
 	};
 
 	return {
-		pendingTransactions,
 		pendingTransactionsCount,
 		listPendingTransactions,
 		getPendingTransactionsCount,

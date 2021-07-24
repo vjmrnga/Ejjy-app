@@ -1,13 +1,12 @@
 import { message, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Content, TableActions, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { types } from '../../../ducks/OfficeManager/products';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
-import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { useProducts } from '../../../hooks/useProducts';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
@@ -34,6 +33,10 @@ export const Products = () => {
 	const [editPriceCostModalVisible, setEditPriceCostModalVisible] =
 		useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
+
+	// REFS
+	const pendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -51,9 +54,6 @@ export const Products = () => {
 		recentRequest,
 	} = useProducts();
 
-	const { pendingTransactions, listPendingTransactions } =
-		usePendingTransactions();
-
 	useEffect(() => {
 		getProducts({ page: 1 });
 	}, []);
@@ -61,10 +61,6 @@ export const Products = () => {
 	// METHODS
 	// Effect: Format products to be rendered in Table
 	useEffect(() => {
-		const hasPendingTransactions = pendingTransactions.some(
-			({ request_model }) => request_model === pendingTransactionTypes.PRODUCTS,
-		);
-
 		const formattedProducts =
 			products?.map((product) => {
 				const { barcode, name, textcode } = product;
@@ -90,7 +86,7 @@ export const Products = () => {
 			}) || [];
 
 		setData(formattedProducts);
-	}, [products, pendingTransactions]);
+	}, [products, hasPendingTransactions]);
 
 	const onPageChange = (page, newPageSize) => {
 		getProducts({ page, pageSize: newPageSize }, newPageSize !== pageSize);
@@ -127,7 +123,8 @@ export const Products = () => {
 					message.warning(
 						'We found an error while deleting the product details in local branch. Please check the pending transaction table below.',
 					);
-					listPendingTransactions(null);
+
+					pendingTransactionsRef.current?.refreshList();
 				}
 
 				removeItemInPagination(product);
@@ -174,7 +171,9 @@ export const Products = () => {
 					addItemInPagination={addItemInPagination}
 					updateItemInPagination={updateItemInPagination}
 					visible={createEditProductModalVisible}
-					onFetchPendingTransactions={listPendingTransactions}
+					onFetchPendingTransactions={
+						pendingTransactionsRef.current?.refreshList
+					}
 					onClose={() => setCreateEditProductModalVisible(false)}
 				/>
 
@@ -186,8 +185,11 @@ export const Products = () => {
 			</Box>
 
 			<PendingTransactionsSection
+				ref={pendingTransactionsRef}
 				title="Pending Product Transactions"
 				transactionType={pendingTransactionTypes.PRODUCTS}
+				setHasPendingTransactions={setHasPendingTransactions}
+				withActionColumn
 			/>
 		</Content>
 	);

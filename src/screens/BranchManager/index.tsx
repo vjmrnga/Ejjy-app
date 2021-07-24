@@ -10,6 +10,7 @@ import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
 import { Products } from './Products/Products';
+import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 
@@ -83,13 +84,18 @@ const OfficeManager = () => {
 					<Route path="/branch-manager/products" component={Products} />
 					<Route
 						path="/branch-manager/requisition-slips"
-						exact
 						component={RequisitionSlips}
+						exact
+					/>
+					<Route
+						path="/branch-manager/requisition-slips/create"
+						component={CreateRequisitionSlip}
+						exact
 					/>
 					<Route
 						path="/branch-manager/requisition-slips/:id"
-						exact
 						component={ViewRequisitionSlip}
+						exact
 					/>
 
 					<Route path="/branch-manager/order-slips" component={OrderSlips} />

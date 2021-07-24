@@ -33,6 +33,7 @@ interface IEditBranchProductPriceCost {
 interface IGetBranchProducts extends IGetRequest {
 	search?: string;
 	product_ids?: number[];
+	product_status?: string;
 }
 
 export const service = {

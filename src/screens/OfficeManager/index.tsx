@@ -105,13 +105,14 @@ const OfficeManager = () => {
 						component={ViewRequisitionSlip}
 					/>
 					<Route
-						path="/office-manager//requisition-slips/delivery-receipt/:id"
+						path="/office-manager/requisition-slips/delivery-receipt/:id"
 						component={ViewDeliveryReceipt}
 					/>
 
 					<Route path="/office-manager/users" exact component={Users} />
 					<Route
 						path="/office-manager/users/assign/:id"
+						exact
 						component={AssignUser}
 					/>
 					<Route

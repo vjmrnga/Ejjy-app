@@ -4,7 +4,7 @@ import { FieldError } from '../../../../components/elements';
 import { NO_BRANCH_ID } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
-import { useUsers } from '../../hooks/useUsers';
+import { useUsers } from '../../../../hooks/useUsers';
 import { EditUserForm } from './EditUserForm';
 
 interface Props {
