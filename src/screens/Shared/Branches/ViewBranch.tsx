@@ -5,6 +5,8 @@ import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
+import { useAuth } from '../../../hooks/useAuth';
+import { getUrlPrefix } from '../../../utils/function';
 import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';
 import { ViewBranchProducts } from './components/ViewBranchProducts';
@@ -33,18 +35,22 @@ export const ViewBranch = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
+	const { user } = useAuth();
 
 	// Effect: Fetch branch products
 	useEffect(() => {
 		if (!branch?.online_url) {
-			history.replace('/branches');
+			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
 			message.error('Branch has no online url.');
 		}
 	}, [branchId, branch]);
 
 	const getBreadcrumbItems = useCallback(
-		() => [{ name: 'Branches', link: '/branches' }, { name: branch?.name }],
-		[branch],
+		() => [
+			{ name: 'Branches', link: `${getUrlPrefix(user.user_type)}/branches` },
+			{ name: branch?.name },
+		],
+		[branch, user],
 	);
 
 	return (

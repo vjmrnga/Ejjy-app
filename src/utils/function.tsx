@@ -477,8 +477,8 @@ export const getTransactionStatus = memoize((status) => {
 	}
 });
 
-export const isUserFromBranch = memoize((user_role) =>
-	[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(user_role),
+export const isUserFromBranch = memoize((userType) =>
+	[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(userType),
 );
 
 export const onCallback =
@@ -518,3 +518,26 @@ export const getKeyDownCombination = (keyboardEvent) => {
 };
 
 export const formatMoney = (number) => Number(number).toFixed(2);
+
+export const getUrlPrefix = memoize((userType) => {
+	let prefix = '';
+
+	switch (userType) {
+		case userTypes.ADMIN:
+			prefix = '/admin';
+			break;
+		case userTypes.OFFICE_MANAGER:
+			prefix = '/office-manager';
+			break;
+		case userTypes.BRANCH_MANAGER:
+			prefix = '/branch-manager';
+			break;
+		case userTypes.BRANCH_PERSONNEL:
+			prefix = '/branch-personel';
+			break;
+		default:
+			break;
+	}
+
+	return prefix;
+});
