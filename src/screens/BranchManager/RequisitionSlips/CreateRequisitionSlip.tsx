@@ -1,6 +1,7 @@
-import { Divider, Pagination } from 'antd';
+/* eslint-disable no-mixed-spaces-and-tabs */
+import { Divider, Pagination, Radio, Space } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { cloneDeep, debounce, toString } from 'lodash';
+import { cloneDeep, debounce, isEmpty, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -18,6 +19,7 @@ import {
 	FormCheckbox,
 	FormInput,
 	FormSelect,
+	Label,
 } from '../../../components/elements';
 import {
 	branchProductStatusOptionsWithAll,
@@ -50,9 +52,11 @@ const columns = [
 
 export const CreateRequisitionSlip = () => {
 	// STATES
+	const [searchedKeyword, setSeachedKeyword] = useState('');
 	const [selectedStatus, setSelectedStatus] = useState('all');
 	const [selectedProducts, setSelectedProducts] = useState({});
 	const [isSubmitting, setSubmitting] = useState(false);
+	const [onlySelectedVisible, setOnlySelectedVisible] = useState(false);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
@@ -72,9 +76,12 @@ export const CreateRequisitionSlip = () => {
 		errors: requisitionSlipsErrors,
 	} = useRequisitionSlips();
 
+	// VARIABLES
+	const branchId = user?.branch?.id;
+
 	// METHODS
 	useEffect(() => {
-		getBranchProducts({ branchId: user.branch.id, page: 1 });
+		getBranchProducts({ branchId, page: 1 });
 	}, []);
 
 	useEffect(() => {
@@ -89,8 +96,11 @@ export const CreateRequisitionSlip = () => {
 					product_status !== branchProductStatus.AVAILABLE &&
 					!productKeys.includes(toString(product.id)),
 			)
-			.forEach(({ product }) => {
+			.forEach(({ product, product_status, current_balance }) => {
 				newProducts[product.id] = {
+					productName: product?.name,
+					status: product_status,
+					currentBalance: current_balance,
 					piecesInBulk: product.pieces_in_bulk,
 					quantityType: quantityTypes.PIECE,
 				};
@@ -105,16 +115,25 @@ export const CreateRequisitionSlip = () => {
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				branchProducts: branchProducts.map((branchProduct) => ({
-					selected: !!selectedProducts?.[branchProduct.product.id],
-					quantity:
-						selectedProducts?.[branchProduct.product.id]?.quantity || '',
-					quantity_type:
-						selectedProducts?.[branchProduct.product.id]?.quantityType ||
-						quantityTypes.PIECE,
-					product_id: branchProduct.product.id,
-					pieces_in_bulk: branchProduct.product.pieces_in_bulk,
-				})),
+				branchProducts: onlySelectedVisible
+					? Object.keys(selectedProducts).map((key) => ({
+							selected: true,
+							quantity: selectedProducts[key]?.quantity || '',
+							quantity_type:
+								selectedProducts[key]?.quantityType || quantityTypes.PIECE,
+							product_id: key,
+							pieces_in_bulk: selectedProducts[key]?.piecesInBulk,
+					  }))
+					: branchProducts.map((branchProduct) => ({
+							selected: !!selectedProducts?.[branchProduct.product.id],
+							quantity:
+								selectedProducts?.[branchProduct.product.id]?.quantity || '',
+							quantity_type:
+								selectedProducts?.[branchProduct.product.id]?.quantityType ||
+								quantityTypes.PIECE,
+							product_id: branchProduct.product.id,
+							pieces_in_bulk: branchProduct.product.pieces_in_bulk,
+					  })),
 			},
 			Schema: Yup.object().shape({
 				branchProducts: Yup.array().of(
@@ -131,7 +150,7 @@ export const CreateRequisitionSlip = () => {
 				),
 			}),
 		}),
-		[branchProducts, selectedProducts],
+		[branchProducts, selectedProducts, onlySelectedVisible],
 	);
 
 	const renderQuantity = (index, values) => {
@@ -175,11 +194,11 @@ export const CreateRequisitionSlip = () => {
 		return <span>{value}</span>;
 	};
 
-	const onChangeCheckbox = (productId, piecesInBulk, value) => {
+	const onChangeCheckbox = (productId, data, value) => {
 		setSelectedProducts((prevProducts) => {
 			const newProducts = cloneDeep(prevProducts);
 			if (value) {
-				newProducts[productId] = { piecesInBulk };
+				newProducts[productId] = data;
 			} else {
 				delete newProducts[productId];
 			}
@@ -253,13 +272,32 @@ export const CreateRequisitionSlip = () => {
 	const onPageChange = (page, newPageSize) => {
 		getBranchProducts(
 			{
-				branchId: user?.branch?.id,
+				branchId,
+				search: searchedKeyword,
 				productStatus: selectedStatus === 'all' ? null : selectedStatus,
+				isSoldInBranch: true,
 				page,
 				pageSize: newPageSize,
 			},
 			newPageSize !== pageSize,
 		);
+	};
+
+	const onSearch = (keyword) => {
+		const lowerCaseKeyword = keyword?.toLowerCase();
+
+		getBranchProducts(
+			{
+				branchId,
+				search: lowerCaseKeyword,
+				productStatus: selectedStatus === 'all' ? null : selectedStatus,
+				isSoldInBranch: true,
+				page: 1,
+			},
+			true,
+		);
+
+		setSeachedKeyword(lowerCaseKeyword);
 	};
 
 	const loading = [requisitionSlipsStatus, branchProductsStatus].includes(
@@ -271,38 +309,63 @@ export const CreateRequisitionSlip = () => {
 			<Box>
 				<TableHeader
 					title="Create Requisition Slip"
+					onSearch={onSearch}
 					statuses={branchProductStatusOptionsWithAll}
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
 								branchId: user?.branch?.id,
+								search: searchedKeyword,
 								productStatus: status === 'all' ? null : status,
+								isSoldInBranch: true,
 								page: 1,
 							},
 							true,
 						);
 						setSelectedStatus(status);
 					}}
+					statusDisabled={onlySelectedVisible}
+					searchDisabled={onlySelectedVisible}
 				/>
 
-				<RequestErrors
-					className="PaddingHorizontal"
-					errors={[
-						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(requisitionSlipsErrors, 'Requisition Slip'),
-					]}
-					withSpaceBottom
-				/>
-
-				{Object.keys(selectedProducts).length > 0 && (
-					// eslint-disable-next-line react/jsx-one-expression-per-line
-					<FieldInfo
-						className="PaddingHorizontal"
-						message={`${
-							Object.keys(selectedProducts).length
-						} product/s selected`}
+				<div className="PaddingHorizontal">
+					<RequestErrors
+						errors={[
+							...convertIntoArray(branchProductsErrors, 'Branch Products'),
+							...convertIntoArray(requisitionSlipsErrors, 'Requisition Slip'),
+						]}
+						withSpaceBottom
 					/>
-				)}
+
+					<Space
+						className="CreateRequisitionSlip_filter"
+						direction="vertical"
+						size={15}
+					>
+						<Label label="Show Sold In Branch" />
+						<Radio.Group
+							options={[
+								{ label: 'Show All Products', value: false },
+								{ label: 'Show Selected Products', value: true },
+							]}
+							onChange={(e) => {
+								setOnlySelectedVisible(e.target.value);
+							}}
+							defaultValue={false}
+							optionType="button"
+						/>
+					</Space>
+
+					{Object.keys(selectedProducts).length > 0 && (
+						// eslint-disable-next-line react/jsx-one-expression-per-line
+						<FieldInfo
+							className="CreateRequisitionSlip_addedProductsCount"
+							message={`${
+								Object.keys(selectedProducts).length
+							} product/s selected`}
+						/>
+					)}
+				</div>
 
 				<Formik
 					initialValues={getFormDetails().DefaultValues}
@@ -318,57 +381,115 @@ export const CreateRequisitionSlip = () => {
 				>
 					{({ values, setFieldValue }) => (
 						<Form className="form">
-							<TableNormal
-								columns={columns}
-								data={branchProducts.map((branchProduct, index) => {
-									const productId = values?.branchProducts?.[index]?.product_id;
+							{onlySelectedVisible ? (
+								<TableNormal
+									columns={columns}
+									data={Object.keys(selectedProducts).map((key, index) => {
+										const product = selectedProducts[key];
+										const productId =
+											values?.branchProducts?.[index]?.product_id;
 
-									return [
-										// Select
-										<FormCheckbox
-											id={`branchProducts.${index}.selected`}
-											label={branchProduct?.product?.name}
-											onChange={(value) => {
-												if (!value) {
-													setFieldValue(`branchProducts.${index}.quantity`, '');
-													setFieldValue(
-														`branchProducts.${index}.quantity_type`,
-														quantityTypes.PIECE,
-													);
-												}
+										return [
+											// Select
+											<FormCheckbox
+												id={`branchProducts.${index}.selected`}
+												label={product?.productName}
+												onChange={(value) => {
+													if (!value) {
+														setFieldValue(
+															`branchProducts.${index}.quantity`,
+															'',
+														);
+														setFieldValue(
+															`branchProducts.${index}.quantity_type`,
+															quantityTypes.PIECE,
+														);
+													}
 
-												onChangeCheckbox(
-													productId,
-													branchProduct?.product?.pieces_in_bulk,
-													value,
-												);
-											}}
-										/>,
-										// Quantity / Bulk | Pieces
-										renderQuantity(index, values),
-										// Current Balance
-										renderCurrentBalance(
-											branchProduct?.current_balance,
-											branchProduct?.product?.pieces_in_bulk,
-											values?.branchProducts?.[index]?.quantity_type,
-										),
-										// Status
-										getBranchProductStatus(branchProduct?.product_status),
-									];
-								})}
-								loading={loading || isSubmitting}
-							/>
-
-							<div className="CreateRequisitionSlip_pagination">
-								<Pagination
-									current={currentPage}
-									total={pageCount}
-									pageSize={pageSize}
-									onChange={onPageChange}
-									pageSizeOptions={pageSizeOptions}
-									disabled={loading || isSubmitting}
+													onChangeCheckbox(productId, {}, value);
+												}}
+											/>,
+											// Quantity / Bulk | Pieces
+											renderQuantity(index, values),
+											// Current Balance
+											renderCurrentBalance(
+												product?.currentBalance,
+												product?.piecesInBulk,
+												values?.branchProducts?.[index]?.quantity_type,
+											),
+											// Status
+											getBranchProductStatus(product?.status),
+										];
+									})}
+									displayInPage
+									loading={loading || isSubmitting}
 								/>
-							</div>
+							) : (
+								<TableNormal
+									columns={columns}
+									data={branchProducts.map((branchProduct, index) => {
+										const productId =
+											values?.branchProducts?.[index]?.product_id;
+
+										return [
+											// Select
+											<FormCheckbox
+												id={`branchProducts.${index}.selected`}
+												label={branchProduct?.product?.name}
+												onChange={(value) => {
+													if (!value) {
+														setFieldValue(
+															`branchProducts.${index}.quantity`,
+															'',
+														);
+														setFieldValue(
+															`branchProducts.${index}.quantity_type`,
+															quantityTypes.PIECE,
+														);
+													}
+
+													onChangeCheckbox(
+														productId,
+														{
+															productName: branchProduct?.product?.name,
+															piecesInBulk:
+																branchProduct?.product?.pieces_in_bulk,
+															status: branchProduct?.product_status,
+															currentBalance: branchProduct?.current_balance,
+														},
+														value,
+													);
+												}}
+											/>,
+											// Quantity / Bulk | Pieces
+											renderQuantity(index, values),
+											// Current Balance
+											renderCurrentBalance(
+												branchProduct?.current_balance,
+												branchProduct?.product?.pieces_in_bulk,
+												values?.branchProducts?.[index]?.quantity_type,
+											),
+											// Status
+											getBranchProductStatus(branchProduct?.product_status),
+										];
+									})}
+									displayInPage
+									loading={loading || isSubmitting}
+								/>
+							)}
+
+							{!onlySelectedVisible && (
+								<div className="CreateRequisitionSlip_pagination">
+									<Pagination
+										current={currentPage}
+										total={pageCount}
+										pageSize={pageSize}
+										onChange={onPageChange}
+										pageSizeOptions={pageSizeOptions}
+										disabled={loading || isSubmitting}
+									/>
+								</div>
+							)}
 
 							<Divider dashed />
 
@@ -378,7 +499,9 @@ export const CreateRequisitionSlip = () => {
 									type="submit"
 									text="Create"
 									variant="primary"
-									disabled={loading || isSubmitting}
+									disabled={
+										loading || isSubmitting || isEmpty(selectedProducts)
+									}
 								/>
 							</div>
 						</Form>

@@ -12,7 +12,6 @@ import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { BackupServerUrlForm } from './components/BackupServerUrlForm';
 import { LocalServerUrlForm } from './components/LocalServerUrlForm';
 import { MachineReportTable } from './components/MachineReportTable';
-import { SiteSettings } from './components/SiteSettings';
 import './style.scss';
 
 export const Dashboard = () => {
@@ -82,8 +81,6 @@ export const Dashboard = () => {
 			/>
 
 			<MachineReportTable />
-
-			<SiteSettings />
 		</Content>
 	);
 };

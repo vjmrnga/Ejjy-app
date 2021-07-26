@@ -1,5 +1,5 @@
 import { Col, Divider, Row } from 'antd';
-import { Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -98,85 +98,90 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 			}}
 			enableReinitialize
 		>
-			{({ errors, touched }) => (
-				<Form className="form">
-					<Row gutter={[15, 15]}>
-						<Col sm={12} xs={24}>
-							<FormInputLabel id="first_name" label="First Name" />
-							{errors.first_name && touched.first_name ? (
-								<FieldError error={errors.first_name} />
-							) : null}
-						</Col>
+			<Form className="form">
+				<Row gutter={[15, 15]}>
+					<Col sm={12} xs={24}>
+						<FormInputLabel id="first_name" label="First Name" />
+						<ErrorMessage
+							name="first_name"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
 
-						<Col sm={12} xs={24}>
-							<FormInputLabel id="last_name" label="Last Name" />
-							{errors.last_name && touched.last_name ? (
-								<FieldError error={errors.last_name} />
-							) : null}
-						</Col>
+					<Col sm={12} xs={24}>
+						<FormInputLabel id="last_name" label="Last Name" />
+						<ErrorMessage
+							name="last_name"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
 
-						<Col sm={12} xs={24}>
-							<FormInputLabel id="email" label="Email Address" />
-							{errors.email && touched.email ? (
-								<FieldError error={errors.email} />
-							) : null}
-						</Col>
+					<Col sm={12} xs={24}>
+						<FormInputLabel id="email" label="Email Address" />
+						<ErrorMessage
+							name="email"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
 
-						<Col sm={12} xs={24}>
-							<Label label="Type" spacing />
-							<FormSelect id="user_type" options={userTypeOptions} />
-							{errors.user_type && touched.user_type ? (
-								<FieldError error={errors.user_type} />
-							) : null}
-						</Col>
-
-						<Divider />
-
-						<Col span={24}>
-							<FormInputLabel id="username" label="Username" />
-							{errors.username && touched.username ? (
-								<FieldError error={errors.username} />
-							) : null}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<FormInputLabel id="password" label="Password" type="password" />
-							{errors.password && touched.password ? (
-								<FieldError error={errors.password} />
-							) : null}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								id="confirm_password"
-								label="Confirm Password"
-								type="password"
-							/>
-							{errors.confirm_password && touched.confirm_password ? (
-								<FieldError error={errors.confirm_password} />
-							) : null}
-						</Col>
-					</Row>
+					<Col sm={12} xs={24}>
+						<Label label="Type" spacing />
+						<FormSelect id="user_type" options={userTypeOptions} />
+						<ErrorMessage
+							name="user_type"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
 
 					<Divider />
 
-					<div className="custom-footer">
-						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
-							classNames="mr-10"
-							disabled={loading || isSubmitting}
+					<Col span={24}>
+						<FormInputLabel id="username" label="Username" />
+						<ErrorMessage
+							name="username"
+							render={(error) => <FieldError error={error} />}
 						/>
-						<Button
-							type="submit"
-							text="Create"
-							variant="primary"
-							loading={loading || isSubmitting}
+					</Col>
+
+					<Col sm={12} xs={24}>
+						<FormInputLabel id="password" label="Password" type="password" />
+						<ErrorMessage
+							name="password"
+							render={(error) => <FieldError error={error} />}
 						/>
-					</div>
-				</Form>
-			)}
+					</Col>
+
+					<Col sm={12} xs={24}>
+						<FormInputLabel
+							id="confirm_password"
+							label="Confirm Password"
+							type="password"
+						/>
+						<ErrorMessage
+							name="confirm_password"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
+				</Row>
+
+				<Divider />
+
+				<div className="custom-footer">
+					<Button
+						type="button"
+						text="Cancel"
+						onClick={onClose}
+						classNames="mr-10"
+						disabled={loading || isSubmitting}
+					/>
+					<Button
+						type="submit"
+						text="Create"
+						variant="primary"
+						loading={loading || isSubmitting}
+					/>
+				</div>
+			</Form>
 		</Formik>
 	);
 };

@@ -11,6 +11,7 @@ import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';
 import { ViewBranchProducts } from './components/ViewBranchProducts';
 import { ViewBranchSessions } from './components/ViewBranchSessions';
+import { ViewBranchSiteSettings } from './components/ViewBranchSiteSettings';
 import { ViewBranchTransactions } from './components/ViewBranchTransactions';
 import './style.scss';
 
@@ -24,6 +25,7 @@ const tabs = {
 	TRANSACTIONS: 'Transactions',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
+	SITE_SETTINGS: 'Site Settings',
 };
 
 export const ViewBranch = ({ match }: Props) => {
@@ -103,6 +105,14 @@ export const ViewBranch = ({ match }: Props) => {
 						disabled={!branch?.online_url}
 					>
 						<ViewBranchDays branchId={branchId} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.SITE_SETTINGS}
+						tab={tabs.SITE_SETTINGS}
+						disabled={!branch?.online_url}
+					>
+						<ViewBranchSiteSettings branchId={branchId} />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

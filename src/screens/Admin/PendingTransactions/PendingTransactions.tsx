@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Content, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
+import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { pendingTransactionTypes, request } from '../../../global/types';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
 import { formatDateTime, showErrorMessages } from '../../../utils/function';
@@ -108,6 +109,8 @@ export const PendingTransactions = () => {
 	return (
 		<Content className="PendingTransactions" title="Pending Transactions">
 			<Box>
+				<TableHeader title="For Approval" />
+
 				<Table
 					columns={columns}
 					dataSource={data}
@@ -119,13 +122,13 @@ export const PendingTransactions = () => {
 
 			<PendingTransactionsSection
 				ref={productPendingTransactionsRef}
-				title="Product Transactions"
+				title="All Product Transactions"
 				transactionType={pendingTransactionTypes.PRODUCTS}
 			/>
 
 			<PendingTransactionsSection
 				ref={userPendingTransactionsRef}
-				title="User Transactions"
+				title="All User Transactions"
 				transactionType={pendingTransactionTypes.USERS}
 			/>
 		</Content>

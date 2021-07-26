@@ -10,12 +10,14 @@ interface Props {
 	onChange: any;
 	classNames?: any;
 	autoFocus?: boolean;
+	disabled?: boolean;
 }
 
 const SearchInput = ({
 	onChange,
 	placeholder,
 	autoFocus,
+	disabled,
 	classNames,
 }: Props) => (
 	<div className={cn('SearchInput', classNames)}>
@@ -25,6 +27,7 @@ const SearchInput = ({
 			placeholder={placeholder}
 			tabIndex={1}
 			autoFocus={autoFocus}
+			disabled={disabled}
 		/>
 	</div>
 );

@@ -11,28 +11,38 @@ const SEARCH_DEBOUNCE_TIME = 250; // 250ms
 
 interface Props {
 	title?: string;
-	searchPlaceholder?: string;
 	buttonName?: string;
-	statuses?: Option[];
 	onCreateDisabled?: boolean;
 	onCreateTooltip?: string;
-	onStatusSelect?: any;
-	onSearch?: any;
 	onCreate?: any;
 	pending?: number;
+
+	searchPlaceholder?: string;
+	onSearch?: any;
+	searchDisabled?: boolean;
+
+	statuses?: Option[];
+	onStatusSelect?: any;
+	statusDisabled?: boolean;
 }
 
 export const TableHeader = ({
 	title,
-	searchPlaceholder,
+
 	buttonName,
-	onStatusSelect,
-	statuses,
 	onCreateDisabled,
 	onCreateTooltip,
-	onSearch,
+
 	onCreate,
 	pending,
+
+	searchPlaceholder,
+	onSearch,
+	searchDisabled,
+
+	statuses,
+	onStatusSelect,
+	statusDisabled,
 }: Props) => {
 	const debounceSearchedChange = useCallback(
 		debounce((keyword) => onSearch(keyword), SEARCH_DEBOUNCE_TIME),
@@ -56,6 +66,7 @@ export const TableHeader = ({
 							onChange={(event) => {
 								debounceSearchedChange(event.target.value.trim());
 							}}
+							disabled={searchDisabled}
 						/>
 					)}
 
@@ -65,6 +76,7 @@ export const TableHeader = ({
 							options={statuses}
 							placeholder="Status"
 							onChange={onStatusSelect}
+							disabled={statusDisabled}
 						/>
 					)}
 				</div>

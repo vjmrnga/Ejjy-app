@@ -1,7 +1,7 @@
-import { Field } from 'formik';
+import cn from 'classnames';
+import { useField } from 'formik';
 import * as React from 'react';
 import './style.scss';
-import cn from 'classnames';
 
 export interface Option {
 	value: string;
@@ -11,10 +11,10 @@ export interface Option {
 
 export interface ISelectProps {
 	id: string;
+	options: Option[];
 	placeholder?: string;
 	onChange?: any;
 	disabled?: boolean;
-	options: Option[];
 }
 
 const FormSelect = ({
@@ -23,29 +23,37 @@ const FormSelect = ({
 	placeholder,
 	onChange,
 	disabled,
-}: ISelectProps) => (
-	<Field
-		className={cn('FormSelect', { disabled })}
-		as="select"
-		id={id}
-		name={id}
-		disabled={disabled}
-		onChange={(event) => {
-			onChange?.(event.target.value);
-		}}
-	>
-		{placeholder && (
-			<option value="" selected disabled>
-				{placeholder}
-			</option>
-		)}
-		{options.map(({ name, value, selected = false }) => (
-			<option selected={selected} value={value}>
-				{name}
-			</option>
-		))}
-	</Field>
-);
+}: ISelectProps) => {
+	const [field, , helpers] = useField(id);
+
+	const onChangeField = (event) => {
+		const { value } = event.target;
+		helpers.setValue(value);
+		onChange?.(value);
+	};
+
+	return (
+		<select
+			{...field}
+			className={cn('FormSelect', { FormSelect__disabled: disabled })}
+			id={id}
+			name={id}
+			disabled={disabled}
+			onChange={onChangeField}
+		>
+			{placeholder && (
+				<option value="" selected disabled>
+					{placeholder}
+				</option>
+			)}
+			{options.map(({ name, value, selected = false }) => (
+				<option selected={selected} value={value}>
+					{name}
+				</option>
+			))}
+		</select>
+	);
+};
 
 FormSelect.defaultProps = {
 	disabled: false,

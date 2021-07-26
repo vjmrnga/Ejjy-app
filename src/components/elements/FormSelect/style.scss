@@ -10,7 +10,7 @@
 
 	display: block;
 
-	&.disabled {
+	&__disabled {
 		background-color: $color-main-background;
 	}
 }
