@@ -1,14 +1,14 @@
 @import '../../../assets/styles/main';
 
 .Dashboard {
-	&_BranchBalanceItem {
+	.BranchBalanceItem {
 		&_cashieringCard {
 			margin-bottom: 16px;
 			border-radius: 8px;
 		}
 
-		&_filter {
-			margin-bottom: 25px;
+		&_table {
+			margin-top: 25px;
 		}
 	}
 }

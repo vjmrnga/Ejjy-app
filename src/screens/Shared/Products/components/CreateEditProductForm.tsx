@@ -120,8 +120,7 @@ export const CreateEditProductForm = ({
 				max_balance: product?.max_balance,
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
-				product_category:
-					product?.product_category || productCategoryTypes.NONE,
+				product_category: product?.product_category,
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
 			},
@@ -216,10 +215,6 @@ export const CreateEditProductForm = ({
 				name,
 				value: name,
 			})),
-			{
-				name: 'None',
-				value: productCategoryTypes.NONE,
-			},
 		],
 		[productCategories],
 	);
@@ -241,10 +236,7 @@ export const CreateEditProductForm = ({
 						cost_per_bulk: removeCommas(formData.cost_per_bulk || 0),
 						price_per_piece: removeCommas(formData.price_per_piece || 0),
 						price_per_bulk: removeCommas(formData.price_per_bulk || 0),
-						product_category:
-							formData.product_category !== productCategoryTypes.NONE
-								? formData.product_category
-								: null,
+						product_category: formData.product_category,
 						allowable_spoilage:
 							formData.type === productTypes.WET &&
 							formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
@@ -300,7 +292,7 @@ export const CreateEditProductForm = ({
 							/>
 						</Col>
 
-						<Col span={24}>
+						<Col sm={12} xs={24}>
 							<Label label="Product Category" spacing />
 							<FormSelect
 								id="product_category"

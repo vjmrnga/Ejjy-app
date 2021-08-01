@@ -206,7 +206,7 @@ export const BranchBalanceItem = ({
 			/>
 
 			<Table
-				className="TableNoPadding"
+				className="TableNoPadding BranchBalanceItem_table"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 600 }}
@@ -242,7 +242,7 @@ const BranchBalanceItemFilter = ({
 	onSelectStatus,
 	onSelectProductCategory,
 }: BranchBalanceItemFilterProps) => (
-	<Row className="BranchBalanceItem_filter" gutter={[15, 15]}>
+	<Row gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Search" spacing />
 			<Input
