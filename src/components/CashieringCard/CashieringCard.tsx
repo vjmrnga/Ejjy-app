@@ -12,15 +12,17 @@ interface Props {
 	onConfirm: any;
 	loading: boolean;
 	classNames?: string;
+	bordered?: boolean;
 	disabled: boolean;
 }
 
 export const CashieringCard = ({
 	branchDay,
 	onConfirm,
-	loading,
-	disabled,
 	classNames,
+	loading,
+	bordered,
+	disabled,
 }: Props) => {
 	const getTitle = useCallback(() => {
 		if (branchDay?.datetime_ended) {
@@ -69,12 +71,16 @@ export const CashieringCard = ({
 	};
 
 	return (
-		<Box className={cn('CashieringCard', classNames)}>
+		<Box
+			className={cn('CashieringCard', classNames, {
+				CashieringCard__bordered: bordered,
+			})}
+		>
 			<Spin size="large" spinning={loading}>
-				<div className="cashiering-container">
+				<div className="CashieringCard_container">
 					<div>
-						<p className="title">{getTitle()}</p>
-						<span className="date">{getDate()}</span>
+						<p className="CashieringCard_title">{getTitle()}</p>
+						<span className="CashieringCard_date">{getDate()}</span>
 					</div>
 
 					{!branchDay?.datetime_ended && (

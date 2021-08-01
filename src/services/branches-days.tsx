@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
 
 interface ICreateBranchDay {
 	started_by_id: number;
@@ -12,10 +12,10 @@ interface IEditBranchDay {
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) =>
+	list: async (params: IListRequest, baseURL) =>
 		axios.get('/branches-days/', { baseURL, params }),
 
-	get: async (params: IGetRequest, baseURL) =>
+	get: async (params: IListRequest, baseURL) =>
 		axios.get('/branches-days/latest/', { baseURL, params }),
 
 	create: async (body: ICreateBranchDay, baseURL) =>

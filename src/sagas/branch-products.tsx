@@ -15,6 +15,7 @@ function* list({ payload }: any) {
 		isSoldInBranch,
 		productIds,
 		productStatus,
+		productCategory,
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
@@ -35,6 +36,7 @@ function* list({ payload }: any) {
 		product_ids: productIds,
 		is_sold_in_branch: isSoldInBranch,
 		product_status: productStatus,
+		product_category: productCategory,
 	};
 
 	let isFetchedFromBackupURL = false;
@@ -282,7 +284,7 @@ function* editPriceCost({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
+	yield takeEvery(types.GET_BRANCH_PRODUCTS, list);
 };
 
 const listWithAnalyticsWatcherSaga = function* listWithAnalyticsWatcherSaga() {

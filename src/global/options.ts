@@ -122,6 +122,21 @@ export const booleanOptions = [
 	},
 ];
 
+export const branchProductStatusOptions = [
+	{
+		name: 'Available',
+		value: branchProductStatus.AVAILABLE,
+	},
+	{
+		name: 'Reorder',
+		value: branchProductStatus.REORDER,
+	},
+	{
+		name: 'Out of Stock',
+		value: branchProductStatus.OUT_OF_STOCK,
+	},
+];
+
 export const branchProductStatusOptionsWithAll = [
 	{
 		name: 'All',

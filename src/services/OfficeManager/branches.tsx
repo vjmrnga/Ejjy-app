@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface ICreateBranch {
 	name: string;
@@ -17,7 +17,7 @@ interface IEditBranch {
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) =>
+	list: async (params: IListRequest, baseURL) =>
 		axios.get('/branches/', { baseURL, params }),
 
 	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),

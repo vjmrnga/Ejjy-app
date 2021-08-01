@@ -1,6 +1,6 @@
 /* eslint-disable no-confusing-arrow */
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface ICreateProduct {
 	name: string;
@@ -13,12 +13,12 @@ interface IEditProduct {
 	machine_printer_serial_number: string;
 }
 
-interface IRetrieveSales extends IGetRequest {
+interface IRetrieveSales extends IListRequest {
 	time_range: string;
 }
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) =>
+	list: async (params: IListRequest, baseURL) =>
 		axios.get('/branches-machines/', { baseURL, params }),
 
 	retrieveSales: async (params: IRetrieveSales, baseURL, withCatch = false) =>

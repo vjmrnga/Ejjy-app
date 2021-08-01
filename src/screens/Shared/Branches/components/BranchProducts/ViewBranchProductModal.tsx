@@ -125,13 +125,13 @@ export const ViewBranchProductModal = ({
 					)}`}
 				/>
 				<DetailsSingle
-					label="Discounted Price 1 (Piece)"
+					label="Wholesale Price (piece)"
 					value={`₱${numberWithCommas(
 						Number(branchProduct?.discounted_price_per_piece1).toFixed(2),
 					)}`}
 				/>
 				<DetailsSingle
-					label="Discounted Price 2 (Piece)"
+					label="Special Price (piece)"
 					value={`₱${numberWithCommas(
 						Number(branchProduct?.discounted_price_per_piece2).toFixed(2),
 					)}`}
@@ -144,13 +144,13 @@ export const ViewBranchProductModal = ({
 					)}`}
 				/>
 				<DetailsSingle
-					label="Discounted Price 1 (Bulk)"
+					label="Wholesale Price (bulk)"
 					value={`₱${numberWithCommas(
 						Number(branchProduct?.discounted_price_per_bulk1).toFixed(2),
 					)}`}
 				/>
 				<DetailsSingle
-					label="Discounted Price 2 (Bulk)"
+					label="Special Price (Bulk)"
 					value={`₱${numberWithCommas(
 						Number(branchProduct?.discounted_price_per_bulk2).toFixed(2),
 					)}`}

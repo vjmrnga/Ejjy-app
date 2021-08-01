@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
 
 export const service = {
-	list: async (params: IGetRequest, baseURL) =>
+	list: async (params: IListRequest, baseURL) =>
 		axios.get('/cashiering-sessions/', { baseURL, params }),
 };

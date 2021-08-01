@@ -102,7 +102,7 @@ interface Props {
 	isActive: boolean;
 }
 
-export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
+export const ReportsBranch = ({ isActive, branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [tags, setTags] = useState('');
@@ -257,7 +257,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 	}, [SEARCH_DEBOUNCE_TIME]);
 
 	return (
-		<div className="BranchBalanceItem">
+		<div className="ReportsBranch">
 			<RequestErrors
 				errors={convertIntoArray(errors, 'Branch Product')}
 				withSpaceBottom
@@ -414,7 +414,7 @@ export const BranchBalanceItem = ({ isActive, branchId }: Props) => {
 			</Row>
 
 			<Table
-				className="table table-no-padding "
+				className="ReportsBranch_table TableNoPadding"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 1200 }}

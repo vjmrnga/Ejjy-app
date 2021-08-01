@@ -166,7 +166,7 @@ export const SalesBranch = ({ isActive, branchId }: Props) => {
 
 				<Col span={24}>
 					<Table
-						className="table table-no-padding "
+						className="table TableNoPadding"
 						columns={columns}
 						dataSource={data}
 						scroll={{ x: 500 }}

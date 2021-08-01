@@ -1,13 +1,20 @@
-import { message, Table } from 'antd';
+import { Col, message, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useRef, useState } from 'react';
-import { Content, TableActions, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
+import {
+	Content,
+	RequestErrors,
+	TableActions,
+	TableHeader,
+} from '../../../components';
+import { Box, ButtonLink, Label } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { types } from '../../../ducks/OfficeManager/products';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
+import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
+import { convertIntoArray } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
@@ -32,8 +39,11 @@ export const Products = () => {
 	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [editPriceCostModalVisible, setEditPriceCostModalVisible] =
 		useState(false);
+	const [productCategories, setProductCategories] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
+	const [productCategory, setProductCategory] = useState(null);
+	const [searchedKeyword, setSeachedKeyword] = useState('');
 
 	// REFS
 	const pendingTransactionsRef = useRef(null);
@@ -50,16 +60,26 @@ export const Products = () => {
 
 		getProducts,
 		removeProduct,
-		status: productStatus,
+		status: productsStatus,
+		errors: productsErrors,
 		recentRequest,
 	} = useProducts();
-
-	useEffect(() => {
-		getProducts({ page: 1 });
-	}, []);
+	const {
+		getProductCategories,
+		status: productCategoriesStatus,
+		errors: productCategoriesErrors,
+	} = useProductCategories();
 
 	// METHODS
-	// Effect: Format products to be rendered in Table
+	useEffect(() => {
+		getProducts({ page: 1 });
+		getProductCategories(({ status, data: responseData }) => {
+			if (status === request.SUCCESS) {
+				setProductCategories(responseData);
+			}
+		});
+	}, []);
+
 	useEffect(() => {
 		const formattedProducts =
 			products?.map((product) => {
@@ -113,7 +133,11 @@ export const Products = () => {
 	};
 
 	const onSearch = (keyword) => {
-		getProducts({ search: keyword?.toLowerCase(), page: 1 }, true);
+		const lowerCaseKeyword = keyword?.toLowerCase();
+
+		getProducts({ search: lowerCaseKeyword, productCategory, page: 1 }, true);
+
+		setSeachedKeyword(lowerCaseKeyword);
 	};
 
 	const onRemoveProduct = (product) => {
@@ -141,7 +165,40 @@ export const Products = () => {
 					onCreate={onCreate}
 				/>
 
+				<RequestErrors
+					className="PaddingHorizontal"
+					errors={[
+						...convertIntoArray(productsErrors, 'Product'),
+						...convertIntoArray(productCategoriesErrors, 'Product Category'),
+					]}
+					withSpaceBottom
+				/>
+
+				<Row className="PaddingHorizontal" gutter={[15, 15]}>
+					<Col lg={12} span={24}>
+						<Label label="Product Category" spacing />
+						<Select
+							style={{ width: '100%' }}
+							onChange={(value) => {
+								setProductCategory(value);
+
+								getProducts(
+									{ search: searchedKeyword, productCategory: value, page: 1 },
+									true,
+								);
+							}}
+							loading={productCategoriesStatus === request.REQUESTING}
+							allowClear
+						>
+							{productCategories.map(({ name }) => (
+								<Select.Option value={name}>{name}</Select.Option>
+							))}
+						</Select>
+					</Col>
+				</Row>
+
 				<Table
+					className="Products_table"
 					columns={columns}
 					dataSource={data}
 					scroll={{ x: 650 }}
@@ -155,7 +212,7 @@ export const Products = () => {
 						pageSizeOptions,
 					}}
 					loading={
-						productStatus === request.REQUESTING &&
+						productsStatus === request.REQUESTING &&
 						recentRequest !== types.GET_PRODUCTS
 					}
 				/>
@@ -168,6 +225,7 @@ export const Products = () => {
 
 				<CreateEditProductModal
 					product={selectedProduct}
+					productCategories={productCategories}
 					addItemInPagination={addItemInPagination}
 					updateItemInPagination={updateItemInPagination}
 					visible={createEditProductModalVisible}

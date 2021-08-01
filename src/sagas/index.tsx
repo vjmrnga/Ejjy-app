@@ -8,6 +8,7 @@ import { branchPersonnelSagas } from './BranchPersonnel';
 import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
 import orderSlipCreationSagas from './order-slip-creation';
+import productCategoriesSagas from './product-categories';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import siteSettingsSagas from './site-settings';
@@ -17,15 +18,16 @@ import xreadReportsSagas from './xread-reports';
 export default function* rootSaga() {
 	yield all([
 		...authSagas,
-		...branchProductsSagas,
-		...requisitionSlipsSagas,
 		...branchesDaysSagas,
-		...sessionsSagas,
+		...branchProductsSagas,
 		...networkSagas,
+		...orderSlipCreationSagas,
+		...productCategoriesSagas,
+		...requisitionSlipsSagas,
+		...sessionsSagas,
 		...siteSettingsSagas,
 		...transactionsSagas,
 		...xreadReportsSagas,
-		...orderSlipCreationSagas,
 		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,

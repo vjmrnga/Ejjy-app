@@ -13,6 +13,7 @@ import { useUpdateBranchProductBalanceLogs } from './hooks/useUpdateBranchProduc
 import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
+import { ProductCategories } from './ProductCategories/ProductCategories';
 import { Sales } from './Sales/Sales';
 import { Users } from './Users/Users';
 
@@ -96,13 +97,12 @@ const Admin = () => {
 				defaultIcon: require('../../assets/images/icon-dashboard.svg'),
 				link: '/admin/dashboard',
 			},
-
 			{
-				key: 'products',
-				name: 'Products',
-				activeIcon: require('../../assets/images/icon-product-active.svg'),
-				defaultIcon: require('../../assets/images/icon-product.svg'),
-				link: '/admin/products',
+				key: 'users',
+				name: 'Users',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/admin/users',
 			},
 			{
 				key: 'branches',
@@ -112,11 +112,18 @@ const Admin = () => {
 				link: '/admin/branches',
 			},
 			{
-				key: 'users',
-				name: 'Users',
-				activeIcon: require('../../assets/images/icon-users-active.svg'),
-				defaultIcon: require('../../assets/images/icon-users.svg'),
-				link: '/admin/users',
+				key: 'products',
+				name: 'Products',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/admin/products',
+			},
+			{
+				key: 'product-categories',
+				name: 'Product Categories',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/admin/product-categories',
 			},
 			{
 				key: 'sales',
@@ -159,18 +166,20 @@ const Admin = () => {
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/admin/dashboard" component={Dashboard} />
-
 					<Route
 						path="/admin/pending-transactions"
 						component={PendingTransactions}
 					/>
-					<Route path="/admin/products" component={Products} />
+					<Route path="/admin/users" component={Users} />
 					<Route path="/admin/branches" exact component={Branches} />
 					<Route path="/admin/branches/:id" component={ViewBranch} />
-					<Route path="/admin/users" component={Users} />
+					<Route path="/admin/products" component={Products} />
+					<Route
+						path="/admin/product-categories"
+						component={ProductCategories}
+					/>
 					<Route path="/admin/logs" component={Logs} />
 					<Route path="/admin/sales" component={Sales} />
-
 					<Route path="/admin/notifications" component={Notifications} />
 
 					<Redirect to="/admin/dashboard" />

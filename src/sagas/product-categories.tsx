@@ -1,13 +1,17 @@
 import { call, retry, takeLatest } from 'redux-saga/effects';
-import { types } from '../../ducks/OfficeManager/products';
-import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
-import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
-import { service } from '../../services/OfficeManager/products';
+import { types } from '../ducks/product-categories';
+import {
+	MAX_PAGE_SIZE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../global/constants';
+import { request } from '../global/types';
+import { ONLINE_API_URL } from '../services/index';
+import { service } from '../services/product-categories';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, search, productCategory, callback } = payload;
+	const { callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -15,11 +19,14 @@ function* list({ payload }: any) {
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
 			service.list,
-			{ page, page_size: pageSize, search, product_category: productCategory },
+			{
+				page: 1,
+				page_size: MAX_PAGE_SIZE,
+			},
 			ONLINE_API_URL,
 		);
 
-		callback({ status: request.SUCCESS, data: response.data });
+		callback({ status: request.SUCCESS, data: response.data.results });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -31,8 +38,7 @@ function* create({ payload }: any) {
 
 	try {
 		const response = yield call(service.create, data, ONLINE_API_URL);
-
-		callback({ status: request.SUCCESS, response: response.data });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -44,8 +50,7 @@ function* edit({ payload }: any) {
 
 	try {
 		const response = yield call(service.edit, data, ONLINE_API_URL);
-
-		callback({ status: request.SUCCESS, response: response.data });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -57,8 +62,7 @@ function* remove({ payload }: any) {
 
 	try {
 		const response = yield call(service.remove, id, ONLINE_API_URL);
-
-		callback({ status: request.SUCCESS, response: response.data });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -66,19 +70,19 @@ function* remove({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.GET_PRODUCTS, list);
+	yield takeLatest(types.GET_PRODUCT_CATEGORIES, list);
 };
 
 const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_PRODUCT, create);
+	yield takeLatest(types.CREATE_PRODUCT_CATEGORY, create);
 };
 
 const editWatcherSaga = function* editWatcherSaga() {
-	yield takeLatest(types.EDIT_PRODUCT, edit);
+	yield takeLatest(types.EDIT_PRODUCT_CATEGORY, edit);
 };
 
 const removeWatcherSaga = function* removeWatcherSaga() {
-	yield takeLatest(types.REMOVE_PRODUCT, remove);
+	yield takeLatest(types.REMOVE_PRODUCT_CATEGORY, remove);
 };
 
 export default [

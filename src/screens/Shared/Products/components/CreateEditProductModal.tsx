@@ -3,12 +3,14 @@ import React from 'react';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';
+import { IProductCategory } from '../../../../models';
 import { convertIntoArray } from '../../../../utils/function';
-import { CreateEditProductForm } from './CreateEditProductForm';
 import '../style.scss';
+import { CreateEditProductForm } from './CreateEditProductForm';
 
 interface Props {
 	product: any;
+	productCategories: IProductCategory[];
 	visible: boolean;
 	addItemInPagination: any;
 	updateItemInPagination: any;
@@ -18,6 +20,7 @@ interface Props {
 
 export const CreateEditProductModal = ({
 	product,
+	productCategories,
 	visible,
 	addItemInPagination,
 	updateItemInPagination,
@@ -25,7 +28,13 @@ export const CreateEditProductModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { createProduct, editProduct, status, errors, reset } = useProducts();
+	const {
+		createProduct,
+		editProduct,
+		status: productsStatus,
+		errors: productsErrors,
+		reset,
+	} = useProducts();
 
 	// METHODS
 	const onCreateProduct = (data, onSuccess) => {
@@ -75,12 +84,16 @@ export const CreateEditProductModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(productsErrors)}
+				withSpaceBottom
+			/>
 			<CreateEditProductForm
 				product={product}
+				productCategories={productCategories}
 				onSubmit={product ? onEditProduct : onCreateProduct}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={productsStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

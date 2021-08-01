@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface SingleProductCheckFulfill {
 	product_check_product_id: number;
@@ -10,14 +10,14 @@ interface IFulfillProductCheck {
 	products: SingleProductCheckFulfill[];
 }
 
-interface IGetProductChecks extends IGetRequest {
+interface IListProductChecks extends IListRequest {
 	type: 'daily' | 'random';
 	assigned_store_id: number;
 	is_filled_up: boolean;
 }
 
 export const service = {
-	list: async (params: IGetProductChecks, baseURL) =>
+	list: async (params: IListProductChecks, baseURL) =>
 		axios.get('/product-checks/', { baseURL, params }),
 
 	fulfill: async (id: number, body: IFulfillProductCheck, baseURL) =>

@@ -91,20 +91,20 @@ export const EditBranchProductsForm = ({
 				discounted_price_per_piece1: Yup.number()
 					.required()
 					.min(0)
-					.label('Discounted Price per Piece 1'),
+					.label('Wholesale Price (piece)'),
 				discounted_price_per_piece2: Yup.number()
 					.required()
 					.min(0)
-					.label('Discounted Price per Piece 2'),
+					.label('Special Price (piece)'),
 				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
 				discounted_price_per_bulk1: Yup.number()
 					.required()
 					.min(0)
-					.label('Discounted Price per Bulk 1'),
+					.label('Wholesale Price (bulk)'),
 				discounted_price_per_bulk2: Yup.number()
 					.required()
 					.min(0)
-					.label('Discounted Price per Bulk 2'),
+					.label('Special Price (bulk)'),
 				current_balance: Yup.number().nullable().min(0).max(65535),
 			}),
 		}),
@@ -244,7 +244,7 @@ export const EditBranchProductsForm = ({
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
 								id="discounted_price_per_piece1"
-								label="Discounted Price per Piece 1"
+								label="Wholesale Price (piece)"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
@@ -257,7 +257,7 @@ export const EditBranchProductsForm = ({
 							<FormInputLabel
 								type="number"
 								id="discounted_price_per_piece2"
-								label="Discounted Price per Piece 2"
+								label="Special Price (piece)"
 								step=".01"
 								disabled={!values.is_sold_in_branch}
 								isMoney
@@ -284,7 +284,7 @@ export const EditBranchProductsForm = ({
 							<FormInputLabel
 								type="number"
 								id="discounted_price_per_bulk1"
-								label="Discounted Price per Bulk 1"
+								label="Wholesale Price (bulk)"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
@@ -297,7 +297,7 @@ export const EditBranchProductsForm = ({
 							<FormInputLabel
 								type="number"
 								id="discounted_price_per_bulk2"
-								label="Discounted Price per Bulk 2"
+								label="Special Price (bulk)"
 								step=".01"
 								disabled={!values.is_sold_in_branch}
 								isMoney

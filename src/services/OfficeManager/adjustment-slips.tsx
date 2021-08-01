@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface AdjustmentSlipProduct {
 	delivery_receipt_product_id: number;
@@ -14,12 +14,12 @@ interface ICreateAdjustmentSlip {
 	adjustment_slip_products: AdjustmentSlipProduct[];
 }
 
-interface IGetByDeliveryReceiptId extends IGetRequest {
+interface IListByDeliveryReceiptId extends IListRequest {
 	delivery_receipt_id: number;
 }
 
 export const service = {
-	getByDeliveryReceiptId: async (params: IGetByDeliveryReceiptId, baseURL) =>
+	getByDeliveryReceiptId: async (params: IListByDeliveryReceiptId, baseURL) =>
 		axios.get('/adjustment-slips/', { baseURL, params }),
 
 	create: async (body: ICreateAdjustmentSlip, baseURL) =>

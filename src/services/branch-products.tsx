@@ -1,5 +1,13 @@
 import axios from 'axios';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
+
+interface IListBranchProducts extends IListRequest {
+	search?: string;
+	product_ids?: number[];
+	product_status?: string;
+	is_sold_in_branch?: boolean;
+	product_category?: string;
+}
 
 interface IEditBranchProduct {
 	id?: number;
@@ -30,17 +38,11 @@ interface IEditBranchProductPriceCost {
 	price_per_bulk: string;
 }
 
-interface IGetBranchProducts extends IGetRequest {
-	search?: string;
-	product_ids?: number[];
-	product_status?: string;
-}
-
 export const service = {
-	list: async (params: IGetBranchProducts, baseURL) =>
+	list: async (params: IListBranchProducts, baseURL) =>
 		axios.get('/branches-products/', { baseURL, params }),
 
-	listWithAnalytics: async (params: IGetBranchProducts, baseURL) =>
+	listWithAnalytics: async (params: IListBranchProducts, baseURL) =>
 		axios.get('/branches-products/with-analytics/', { baseURL, params }),
 
 	edit: async (body: IEditBranchProduct, baseURL) =>

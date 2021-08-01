@@ -1,6 +1,6 @@
 /* eslint-disable newline-per-chained-call */
 import { Col, Divider, Row, Typography } from 'antd';
-import { Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -8,6 +8,7 @@ import {
 	FieldError,
 	FormInputLabel,
 	FormRadioButton,
+	FormSelect,
 	FormTextareaLabel,
 	Label,
 } from '../../../../components/elements';
@@ -18,6 +19,7 @@ import {
 	productTypes,
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
+import { IProductCategory } from '../../../../models';
 import { removeCommas, sleep } from '../../../../utils/function';
 
 const { Text } = Typography;
@@ -61,39 +63,6 @@ const isVatExemptedTypes = [
 	},
 ];
 
-const productCategories = [
-	{
-		id: productCategoryTypes.NONE,
-		label: 'None',
-		value: productCategoryTypes.NONE,
-	},
-	{
-		id: productCategoryTypes.ASSORTED,
-		label: 'Assorted',
-		value: productCategoryTypes.ASSORTED,
-	},
-	{
-		id: productCategoryTypes.BABOY,
-		label: 'Baboy',
-		value: productCategoryTypes.BABOY,
-	},
-	{
-		id: productCategoryTypes.MANOK,
-		label: 'Manok',
-		value: productCategoryTypes.MANOK,
-	},
-	{
-		id: productCategoryTypes.GULAY,
-		label: 'Gulay',
-		value: productCategoryTypes.GULAY,
-	},
-	{
-		id: productCategoryTypes.HOTDOG,
-		label: 'Hotdog',
-		value: productCategoryTypes.HOTDOG,
-	},
-];
-
 interface ICreateProduct {
 	id?: number;
 	barcode?: string;
@@ -117,6 +86,7 @@ interface ICreateProduct {
 
 interface Props {
 	product: any;
+	productCategories: IProductCategory[];
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
@@ -124,6 +94,7 @@ interface Props {
 
 export const CreateEditProductForm = ({
 	product,
+	productCategories,
 	onSubmit,
 	onClose,
 	loading,
@@ -239,6 +210,20 @@ export const CreateEditProductForm = ({
 		[product],
 	);
 
+	const getProductCategoriesOptions = useCallback(
+		() => [
+			...productCategories.map(({ name }) => ({
+				name,
+				value: name,
+			})),
+			{
+				name: 'None',
+				value: productCategoryTypes.NONE,
+			},
+		],
+		[productCategories],
+	);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -293,34 +278,38 @@ export const CreateEditProductForm = ({
 						</Col>
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="name" label="Name" />
-							{errors.name && touched.name ? (
-								<FieldError error={errors.name} />
-							) : null}
+							<ErrorMessage
+								name="name"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col span={24}>
 							<FormTextareaLabel id="print_details" label="Print Details" />
-							{errors.print_details && touched.print_details ? (
-								<FieldError error={errors.print_details} />
-							) : null}
+							<ErrorMessage
+								name="print_details"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col span={24}>
 							<FormTextareaLabel id="description" label="Description" />
-							{errors.description && touched.description ? (
-								<FieldError error={errors.description} />
-							) : null}
+							<ErrorMessage
+								name="description"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col span={24}>
 							<Label label="Product Category" spacing />
-							<FormRadioButton
+							<FormSelect
 								id="product_category"
-								items={productCategories}
+								options={getProductCategoriesOptions()}
 							/>
-							{errors.product_category && touched.product_category ? (
-								<FieldError error={errors.product_category} />
-							) : null}
+							<ErrorMessage
+								name="product_category"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -329,10 +318,10 @@ export const CreateEditProductForm = ({
 								id="is_shown_in_scale_list"
 								items={booleanOptions}
 							/>
-							{errors.is_shown_in_scale_list &&
-							touched.is_shown_in_scale_list ? (
-								<FieldError error={errors.is_shown_in_scale_list} />
-							) : null}
+							<ErrorMessage
+								name="is_shown_in_scale_list"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Divider dashed>TAGS</Divider>
@@ -340,9 +329,10 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-001" spacing />
 							<FormRadioButton id="type" items={type} />
-							{errors.type && touched.type ? (
-								<FieldError error={errors.type} />
-							) : null}
+							<ErrorMessage
+								name="type"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -351,9 +341,10 @@ export const CreateEditProductForm = ({
 								id="unit_of_measurement"
 								items={unitOfMeasurement}
 							/>
-							{errors.unit_of_measurement && touched.unit_of_measurement ? (
-								<FieldError error={errors.unit_of_measurement} />
-							) : null}
+							<ErrorMessage
+								name="unit_of_measurement"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -362,9 +353,10 @@ export const CreateEditProductForm = ({
 								id="is_vat_exempted"
 								items={isVatExemptedTypes}
 							/>
-							{errors.is_vat_exempted && touched.is_vat_exempted ? (
-								<FieldError error={errors.is_vat_exempted} />
-							) : null}
+							<ErrorMessage
+								name="is_vat_exempted"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Divider dashed>QUANTITY</Divider>
@@ -376,9 +368,10 @@ export const CreateEditProductForm = ({
 								id="reorder_point"
 								label="Reorder Point"
 							/>
-							{errors.reorder_point && touched.reorder_point ? (
-								<FieldError error={errors.reorder_point} />
-							) : null}
+							<ErrorMessage
+								name="reorder_point"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -388,9 +381,10 @@ export const CreateEditProductForm = ({
 								id="max_balance"
 								label="Max Balance"
 							/>
-							{errors.max_balance && touched.max_balance ? (
-								<FieldError error={errors.max_balance} />
-							) : null}
+							<ErrorMessage
+								name="max_balance"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -400,9 +394,10 @@ export const CreateEditProductForm = ({
 								id="pieces_in_bulk"
 								label="Pieces in Bulk"
 							/>
-							{errors.pieces_in_bulk && touched.pieces_in_bulk ? (
-								<FieldError error={errors.pieces_in_bulk} />
-							) : null}
+							<ErrorMessage
+								name="pieces_in_bulk"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -420,9 +415,10 @@ export const CreateEditProductForm = ({
 									)
 								}
 							/>
-							{errors.allowable_spoilage && touched.allowable_spoilage ? (
-								<FieldError error={errors.allowable_spoilage} />
-							) : null}
+							<ErrorMessage
+								name="allowable_spoilage"
+								render={(error) => <FieldError error={error} />}
+							/>
 							{!(
 								values?.type === productTypes.WET &&
 								values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
@@ -443,16 +439,18 @@ export const CreateEditProductForm = ({
 								label="Cost (Piece)"
 								isMoney
 							/>
-							{errors.cost_per_piece && touched.cost_per_piece ? (
-								<FieldError error={errors.cost_per_piece} />
-							) : null}
+							<ErrorMessage
+								name="cost_per_piece"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="cost_per_bulk" label="Cost (Bulk)" isMoney />
-							{errors.cost_per_bulk && touched.cost_per_bulk ? (
-								<FieldError error={errors.cost_per_bulk} />
-							) : null}
+							<ErrorMessage
+								name="cost_per_bulk"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -461,9 +459,10 @@ export const CreateEditProductForm = ({
 								label="Price (Piece)"
 								isMoney
 							/>
-							{errors.price_per_piece && touched.price_per_piece ? (
-								<FieldError error={errors.price_per_piece} />
-							) : null}
+							<ErrorMessage
+								name="price_per_piece"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -472,9 +471,10 @@ export const CreateEditProductForm = ({
 								label="Price (Bulk)"
 								isMoney
 							/>
-							{errors.price_per_bulk && touched.price_per_bulk ? (
-								<FieldError error={errors.price_per_bulk} />
-							) : null}
+							<ErrorMessage
+								name="price_per_bulk"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 					</Row>
 

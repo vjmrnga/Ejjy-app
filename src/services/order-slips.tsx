@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
 
 type Product = {
 	product_id: number;
@@ -29,17 +29,17 @@ interface IEditOrderSlip {
 	products: EditProduct[];
 }
 
-interface IGetOrderSlipsRequest extends IGetRequest {
+interface IListOrderSlipsRequest extends IListRequest {
 	requisition_slip_id?: number;
 	assigned_store_id?: number;
 	is_out_of_stock?: boolean;
 }
 
 export const service = {
-	list: async (params: IGetOrderSlipsRequest, baseURL) =>
+	list: async (params: IListOrderSlipsRequest, baseURL) =>
 		axios.get('/order-slips/', { baseURL, params }),
 
-	listExtended: async (params: IGetOrderSlipsRequest, baseURL) =>
+	listExtended: async (params: IListOrderSlipsRequest, baseURL) =>
 		axios.get('/order-slips/extended/', { baseURL, params }),
 
 	create: async (body: ICreateOrderSlip, baseURL) =>

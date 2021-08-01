@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
 
 type Product = {
 	product_id: number;
@@ -25,7 +25,7 @@ interface IEditRequisitionSlip {
 		| 'f_ds1_error';
 }
 
-interface IGetRequisitionSlip extends IGetRequest {
+interface IListRequisitionSlip extends IListRequest {
 	branch_id?: number;
 	status?: string;
 }
@@ -35,10 +35,10 @@ interface IGetRequestRequisitionSlipBranchId {
 }
 
 export const service = {
-	list: async (params: IGetRequisitionSlip, baseURL) =>
+	list: async (params: IListRequisitionSlip, baseURL) =>
 		axios.get('/requisition-slips/', { baseURL, params }),
 
-	listExtended: async (params: IGetRequisitionSlip, baseURL) =>
+	listExtended: async (params: IListRequisitionSlip, baseURL) =>
 		axios.get('/requisition-slips/extended/', { baseURL, params }),
 
 	getById: async (id, requestingUserType, baseURL) =>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface PreparattionSlipProduct {
 	order_slip_product_id: number;
@@ -16,7 +16,7 @@ interface IFulfillPreparationSlip {
 	products: PreparattionSlipProduct[];
 }
 
-interface IGetPreparationSlipsRequest extends IGetRequest {
+interface IListPreparationSlipsRequest extends IListRequest {
 	id?: number;
 	requisition_slip_id: number;
 	assigned_store_id: number;
@@ -28,7 +28,7 @@ interface IGetPreparationSlipByIdRequest {
 }
 
 export const service = {
-	list: async (params: IGetPreparationSlipsRequest, baseURL) =>
+	list: async (params: IListPreparationSlipsRequest, baseURL) =>
 		axios.get('/order-slips/with-assigned-personnel-details/', {
 			baseURL,
 			params,

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
-interface IGetProducts extends IGetRequest {
-	search?: string;
+interface IListProducts extends IListRequest {
+	product_category?: string;
 }
 
 interface ICreateProduct {
@@ -41,7 +41,7 @@ interface IEditProduct {
 }
 
 export const service = {
-	list: async (params: IGetProducts, baseURL) =>
+	list: async (params: IListProducts, baseURL) =>
 		axios.get('/online-products/', { baseURL, params }),
 
 	create: async (body: ICreateProduct, baseURL) =>

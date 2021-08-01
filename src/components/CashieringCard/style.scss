@@ -1,25 +1,25 @@
 @import '../../assets/styles/main';
 
 .CashieringCard {
-	&.bordered {
+	&__bordered {
 		box-shadow: none;
 		border: 1px solid $color-gray;
 	}
 
-	.cashiering-container {
+	&_container {
 		@include flex(space-between, center);
 		padding: 20px 25px;
+	}
 
-		.title {
-			@include font(1.25rem, bold);
-			margin: 0;
-			color: $color-dark;
-			flex: 1;
-		}
+	&_title {
+		@include font(1.25rem, bold);
+		margin: 0;
+		color: $color-dark;
+		flex: 1;
+	}
 
-		.date {
-			color: $color-dark-gray;
-			font-size: 18px;
-		}
+	&_date {
+		color: $color-dark-gray;
+		font-size: 18px;
 	}
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { NO_VERIFICATION_CONFIG } from '.';
-import { IGetRequest } from './interfaces';
+import { IListRequest } from './interfaces';
 
 interface ILogin {
 	login: string;
@@ -22,10 +22,10 @@ export const service = {
 			...NO_VERIFICATION_CONFIG,
 		}),
 
-	retrieve: async (id: number, params: IGetRequest, baseURL) =>
+	retrieve: async (id: number, params: IListRequest, baseURL) =>
 		axios.get(`users/${id}/`, { baseURL, params }),
 
-	retrieveOnline: async (id: number, params: IGetRequest, baseURL) =>
+	retrieveOnline: async (id: number, params: IListRequest, baseURL) =>
 		axios.get(`online-users/${id}/`, { baseURL, params }),
 
 	acquireToken: async (body: IAcquireToken, baseURL) =>

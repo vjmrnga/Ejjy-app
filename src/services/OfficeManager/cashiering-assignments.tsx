@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IGetRequest } from '../interfaces';
+import { IListRequest } from '../interfaces';
 
 interface ICreateCashieringAssignment {
 	user_id: number;
@@ -12,7 +12,7 @@ interface IEditCashieringAssignment {
 	branch_machine_id: number;
 }
 
-interface IListCashieringAssignmentsByUserIdRequest extends IGetRequest {
+interface IListCashieringAssignmentsByUserIdRequest extends IListRequest {
 	user_id: number;
 }
 
