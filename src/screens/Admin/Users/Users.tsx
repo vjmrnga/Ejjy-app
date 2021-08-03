@@ -1,8 +1,14 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { Content, RequestErrors, TableActions } from '../../../components';
+import {
+	Content,
+	RequestErrors,
+	TableActions,
+	TableHeader,
+} from '../../../components';
 import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
+import { MAX_PAGE_SIZE } from '../../../global/constants';
+import { request, userPendingApprovalTypes } from '../../../global/types';
 import { useUsers } from '../../../hooks/useUsers';
 import {
 	convertIntoArray,
@@ -16,11 +22,17 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
-export const Users = () => {
+export const Users = () => (
+	<Content className="Users" title="Users">
+		<PendingUserCreation />
+		<PendingEditUserType />
+	</Content>
+);
+
+const PendingUserCreation = () => {
 	// STATES
 	const [data, setData] = useState([]);
 
-	// CUSTOM HOOKS
 	const {
 		users,
 		getOnlineUsers,
@@ -35,7 +47,6 @@ export const Users = () => {
 		fetchUsers();
 	}, []);
 
-	// Effect: Format users to be rendered in Table
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
 			const { id, first_name, last_name, user_type } = user;
@@ -46,13 +57,109 @@ export const Users = () => {
 				actions: (
 					<TableActions
 						onApprove={() => {
-							approveUser(id, ({ status, error }) => {
+							approveUser(
+								{
+									id,
+									pendingApprovalType: userPendingApprovalTypes.CREATE,
+								},
+								({ status, error }) => {
+									if (status === request.SUCCESS) {
+										fetchUsers();
+									} else if (status === request.ERROR) {
+										showErrorMessages(error);
+									}
+								},
+							);
+						}}
+						onRemove={() => {
+							removeUser(id, ({ status, error }) => {
 								if (status === request.SUCCESS) {
 									fetchUsers();
 								} else if (status === request.ERROR) {
 									showErrorMessages(error);
 								}
 							});
+						}}
+					/>
+				),
+			};
+		});
+
+		setData(formattedUsers);
+	}, [users]);
+
+	const fetchUsers = () => {
+		getOnlineUsers(
+			{
+				isPendingCreateApproval: true,
+				pageSize: MAX_PAGE_SIZE,
+				page: 1,
+			},
+			true,
+		);
+	};
+
+	return (
+		<Box>
+			<RequestErrors
+				className="PaddingHorizontal"
+				errors={convertIntoArray(usersErrors)}
+			/>
+
+			<TableHeader title="Pending User Creation" />
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 800 }}
+				pagination={false}
+				loading={usersStatus === request.REQUESTING}
+			/>
+		</Box>
+	);
+};
+
+const PendingEditUserType = () => {
+	// STATES
+	const [data, setData] = useState([]);
+
+	const {
+		users,
+		getOnlineUsers,
+		removeUser,
+		approveUser,
+		errors: usersErrors,
+		status: usersStatus,
+	} = useUsers();
+
+	// METHODS
+	useEffect(() => {
+		fetchUsers();
+	}, []);
+
+	useEffect(() => {
+		const formattedUsers = users.map((user) => {
+			const { id, first_name, last_name, user_type } = user;
+
+			return {
+				name: `${first_name} ${last_name}`,
+				user_type: getUserTypeName(user_type),
+				actions: (
+					<TableActions
+						onApprove={() => {
+							approveUser(
+								{
+									id,
+									pendingApprovalType:
+										userPendingApprovalTypes.UPDATE_USER_TYPE,
+								},
+								({ status, error }) => {
+									if (status === request.SUCCESS) {
+										fetchUsers();
+									} else if (status === request.ERROR) {
+										showErrorMessages(error);
+									}
+								},
+							);
 						}}
 						onRemove={() => {
 							removeUser(id, ({ status, error }) => {
@@ -73,23 +180,27 @@ export const Users = () => {
 
 	const fetchUsers = () => {
 		getOnlineUsers({
-			isPendingApproval: true,
+			isPendingUpdateUserTypeApproval: true,
+			pageSize: MAX_PAGE_SIZE,
+			page: 1,
 		});
 	};
 
 	return (
-		<Content className="Users" title="Users">
-			<Box>
-				<RequestErrors errors={convertIntoArray(usersErrors)} />
+		<Box>
+			<RequestErrors
+				className="PaddingHorizontal"
+				errors={convertIntoArray(usersErrors)}
+			/>
 
-				<Table
-					columns={columns}
-					dataSource={data}
-					scroll={{ x: 800 }}
-					pagination={false}
-					loading={usersStatus === request.REQUESTING}
-				/>
-			</Box>
-		</Content>
+			<TableHeader title="Pending User Type Update" />
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 800 }}
+				pagination={false}
+				loading={usersStatus === request.REQUESTING}
+			/>
+		</Box>
 	);
 };

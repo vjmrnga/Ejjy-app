@@ -110,7 +110,7 @@ const PendingTransactionsSectionComponent = (
 	const onExecutePendingTransaction = (pendingTransaction) => {
 		// Note: We added 2 so we can skip the 'v1'
 		const urlIndex = pendingTransaction.url.indexOf('v1');
-		const urlPathName = pendingTransaction.url.slice(urlIndex + 2);
+		const urlPathName = pendingTransaction.url.slice(urlIndex + 3);
 		const newUrl = `${pendingTransaction.branch.online_url}/${urlPathName}`;
 
 		executePendingTransaction(

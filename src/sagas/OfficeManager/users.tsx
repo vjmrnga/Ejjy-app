@@ -1,4 +1,11 @@
-import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
+import {
+	call,
+	put,
+	retry,
+	select,
+	takeLatest,
+	takeEvery,
+} from 'redux-saga/effects';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { actions, types } from '../../ducks/OfficeManager/users';
 import {
@@ -51,11 +58,9 @@ function* listOnline({ payload }: any) {
 			}
 		}
 
-		yield put(
-			actions.save({ type: types.GET_USERS, users: response.data.results }),
-		);
 		callback({
 			status: request.SUCCESS,
+			data: response.data,
 			warnings: isFetchedFromBackupURL
 				? ['Data Source: Backup Server, data might be outdated.']
 				: [],
@@ -66,7 +71,13 @@ function* listOnline({ payload }: any) {
 }
 
 function* listOnlineByBranch({ payload }: any) {
-	const { branchId, userType, isPendingApproval, callback } = payload;
+	const {
+		branchId,
+		userType,
+		isPendingCreateApproval,
+		isPendingUpdateUserTypeApproval,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -77,17 +88,15 @@ function* listOnlineByBranch({ payload }: any) {
 				page_size: MAX_PAGE_SIZE,
 				branch_id: branchId,
 				user_type: userType,
-				is_pending_approval: isPendingApproval,
+				is_pending_create_approval: isPendingCreateApproval,
+				is_pending_update_user_type_approval: isPendingUpdateUserTypeApproval,
 			},
 			ONLINE_API_URL,
 		);
 
-		yield put(
-			actions.save({ type: types.GET_USERS, users: response.data.results }),
-		);
-		callback({ status: request.SUCCESS, response: response.data });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
@@ -122,26 +131,26 @@ function* createOnline({ payload }: any) {
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
 function* editOnline({ payload }: any) {
-	const { id, branch_id, callback } = payload;
+	const { id, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
 		const response = yield call(
 			service.editOnline,
 			id,
-			{ branch_id },
+			{ branch_id: branchId },
 			ONLINE_API_URL,
 		);
 
 		yield put(actions.save({ type: types.EDIT_USER, id }));
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
@@ -155,20 +164,45 @@ function* remove({ payload }: any) {
 		yield put(actions.save({ type: types.REMOVE_USER, id }));
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
 function* approve({ payload }: any) {
-	const { id, callback } = payload;
+	const { id, pendingApprovalType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.approveOnline, id, ONLINE_API_URL);
+		const response = yield call(
+			service.approveOnline,
+			id,
+			{
+				pending_approval_type: pendingApprovalType,
+			},
+			ONLINE_API_URL,
+		);
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors, response: e.response });
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* requestUserTypeChange({ payload }: any) {
+	const { id, newUserType, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(
+			service.requestUserTypeChange,
+			id,
+			{ new_user_type: newUserType },
+			ONLINE_API_URL,
+		);
+
+		callback({ status: request.SUCCESS, response: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
@@ -179,7 +213,7 @@ const listOnlineWatcherSaga = function* listOnlineWatcherSaga() {
 
 const listOnlineByBranchWatcherSaga =
 	function* listOnlineByBranchWatcherSaga() {
-		yield takeLatest(types.GET_ONLINE_USERS, listOnlineByBranch);
+		yield takeEvery(types.GET_ONLINE_USERS, listOnlineByBranch);
 	};
 
 const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
@@ -202,6 +236,11 @@ const approveWatcherSaga = function* approveWatcherSaga() {
 	yield takeLatest(types.APPROVE_USER, approve);
 };
 
+const requestUserTypeChangeWatcherSaga =
+	function* requestUserTypeChangeWatcherSaga() {
+		yield takeLatest(types.REQUEST_USER_TYPE_CHANGE, requestUserTypeChange);
+	};
+
 export default [
 	listOnlineWatcherSaga(),
 	listOnlineByBranchWatcherSaga(),
@@ -210,4 +249,5 @@ export default [
 	editOnlineWatcherSaga(),
 	removeWatcherSaga(),
 	approveWatcherSaga(),
+	requestUserTypeChangeWatcherSaga(),
 ];

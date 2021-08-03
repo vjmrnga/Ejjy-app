@@ -14,11 +14,7 @@ import {
 } from '../../../../components/elements';
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
 import { booleanOptions } from '../../../../global/options';
-import {
-	productCategoryTypes,
-	productTypes,
-	unitOfMeasurementTypes,
-} from '../../../../global/types';
+import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
 import { IProductCategory } from '../../../../models';
 import { removeCommas, sleep } from '../../../../utils/function';
 
@@ -415,7 +411,7 @@ export const CreateEditProductForm = ({
 								values?.type === productTypes.WET &&
 								values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 							) && (
-								<FieldWarning error="Allowable Spoilage won't be included when submited" />
+								<FieldWarning message="Allowable Spoilage won't be included when submited" />
 							)}
 						</Col>
 

@@ -4,12 +4,19 @@ import { message, Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AddIcon, Content, TableActions } from '../../../components';
+import {
+	AddIcon,
+	Content,
+	PendingApprovalBadgePill,
+	TableActions,
+} from '../../../components';
 import { Box, Button } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import {
+	MAX_PAGE_SIZE,
 	NO_BRANCH_ID,
-	PENDING_USERS_BRANCH_ID,
+	PENDING_CREATE_USERS_BRANCH_ID,
+	PENDING_EDIT_USERS_BRANCH_ID,
 } from '../../../global/constants';
 import {
 	pendingTransactionTypes,
@@ -26,7 +33,17 @@ import './style.scss';
 
 const { TabPane } = Tabs;
 
-const NOT_BRANCH_IDS = [NO_BRANCH_ID, PENDING_USERS_BRANCH_ID];
+const NOT_BRANCH_IDS = [
+	NO_BRANCH_ID,
+	PENDING_CREATE_USERS_BRANCH_ID,
+	PENDING_EDIT_USERS_BRANCH_ID,
+];
+
+const PENDING_BRANCH_IDS = [
+	PENDING_CREATE_USERS_BRANCH_ID,
+	PENDING_EDIT_USERS_BRANCH_ID,
+];
+
 const BRANCH_USERS = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
 
 export const Users = () => {
@@ -81,16 +98,16 @@ export const Users = () => {
 			usersStatus === request.SUCCESS
 				? users?.map((user) => {
 						const { id, first_name, last_name, user_type } = user;
-
 						const userWithBranch = {
 							...user,
 							branch: { id: branchId },
 						};
 
-						return {
-							name: `${first_name} ${last_name}`,
-							type: getUserTypeName(user_type),
-							action: hasPendingTransactions ? null : (
+						let action = null;
+						if (PENDING_BRANCH_IDS.includes(branchId)) {
+							action = <PendingApprovalBadgePill />;
+						} else if (!hasPendingTransactions) {
+							action = (
 								<TableActions
 									onAssign={
 										BRANCH_USERS.includes(user_type)
@@ -108,7 +125,13 @@ export const Users = () => {
 											: null
 									}
 								/>
-							),
+							);
+						}
+
+						return {
+							name: `${first_name} ${last_name}`,
+							type: getUserTypeName(user_type),
+							action,
 						};
 				  })
 				: [];
@@ -120,10 +143,18 @@ export const Users = () => {
 		const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
 
 		const getUserFn = isNotBranchId ? getOnlineUsers : getUsers;
-		getUserFn({
-			branchId: isNotBranchId ? null : branchId,
-			isPendingApproval: Number(branchId) === PENDING_USERS_BRANCH_ID,
-		});
+		getUserFn(
+			{
+				page: 1,
+				pageSize: MAX_PAGE_SIZE,
+				branchId: isNotBranchId ? null : branchId,
+				isPendingCreateApproval:
+					Number(branchId) === PENDING_CREATE_USERS_BRANCH_ID,
+				isPendingUpdateUserTypeApproval:
+					Number(branchId) === PENDING_EDIT_USERS_BRANCH_ID,
+			},
+			true,
+		);
 		setTabActiveKey(toString(branchId));
 	};
 
@@ -149,10 +180,6 @@ export const Users = () => {
 				onTabClick(user?.branch?.id);
 			}
 		});
-	};
-
-	const onSuccessEditUser = (branchId) => {
-		onTabClick(branchId);
 	};
 
 	return (
@@ -184,9 +211,21 @@ export const Users = () => {
 							<BranchUsers dataSource={getTableDataSource(NO_BRANCH_ID)} />
 						</TabPane>
 
-						<TabPane key={PENDING_USERS_BRANCH_ID} tab="Pending Users">
+						<TabPane
+							key={PENDING_CREATE_USERS_BRANCH_ID}
+							tab="Pending Create Users"
+						>
 							<BranchUsers
-								dataSource={getTableDataSource(PENDING_USERS_BRANCH_ID)}
+								dataSource={getTableDataSource(PENDING_CREATE_USERS_BRANCH_ID)}
+							/>
+						</TabPane>
+
+						<TabPane
+							key={PENDING_EDIT_USERS_BRANCH_ID}
+							tab="Pending Edit Users"
+						>
+							<BranchUsers
+								dataSource={getTableDataSource(PENDING_EDIT_USERS_BRANCH_ID)}
 							/>
 						</TabPane>
 					</Tabs>
@@ -196,7 +235,7 @@ export const Users = () => {
 					visible={createUserModalVisible}
 					onSuccess={(userType) => {
 						[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(userType)
-							? onTabClick(PENDING_USERS_BRANCH_ID)
+							? onTabClick(PENDING_CREATE_USERS_BRANCH_ID)
 							: onTabClick(NO_BRANCH_ID);
 					}}
 					onClose={() => setCreateUserModalVisible(false)}
@@ -208,7 +247,12 @@ export const Users = () => {
 					onFetchPendingTransactions={
 						pendingTransactionsRef.current?.refreshList
 					}
-					onSuccess={onSuccessEditUser}
+					onSuccessEditUserBranch={(branchId) => {
+						onTabClick(branchId);
+					}}
+					onSuccessEditUserType={() => {
+						onTabClick(PENDING_EDIT_USERS_BRANCH_ID);
+					}}
 					onClose={() => setEditUserModalVisible(false)}
 				/>
 			</Box>

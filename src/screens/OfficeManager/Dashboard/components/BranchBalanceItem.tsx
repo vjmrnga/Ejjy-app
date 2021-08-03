@@ -19,6 +19,7 @@ import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
+	formatBalance,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 
@@ -55,7 +56,7 @@ export const BranchBalanceItem = ({
 	const [searchedKeyword, setSearchedKeyword] = useState('');
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 	const [productCategory, setProductCategory] = useState(null);
-	const [status, setStatus] = useState(null);
+	const [productStatus, setProductStatus] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -97,12 +98,19 @@ export const BranchBalanceItem = ({
 		const newBranchProducts = branchProducts?.map((branchProduct) => {
 			const { product, max_balance, current_balance, product_status } =
 				branchProduct;
-			const { barcode, name, textcode } = product;
+			const { barcode, name, textcode, unit_of_measurement } = product;
+
+			const currentBalance = formatBalance(
+				unit_of_measurement,
+				current_balance,
+			);
+
+			const maxBalance = formatBalance(unit_of_measurement, max_balance);
 
 			return {
 				barcode: barcode || textcode,
 				name,
-				balance: `${current_balance} / ${max_balance}`,
+				balance: `${currentBalance} / ${maxBalance}`,
 				status: getBranchProductStatus(product_status),
 			};
 		});
@@ -110,34 +118,35 @@ export const BranchBalanceItem = ({
 		setData(newBranchProducts);
 	}, [branchProducts]);
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
-			fetchBranchProducts(
-				{
-					search: searchedKeyword,
-					productCategory,
-					status: branchProductsStatus,
-				},
-				1,
-				pageSize,
-			);
-			setSearchedKeyword(lowerCaseKeyword);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
-
 	const onPageChange = (page, newPageSize) => {
 		fetchBranchProducts(
 			{
 				search: searchedKeyword,
 				productCategory,
-				status,
+				productStatus,
 			},
 			page,
 			newPageSize,
 		);
 	};
+
+	const onSearch = useCallback(
+		debounce((keyword) => {
+			const lowerCaseKeyword = keyword?.toLowerCase();
+			setSearchedKeyword(lowerCaseKeyword);
+
+			fetchBranchProducts(
+				{
+					search: lowerCaseKeyword,
+					productCategory,
+					productStatus,
+				},
+				1,
+				pageSize,
+			);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
 
 	const onSelectProductCategory = (value) => {
 		setProductCategory(value);
@@ -146,21 +155,21 @@ export const BranchBalanceItem = ({
 			{
 				search: searchedKeyword,
 				productCategory: value,
-				status,
+				productStatus,
 			},
 			1,
 			pageSize,
 		);
 	};
 
-	const onSelectStatus = (value) => {
-		setStatus(value);
+	const onSelectProductStatus = (value) => {
+		setProductStatus(value);
 
 		fetchBranchProducts(
 			{
 				search: searchedKeyword,
 				productCategory,
-				status: value,
+				productStatus: value,
 			},
 			1,
 			pageSize,
@@ -168,6 +177,7 @@ export const BranchBalanceItem = ({
 	};
 
 	const fetchBranchProducts = (params, page, newPageSize) => {
+		setIsCompletedInitialFetch(false);
 		getBranchProducts(
 			{ ...params, branchId, page, pageSize: newPageSize },
 			true,
@@ -191,7 +201,7 @@ export const BranchBalanceItem = ({
 			<BranchBalanceItemFilter
 				productCategories={productCategories}
 				onSearch={onSearch}
-				onSelectStatus={onSelectStatus}
+				onSelectProductStatus={onSelectProductStatus}
 				onSelectProductCategory={onSelectProductCategory}
 			/>
 
@@ -232,14 +242,14 @@ export const BranchBalanceItem = ({
 interface BranchBalanceItemFilterProps {
 	productCategories: IProductCategory[];
 	onSearch: any;
-	onSelectStatus: any;
+	onSelectProductStatus: any;
 	onSelectProductCategory: any;
 }
 
 const BranchBalanceItemFilter = ({
 	productCategories,
 	onSearch,
-	onSelectStatus,
+	onSelectProductStatus,
 	onSelectProductCategory,
 }: BranchBalanceItemFilterProps) => (
 	<Row gutter={[15, 15]}>
@@ -271,7 +281,7 @@ const BranchBalanceItemFilter = ({
 			<Select
 				style={{ width: '100%' }}
 				onChange={(value) => {
-					onSelectStatus(value);
+					onSelectProductStatus(value);
 				}}
 				allowClear
 			>

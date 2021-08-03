@@ -21,8 +21,8 @@ export const RequestErrors = ({
 }: Props) => (
 	<Space
 		className={cn('RequestErrors', className, {
-			RequestErrors___spaceTop: withSpaceTop,
-			RequestErrors___spaceBottom: withSpaceBottom,
+			RequestErrors__spaceTop: withSpaceTop,
+			RequestErrors__spaceBottom: withSpaceBottom,
 		})}
 		direction="vertical"
 		size={size}

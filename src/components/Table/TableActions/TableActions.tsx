@@ -57,7 +57,7 @@ export const TableActions = ({
 		{onRestore && <RestoreButtonIcon onClick={onRestore} tooltip="Restore" />}
 		{onRemove && (
 			<Popconfirm
-				placement="topLeft"
+				placement="left"
 				title="Are you sure to remove this?"
 				onConfirm={onRemove}
 				okText="Yes"

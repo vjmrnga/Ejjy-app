@@ -27,7 +27,9 @@ export const LOCAL_IP_ADDRESS_KEY = 'LOCAL_IP_ADDRESS_KEY';
 
 export const NO_BRANCH_ID = -1;
 
-export const PENDING_USERS_BRANCH_ID = -2;
+export const PENDING_CREATE_USERS_BRANCH_ID = -2;
+
+export const PENDING_EDIT_USERS_BRANCH_ID = -3;
 
 export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 

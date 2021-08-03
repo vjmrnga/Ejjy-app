@@ -5,6 +5,7 @@ import {
 	preparationSlipStatus,
 	quantityTypes,
 	requisitionSlipActions,
+	userTypes,
 } from './types';
 
 export const pageSizeOptions = ['10', '20', '50'];
@@ -153,5 +154,24 @@ export const branchProductStatusOptionsWithAll = [
 	{
 		name: 'Out of Stock',
 		value: branchProductStatus.OUT_OF_STOCK,
+	},
+];
+
+export const userTypeOptions = [
+	{
+		name: 'Branch Manager',
+		value: userTypes.BRANCH_MANAGER,
+	},
+	{
+		name: 'Branch Personnel',
+		value: userTypes.BRANCH_PERSONNEL,
+	},
+	{
+		name: 'Office Manager',
+		value: userTypes.OFFICE_MANAGER,
+	},
+	{
+		name: 'Admin',
+		value: userTypes.ADMIN,
 	},
 ];

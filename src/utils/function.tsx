@@ -1,7 +1,7 @@
-import React from 'react';
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { floor, isArray, isString, memoize } from 'lodash';
+import React from 'react';
 import {
 	AddedToOSBadgePill,
 	AvailableBadgePill,
@@ -541,3 +541,14 @@ export const getUrlPrefix = memoize((userType) => {
 
 	return prefix;
 });
+
+export const formatBalance = (
+	unitOfMeasurement: string,
+	currentBalance: number,
+): string => {
+	const balance = Number(currentBalance);
+
+	return unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
+		? balance.toFixed(3)
+		: balance.toFixed(0);
+};

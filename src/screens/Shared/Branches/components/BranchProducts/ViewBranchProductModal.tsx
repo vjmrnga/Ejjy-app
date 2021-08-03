@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
-import { unitOfMeasurementTypes } from '../../../../../global/types';
 import {
 	confirmPassword,
+	formatBalance,
 	getKeyDownCombination,
 	numberWithCommas,
 } from '../../../../../utils/function';
@@ -105,12 +105,10 @@ export const ViewBranchProductModal = ({
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"
-						value={
-							branchProduct?.product?.unit_of_measurement ===
-							unitOfMeasurementTypes.WEIGHING
-								? Number(branchProduct?.current_balance).toFixed(3)
-								: branchProduct?.current_balance
-						}
+						value={formatBalance(
+							branchProduct?.product?.unit_of_measurement,
+							branchProduct?.current_balance,
+						)}
 					/>
 				)}
 

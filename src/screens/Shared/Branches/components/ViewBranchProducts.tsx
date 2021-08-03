@@ -14,6 +14,7 @@ import { IProductCategory } from '../../../../models';
 import {
 	confirmPassword,
 	convertIntoArray,
+	formatBalance,
 	getKeyDownCombination,
 } from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
@@ -88,10 +89,15 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	useEffect(() => {
 		const formattedBranchProducts = branchProducts.map((branchProduct) => {
 			const {
-				product: { barcode, name, textcode },
+				product: { barcode, name, textcode, unit_of_measurement },
 				current_balance,
 				max_balance,
 			} = branchProduct;
+
+			const currentBalance = formatBalance(
+				unit_of_measurement,
+				current_balance,
+			);
 
 			return {
 				barcode: (
@@ -102,7 +108,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				),
 				name,
 				balance: `${
-					isCurrentBalanceVisible ? current_balance : '???'
+					isCurrentBalanceVisible ? currentBalance : '???'
 				} / ${max_balance}`,
 				actions: (
 					<TableActions

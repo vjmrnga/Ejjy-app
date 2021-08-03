@@ -118,3 +118,8 @@ export const timeRangeTypes = {
 	MONTHLY: 'monthly',
 	DATE_RANGE: 'date_range',
 };
+
+export const userPendingApprovalTypes = {
+	CREATE: 'create',
+	UPDATE_USER_TYPE: 'update_user_type',
+};

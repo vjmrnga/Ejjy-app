@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { IListRequest } from '../interfaces';
 
 interface IEditPendingTransaction {
 	is_pending_approval: boolean;

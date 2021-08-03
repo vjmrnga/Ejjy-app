@@ -42,7 +42,7 @@ export const useRequisitionSlips = () => {
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(5);
 
 	// SELECTORS
 	const requisitionSlip = useSelector(selectors.selectRequisitionSlip());

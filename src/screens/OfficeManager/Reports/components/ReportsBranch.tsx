@@ -11,6 +11,7 @@ import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProducts } from '../../../../hooks/useProducts';
 import {
 	convertIntoArray,
+	formatBalance,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 
@@ -179,14 +180,21 @@ export const ReportsBranch = ({ isActive, branchId }: Props) => {
 				daily_average_sold,
 				daily_average_sold_percentage,
 			} = branchProduct;
-			const { barcode, name, textcode } = product;
+			const { barcode, name, textcode, unit_of_measurement } = product;
 			const remainingBalance =
 				(Number(current_balance) / Number(max_balance)) * 100;
+
+			const currentBalance = formatBalance(
+				unit_of_measurement,
+				current_balance,
+			);
+
+			const maxBalance = formatBalance(unit_of_measurement, max_balance);
 
 			return {
 				barcode: barcode || textcode,
 				name,
-				balance: `${current_balance} / ${max_balance}`,
+				balance: `${currentBalance} / ${maxBalance}`,
 				remaining_balance: `${remainingBalance.toFixed(2)}%`,
 				quantity_sold,
 				daily_average_sold,

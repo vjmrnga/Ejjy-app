@@ -6,10 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
-import {
-	pageSizeOptions,
-	requisitionSlipActionsOptionsWithAll,
-} from '../../../global/options';
+import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import {
 	request,
 	requisitionSlipActions,
@@ -150,7 +147,7 @@ export const RequisitionSlips = () => {
 						onChange: onPageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
-						pageSizeOptions,
+						pageSizeOptions: ['5', '10', '15'],
 					}}
 					loading={requisitionSlipsStatus === request.REQUESTING}
 				/>

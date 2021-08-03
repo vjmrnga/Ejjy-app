@@ -54,9 +54,6 @@ export const Products = () => {
 		pageCount,
 		pageSize,
 		currentPage,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
 
 		getProducts,
 		removeProduct,
@@ -150,8 +147,10 @@ export const Products = () => {
 
 					pendingTransactionsRef.current?.refreshList();
 				}
-
-				removeItemInPagination(product);
+				getProducts(
+					{ search: searchedKeyword, productCategory, page: currentPage },
+					true,
+				);
 			}
 		});
 	};
@@ -226,12 +225,16 @@ export const Products = () => {
 				<CreateEditProductModal
 					product={selectedProduct}
 					productCategories={productCategories}
-					addItemInPagination={addItemInPagination}
-					updateItemInPagination={updateItemInPagination}
 					visible={createEditProductModalVisible}
 					onFetchPendingTransactions={
 						pendingTransactionsRef.current?.refreshList
 					}
+					onSuccess={() => {
+						getProducts(
+							{ search: searchedKeyword, productCategory, page: currentPage },
+							true,
+						);
+					}}
 					onClose={() => setCreateEditProductModalVisible(false)}
 				/>
 

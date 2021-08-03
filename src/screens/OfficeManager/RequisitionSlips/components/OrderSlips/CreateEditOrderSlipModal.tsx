@@ -160,7 +160,7 @@ export const CreateEditOrderSlipModal = ({
 			))}
 
 			{warnings.map((warning, index) => (
-				<FieldWarning key={index} error={warning} />
+				<FieldWarning key={index} message={warning} />
 			))}
 
 			{orderSlip ? (

@@ -12,10 +12,10 @@ export const types = {
 	CREATE_USER: `${key}/CREATE_USER`,
 	EDIT_USER: `${key}/EDIT_USER`,
 	APPROVE_USER: `${key}/APPROVE_USER`,
+	REQUEST_USER_TYPE_CHANGE: `${key}/REQUEST_USER_TYPE_CHANGE`,
 };
 
 const initialState = {
-	users: [],
 	user: {},
 };
 
@@ -26,18 +26,8 @@ const reducer = handleActions(
 			let newData = {};
 
 			switch (type) {
-				case types.GET_USERS: {
-					newData = { users: payload.users };
-					break;
-				}
 				case types.GET_USER_BY_ID: {
 					newData = { user: payload.user };
-					break;
-				}
-				case types.REMOVE_USER: {
-					newData = {
-						products: state.users.filter(({ id }) => id !== payload.id),
-					};
 					break;
 				}
 				default:
@@ -59,11 +49,11 @@ export const actions = {
 	editUser: createAction(types.EDIT_USER),
 	removeUser: createAction(types.REMOVE_USER),
 	approveUser: createAction(types.APPROVE_USER),
+	requestUserTypeChange: createAction(types.REQUEST_USER_TYPE_CHANGE),
 };
 
 const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
-	selectUsers: () => createSelector(selectState, (state) => state.users),
 	selectUser: () => createSelector(selectState, (state) => state.user),
 };
 

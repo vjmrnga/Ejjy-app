@@ -126,7 +126,7 @@ export const EditPriceCostForm = ({
 										)}
 
 										{errors?.response?.warnings?.map((warnings) => (
-											<FieldWarning error={warnings} />
+											<FieldWarning message={warnings} />
 										))}
 									</Col>
 									<Col sm={12} xs={24}>

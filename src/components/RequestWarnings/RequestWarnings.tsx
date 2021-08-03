@@ -19,14 +19,14 @@ export const RequestWarnings = ({
 }: Props) => (
 	<Space
 		className={cn('RequestWarnings', {
-			RequestWarnings___spaceTop: withSpaceTop,
-			RequestWarnings___spaceBottom: withSpaceBottom,
+			RequestWarnings__spaceTop: withSpaceTop,
+			RequestWarnings__spaceBottom: withSpaceBottom,
 		})}
 		direction="vertical"
 		size={size}
 	>
 		{warnings?.map((warning, index) => (
-			<FieldWarning key={index} error={warning} />
+			<FieldWarning key={index} message={warning} />
 		))}
 	</Space>
 );

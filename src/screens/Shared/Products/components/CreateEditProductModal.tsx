@@ -12,8 +12,7 @@ interface Props {
 	product: any;
 	productCategories: IProductCategory[];
 	visible: boolean;
-	addItemInPagination: any;
-	updateItemInPagination: any;
+	onSuccess: any;
 	onFetchPendingTransactions: any;
 	onClose: any;
 }
@@ -22,8 +21,7 @@ export const CreateEditProductModal = ({
 	product,
 	productCategories,
 	visible,
-	addItemInPagination,
-	updateItemInPagination,
+	onSuccess,
 	onFetchPendingTransactions,
 	onClose,
 }: Props) => {
@@ -37,31 +35,33 @@ export const CreateEditProductModal = ({
 	} = useProducts();
 
 	// METHODS
-	const onCreateProduct = (data, onSuccess) => {
+	const onCreateProduct = (data, resetForm) => {
 		createProduct(data, ({ status: requestStatus, response }) => {
 			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
 					onPendingTransactions();
 				}
 
-				addItemInPagination(data);
-				reset();
 				onSuccess();
+				resetForm();
+
+				reset();
 				onClose();
 			}
 		});
 	};
 
-	const onEditProduct = (data, onSuccess) => {
+	const onEditProduct = (data, resetForm) => {
 		editProduct(data, ({ status: requestStatus, response }) => {
 			if (requestStatus === request.SUCCESS) {
 				if (response?.pending_database_transactions?.length) {
 					onPendingTransactions();
 				}
 
-				updateItemInPagination(data);
-				reset();
 				onSuccess();
+				resetForm();
+
+				reset();
 				onClose();
 			}
 		});

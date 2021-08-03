@@ -3,15 +3,22 @@
 
 .FieldWarning {
 	@include flex($align-items: center);
-	margin-top: 8px;
-	margin-bottom: 5px;
+	margin: 4px 0;
 
-	.icon {
-		color: $color-secondary;
-		font-size: 13px;
+	&__spaceTop {
+		margin-top: 8px;
 	}
 
-	.text {
+	&__spaceBottom {
+		margin-bottom: 8px;
+	}
+
+	&_icon {
+		color: $color-secondary !important;
+		font-size: 13px !important;
+	}
+
+	&_text {
 		margin-left: 5px;
 		color: $color-secondary;
 		@include font(0.75rem);

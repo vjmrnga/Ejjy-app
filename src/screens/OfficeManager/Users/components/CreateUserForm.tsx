@@ -9,6 +9,7 @@ import {
 	FormSelect,
 	Label,
 } from '../../../../components/elements';
+import { userTypeOptions } from '../../../../global/options';
 import { userTypes } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
 
@@ -61,25 +62,6 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 		}),
 		[],
 	);
-
-	const userTypeOptions = [
-		{
-			name: 'Branch Manager',
-			value: userTypes.BRANCH_MANAGER,
-		},
-		{
-			name: 'Branch Personel',
-			value: userTypes.BRANCH_PERSONNEL,
-		},
-		{
-			name: 'Office Manager',
-			value: userTypes.OFFICE_MANAGER,
-		},
-		{
-			name: 'Admin',
-			value: userTypes.ADMIN,
-		},
-	];
 
 	return (
 		<Formik

@@ -23,6 +23,7 @@ import { CreateEditOrderSlipModal } from './CreateEditOrderSlipModal';
 import { OrderSlipsTable } from './OrderSlipsTable';
 import { SetOutOfStockModal } from './SetOutOfStockModal';
 import { ViewOrderSlipModal } from './ViewOrderSlipModal';
+import { MAX_PAGE_SIZE } from '../../../../../global/constants';
 
 interface Props {
 	requisitionSlip: any;
@@ -252,7 +253,15 @@ export const OrderSlips = ({
 			userReset();
 			branchProductsReset();
 
-			getUsers({ branchId, userType: userTypes.BRANCH_PERSONNEL });
+			getUsers(
+				{
+					page: 1,
+					pageSize: MAX_PAGE_SIZE,
+					branchId,
+					userType: userTypes.BRANCH_PERSONNEL,
+				},
+				true,
+			);
 
 			const productIds = requisitionSlipProducts.map(
 				(product) => product.product_id,

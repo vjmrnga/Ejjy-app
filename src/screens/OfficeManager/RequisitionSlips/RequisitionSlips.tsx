@@ -6,10 +6,7 @@ import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeaders/TableHeaderRequisitionSlip';
 import { EMPTY_CELL } from '../../../global/constants';
-import {
-	pageSizeOptions,
-	requisitionSlipActionsOptionsWithAll,
-} from '../../../global/options';
+import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import {
 	request,
 	requisitionSlipActions,
@@ -154,7 +151,7 @@ export const RequisitionSlips = () => {
 						onChange: onPageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
-						pageSizeOptions,
+						pageSizeOptions: ['5', '10', '15'],
 					}}
 					loading={requisitionSlipsStatus === request.REQUESTING}
 				/>

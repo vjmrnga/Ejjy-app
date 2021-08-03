@@ -1,9 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/OfficeManager/users';
 import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+	onCallback,
+} from '../utils/function';
+import {
+	getDataForCurrentPage,
+	addInCachedData,
+	updateInCachedData,
+	removeInCachedData,
+	executePaginatedRequest,
+} from '../utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
+
+const LIST_ERROR_MESSAGE = 'An error occurred while fetching users';
 
 const CREATE_SUCCESS_MESSAGE = 'User was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the user';
@@ -22,8 +35,14 @@ export const useUsers = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	// SELECTORS
-	const users = useSelector(selectors.selectUsers());
 	const user = useSelector(selectors.selectUser());
+
+	// PAGINATION
+	const [allData, setAllData] = useState([]);
+	const [pageCount, setPageCount] = useState(0);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [currentPageData, setCurrentPageData] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
 	const getUsersAction = useActionDispatch(actions.getUsers);
@@ -33,27 +52,91 @@ export const useUsers = () => {
 	const editUserAction = useActionDispatch(actions.editUser);
 	const removeUserAction = useActionDispatch(actions.removeUser);
 	const approveUserAction = useActionDispatch(actions.approveUser);
+	const requestUserTypeChangeAction = useActionDispatch(
+		actions.requestUserTypeChange,
+	);
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const resetWarning = () => setWarnings([]);
-
+	// GENERAL METHODS
 	const reset = () => {
-		resetError();
-		resetStatus();
-		resetWarning();
+		setStatus(request.NONE);
+		setErrors([]);
+		setWarnings([]);
 	};
 
-	const getUsers = (data: any = {}) => {
-		setRecentRequest(types.GET_USERS);
-		getUsersAction({ ...data, callback });
+	const executeRequest = (data, requestCallback, action, type) => {
+		setRecentRequest(type);
+		action({
+			...data,
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
+		});
 	};
 
-	const getOnlineUsers = (data: any = {}) => {
-		setRecentRequest(types.GET_ONLINE_USERS);
-		getOnlineUsersAction({ ...data, callback });
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+		warnings: callbackWarnings = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
+		setWarnings(callbackWarnings);
+	};
+
+	// PAGINATION METHODS
+	useEffect(() => {
+		setCurrentPageData(
+			getDataForCurrentPage({
+				data: allData,
+				currentPage,
+				pageSize,
+			}),
+		);
+	}, [allData, currentPage, pageSize]);
+
+	const addItemInPagination = (item) => {
+		setAllData((data) => addInCachedData({ data, item }));
+	};
+
+	const updateItemInPagination = (item) => {
+		setAllData((data) => updateInCachedData({ data, item }));
+	};
+
+	const removeItemInPagination = (item) => {
+		setAllData((data) => removeInCachedData({ data, item }));
+	};
+
+	// REQUEST METHODS
+	const getUsers = (data, shouldReset = false) => {
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getUsersAction,
+			requestType: types.GET_USERS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
+	};
+
+	const getOnlineUsers = (data, shouldReset = false) => {
+		executePaginatedRequest(data, shouldReset, {
+			requestAction: getOnlineUsersAction,
+			requestType: types.GET_ONLINE_USERS,
+			errorMessage: LIST_ERROR_MESSAGE,
+			allData,
+			pageSize,
+			executeRequest,
+			setAllData,
+			setPageCount,
+			setCurrentPage,
+			setPageSize,
+		});
 	};
 
 	const getUserById = (id = 0, extraCallback = null) => {
@@ -105,26 +188,31 @@ export const useUsers = () => {
 		});
 	};
 
-	const approveUser = (id, extraCallback = null) => {
+	const approveUser = (data, extraCallback = null) => {
 		setRecentRequest(types.APPROVE_USER);
 		approveUserAction({
-			id,
+			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-		warnings: callbackWarnings = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-		setWarnings(callbackWarnings);
+	const requestUserTypeChange = (data, extraCallback = null) => {
+		setRecentRequest(types.APPROVE_USER);
+		requestUserTypeChangeAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	return {
-		users,
+		users: currentPageData,
+		pageCount,
+		currentPage,
+		pageSize,
+		addItemInPagination,
+		updateItemInPagination,
+		removeItemInPagination,
+
 		user,
 		getUsers,
 		getOnlineUsers,
@@ -133,13 +221,11 @@ export const useUsers = () => {
 		editUser,
 		removeUser,
 		approveUser,
+		requestUserTypeChange,
 		status,
 		errors,
 		warnings,
 		recentRequest,
 		reset,
-		resetStatus,
-		resetError,
-		resetWarning,
 	};
 };

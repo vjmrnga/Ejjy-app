@@ -1,17 +1,19 @@
 import { message, Modal } from 'antd';
 import React, { useCallback } from 'react';
-import { FieldError } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components';
 import { NO_BRANCH_ID } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../../../hooks/useUsers';
+import { convertIntoArray } from '../../../../utils/function';
 import { EditUserForm } from './EditUserForm';
 
 interface Props {
 	visible: boolean;
 	user: any;
 	onFetchPendingTransactions: any;
-	onSuccess: any;
+	onSuccessEditUserBranch: any;
+	onSuccessEditUserType: any;
 	onClose: any;
 }
 
@@ -19,12 +21,19 @@ export const EditUserModal = ({
 	user,
 	visible,
 	onFetchPendingTransactions,
-	onSuccess,
+	onSuccessEditUserBranch,
+	onSuccessEditUserType,
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
-	const { editUser, status: userStatus, errors, reset } = useUsers();
+	const {
+		editUser,
+		requestUserTypeChange,
+		status: userStatus,
+		errors,
+		reset,
+	} = useUsers();
 
 	// METHODS
 	const getBranchOptions = useCallback(
@@ -40,7 +49,7 @@ export const EditUserModal = ({
 		[branches],
 	);
 
-	const onEditUser = (data) => {
+	const onEditUserBranch = (data, resetForm) => {
 		editUser(data, ({ status, response }) => {
 			if (status === request.SUCCESS) {
 				if (response?.length) {
@@ -50,11 +59,26 @@ export const EditUserModal = ({
 					onFetchPendingTransactions();
 				}
 
-				onSuccess(data.branch_id);
-				reset();
-				onClose();
+				onSuccessEditUserBranch(data.branchId);
+				resetForm();
+				close();
 			}
 		});
+	};
+
+	const onEditUserType = (data, resetForm) => {
+		requestUserTypeChange(data, ({ status }) => {
+			if (status === request.SUCCESS) {
+				onSuccessEditUserType();
+				resetForm();
+				close();
+			}
+		});
+	};
+
+	const close = () => {
+		reset();
+		onClose();
 	};
 
 	return (
@@ -62,18 +86,17 @@ export const EditUserModal = ({
 			title="Edit User"
 			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			onCancel={close}
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<EditUserForm
 				user={user}
 				branchOptions={getBranchOptions()}
-				onSubmit={onEditUser}
+				onEditUserBranch={onEditUserBranch}
+				onEditUserType={onEditUserType}
 				onClose={onClose}
 				loading={userStatus === request.REQUESTING}
 			/>
