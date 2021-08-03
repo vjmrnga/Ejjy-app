@@ -55,11 +55,31 @@ export const EditUserForm = ({
 				newUserType: user.user_type,
 			},
 			Schema: Yup.object().shape({
-				branchId: Yup.number(),
-				newUserType: Yup.string(),
+				branchId: Yup.number().test(
+					'Unchanged branch',
+					"The branch selected is still user's current branch. Please select a new one.",
+					(value: number) => {
+						if (currentActiveKey === TABS.branch) {
+							return value !== user?.branch?.id;
+						}
+
+						return true;
+					},
+				),
+				newUserType: Yup.string().test(
+					'Unchanged user type',
+					"The user type selected is still user's current user type. Please select a new one.",
+					(value: string) => {
+						if (currentActiveKey === TABS.userType) {
+							return value !== user.user_type;
+						}
+
+						return true;
+					},
+				),
 			}),
 		}),
-		[user, branchOptions],
+		[user, branchOptions, currentActiveKey],
 	);
 
 	return (
