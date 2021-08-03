@@ -263,9 +263,14 @@ export const OrderSlips = ({
 				true,
 			);
 
-			const productIds = requisitionSlipProducts.map(
-				(product) => product.product_id,
-			);
+			const productIds = requisitionSlip.products
+				.filter(
+					({ status }) =>
+						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS,
+				)
+				.map(({ product_id }) => product_id)
+				.join(',');
+
 			getBranchProducts({ productIds, branchId, page: 1 }, true);
 		}
 	};
