@@ -15,6 +15,14 @@ interface Props {
 }
 
 export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
+	// VARIABLES
+	const title = (
+		<>
+			<span>[Edit] Branch Product&apos;s Price Cost</span>
+			<span className="ModalTitleMainInfo">{product?.name}</span>
+		</>
+	);
+
 	// STATES
 	const [response, setResponse] = useState([]);
 	const [branches, setBranches] = useState([]);
@@ -164,8 +172,8 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 
 	return (
 		<Modal
-			className="EditPriceCostModal modal-large"
-			title={`Edit Branch Product's Price Cost ${product?.name}`}
+			className="EditPriceCostModal ModalLarge"
+			title={title}
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

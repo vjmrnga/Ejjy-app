@@ -15,44 +15,44 @@ interface Props {
 
 export const ViewProductModal = ({ product, visible, onClose }: Props) => (
 	<Modal
-		title="[VIEW] Product Details"
-		className="modal-large"
+		title="[View] Product"
+		className="ModalLarge"
 		visible={visible}
 		footer={[<Button text="Close" onClick={onClose} />]}
 		onCancel={onClose}
 		centered
 		closable
 	>
-		<DetailsRow>
-			<DetailsSingle
-				label="Barcode"
-				value={product?.barcode || product?.textcode}
-			/>
-			<DetailsSingle label="Name" value={product?.name} />
-			<DetailsSingle label="TT-001" value={getProductType(product?.type)} />
-			<DetailsSingle
-				label="TT-002"
-				value={getUnitOfMeasurement(product?.unit_of_measurement)}
-			/>
+		{product && (
+			<DetailsRow>
+				<DetailsSingle label="Barcode" value={product.barcode} />
+				<DetailsSingle label="Textcode" value={product.textcode} />
+				<DetailsSingle label="Name" value={product.name} />
+				<DetailsSingle label="TT-001" value={getProductType(product.type)} />
+				<DetailsSingle
+					label="TT-002"
+					value={getUnitOfMeasurement(product.unit_of_measurement)}
+				/>
 
-			<Divider dashed />
+				<Divider dashed />
 
-			<DetailsHalf
-				label="Checking"
-				value={product?.is_daily_checked ? 'Daily' : 'Random'}
-			/>
-			<DetailsHalf
-				label="TT-003"
-				value={product?.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
-			/>
-			<DetailsHalf label="Reorder Point" value={product?.reorder_point} />
-			<DetailsHalf label="Max Balance" value={product?.max_balance} />
-			<DetailsHalf label="Price (Piece)" value={product?.price_per_piece} />
-			<DetailsHalf label="Price (Bulk)" value={product?.price_per_bulk} />
-			<DetailsHalf
-				label="Allowable Spoilage (%)"
-				value={product?.allowable_spoilage * 100}
-			/>
-		</DetailsRow>
+				<DetailsHalf
+					label="Checking"
+					value={product.is_daily_checked ? 'Daily' : 'Random'}
+				/>
+				<DetailsHalf
+					label="TT-003"
+					value={product.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
+				/>
+				<DetailsHalf label="Reorder Point" value={product.reorder_point} />
+				<DetailsHalf label="Max Balance" value={product.max_balance} />
+				<DetailsHalf label="Price (Piece)" value={product.price_per_piece} />
+				<DetailsHalf label="Price (Bulk)" value={product.price_per_bulk} />
+				<DetailsHalf
+					label="Allowable Spoilage (%)"
+					value={product.allowable_spoilage * 100}
+				/>
+			</DetailsRow>
+		)}
 	</Modal>
 );

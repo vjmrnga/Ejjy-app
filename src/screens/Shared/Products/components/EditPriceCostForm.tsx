@@ -189,9 +189,7 @@ export const EditPriceCostForm = ({
 						);
 					})}
 
-					<Divider />
-
-					<div className="custom-footer">
+					<div className="ModalCustomFooter">
 						<Button
 							type="button"
 							text="Cancel"

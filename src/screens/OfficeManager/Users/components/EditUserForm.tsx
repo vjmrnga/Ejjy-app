@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable react/jsx-wrap-multilines */
 import { HomeOutlined, UserSwitchOutlined } from '@ant-design/icons';
-import { Divider, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -159,9 +159,7 @@ export const EditUserForm = ({
 					)}
 				</Tabs>
 
-				<Divider />
-
-				<div className="custom-footer">
+				<div className="ModalCustomFooter">
 					<Button
 						type="button"
 						text="Cancel"

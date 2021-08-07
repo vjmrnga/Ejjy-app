@@ -107,7 +107,7 @@ export const ViewPreparationSlipModal = ({
 
 	return (
 		<Modal
-			className="ViewPreparationSlipModal modal-large"
+			className="ViewPreparationSlipModal ModalLarge"
 			title="View Preparation Slip"
 			visible={visible}
 			footer={[<Button text="Close" onClick={onClose} />]}

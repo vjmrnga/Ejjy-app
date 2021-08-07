@@ -146,9 +146,7 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 					</Col>
 				</Row>
 
-				<Divider />
-
-				<div className="custom-footer">
+				<div className="ModalCustomFooter">
 					<Button
 						type="button"
 						text="Cancel"

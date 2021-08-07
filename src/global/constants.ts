@@ -33,5 +33,7 @@ export const PENDING_EDIT_USERS_BRANCH_ID = -3;
 
 export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
+export const SEARCH_DEBOUNCE_TIME = 500;
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

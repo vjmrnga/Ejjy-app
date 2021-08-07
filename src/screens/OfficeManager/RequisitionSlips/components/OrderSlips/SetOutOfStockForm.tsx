@@ -1,5 +1,4 @@
-import { Divider } from 'antd';
-import { FieldArray, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import { TableNormal } from '../../../../../components';
 import { Button, FormCheckbox } from '../../../../../components/elements';
@@ -53,46 +52,37 @@ export const SetOutOfStockForm = ({
 			}}
 			enableReinitialize
 		>
-			{() => (
-				<FieldArray
-					name="products"
-					render={() => (
-						<Form className="form">
-							<TableNormal
-								columns={columns}
-								data={products.map((product, index) => [
-									// Select
-									getSelectRadioButton(index),
-									// Barcode
-									product?.product_barcode || product?.product_textcode,
-									// Name
-									product?.product_name,
-								])}
-								loading={loading}
-							/>
-
-							<Divider dashed />
-
-							<div className="custom-footer">
-								<Button
-									type="button"
-									text="Cancel"
-									onClick={onClose}
-									classNames="mr-10"
-									disabled={loading || isSubmitting}
-								/>
-								<Button
-									type="submit"
-									text="Submit"
-									variant="primary"
-									loading={loading || isSubmitting}
-									disabled={!products.length}
-								/>
-							</div>
-						</Form>
-					)}
+			<Form>
+				<TableNormal
+					columns={columns}
+					data={products.map((product, index) => [
+						// Select
+						getSelectRadioButton(index),
+						// Barcode
+						product?.product_barcode || product?.product_textcode,
+						// Name
+						product?.product_name,
+					])}
+					loading={loading}
 				/>
-			)}
+
+				<div className="ModalCustomFooter">
+					<Button
+						type="button"
+						text="Cancel"
+						onClick={onClose}
+						classNames="mr-10"
+						disabled={loading || isSubmitting}
+					/>
+					<Button
+						type="submit"
+						text="Submit"
+						variant="primary"
+						loading={loading || isSubmitting}
+						disabled={!products.length}
+					/>
+				</div>
+			</Form>
 		</Formik>
 	);
 };

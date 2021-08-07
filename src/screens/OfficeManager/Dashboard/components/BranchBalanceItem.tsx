@@ -7,7 +7,10 @@ import { CashieringCard } from '../../../../components/CashieringCard/Cashiering
 import { Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import { IS_APP_LIVE } from '../../../../global/constants';
+import {
+	IS_APP_LIVE,
+	SEARCH_DEBOUNCE_TIME,
+} from '../../../../global/constants';
 import {
 	branchProductStatusOptions,
 	pageSizeOptions,
@@ -36,7 +39,6 @@ const columns = [
 ];
 
 const INTERVAL_MS = 30000;
-const SEARCH_DEBOUNCE_TIME = 500;
 
 interface Props {
 	branchId: number;

@@ -1,6 +1,8 @@
-import { Col, message, Row, Select, Table } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Input, message, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import React, { useEffect, useRef, useState } from 'react';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Content,
 	RequestErrors,
@@ -10,10 +12,12 @@ import {
 import { Box, ButtonLink, Label } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { types } from '../../../ducks/OfficeManager/products';
+import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
+import { IProductCategory } from '../../../models';
 import { convertIntoArray } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
@@ -129,14 +133,6 @@ export const Products = () => {
 		setEditPriceCostModalVisible(true);
 	};
 
-	const onSearch = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
-
-		getProducts({ search: lowerCaseKeyword, productCategory, page: 1 }, true);
-
-		setSeachedKeyword(lowerCaseKeyword);
-	};
-
 	const onRemoveProduct = (product) => {
 		removeProduct(product.id, ({ status, response }) => {
 			if (status === request.SUCCESS) {
@@ -155,14 +151,30 @@ export const Products = () => {
 		});
 	};
 
+	const onSearch = useCallback(
+		debounce((keyword) => {
+			const lowerCaseKeyword = keyword?.toLowerCase();
+
+			getProducts({ search: lowerCaseKeyword, productCategory, page: 1 }, true);
+
+			setSeachedKeyword(lowerCaseKeyword);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
+
+	const onSelectProductCategory = (value) => {
+		setProductCategory(value);
+
+		getProducts(
+			{ search: searchedKeyword, productCategory: value, page: 1 },
+			true,
+		);
+	};
+
 	return (
 		<Content className="Products" title="Products">
 			<Box>
-				<TableHeader
-					buttonName="Create Product"
-					onSearch={onSearch}
-					onCreate={onCreate}
-				/>
+				<TableHeader buttonName="Create Product" onCreate={onCreate} />
 
 				<RequestErrors
 					className="PaddingHorizontal"
@@ -173,28 +185,14 @@ export const Products = () => {
 					withSpaceBottom
 				/>
 
-				<Row className="PaddingHorizontal" gutter={[15, 15]}>
-					<Col lg={12} span={24}>
-						<Label label="Product Category" spacing />
-						<Select
-							style={{ width: '100%' }}
-							onChange={(value) => {
-								setProductCategory(value);
-
-								getProducts(
-									{ search: searchedKeyword, productCategory: value, page: 1 },
-									true,
-								);
-							}}
-							loading={productCategoriesStatus === request.REQUESTING}
-							allowClear
-						>
-							{productCategories.map(({ name }) => (
-								<Select.Option value={name}>{name}</Select.Option>
-							))}
-						</Select>
-					</Col>
-				</Row>
+				<ProductFilter
+					productCategories={productCategories}
+					productCategoriesLoading={
+						productCategoriesStatus === request.REQUESTING
+					}
+					onSearch={onSearch}
+					onSelectProductCategory={onSelectProductCategory}
+				/>
 
 				<Table
 					className="Products_table"
@@ -255,3 +253,43 @@ export const Products = () => {
 		</Content>
 	);
 };
+
+interface ProductFilterProps {
+	productCategories: IProductCategory[];
+	productCategoriesLoading: boolean;
+	onSearch: any;
+	onSelectProductCategory: any;
+}
+
+const ProductFilter = ({
+	productCategories,
+	productCategoriesLoading,
+	onSearch,
+	onSelectProductCategory,
+}: ProductFilterProps) => (
+	<Row className="PaddingHorizontal" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Search" spacing />
+			<Input
+				prefix={<SearchOutlined />}
+				onChange={(event) => onSearch(event.target.value.trim())}
+			/>
+		</Col>
+
+		<Col lg={12} span={24}>
+			<Label label="Category" spacing />
+			<Select
+				style={{ width: '100%' }}
+				onChange={(value) => {
+					onSelectProductCategory(value);
+				}}
+				loading={productCategoriesLoading}
+				allowClear
+			>
+				{productCategories.map(({ name }) => (
+					<Select.Option value={name}>{name}</Select.Option>
+				))}
+			</Select>
+		</Col>
+	</Row>
+);

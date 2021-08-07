@@ -25,6 +25,14 @@ export const CreateEditProductModal = ({
 	onFetchPendingTransactions,
 	onClose,
 }: Props) => {
+	// VARIABLES
+	const title = (
+		<>
+			<span>{product ? '[Edit] Product' : '[Create] Product'}</span>
+			<span className="ModalTitleMainInfo">{product?.name}</span>
+		</>
+	);
+
 	// CUSTOM HOOKS
 	const {
 		createProduct,
@@ -76,8 +84,8 @@ export const CreateEditProductModal = ({
 
 	return (
 		<Modal
-			className="CreateEditProductModal modal-large"
-			title={product ? 'Edit Product' : 'Create Product'}
+			className="CreateEditProductModal ModalLarge"
+			title={title}
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

@@ -54,7 +54,9 @@ export const CreateEditProductCategoryModal = ({
 	return (
 		<Modal
 			title={
-				productCategory ? 'Edit Product Category' : 'Create Product Category'
+				productCategory
+					? '[Edit] Product Category'
+					: '[Create] Product Category'
 			}
 			visible={visible}
 			footer={null}

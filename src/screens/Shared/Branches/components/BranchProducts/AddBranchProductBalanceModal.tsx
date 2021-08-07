@@ -108,12 +108,20 @@ export const AddBranchProductBalanceModal = ({
 			<DetailsRow>
 				<DetailsSingle
 					label="Barcode"
-					value={
-						branchProduct?.product?.barcode || branchProduct?.product?.textcode
-					}
+					value={branchProduct?.product?.barcode}
+				/>
+				<DetailsSingle
+					label="Textcode"
+					value={branchProduct?.product?.textcode}
 				/>
 				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
-				<DetailsSingle label="Max Balance" value={branchProduct?.max_balance} />
+				<DetailsSingle
+					label="Max Balance"
+					value={formatBalance(
+						branchProduct?.product?.unit_of_measurement,
+						branchProduct?.max_balance,
+					)}
+				/>
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"

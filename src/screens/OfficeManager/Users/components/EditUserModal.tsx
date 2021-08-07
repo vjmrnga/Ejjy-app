@@ -83,7 +83,7 @@ export const EditUserModal = ({
 
 	return (
 		<Modal
-			title="Edit User"
+			title="[Edit] User"
 			visible={visible}
 			footer={null}
 			onCancel={close}

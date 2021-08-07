@@ -32,7 +32,7 @@ export const RequestWarnings = ({
 );
 
 RequestWarnings.defaultProps = {
-	size: 5,
+	size: 0,
 	withSpaceTop: false,
 	withSpaceBottom: false,
 };

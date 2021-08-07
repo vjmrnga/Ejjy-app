@@ -1,4 +1,3 @@
-import { Divider } from 'antd';
 import { FieldArray, Form, Formik } from 'formik';
 import { min } from 'lodash';
 import React, { useCallback, useState } from 'react';
@@ -211,9 +210,7 @@ export const CreateEditOrderSlipForm = ({
 								loading={loading}
 							/>
 
-							<Divider dashed />
-
-							<div className="custom-footer">
+							<div className="ModalCustomFooter">
 								<Button
 									type="button"
 									text="Cancel"

@@ -27,7 +27,7 @@ export const CreateEditBranchModal = ({ branch, visible, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={branch ? 'Edit Branch' : 'Create Branch'}
+			title={branch ? '[Edit] Branch' : '[Create] Branch'}
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

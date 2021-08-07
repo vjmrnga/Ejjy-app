@@ -234,7 +234,6 @@ export const CreateEditProductForm = ({
 						price_per_bulk: removeCommas(formData.price_per_bulk || 0),
 						product_category: formData.product_category,
 						allowable_spoilage:
-							formData.type === productTypes.WET &&
 							formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 								? formData.allowable_spoilage
 								: null,
@@ -244,26 +243,25 @@ export const CreateEditProductForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ values }) => (
 				<Form className="form">
 					<Row gutter={[15, 15]}>
-						<Col sm={12} xs={24}>
-							<Row gutter={[15, 15]}>
-								<Col xs={24} md={12}>
-									<FormInputLabel id="barcode" label="Barcode" />
-								</Col>
-								<Col xs={24} md={12}>
-									<FormInputLabel id="textcode" label="Textcode" />
-								</Col>
-								{(errors.textcode || errors.barcode) &&
-								(touched.textcode || touched.barcode) ? (
-									<FieldError
-										classNames="custom-field-error"
-										error={errors.textcode || errors.barcode}
-									/>
-								) : null}
-							</Row>
+						<Col sm={6} xs={24}>
+							<FormInputLabel id="barcode" label="Barcode" />
+							<ErrorMessage
+								name="barcode"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
+
+						<Col sm={6} xs={24}>
+							<FormInputLabel id="textcode" label="Textcode" />
+							<ErrorMessage
+								name="textcode"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
 						<Col sm={12} xs={24}>
 							<FormInputLabel id="name" label="Name" />
 							<ErrorMessage
@@ -397,9 +395,8 @@ export const CreateEditProductForm = ({
 								label="Allowable Spoilage (%)"
 								disabled={
 									!(
-										values?.type === productTypes.WET &&
-										values?.unit_of_measurement ===
-											unitOfMeasurementTypes.WEIGHING
+										values?.unit_of_measurement !==
+										unitOfMeasurementTypes.WEIGHING
 									)
 								}
 							/>
@@ -407,10 +404,8 @@ export const CreateEditProductForm = ({
 								name="allowable_spoilage"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!(
-								values?.type === productTypes.WET &&
-								values?.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
-							) && (
+							{values?.unit_of_measurement !==
+								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited" />
 							)}
 						</Col>
@@ -466,9 +461,7 @@ export const CreateEditProductForm = ({
 						</Col>
 					</Row>
 
-					<Divider />
-
-					<div className="custom-footer">
+					<div className="ModalCustomFooter">
 						<Button
 							type="button"
 							text="Cancel"

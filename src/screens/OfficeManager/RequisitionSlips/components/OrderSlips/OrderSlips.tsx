@@ -15,7 +15,11 @@ import {
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
-import { convertToBulk } from '../../../../../utils/function';
+import {
+	convertIntoArray,
+	convertToBulk,
+	formatBalance,
+} from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { useUsers } from '../../../../../hooks/useUsers';
@@ -221,12 +225,20 @@ export const OrderSlips = ({
 		orderedQuantityPiece,
 		assignedPersonnel,
 	) => {
-		const { id: productId, name, barcode, textcode, pieces_in_bulk } = product;
+		const {
+			id: productId,
+			name,
+			barcode,
+			textcode,
+			pieces_in_bulk,
+			unit_of_measurement,
+		} = product;
 		const { current = '', max_balance = '' } = branchBalance;
 
 		return {
 			order_slip_product_id: orderSlipProductId,
 			selected: true,
+			product,
 			product_id: productId,
 			product_name: name,
 			product_barcode: barcode,
@@ -239,10 +251,16 @@ export const OrderSlips = ({
 				pieces_in_bulk,
 			),
 			quantity_type: quantityTypes.PIECE,
-			branch_current: current,
-			branch_max_balance: max_balance,
-			branch_current_bulk: convertToBulk(current, pieces_in_bulk),
-			branch_max_balance_bulk: convertToBulk(max_balance, pieces_in_bulk),
+			branch_current: formatBalance(unit_of_measurement, current),
+			branch_max_balance: formatBalance(unit_of_measurement, max_balance),
+			branch_current_bulk: formatBalance(
+				unit_of_measurement,
+				convertToBulk(current, pieces_in_bulk),
+			),
+			branch_max_balance_bulk: formatBalance(
+				unit_of_measurement,
+				convertToBulk(max_balance, pieces_in_bulk),
+			),
 			assigned_personnel: assignedPersonnel,
 		};
 	};
@@ -352,8 +370,14 @@ export const OrderSlips = ({
 				onChangePreparingBranch={onChangePreparingBranch}
 				visible={createEditOrderSlipVisible}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
-				warnings={[...branchProductsWarnings, ...userWarnings]}
-				errors={[...branchProducstErrors, ...userErrors]}
+				warnings={[
+					...convertIntoArray(branchProductsWarnings, 'Branch Products'),
+					...convertIntoArray(userWarnings, 'Users'),
+				]}
+				errors={[
+					...convertIntoArray(branchProducstErrors, 'Branch Products'),
+					...convertIntoArray(userErrors, 'Users'),
+				]}
 				loading={[usersStatus, branchProductsStatus].includes(
 					request.REQUESTING,
 				)}

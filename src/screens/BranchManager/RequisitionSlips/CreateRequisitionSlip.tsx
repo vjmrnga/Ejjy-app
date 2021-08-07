@@ -37,7 +37,6 @@ import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	convertIntoArray,
-	convertToBulk,
 	convertToPieces,
 	getBranchProductStatus,
 	sleep,
@@ -46,7 +45,6 @@ import {
 const columns = [
 	{ name: 'Name' },
 	{ name: 'Quantity', width: '200px' },
-	{ name: 'Balance' },
 	{ name: 'Status' },
 ];
 
@@ -96,11 +94,10 @@ export const CreateRequisitionSlip = () => {
 					product_status !== branchProductStatus.AVAILABLE &&
 					!productKeys.includes(toString(product.id)),
 			)
-			.forEach(({ product, product_status, current_balance }) => {
+			.forEach(({ product, product_status }) => {
 				newProducts[product.id] = {
 					productName: product?.name,
 					status: product_status,
-					currentBalance: current_balance,
 					piecesInBulk: product.pieces_in_bulk,
 					quantityType: quantityTypes.PIECE,
 				};
@@ -183,15 +180,6 @@ export const CreateRequisitionSlip = () => {
 				/>
 			</>
 		);
-	};
-
-	const renderCurrentBalance = (currentBalance, piecesInBulk, quantityType) => {
-		const value =
-			quantityType === quantityTypes.PIECE
-				? currentBalance
-				: convertToBulk(currentBalance, piecesInBulk);
-
-		return <span>{value}</span>;
 	};
 
 	const onChangeCheckbox = (productId, data, value) => {
@@ -411,12 +399,6 @@ export const CreateRequisitionSlip = () => {
 											/>,
 											// Quantity / Bulk | Pieces
 											renderQuantity(index, values),
-											// Current Balance
-											renderCurrentBalance(
-												product?.currentBalance,
-												product?.piecesInBulk,
-												values?.branchProducts?.[index]?.quantity_type,
-											),
 											// Status
 											getBranchProductStatus(product?.status),
 										];
@@ -455,7 +437,6 @@ export const CreateRequisitionSlip = () => {
 															piecesInBulk:
 																branchProduct?.product?.pieces_in_bulk,
 															status: branchProduct?.product_status,
-															currentBalance: branchProduct?.current_balance,
 														},
 														value,
 													);
@@ -463,12 +444,6 @@ export const CreateRequisitionSlip = () => {
 											/>,
 											// Quantity / Bulk | Pieces
 											renderQuantity(index, values),
-											// Current Balance
-											renderCurrentBalance(
-												branchProduct?.current_balance,
-												branchProduct?.product?.pieces_in_bulk,
-												values?.branchProducts?.[index]?.quantity_type,
-											),
 											// Status
 											getBranchProductStatus(branchProduct?.product_status),
 										];

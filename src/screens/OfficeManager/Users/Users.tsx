@@ -110,6 +110,7 @@ export const Users = () => {
 							action = (
 								<TableActions
 									onAssign={
+										!NOT_BRANCH_IDS.includes(branchId) &&
 										BRANCH_USERS.includes(user_type)
 											? () => history.push(`/office-manager/users/assign/${id}`)
 											: null

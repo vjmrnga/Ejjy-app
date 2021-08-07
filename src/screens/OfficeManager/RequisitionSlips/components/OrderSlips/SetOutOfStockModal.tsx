@@ -1,12 +1,15 @@
-import { Col, message, Modal, Row, Spin } from 'antd';
+import { message, Modal, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FieldError, Label } from '../../../../../components/elements';
+import { RequestErrors } from '../../../../../components';
+import { Label } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/requisition-slips';
 import {
 	request,
 	requisitionSlipProductStatus,
 } from '../../../../../global/types';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
+import { convertIntoArray } from '../../../../../utils/function';
+import '../../style.scss';
 import { SetOutOfStockForm } from './SetOutOfStockForm';
 
 interface Props {
@@ -102,31 +105,29 @@ export const SetOutOfStockModal = ({
 	return (
 		<Modal
 			title="Out of Stock"
-			className="modal-large"
+			className="SetOutOfStockModal ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}
 			centered
 			closable
 		>
-			<Spin size="large" spinning={isFetching()}>
-				{errors.map((error, index) => (
-					<FieldError key={index} error={error} />
-				))}
+			<Space
+				className="SetOutOfStockModal_space"
+				direction="vertical"
+				size={15}
+			>
+				<RequestErrors errors={convertIntoArray(errors)} />
 
-				<Row gutter={[15, 15]} align="middle">
-					<Col span={12}>
-						<Label label="Requested Products" />
-					</Col>
-				</Row>
+				<Label label="Requested Products" />
 
 				<SetOutOfStockForm
 					products={products}
 					onSubmit={onSetOutOfStockSubmit}
 					onClose={onClose}
-					loading={isSettingOutOfStock()}
+					loading={isFetching() || isSettingOutOfStock()}
 				/>
-			</Spin>
+			</Space>
 		</Modal>
 	);
 };

@@ -43,7 +43,7 @@ export const ViewTransactionModal = ({
 	return (
 		<Modal
 			title="View Transaction"
-			className="ViewTransactionModal modal-large"
+			className="ViewTransactionModal ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

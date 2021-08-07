@@ -1,14 +1,15 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
+import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
+import { request } from '../../../../../global/types';
+import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
 	convertIntoArray,
 	getKeyDownCombination,
 } from '../../../../../utils/function';
-import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
-import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
-import { request } from '../../../../../global/types';
-import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { EditBranchProductsForm } from './EditBranchProductsForm';
 
 interface Props {
@@ -26,6 +27,14 @@ export const EditBranchProductsModal = ({
 	visible,
 	onClose,
 }: Props) => {
+	// VARIABLES
+	const title = (
+		<>
+			<span>{branchProduct ? '[Edit]' : '[Create]'} Branch Product</span>
+			<span className="ModalTitleMainInfo">{branchProduct?.product?.name}</span>
+		</>
+	);
+
 	// STATES
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
@@ -83,10 +92,8 @@ export const EditBranchProductsModal = ({
 
 	return (
 		<Modal
-			title={`${branchProduct ? '[EDIT]' : '[CREATE]'} Product Details (${
-				branch?.name
-			})`}
-			className="modal-large"
+			title={title}
+			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={handleClose}

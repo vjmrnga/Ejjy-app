@@ -97,7 +97,7 @@ export const FulfillPreparationSlipModal = ({
 	return (
 		<Modal
 			title="Fulfill Preparation Slip"
-			className="modal-large"
+			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

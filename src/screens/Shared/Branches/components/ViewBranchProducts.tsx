@@ -99,6 +99,8 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				current_balance,
 			);
 
+			const maxBalance = formatBalance(unit_of_measurement, max_balance);
+
 			return {
 				barcode: (
 					<ButtonLink
@@ -109,7 +111,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				name,
 				balance: `${
 					isCurrentBalanceVisible ? currentBalance : '???'
-				} / ${max_balance}`,
+				} / ${maxBalance}`,
 				actions: (
 					<TableActions
 						onAddName="Supplier Delivery"

@@ -15,13 +15,12 @@ import { Box, Button, SearchInput } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
 import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
+import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
 import { PreparationSlipDetails } from './components/PreparationSlipDetails';
 import './style.scss';
-
-const SEARCH_DEBOUNCE_TIME = 500;
 
 const columnsLeft = [{ name: 'Name' }, { name: 'Ordered' }];
 const columnsRight = [{ name: 'Name' }, { name: 'Inputted' }];

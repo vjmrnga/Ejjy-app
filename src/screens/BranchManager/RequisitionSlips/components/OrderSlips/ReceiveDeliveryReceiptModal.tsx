@@ -33,8 +33,20 @@ export const ReceiveDeliveryReceiptModal = ({
 	onSuccess,
 	onClose,
 }: Props) => {
+	// VARIABLES
+	const title = (
+		<>
+			<span>F-DS01</span>
+			<span className="ModalTitleMainInfo">
+				{requisitionSlip?.requesting_user?.branch?.name}
+			</span>
+		</>
+	);
+
+	// STATES
 	const [products, setProducts] = useState([]);
 
+	// CUSTOM HOOKS
 	const user = useSelector(authSelectors.selectUser());
 	const {
 		receiveDeliveryReceipt,
@@ -98,8 +110,8 @@ export const ReceiveDeliveryReceiptModal = ({
 
 	return (
 		<Modal
-			title={`F-DS01 ${requisitionSlip?.requesting_user?.branch?.name}`}
-			className="modal-large"
+			title={title}
+			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

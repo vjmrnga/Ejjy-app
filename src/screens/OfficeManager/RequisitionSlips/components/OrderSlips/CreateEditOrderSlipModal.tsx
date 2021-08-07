@@ -1,12 +1,17 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { FieldError, Label, Select } from '../../../../../components/elements';
+import { RequestWarnings } from '../../../../../components';
+import { Label, Select } from '../../../../../components/elements';
+import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types } from '../../../../../ducks/order-slips';
 import { quantityTypes, request } from '../../../../../global/types';
-import { convertToPieces } from '../../../../../utils/function';
+import {
+	convertIntoArray,
+	convertToPieces,
+} from '../../../../../utils/function';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import {
 	RequisitionSlipDetails,
@@ -14,7 +19,6 @@ import {
 } from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
-import FieldWarning from '../../../../../components/elements/FieldWarning/FieldWarning';
 
 interface Props {
 	updateRequisitionSlipByFetching: any;
@@ -147,21 +151,23 @@ export const CreateEditOrderSlipModal = ({
 
 	return (
 		<Modal
-			title={`${orderSlip ? '[EDIT]' : '[CREATE]'} F-OS1`}
-			className="modal-large"
+			title={`${orderSlip ? '[Edit]' : '[Create]'} F-OS1`}
+			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}
 			centered
 			closable
 		>
-			{[...errors, ...orderSlipsErrors].map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors
+				errors={[
+					...errors,
+					...convertIntoArray(orderSlipsErrors, 'Order Slips'),
+				]}
+				withSpaceBottom
+			/>
 
-			{warnings.map((warning, index) => (
-				<FieldWarning key={index} message={warning} />
-			))}
+			<RequestWarnings warnings={warnings} withSpaceBottom />
 
 			{orderSlip ? (
 				<OrderSlipDetails orderSlip={orderSlip} />

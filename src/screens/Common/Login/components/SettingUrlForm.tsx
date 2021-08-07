@@ -1,4 +1,3 @@
-import { Divider } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -56,8 +55,6 @@ export const SettingUrlForm = ({
 					{errors.localIpAddress && touched.localIpAddress ? (
 						<FieldError error={errors.localIpAddress} />
 					) : null}
-
-					<Divider />
 
 					<div className="custom-footer">
 						<Button

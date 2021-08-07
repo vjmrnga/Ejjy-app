@@ -1,4 +1,4 @@
-import { Col, Divider } from 'antd';
+import { Col } from 'antd';
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -95,9 +95,7 @@ export const CreateEditBranchMachineForm = ({
 						</Col>
 					</DetailsRow>
 
-					<Divider />
-
-					<div className="custom-footer">
+					<div className="ModalCustomFooter">
 						<Button
 							type="button"
 							text="Cancel"

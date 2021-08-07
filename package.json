@@ -37,7 +37,6 @@
 		"react": "^16.13.1",
 		"react-barcode-reader": "0.0.2",
 		"react-beforeunload": "^2.4.0",
-		"react-detect-offline": "^2.4.1",
 		"react-dom": "^16.13.1",
 		"react-helmet": "^6.1.0",
 		"react-keyboard-event-handler": "^1.5.4",

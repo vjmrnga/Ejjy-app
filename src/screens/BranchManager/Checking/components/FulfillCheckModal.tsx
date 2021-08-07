@@ -88,7 +88,7 @@ export const FulfillCheckModal = ({
 					? 'Daily Check'
 					: 'Random Check'
 			}
-			className="modal-large"
+			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

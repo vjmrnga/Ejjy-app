@@ -1,4 +1,4 @@
-import { Col, Divider, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -6,8 +6,8 @@ import {
 	Button,
 	FieldError,
 	FormInput,
-	UncontrolledInput,
 	Label,
+	UncontrolledInput,
 } from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
 
@@ -94,9 +94,7 @@ export const ReceiveDeliveryReceiptForm = ({
 								))}
 							</Row>
 
-							<Divider dashed />
-
-							<div className="custom-footer">
+							<div className="ModalCustomFooter">
 								<Button
 									type="button"
 									text="Cancel"

@@ -34,7 +34,7 @@ export const RequestErrors = ({
 );
 
 RequestErrors.defaultProps = {
-	size: 15,
+	size: 0,
 	withSpaceTop: false,
 	withSpaceBottom: false,
 };

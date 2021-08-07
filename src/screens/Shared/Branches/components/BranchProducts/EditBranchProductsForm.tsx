@@ -309,9 +309,7 @@ export const EditBranchProductsForm = ({
 						</Col>
 					</DetailsRow>
 
-					<Divider />
-
-					<div className="custom-footer">
+					<div className="ModalCustomFooter">
 						<Button
 							type="button"
 							text="Cancel"
