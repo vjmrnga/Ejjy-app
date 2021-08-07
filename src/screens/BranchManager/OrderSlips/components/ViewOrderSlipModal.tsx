@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Col, Divider, Modal, Row } from 'antd';
+import { Col, Divider, Modal, Row, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, TableNormal } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
 import { convertToBulk, getColoredText } from '../../../../utils/function';
 import { OrderSlipDetails } from './OrderSlipDetails';
+import { printOrderSlip } from '../../../../configurePrinter';
+import { useAuth } from '../../../../hooks/useAuth';
 
 interface Props {
 	visible: boolean;
@@ -14,16 +16,24 @@ interface Props {
 }
 
 export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
+	// STATES
 	const [requestedProducts, setRequestedProducts] = useState([]);
 	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
 		[],
 	);
 	const [quantityType, setQuantityType] = useState(quantityTypes.PIECE);
+	const [forPrintProducts, setForPrintProducts] = useState([]);
+	const [printingDisabled, setPrintingDisabled] = useState(false);
 
+	// CUSTOM HOOKS
+	const { user } = useAuth();
+
+	// METHODS
 	useEffect(() => {
 		if (orderSlip) {
 			const formattedQuantities = [];
 			const formattedPreparationSlip = [];
+			const formattedForPrintProducts = [];
 
 			orderSlip?.products?.forEach((requestedProduct) => {
 				const {
@@ -56,7 +66,19 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 					),
 					`${first_name} ${last_name}`,
 				]);
+
+				formattedForPrintProducts.push({
+					barcode,
+					name,
+					piecesInputted: fulfilled_quantity_piece || 0,
+					piecesOrdered: quantity_piece,
+					bulkInputted: convertToBulk(fulfilled_quantity_piece, pieces_in_bulk),
+					bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
+					personnel: `${first_name} ${last_name}`,
+				});
 			});
+
+			setForPrintProducts(formattedForPrintProducts);
 
 			setRequestedProducts(formattedPreparationSlip);
 			setRequestedProductsQuantity(formattedQuantities);
@@ -114,6 +136,15 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 		[onQuantityTypeChange, quantityType],
 	);
 
+	const onPrint = () => {
+		printOrderSlip(user, orderSlip, forPrintProducts, quantityType);
+		setPrintingDisabled(true);
+
+		setTimeout(() => {
+			setPrintingDisabled(false);
+		}, 5000);
+	};
+
 	const close = () => {
 		setQuantityType(quantityTypes.PIECE);
 		onClose();
@@ -124,7 +155,17 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 			title="View Order Slip"
 			className="ModalLarge"
 			visible={visible}
-			footer={[<Button key="close" text="Close" onClick={close} />]}
+			footer={[
+				<Space size={10}>
+					<Button text="Close" onClick={close} />
+					<Button
+						variant="primary"
+						text="Print"
+						onClick={onPrint}
+						disabled={printingDisabled}
+					/>
+				</Space>,
+			]}
 			onCancel={close}
 			centered
 			closable

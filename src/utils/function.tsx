@@ -358,6 +358,38 @@ export const getOrderSlipStatusBranchManager = (
 	}
 };
 
+export const getOrderSlipStatusBranchManagerText = (
+	status,
+	screenType,
+	percentage,
+	osdrStatus = null,
+) => {
+	switch (status) {
+		case orderSlipStatus.PREPARING: {
+			return `Preparing (${percentage}%)`;
+		}
+		case orderSlipStatus.PREPARED: {
+			return 'Prepared';
+		}
+		case orderSlipStatus.DELIVERED: {
+			return 'Delivered';
+		}
+		case orderSlipStatus.RECEIVED: {
+			if (osdrStatus === OSDRStatus.DONE) {
+				return 'Received (Done)';
+			}
+
+			if (osdrStatus === OSDRStatus.ERROR) {
+				return 'Received (Error)';
+			}
+
+			return 'Received';
+		}
+		default:
+			return '';
+	}
+};
+
 export const getPreparationSlipStatus = memoize((status) => {
 	switch (status) {
 		case preparationSlipStatus.NEW: {
