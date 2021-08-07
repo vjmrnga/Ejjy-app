@@ -65,7 +65,9 @@ export const PreparationSlips = () => {
 					status === preparationSlipStatus.NEW ? (
 						<AddButtonIcon
 							onClick={() => {
-								history.push(`${preparationSlip.id}`);
+								history.push(
+									`/branch-personnel/preparation-slips/${preparationSlip.id}`,
+								);
 							}}
 							tooltip="Fulfill"
 						/>

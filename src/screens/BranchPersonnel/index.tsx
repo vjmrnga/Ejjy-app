@@ -60,12 +60,13 @@ const BranchPersonnel = () => {
 
 					<Route
 						path="/branch-personnel/preparation-slips"
-						exact
 						component={PreparationSlips}
+						exact
 					/>
 					<Route
 						path="/branch-personnel/preparation-slips/:id"
 						component={FulfillPreparationSlips}
+						exact
 					/>
 
 					<Route
