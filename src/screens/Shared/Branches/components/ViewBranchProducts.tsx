@@ -1,11 +1,16 @@
-import { Col, Radio, Row, Select, Table } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TableActions, TableHeader } from '../../../../components';
 import { ButtonLink, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import { SHOW_HIDE_SHORTCUT } from '../../../../global/constants';
+import {
+	SEARCH_DEBOUNCE_TIME,
+	SHOW_HIDE_SHORTCUT,
+} from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
@@ -154,21 +159,24 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		);
 	};
 
-	const onSearch = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
-		getBranchProducts(
-			{
-				search: lowerCaseKeyword,
-				branchId: branch?.id,
-				isSoldInBranch,
-				productCategory,
-				page: 1,
-			},
-			true,
-		);
+	const onSearch = useCallback(
+		debounce((keyword) => {
+			const lowerCaseKeyword = keyword?.toLowerCase();
+			getBranchProducts(
+				{
+					search: lowerCaseKeyword,
+					branchId: branch?.id,
+					isSoldInBranch,
+					productCategory,
+					page: 1,
+				},
+				true,
+			);
 
-		setSeachedKeyword(lowerCaseKeyword);
-	};
+			setSeachedKeyword(lowerCaseKeyword);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
 
 	const onSelectProductCategory = (value) => {
 		setProductCategory(value);
@@ -224,17 +232,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 	return (
 		<div className="ViewBranchProducts">
-			<TableHeader
-				title="Products"
-				buttonName="Create Branch Product"
-				onSearch={onSearch}
-			/>
+			<TableHeader title="Products" buttonName="Create Branch Product" />
 
 			<ViewBranchProductsFilter
 				productCategoriesStatus={productCategoriesStatus}
 				productCategories={productCategories}
 				onSelectProductCategory={onSelectProductCategory}
 				onSelectSoldInBranch={onSelectSoldInBranch}
+				onSearch={onSearch}
 			/>
 
 			<br />
@@ -295,6 +300,7 @@ interface ViewBranchProductsFilterProps {
 	productCategoriesStatus: number;
 	onSelectProductCategory: any;
 	onSelectSoldInBranch: any;
+	onSearch: any;
 }
 
 const ViewBranchProductsFilter = ({
@@ -302,8 +308,17 @@ const ViewBranchProductsFilter = ({
 	productCategories,
 	onSelectProductCategory,
 	onSelectSoldInBranch,
+	onSearch,
 }: ViewBranchProductsFilterProps) => (
 	<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Search" spacing />
+			<Input
+				prefix={<SearchOutlined />}
+				onChange={(event) => onSearch(event.target.value.trim())}
+			/>
+		</Col>
+
 		<Col lg={12} span={24}>
 			<Label label="Product Category" spacing />
 			<Select

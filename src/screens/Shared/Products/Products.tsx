@@ -110,7 +110,10 @@ export const Products = () => {
 	}, [products, hasPendingTransactions]);
 
 	const onPageChange = (page, newPageSize) => {
-		getProducts({ page, pageSize: newPageSize }, newPageSize !== pageSize);
+		getProducts(
+			{ search: searchedKeyword, productCategory, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	const onView = (product) => {

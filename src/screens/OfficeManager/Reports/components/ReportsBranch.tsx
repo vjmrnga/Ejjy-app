@@ -1,4 +1,4 @@
-import { Col, DatePicker, Radio, Row, Select, Space, Spin, Table } from 'antd';
+import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
 import debounce from 'lodash/debounce';
 import React, { useEffect, useRef, useState } from 'react';
@@ -9,13 +9,13 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request, timeRangeTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProducts } from '../../../../hooks/useProducts';
+import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
 	formatBalance,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 
-const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const columns: ColumnsType = [
@@ -100,10 +100,15 @@ const getSorting = (column, order) => {
 
 interface Props {
 	branchId: number;
+	productCategories: IProductCategory[];
 	isActive: boolean;
 }
 
-export const ReportsBranch = ({ isActive, branchId }: Props) => {
+export const ReportsBranch = ({
+	isActive,
+	branchId,
+	productCategories,
+}: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [tags, setTags] = useState('');
@@ -327,32 +332,52 @@ export const ReportsBranch = ({ isActive, branchId }: Props) => {
 						}}
 						allowClear
 					>
-						<Option value="baboy">Baboy</Option>
-						<Option value="manok">Manok</Option>
-						<Option value="assorted">Assorted</Option>
-						<Option value="gulay">Gulay</Option>
-						<Option value="hotdog">Hotdog</Option>
+						{productCategories.map(({ name }) => (
+							<Select.Option value={name}>{name}</Select.Option>
+						))}
 					</Select>
 				</Col>
 				<Col lg={12} span={24}>
-					<Space direction="vertical" size={15}>
-						<Label label="Quantity Sold Date" />
-						<Radio.Group
-							options={[
-								{ label: 'Daily', value: timeRangeTypes.DAILY },
-								{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-								{
-									label: 'Select Date Range',
-									value: timeRangeTypes.DATE_RANGE,
-								},
-							]}
-							onChange={(e) => {
-								const { value } = e.target;
-								setTimeRange(value);
-								setTimeRangeOption(value);
+					<Label label="Quantity Sold Date" spacing />
+					<Radio.Group
+						options={[
+							{ label: 'Daily', value: timeRangeTypes.DAILY },
+							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
+							{
+								label: 'Select Date Range',
+								value: timeRangeTypes.DATE_RANGE,
+							},
+						]}
+						onChange={(e) => {
+							const { value } = e.target;
+							setTimeRange(value);
+							setTimeRangeOption(value);
 
-								if (value !== 'date_range') {
+							if (value !== 'date_range') {
+								setIsCompletedInitialFetch(false);
+								fetchBranchProducts(
+									tags,
+									sorting,
+									productCategory,
+									value,
+									showSoldOnly,
+									1,
+									pageSize,
+								);
+							}
+						}}
+						defaultValue="daily"
+						optionType="button"
+					/>
+					{timeRangeOption === 'date_range' && (
+						<RangePicker
+							format="MM/DD/YY"
+							onCalendarChange={(dates, dateStrings) => {
+								if (dates?.[0] && dates?.[1]) {
+									const value = dateStrings.join(',');
+									setTimeRange(value);
 									setIsCompletedInitialFetch(false);
+
 									fetchBranchProducts(
 										tags,
 										sorting,
@@ -364,60 +389,34 @@ export const ReportsBranch = ({ isActive, branchId }: Props) => {
 									);
 								}
 							}}
-							defaultValue="daily"
-							optionType="button"
 						/>
-						{timeRangeOption === 'date_range' && (
-							<RangePicker
-								format="MM/DD/YY"
-								onCalendarChange={(dates, dateStrings) => {
-									if (dates?.[0] && dates?.[1]) {
-										const value = dateStrings.join(',');
-										setTimeRange(value);
-										setIsCompletedInitialFetch(false);
-
-										fetchBranchProducts(
-											tags,
-											sorting,
-											productCategory,
-											value,
-											showSoldOnly,
-											1,
-											pageSize,
-										);
-									}
-								}}
-							/>
-						)}
-					</Space>
+					)}
 				</Col>
 				<Col lg={12} span={24}>
-					<Space direction="vertical" size={15}>
-						<Label label="Show Sold In Branch" />
-						<Radio.Group
-							options={[
-								{ label: 'Show All', value: false },
-								{ label: 'In Stock', value: true },
-							]}
-							onChange={(e) => {
-								const { value } = e.target;
-								setShowSoldOnly(value);
+					<Label label="Show Sold In Branch" spacing />
+					<Radio.Group
+						options={[
+							{ label: 'Show All', value: false },
+							{ label: 'In Stock', value: true },
+						]}
+						onChange={(e) => {
+							const { value } = e.target;
+							setShowSoldOnly(value);
 
-								fetchBranchProducts(
-									tags,
-									sorting,
-									productCategory,
-									timeRange,
-									value,
-									1,
-									pageSize,
-								);
-							}}
-							// eslint-disable-next-line react/jsx-boolean-value
-							defaultValue={true}
-							optionType="button"
-						/>
-					</Space>
+							fetchBranchProducts(
+								tags,
+								sorting,
+								productCategory,
+								timeRange,
+								value,
+								1,
+								pageSize,
+							);
+						}}
+						// eslint-disable-next-line react/jsx-boolean-value
+						defaultValue={true}
+						optionType="button"
+					/>
 				</Col>
 			</Row>
 
