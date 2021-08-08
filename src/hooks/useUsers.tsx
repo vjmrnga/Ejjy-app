@@ -45,7 +45,7 @@ export const useUsers = () => {
 	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-	const getUsersAction = useActionDispatch(actions.getUsers);
+	const getLocalUsersAction = useActionDispatch(actions.getLocalUsers);
 	const getOnlineUsersAction = useActionDispatch(actions.getOnlineUsers);
 	const getUserByIdAction = useActionDispatch(actions.getUserById);
 	const createUserAction = useActionDispatch(actions.createUser);
@@ -109,10 +109,10 @@ export const useUsers = () => {
 	};
 
 	// REQUEST METHODS
-	const getUsers = (data, shouldReset = false) => {
+	const getLocalUsers = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
-			requestAction: getUsersAction,
-			requestType: types.GET_USERS,
+			requestAction: getLocalUsersAction,
+			requestType: types.GET_LOCAL_USERS,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,
@@ -214,7 +214,7 @@ export const useUsers = () => {
 		removeItemInPagination,
 
 		user,
-		getUsers,
+		getLocalUsers,
 		getOnlineUsers,
 		getUserById,
 		createUser,

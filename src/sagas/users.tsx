@@ -3,22 +3,22 @@ import {
 	put,
 	retry,
 	select,
-	takeLatest,
 	takeEvery,
+	takeLatest,
 } from 'redux-saga/effects';
-import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
-import { actions, types } from '../../ducks/OfficeManager/users';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
+import { actions, types } from '../ducks/OfficeManager/users';
 import {
 	MAX_PAGE_SIZE,
 	MAX_RETRY,
 	RETRY_INTERVAL_MS,
-} from '../../global/constants';
-import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services/index';
-import { service } from '../../services/OfficeManager/users';
+} from '../global/constants';
+import { request } from '../global/types';
+import { ONLINE_API_URL } from '../services/index';
+import { service } from '../services/users';
 
 /* WORKERS */
-function* listOnline({ payload }: any) {
+function* listLocalUsers({ payload }: any) {
 	const { branchId, userType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -39,11 +39,10 @@ function* listOnline({ payload }: any) {
 
 	try {
 		let response = null;
-		const endpoint = baseURL ? service.list : service.listOnline;
 
 		try {
 			// Fetch in branch url
-			response = yield call(endpoint, data, baseURL);
+			response = yield call(service.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -51,7 +50,7 @@ function* listOnline({ payload }: any) {
 			);
 			if (baseURL && baseBackupURL) {
 				// Fetch branch url
-				response = yield call(endpoint, data, baseBackupURL);
+				response = yield call(service.list, data, baseBackupURL);
 				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
@@ -70,7 +69,7 @@ function* listOnline({ payload }: any) {
 	}
 }
 
-function* listOnlineByBranch({ payload }: any) {
+function* listOnlineUsers({ payload }: any) {
 	const {
 		branchId,
 		userType,
@@ -207,14 +206,13 @@ function* requestUserTypeChange({ payload }: any) {
 }
 
 /* WATCHERS */
-const listOnlineWatcherSaga = function* listOnlineWatcherSaga() {
-	yield takeLatest(types.GET_USERS, listOnline);
+const listLocalUsersWatcherSaga = function* listLocalUsersWatcherSaga() {
+	yield takeLatest(types.GET_LOCAL_USERS, listLocalUsers);
 };
 
-const listOnlineByBranchWatcherSaga =
-	function* listOnlineByBranchWatcherSaga() {
-		yield takeEvery(types.GET_ONLINE_USERS, listOnlineByBranch);
-	};
+const listOnlineUsersWatcherSaga = function* listOnlineUsersWatcherSaga() {
+	yield takeEvery(types.GET_ONLINE_USERS, listOnlineUsers);
+};
 
 const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
 	yield takeLatest(types.GET_USER_BY_ID, getByIdOnline);
@@ -242,8 +240,8 @@ const requestUserTypeChangeWatcherSaga =
 	};
 
 export default [
-	listOnlineWatcherSaga(),
-	listOnlineByBranchWatcherSaga(),
+	listLocalUsersWatcherSaga(),
+	listOnlineUsersWatcherSaga(),
 	getByIdOnlineWatcherSaga(),
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),

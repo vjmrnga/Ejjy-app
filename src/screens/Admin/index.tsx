@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
-import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
 import { Branches } from '../Shared/Branches/Branches';
@@ -9,7 +8,6 @@ import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { Products } from '../Shared/Products/Products';
 import { Dashboard } from './Dashboard/Dashboard';
 import { useFailedTransfers } from './hooks/useFailedTransfers';
-import { useUpdateBranchProductBalanceLogs } from './hooks/useUpdateBranchProductBalanceLogs';
 import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
@@ -21,12 +19,10 @@ const POLL_INTERVAL_MS = 5000;
 
 const Admin = () => {
 	// STATES
-	const [logsCount, setLogsCount] = useState(0);
+
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { getUpdateBranchProductBalanceLogs } =
-		useUpdateBranchProductBalanceLogs();
 	const { pendingTransactionsCount, getPendingTransactionsCount } =
 		usePendingTransactions();
 	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();
@@ -45,20 +41,6 @@ const Admin = () => {
 		getPendingTransactionsCount({ isPendingApproval: true });
 		pendingTransactionsCountRef.current = setInterval(() => {
 			getPendingTransactionsCount({ isPendingApproval: true });
-		}, POLL_INTERVAL_MS);
-
-		// Logs Count
-		const fetchLogsCount = () => {
-			getUpdateBranchProductBalanceLogs(({ status, data }) => {
-				if (status === request.SUCCESS) {
-					setLogsCount(data);
-				}
-			});
-		};
-
-		fetchLogsCount();
-		logsCountRef.current = setInterval(() => {
-			fetchLogsCount();
 		}, POLL_INTERVAL_MS);
 
 		// Notifications Coun
@@ -146,9 +128,7 @@ const Admin = () => {
 				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
 				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 				link: '/admin/logs',
-				count: logsCount,
 			},
-
 			{
 				key: 'notifications',
 				name: 'Notifications',
@@ -158,7 +138,7 @@ const Admin = () => {
 				count: notificationsCount,
 			},
 		],
-		[pendingTransactionsCount, logsCount, notificationsCount],
+		[pendingTransactionsCount, notificationsCount],
 	);
 
 	return (

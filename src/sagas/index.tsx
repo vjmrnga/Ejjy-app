@@ -7,12 +7,12 @@ import { branchManagerSagas } from './BranchManager';
 import { branchPersonnelSagas } from './BranchPersonnel';
 import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
-import orderSlipCreationSagas from './order-slip-creation';
 import productCategoriesSagas from './product-categories';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import siteSettingsSagas from './site-settings';
 import transactionsSagas from './transactions';
+import usersSagas from './users';
 import xreadReportsSagas from './xread-reports';
 
 export default function* rootSaga() {
@@ -21,12 +21,12 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...branchProductsSagas,
 		...networkSagas,
-		...orderSlipCreationSagas,
 		...productCategoriesSagas,
 		...requisitionSlipsSagas,
 		...sessionsSagas,
 		...siteSettingsSagas,
 		...transactionsSagas,
+		...usersSagas,
 		...xreadReportsSagas,
 		...adminSagas,
 		...officeManagerSagas,

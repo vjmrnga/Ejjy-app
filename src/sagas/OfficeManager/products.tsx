@@ -52,11 +52,16 @@ function* edit({ payload }: any) {
 }
 
 function* remove({ payload }: any) {
-	const { callback, id } = payload;
+	const { actingUserId, id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.remove, id, ONLINE_API_URL);
+		const response = yield call(
+			service.remove,
+			id,
+			{ acting_user_id: actingUserId },
+			ONLINE_API_URL,
+		);
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {

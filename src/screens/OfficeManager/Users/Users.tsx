@@ -62,7 +62,7 @@ export const Users = () => {
 	const { branches } = useBranches();
 	const {
 		users,
-		getUsers,
+		getLocalUsers,
 		getOnlineUsers,
 		removeUser,
 		status: usersStatus,
@@ -143,7 +143,7 @@ export const Users = () => {
 	const onTabClick = (branchId) => {
 		const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
 
-		const getUserFn = isNotBranchId ? getOnlineUsers : getUsers;
+		const getUserFn = isNotBranchId ? getOnlineUsers : getLocalUsers;
 		getUserFn(
 			{
 				page: 1,

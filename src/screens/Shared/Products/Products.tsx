@@ -15,6 +15,7 @@ import { types } from '../../../ducks/OfficeManager/products';
 import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
 import { IProductCategory } from '../../../models';
@@ -53,6 +54,7 @@ export const Products = () => {
 	const pendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		products,
 		pageCount,
@@ -137,21 +139,24 @@ export const Products = () => {
 	};
 
 	const onRemoveProduct = (product) => {
-		removeProduct(product.id, ({ status, response }) => {
-			if (status === request.SUCCESS) {
-				if (response?.length) {
-					message.warning(
-						'We found an error while deleting the product details in local branch. Please check the pending transaction table below.',
-					);
+		removeProduct(
+			{ id: product.id, actingUserId: user.id },
+			({ status, response }) => {
+				if (status === request.SUCCESS) {
+					if (response?.length) {
+						message.warning(
+							'We found an error while deleting the product details in local branch. Please check the pending transaction table below.',
+						);
 
-					pendingTransactionsRef.current?.refreshList();
+						pendingTransactionsRef.current?.refreshList();
+					}
+					getProducts(
+						{ search: searchedKeyword, productCategory, page: currentPage },
+						true,
+					);
 				}
-				getProducts(
-					{ search: searchedKeyword, productCategory, page: currentPage },
-					true,
-				);
-			}
-		});
+			},
+		);
 	};
 
 	const onSearch = useCallback(
@@ -188,7 +193,7 @@ export const Products = () => {
 					withSpaceBottom
 				/>
 
-				<ProductFilter
+				<Filter
 					productCategories={productCategories}
 					productCategoriesLoading={
 						productCategoriesStatus === request.REQUESTING
@@ -257,19 +262,19 @@ export const Products = () => {
 	);
 };
 
-interface ProductFilterProps {
+interface FilterProps {
 	productCategories: IProductCategory[];
 	productCategoriesLoading: boolean;
 	onSearch: any;
 	onSelectProductCategory: any;
 }
 
-const ProductFilter = ({
+const Filter = ({
 	productCategories,
 	productCategoriesLoading,
 	onSearch,
 	onSelectProductCategory,
-}: ProductFilterProps) => (
+}: FilterProps) => (
 	<Row className="PaddingHorizontal" gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Search" spacing />

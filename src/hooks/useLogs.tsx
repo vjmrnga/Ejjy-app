@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/Admin/logs';
 import { request } from '../global/types';
-import { onCallback } from '../utils/function';
+import { modifiedExtraCallback, onCallback } from '../utils/function';
 import {
 	executePaginatedRequest,
 	getDataForCurrentPage,
-	updateInCachedData,
 } from '../utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
 
@@ -15,7 +14,6 @@ export const useLogs = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
 
 	// PAGINATION
 	const [allData, setAllData] = useState([]);
@@ -25,34 +23,11 @@ export const useLogs = () => {
 	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-	const getUpdateBranchProductBalanceLogsAction = useActionDispatch(
-		actions.getUpdateBranchProductBalanceLogs,
-	);
+	const listLogsAction = useActionDispatch(actions.listLogs);
+	const getCountAction = useActionDispatch(actions.getCount);
 
 	// GENERAL METHODS
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const resetPagination = () => {
-		setAllData([]);
-		setPageCount(0);
-		setCurrentPage(1);
-		setCurrentPageData([]);
-	};
-
-	const resetAll = () => {
-		reset();
-		resetPagination();
-	};
-
-	const executeRequest = (data, requestCallback, action, type) => {
-		setRecentRequest(type);
+	const executeRequest = (data, requestCallback, action) => {
 		action({
 			...data,
 			callback: onCallback(
@@ -79,15 +54,11 @@ export const useLogs = () => {
 		);
 	}, [allData, currentPage]);
 
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
 	// REQUEST METHODS
-	const getUpdateBranchProductBalanceLogs = (data, shouldReset = false) => {
+	const listLogs = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
-			requestAction: getUpdateBranchProductBalanceLogsAction,
-			requestType: types.GET_UPDATE_BRANCH_PRODUCT_BALANCE_LOGS,
+			requestAction: listLogsAction,
+			requestType: types.LIST_LOGS,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,
@@ -99,20 +70,21 @@ export const useLogs = () => {
 		});
 	};
 
+	const getLogsCount = (extraCallback = null) => {
+		getCountAction({
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
 	return {
 		logs: currentPageData,
 		pageCount,
 		currentPage,
 		pageSize,
-		updateItemInPagination,
 
-		getUpdateBranchProductBalanceLogs,
+		listLogs,
+		getLogsCount,
 		status,
 		errors,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-		resetAll,
 	};
 };

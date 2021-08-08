@@ -1,4 +1,4 @@
-import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { call, put, retry, takeEvery, takeLatest } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/branches';
 import {
 	MAX_PAGE_SIZE,
@@ -104,7 +104,7 @@ function* remove({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.GET_BRANCHES, list);
+	yield takeEvery(types.GET_BRANCHES, list);
 };
 
 const getByIdWatcherSaga = function* getByIdesWatcherSaga() {

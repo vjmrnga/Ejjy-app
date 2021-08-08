@@ -114,11 +114,11 @@ export const useProducts = () => {
 		});
 	};
 
-	const createProduct = (product, extraCallback = null) => {
+	const createProduct = (data, extraCallback = null) => {
 		setRecentRequest(types.CREATE_PRODUCT);
 		const clonedProduct = {
-			...product,
-			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
+			...data,
+			allowable_spoilage: (data.allowable_spoilage || 0) / 100,
 		};
 
 		createProductAction({
@@ -134,11 +134,11 @@ export const useProducts = () => {
 		});
 	};
 
-	const editProduct = (product, extraCallback = null) => {
+	const editProduct = (data, extraCallback = null) => {
 		setRecentRequest(types.EDIT_PRODUCT);
 		const clonedProduct = {
-			...product,
-			allowable_spoilage: (product.allowable_spoilage || 0) / 100,
+			...data,
+			allowable_spoilage: (data.allowable_spoilage || 0) / 100,
 		};
 
 		editProductAction({
@@ -150,10 +150,10 @@ export const useProducts = () => {
 		});
 	};
 
-	const removeProduct = (id, extraCallback = null) => {
+	const removeProduct = (data, extraCallback = null) => {
 		setRecentRequest(types.REMOVE_PRODUCT);
 		removeProductAction({
-			id,
+			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
 					callback,

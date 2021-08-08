@@ -17,6 +17,7 @@ import { booleanOptions } from '../../../../global/options';
 import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
 import { IProductCategory } from '../../../../models';
 import { removeCommas, sleep } from '../../../../utils/function';
+import { useAuth } from '../../../../hooks/useAuth';
 
 const { Text } = Typography;
 
@@ -95,11 +96,17 @@ export const CreateEditProductForm = ({
 	onClose,
 	loading,
 }: Props) => {
+	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 
+	// CUSTOM HOOKS
+	const { user } = useAuth();
+
+	// METHODS
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
+				acting_user_id: user.id,
 				barcode: product?.barcode || '',
 				textcode: product?.textcode || '',
 				name: product?.name || '',
@@ -167,9 +174,8 @@ export const CreateEditProductForm = ({
 						.min(0)
 						.label('Pieces in Bulk'),
 					allowable_spoilage: Yup.number()
-						.when(['type', 'unit_of_measurement'], {
-							is: (typeValue, unitOfMeasurementValue) =>
-								typeValue === productTypes.WET &&
+						.when(['unit_of_measurement'], {
+							is: (unitOfMeasurementValue) =>
 								unitOfMeasurementValue === unitOfMeasurementTypes.WEIGHING,
 							then: Yup.number().integer().min(0).max(100).required(),
 							otherwise: Yup.number().notRequired().nullable(),
@@ -202,16 +208,15 @@ export const CreateEditProductForm = ({
 				[['barcode', 'textcode']],
 			),
 		}),
-		[product],
+		[product, user],
 	);
 
 	const getProductCategoriesOptions = useCallback(
-		() => [
-			...productCategories.map(({ name }) => ({
+		() =>
+			productCategories.map(({ name }) => ({
 				name,
 				value: name,
 			})),
-		],
 		[productCategories],
 	);
 
@@ -394,10 +399,8 @@ export const CreateEditProductForm = ({
 								id="allowable_spoilage"
 								label="Allowable Spoilage (%)"
 								disabled={
-									!(
-										values?.unit_of_measurement !==
-										unitOfMeasurementTypes.WEIGHING
-									)
+									values?.unit_of_measurement !==
+									unitOfMeasurementTypes.WEIGHING
 								}
 							/>
 							<ErrorMessage

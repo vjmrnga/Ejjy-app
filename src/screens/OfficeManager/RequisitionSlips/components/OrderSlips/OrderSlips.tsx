@@ -72,7 +72,7 @@ export const OrderSlips = ({
 	} = useBranchProducts();
 	const {
 		users: branchPersonnels,
-		getUsers,
+		getLocalUsers,
 		status: usersStatus,
 		warnings: userWarnings,
 		errors: userErrors,
@@ -271,7 +271,7 @@ export const OrderSlips = ({
 			userReset();
 			branchProductsReset();
 
-			getUsers(
+			getLocalUsers(
 				{
 					page: 1,
 					pageSize: MAX_PAGE_SIZE,

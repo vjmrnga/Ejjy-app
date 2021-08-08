@@ -234,7 +234,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		<div className="ViewBranchProducts">
 			<TableHeader title="Products" buttonName="Create Branch Product" />
 
-			<ViewBranchProductsFilter
+			<Filter
 				productCategoriesStatus={productCategoriesStatus}
 				productCategories={productCategories}
 				onSelectProductCategory={onSelectProductCategory}
@@ -295,7 +295,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	);
 };
 
-interface ViewBranchProductsFilterProps {
+interface FilterProps {
 	productCategories: IProductCategory[];
 	productCategoriesStatus: number;
 	onSelectProductCategory: any;
@@ -303,13 +303,13 @@ interface ViewBranchProductsFilterProps {
 	onSearch: any;
 }
 
-const ViewBranchProductsFilter = ({
+const Filter = ({
 	productCategoriesStatus,
 	productCategories,
 	onSelectProductCategory,
 	onSelectSoldInBranch,
 	onSearch,
-}: ViewBranchProductsFilterProps) => (
+}: FilterProps) => (
 	<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Search" spacing />

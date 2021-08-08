@@ -20,6 +20,7 @@ interface ICreateProduct {
 	price_per_piece: number;
 	price_per_bulk: number;
 	is_shown_in_scale_list?: boolean;
+	acting_user_id: number;
 }
 
 interface IEditProduct {
@@ -38,6 +39,11 @@ interface IEditProduct {
 	price_per_piece?: number;
 	price_per_bulk?: number;
 	is_shown_in_scale_list?: boolean;
+	acting_user_id: number;
+}
+
+interface IDeleteProduct extends IListRequest {
+	acting_user_id: number;
 }
 
 export const service = {
@@ -50,6 +56,6 @@ export const service = {
 	edit: async (body: IEditProduct, baseURL) =>
 		axios.patch(`/online-products/${body.id}/`, body, { baseURL }),
 
-	remove: async (id, baseURL) =>
-		axios.delete(`/online-products/${id}/`, { baseURL }),
+	remove: async (id, body: IDeleteProduct, baseURL) =>
+		axios.delete(`/online-products/${id}/`, { data: body, baseURL }),
 };

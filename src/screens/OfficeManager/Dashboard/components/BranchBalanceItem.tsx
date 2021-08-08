@@ -200,7 +200,7 @@ export const BranchBalanceItem = ({
 
 			<Divider dashed />
 
-			<BranchBalanceItemFilter
+			<Filter
 				productCategories={productCategories}
 				onSearch={onSearch}
 				onSelectProductStatus={onSelectProductStatus}
@@ -241,19 +241,19 @@ export const BranchBalanceItem = ({
 	);
 };
 
-interface BranchBalanceItemFilterProps {
+interface FilterProps {
 	productCategories: IProductCategory[];
 	onSearch: any;
 	onSelectProductStatus: any;
 	onSelectProductCategory: any;
 }
 
-const BranchBalanceItemFilter = ({
+const Filter = ({
 	productCategories,
 	onSearch,
 	onSelectProductStatus,
 	onSelectProductCategory,
-}: BranchBalanceItemFilterProps) => (
+}: FilterProps) => (
 	<Row gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Search" spacing />
