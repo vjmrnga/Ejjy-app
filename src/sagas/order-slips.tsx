@@ -1,14 +1,14 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/order-slips';
-import { actions as requisitionSlipActions } from '../../ducks/requisition-slips';
+import { actions, types } from '../ducks/order-slips';
+import { actions as requisitionSlipActions } from '../ducks/requisition-slips';
 import {
 	MAX_PAGE_SIZE,
 	MAX_RETRY,
 	RETRY_INTERVAL_MS,
-} from '../../global/constants';
-import { request } from '../../global/types';
-import { service } from '../../services/order-slips';
-import { ONLINE_API_URL } from '../../services/index';
+} from '../global/constants';
+import { request } from '../global/types';
+import { service } from '../services/order-slips';
+import { ONLINE_API_URL } from '../services/index';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -81,6 +81,23 @@ function* listExtended({ payload }: any) {
 	}
 }
 
+function* getPendingCount({ payload }: any) {
+	const { userId, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(
+			service.getPendingCount,
+			{ user_id: userId },
+			ONLINE_API_URL,
+		);
+
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
@@ -138,6 +155,10 @@ const listExtendedWatcherSaga = function* listExtendedWatcherSaga() {
 	yield takeLatest(types.GET_ORDER_SLIPS_EXTENDED, listExtended);
 };
 
+const getPendingCountWatcherSaga = function* getPendingCountWatcherSaga() {
+	yield takeLatest(types.GET_PENDING_COUNT, getPendingCount);
+};
+
 const createWatcherSaga = function* createWatcherSaga() {
 	yield takeLatest(types.CREATE_ORDER_SLIP, create);
 };
@@ -153,6 +174,7 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 export default [
 	listWatcherSaga(),
 	listExtendedWatcherSaga(),
+	getPendingCountWatcherSaga(),
 	createWatcherSaga(),
 	editWatcherSaga(),
 	removeWatcherSaga(),

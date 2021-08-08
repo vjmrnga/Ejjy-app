@@ -67,6 +67,7 @@ export const useRequisitionSlips = () => {
 	const getRequisitionSlipsByIdAndBranch = useActionDispatch(
 		actions.getRequisitionSlipByIdAndBranch,
 	);
+	const getPendingCountAction = useActionDispatch(actions.getPendingCount);
 	const createRequisitionSlip = useActionDispatch(
 		actions.createRequisitionSlip,
 	);
@@ -196,6 +197,14 @@ export const useRequisitionSlips = () => {
 		}
 	};
 
+	const getPendingCount = (data, extraCallback = null) => {
+		setRecentRequest(types.GET_PENDING_COUNT);
+		getPendingCountAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
 	const createRequisitionSlipRequest = (data, extraCallback = null) => {
 		setRecentRequest(types.CREATE_REQUISITION_SLIP);
 		createRequisitionSlip({
@@ -253,6 +262,7 @@ export const useRequisitionSlips = () => {
 		getRequisitionSlipsExtended,
 		getRequisitionSlipsById,
 		getRequisitionSlipsByIdAndBranch: getRequisitionSlipsByIdAndBranchRequest,
+		getPendingCount,
 		createRequisitionSlip: createRequisitionSlipRequest,
 		editRequisitionSlip: editRequisitionSlipRequest,
 		setOutOfStock: setOutOfStockRequest,

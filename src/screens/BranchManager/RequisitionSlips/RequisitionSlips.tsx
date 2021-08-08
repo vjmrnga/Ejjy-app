@@ -1,17 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import { Table } from 'antd';
 import { upperFirst } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import {
-	request,
-	requisitionSlipActions,
-	userTypes,
-} from '../../../global/types';
+import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -29,16 +25,11 @@ const columns = [
 	{ title: 'Progress', dataIndex: 'progress' },
 ];
 
-const pendingRequisitionSlipActions = [
-	requisitionSlipActions.F_DS1_CREATING,
-	requisitionSlipActions.F_DS1_CREATED,
-	requisitionSlipActions.F_DS1_DELIVERING,
-];
-
 export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('all');
+	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
@@ -51,10 +42,16 @@ export const RequisitionSlips = () => {
 		getRequisitionSlipsExtended,
 		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
+	const { getPendingCount } = useRequisitionSlips();
 
 	// METHODS
 	useEffect(() => {
 		onFetchRequisitionSlips(1, pageSize, true);
+		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+			if (status === request.SUCCESS) {
+				setPendingCount(count);
+			}
+		});
 	}, []);
 
 	useEffect(() => {
@@ -97,16 +94,6 @@ export const RequisitionSlips = () => {
 		setData(formattedProducts);
 	}, [requisitionSlips]);
 
-	const getPendingCount = useCallback(
-		() =>
-			requisitionSlips.filter(
-				({ action, requesting_user }) =>
-					pendingRequisitionSlipActions.includes(action?.action) &&
-					user?.branch?.id === requesting_user?.branch?.id,
-			).length,
-		[requisitionSlips],
-	);
-
 	const onFetchRequisitionSlips = (page, newPageSize, shouldReset) => {
 		getRequisitionSlipsExtended(
 			{
@@ -133,7 +120,7 @@ export const RequisitionSlips = () => {
 					onCreate={() => {
 						history.push('/branch-manager/requisition-slips/create');
 					}}
-					pending={getPendingCount()}
+					pending={pendingCount}
 				/>
 
 				<Table

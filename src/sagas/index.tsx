@@ -7,6 +7,7 @@ import { branchManagerSagas } from './BranchManager';
 import { branchPersonnelSagas } from './BranchPersonnel';
 import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
+import orderSlipsSagas from './order-slips';
 import productCategoriesSagas from './product-categories';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
@@ -21,6 +22,7 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...branchProductsSagas,
 		...networkSagas,
+		...orderSlipsSagas,
 		...productCategoriesSagas,
 		...requisitionSlipsSagas,
 		...sessionsSagas,

@@ -42,6 +42,9 @@ export const service = {
 	listExtended: async (params: IListOrderSlipsRequest, baseURL) =>
 		axios.get('/order-slips/extended/', { baseURL, params }),
 
+	getPendingCount: async (params, baseURL) =>
+		axios.get('/order-slips/pending-count/', { baseURL, params }),
+
 	create: async (body: ICreateOrderSlip, baseURL) =>
 		axios.post('/order-slips/', body, { baseURL }),
 

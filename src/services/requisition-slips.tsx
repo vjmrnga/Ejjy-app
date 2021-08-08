@@ -41,6 +41,9 @@ export const service = {
 	listExtended: async (params: IListRequisitionSlip, baseURL) =>
 		axios.get('/requisition-slips/extended/', { baseURL, params }),
 
+	getPendingCount: async (params, baseURL) =>
+		axios.get('/requisition-slips/pending-count/', { baseURL, params }),
+
 	getById: async (id, requestingUserType, baseURL) =>
 		axios.get(
 			`/requisition-slips/${id}/extended/?requesting_user_type=${requestingUserType}`,

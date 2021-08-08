@@ -121,6 +121,23 @@ function* getById({ payload }: any) {
 	}
 }
 
+function* getPendingCount({ payload }: any) {
+	const { userId, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(
+			service.getPendingCount,
+			{ user_id: userId },
+			ONLINE_API_URL,
+		);
+
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 function* create({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
@@ -192,6 +209,10 @@ const getByIdAndBranchWatcherSaga = function* getByIdAndBranchWatcherSaga() {
 	);
 };
 
+const getPendingCountWatcherSaga = function* getPendingCountWatcherSaga() {
+	yield takeLatest(types.GET_PENDING_COUNT, getPendingCount);
+};
+
 const createWatcherSaga = function* createWatcherSaga() {
 	yield takeLatest(types.CREATE_REQUISITION_SLIP, create);
 };
@@ -209,6 +230,7 @@ export default [
 	listExtendedWatcherSaga(),
 	getByIdWatcherSaga(),
 	getByIdAndBranchWatcherSaga(),
+	getPendingCountWatcherSaga(),
 	createWatcherSaga(),
 	editWatcherSaga(),
 	setOutOfStockWatcherSaga(),

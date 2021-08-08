@@ -7,11 +7,8 @@ import { Box } from '../../../components/elements';
 import { TableHeaderRequisitionSlip } from '../../../components/Table/TableHeaders/TableHeaderRequisitionSlip';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
-import {
-	request,
-	requisitionSlipActions,
-	userTypes,
-} from '../../../global/types';
+import { request, userTypes } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
@@ -29,25 +26,16 @@ const columns = [
 	{ title: 'Progress', dataIndex: 'progress' },
 ];
 
-const pendingRequisitionSlipActions = [
-	requisitionSlipActions.NEW,
-	requisitionSlipActions.SEEN,
-	requisitionSlipActions.F_OS1_CREATING,
-	requisitionSlipActions.F_OS1_CREATED,
-	requisitionSlipActions.F_OS1_PREPARING,
-	requisitionSlipActions.F_OS1_PREPARED,
-	requisitionSlipActions.F_DS1_CREATING,
-	requisitionSlipActions.F_DS1_CREATED,
-];
-
 export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('all');
 	const [selectedBranch, setSelectedBranch] = useState('all');
+	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
+	const { user } = useAuth();
 	const {
 		requisitionSlips,
 		pageCount,
@@ -56,9 +44,9 @@ export const RequisitionSlips = () => {
 		getRequisitionSlipsExtended,
 		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
+	const { getPendingCount } = useRequisitionSlips();
 
 	// METHODS
-	// Effect: Format requisitionSlips to be rendered in Table
 	useEffect(() => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
 			const {
@@ -89,6 +77,11 @@ export const RequisitionSlips = () => {
 	// Filter by status and branch
 	useEffect(() => {
 		onFetchRequisitionSlips(1, pageSize, true);
+		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+			if (status === request.SUCCESS) {
+				setPendingCount(count);
+			}
+		});
 	}, [selectedStatus, selectedBranch]);
 
 	const getBranchOptions = useCallback(
@@ -100,14 +93,6 @@ export const RequisitionSlips = () => {
 			...branches.map(({ id, name }) => ({ value: id, name })),
 		],
 		[branches],
-	);
-
-	const getPendingCount = useCallback(
-		() =>
-			requisitionSlips.filter(({ action }) =>
-				pendingRequisitionSlipActions.includes(action?.action),
-			).length,
-		[requisitionSlips],
 	);
 
 	const onFetchRequisitionSlips = (page, newPageSize, shouldReset) => {
@@ -138,7 +123,7 @@ export const RequisitionSlips = () => {
 					onStatusSelect={(status) => setSelectedStatus(status)}
 					branches={getBranchOptions()}
 					onBranchSelect={(branch) => setSelectedBranch(branch)}
-					pending={getPendingCount()}
+					pending={pendingCount}
 				/>
 
 				<Table

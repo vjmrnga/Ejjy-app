@@ -3,7 +3,10 @@ import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../../../ducks/order-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback } from '../../../utils/function';
+import {
+	modifiedCallback,
+	modifiedExtraCallback,
+} from '../../../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Order slip was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the order slip';
@@ -20,13 +23,14 @@ export const useOrderSlips = () => {
 	const [recentRequest, setRecentRequest] = useState<any>();
 
 	const orderSlips = useSelector(selectors.selectOrderSlips());
-	const getOrderSlips = useActionDispatch(actions.getOrderSlips);
-	const getOrderSlipsExtended = useActionDispatch(
+	const getOrderSlipsAction = useActionDispatch(actions.getOrderSlips);
+	const getOrderSlipsExtendedAction = useActionDispatch(
 		actions.getOrderSlipsExtended,
 	);
-	const createOrderSlip = useActionDispatch(actions.createOrderSlip);
-	const editOrderSlip = useActionDispatch(actions.editOrderSlip);
-	const removeOrderSlip = useActionDispatch(actions.removeOrderSlip);
+	const getPendingCountAction = useActionDispatch(actions.getPendingCount);
+	const createOrderSlipAction = useActionDispatch(actions.createOrderSlip);
+	const editOrderSlipAction = useActionDispatch(actions.editOrderSlip);
+	const removeOrderSlipAction = useActionDispatch(actions.removeOrderSlip);
 
 	const reset = () => {
 		resetError();
@@ -37,19 +41,30 @@ export const useOrderSlips = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const getOrderSlipRequest = (requisitionSlipId) => {
+	const getOrderSlip = (requisitionSlipId) => {
 		setRecentRequest(types.GET_ORDER_SLIPS);
-		getOrderSlips({ requisition_slip_id: requisitionSlipId, callback });
+		getOrderSlipsAction({ requisition_slip_id: requisitionSlipId, callback });
 	};
 
-	const getOrderSlipsExtendedRequest = (requisitionSlipId) => {
+	const getOrderSlipsExtended = (requisitionSlipId) => {
 		setRecentRequest(types.GET_ORDER_SLIPS_EXTENDED);
-		getOrderSlipsExtended({ requisition_slip_id: requisitionSlipId, callback });
+		getOrderSlipsExtendedAction({
+			requisition_slip_id: requisitionSlipId,
+			callback,
+		});
 	};
 
-	const createOrderSlipRequest = (orderSlip) => {
+	const getPendingCount = (data, extraCallback = null) => {
+		setRecentRequest(types.GET_PENDING_COUNT);
+		getPendingCountAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
+	const createOrderSlip = (orderSlip) => {
 		setRecentRequest(types.CREATE_ORDER_SLIP);
-		createOrderSlip({
+		createOrderSlipAction({
 			...orderSlip,
 			callback: modifiedCallback(
 				callback,
@@ -59,9 +74,9 @@ export const useOrderSlips = () => {
 		});
 	};
 
-	const editOrderSlipRequest = (orderSlip) => {
+	const editOrderSlip = (orderSlip) => {
 		setRecentRequest(types.EDIT_ORDER_SLIP);
-		editOrderSlip({
+		editOrderSlipAction({
 			...orderSlip,
 			callback: modifiedCallback(
 				callback,
@@ -71,9 +86,9 @@ export const useOrderSlips = () => {
 		});
 	};
 
-	const removeOrderSlipRequest = (id) => {
+	const removeOrderSlip = (id) => {
 		setRecentRequest(types.REMOVE_ORDER_SLIP);
-		removeOrderSlip({
+		removeOrderSlipAction({
 			id,
 			callback: modifiedCallback(
 				callback,
@@ -93,11 +108,12 @@ export const useOrderSlips = () => {
 
 	return {
 		orderSlips,
-		getOrderSlip: getOrderSlipRequest,
-		getOrderSlipsExtended: getOrderSlipsExtendedRequest,
-		createOrderSlip: createOrderSlipRequest,
-		editOrderSlip: editOrderSlipRequest,
-		removeOrderSlip: removeOrderSlipRequest,
+		getOrderSlip,
+		getOrderSlipsExtended,
+		getPendingCount,
+		createOrderSlip,
+		editOrderSlip,
+		removeOrderSlip,
 		status,
 		errors,
 		recentRequest,

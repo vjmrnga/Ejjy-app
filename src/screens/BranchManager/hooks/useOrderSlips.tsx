@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { actions, types } from '../../../ducks/order-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { onCallback } from '../../../utils/function';
+import { modifiedExtraCallback, onCallback } from '../../../utils/function';
 import {
 	addInCachedData,
 	executePaginatedRequest,
@@ -30,6 +30,7 @@ export const useOrderSlips = () => {
 	const getOrderSlipsExtendedAction = useActionDispatch(
 		actions.getOrderSlipsExtended,
 	);
+	const getPendingCountAction = useActionDispatch(actions.getPendingCount);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
@@ -101,6 +102,14 @@ export const useOrderSlips = () => {
 		});
 	};
 
+	const getPendingCount = (data, extraCallback = null) => {
+		setRecentRequest(types.GET_PENDING_COUNT);
+		getPendingCountAction({
+			...data,
+			callback: modifiedExtraCallback(requestCallback, extraCallback),
+		});
+	};
+
 	return {
 		orderSlips: currentPageData,
 		pageCount,
@@ -111,6 +120,7 @@ export const useOrderSlips = () => {
 		removeItemInPagination,
 
 		getOrderSlipsExtended,
+		getPendingCount,
 		status,
 		errors,
 		recentRequest,

@@ -1,7 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import {
 	AddButtonIcon,
@@ -10,15 +9,16 @@ import {
 	TableHeader,
 } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
 import { preparationSlipStatusOptions } from '../../../global/options';
 import { preparationSlipStatus, request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import {
 	calculateTableHeight,
 	formatDateTime,
 	getPreparationSlipStatus,
 } from '../../../utils/function';
+import { useOrderSlips } from '../../BranchManager/hooks/useOrderSlips';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';
@@ -30,8 +30,6 @@ const columns = [
 	{ title: 'Actions', dataIndex: 'action' },
 ];
 
-const pendingPreparationSlipStatus = [preparationSlipStatus.NEW];
-
 export const PreparationSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
@@ -39,22 +37,29 @@ export const PreparationSlips = () => {
 	const [viewPreparationSlipModalVisible, setViewPreparationSlipModalVisible] =
 		useState(false);
 	const [selectedPreparationSlip, setSelectedPreparationSlip] = useState(null);
+	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const user = useSelector(authSelectors.selectUser());
+	const { user } = useAuth();
 	const {
 		preparationSlips,
 		getPreparationSlips,
 		status: preparationSlipsStatus,
 		recentRequest,
 	} = usePreparationSlips();
+	const { getPendingCount } = useOrderSlips();
 
+	// METHODS
 	useEffect(() => {
-		getPreparationSlips(user?.id);
+		getPreparationSlips(user.id);
+		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+			if (status === request.SUCCESS) {
+				setPendingCount(count);
+			}
+		});
 	}, []);
 
-	// Effect: Format preparation slips to be rendered in Table
 	useEffect(() => {
 		const formattedPreparationSlips = preparationSlips.map(
 			(preparationSlip) => {
@@ -123,14 +128,6 @@ export const PreparationSlips = () => {
 		setTableData(filteredData);
 	};
 
-	const getPendingCount = useCallback(
-		() =>
-			preparationSlips.filter(({ status }) =>
-				pendingPreparationSlipStatus.includes(status),
-			).length,
-		[preparationSlips],
-	);
-
 	return (
 		<Content title="Preparation Slips">
 			<Box>
@@ -138,7 +135,7 @@ export const PreparationSlips = () => {
 					statuses={preparationSlipStatusOptions}
 					onStatusSelect={onStatusSelect}
 					onSearch={onSearch}
-					pending={getPendingCount()}
+					pending={pendingCount}
 				/>
 
 				<Table

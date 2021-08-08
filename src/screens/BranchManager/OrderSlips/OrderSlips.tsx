@@ -1,11 +1,10 @@
 import { Table } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
 import { pageSizeOptions } from '../../../global/options';
-import { orderSlipStatus, request } from '../../../global/types';
+import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import {
 	formatDateTime,
 	getOrderSlipStatusBranchManager,
@@ -20,16 +19,15 @@ const columns = [
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
-const pendingOrderSlipStatus = [orderSlipStatus.PREPARING];
-
 export const OrderSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
+	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const user = useSelector(authSelectors.selectUser());
+	const { user } = useAuth();
 	const {
 		orderSlips,
 		getOrderSlipsExtended,
@@ -38,14 +36,20 @@ export const OrderSlips = () => {
 		pageSize,
 		status: orderSlipsStatus,
 	} = useOrderSlips();
+	const { getPendingCount } = useOrderSlips();
 
 	// METHODS
 	// Effect: Fetch order slips
 	useEffect(() => {
 		getOrderSlipsExtended({
-			assigned_store_id: user?.branch?.id,
+			assigned_store_id: user.branch?.id,
 			requisition_slip_id: null,
 			page: 1,
+		});
+		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+			if (status === request.SUCCESS) {
+				setPendingCount(count);
+			}
 		});
 	}, [user]);
 
@@ -78,14 +82,6 @@ export const OrderSlips = () => {
 		setViewOrderSlipVisible(true);
 	};
 
-	const getPendingCount = useCallback(
-		() =>
-			orderSlips.filter(({ status }) =>
-				pendingOrderSlipStatus.includes(status?.value),
-			).length,
-		[orderSlips],
-	);
-
 	const onPageChange = (page) => {
 		getOrderSlipsExtended({
 			assigned_store_id: user?.branch?.id,
@@ -97,7 +93,7 @@ export const OrderSlips = () => {
 	return (
 		<Content className="OrderSlips" title="Order Slips">
 			<Box>
-				<TableHeader title="F-OS1" pending={getPendingCount()} />
+				<TableHeader title="F-OS1" pending={pendingCount} />
 
 				<Table
 					columns={columns}
