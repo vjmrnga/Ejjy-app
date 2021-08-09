@@ -217,8 +217,8 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 			<thead>
 				<tr>
 					<th style="text-align: left">NAME</th>
-					<th style="text-align: center">QTY (${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
-					<th style="text-align: right">PERSONNEL</th>
+					<th style="text-align: center">QTY REQUESTED<br/>(${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
+					<th style="text-align: center">QTY SERVED</th>
 				</tr>
 			</thead>  
 			<tbody>
@@ -231,13 +231,10 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 							</td>
 
 							<td style="text-align: center">
-								${quantityType === quantityTypes.PIECE ? 
-									`${product.piecesInputted}/${product.piecesOrdered}` : 
-									`${product.bulkInputted}/${product.bulkOrdered}`
-								}
-								</td>
+								${quantityType === quantityTypes.PIECE ? product.piecesInputted : product.bulkInputted}
+							</td>
 
-							<td style="text-align: right">${product.personnel}</td>
+							<td style="text-align: center">_____</td>
 						</tr>
 					`
 					)).join('')	
@@ -245,7 +242,8 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 			</tbody>
 		</table>
 
-		<hr />
+		<br/>
+		<br/>
 
 		<table style="width: 100%;">
 			<tr>
@@ -257,21 +255,10 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 				<td style="text-align: right">${user.first_name} ${user.last_name}</td>
 			</tr>
 		</table>
-
-		<br/>
-		<br/>
-
-		<div style="text-align: center; display: flex; flex-direction: column">
-			<span>EJ & JY I.T. SOLUTIONS</span>
-			<span>Burgos St., Poblacion, Carmen,</span>
-			<span>Agusan del Norte</span>
-			<span>178-846-963-005</span>
-			<span>ACCREDITATION NUMBER</span>
-			<span>DATE ISSUED</span>
-			<span>VALID UNTIL</span>
-		</div>
 	</div>
 	`;
+
+	console.log(data);
 
 	print(
 		data, 
