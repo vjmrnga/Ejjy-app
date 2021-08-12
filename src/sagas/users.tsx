@@ -115,7 +115,7 @@ function* getByIdOnline({ payload }: any) {
 		yield put(
 			actions.save({ type: types.GET_USER_BY_ID, user: response.data }),
 		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}

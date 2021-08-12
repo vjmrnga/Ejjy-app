@@ -64,17 +64,19 @@ export const AssignUser = ({ match }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		getUserById(userId, ({ status }) => {
+		getUserById(userId, ({ status, data: userData }) => {
 			if (status === request.ERROR) {
 				history.replace('/404');
-			} else if (status === request.SUCCESS) {
-				if (BRANCH_USER_TYPES.includes(user?.user_type)) {
-					getBranchMachines(user?.branch?.id);
-					getCashieringAssignmentsByUserId({
-						userId,
-						branchId: user?.branch?.id,
-					});
-				}
+			} else if (
+				status === request.SUCCESS &&
+				BRANCH_USER_TYPES.includes(userData?.user_type)
+			) {
+				const branchId = userData?.branch?.id;
+				getBranchMachines(branchId);
+				getCashieringAssignmentsByUserId({
+					userId,
+					branchId,
+				});
 			}
 		});
 	}, []);
