@@ -152,7 +152,7 @@ export const OrderSlips = ({
 	) => {
 		let requestedProducts = [];
 
-		if (selectedOrderSlip) {
+		if (orderSlip) {
 			const findBranchProduct = (productId) =>
 				bProducts.find((item) => item.product.id === productId);
 
@@ -178,9 +178,6 @@ export const OrderSlips = ({
 				);
 			});
 		} else {
-			// const findBranchProduct = (productId) =>
-			// 	branchProducts.find((item) => item.product.id === productId);
-
 			requestedProducts = reqSlip?.products
 				?.filter(({ is_out_of_stock, status, product_id }) => {
 					// Condition: Not yet added to OS
@@ -282,10 +279,6 @@ export const OrderSlips = ({
 			);
 
 			const productIds = requisitionSlip.products
-				.filter(
-					({ status }) =>
-						status === requisitionSlipProductStatus.NOT_ADDED_TO_OS,
-				)
 				.map(({ product_id }) => product_id)
 				.join(',');
 
@@ -326,8 +319,6 @@ export const OrderSlips = ({
 			).length,
 		[orderSlips],
 	);
-
-	console.log('requisitionSlip?.products', requisitionSlip?.products);
 
 	return (
 		<Box>

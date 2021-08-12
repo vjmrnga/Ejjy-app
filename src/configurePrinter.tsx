@@ -138,13 +138,13 @@ const print = (printData, loadingMessage, successMessage, errorMessage) => {
 				}
 			);
 
-			const data = {
+			const data = [{
 				type: 'pixel',
 				format: 'html',
 				flavor: 'plain',
 				options: { pageWidth: PAPER_WIDTH },
 				data: printData,
-			}
+			}]
 
 			return qz.print(config, data);
 		})
@@ -170,7 +170,6 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 				<span style="font-size: 20px">EJ AND JY</span>
 				<span>WET MARKET AND ENTERPRISES</span>
 				<span>POB., CARMEN, AGUSAN DEL NORTE</span>
-				<span>${user?.branch?.name}</span>
 
 				<br />
 
@@ -231,10 +230,12 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 							</td>
 
 							<td style="text-align: center">
-								${quantityType === quantityTypes.PIECE ? product.piecesInputted : product.bulkInputted}
+								${quantityType === quantityTypes.PIECE ? product.piecesOrdered : product.bulkOrdered}
 							</td>
 
-							<td style="text-align: center">_____</td>
+							<td style="text-align: center">
+								<div style="width: 70px; height: 30px; border: 1px solid black; margin: auto;"></div>
+							</td>
 						</tr>
 					`
 					)).join('')	
