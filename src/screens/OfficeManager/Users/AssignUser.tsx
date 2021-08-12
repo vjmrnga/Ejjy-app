@@ -1,4 +1,4 @@
-import { Divider, message, Spin, Table } from 'antd';
+import { Spin, Table, message } from 'antd';
 import cn from 'classnames';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,19 +9,27 @@ import {
 	Content,
 	DetailsRow,
 	DetailsSingle,
+	RequestErrors,
 } from '../../../components';
 import { Box, Select } from '../../../components/elements';
+import { RequestWarnings } from '../../../components/RequestWarnings/RequestWarnings';
 import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
 import { request, userTypes } from '../../../global/types';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
 import { useUsers } from '../../../hooks/useUsers';
+import { convertIntoArray } from '../../../utils/function';
+import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
 import './style.scss';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'date' },
 	{ title: 'Day', dataIndex: 'day' },
 	{ title: 'Actions', dataIndex: 'actions' },
+];
+
+const BRANCH_USER_TYPES = [
+	userTypes.BRANCH_MANAGER,
+	userTypes.BRANCH_PERSONNEL,
 ];
 
 interface Props {
@@ -40,6 +48,7 @@ export const AssignUser = ({ match }: Props) => {
 		branchMachines,
 		getBranchMachines,
 		status: branchesMachinesStatus,
+		errors: branchesMachinesErrors,
 	} = useBranchMachines();
 	const {
 		cashieringAssignments,
@@ -48,43 +57,27 @@ export const AssignUser = ({ match }: Props) => {
 		editCashieringAssignment,
 		removeCashieringAssignment,
 		status: cashieringAssignmentsStatus,
+		errors: cashieringAssignmentsErrors,
 		warnings: cashieringAssignmentsWarnings,
 		recentRequest: cashieringAssignmentsRecentRequest,
 	} = useCashieringAssignments();
 
 	// METHODS
 	useEffect(() => {
-		getUserById(userId, userDoesNotExistCallback);
-	}, []);
-
-	useEffect(() => {
-		if (
-			cashieringAssignmentsStatus === request.SUCCESS &&
-			cashieringAssignmentsWarnings?.length
-		) {
-			cashieringAssignmentsWarnings?.forEach((warning) => {
-				message.warning(warning);
-			});
-		}
-	}, [cashieringAssignmentsStatus, cashieringAssignmentsWarnings]);
-
-	const userDoesNotExistCallback = ({ status }) => {
-		if (status === request.ERROR) {
-			history.replace('/404');
-		} else if (status === request.SUCCESS) {
-			if (
-				[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(
-					user?.user_type,
-				)
-			) {
-				getBranchMachines(user?.branch?.id);
-				getCashieringAssignmentsByUserId({
-					userId,
-					branchId: user?.branch?.id,
-				});
+		getUserById(userId, ({ status }) => {
+			if (status === request.ERROR) {
+				history.replace('/404');
+			} else if (status === request.SUCCESS) {
+				if (BRANCH_USER_TYPES.includes(user?.user_type)) {
+					getBranchMachines(user?.branch?.id);
+					getCashieringAssignmentsByUserId({
+						userId,
+						branchId: user?.branch?.id,
+					});
+				}
 			}
-		}
-	};
+		});
+	}, []);
 
 	// Effect: Format cashiering assignments
 	useEffect(() => {
@@ -121,9 +114,9 @@ export const AssignUser = ({ match }: Props) => {
 						</div>
 					) : (
 						<AddButtonIcon
-							classNames={cn('btn-assign', { disabled: isDateAfter })}
+							classNames={cn({ AssignUsers_btnAssign__disabled: isDateAfter })}
 							tooltip="Assign"
-							onClick={() => onAssign(item.date)}
+							onClick={() => onAssign(item.date, branchMachines?.[0]?.id)}
 						/>
 					),
 				};
@@ -133,14 +126,16 @@ export const AssignUser = ({ match }: Props) => {
 		}
 	}, [user, cashieringAssignments, branchMachines]);
 
-	const onAssign = (date) => {
+	const onAssign = (date, branchMachineId) => {
 		if (branchMachines.length) {
 			createCashieringAssignment({
 				user_id: userId,
 				branchId: user?.branch?.id,
-				branch_machine_id: branchMachines[0].id,
+				branch_machine_id: branchMachineId,
 				date: date.format('YYYY-MM-DD'),
 			});
+		} else {
+			message.error('There is no branch machines fetched.');
 		}
 	};
 
@@ -221,7 +216,7 @@ export const AssignUser = ({ match }: Props) => {
 		<Content className="AssignUsers" title="Assign User">
 			<Spin size="large" spinning={isFetching()} tip="Fetching user details...">
 				<Box>
-					<div className="AssignUsers_details">
+					<div className="PaddingHorizontal PaddingVertical">
 						<DetailsRow>
 							<DetailsSingle
 								label="Name"
@@ -231,16 +226,26 @@ export const AssignUser = ({ match }: Props) => {
 						</DetailsRow>
 					</div>
 
-					{[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(
-						user?.user_type,
-					) && (
+					{BRANCH_USER_TYPES.includes(user?.user_type) && (
 						<>
-							<div className="AssignUsers_cashieringAssignments">
-								<Divider dashed />
-								<DetailsRow>
-									<DetailsSingle label="Assignments" value="" />
-								</DetailsRow>
-							</div>
+							<RequestErrors
+								errors={[
+									...convertIntoArray(
+										branchesMachinesErrors,
+										'Branch Machines',
+									),
+									...convertIntoArray(
+										cashieringAssignmentsErrors,
+										'Cashiering Assignments',
+									),
+								]}
+								withSpaceBottom
+							/>
+
+							<RequestWarnings
+								warnings={convertIntoArray(cashieringAssignmentsWarnings)}
+								withSpaceBottom
+							/>
 
 							<Table
 								columns={columns}

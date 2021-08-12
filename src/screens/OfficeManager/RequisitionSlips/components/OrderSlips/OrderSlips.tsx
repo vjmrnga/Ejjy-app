@@ -136,11 +136,11 @@ export const OrderSlips = ({
 
 	const hasAvailableProducts = useCallback(
 		() =>
-			!!requisitionSlip?.products?.filter(
+			requisitionSlip?.products?.some(
 				({ is_out_of_stock, status }) =>
 					status === requisitionSlipProductStatus.NOT_ADDED_TO_OS &&
 					!is_out_of_stock,
-			).length,
+			),
 		[requisitionSlip],
 	);
 
@@ -326,6 +326,8 @@ export const OrderSlips = ({
 			).length,
 		[orderSlips],
 	);
+
+	console.log('requisitionSlip?.products', requisitionSlip?.products);
 
 	return (
 		<Box>

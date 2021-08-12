@@ -23,8 +23,10 @@ export const useBranchMachines = () => {
 	const [warnings, setWarnings] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
+	// SELECTORS
 	const branchMachines = useSelector(selectors.selectBranchMachines());
 
+	// ACTIONS
 	const getBranchMachinesAction = useActionDispatch(actions.getBranchMachines);
 	const retrieveBranchMachineSalesAction = useActionDispatch(
 		actions.retrieveBranchMachineSales,
@@ -32,12 +34,12 @@ export const useBranchMachines = () => {
 	const retrieveBranchMachineSalesAllAction = useActionDispatch(
 		actions.retrieveBranchMachineSalesAll,
 	);
-
 	const createBranchMachineAction = useActionDispatch(
 		actions.createBranchMachine,
 	);
 	const editBranchMachineAction = useActionDispatch(actions.editBranchMachine);
 
+	// METHODS
 	const resetError = () => setErrors([]);
 
 	const resetStatus = () => setStatus(request.NONE);

@@ -1,15 +1,7 @@
 @import '../../../assets/styles/main';
 
 .AssignUsers {
-	&_details {
-		padding: 25px 25px 0 25px;
-	}
-
-	&_cashieringAssignments {
-		padding: 0 25px 10px 25px;
-	}
-
-	.btn-assign.disabled {
+	&_btnAssign__disabled {
 		opacity: 0.4 !important;
 		background-color: rgba(0, 0, 0, 0.1) !important;
 	}
