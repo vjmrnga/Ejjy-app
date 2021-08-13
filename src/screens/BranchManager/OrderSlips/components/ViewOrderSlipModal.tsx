@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Col, Divider, Modal, Row } from 'antd';
+import { Col, Divider, Modal, Row, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect, TableNormal } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
@@ -126,7 +126,12 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 			title="View Order Slip"
 			className="ModalLarge"
 			visible={visible}
-			footer={[<Button text="Close" onClick={close} />]}
+			footer={[
+				<Space size={10}>
+					<Button text="Close" onClick={close} />
+					<Button variant="primary" text="Print" disabled />
+				</Space>,
+			]}
 			onCancel={close}
 			centered
 			closable

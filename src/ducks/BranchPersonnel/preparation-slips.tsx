@@ -12,7 +12,6 @@ export const types = {
 
 const initialState = {
 	preparationSlips: [],
-	preparationSlip: {},
 };
 
 const reducer = handleActions(
@@ -27,25 +26,6 @@ const reducer = handleActions(
 					break;
 				}
 
-				case types.GET_PREPARATION_SLIP_BY_ID: {
-					newData = { preparationSlip: payload.preparationSlip };
-					break;
-				}
-				// NOTE: Commented out because prep slip re-fetched after fulfilling prep slip
-				// case types.FULFILL_PREPARATION_SLIP: {
-				// 	const { preparationSlip: editedPreparationSlip } = payload;
-				// 	const index = state.preparationSlips.findIndex(
-				// 		({ id }) => id === editedPreparationSlip.id,
-				// 	);
-
-				// 	if (index !== NOT_FOUND_INDEX) {
-				// 		const preparationSlips = cloneDeep(state.preparationSlips);
-				// 		preparationSlips[index].products = editedPreparationSlip.products;
-				// 		preparationSlips[index].status = preparationSlipStatus.COMPLETED;
-				// 		newData = { preparationSlips };
-				// 	}
-				// 	break;
-				// }
 				default:
 					break;
 			}
@@ -67,8 +47,6 @@ const selectState = (state: any) => state[key] || initialState;
 export const selectors = {
 	selectPreparationSlips: () =>
 		createSelector(selectState, (state) => state.preparationSlips),
-	selectPreparationSlip: () =>
-		createSelector(selectState, (state) => state.preparationSlip),
 };
 
 export default reducer;

@@ -13,21 +13,27 @@ import {
 } from '../../../utils/function';
 
 const FULFILL_SUCCESS_MESSAGE = 'Preparation slip was fulfilled successfully';
+const FULFILL_SAVE_SUCCESS_MESSAGE = 'Preparation slip was saved successfully';
 const FULFILL_ERROR_MESSAGE =
 	'An error occurred while fulfilling the preparation slip';
 
 export const usePreparationSlips = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	const preparationSlip = useSelector(selectors.selectPreparationSlip());
+	// SELECTORS
 	const preparationSlips = useSelector(selectors.selectPreparationSlips());
-	const getPreparationSlips = useActionDispatch(actions.getPreparationSlips);
-	const getPreparationSlipById = useActionDispatch(
+
+	// ACTIONS
+	const getPreparationSlipsAction = useActionDispatch(
+		actions.getPreparationSlips,
+	);
+	const getPreparationSlipByIdAction = useActionDispatch(
 		actions.getPreparationSlipById,
 	);
-	const fulfillPreparationSlip = useActionDispatch(
+	const fulfillPreparationSlipAction = useActionDispatch(
 		actions.fulfillPreparationSlip,
 	);
 
@@ -40,32 +46,32 @@ export const usePreparationSlips = () => {
 
 	const resetStatus = () => setStatus(request.NONE);
 
-	const getPreparationSlipsRequest = (assigned_personnel_id) => {
+	const getPreparationSlips = (assigned_personnel_id) => {
 		setRecentRequest(types.GET_PREPARATION_SLIPS);
-		getPreparationSlips({ assigned_personnel_id, callback });
+		getPreparationSlipsAction({ assigned_personnel_id, callback });
 	};
 
-	const getPreparationSlipByIdRequest = (
-		id,
-		assigned_personnel_id,
-		extraCallback = null,
-	) => {
+	const getPreparationSlipById = (data, extraCallback = null) => {
 		setRecentRequest(types.GET_PREPARATION_SLIP_BY_ID);
-		getPreparationSlipById({
-			id,
-			assigned_personnel_id,
+		getPreparationSlipByIdAction({
+			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const fulfillPreparationSlipRequest = (data) => {
+	const fulfillPreparationSlip = (data, extraCallback = null) => {
 		setRecentRequest(types.FULFILL_PREPARATION_SLIP);
-		fulfillPreparationSlip({
+		fulfillPreparationSlipAction({
 			...data,
-			callback: modifiedCallback(
-				callback,
-				FULFILL_SUCCESS_MESSAGE,
-				FULFILL_ERROR_MESSAGE,
+			callback: modifiedExtraCallback(
+				modifiedCallback(
+					callback,
+					data.is_prepared
+						? FULFILL_SUCCESS_MESSAGE
+						: FULFILL_SAVE_SUCCESS_MESSAGE,
+					FULFILL_ERROR_MESSAGE,
+				),
+				extraCallback,
 			),
 		});
 	};
@@ -79,11 +85,10 @@ export const usePreparationSlips = () => {
 	};
 
 	return {
-		preparationSlip,
 		preparationSlips,
-		getPreparationSlips: getPreparationSlipsRequest,
-		getPreparationSlipById: getPreparationSlipByIdRequest,
-		fulfillPreparationSlip: fulfillPreparationSlipRequest,
+		getPreparationSlips,
+		getPreparationSlipById,
+		fulfillPreparationSlip,
 		status,
 		errors,
 		recentRequest,

@@ -1,13 +1,7 @@
-import { Col, Divider, Row } from 'antd';
+import { Divider, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { Table } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
-import { request } from '../../../../global/types';
-import {
-	calculateTableHeight,
-	convertToBulk,
-	sleep,
-} from '../../../../utils/function';
 import '../style.scss';
 import {
 	RequisitionSlipDetails,
@@ -16,41 +10,31 @@ import {
 
 interface Props {
 	requisitionSlip: any;
-	requisitionSlipStatus: number;
 }
 
-const columns = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
-	{ title: 'Name', dataIndex: 'name' },
+const columns: ColumnsType = [
+	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
 ];
 
-export const RequestedProducts = ({
-	requisitionSlip,
-	requisitionSlipStatus,
-}: Props) => {
-	const [requestedProducts, setRequestedProducts] = useState([]);
+export const RequestedProducts = ({ requisitionSlip }: Props) => {
+	const [data, setData] = useState([]);
 
-	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
-		if (requisitionSlip && requisitionSlipStatus === request.SUCCESS) {
-			const formattedRequestedProducts = requisitionSlip?.products.map(
-				(requestedProduct) => {
-					const { product, quantity_piece } = requestedProduct;
-					const { barcode, textcode, name, pieces_in_bulk } = product;
+		if (requisitionSlip) {
+			setData(
+				requisitionSlip?.products?.map((requestedProduct) => {
+					const { product } = requestedProduct;
+					const { barcode, textcode, name } = product;
 
 					return {
-						_quantity_piece: quantity_piece,
-						_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
 						barcode: barcode || textcode,
 						name,
-						// quantity: quantity_piece,
 					};
-				},
+				}),
 			);
-
-			sleep(500).then(() => setRequestedProducts(formattedRequestedProducts));
 		}
-	}, [requisitionSlip, requisitionSlipStatus]);
+	}, [requisitionSlip]);
 
 	return (
 		<Box>
@@ -61,20 +45,14 @@ export const RequestedProducts = ({
 
 			<div className="ViewRequisitionSlip_requestedProducts">
 				<Divider dashed />
-				<Row gutter={[15, 15]} align="middle">
-					<Col span={24}>
-						<Label label="Requested Products" />
-					</Col>
-				</Row>
+				<Label label="Requested Products" />
 			</div>
 
 			<Table
 				columns={columns}
-				dataSource={requestedProducts}
-				scroll={{
-					y: calculateTableHeight(requestedProducts.length),
-					x: '100%',
-				}}
+				dataSource={data}
+				scroll={{ y: 250 }}
+				pagination={false}
 			/>
 		</Box>
 	);

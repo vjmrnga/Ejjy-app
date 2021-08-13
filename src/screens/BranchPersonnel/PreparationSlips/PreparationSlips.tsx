@@ -1,20 +1,16 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-	AddButtonIcon,
-	Content,
-	Table,
-	TableHeader,
-} from '../../../components';
+import { AddButtonIcon, Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
 import { preparationSlipStatusOptions } from '../../../global/options';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import {
-	calculateTableHeight,
 	formatDateTime,
 	getPreparationSlipStatus,
 } from '../../../utils/function';
@@ -23,11 +19,15 @@ import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';
 
-const columns = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
-	{ title: 'Status', dataIndex: 'status' },
-	{ title: 'Actions', dataIndex: 'action' },
+const columns: ColumnsType = [
+	{ title: 'ID', dataIndex: 'id', key: 'id' },
+	{
+		title: 'Date & Time Created',
+		dataIndex: 'datetime_created',
+		key: 'datetime_created',
+	},
+	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{ title: 'Actions', dataIndex: 'action', key: 'action' },
 ];
 
 export const PreparationSlips = () => {
@@ -141,7 +141,6 @@ export const PreparationSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={tableData}
-					scroll={{ y: calculateTableHeight(tableData.length), x: '100%' }}
 					loading={getFetchLoading()}
 				/>
 

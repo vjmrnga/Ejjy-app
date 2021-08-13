@@ -22,6 +22,12 @@
 		tbody {
 			tr {
 				border-bottom: 1px solid #f5f6fa;
+
+				&.active {
+					td {
+						background-color: transparentize($color-secondary, 0.8);
+					}
+				}
 			}
 
 			td {

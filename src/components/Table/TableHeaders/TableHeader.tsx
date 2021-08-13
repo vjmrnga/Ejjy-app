@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { AddIcon } from '../..';
 import { Button, SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
-import { Pending } from '../../Pending/Pending';
+import { PendingCount } from '../../PendingCount/PendingCount';
 import './style.scss';
 
 const SEARCH_DEBOUNCE_TIME = 250; // 250ms
@@ -82,7 +82,7 @@ export const TableHeader = ({
 				</div>
 
 				<div className="pending-button">
-					{pending >= 0 && <Pending value={pending} />}
+					{pending >= 0 && <PendingCount value={pending} />}
 
 					{onCreate && (
 						<Button

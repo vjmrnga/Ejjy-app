@@ -14,10 +14,13 @@ import {
 	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
 	ReorderBadgePill,
-	ROW_HEIGHT,
 } from '../components';
 import { BadgePill, UncontrolledInput } from '../components/elements';
-import { EMPTY_CELL, LOCAL_IP_ADDRESS_KEY } from '../global/constants';
+import {
+	EMPTY_CELL,
+	LOCAL_IP_ADDRESS_KEY,
+	ROW_HEIGHT,
+} from '../global/constants';
 import {
 	branchProductStatus,
 	deliveryReceiptStatus,

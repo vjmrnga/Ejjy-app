@@ -11,30 +11,13 @@
 }
 
 .FulfillPreparationSlip {
-	.details {
-		padding: 25px 25px 0 25px;
+	&_keyboardKeys {
+		display: grid;
+		grid-template-columns: 120px 140px;
+		column-gap: 20px;
 	}
 
-	.keyboard-keys {
-		padding: 0 25px 0 25px;
-		display: flex;
-		align-items: center;
-
-		.KeyboardButton {
-			margin-right: 50px;
-		}
-	}
-
-	.search-input-container {
-		padding: 25px;
-
-		input {
-			display: block;
-			width: 100%;
-		}
-	}
-
-	.product-name {
+	&_productName {
 		display: flex;
 		align-items: center;
 
@@ -43,32 +26,22 @@
 		}
 	}
 
-	.btn-fulfill-container {
-		padding: 0 25px 25px 25px;
-
-		.divider {
-			margin-top: 0;
-		}
-
-		.btn-fulfill {
-			display: block;
-			margin-left: auto;
-			width: 150px;
-		}
+	&_btnActions {
+		display: grid;
+		grid-template-columns: 150px 150px;
+		column-gap: 20px;
+		justify-content: end;
 	}
 }
 
 .FulfillSlipModal {
-	.keyboard-keys {
-		display: flex;
-		align-items: center;
-
-		.KeyboardButton {
-			margin-right: 50px;
-		}
+	&_keyboardKeys {
+		display: grid;
+		grid-template-columns: 120px 140px;
+		column-gap: 20px;
 	}
 
-	.input-quantity {
+	&_inputQuantity {
 		margin-top: 20px;
 
 		input {

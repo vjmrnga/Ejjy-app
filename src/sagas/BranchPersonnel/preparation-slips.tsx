@@ -48,7 +48,7 @@ function* list({ payload }: any) {
 }
 
 function* getById({ payload }: any) {
-	const { id, assigned_personnel_id, callback } = payload;
+	const { id, assignedPersonnelId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -57,17 +57,11 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
-			{ assigned_personnel_id },
+			{ assigned_personnel_id: assignedPersonnelId },
 			ONLINE_API_URL,
 		);
 
-		yield put(
-			actions.save({
-				type: types.GET_PREPARATION_SLIP_BY_ID,
-				preparationSlip: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -80,13 +74,7 @@ function* fulfill({ payload }: any) {
 	try {
 		const response = yield call(service.fulfill, data, ONLINE_API_URL);
 
-		yield put(
-			actions.save({
-				type: types.FULFILL_PREPARATION_SLIP,
-				preparationSlip: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}

@@ -1,34 +1,27 @@
-import { Col, Divider, message, Row, Spin } from 'antd';
-import { debounce } from 'lodash';
+import { SearchOutlined } from '@ant-design/icons';
+import { Input, message, Spin } from 'antd';
+import { debounce, throttle, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
-import KeyboardEventHandler from 'react-keyboard-event-handler';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import {
-	BarcodeTable,
-	CheckIcon,
-	Content,
-	TableNormal,
-} from '../../../components';
-import { Box, Button, SearchInput } from '../../../components/elements';
+import { CheckIcon, Content, TableNormal } from '../../../components';
+import { Box, Button, Label } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
-import { selectors as authSelectors } from '../../../ducks/auth';
-import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
 import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { preparationSlipStatus, request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
+import { getKeyDownCombination } from '../../../utils/function';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
+import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
 import { PreparationSlipDetails } from './components/PreparationSlipDetails';
 import './style.scss';
 
-const columnsLeft = [{ name: 'Name' }, { name: 'Ordered' }];
-const columnsRight = [{ name: 'Name' }, { name: 'Inputted' }];
-
-export const fulfillType = {
-	ADD: 1,
-	DEDUCT: 2,
-};
+const columns = [
+	{ name: 'Name' },
+	{ name: 'Ordered', center: true },
+	{ name: 'Inputted', center: true },
+];
 
 interface Props {
 	match: any;
@@ -36,379 +29,355 @@ interface Props {
 
 export const FulfillPreparationSlips = ({ match }: Props) => {
 	const preparationSlipId = match?.params?.id;
-	const history = useHistory();
 
-	const user = useSelector(authSelectors.selectUser());
-	const {
-		preparationSlip,
-		fulfillPreparationSlip,
-		getPreparationSlipById,
-		status: prepSlipStatus,
-		recentRequest,
-		reset,
-	} = usePreparationSlips();
+	// STATES
+	const [preparationSlip, setPreparationSlip] = useState(null);
+	const [psProducts, setPsProducts] = useState({});
+	const [data, setData] = useState([]);
 
-	const [products, setProducts] = useState([]);
-	const [allProducts, setAllProducts] = useState([]);
-	const [inputtedProducts, setInputtedProducts] = useState([]);
+	const [fulfillType, setFulfillType] = useState(null);
 	const [selectedProduct, setSelectedProduct] = useState(null);
-	// eslint-disable-next-line no-unused-vars
-	const [selectedProductIndex, setSelectedProductIndex] = useState(null);
-	const [fulfillPreparationSlipVisible, setFulfillPreparationSlipVisible] =
-		useState(false);
+	const [selectedIndex, setSelectedProductIndex] = useState(0);
+
+	const [isEdited, setIsEdited] = useState(false);
+
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const { user } = useAuth();
+	const { getPreparationSlipById, status: prepSlipStatus } =
+		usePreparationSlips();
+	const {
+		fulfillPreparationSlip: fulfillPrepSlip,
+		status: fulfillPrepSlipStatus,
+	} = usePreparationSlips();
+	const { fulfillPreparationSlip: savePrepSlip, status: savePrepSlipStatus } =
+		usePreparationSlips();
+
+	// METHODS
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
 
 	useEffect(() => {
-		fetchPreparationSlip();
-	}, []);
+		getPreparationSlipById(
+			{ id: preparationSlipId, assignedPersonnelId: user?.id },
+			({ status, data: psData }) => {
+				if (status === request.SUCCESS) {
+					// Save preparation slip
+					setPreparationSlip(psData);
 
-	// Effect: Format preparation slip products
-	useEffect(() => {
-		if (
-			prepSlipStatus === request.SUCCESS &&
-			recentRequest === types.GET_PREPARATION_SLIP_BY_ID &&
-			preparationSlip
-		) {
-			if (preparationSlip.status === preparationSlipStatus.COMPLETED) {
-				history.replace('/preparation-slips');
-				return;
-			}
+					// Save products
+					const initialProducts = {};
+					psData.products.forEach((psProduct) => {
+						initialProducts[psProduct.id] = {
+							// OS product details
+							id: psProduct.id,
+							ordered: psProduct.quantity_piece,
+							fulfilled: psProduct.fulfilled_quantity_piece || 0,
+							assignedPersonId: psProduct.assigned_person.id,
 
-			reset();
-			searchProducts('');
-			formatAllProducts();
-			formatOrderedProducts();
-		}
-	}, [preparationSlip, recentRequest, prepSlipStatus]);
+							// Product details
+							productId: psProduct.product.id,
+							name: psProduct.product.name,
+							barcode: psProduct.product.barcode,
+							textcode: psProduct.product.textcode,
+						};
+					});
 
-	// Effect: Fulfill success
-	useEffect(() => {
-		if (
-			prepSlipStatus === request.SUCCESS &&
-			recentRequest === types.FULFILL_PREPARATION_SLIP
-		) {
-			fetchPreparationSlip();
-		}
-	}, [prepSlipStatus, recentRequest]);
-
-	const getFetchLoadingText = useCallback(() => {
-		if (prepSlipStatus === request.REQUESTING) {
-			if (recentRequest === types.GET_PREPARATION_SLIP_BY_ID) {
-				return 'Fetching preparation slip...';
-			}
-
-			if (recentRequest === types.FULFILL_PREPARATION_SLIP) {
-				return 'Submitting preparation slip...';
-			}
-		}
-
-		return '';
-	}, [prepSlipStatus, recentRequest]);
-
-	const fetchPreparationSlip = () => {
-		getPreparationSlipById(preparationSlipId, user?.id, ({ status }) => {
-			if (status === request.ERROR) {
-				history.replace('/404');
-			}
-		});
-	};
-
-	const searchProducts = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
-
-		const formattedProducts = preparationSlip?.products
-			?.filter(({ product }) => {
-				const name = product?.name?.toLowerCase() ?? '';
-				const barcode = product?.barcode?.toLowerCase() ?? '';
-				const textcode = product?.textcode?.toLowerCase() ?? '';
-
-				return (
-					name.includes(lowerCaseKeyword) ||
-					barcode.includes(lowerCaseKeyword) ||
-					textcode.includes(lowerCaseKeyword)
-				);
-			})
-			?.sort((a, b) => a.fulfilled_quantity_piece - b.fulfilled_quantity_piece)
-			?.map((requestedProduct) => {
-				const {
-					id,
-					product,
-					quantity_piece,
-					fulfilled_quantity_piece = 0,
-					assigned_person,
-				} = requestedProduct;
-				const { id: product_id, name, barcode } = product;
-
-				const productName = (
-					<div className="product-name">
-						{fulfilled_quantity_piece > 0 ? <CheckIcon /> : null}
-						<span>{name}</span>
-					</div>
-				);
-
-				return {
-					payload: {
-						preparation_slip_id: preparationSlip.id,
-						id,
-						barcode,
-						name,
-						order_slip_product_id: id,
-						product_id,
-						assigned_person_id: assigned_person?.id,
-						quantity_piece,
-						fulfilled_quantity_piece,
-					},
-					value: [productName, quantity_piece],
-				};
-			});
-
-		setProducts(formattedProducts);
-		setSelectedProduct(formattedProducts?.[0]?.payload);
-		setSelectedProductIndex(0);
-	};
-
-	const formatAllProducts = () => {
-		const formattedProducts = preparationSlip?.products?.map(
-			(requestedProduct) => {
-				const {
-					id,
-					product,
-					quantity_piece,
-					fulfilled_quantity_piece = 0,
-					assigned_person,
-				} = requestedProduct;
-				const { id: product_id, name } = product;
-
-				return {
-					preparation_slip_id: preparationSlip.id,
-					id,
-					name,
-					order_slip_product_id: id,
-					product_id,
-					assigned_person_id: assigned_person?.id,
-					quantity_piece,
-					fulfilled_quantity_piece,
-				};
+					formatProducts(initialProducts, true);
+				} else if (status === request.ERROR) {
+					history.replace('/404');
+				}
 			},
 		);
+	}, []);
 
-		setAllProducts(formattedProducts);
-	};
+	useEffect(() => {
+		window.addEventListener('beforeunload', alertUser);
 
-	const formatOrderedProducts = () => {
-		const formattedProducts = preparationSlip?.products
-			?.filter(({ fulfilled_quantity_piece }) => fulfilled_quantity_piece > 0)
-			?.map((requestedProduct) => [
-				requestedProduct?.product?.name,
-				requestedProduct?.fulfilled_quantity_piece,
-			]);
+		return () => {
+			window.removeEventListener('beforeunload', alertUser);
+		};
+	}, [isEdited]);
 
-		setInputtedProducts(formattedProducts);
-	};
-
-	const debounceSearched = useCallback(
-		debounce((keyword) => searchProducts(keyword), SEARCH_DEBOUNCE_TIME),
-		[preparationSlip],
-	);
-
-	const handleKeyPress = (key) => {
-		if (key === 'up') {
-			setSelectedProductIndex((value) => {
-				const newValue = value > 0 ? value - 1 : value;
-				setSelectedProduct(products?.[newValue]?.payload);
-				return newValue;
-			});
-		} else if (key === 'down') {
-			setSelectedProductIndex((value) => {
-				if (products?.length > 0) {
-					const newValue = value < products.length - 1 ? value + 1 : value;
-					setSelectedProduct(products?.[newValue]?.payload);
-
-					return newValue;
-				}
-				return value;
-			});
-		} else if (key === 'f1') {
-			onModifyQuantity(fulfillType.ADD);
-		} else if (key === 'f2') {
-			onModifyQuantity(fulfillType.DEDUCT);
+	const alertUser = (e) => {
+		if (isEdited) {
+			e.preventDefault();
+			e.returnValue = '';
 		}
 	};
 
-	const onModifyQuantity = (type) => {
-		if (selectedProduct) {
-			setFulfillPreparationSlipVisible(true);
-			setSelectedProduct((value) => ({ ...value, type }));
+	const formatProducts = (products, shouldSave = false) => {
+		const productKeys = Object.keys(products).sort(
+			(key1, key2) => products[key1].fulfilled - products[key2].fulfilled,
+		);
+
+		const formattedProducts = productKeys.map((key) => {
+			const { ordered, fulfilled, name } = products[key];
+
+			return [
+				{
+					isHidden: true,
+					product: products[key],
+				},
+				<div className="FulfillPreparationSlip_productName">
+					{fulfilled > 0 ? <CheckIcon /> : null}
+					<span>{name}</span>
+				</div>,
+				ordered,
+				fulfilled,
+			];
+		});
+
+		setData(formattedProducts);
+
+		if (shouldSave) {
+			setPsProducts(products);
+		}
+	};
+
+	const onSearch = useCallback(
+		debounce((keyword) => {
+			const lowerCaseKeyword = keyword.toLowerCase();
+
+			const products = Object.keys(psProducts)
+				.filter((key) => {
+					const product = psProducts[key];
+
+					const name = product.name?.toLowerCase() ?? '';
+					const barcode = product.barcode?.toLowerCase() ?? '';
+					const textcode = product.textcode?.toLowerCase() ?? '';
+
+					return (
+						name.includes(lowerCaseKeyword) ||
+						barcode.includes(lowerCaseKeyword) ||
+						textcode.includes(lowerCaseKeyword)
+					);
+				})
+				.map((key) => psProducts[key]);
+
+			formatProducts(products, false);
+		}, SEARCH_DEBOUNCE_TIME),
+		[psProducts],
+	);
+
+	const onShowFulfillSlipModal = (type) => {
+		const product = data?.[selectedIndex]?.[0]?.product;
+
+		if (product) {
+			setFulfillType(type);
+			setSelectedProduct(product);
 		} else {
 			message.error('Select a product first');
 		}
 	};
 
-	const onFulfill = () => {
-		const fulfilledPrepSlipProducts = allProducts?.map((product) => ({
-			order_slip_product_id: product?.order_slip_product_id,
-			product_id: product?.product_id,
-			assigned_person_id: product?.assigned_person_id,
-			quantity_piece: product?.quantity_piece,
-			fulfilled_quantity_piece: product?.fulfilled_quantity_piece || undefined,
-		}));
+	const onUpdate = (id, quantity) => {
+		const newProducts = {
+			...psProducts,
+			[id]: {
+				...psProducts[id],
+				fulfilled: quantity,
+			},
+		};
 
-		fulfillPreparationSlip({
-			id: preparationSlip.id,
-			is_prepared: true,
-			assigned_store_id: user.branch.id,
-			products: fulfilledPrepSlipProducts,
-		});
+		formatProducts(newProducts, true);
+
+		if (!isEdited) {
+			setIsEdited(true);
+		}
 	};
 
-	const handleScan = (test) => {
-		let data = `${test}`;
-		if (test === '4800047820182') {
-			data = 'PRODUCT0002';
+	const onFulfill = (isPrepared) => {
+		if (!isEdited && !isPrepared) {
+			message.warning('You have not made any adjustments yet.');
+			return;
 		}
 
-		const product = preparationSlip.products.find(
-			({ product: prepSlipProduct }) => {
-				const barcode = prepSlipProduct?.barcode?.toLowerCase() || '';
-				const scannedBarcode = data?.toLowerCase() || '';
+		const preparationSlipData = {
+			id: preparationSlip.id,
+			is_prepared: isPrepared,
+			assigned_store_id: user.branch.id,
+			products: Object.keys(psProducts).map((key) => {
+				const psProduct = psProducts[key];
 
-				return barcode === scannedBarcode;
-			},
-		);
+				return {
+					order_slip_product_id: psProduct.id,
+					product_id: psProduct.productId,
+					assigned_person_id: psProduct.assignedPersonId,
+					quantity_piece: psProduct.ordered,
+					fulfilled_quantity_piece: psProduct.fulfilled || undefined,
+				};
+			}),
+		};
 
-		if (product) {
-			const newQuantity = product?.fulfilled_quantity_piece
-				? product?.fulfilled_quantity_piece + 1
-				: 1;
-
-			if (newQuantity > product.quantity_piece) {
-				message.error(
-					`Total quantity must not be greater than ${product.quantity_piece}`,
-				);
-				return;
-			}
-
-			const prepSlipProducts = preparationSlip.products
-				?.filter(({ id }) => id !== product.id)
-				?.map((prepSlipProduct) => ({
-					order_slip_product_id: prepSlipProduct?.id,
-					product_id: prepSlipProduct?.product?.id,
-					assigned_person_id: prepSlipProduct?.assigned_person?.id,
-					quantity_piece: prepSlipProduct?.quantity_piece,
-					fulfilled_quantity_piece:
-						prepSlipProduct?.fulfilled_quantity_piece || undefined,
-				}));
-
-			reset();
-
-			fulfillPreparationSlip({
-				id: preparationSlip.id,
-				is_prepared: false,
-				assigned_store_id: user.branch.id,
-				products: [
-					{
-						order_slip_product_id: product?.id,
-						product_id: product?.product?.id,
-						assigned_person_id: product?.assigned_person?.id,
-						quantity_piece: product?.quantity_piece,
-						fulfilled_quantity_piece: newQuantity,
-					},
-					...prepSlipProducts,
-				],
+		if (isPrepared) {
+			fulfillPrepSlip(preparationSlipData, ({ status }) => {
+				if (status === request.SUCCESS) {
+					history.push('/branch-personnel/preparation-slips');
+				}
 			});
 		} else {
-			message.error(`Cannot find the scanned product: ${data}`);
+			savePrepSlip(preparationSlipData);
+		}
+
+		setIsEdited(false);
+	};
+
+	const handleScan = (scannedBarcode) => {
+		const barcode = toString(scannedBarcode);
+		const foundKey = Object.keys(psProducts).find(
+			(key) => psProducts[key].barcode === barcode,
+		);
+
+		if (foundKey) {
+			const currentQuantity = psProducts[foundKey].fulfilled;
+			const newQuantity = currentQuantity > 0 ? currentQuantity + 1 : 1;
+
+			if (newQuantity > currentQuantity) {
+				message.error(
+					`Total quantity must not be greater than ${currentQuantity}`,
+				);
+			} else {
+				onUpdate(foundKey, newQuantity);
+			}
+		} else {
+			message.error(`Cannot find the scanned product: ${barcode}`);
 		}
 	};
 
 	const handleError = (err) => {
-		message.error(err);
+		// eslint-disable-next-line no-console
+		console.error(err);
 	};
 
+	const handleKeyDown = throttle((event) => {
+		const key = getKeyDownCombination(event);
+
+		if (key === 'ArrowUp') {
+			setSelectedProductIndex((value) => {
+				const newValue = value > 0 ? value - 1 : value;
+				return newValue;
+			});
+
+			return;
+		}
+
+		if (key === 'ArrowDown') {
+			setSelectedProductIndex((value) => {
+				if (data?.length > 0) {
+					const newValue = value < data.length - 1 ? value + 1 : value;
+					return newValue;
+				}
+				return value;
+			});
+
+			return;
+		}
+
+		if (key === 'f1') {
+			onShowFulfillSlipModal(FULFILL_TYPES.ADD);
+			return;
+		}
+
+		if (key === 'f2') {
+			onShowFulfillSlipModal(FULFILL_TYPES.DEDUCT);
+		}
+	}, 500);
+
+	const getFetchLoadingText = useCallback(() => {
+		let loadingText = '';
+
+		if (prepSlipStatus === request.REQUESTING) {
+			loadingText = 'Fetching preparation slip...';
+		} else if (fulfillPrepSlipStatus === request.REQUESTING) {
+			loadingText = 'Submitting preparation slip...';
+		} else if (savePrepSlipStatus === request.REQUESTING) {
+			loadingText = 'Saving preparation slip...';
+		}
+
+		return loadingText;
+	}, [prepSlipStatus, fulfillPrepSlipStatus, savePrepSlipStatus]);
+
 	return (
-		<Content title="Fulfill Preparation Slip">
+		<Content
+			className="FulfillPreparationSlip"
+			title="Fulfill Preparation Slip"
+		>
 			<BarcodeReader onError={handleError} onScan={handleScan} />
-			<KeyboardEventHandler
-				handleKeys={['up', 'down', 'f1', 'f2']}
-				onKeyEvent={(key) => handleKeyPress(key)}
+			<Spin
+				size="large"
+				tip={getFetchLoadingText()}
+				spinning={[
+					prepSlipStatus,
+					fulfillPrepSlipStatus,
+					savePrepSlipStatus,
+				].includes(request.REQUESTING)}
 			>
-				<Spin
-					spinning={prepSlipStatus === request.REQUESTING}
-					tip={getFetchLoadingText()}
-				>
-					<section className="FulfillPreparationSlip">
-						<Box>
-							<div className="details">
-								<PreparationSlipDetails preparationSlip={preparationSlip} />
-							</div>
+				<Box>
+					<PreparationSlipDetails
+						className="PaddingHorizontal PaddingVertical"
+						preparationSlip={preparationSlip}
+					/>
 
-							<div className="keyboard-keys">
-								<KeyboardButton
-									keyboardKey="F1"
-									label="Add Quantity"
-									onClick={() => onModifyQuantity(fulfillType.ADD)}
-								/>
-								<KeyboardButton
-									keyboardKey="F2"
-									label="Deduct Quantity"
-									onClick={() => onModifyQuantity(fulfillType.DEDUCT)}
-								/>
-							</div>
-
-							<div className="search-input-container">
-								<SearchInput
-									classNames="search-input"
-									placeholder="Search product"
-									onChange={(event) => {
-										debounceSearched(event.target.value.trim());
-									}}
-									autoFocus={false}
-								/>
-							</div>
-
-							<Row gutter={25}>
-								<Col xs={24} md={12}>
-									<BarcodeTable
-										columns={columnsLeft}
-										data={products}
-										selectedProduct={selectedProduct}
-										displayInPage
-									/>
-								</Col>
-
-								<Col xs={24} md={12}>
-									<TableNormal
-										columns={columnsRight}
-										data={inputtedProducts}
-										displayInPage
-									/>
-								</Col>
-							</Row>
-
-							<div className="btn-fulfill-container">
-								<Divider className="divider" dashed />
-
-								<Button
-									classNames="btn-fulfill"
-									text="Fulfill"
-									variant="primary"
-									onClick={onFulfill}
-									disabled={
-										preparationSlip?.status === preparationSlipStatus.COMPLETED
-									}
-								/>
-							</div>
-						</Box>
-
-						<FulfillSlipModal
-							preparationSlipProduct={selectedProduct}
-							otherProducts={allProducts}
-							updatePreparationSlipsByFetching={fetchPreparationSlip}
-							visible={fulfillPreparationSlipVisible}
-							onClose={() => setFulfillPreparationSlipVisible(false)}
+					<div className="FulfillPreparationSlip_keyboardKeys PaddingHorizontal">
+						<KeyboardButton
+							keyboardKey="F1"
+							label="Add Quantity"
+							onClick={() => onShowFulfillSlipModal(FULFILL_TYPES.ADD)}
 						/>
-					</section>
-				</Spin>
-			</KeyboardEventHandler>
+						<KeyboardButton
+							keyboardKey="F2"
+							label="Deduct Quantity"
+							onClick={() => onShowFulfillSlipModal(FULFILL_TYPES.DEDUCT)}
+						/>
+					</div>
+
+					<div className="PaddingHorizontal PaddingVertical">
+						<Label label="Search" spacing />
+						<Input
+							prefix={<SearchOutlined />}
+							onChange={(event) => onSearch(event.target.value.trim())}
+						/>
+					</div>
+
+					<TableNormal
+						columns={columns}
+						data={data}
+						activeRow={selectedIndex}
+						displayInPage
+					/>
+
+					{preparationSlip?.status !== preparationSlipStatus.COMPLETED && (
+						<div className="FulfillPreparationSlip_btnActions PaddingHorizontal PaddingVertical">
+							<Button
+								text="Save"
+								variant="secondary"
+								onClick={() => onFulfill(false)}
+							/>
+
+							<Button
+								classNames="FulfillPreparationSlip_btnActions_btnFulfill"
+								text="Fulfill"
+								variant="primary"
+								onClick={() => onFulfill(true)}
+							/>
+						</div>
+					)}
+				</Box>
+			</Spin>
+
+			<FulfillSlipModal
+				visible={fulfillType}
+				type={fulfillType}
+				product={selectedProduct}
+				onSubmit={onUpdate}
+				onClose={() => setFulfillType(false)}
+			/>
 		</Content>
 	);
 };

@@ -5,10 +5,14 @@ import { formatDateTime } from '../../../../utils/function';
 
 interface Props {
 	preparationSlip: any;
+	className?: string;
 }
 
-export const PreparationSlipDetails = ({ preparationSlip }: Props) => (
-	<DetailsRow>
+export const PreparationSlipDetails = ({
+	preparationSlip,
+	className,
+}: Props) => (
+	<DetailsRow className={className}>
 		<DetailsSingle label="ID" value={preparationSlip?.id} />
 		<DetailsSingle
 			label="Date & Time Created"

@@ -25,7 +25,7 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 	const {
 		getRequisitionSlipsById,
 		removeRequisitionSlipByBranch,
-		status: requisitionSlipStatus,
+		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
 	const requisitionSlip = useSelector(selectors.selectRequisitionSlip());
 
@@ -65,13 +65,10 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 		>
 			<Spin
 				size="large"
-				spinning={requisitionSlipStatus === request.REQUESTING}
+				spinning={requisitionSlipsStatus === request.REQUESTING}
 				tip="Fetching requisition slip..."
 			>
-				<RequestedProducts
-					requisitionSlip={requisitionSlip}
-					requisitionSlipStatus={requisitionSlipStatus}
-				/>
+				<RequestedProducts requisitionSlip={requisitionSlip} />
 
 				<OrderSlips
 					fetchRequisitionSlip={fetchRequisitionSlip}

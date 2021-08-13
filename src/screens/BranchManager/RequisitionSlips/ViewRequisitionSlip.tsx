@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Breadcrumb, Content } from '../../../components';
@@ -57,12 +58,15 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 			rightTitle={`#${requisitionSlip?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<RequestedProducts
-				requisitionSlip={requisitionSlip}
-				requisitionSlipStatus={requisitionSlipsStatus}
-			/>
+			<Spin
+				size="large"
+				spinning={requisitionSlipsStatus === request.REQUESTING}
+				tip="Fetching requisition slip..."
+			>
+				<RequestedProducts requisitionSlip={requisitionSlip} />
 
-			<OrderSlips requisitionSlipId={requisitionSlipId} />
+				<OrderSlips requisitionSlipId={requisitionSlipId} />
+			</Spin>
 		</Content>
 	);
 };

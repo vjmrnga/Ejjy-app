@@ -1,8 +1,8 @@
 import { Spin, Tooltip } from 'antd';
 import cn from 'classnames';
 import React, { ReactNode } from 'react';
+import { ROW_HEIGHT } from '../../global/constants';
 import { calculateTableHeight } from '../../utils/function';
-import { ROW_HEIGHT } from '../Table/Table';
 import './style.scss';
 
 interface Column {
@@ -15,6 +15,7 @@ interface Column {
 interface Props {
 	columns: Column[];
 	data: any;
+	activeRow?: number;
 	loading?: boolean;
 	displayInPage?: boolean;
 	hasCustomHeaderComponent?: boolean;
@@ -23,6 +24,7 @@ interface Props {
 export const TableNormal = ({
 	columns,
 	data,
+	activeRow,
 	loading,
 	displayInPage,
 	hasCustomHeaderComponent,
@@ -65,7 +67,11 @@ export const TableNormal = ({
 							);
 						}
 						return (
-							<tr key={`tr-${rowIndex}`} style={{ height: `${ROW_HEIGHT}px` }}>
+							<tr
+								className={cn({ active: rowIndex === activeRow })}
+								key={`tr-${rowIndex}`}
+								style={{ height: `${ROW_HEIGHT}px` }}
+							>
 								{row
 									.filter((item) => !item?.isHidden)
 									.map((item, columnIndex) => (

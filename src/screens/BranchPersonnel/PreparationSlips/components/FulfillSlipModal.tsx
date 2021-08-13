@@ -1,99 +1,56 @@
-import { message, Modal, Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Divider, message, Modal } from 'antd';
+import React, { useState } from 'react';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
-import { useSelector } from 'react-redux';
 import { DetailsRow, DetailsSingle } from '../../../../components';
 import { ControlledInput, Label } from '../../../../components/elements';
 import { KeyboardButton } from '../../../../components/KeyboardButton/KeyboardButton';
-import { selectors as authSelectors } from '../../../../ducks/auth';
-import { types } from '../../../../ducks/BranchPersonnel/preparation-slips';
-import { request } from '../../../../global/types';
-import { usePreparationSlips } from '../../hooks/usePreparationSlips';
-import { fulfillType } from '../FulfillPreparationSlip';
+import { FULFILL_TYPES } from './constants';
 
 interface Props {
-	preparationSlipProduct: any;
-	otherProducts: any;
-	updatePreparationSlipsByFetching: any;
+	product: any;
+	type: number;
 	visible: boolean;
+	onSubmit: any;
 	onClose: any;
 }
 
 export const FulfillSlipModal = ({
-	preparationSlipProduct,
-	otherProducts,
-	updatePreparationSlipsByFetching,
+	product,
+	type,
 	visible,
+	onSubmit,
 	onClose,
 }: Props) => {
-	const user = useSelector(authSelectors.selectUser());
-	const { fulfillPreparationSlip, status, recentRequest, reset } =
-		usePreparationSlips();
-
+	// STATES
 	const [quantity, setQuantity] = useState('');
 
-	// Effect: Close modal if fulfill success
-	useEffect(() => {
-		if (
-			status === request.SUCCESS &&
-			recentRequest === types.FULFILL_PREPARATION_SLIP
-		) {
-			updatePreparationSlipsByFetching();
-			reset();
-			close();
-		}
-	}, [status, recentRequest]);
-
+	// METHODS
 	const onFulfill = () => {
-		if (!quantity.length || !Number(quantity) || Number(quantity) <= 0) {
+		const quantityValue = Number(quantity);
+
+		if (!quantity.length || !(quantityValue > 0)) {
 			message.error('Please input a valid quantity.');
 			return;
 		}
 
 		const newQuantity =
-			(preparationSlipProduct?.fulfilled_quantity_piece || 0) +
-			Number(
-				preparationSlipProduct.type === fulfillType.ADD ? quantity : -quantity,
-			);
+			product.fulfilled +
+			(type === FULFILL_TYPES.ADD ? quantityValue : -quantityValue);
 
 		if (newQuantity < 0) {
 			message.error('Total quantity must be greater than or equals to zero');
 			return;
 		}
 
-		if (newQuantity > preparationSlipProduct.quantity_piece) {
+		if (newQuantity > product.ordered) {
 			message.error(
-				`Total quantity must not be greater than ${preparationSlipProduct.quantity_piece}`,
+				`Total quantity must not be greater than ${product.ordered}`,
 			);
 			return;
 		}
 
-		const products = otherProducts
-			?.filter(({ id }) => id !== preparationSlipProduct.id)
-			?.map((product) => ({
-				order_slip_product_id: product?.order_slip_product_id,
-				product_id: product?.product_id,
-				assigned_person_id: product?.assigned_person_id,
-				quantity_piece: product?.quantity_piece,
-				fulfilled_quantity_piece:
-					product?.fulfilled_quantity_piece || undefined,
-			}));
-
-		fulfillPreparationSlip({
-			id: preparationSlipProduct.preparation_slip_id,
-			is_prepared: false,
-			assigned_store_id: user.branch.id,
-			products: [
-				{
-					order_slip_product_id: preparationSlipProduct.order_slip_product_id,
-					product_id: preparationSlipProduct.product_id,
-					assigned_person_id: preparationSlipProduct.assigned_person_id,
-					quantity_piece: preparationSlipProduct.quantity_piece,
-					fulfilled_quantity_piece: newQuantity,
-				},
-				...products,
-			],
-		});
+		onSubmit(product.id, newQuantity);
+		close();
 	};
 
 	const handleKeyPress = (key) => {
@@ -111,7 +68,7 @@ export const FulfillSlipModal = ({
 
 	return (
 		<Modal
-			title={preparationSlipProduct?.name}
+			title={product?.name}
 			className="FulfillSlipModal"
 			visible={visible}
 			footer={null}
@@ -119,50 +76,40 @@ export const FulfillSlipModal = ({
 			centered
 			closable
 		>
-			<Spin spinning={status === request.REQUESTING}>
-				<KeyboardEventHandler
-					handleKeys={['enter', 'esc']}
-					onKeyEvent={(key) => handleKeyPress(key)}
-				>
-					<div className="keyboard-keys">
-						<KeyboardButton
-							keyboardKey="Enter"
-							label="Submit"
-							onClick={() => {}}
-						/>
-						<KeyboardButton keyboardKey="Esc" label="Exit" onClick={close} />
-					</div>
+			<KeyboardEventHandler
+				handleKeys={['enter', 'esc']}
+				onKeyEvent={(key) => handleKeyPress(key)}
+			>
+				<div className="FulfillSlipModal_keyboardKeys">
+					<KeyboardButton
+						keyboardKey="Enter"
+						label="Submit"
+						onClick={onFulfill}
+					/>
+					<KeyboardButton keyboardKey="Esc" label="Exit" onClick={close} />
+				</div>
 
-					<div className="input-quantity">
-						<DetailsRow>
-							<DetailsSingle
-								label="Ordered quantity"
-								value={preparationSlipProduct?.quantity_piece}
-							/>
-							<DetailsSingle
-								label="Current quantity"
-								value={preparationSlipProduct?.fulfilled_quantity_piece || 0}
-							/>
-						</DetailsRow>
+				<Divider dashed />
 
-						<Label
-							label={`${
-								preparationSlipProduct?.type === fulfillType.ADD
-									? 'Add'
-									: 'Deduct'
-							} Quantity`}
-							spacing
-						/>
-						<ControlledInput
-							type="number"
-							min={0}
-							value={quantity}
-							onChange={(value) => setQuantity(value)}
-							autoFocus
-						/>
-					</div>
-				</KeyboardEventHandler>
-			</Spin>
+				<DetailsRow>
+					<DetailsSingle label="Ordered quantity" value={product?.ordered} />
+					<DetailsSingle label="Current quantity" value={product?.fulfilled} />
+				</DetailsRow>
+
+				<div className="FulfillSlipModal_inputQuantity">
+					<Label
+						label={`${type === FULFILL_TYPES.ADD ? 'Add' : 'Deduct'} Quantity`}
+						spacing
+					/>
+					<ControlledInput
+						type="number"
+						min={0}
+						value={quantity}
+						onChange={(value) => setQuantity(value)}
+						autoFocus
+					/>
+				</div>
+			</KeyboardEventHandler>
 		</Modal>
 	);
 };

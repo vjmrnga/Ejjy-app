@@ -35,5 +35,7 @@ export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
 export const SEARCH_DEBOUNCE_TIME = 500;
 
+export const ROW_HEIGHT = 65;
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

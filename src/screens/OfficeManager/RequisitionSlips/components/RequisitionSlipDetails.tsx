@@ -17,9 +17,14 @@ export const requisitionSlipDetailsType = {
 interface Props {
 	requisitionSlip: any;
 	type: string;
+	className?: string;
 }
 
-export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
+export const RequisitionSlipDetails = ({
+	requisitionSlip,
+	type,
+	className,
+}: Props) => {
 	const { editRequisitionSlip, status: requisitionSlipsStatus } =
 		useRequisitionSlips();
 
@@ -40,7 +45,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 
 	return (
 		<Row
-			className={cn({
+			className={cn(className, {
 				details: type === requisitionSlipDetailsType.SINGLE_VIEW,
 			})}
 		>

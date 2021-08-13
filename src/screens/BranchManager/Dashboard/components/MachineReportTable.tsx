@@ -1,20 +1,17 @@
-import { Spin } from 'antd';
+import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { Table, TableHeader, ViewButtonIcon } from '../../../../components';
+import { TableHeader, ViewButtonIcon } from '../../../../components';
 import { Box } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
-import { useXreadReports } from '../../../../hooks/useXreadReports';
-import {
-	calculateTableHeight,
-	showErrorMessages,
-} from '../../../../utils/function';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
+import { useXreadReports } from '../../../../hooks/useXreadReports';
+import { showErrorMessages } from '../../../../utils/function';
 import { ViewReportModal } from './ViewReportModal';
 
-const columns = [
-	{ title: 'Machines', dataIndex: 'machines' },
-	{ title: 'Actions', dataIndex: 'actions' },
+const columns: ColumnsType = [
+	{ title: 'Machines', dataIndex: 'machines', key: 'machines' },
+	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
 export const MachineReportTable = () => {
@@ -40,16 +37,18 @@ export const MachineReportTable = () => {
 		getBranchMachines(user?.branch?.id);
 	}, []);
 
-	// Effect: Format products to be rendered in Table
 	useEffect(() => {
-		const formattedBranchMachines = branchMachines.map(({ name, id }) => ({
-			machines: name,
-			actions: (
-				<ViewButtonIcon onClick={() => viewReport(id)} tooltip="View Report" />
-			),
-		}));
-
-		setData(formattedBranchMachines);
+		setData(
+			branchMachines.map(({ name, id }) => ({
+				machines: name,
+				actions: (
+					<ViewButtonIcon
+						onClick={() => viewReport(id)}
+						tooltip="View Report"
+					/>
+				),
+			})),
+		);
 	}, [branchMachines]);
 
 	const viewReport = (machineId) => {
@@ -71,14 +70,13 @@ export const MachineReportTable = () => {
 
 	return (
 		<Box className="MachineReportTable">
-			<Spin size="large" spinning={false}>
-				<TableHeader title="Reports per Machine" />
-			</Spin>
+			<TableHeader title="Reports per Machine" />
 
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ y: calculateTableHeight(data.length), x: '100%' }}
+				scroll={{ x: 650 }}
+				pagination={false}
 				loading={[branchMachinesStatus, xReadReportStatus].includes(
 					request.REQUESTING,
 				)}

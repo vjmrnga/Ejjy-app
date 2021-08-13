@@ -1,14 +1,9 @@
-/* eslint-disable no-underscore-dangle */
-import { Col, Divider, Row } from 'antd';
+import { Divider, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { QuantitySelect, Table } from '../../../../components';
+import { QuantitySelect } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
-import { quantityTypes, request } from '../../../../global/types';
-import {
-	calculateTableHeight,
-	convertToBulk,
-	sleep,
-} from '../../../../utils/function';
+import { quantityTypes } from '../../../../global/types';
+import { convertToBulk } from '../../../../utils/function';
 import '../style.scss';
 import {
 	RequisitionSlipDetails,
@@ -17,57 +12,48 @@ import {
 
 interface Props {
 	requisitionSlip: any;
-	requisitionSlipStatus: number;
 }
 
-export const RequestedProducts = ({
-	requisitionSlip,
-	requisitionSlipStatus,
-}: Props) => {
-	const [requestedProducts, setRequestedProducts] = useState([]);
+export const RequestedProducts = ({ requisitionSlip }: Props) => {
+	const [data, setData] = useState([]);
 
-	// Effect: Format requested products to be rendered in Table
 	useEffect(() => {
-		if (requisitionSlip && requisitionSlipStatus === request.SUCCESS) {
-			const formattedRequestedProducts = requisitionSlip?.products.map(
-				(requestedProduct) => {
+		if (requisitionSlip) {
+			setData(
+				requisitionSlip?.products?.map((requestedProduct) => {
 					const { product, quantity_piece } = requestedProduct;
 					const { barcode, textcode, name, pieces_in_bulk } = product;
 
 					return {
-						_quantity_piece: quantity_piece,
-						_quantity_bulk: convertToBulk(quantity_piece, pieces_in_bulk),
+						quantityPiece: quantity_piece,
+						quantityBulk: convertToBulk(quantity_piece, pieces_in_bulk),
 						barcode: barcode || textcode,
 						name,
 						quantity: quantity_piece,
 					};
-				},
+				}),
 			);
-
-			sleep(500).then(() => setRequestedProducts(formattedRequestedProducts));
 		}
-	}, [requisitionSlip, requisitionSlipStatus]);
+	}, [requisitionSlip]);
 
 	const onQuantityTypeChange = useCallback(
 		(quantityType) => {
-			const formattedRequestedProducts = requestedProducts.map(
-				(requestProduct) => ({
-					...requestProduct,
-					quantity:
-						quantityType === quantityTypes.PIECE
-							? requestProduct._quantity_piece
-							: requestProduct._quantity_bulk,
-				}),
-			);
-			setRequestedProducts(formattedRequestedProducts);
+			const formattedRequestedProducts = data.map((requestProduct) => ({
+				...requestProduct,
+				quantity:
+					quantityType === quantityTypes.PIECE
+						? requestProduct.quantityPiece
+						: requestProduct.quantityBulk,
+			}));
+			setData(formattedRequestedProducts);
 		},
-		[requestedProducts],
+		[data],
 	);
 
 	const getColumns = useCallback(
 		() => [
-			{ title: 'Barcode', dataIndex: 'barcode' },
-			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
+			{ title: 'Name', dataIndex: 'name', key: 'name' },
 			{
 				title: (
 					<QuantitySelect
@@ -76,6 +62,7 @@ export const RequestedProducts = ({
 					/>
 				),
 				dataIndex: 'quantity',
+				key: 'quantity',
 			},
 		],
 		[onQuantityTypeChange],
@@ -84,27 +71,21 @@ export const RequestedProducts = ({
 	return (
 		<Box>
 			<RequisitionSlipDetails
+				className="PaddingHorizontal PaddingVertical"
 				requisitionSlip={requisitionSlip}
 				type={requisitionSlipDetailsType.SINGLE_VIEW}
 			/>
 
-			<div className="requested-products">
+			<div className="ViewRequisitionSlip_requestedProducts">
 				<Divider dashed />
-				<Row gutter={[15, 15]} align="middle">
-					<Col span={24}>
-						<Label label="Requested Products" />
-					</Col>
-				</Row>
+				<Label label="Requested Products" />
 			</div>
 
 			<Table
 				columns={getColumns()}
-				dataSource={requestedProducts}
-				scroll={{
-					y: calculateTableHeight(requestedProducts.length),
-					x: '100%',
-				}}
-				hasCustomHeaderComponent
+				dataSource={data}
+				scroll={{ y: 250 }}
+				pagination={false}
 			/>
 		</Box>
 	);
