@@ -52,7 +52,7 @@ export const useLogs = () => {
 				pageSize,
 			}),
 		);
-	}, [allData, currentPage]);
+	}, [allData, currentPage, pageSize]);
 
 	// REQUEST METHODS
 	const listLogs = (data, shouldReset = false) => {

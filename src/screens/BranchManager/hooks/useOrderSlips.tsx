@@ -71,7 +71,7 @@ export const useOrderSlips = () => {
 				pageSize,
 			}),
 		);
-	}, [allData, currentPage]);
+	}, [allData, currentPage, pageSize]);
 
 	const addItemInPagination = (item) => {
 		setAllData((data) => addInCachedData({ data, item }));

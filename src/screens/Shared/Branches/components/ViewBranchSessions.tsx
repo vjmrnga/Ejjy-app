@@ -83,8 +83,11 @@ export const ViewBranchSessions = ({ branchId }: Props) => {
 		</div>
 	);
 
-	const onPageChange = (page) => {
-		listSessions({ branchId, page });
+	const onPageChange = (page, newPageSize) => {
+		listSessions(
+			{ branchId, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	return (

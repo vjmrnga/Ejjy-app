@@ -82,12 +82,16 @@ export const OrderSlips = () => {
 		setViewOrderSlipVisible(true);
 	};
 
-	const onPageChange = (page) => {
-		getOrderSlipsExtended({
-			assigned_store_id: user?.branch?.id,
-			requisition_slip_id: null,
-			page,
-		});
+	const onPageChange = (page, newPageSize) => {
+		getOrderSlipsExtended(
+			{
+				assigned_store_id: user?.branch?.id,
+				requisition_slip_id: null,
+				page,
+				pageSize: newPageSize,
+			},
+			newPageSize !== pageSize,
+		);
 	};
 
 	return (

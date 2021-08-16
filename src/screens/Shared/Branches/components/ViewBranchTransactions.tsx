@@ -71,7 +71,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 					),
 					invoice: invoice?.or_number || EMPTY_CELL,
 					amount: `₱${numberWithCommas(total_amount?.toFixed(2))}`,
-					transactionStatus: getTransactionStatus(transactionStatus),
+					status: getTransactionStatus(transactionStatus),
 				};
 			},
 		);
@@ -84,8 +84,11 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		setViewTransactionModalVisible(true);
 	};
 
-	const onPageChange = (page) => {
-		listTransactions({ branchId, page });
+	const onPageChange = (page, newPageSize) => {
+		listTransactions(
+			{ branchId, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
 	};
 
 	return (

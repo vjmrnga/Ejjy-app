@@ -1,10 +1,11 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Modal } from 'antd';
+import { Divider, Modal, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle, TableNormal } from '../../../../components';
+import { DetailsRow, DetailsSingle } from '../../../../components';
 import { EMPTY_CELL } from '../../../../global/constants';
-import { numberWithCommas } from '../../../../utils/function';
+import { formatBalance, numberWithCommas } from '../../../../utils/function';
 
 interface Props {
 	transaction: any;
@@ -12,11 +13,11 @@ interface Props {
 	onClose: any;
 }
 
-const columns = [
-	{ name: 'Item' },
-	{ name: 'Qty' },
-	{ name: 'Rate' },
-	{ name: 'Amount' },
+const columns: ColumnsType = [
+	{ title: 'Item', dataIndex: 'item', key: 'item' },
+	{ title: 'Qty', dataIndex: 'qty', key: 'qty' },
+	{ title: 'Rate', dataIndex: 'rate', key: 'rate' },
+	{ title: 'Amount', dataIndex: 'amount', key: 'amount' },
 ];
 
 export const ViewTransactionModal = ({
@@ -24,20 +25,26 @@ export const ViewTransactionModal = ({
 	visible,
 	onClose,
 }: Props) => {
+	// STATES
 	const [data, setData] = useState([]);
 
-	// Effect: Format product data
+	// METHODS
 	useEffect(() => {
-		const formattedProducts = transaction?.products.map(
-			({ product, quantity, price_per_piece }) => [
-				product.name,
-				quantity.toFixed(3),
-				`₱${numberWithCommas(Number(price_per_piece).toFixed(2))}`,
-				`₱${numberWithCommas((quantity * Number(price_per_piece)).toFixed(2))}`,
-			],
+		setData(
+			transaction?.products.map(
+				({ branch_product, quantity, price_per_piece }) => ({
+					item: branch_product.product.name,
+					qty: formatBalance(
+						branch_product.product.unit_of_measurement,
+						quantity,
+					),
+					rate: `₱${numberWithCommas(Number(price_per_piece).toFixed(2))}`,
+					amount: `₱${numberWithCommas(
+						(quantity * Number(price_per_piece)).toFixed(2),
+					)}`,
+				}),
+			),
 		);
-
-		setData(formattedProducts);
 	}, [transaction]);
 
 	return (
@@ -98,7 +105,12 @@ export const ViewTransactionModal = ({
 
 			<Divider />
 
-			<TableNormal columns={columns} data={data} />
+			<Table
+				columns={columns}
+				dataSource={data}
+				scroll={{ y: 300 }}
+				pagination={false}
+			/>
 
 			<Divider />
 
@@ -131,25 +143,37 @@ export const ViewTransactionModal = ({
 					labelSpan={8}
 					valueSpan={16}
 					label="VAT Exempt"
-					value={`₱${numberWithCommas(
-						Number(transaction?.invoice?.vat_exempt).toFixed(2),
-					)}`}
+					value={
+						transaction?.invoice
+							? `₱${numberWithCommas(
+									Number(transaction?.invoice?.vat_exempt).toFixed(2),
+							  )}`
+							: EMPTY_CELL
+					}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="VAT Sales"
-					value={`₱${numberWithCommas(
-						Number(transaction?.invoice?.vat_sales).toFixed(2),
-					)}`}
+					value={
+						transaction?.invoice
+							? `₱${numberWithCommas(
+									Number(transaction?.invoice?.vat_sales).toFixed(2),
+							  )}`
+							: EMPTY_CELL
+					}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="12% VAT"
-					value={`₱${numberWithCommas(
-						Number(transaction?.invoice?.vat_12_percent).toFixed(2),
-					)}`}
+					value={
+						transaction?.invoice
+							? `₱${numberWithCommas(
+									Number(transaction?.invoice?.vat_12_percent).toFixed(2),
+							  )}`
+							: EMPTY_CELL
+					}
 				/>
 			</DetailsRow>
 
@@ -173,8 +197,9 @@ export const ViewTransactionModal = ({
 					valueSpan={16}
 					label="Cashier"
 					value={
-						`${transaction?.teller?.first_name} ${transaction?.teller?.last_name}` ||
-						EMPTY_CELL
+						transaction?.teller
+							? `${transaction?.teller?.first_name} ${transaction?.teller?.last_name}`
+							: EMPTY_CELL
 					}
 				/>
 				<DetailsSingle
