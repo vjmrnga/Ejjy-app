@@ -71,7 +71,7 @@ export const FulfillPreparationSlipForm = ({
 		maxBulk,
 	) => (
 		<>
-			<div className="quantity-container">
+			<div className="QuantityContainer">
 				<FormInput
 					type="number"
 					id={`preparationSlipProducts.${index}.fulfilled_quantity`}

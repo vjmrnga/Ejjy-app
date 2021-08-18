@@ -58,7 +58,7 @@ export const FulfillCheckForm = ({
 
 	const getFulfilledQuantity = (index, touched, errors) => (
 		<>
-			<div className="quantity-container">
+			<div className="QuantityContainer">
 				<FormInput
 					type="number"
 					id={`products.${index}.fulfilled_quantity_piece`}

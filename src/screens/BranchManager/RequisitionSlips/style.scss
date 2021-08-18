@@ -7,11 +7,6 @@
 }
 
 .CreateRequisitionSlip {
-	&_pagination {
-		@include flex(center, center);
-		margin: 15px 0 0 0;
-	}
-
 	&_createContainer {
 		padding: 0 25px 25px 25px;
 	}

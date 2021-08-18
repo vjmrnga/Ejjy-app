@@ -104,7 +104,7 @@ body {
 	@include font(1rem, 700);
 }
 
-.quantity-container {
+.QuantityContainer {
 	@include flex();
 
 	& > *:first-child {

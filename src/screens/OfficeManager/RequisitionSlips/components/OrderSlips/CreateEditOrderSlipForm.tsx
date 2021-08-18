@@ -85,7 +85,7 @@ export const CreateEditOrderSlipForm = ({
 
 	const getQuantity = (index, values, touched, errors, maxPiece, maxBulk) => (
 		<>
-			<div className="quantity-container">
+			<div className="QuantityContainer">
 				<FormInput
 					type="number"
 					id={`requestedProducts.${index}.quantity`}

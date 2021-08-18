@@ -17,9 +17,9 @@ import { NO_BRANCH_ID } from '../../../../global/constants';
 import { userTypeOptions } from '../../../../global/options';
 import { sleep } from '../../../../utils/function';
 
-const TABS = {
-	branch: 'branch',
-	userType: 'userType',
+const tabs = {
+	BRANCH: 'branch',
+	USER_TYPE: 'userType',
 };
 
 interface Props {
@@ -41,11 +41,11 @@ export const EditUserForm = ({
 }: Props) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
-	const [currentActiveKey, setCurrentActiveKey] = useState(TABS.branch);
+	const [currentActiveKey, setCurrentActiveKey] = useState(tabs.BRANCH);
 
 	// METHODS
 	useEffect(() => {
-		setCurrentActiveKey(TABS.branch);
+		setCurrentActiveKey(tabs.BRANCH);
 	}, [user]);
 
 	const getFormDetails = useCallback(
@@ -59,7 +59,7 @@ export const EditUserForm = ({
 					'Unchanged branch',
 					"The branch selected is still user's current branch. Please select a new one.",
 					(value: number) => {
-						if (currentActiveKey === TABS.branch) {
+						if (currentActiveKey === tabs.BRANCH) {
 							return value !== user?.branch?.id;
 						}
 
@@ -70,7 +70,7 @@ export const EditUserForm = ({
 					'Unchanged user type',
 					"The user type selected is still user's current user type. Please select a new one.",
 					(value: string) => {
-						if (currentActiveKey === TABS.userType) {
+						if (currentActiveKey === tabs.USER_TYPE) {
 							return value !== user.user_type;
 						}
 
@@ -91,12 +91,12 @@ export const EditUserForm = ({
 				await sleep(500);
 				setSubmitting(false);
 
-				if (currentActiveKey === TABS.branch) {
+				if (currentActiveKey === tabs.BRANCH) {
 					onEditUserBranch(
 						{ id: user?.id, branchId: formData.branchId },
 						resetForm,
 					);
-				} else if (currentActiveKey === TABS.userType) {
+				} else if (currentActiveKey === tabs.USER_TYPE) {
 					onEditUserType(
 						{ id: user?.id, newUserType: formData.newUserType },
 						resetForm,
@@ -123,7 +123,7 @@ export const EditUserForm = ({
 					}}
 				>
 					<Tabs.TabPane
-						key={TABS.branch}
+						key={tabs.BRANCH}
 						tab={
 							<span>
 								<HomeOutlined />
@@ -141,7 +141,7 @@ export const EditUserForm = ({
 
 					{user?.branch?.id === NO_BRANCH_ID && (
 						<Tabs.TabPane
-							key={TABS.userType}
+							key={tabs.USER_TYPE}
 							tab={
 								<span>
 									<UserSwitchOutlined />
