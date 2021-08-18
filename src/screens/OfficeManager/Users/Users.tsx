@@ -130,6 +130,7 @@ export const Users = () => {
 						}
 
 						return {
+							id,
 							name: `${first_name} ${last_name}`,
 							type: getUserTypeName(user_type),
 							action,

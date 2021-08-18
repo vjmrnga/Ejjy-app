@@ -23,6 +23,9 @@ const columns = [
 	{ name: 'Inputted', center: true },
 ];
 
+const MESSAGE_KEY = 'MESSAGE_KEY_BARCODE_SCAN_MSG';
+const MESSAGE_KEY_RESULT = 'MESSAGE_KEY_BARCODE_SCAN_RESULT_MSG';
+
 interface Props {
 	match: any;
 }
@@ -172,7 +175,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			setFulfillType(type);
 			setSelectedProduct(product);
 		} else {
-			message.error('Select a product first');
+			message.error('Select a product first.');
 		}
 	};
 
@@ -230,6 +233,12 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 
 	const handleScan = (scannedBarcode) => {
 		const barcode = toString(scannedBarcode);
+
+		message.info({
+			key: MESSAGE_KEY,
+			content: `Scanned Barcode: ${barcode}`,
+		});
+
 		const foundKey = Object.keys(psProducts).find(
 			(key) => psProducts[key].barcode === barcode,
 		);
@@ -239,14 +248,22 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			const newQuantity = currentQuantity > 0 ? currentQuantity + 1 : 1;
 
 			if (newQuantity > currentQuantity) {
-				message.error(
-					`Total quantity must not be greater than ${currentQuantity}`,
-				);
+				message.error({
+					key: MESSAGE_KEY_RESULT,
+					content: `Total quantity must not be greater than ${currentQuantity}.`,
+				});
 			} else {
+				message.success({
+					key: MESSAGE_KEY_RESULT,
+					content: `${psProducts[foundKey].name} successfully edited.`,
+				});
 				onUpdate(foundKey, newQuantity);
 			}
 		} else {
-			message.error(`Cannot find the scanned product: ${barcode}`);
+			message.error({
+				key: MESSAGE_KEY_RESULT,
+				content: `Cannot find the scanned product: ${barcode}.`,
+			});
 		}
 	};
 

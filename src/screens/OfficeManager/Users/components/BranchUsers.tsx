@@ -3,6 +3,7 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useState } from 'react';
 
 const columns: ColumnsType = [
+	{ title: 'ID', dataIndex: 'id', key: 'id' },
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
 	{ title: 'Type', dataIndex: 'type', key: 'type' },
 	{ title: 'Action', dataIndex: 'action', key: 'action' },
