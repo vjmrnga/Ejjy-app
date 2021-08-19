@@ -1,4 +1,11 @@
-import { all, call, put, select, takeLatest } from 'redux-saga/effects';
+import {
+	all,
+	call,
+	put,
+	select,
+	takeEvery,
+	takeLatest,
+} from 'redux-saga/effects';
 import { actions, types } from '../../ducks/OfficeManager/branch-machines';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { MAX_PAGE_SIZE } from '../../global/constants';
@@ -197,7 +204,7 @@ const retrieveSalesWatcherSaga = function* retrieveSalesWatcherSaga() {
 };
 
 const retrieveSalesAllWatcherSaga = function* retrieveSalesAllWatcherSaga() {
-	yield takeLatest(types.RETRIEVE_BRANCH_MACHINE_SALES_ALL, retrieveSalesAll);
+	yield takeEvery(types.RETRIEVE_BRANCH_MACHINE_SALES_ALL, retrieveSalesAll);
 };
 
 const createWatcherSaga = function* createWatcherSaga() {

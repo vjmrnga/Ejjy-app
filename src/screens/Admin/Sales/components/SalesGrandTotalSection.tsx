@@ -12,7 +12,7 @@ const INTERVAL_MS = 30000;
 
 export const SalesGrandTotalSection = () => {
 	// STATES
-	const [branchSales, setBranchSales] = useState([]);
+	const [branchSales, setBranchSales] = useState(0);
 	const [timeRange, setTimeRange] = useState(timeRangeTypes.DAILY);
 	const [timeRangeOption, setTimeRangeOption] = useState(timeRangeTypes.DAILY);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
@@ -35,20 +35,6 @@ export const SalesGrandTotalSection = () => {
 		[branches],
 	);
 
-	const getGrandTotalSales = useCallback(
-		() =>
-			branchSales.reduce(
-				(prevSales, sales) =>
-					sales.reduce(
-						(prevCashierSales, { sales: cashierSales }) =>
-							prevCashierSales + cashierSales,
-						0,
-					) + prevSales,
-				0,
-			),
-		[branchSales],
-	);
-
 	const fetchBranchMachineSales = (range) => {
 		const branchIds = getBranchIds();
 		retrieveBranchMachineSalesAll(
@@ -59,7 +45,17 @@ export const SalesGrandTotalSection = () => {
 				}
 
 				if (status === request.SUCCESS) {
-					setBranchSales(data);
+					const newBranchSales = data.reduce(
+						(prevSales, sales) =>
+							sales.reduce(
+								(prevCashierSales, { sales: cashierSales }) =>
+									prevCashierSales + cashierSales,
+								0,
+							) + prevSales,
+						0,
+					);
+
+					setBranchSales(newBranchSales);
 				}
 			},
 		);
@@ -117,7 +113,7 @@ export const SalesGrandTotalSection = () => {
 				<Col span={24}>
 					<SalesTotalCard
 						title="Grand Total Sales"
-						totalSales={getGrandTotalSales()}
+						totalSales={branchSales}
 						timeRange={timeRange}
 						timeRangeOption={timeRangeOption}
 						loading={

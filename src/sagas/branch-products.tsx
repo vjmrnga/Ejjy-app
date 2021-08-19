@@ -82,7 +82,7 @@ function* listWithAnalytics({ payload }: any) {
 		sorting,
 		productCategory,
 		timeRange,
-		hasBeenSoldOnly,
+		isSoldInBranch,
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
@@ -103,7 +103,7 @@ function* listWithAnalytics({ payload }: any) {
 		sorting,
 		product_category: productCategory,
 		time_range: timeRange,
-		has_been_sold_only: hasBeenSoldOnly,
+		is_sold_in_branch: isSoldInBranch,
 	};
 
 	let isFetchedFromBackupURL = false;

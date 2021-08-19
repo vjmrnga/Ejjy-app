@@ -141,6 +141,7 @@ export const PreparationSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={tableData}
+					pagination={false}
 					loading={getFetchLoading()}
 				/>
 

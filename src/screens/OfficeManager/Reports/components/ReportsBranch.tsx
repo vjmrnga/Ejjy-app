@@ -2,6 +2,7 @@ import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
 import debounce from 'lodash/debounce';
 import React, { useEffect, useRef, useState } from 'react';
+import { TableActions } from '../../../../components';
 import { Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
@@ -15,6 +16,7 @@ import {
 	formatBalance,
 	getBranchProductStatus,
 } from '../../../../utils/function';
+import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 
 const { RangePicker } = DatePicker;
 
@@ -70,6 +72,11 @@ const columns: ColumnsType = [
 		dataIndex: 'status',
 		key: 'status',
 	},
+	{
+		title: 'Actions',
+		dataIndex: 'actions',
+		key: 'actions',
+	},
 ];
 
 const INTERVAL_MS = 30000;
@@ -119,6 +126,9 @@ export const ReportsBranch = ({
 	const [productOptions, setProductOptions] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 	const [showSoldOnly, setShowSoldOnly] = useState(true);
+	const [editBranchProductModalVisible, setEditBranchProductModalVisible] =
+		useState(false);
+	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -127,6 +137,7 @@ export const ReportsBranch = ({
 		pageSize,
 		currentPage,
 		getBranchProductsWithAnalytics,
+		updateItemInPagination,
 		status: branchProductsStatus,
 		errors,
 		warnings,
@@ -205,6 +216,14 @@ export const ReportsBranch = ({
 				daily_average_sold,
 				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
 				status: getBranchProductStatus(product_status),
+				actions: (
+					<TableActions
+						onEdit={() => {
+							setSelectedBranchProduct(branchProduct);
+							setEditBranchProductModalVisible(true);
+						}}
+					/>
+				),
 			};
 		});
 
@@ -216,7 +235,7 @@ export const ReportsBranch = ({
 		sort,
 		category,
 		range,
-		hasBeenSoldOnly,
+		isSoldInBranch,
 		page,
 		newPageSize,
 	) => {
@@ -227,7 +246,7 @@ export const ReportsBranch = ({
 				sorting: sort,
 				productCategory: category,
 				timeRange: range,
-				hasBeenSoldOnly,
+				isSoldInBranch: isSoldInBranch || undefined,
 				page,
 				pageSize: newPageSize,
 			},
@@ -243,7 +262,7 @@ export const ReportsBranch = ({
 					sorting,
 					productCategory,
 					timeRange,
-					hasBeenSoldOnly,
+					isSoldInBranch,
 					page,
 					pageSize: newPageSize,
 				},
@@ -467,6 +486,14 @@ export const ReportsBranch = ({
 						? false
 						: branchProductsStatus === request.REQUESTING
 				}
+			/>
+
+			<EditBranchProductsModal
+				branchId={branchId}
+				branchProduct={selectedBranchProduct}
+				updateItemInPagination={updateItemInPagination}
+				visible={editBranchProductModalVisible}
+				onClose={() => setEditBranchProductModalVisible(false)}
 			/>
 		</div>
 	);
