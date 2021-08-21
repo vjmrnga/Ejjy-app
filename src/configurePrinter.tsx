@@ -5,13 +5,11 @@ import qz from 'qz-tray';
 import { quantityTypes } from './global/types';
 import { formatDateTime, getOrderSlipStatusBranchManagerText } from './utils/function';
 
-
 const PAPER_MARGIN = 0.2; // inches
 const PAPER_WIDTH = 3.2; // inches
 const PRINTER_MESSAGE_KEY = 'configurePrinter';
 const SI_MESSAGE_KEY = 'SI_MESSAGE_KEY';
 const PRINTER_NAME = 'EPSON TM-U220 Receipt';
-// const PRINTER_NAME = 'Microsoft Print to PDF';
 
 const configurePrinter = (callback = null) => {
 	if (!qz.websocket.isActive()) {
