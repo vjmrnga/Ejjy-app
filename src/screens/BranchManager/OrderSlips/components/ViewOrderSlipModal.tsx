@@ -51,7 +51,6 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 					barcode,
 					name,
 					getColoredText(
-						`${orderSlip?.id}-${barcode}-${quantity.isFulfilled}`, // key
 						!quantity.isFulfilled,
 						quantity.piecesInputted,
 						quantity.piecesOrdered,

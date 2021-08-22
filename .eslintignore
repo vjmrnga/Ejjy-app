@@ -1,2 +1,2 @@
 node_modules
-configurePrinter.tsx
+./src/configurePrinter.tsx

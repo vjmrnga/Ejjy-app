@@ -106,7 +106,6 @@ export const SalesBranch = ({
 	}, [sales]);
 
 	const fetchBranchMachineSales = (range) => {
-		console.log('fetchBranchMachineSales', branchId);
 		const onCallback = ({ status, data: branchSales }) => {
 			if (status === request.SUCCESS) {
 				setSales(branchSales);

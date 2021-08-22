@@ -347,11 +347,12 @@ export const OrderSlips = ({
 				)}
 			/>
 
-			<ViewOrderSlipModal
-				visible={viewOrderSlipVisible}
-				orderSlip={selectedOrderSlip}
-				onClose={() => setViewOrderSlipVisible(false)}
-			/>
+			{viewOrderSlipVisible && (
+				<ViewOrderSlipModal
+					orderSlip={selectedOrderSlip}
+					onClose={() => setViewOrderSlipVisible(false)}
+				/>
+			)}
 
 			<CreateEditOrderSlipModal
 				updateRequisitionSlipByFetching={fetchRequisitionSlip}

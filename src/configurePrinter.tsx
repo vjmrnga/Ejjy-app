@@ -163,108 +163,103 @@ const print = (printData, loadingMessage, successMessage, errorMessage) => {
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 	const data = `
-	<div style="width: 100%; font-family: 'Verdana', Courier, monospace; font-size: 16px; line-height: 100%">
-		<div style="text-align: center; display: flex; flex-direction: column">
-				<span style="font-size: 20px">EJ AND JY</span>
-				<span>WET MARKET AND ENTERPRISES</span>
-				<span>POB., CARMEN, AGUSAN DEL NORTE</span>
+		<div style="width: 427px; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 10px; line-height: 100%">
+			<div style="text-align: center;">
+					<div style="font-size: 15px;">EJ AND JY</div>
+					<div>WET MARKET AND ENTERPRISES</div>
+					<div>POB., CARMEN, AGUSAN DEL NORTE</div>
 
-				<br />
+					<br />
 
-				<strong style="font-size: 20px">[ORDER SLIP]</strong>
-		</div>
+					<div style="font-size: 15px">[ORDER SLIP]</div>
+			</div>
 
-		<br />
+			<br />
 
-		<table style="width: 100%;">
-			<tr>
-				<td>Date & Time Requested:</td>
-				<td style="text-align: right">${formatDateTime(orderSlip?.datetime_created)}</td>
-			</tr>
-			<tr>
-				<td>Requesting Branch:</td>
-				<td style="text-align: right">${orderSlip?.requisition_slip?.requesting_user?.branch?.name}</td>
-			</tr>
-			<tr>
-				<td>Created By:</td>
-				<td style="text-align: right">${orderSlip?.requisition_slip?.requesting_user?.first_name} ${orderSlip?.requisition_slip?.requesting_user?.last_name}</td>
-			</tr>
-			<tr>
-				<td>F-RS1:</td>
-				<td style="text-align: right">${orderSlip?.requisition_slip?.id}</td>
-			</tr>
-			<tr>
-				<td>F-OS1:</td>
-				<td style="text-align: right">${orderSlip?.id}</td>
-			</tr>
-			<tr>
-				<td>Status:</td>
-				<td style="text-align: right">${getOrderSlipStatusBranchManagerText(
-					orderSlip?.status?.value,
-					null,
-					orderSlip?.status?.percentage_fulfilled * 100,
-					orderSlip?.delivery_receipt?.status,
-				)}</td>
-			</tr>
-		</table>
-
-		<hr />
-
-		<table style="width: 100%;">
-			<thead>
+			<table style="width: 100%;">
 				<tr>
-					<th style="text-align: left">NAME</th>
-					<th style="text-align: center">QTY REQUESTED<br/>(${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
-					<th style="text-align: center">QTY SERVED</th>
+					<td>Date & Time Requested:</td>
+					<td style="text-align: right">${formatDateTime(orderSlip?.datetime_created)}</td>
 				</tr>
-			</thead>  
-			<tbody>
-				${products.map((product) => (
-					`	
-						<tr>
-							<td>
-								<span style="display:block">${product.name}</span>
-								<small>${product.barcode}</small>
-							</td>
+				<tr>
+					<td>Requesting Branch:</td>
+					<td style="text-align: right">${orderSlip?.requisition_slip?.requesting_user?.branch?.name}</td>
+				</tr>
+				<tr>
+					<td>Created By:</td>
+					<td style="text-align: right">${orderSlip?.requisition_slip?.requesting_user?.first_name} ${orderSlip?.requisition_slip?.requesting_user?.last_name}</td>
+				</tr>
+				<tr>
+					<td>F-RS1:</td>
+					<td style="text-align: right">${orderSlip?.requisition_slip?.id}</td>
+				</tr>
+				<tr>
+					<td>F-OS1:</td>
+					<td style="text-align: right">${orderSlip.id}</td>
+				</tr>
+				<tr>
+					<td>Status:</td>
+					<td style="text-align: right">${getOrderSlipStatusBranchManagerText(
+						orderSlip?.status?.value,
+						null,
+						orderSlip?.status?.percentage_fulfilled * 100,
+						orderSlip?.delivery_receipt?.status,
+					)}</td>
+				</tr>
+			</table>
 
-							<td style="text-align: center">
-								${quantityType === quantityTypes.PIECE ? product.piecesOrdered : product.bulkOrdered}
-							</td>
+			<hr />
 
-							<td style="text-align: center">
-								<div style="width: 70px; height: 30px; border: 1px solid black; margin: auto;"></div>
-							</td>
-						</tr>
-					`
-					)).join('')	
-				}
-			</tbody>
-		</table>
+			<table style="width: 100%;">
+				<thead>
+					<tr>
+						<th style="text-align: left">NAME</th>
+						<th style="text-align: center">QTY REQUESTED<br/>(${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
+						<th style="text-align: right">QTY SERVED</th>
+					</tr>
+				</thead>  
+				<tbody>
+					${products.map((product) => (
+						`	
+							<tr>
+								<td>
+									<span style="display:block">${product.name}</span>
+									<small>${product.barcode}</small>
+								</td>
 
-		<br/>
-		<br/>
+								<td style="text-align: center">
+									${product.ordered}
+								</td>
 
-		<table style="width: 100%;">
-			<tr>
-				<td>Date & Time Printed:</td>
-				<td style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</td>
-			</tr>
-			<tr>
-				<td>Printed By:</td>
-				<td style="text-align: right">${user.first_name} ${user.last_name}</td>
-			</tr>
-		</table>
-	</div>
+								<td style="text-align: right">
+									<div style="width: 70px; height: 15px; border: 1px solid black; margin-left: auto;"></div>
+								</td>
+							</tr>
+						`
+						)).join('')	
+					}
+				</tbody>
+			</table>
+
+			<br/>
+			<br/>
+
+			<table style="width: 100%;">
+				<tr>
+					<td>Date & Time Printed:</td>
+					<td style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</td>
+				</tr>
+				<tr>
+					<td>Printed By:</td>
+					<td style="text-align: right">${user.first_name} ${user.last_name}</td>
+				</tr>
+			</table>
+		</div>
 	`;
 
 	console.log(data);
 
-	print(
-		data, 
-		'Printing order slip...',
-		'Successfully printed order slip.',
-		'Error occurred while trying to print order slip.',
-	);
+	return data;
 };
 
 export default configurePrinter;

@@ -1,7 +1,9 @@
+/* eslint-disable new-cap */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Col, Divider, Modal, Row, Space } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { QuantitySelect, TableNormal } from '../../../../../components';
+import { Col, Divider, Modal, Radio, Row, Select, Space, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { jsPDF } from 'jspdf';
+import React, { useEffect, useState } from 'react';
 import { Button, Label } from '../../../../../components/elements';
 import { printOrderSlip } from '../../../../../configurePrinter';
 import { quantityTypes } from '../../../../../global/types';
@@ -9,130 +11,108 @@ import { useAuth } from '../../../../../hooks/useAuth';
 import { convertToBulk, getColoredText } from '../../../../../utils/function';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
+const columns: ColumnsType = [
+	{
+		title: 'Barcode',
+		dataIndex: 'barcode',
+		key: 'barcode',
+		width: 150,
+		fixed: 'left',
+	},
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
+	{ title: 'Personnel', dataIndex: 'personnel', key: 'personnel' },
+];
+
 interface Props {
-	visible: boolean;
 	orderSlip: any;
 	onClose: any;
 }
 
-export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
+export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	// STATES
-	const [requestedProducts, setRequestedProducts] = useState([]);
-	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
-		[],
-	);
+	const [data, setData] = useState([]);
+
 	const [quantityType, setQuantityType] = useState(quantityTypes.PIECE);
-	const [forPrintProducts, setForPrintProducts] = useState([]);
+	const [personnels, setPersonnels] = useState([]);
+	const [personnel, setPersonnel] = useState(null);
 	const [printingDisabled, setPrintingDisabled] = useState(false);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 
+	// METHODS
 	useEffect(() => {
 		if (orderSlip) {
-			const formattedQuantities = [];
-			const formattedPreparationSlip = [];
-			const formattedForPrintProducts = [];
+			const addedPersonnelIds = [];
+			const listPersonnels = [];
 
-			orderSlip?.products?.forEach((requestedProduct) => {
-				const {
-					product,
-					assigned_person,
-					quantity_piece,
-					fulfilled_quantity_piece = 0,
-				} = requestedProduct;
-				const { barcode, name, pieces_in_bulk } = product;
-				const { first_name, last_name } = assigned_person;
-
-				const quantity = {
-					barcode,
-					isFulfilled: fulfilled_quantity_piece !== null,
-					piecesInputted: fulfilled_quantity_piece || 0,
-					piecesOrdered: quantity_piece,
-					bulkInputted: convertToBulk(fulfilled_quantity_piece, pieces_in_bulk),
-					bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
-				};
-
-				formattedQuantities.push(quantity);
-				formattedPreparationSlip.push([
-					barcode,
-					name,
-					getColoredText(
-						`${orderSlip?.id}-${barcode}-${quantity.isFulfilled}`, // key
-						!quantity.isFulfilled,
-						quantity.piecesInputted,
-						quantity.piecesOrdered,
-					),
-					`${first_name} ${last_name}`,
-				]);
-
-				formattedForPrintProducts.push({
-					barcode,
-					name,
-					piecesOrdered: quantity_piece,
-					bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
-					personnel: `${first_name} ${last_name}`,
-				});
+			orderSlip.products.forEach(({ assigned_person }) => {
+				if (!addedPersonnelIds.includes(assigned_person.id)) {
+					listPersonnels.push(assigned_person);
+					addedPersonnelIds.push(assigned_person.id);
+				}
 			});
 
-			setForPrintProducts(formattedForPrintProducts);
-
-			setRequestedProducts(formattedPreparationSlip);
-			setRequestedProductsQuantity(formattedQuantities);
+			setPersonnels(listPersonnels);
 		}
 	}, [orderSlip]);
 
-	const onQuantityTypeChange = useCallback(
-		(type) => {
-			const QUANTITY_INDEX = 2;
-			const formattedRequestedProducts = requestedProducts.map(
-				(requestedProduct, index) => {
-					const requestedProd = requestedProduct;
-					const quantity = requestedProductsQuantity[index];
-					const isPiece = type === quantityTypes.PIECE;
-					const inputted = isPiece
-						? quantity.piecesInputted
-						: quantity.bulkInputted;
-					const ordered = isPiece
-						? quantity.piecesOrdered
-						: quantity.bulkOrdered;
-					const key = `${
-						orderSlip?.id
-					}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
+	useEffect(() => {
+		if (orderSlip) {
+			const orderSlipProducts = orderSlip.products
+				?.filter(({ assigned_person }) => {
+					if (personnel) {
+						return assigned_person.id === personnel;
+					}
+					return true;
+				})
+				?.map((product) => {
+					const {
+						product: { barcode, name, pieces_in_bulk },
+						assigned_person: { first_name, last_name },
+						quantity_piece,
+						fulfilled_quantity_piece = 0,
+					} = product;
+					const fulfilledQuantityPiece = fulfilled_quantity_piece || 0;
 
-					requestedProd[QUANTITY_INDEX] = getColoredText(
-						key,
-						!quantity.isFulfilled,
-						inputted,
+					const isFulfilled = fulfilledQuantityPiece > 0;
+					const inputted =
+						quantityType === quantityTypes.PIECE
+							? fulfilledQuantityPiece
+							: convertToBulk(fulfilledQuantityPiece, pieces_in_bulk);
+					const ordered =
+						quantityType === quantityTypes.PIECE
+							? quantity_piece
+							: convertToBulk(quantity_piece, pieces_in_bulk);
+
+					return {
+						barcode,
+						name,
+						quantity: getColoredText(!isFulfilled, inputted, ordered),
+						personnel: `${first_name} ${last_name}`,
 						ordered,
-					);
+					};
+				});
 
-					return requestedProd;
-				},
-			);
-			setRequestedProducts(formattedRequestedProducts);
-			setQuantityType(type);
-		},
-		[requestedProducts, requestedProductsQuantity, orderSlip],
-	);
-
-	const getColumns = useCallback(
-		() => [
-			{ name: 'Barcode' },
-			{ name: 'Name' },
-			{ name: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} /> },
-			{ name: 'Assigned Personnel' },
-		],
-		[onQuantityTypeChange],
-	);
+			setData(orderSlipProducts);
+		}
+	}, [orderSlip, quantityType, personnel]);
 
 	const onPrint = () => {
-		printOrderSlip(user, orderSlip, forPrintProducts, quantityType);
 		setPrintingDisabled(true);
 
-		setTimeout(() => {
-			setPrintingDisabled(false);
-		}, 5000);
+		const html = printOrderSlip(user, orderSlip, data, quantityType);
+		const pdf = new jsPDF('p', 'px', 'a4', true);
+
+		pdf.html(html, {
+			x: 10,
+			y: 10,
+			callback: (instance) => {
+				instance.save(`FOS1_${orderSlip.id}`);
+				setPrintingDisabled(false);
+			},
+		});
 	};
 
 	const close = () => {
@@ -144,7 +124,6 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 		<Modal
 			title="View Order Slip"
 			className="ModalLarge"
-			visible={visible}
 			footer={[
 				<Space size={10}>
 					<Button text="Close" onClick={close} />
@@ -157,6 +136,7 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 				</Space>,
 			]}
 			onCancel={close}
+			visible
 			centered
 			closable
 		>
@@ -164,17 +144,49 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 
 			<Divider dashed />
 
-			<Row gutter={[15, 15]} align="middle" justify="space-between">
+			<Row gutter={[15, 15]}>
+				<Col sm={12} span={24}>
+					<Label label="Quantity Type" spacing />
+					<Radio.Group
+						options={[
+							{ label: 'Piece', value: quantityTypes.PIECE },
+							{ label: 'Bulk', value: quantityTypes.BULK },
+						]}
+						onChange={(e) => {
+							const { value } = e.target;
+							setQuantityType(value);
+						}}
+						defaultValue={quantityTypes.PIECE}
+						optionType="button"
+					/>
+				</Col>
+
+				<Col sm={12} span={24}>
+					<Label label="Assigned Personnel" spacing />
+					<Select
+						style={{ width: '100%' }}
+						onChange={(value) => {
+							setPersonnel(value);
+						}}
+						allowClear
+					>
+						{personnels.map(({ id, first_name, last_name }) => (
+							<Select.Option value={id}>
+								{`${first_name} ${last_name}`}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
 				<Col span={24}>
-					<Label label="Requested Products" />
+					<Table
+						columns={columns}
+						dataSource={data}
+						scroll={{ x: 650, y: 250 }}
+						pagination={false}
+					/>
 				</Col>
 			</Row>
-
-			<TableNormal
-				columns={getColumns()}
-				data={requestedProducts}
-				hasCustomHeaderComponent
-			/>
 		</Modal>
 	);
 };

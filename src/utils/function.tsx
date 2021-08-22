@@ -155,25 +155,26 @@ export const showErrorMessages = (errors) => {
 	}
 };
 
-export const getColoredText = memoize(
-	(key, isDefault, x, y, isOverOnlyIfDefault = false) => {
-		let text = `${x}/${y}`;
-		let component = null;
+export const getColoredText = (
+	isDefault,
+	x,
+	y,
+	isOverOnlyIfDefault = false,
+) => {
+	let text = `${x}/${y}`;
+	let component = null;
 
-		if (isDefault) {
-			text = isOverOnlyIfDefault ? text : y;
-			component = <ColoredText type={coloredTextType.DEFAULT} text={text} />;
-		}
-		if (x !== y) {
-			component = <ColoredText type={coloredTextType.ERROR} text={text} />;
-		}
-		if (x === y) {
-			component = <ColoredText type={coloredTextType.PRIMARY} text={text} />;
-		}
+	if (isDefault) {
+		text = isOverOnlyIfDefault ? text : y;
+		component = <ColoredText type={coloredTextType.DEFAULT} text={text} />;
+	} else if (x !== y) {
+		component = <ColoredText type={coloredTextType.ERROR} text={text} />;
+	} else if (x === y) {
+		component = <ColoredText type={coloredTextType.PRIMARY} text={text} />;
+	}
 
-		return component;
-	},
-);
+	return component;
+};
 
 export const getBranchProductStatus = memoize((status: string) => {
 	switch (status) {

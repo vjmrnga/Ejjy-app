@@ -50,7 +50,6 @@ export const ViewPreparationSlipModal = ({
 					barcode,
 					name,
 					getColoredText(
-						`${preparationSlip?.id}-${barcode}-${quantity.isFulfilled}`, // key
 						!quantity.isFulfilled,
 						quantity.piecesInputted,
 						quantity.piecesOrdered,
