@@ -26,4 +26,9 @@
 		@include font(1.5rem, bold);
 		color: $color-primary;
 	}
+
+	&_spinner {
+		margin-left: 5px;
+		color: $color-primary !important;
+	}
 }

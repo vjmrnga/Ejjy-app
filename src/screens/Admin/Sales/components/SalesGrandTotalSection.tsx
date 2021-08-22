@@ -1,20 +1,22 @@
-import { Col, DatePicker, Radio, Row, Space } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Label } from '../../../../components/elements';
+import { Box } from '../../../../components/elements';
 import { request, timeRangeTypes } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
+import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';
 
-const { RangePicker } = DatePicker;
+interface Props {
+	timeRange: string;
+	timeRangeOption: string;
+}
 
-const INTERVAL_MS = 30000;
-
-export const SalesGrandTotalSection = () => {
+export const SalesGrandTotalSection = ({
+	timeRange,
+	timeRangeOption,
+}: Props) => {
 	// STATES
 	const [branchSales, setBranchSales] = useState(0);
-	const [timeRange, setTimeRange] = useState(timeRangeTypes.DAILY);
-	const [timeRangeOption, setTimeRangeOption] = useState(timeRangeTypes.DAILY);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 
 	// CUSTOM HOOKS
@@ -27,8 +29,18 @@ export const SalesGrandTotalSection = () => {
 
 	// METHODS
 	useEffect(() => {
-		fetchBranchMachineSales(timeRangeTypes.DAILY);
-	}, [branches]);
+		if (timeRangeOption !== timeRangeTypes.DATE_RANGE) {
+			setIsCompletedInitialFetch(false);
+			fetchBranchMachineSales(timeRangeOption);
+		}
+	}, [timeRangeOption]);
+
+	useEffect(() => {
+		if (timeRangeOption === timeRangeTypes.DATE_RANGE && timeRange !== null) {
+			setIsCompletedInitialFetch(false);
+			fetchBranchMachineSales(timeRange);
+		}
+	}, [timeRange, timeRangeOption]);
 
 	const getBranchIds = useCallback(
 		() => branches.map(({ id }) => id),
@@ -68,62 +80,18 @@ export const SalesGrandTotalSection = () => {
 
 	return (
 		<Box padding>
-			<Row gutter={[15, 15]}>
-				<Col lg={12} span={24}>
-					<Space direction="vertical" size={10}>
-						<Label label="Quantity Sold Date" />
-						<Radio.Group
-							options={[
-								{ label: 'Daily', value: timeRangeTypes.DAILY },
-								{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-								{
-									label: 'Select Date Range',
-									value: timeRangeTypes.DATE_RANGE,
-								},
-							]}
-							onChange={(e) => {
-								const { value } = e.target;
-								setTimeRange(value);
-								setTimeRangeOption(value);
-
-								if (value !== 'date_range') {
-									setIsCompletedInitialFetch(false);
-									fetchBranchMachineSales(value);
-								}
-							}}
-							defaultValue="daily"
-							optionType="button"
-						/>
-						{timeRangeOption === 'date_range' && (
-							<RangePicker
-								format="MM/DD/YY"
-								onCalendarChange={(dates, dateStrings) => {
-									if (dates?.[0] && dates?.[1]) {
-										const value = dateStrings.join(',');
-										setTimeRange(value);
-										setIsCompletedInitialFetch(false);
-
-										fetchBranchMachineSales(value);
-									}
-								}}
-							/>
-						)}
-					</Space>
-				</Col>
-				<Col span={24}>
-					<SalesTotalCard
-						title="Grand Total Sales"
-						totalSales={branchSales}
-						timeRange={timeRange}
-						timeRangeOption={timeRangeOption}
-						loading={
-							isCompletedInitialFetch
-								? false
-								: branchMachinesStatus === request.REQUESTING
-						}
-					/>
-				</Col>
-			</Row>
+			<SalesTotalCard
+				title="Grand Total Sales"
+				totalSales={branchSales}
+				timeRange={timeRange}
+				timeRangeOption={timeRangeOption}
+				loading={branchMachinesStatus === request.REQUESTING}
+				firstTimeLoading={
+					isCompletedInitialFetch
+						? false
+						: branchMachinesStatus === request.REQUESTING
+				}
+			/>
 		</Box>
 	);
 };

@@ -1,3 +1,4 @@
+import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import React, { useCallback } from 'react';
 import { Box } from '../../../../components/elements';
@@ -10,6 +11,7 @@ interface Props {
 	totalSales: number;
 	timeRange: string;
 	timeRangeOption: string;
+	firstTimeLoading: boolean;
 	loading: boolean;
 }
 
@@ -18,6 +20,7 @@ export const SalesTotalCard = ({
 	totalSales,
 	timeRange,
 	timeRangeOption,
+	firstTimeLoading,
 	loading,
 }: Props) => {
 	const getTotalSalesDescription = useCallback(() => {
@@ -40,12 +43,16 @@ export const SalesTotalCard = ({
 
 	return (
 		<Box className="SalesTotalCard">
-			<Spin spinning={loading}>
+			<Spin spinning={firstTimeLoading}>
 				<div className="SalesTotalCard_container">
 					<div>
-						<p className="SalesTotalCard_title">{title || 'Total Sales'}</p>
+						<p className="SalesTotalCard_title">{title}</p>
 						<span className="SalesTotalCard_description">
 							{getTotalSalesDescription()}
+
+							{loading && (
+								<LoadingOutlined className="SalesTotalCard_spinner" />
+							)}
 						</span>
 					</div>
 

@@ -13,6 +13,8 @@ import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/branch-machines';
 import { getLocalIpAddress } from '../../utils/function';
 
+const SALES_PAGE_SIZE = 2;
+
 /* WORKERS */
 function* list({ payload }: any) {
 	const { branchId, callback } = payload;
@@ -84,7 +86,7 @@ function* retrieveSales({ payload }: any) {
 
 	const data = {
 		page: 1,
-		page_size: MAX_PAGE_SIZE,
+		page_size: SALES_PAGE_SIZE,
 		time_range: timeRange,
 	};
 
@@ -119,7 +121,7 @@ function* retrieveSalesAll({ payload }: any) {
 					service.retrieveSales,
 					{
 						page: 1,
-						page_size: MAX_PAGE_SIZE,
+						page_size: SALES_PAGE_SIZE,
 						time_range: timeRange,
 					},
 					url,
@@ -200,7 +202,7 @@ const listWatcherSaga = function* listWatcherSaga() {
 };
 
 const retrieveSalesWatcherSaga = function* retrieveSalesWatcherSaga() {
-	yield takeLatest(types.RETRIEVE_BRANCH_MACHINE_SALES, retrieveSales);
+	yield takeEvery(types.RETRIEVE_BRANCH_MACHINE_SALES, retrieveSales);
 };
 
 const retrieveSalesAllWatcherSaga = function* retrieveSalesAllWatcherSaga() {

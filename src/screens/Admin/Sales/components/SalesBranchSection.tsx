@@ -4,7 +4,12 @@ import { Box } from '../../../../components/elements';
 import { useBranches } from '../../../../hooks/useBranches';
 import { SalesBranch } from './SalesBranch';
 
-export const SalesBranchSection = () => {
+interface Props {
+	timeRange: string;
+	timeRangeOption: string;
+}
+
+export const SalesBranchSection = ({ timeRange, timeRangeOption }: Props) => {
 	// STATES
 	const [currentActiveKey, setCurrentActiveKey] = useState(null);
 
@@ -14,27 +19,27 @@ export const SalesBranchSection = () => {
 	// METHODS
 	useEffect(() => {
 		if (branches) {
-			onTabClick(branches?.[0]?.id);
+			setCurrentActiveKey(branches?.[0]?.id.toString());
 		}
 	}, [branches]);
-
-	const onTabClick = (branchId) => {
-		setCurrentActiveKey(branchId);
-	};
 
 	return (
 		<Box>
 			<Tabs
-				defaultActiveKey={branches?.[0]?.id}
+				activeKey={currentActiveKey}
 				style={{ padding: '20px 25px' }}
 				type="card"
-				onTabClick={onTabClick}
+				onTabClick={(branchId) => {
+					setCurrentActiveKey(branchId);
+				}}
 			>
 				{branches.map(({ name, id, online_url }) => (
 					<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
 						<SalesBranch
-							isActive={id === Number(currentActiveKey)}
 							branchId={id}
+							timeRange={timeRange}
+							timeRangeOption={timeRangeOption}
+							isActive={id === Number(currentActiveKey)}
 						/>
 					</Tabs.TabPane>
 				))}
