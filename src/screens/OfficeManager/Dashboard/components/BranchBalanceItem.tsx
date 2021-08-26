@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CashieringCard } from '../../../../components/CashieringCard/CashieringCard';
-import { Label } from '../../../../components/elements';
+import { FieldError, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
 import {
@@ -19,6 +19,7 @@ import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useBranchesDays } from '../../../../hooks/useBranchesDays';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
+import { useNetwork } from '../../../../hooks/useNetwork';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
@@ -38,7 +39,8 @@ const columns = [
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
-const INTERVAL_MS = 30000;
+const FETCH_INTERVAL_MS = 30000;
+const NETWORK_INTERVAL_MS = 5000;
 
 interface Props {
 	branchId: number;
@@ -59,6 +61,7 @@ export const BranchBalanceItem = ({
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 	const [productCategory, setProductCategory] = useState(null);
 	const [productStatus, setProductStatus] = useState(null);
+	const [hasInternetConnection, setHasInternetConnection] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -71,15 +74,17 @@ export const BranchBalanceItem = ({
 		errors: branchProductsErrors,
 		warnings: branchProductsWarnings,
 	} = useBranchProducts();
+	const { testBranchConnection } = useNetwork();
 
 	// REFS
-	const intervalRef = useRef(null);
+	const fetchIntervalRef = useRef(null);
+	const networkIntervalRef = useRef(null);
 
 	// METHODS
 	useEffect(
 		() => () => {
 			// Cleanup in case logged out due to single sign on
-			clearInterval(intervalRef.current);
+			clearInterval(fetchIntervalRef.current);
 		},
 		[],
 	);
@@ -87,8 +92,20 @@ export const BranchBalanceItem = ({
 	useEffect(() => {
 		if (isActive) {
 			fetchBranchProducts({}, 1, pageSize);
+
+			const fn = () => {
+				testBranchConnection({ branchId }, ({ status }) => {
+					if (status === request.SUCCESS) {
+						setHasInternetConnection(true);
+					} else if (status === request.ERROR) {
+						setHasInternetConnection(false);
+					}
+				});
+			};
+			networkIntervalRef.current = setInterval(fn, NETWORK_INTERVAL_MS);
 		} else {
-			clearInterval(intervalRef.current);
+			clearInterval(fetchIntervalRef.current);
+			clearInterval(networkIntervalRef.current);
 		}
 	}, [isActive]);
 
@@ -185,18 +202,25 @@ export const BranchBalanceItem = ({
 			true,
 		);
 
-		clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => {
+		clearInterval(fetchIntervalRef.current);
+		fetchIntervalRef.current = setInterval(() => {
 			getBranchProducts(
 				{ ...params, branchId, page, pageSize: newPageSize },
 				true,
 			);
-		}, INTERVAL_MS);
+		}, FETCH_INTERVAL_MS);
 	};
 
 	return (
 		<div className="BranchBalanceItem">
-			<BranchDay branchId={branchId} isActive={isActive} disabled={disabled} />
+			{hasInternetConnection === false && (
+				<FieldError error="Cannot reach branch's API" />
+			)}
+			<BranchDay
+				branchId={branchId}
+				isActive={isActive}
+				disabled={disabled || !hasInternetConnection}
+			/>
 
 			<Divider dashed />
 

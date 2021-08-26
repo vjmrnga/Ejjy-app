@@ -105,7 +105,7 @@ export const SetOutOfStockModal = ({
 	return (
 		<Modal
 			title="Out of Stock"
-			className="SetOutOfStockModal ModalLarge"
+			className="SetOutOfStockModal Modal__large"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

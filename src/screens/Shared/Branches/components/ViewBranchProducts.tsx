@@ -304,8 +304,8 @@ interface FilterProps {
 }
 
 const Filter = ({
-	productCategoriesStatus,
 	productCategories,
+	productCategoriesStatus,
 	onSelectProductCategory,
 	onSelectSoldInBranch,
 	onSearch,

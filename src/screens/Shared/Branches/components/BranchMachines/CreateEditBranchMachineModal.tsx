@@ -57,7 +57,6 @@ export const CreateEditBranchMachineModal = ({
 	return (
 		<Modal
 			title={`${branchMachine ? '[Edit]' : '[Create]'} Branch Machine`}
-			className="ModalLarge"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

@@ -8,51 +8,55 @@ import {
 } from '../../../../utils/function';
 
 interface Props {
-	visible: boolean;
-	product: any;
+	branchProduct: any;
 	onClose: any;
 }
 
-export const ViewProductModal = ({ product, visible, onClose }: Props) => (
+export const ViewProductModal = ({ branchProduct, onClose }: Props) => (
 	<Modal
 		title="[View] Product"
-		className="ModalLarge"
-		visible={visible}
+		className="Modal__large Modal__hasFooter"
 		footer={[<Button text="Close" onClick={onClose} />]}
 		onCancel={onClose}
+		visible
 		centered
 		closable
 	>
-		{product && (
-			<DetailsRow>
-				<DetailsSingle label="Barcode" value={product.barcode} />
-				<DetailsSingle label="Textcode" value={product.textcode} />
-				<DetailsSingle label="Name" value={product.name} />
-				<DetailsSingle label="TT-001" value={getProductType(product.type)} />
-				<DetailsSingle
-					label="TT-002"
-					value={getUnitOfMeasurement(product.unit_of_measurement)}
-				/>
+		<DetailsRow>
+			<DetailsSingle label="Barcode" value={branchProduct.product.barcode} />
+			<DetailsSingle label="Textcode" value={branchProduct.product.textcode} />
+			<DetailsSingle label="Name" value={branchProduct.product.name} />
+			<DetailsSingle
+				label="TT-001"
+				value={getProductType(branchProduct.product.type)}
+			/>
+			<DetailsSingle
+				label="TT-002"
+				value={getUnitOfMeasurement(branchProduct.product.unit_of_measurement)}
+			/>
+			<DetailsSingle
+				label="TT-003"
+				value={branchProduct.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
+			/>
 
-				<Divider dashed />
+			<Divider dashed />
 
-				<DetailsHalf
-					label="Checking"
-					value={product.is_daily_checked ? 'Daily' : 'Random'}
-				/>
-				<DetailsHalf
-					label="TT-003"
-					value={product.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
-				/>
-				<DetailsHalf label="Reorder Point" value={product.reorder_point} />
-				<DetailsHalf label="Max Balance" value={product.max_balance} />
-				<DetailsHalf label="Price (Piece)" value={product.price_per_piece} />
-				<DetailsHalf label="Price (Bulk)" value={product.price_per_bulk} />
-				<DetailsHalf
-					label="Allowable Spoilage (%)"
-					value={product.allowable_spoilage * 100}
-				/>
-			</DetailsRow>
-		)}
+			<DetailsHalf
+				label="Checking"
+				value={branchProduct.is_daily_checked ? 'Daily' : 'Random'}
+			/>
+
+			<DetailsHalf label="Reorder Point" value={branchProduct.reorder_point} />
+			<DetailsHalf label="Max Balance" value={branchProduct.max_balance} />
+			<DetailsHalf
+				label="Price (Piece)"
+				value={branchProduct.price_per_piece}
+			/>
+			<DetailsHalf label="Price (Bulk)" value={branchProduct.price_per_bulk} />
+			<DetailsHalf
+				label="Allowable Spoilage (%)"
+				value={branchProduct.product.allowable_spoilage * 100}
+			/>
+		</DetailsRow>
 	</Modal>
 );

@@ -163,15 +163,15 @@ const print = (printData, loadingMessage, successMessage, errorMessage) => {
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 	const data = `
-		<div style="width: 427px; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 10px; line-height: 100%">
+		<div style="width: 430pt; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 7pt; line-height: 100%">
 			<div style="text-align: center;">
-					<div style="font-size: 15px;">EJ AND JY</div>
+					<div style="font-size: 10pt;">EJ AND JY</div>
 					<div>WET MARKET AND ENTERPRISES</div>
 					<div>POB., CARMEN, AGUSAN DEL NORTE</div>
 
 					<br />
 
-					<div style="font-size: 15px">[ORDER SLIP]</div>
+					<div style="font-size: 10pt">[ORDER SLIP]</div>
 			</div>
 
 			<br />
@@ -208,14 +208,15 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 				</tr>
 			</table>
 
-			<hr />
+			<br />
+			<br />
 
 			<table style="width: 100%;">
 				<thead>
 					<tr>
-						<th style="text-align: left">NAME</th>
-						<th style="text-align: center">QTY REQUESTED<br/>(${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
-						<th style="text-align: right">QTY SERVED</th>
+						<th style="text-align: left; font-weight: normal">NAME</th>
+						<th style="text-align: center; font-weight: normal">QTY REQUESTED<br/>(${quantityType === quantityTypes.PIECE ? "PCS" : "BULK"})</th>
+						<th style="text-align: right; font-weight: normal">QTY SERVED</th>
 					</tr>
 				</thead>  
 				<tbody>
@@ -232,7 +233,7 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 								</td>
 
 								<td style="text-align: right">
-									<div style="width: 70px; height: 15px; border: 1px solid black; margin-left: auto;"></div>
+									<div style="width: 50pt; height: 12pt; border: 0.1pt solid #898989; margin-left: auto;"></div>
 								</td>
 							</tr>
 						`

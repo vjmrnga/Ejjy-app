@@ -15,7 +15,7 @@ function* list({ payload }: any) {
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
+	if (!baseURL && branchId && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
@@ -68,57 +68,33 @@ function* getBranchDay({ payload }: any) {
 	const { branch_id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(
 		branchesSelectors.selectURLByBranchId(branch_id),
 	);
-	if (!baseURL && branch_id) {
+	if (!baseURL && branch_id && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
+
+	const localURL = getLocalIpAddress();
 
 	const data = {
 		page: 1,
 		page_size: MAX_PAGE_SIZE,
 	};
 
-	let isFetchedFromBackupURL = false;
-
 	try {
-		let response = null;
-
-		try {
-			// Fetch in branch url
-			response = yield call(
-				service.get,
-				data,
-				IS_APP_LIVE ? baseURL : localURL,
-			);
-		} catch (e) {
-			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(
-				branchesSelectors.selectBackUpURLByBranchId(branch_id),
-			);
-			if (baseURL && baseBackupURL) {
-				// Fetch branch url
-				response = yield call(service.get, data, baseBackupURL);
-				isFetchedFromBackupURL = true;
-			} else {
-				throw e;
-			}
-		}
+		const response = yield call(
+			service.get,
+			data,
+			IS_APP_LIVE ? baseURL : localURL,
+		);
 
 		yield put(
 			actions.save({ type: types.GET_BRANCH_DAY, branchDay: response.data }),
 		);
-		callback({
-			status: request.SUCCESS,
-			warnings: isFetchedFromBackupURL
-				? ['Data Source: Backup Server, data might be outdated.']
-				: [],
-		});
+		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -134,7 +110,7 @@ function* create({ payload }: any) {
 	const baseURL = yield select(
 		branchesSelectors.selectURLByBranchId(branch_id),
 	);
-	if (!baseURL && branch_id) {
+	if (!baseURL && branch_id && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
@@ -165,7 +141,7 @@ function* edit({ payload }: any) {
 	const baseURL = yield select(
 		branchesSelectors.selectURLByBranchId(branch_id),
 	);
-	if (!baseURL && branch_id) {
+	if (!baseURL && branch_id && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}

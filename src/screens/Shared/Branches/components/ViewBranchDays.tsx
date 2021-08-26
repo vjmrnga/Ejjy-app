@@ -69,13 +69,13 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 		return (
 			<div className="branch-day-column">
 				<div className="first-row">
-					<span className="label">Start: </span>
+					<span className="label">Open: </span>
 					<span className="value">
 						{startedBy ? startedByUser : EMPTY_CELL}
 					</span>
 				</div>
 				<div>
-					<span className="label">End: </span>
+					<span className="label">Close: </span>
 					<span className="value">{endedBy ? endedByUser : EMPTY_CELL}</span>
 				</div>
 			</div>
@@ -85,7 +85,7 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 	const getDateTime = (datetime_created, datetime_ended) => (
 		<div className="branch-day-column">
 			<div className="first-row">
-				<span className="label">Start: </span>
+				<span className="label">Open: </span>
 				<span className="value">
 					{datetime_created
 						? formatDateTimeShortMonth(datetime_created)
@@ -93,7 +93,7 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 				</span>
 			</div>
 			<div>
-				<span className="label">End: </span>
+				<span className="label">Close: </span>
 				<span className="value">
 					{datetime_ended
 						? formatDateTimeShortMonth(datetime_ended)

@@ -93,7 +93,7 @@ export const EditBranchProductsModal = ({
 	return (
 		<Modal
 			title={title}
-			className="ModalLarge"
+			className="Modal__large ModalLarge__scrollable"
 			visible={visible}
 			footer={null}
 			onCancel={handleClose}

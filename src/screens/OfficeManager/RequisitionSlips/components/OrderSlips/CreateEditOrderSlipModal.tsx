@@ -152,7 +152,7 @@ export const CreateEditOrderSlipModal = ({
 	return (
 		<Modal
 			title={`${orderSlip ? '[Edit]' : '[Create]'} F-OS1`}
-			className="ModalLarge"
+			className="Modal__large ModalLarge__scrollable"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

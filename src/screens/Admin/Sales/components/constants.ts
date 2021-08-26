@@ -1,1 +1,1 @@
-export const INTERVAL_MS = 60000;
+export const INTERVAL_MS = 30000;

@@ -48,7 +48,7 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 	return (
 		<Modal
 			title="View Order Slip"
-			className="ModalLarge"
+			className="Modal__large Modal__hasFooter"
 			visible={visible}
 			footer={[<Button key="close" text="Close" onClick={onClose} />]}
 			onCancel={onClose}

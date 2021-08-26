@@ -282,7 +282,10 @@ export const OrderSlips = ({
 				.map(({ product_id }) => product_id)
 				.join(',');
 
-			getBranchProducts({ productIds, branchId, page: 1 }, true);
+			getBranchProducts(
+				{ page: 1, pageSize: MAX_PAGE_SIZE, productIds, branchId },
+				true,
+			);
 		}
 	};
 

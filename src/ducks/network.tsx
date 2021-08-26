@@ -5,6 +5,7 @@ export const key = 'NETWORK';
 
 export const types = {
 	TEST_CONNECTION: `${key}/TEST_CONNECTION`,
+	TEST_BRANCH_CONNECTION: `${key}/TEST_BRANCH_CONNECTION`,
 	UPDATE_INTERNET_CONNECTION: `${key}/UPDATE_INTERNET_CONNECTION`,
 };
 
@@ -25,6 +26,7 @@ const reducer = handleActions(
 export const actions = {
 	updateInternetConnection: createAction(types.UPDATE_INTERNET_CONNECTION),
 	testConnection: createAction(types.TEST_CONNECTION),
+	testBranchConnection: createAction(types.TEST_BRANCH_CONNECTION),
 };
 
 const selectState = (state: any) => state[key] || initialState;

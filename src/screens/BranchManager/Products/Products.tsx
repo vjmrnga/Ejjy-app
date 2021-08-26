@@ -1,15 +1,23 @@
-import { Table } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Input, Row, Select, Table } from 'antd';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Content, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { EMPTY_CELL } from '../../../global/constants';
+import { Content, RequestErrors, TableHeader } from '../../../components';
+import { Box, ButtonLink, Label } from '../../../components/elements';
+import { EMPTY_CELL, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
-import { request } from '../../../global/types';
+import { branchProductStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { getBranchProductStatus } from '../../../utils/function';
+import { useProductCategories } from '../../../hooks/useProductCategories';
+import { IProductCategory } from '../../../models';
+import {
+	convertIntoArray,
+	getBranchProductStatus,
+} from '../../../utils/function';
 import { ViewProductModal } from './components/ViewProductModal';
+import './style.scss';
 
 const columns = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
@@ -21,9 +29,11 @@ const columns = [
 export const Products = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] =
-		useState(false);
+	const [productCategories, setProductCategories] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
+	const [searchedKeyword, setSearchedKeyword] = useState('');
+	const [status, setStatus] = useState(null);
+	const [productCategory, setProductCategory] = useState(null);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
@@ -33,76 +43,137 @@ export const Products = () => {
 		pageSize,
 		currentPage,
 		getBranchProducts,
-		status,
+		status: branchProductsStatus,
+		errors: branchProductsErrors,
 	} = useBranchProducts();
+	const {
+		getProductCategories,
+		status: productCategoriesStatus,
+		errors: productCategoriesErrors,
+	} = useProductCategories();
 
 	// METHODS
 	useEffect(() => {
 		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
+		getProductCategories(({ status: requestStatus, data: responseData }) => {
+			if (requestStatus === request.SUCCESS) {
+				setProductCategories(responseData);
+			}
+		});
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
 	useEffect(() => {
-		const formattedBranchProducts = branchProducts.map((branchProduct) => {
-			const {
-				product: { barcode, textcode, name },
-				requisition_slip,
-				product_status,
-			} = branchProduct;
-
-			const product = {
-				...branchProduct?.product,
-				max_balance: branchProduct?.max_balance,
-				reorder_point: branchProduct?.reorder_point,
-				price_per_piece: branchProduct?.price_per_piece,
-				price_per_bulk: branchProduct?.price_per_bulk,
-				allowable_spoilage: branchProduct?.allowable_spoilage,
-				is_daily_checked: branchProduct?.is_daily_checked,
-				is_vat_exempted: branchProduct?.is_vat_exempted,
-			};
-
-			return {
-				_textcode: textcode,
-				_barcode: barcode,
+		setData(
+			branchProducts.map((branchProduct) => ({
 				barcode: (
 					<ButtonLink
-						text={barcode || textcode}
-						onClick={() => onView(product)}
+						text={
+							branchProduct.product.barcode || branchProduct.product.textcode
+						}
+						onClick={() => setSelectedBranchProduct(branchProduct)}
 					/>
 				),
-				name,
-				status: getBranchProductStatus(product_status),
-				requisitionSlip: requisition_slip ? (
+				name: branchProduct.product.name,
+				status: getBranchProductStatus(branchProduct.product_status),
+				requisitionSlip: branchProduct.requisition_slip ? (
 					<Link
-						to={`/branch-manager/requisition-slips/${requisition_slip?.id}`}
+						to={`/branch-manager/requisition-slips/${branchProduct.requisition_slip?.id}`}
 					>
-						{requisition_slip?.id}
+						{branchProduct.requisition_slip?.id}
 					</Link>
 				) : (
 					EMPTY_CELL
 				),
-			};
-		});
-
-		setData(formattedBranchProducts);
+			})),
+		);
 	}, [branchProducts]);
-
-	const onView = (branchProduct) => {
-		setSelectedBranchProduct(branchProduct);
-		setViewBranchProductModalVisible(true);
-	};
 
 	const onPageChange = (page, newPageSize) => {
 		getBranchProducts(
-			{ branchId: user?.branch?.id, page, pageSize: newPageSize },
+			{
+				search: searchedKeyword,
+				branchId: user?.branch?.id,
+				productCategory,
+				productStatus: status,
+				page,
+				pageSize: newPageSize,
+			},
 			newPageSize !== pageSize,
 		);
+	};
+
+	const onSearch = useCallback(
+		debounce((keyword) => {
+			const lowerCaseKeyword = keyword?.toLowerCase();
+			getBranchProducts(
+				{
+					search: lowerCaseKeyword,
+					branchId: user?.branch?.id,
+					productCategory,
+					productStatus: status,
+					page: 1,
+				},
+				true,
+			);
+
+			setSearchedKeyword(lowerCaseKeyword);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
+
+	const onSelectProductCategory = (value) => {
+		getBranchProducts(
+			{
+				search: searchedKeyword,
+				branchId: user?.branch?.id,
+				productCategory: value,
+				productStatus: status,
+				page: 1,
+			},
+			true,
+		);
+
+		setProductCategory(value);
+	};
+
+	const onSelectStatus = (value) => {
+		getBranchProducts(
+			{
+				search: searchedKeyword,
+				branchId: user?.branch?.id,
+				productCategory,
+				productStatus: value,
+				page: 1,
+			},
+			true,
+		);
+
+		setStatus(value);
 	};
 
 	return (
 		<Content title="Products">
 			<Box>
-				<TableHeader title="Products" buttonName="Create Branch Product" />
+				<TableHeader title="Products" />
+
+				<div className="PaddingHorizontal">
+					<RequestErrors
+						errors={[
+							...convertIntoArray(branchProductsErrors, 'Branch Product'),
+							...convertIntoArray(productCategoriesErrors, 'Product Category'),
+						]}
+						withSpaceBottom
+					/>
+
+					<Filter
+						productCategories={productCategories}
+						productCategoriesStatus={productCategoriesStatus}
+						onSelectProductCategory={onSelectProductCategory}
+						onSelectStatus={onSelectStatus}
+						onSearch={onSearch}
+					/>
+				</div>
 
 				<Table
 					columns={columns}
@@ -117,15 +188,71 @@ export const Products = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={status === request.REQUESTING}
+					loading={branchProductsStatus === request.REQUESTING}
 				/>
 
-				<ViewProductModal
-					product={selectedBranchProduct}
-					visible={viewBranchProductModalVisible}
-					onClose={() => setViewBranchProductModalVisible(false)}
-				/>
+				{selectedBranchProduct && (
+					<ViewProductModal
+						branchProduct={selectedBranchProduct}
+						onClose={() => setSelectedBranchProduct(null)}
+					/>
+				)}
 			</Box>
 		</Content>
 	);
 };
+
+interface FilterProps {
+	productCategories: IProductCategory[];
+	productCategoriesStatus: number;
+	onSelectProductCategory: any;
+	onSelectStatus: any;
+	onSearch: any;
+}
+
+const Filter = ({
+	productCategories,
+	productCategoriesStatus,
+	onSelectProductCategory,
+	onSelectStatus,
+	onSearch,
+}: FilterProps) => (
+	<Row className="Products_filter" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Search" spacing />
+			<Input
+				prefix={<SearchOutlined />}
+				onChange={(event) => onSearch(event.target.value.trim())}
+			/>
+		</Col>
+
+		<Col lg={12} span={24}>
+			<Label label="Product Category" spacing />
+			<Select
+				style={{ width: '100%' }}
+				onChange={onSelectProductCategory}
+				loading={productCategoriesStatus === request.REQUESTING}
+				allowClear
+			>
+				{productCategories.map(({ name }) => (
+					<Select.Option value={name}>{name}</Select.Option>
+				))}
+			</Select>
+		</Col>
+
+		<Col lg={12} span={24}>
+			<Label label="Status" spacing />
+			<Select style={{ width: '100%' }} onChange={onSelectStatus} allowClear>
+				<Select.Option value={branchProductStatus.AVAILABLE}>
+					Available
+				</Select.Option>
+				<Select.Option value={branchProductStatus.REORDER}>
+					Reorder
+				</Select.Option>
+				<Select.Option value={branchProductStatus.OUT_OF_STOCK}>
+					Out of Stock
+				</Select.Option>
+			</Select>
+		</Col>
+	</Row>
+);

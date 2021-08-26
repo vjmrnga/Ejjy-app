@@ -111,7 +111,7 @@ export const ReceiveDeliveryReceiptModal = ({
 	return (
 		<Modal
 			title={title}
-			className="ModalLarge"
+			className="Modal__large"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

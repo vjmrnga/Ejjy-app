@@ -65,7 +65,7 @@ export const ViewBranchProductModal = ({
 
 	return (
 		<Modal
-			className="ViewBranchProductModal ModalLarge"
+			className="ViewBranchProductModal Modal__large Modal__hasFooter"
 			title={title}
 			visible={visible}
 			footer={[<Button text="Close" onClick={handleClose} />]}

@@ -13,6 +13,7 @@ interface Props {
 
 export const ViewReportModal = ({ report, visible, onClose }: Props) => (
 	<Modal
+		className="Modal__hasFooter"
 		title="Report"
 		visible={visible}
 		footer={[<Button text="Close" onClick={onClose} />]}

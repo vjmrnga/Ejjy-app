@@ -17,7 +17,7 @@ interface Props {
 
 export const ViewProductModal = ({ product, visible, onClose }: Props) => (
 	<Modal
-		className="ViewProductModal ModalLarge"
+		className="ViewProductModal Modal__large Modal__hasFooter"
 		title="View Product"
 		visible={visible}
 		footer={[<Button text="Close" onClick={onClose} />]}

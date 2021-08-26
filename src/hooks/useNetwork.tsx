@@ -1,41 +1,51 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../ducks/network';
+import { actions, selectors } from '../ducks/network';
 import { request } from '../global/types';
+import { modifiedExtraCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
 
 export const useNetwork = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
 
+	// SELECTORS
 	const hasInternetConnection = useSelector(
 		selectors.selectHasInternetConnection(),
 	);
+
+	// ACTIONS
 	const testConnectionAction = useActionDispatch(actions.testConnection);
+	const testBranchConnectionAction = useActionDispatch(
+		actions.testBranchConnection,
+	);
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
+	const callback = ({
+		status: callbackStatus,
+		errors: callbackErrors = [],
+	}) => {
+		setStatus(callbackStatus);
+		setErrors(callbackErrors);
 	};
 
+	// METHODS
 	const testConnection = () => {
-		setRecentRequest(types.TEST_CONNECTION);
 		testConnectionAction();
+	};
+
+	const testBranchConnection = (data, extraCallback = null) => {
+		testBranchConnectionAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	return {
 		hasInternetConnection,
 		testConnection,
+		testBranchConnection,
 		status,
 		errors,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
 	};
 };

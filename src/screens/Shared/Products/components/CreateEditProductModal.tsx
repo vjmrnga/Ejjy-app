@@ -84,7 +84,7 @@ export const CreateEditProductModal = ({
 
 	return (
 		<Modal
-			className="CreateEditProductModal ModalLarge"
+			className="CreateEditProductModal Modal__large ModalLarge__scrollable"
 			title={title}
 			visible={visible}
 			footer={null}

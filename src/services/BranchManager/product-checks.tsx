@@ -12,7 +12,6 @@ interface IFulfillProductCheck {
 
 interface IListProductChecks extends IListRequest {
 	type: 'daily' | 'random';
-	assigned_store_id: number;
 	is_filled_up: boolean;
 }
 

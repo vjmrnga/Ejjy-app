@@ -4,11 +4,11 @@ import { Box, Button } from '../../../../components/elements';
 import { formatDateTimeExtended } from '../../../../utils/function';
 
 interface Props {
-	onDailyCheck?: any;
 	dateTimeRequested?: any;
+	onDailyCheck?: any;
 }
 
-export const DailyCheckCard = ({ onDailyCheck, dateTimeRequested }: Props) => (
+export const DailyCheckCard = ({ dateTimeRequested, onDailyCheck }: Props) => (
 	<Box className="DailyCheckCard">
 		<div>
 			<p className="DailyCheckCard_title">Daily Check</p>

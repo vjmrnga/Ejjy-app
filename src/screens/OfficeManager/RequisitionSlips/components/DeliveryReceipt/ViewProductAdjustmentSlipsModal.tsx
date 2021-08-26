@@ -77,7 +77,7 @@ export const ViewProductAdjustmentSlipsModal = ({
 	return (
 		<Modal
 			title="View Product’s Adjustment Slip"
-			className="ModalLarge"
+			className="Modal__large Modal__hasFooter"
 			visible={visible}
 			footer={[<Button key="close" text="Close" onClick={onModalClose} />]}
 			onCancel={onClose}

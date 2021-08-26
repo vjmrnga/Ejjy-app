@@ -1,33 +1,45 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, Divider, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../components';
-import { FieldError, Label } from '../../../../components/elements';
-import { types } from '../../../../ducks/BranchManager/product-checks';
+import {
+	DetailsRow,
+	DetailsSingle,
+	RequestErrors,
+} from '../../../../components';
+import { Label } from '../../../../components/elements';
 import {
 	productCheckingTypes,
 	quantityTypes,
 	request,
 } from '../../../../global/types';
-import { convertToBulk, formatDateTime } from '../../../../utils/function';
+import {
+	convertIntoArray,
+	convertToBulk,
+	formatDateTime,
+} from '../../../../utils/function';
 import { useProductChecks } from '../../hooks/useProductChecks';
 import { FulfillCheckForm } from './FulfillCheckForm';
 
 interface Props {
+	branchId?: number;
 	productCheck?: any;
-	visible: boolean;
 	onClose: any;
 }
 
 export const FulfillCheckModal = ({
+	branchId,
 	productCheck,
-	visible,
 	onClose,
 }: Props) => {
+	// STATES
 	const [products, setProducts] = useState([]);
 
-	const { fulfillProductCheck, status, errors, recentRequest, reset } =
-		useProductChecks();
+	// CUSTOM HOOKS
+	const {
+		fulfillProductCheck,
+		status: productChecksStatus,
+		errors: productChecksErrors,
+	} = useProductChecks();
 
 	// Effect: Format product check products
 	useEffect(() => {
@@ -47,17 +59,6 @@ export const FulfillCheckModal = ({
 		}
 	}, [productCheck]);
 
-	// Effect: Close modal if fulfill success
-	useEffect(() => {
-		if (
-			status === request.SUCCESS &&
-			recentRequest === types.FULFILL_PRODUCT_CHECK
-		) {
-			reset();
-			onClose();
-		}
-	}, [status, recentRequest]);
-
 	const onFulfill = (values) => {
 		const fulfilledProducts = values.products.map((product) => {
 			const quantity =
@@ -74,11 +75,19 @@ export const FulfillCheckModal = ({
 			};
 		});
 
-		fulfillProductCheck({
-			id: productCheck.id,
-			products: fulfilledProducts,
-			type: productCheck?.type,
-		});
+		fulfillProductCheck(
+			{
+				branchId,
+				id: productCheck.id,
+				products: fulfilledProducts,
+				type: productCheck?.type,
+			},
+			({ status }) => {
+				if (status === request.SUCCESS) {
+					onClose();
+				}
+			},
+		);
 	};
 
 	return (
@@ -88,16 +97,17 @@ export const FulfillCheckModal = ({
 					? 'Daily Check'
 					: 'Random Check'
 			}
-			className="ModalLarge"
-			visible={visible}
+			className="Modal__large"
 			footer={null}
 			onCancel={onClose}
+			visible
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors
+				errors={convertIntoArray(productChecksErrors)}
+				withSpaceBottom
+			/>
 
 			<DetailsRow>
 				<DetailsSingle
@@ -120,7 +130,7 @@ export const FulfillCheckModal = ({
 				products={products}
 				onSubmit={onFulfill}
 				onClose={onClose}
-				loading={status === request.REQUESTING}
+				loading={productChecksStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

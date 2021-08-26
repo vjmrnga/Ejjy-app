@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../components';
+import { Button } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { formatBalance, numberWithCommas } from '../../../../utils/function';
 
@@ -50,9 +51,9 @@ export const ViewTransactionModal = ({
 	return (
 		<Modal
 			title="View Transaction"
-			className="ViewTransactionModal ModalLarge"
+			className="ViewTransactionModal Modal__large Modal__hasFooter"
 			visible={visible}
-			footer={null}
+			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
 			centered
 			closable

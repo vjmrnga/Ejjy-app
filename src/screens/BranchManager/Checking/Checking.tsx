@@ -1,10 +1,9 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { AddButtonIcon, Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import { selectors as authSelectors } from '../../../ducks/auth';
-import { request } from '../../../global/types';
+import { request, productCheckingTypes } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { formatDateTime } from '../../../utils/function';
 import { useProductChecks } from '../hooks/useProductChecks';
 import { DailyCheckCard } from './components/DailyCheckCard';
@@ -17,81 +16,90 @@ const columns: ColumnsType = [
 ];
 
 export const Checking = () => {
-	const user = useSelector(authSelectors.selectUser());
-	const { dailyCheck, randomChecks, getDailyCheck, getRandomChecks, status } =
+	// STATES
+	const [data, setData] = useState([]);
+	const [dailyCheck, setDailyCheck] = useState(null);
+	const [randomChecks, setRandomCheck] = useState([]);
+	const [selectedProductCheck, setSelectedProductCheck] = useState(null);
+
+	// CUSTOM HOOKS
+	const { user } = useAuth();
+	const { getProductChecks: getDailyCheck } = useProductChecks();
+	const { getProductChecks: getRandomChecks, status: randomChecksStatus } =
 		useProductChecks();
 
-	const [randomChecksDataSource, setRandomChecksDataSource] = useState([]);
-	const [selectedProductCheck, setSelectedProductCheck] = useState(null);
-	const [fulfillModalVisible, setFulfillModalVisible] = useState(false);
-
+	// METHODS
 	useEffect(() => {
-		fetchDailyCheck();
-		fetchRandomChecks();
+		getDailyCheck(
+			{
+				assignedStoreId: user?.branch?.id,
+				type: productCheckingTypes.DAILY,
+				isFilledUp: false,
+			},
+			({ status, response }) => {
+				if (status === request.SUCCESS) {
+					setDailyCheck(response?.[0]);
+				}
+			},
+		);
+
+		getRandomChecks(
+			{
+				assignedStoreId: user?.branch?.id,
+				type: productCheckingTypes.RANDOM,
+				isFilledUp: false,
+			},
+			({ status, response }) => {
+				if (status === request.SUCCESS) {
+					setRandomCheck(response);
+				}
+			},
+		);
 	}, []);
 
-	// Effect: Format random checks
 	useEffect(() => {
-		if (randomChecks) {
-			const formattedRandomChecks = randomChecks?.map((randomCheck) => ({
+		setData(
+			randomChecks.map((randomCheck) => ({
 				datetime_requested: formatDateTime(randomCheck?.datetime_created),
 				action: (
 					<AddButtonIcon
 						tooltip="Fulfill random check"
-						onClick={() => onRandomCheck(randomCheck)}
+						onClick={() => setSelectedProductCheck(randomCheck)}
 					/>
 				),
-			}));
-
-			setRandomChecksDataSource(formattedRandomChecks);
-		}
+			})),
+		);
 	}, [randomChecks]);
-
-	const fetchDailyCheck = () => {
-		getDailyCheck(user?.branch?.id);
-	};
-
-	const fetchRandomChecks = () => {
-		getRandomChecks(user?.branch?.id);
-	};
-
-	const onRandomCheck = (randomCheck) => {
-		setFulfillModalVisible(true);
-		setSelectedProductCheck(randomCheck);
-	};
-
-	const onDailyCheck = () => {
-		setFulfillModalVisible(true);
-		setSelectedProductCheck(dailyCheck);
-	};
 
 	return (
 		<Content className="Checking" title="Checking">
-			<section>
-				{dailyCheck && (
-					<DailyCheckCard
-						onDailyCheck={onDailyCheck}
-						dateTimeRequested={dailyCheck?.datetime_created}
-					/>
-				)}
-
-				<Box>
-					<TableHeader title="Random Checks" />
-					<Table
-						columns={columns}
-						dataSource={randomChecksDataSource}
-						scroll={{ x: 650 }}
-						pagination={false}
-						loading={status === request.REQUESTING}
-					/>
-				</Box>
-
-				<FulfillCheckModal
-					productCheck={selectedProductCheck}
-					visible={fulfillModalVisible}
-					onClose={() => setFulfillModalVisible(false)}
+			{dailyCheck && (
+				<DailyCheckCard
+					dateTimeRequested={dailyCheck?.datetime_created}
+					onDailyCheck={() => {
+						setSelectedProductCheck(dailyCheck);
+					}}
 				/>
-			</section>
+			)}
+
+			<Box>
+				<TableHeader title="Random Checks" />
+				<Table
+					columns={columns}
+					dataSource={data}
+					scroll={{ x: 650 }}
+					pagination={false}
+					loading={randomChecksStatus === request.REQUESTING}
+				/>
+			</Box>
+
+			{selectedProductCheck && (
+				<FulfillCheckModal
+					branchId={user?.branch?.id}
+					productCheck={selectedProductCheck}
+					onClose={() => setSelectedProductCheck(null)}
+				/>
+			)}
 		</Content>
 	);
 };

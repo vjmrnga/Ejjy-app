@@ -103,13 +103,14 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 		setPrintingDisabled(true);
 
 		const html = printOrderSlip(user, orderSlip, data, quantityType);
-		const pdf = new jsPDF('p', 'px', 'a4', true);
+		const pdf = new jsPDF('p', 'pt', 'a4');
 
 		pdf.html(html, {
 			x: 10,
 			y: 10,
+			filename: `FOS1_${orderSlip.id}`,
 			callback: (instance) => {
-				instance.save(`FOS1_${orderSlip.id}`);
+				window.open(instance.output('bloburl').toString());
 				setPrintingDisabled(false);
 			},
 		});
@@ -123,7 +124,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	return (
 		<Modal
 			title="View Order Slip"
-			className="ModalLarge"
+			className="Modal__large Modal__hasFooter"
 			footer={[
 				<Space size={10}>
 					<Button text="Close" onClick={close} />
@@ -131,7 +132,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 						variant="primary"
 						text="Print"
 						onClick={onPrint}
-						disabled={printingDisabled}
+						loading={printingDisabled}
 					/>
 				</Space>,
 			]}

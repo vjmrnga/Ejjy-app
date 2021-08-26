@@ -172,7 +172,7 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 
 	return (
 		<Modal
-			className="EditPriceCostModal ModalLarge"
+			className="EditPriceCostModal Modal__large"
 			title={title}
 			visible={visible}
 			footer={null}
