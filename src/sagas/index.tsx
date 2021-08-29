@@ -9,6 +9,7 @@ import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
 import productCategoriesSagas from './product-categories';
+import productChecksSagas from './product-checks';
 import requisitionSlipsSagas from './requisition-slips';
 import sessionsSagas from './sessions';
 import siteSettingsSagas from './site-settings';
@@ -24,6 +25,7 @@ export default function* rootSaga() {
 		...networkSagas,
 		...orderSlipsSagas,
 		...productCategoriesSagas,
+		...productChecksSagas,
 		...requisitionSlipsSagas,
 		...sessionsSagas,
 		...siteSettingsSagas,

@@ -1,5 +1,5 @@
 import { Col, Row } from 'antd';
-import { Form, Formik } from 'formik';
+import { Form, Formik, ErrorMessage } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -48,38 +48,33 @@ export const AddBranchProductBalanceForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors, touched }) => (
-				<Form className="form">
-					<Row gutter={[15, 15]}>
-						<Col span={24}>
-							<FormInputLabel
-								type="number"
-								id="balance"
-								label="Qty Delivered"
-							/>
-							{errors.balance && touched.balance ? (
-								<FieldError error={errors.balance} />
-							) : null}
-						</Col>
-					</Row>
+			<Form className="form">
+				<Row gutter={[15, 15]}>
+					<Col span={24}>
+						<FormInputLabel type="number" id="balance" label="Qty Delivered" />
+						<ErrorMessage
+							name="balance"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
+				</Row>
 
-					<div className="ModalCustomFooter">
-						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
-							classNames="mr-10"
-							disabled={loading || isSubmitting}
-						/>
-						<Button
-							type="submit"
-							text="Add"
-							variant="primary"
-							loading={loading || isSubmitting}
-						/>
-					</div>
-				</Form>
-			)}
+				<div className="ModalCustomFooter">
+					<Button
+						type="button"
+						text="Cancel"
+						onClick={onClose}
+						classNames="mr-10"
+						disabled={loading || isSubmitting}
+					/>
+					<Button
+						type="submit"
+						text="Add"
+						variant="primary"
+						loading={loading || isSubmitting}
+					/>
+				</div>
+			</Form>
 		</Formik>
 	);
 };

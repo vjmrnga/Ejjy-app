@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
 	CheckIcon,
 	ColoredText,
-	coloredTextType,
+	ColoredTextVariant,
 	DetailsHalf,
 	DetailsRow,
 	DetailsSingle,
@@ -102,14 +102,15 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 
 	const getMessage = (isMatch, isUnder, message) => {
 		let mainMessage = 'Match';
-		let colorType = coloredTextType.DEFAULT;
+		let colorVariant: ColoredTextVariant = 'default';
 		let extraMessage = '';
+
 		if (!isMatch) {
 			mainMessage = isUnder ? 'Under' : 'Over';
 			extraMessage = `: ${message}` || '';
-			colorType = coloredTextType.ERROR;
+			colorVariant = 'error';
 		} else {
-			colorType = coloredTextType.PRIMARY;
+			colorVariant = 'primary';
 		}
 
 		return (
@@ -119,8 +120,8 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 				</span>
 				<ColoredText
 					size="small"
+					variant={colorVariant}
 					text={`${mainMessage} ${extraMessage}`}
-					type={colorType}
 				/>
 			</div>
 		);

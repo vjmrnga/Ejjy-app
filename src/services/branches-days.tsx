@@ -15,8 +15,7 @@ export const service = {
 	list: async (params: IListRequest, baseURL) =>
 		axios.get('/branches-days/', { baseURL, params }),
 
-	get: async (params: IListRequest, baseURL) =>
-		axios.get('/branches-days/latest/', { baseURL, params }),
+	get: async (baseURL) => axios.get('/branches-days/latest/', { baseURL }),
 
 	create: async (body: ICreateBranchDay, baseURL) =>
 		axios.post('/branches-days/', body, { baseURL }),

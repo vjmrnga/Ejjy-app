@@ -2,22 +2,26 @@ import cn from 'classnames';
 import React from 'react';
 import './style.scss';
 
-export const coloredTextType = {
-	DEFAULT: 'default',
-	PRIMARY: 'primary',
-	ERROR: 'error',
-};
+export type ColoredTextVariant = 'default' | 'primary' | 'secondary' | 'error';
 
 interface Props {
 	text: string;
-	type: string;
-	size?: 'default' | 'small';
+	variant?: ColoredTextVariant;
+	size?: 'default' | 'small' | string;
 }
 
-export const ColoredText = ({ text, type, size }: Props) => (
-	<span className={cn('ColoredText', type, size)}>{text}</span>
+export const ColoredText = ({ text, variant, size }: Props) => (
+	<span
+		className={cn('ColoredText', {
+			[`ColoredText___${variant}`]: variant,
+			[`ColoredText___${size}`]: size,
+		})}
+	>
+		{text}
+	</span>
 );
 
 ColoredText.defaultProps = {
+	variant: 'default',
 	size: 'default',
 };

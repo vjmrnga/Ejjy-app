@@ -4,15 +4,19 @@
 	@include font(1rem, 600);
 	color: $color-dark-gray;
 
-	&.primary {
+	&___primary {
 		color: $color-primary;
 	}
 
-	&.error {
+	&___secondary {
+		color: $color-secondary;
+	}
+
+	&___error {
 		color: $color-red;
 	}
 
-	&.small {
+	&___small {
 		@include font(0.8rem, 600);
 	}
 }

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../ducks/branches-days';
+import { actions, types } from '../ducks/branches-days';
 import { request } from '../global/types';
-import { onCallback } from '../utils/function';
+import { modifiedExtraCallback, onCallback } from '../utils/function';
 import {
 	addInCachedData,
 	executePaginatedRequest,
@@ -28,14 +27,11 @@ export const useBranchesDays = () => {
 	const [currentPageData, setCurrentPageData] = useState([]);
 	const [pageSize, setPageSize] = useState(10);
 
-	// SELECTORS
-	const branchDay = useSelector(selectors.selectBranchDay());
-
 	// ACTIONS
 	const listBranchDaysAction = useActionDispatch(actions.listBranchDays);
-	const getBranchDay = useActionDispatch(actions.getBranchDay);
-	const createBranchDay = useActionDispatch(actions.createBranchDay);
-	const editBranchDay = useActionDispatch(actions.editBranchDay);
+	const getBranchDayAction = useActionDispatch(actions.getBranchDay);
+	const createBranchDayAction = useActionDispatch(actions.createBranchDay);
+	const editBranchDayAction = useActionDispatch(actions.editBranchDay);
 
 	// GENERAL METHODS
 	const resetError = () => setErrors([]);
@@ -108,42 +104,31 @@ export const useBranchesDays = () => {
 		});
 	};
 
-	const getBranchDayRequest = (branchId) => {
+	const getBranchDay = (branchId, extraCallback = null) => {
 		setRecentRequest(types.GET_BRANCH_DAY);
-		getBranchDay({
-			branch_id: branchId,
-			callback,
+		getBranchDayAction({
+			branchId,
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const createBranchDayRequest = (branchId, startedById, onlineStartedById) => {
+	const createBranchDay = (data, extraCallback = null) => {
 		setRecentRequest(types.CREATE_BRANCH_DAY);
-		createBranchDay({
-			branch_id: branchId,
-			started_by_id: startedById,
-			online_started_by_id: onlineStartedById,
-			callback,
+		createBranchDayAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
-	const editBranchDayRequest = (
-		branchId,
-		branchDayId,
-		endedById,
-		onlineEndedById,
-	) => {
+	const editBranchDay = (data, extraCallback = null) => {
 		setRecentRequest(types.EDIT_BRANCH_DAY);
-		editBranchDay({
-			id: branchDayId,
-			branch_id: branchId,
-			ended_by_id: endedById,
-			online_ended_by_id: onlineEndedById,
-			callback,
+		editBranchDayAction({
+			...data,
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
 	return {
-		branchDay,
 		branchDays: currentPageData,
 		pageCount,
 		currentPage,
@@ -153,9 +138,9 @@ export const useBranchesDays = () => {
 		removeItemInPagination,
 
 		listBranchDays,
-		getBranchDay: getBranchDayRequest,
-		createBranchDay: createBranchDayRequest,
-		editBranchDay: editBranchDayRequest,
+		getBranchDay,
+		createBranchDay,
+		editBranchDay,
 		status,
 		errors,
 		warnings,

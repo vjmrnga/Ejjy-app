@@ -7,6 +7,7 @@ import { RequestErrors } from '../../../../../components/RequestErrors/RequestEr
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types } from '../../../../../ducks/order-slips';
+import { IS_APP_LIVE } from '../../../../../global/constants';
 import { quantityTypes, request } from '../../../../../global/types';
 import {
 	convertIntoArray,
@@ -118,6 +119,7 @@ export const CreateEditOrderSlipModal = ({
 			assigned_store_id: selectedBranchId,
 			requisition_slip_id: requisitionSlip.id,
 			products,
+			is_online: IS_APP_LIVE,
 		};
 
 		createOrderSlip(data);
@@ -141,6 +143,7 @@ export const CreateEditOrderSlipModal = ({
 				id: orderSlip.id,
 				assigned_store_id: selectedBranchId,
 				products,
+				is_online: IS_APP_LIVE,
 			};
 
 			editOrderSlip(data);

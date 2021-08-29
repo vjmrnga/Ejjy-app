@@ -1,5 +1,5 @@
 import { Col, Divider, Typography } from 'antd';
-import { Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
@@ -105,7 +105,11 @@ export const EditBranchProductsForm = ({
 					.required()
 					.min(0)
 					.label('Special Price (bulk)'),
-				current_balance: Yup.number().nullable().min(0).max(65535),
+				current_balance: Yup.number()
+					.nullable()
+					.min(0)
+					.max(65535)
+					.label('Current Balance'),
 			}),
 		}),
 		[branchProduct],
@@ -142,7 +146,7 @@ export const EditBranchProductsForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ values }) => (
 				<Form className="form">
 					<DetailsRow>
 						<DetailsSingle
@@ -164,17 +168,19 @@ export const EditBranchProductsForm = ({
 								items={checkingTypesOptions}
 								disabled={!values.is_sold_in_branch}
 							/>
-							{errors.checking && touched.checking ? (
-								<FieldError error={errors.checking} />
-							) : null}
+							<ErrorMessage
+								name="checking"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<Label label="In Stock" spacing />
 							<FormRadioButton id="is_sold_in_branch" items={booleanOptions} />
-							{errors.is_sold_in_branch && touched.is_sold_in_branch ? (
-								<FieldError error={errors.is_sold_in_branch} />
-							) : null}
+							<ErrorMessage
+								name="is_sold_in_branch"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Divider dashed>QUANTITY</Divider>
@@ -187,9 +193,10 @@ export const EditBranchProductsForm = ({
 								label="Reorder Point"
 								disabled={!values.is_sold_in_branch}
 							/>
-							{errors.reorder_point && touched.reorder_point ? (
-								<FieldError error={errors.reorder_point} />
-							) : null}
+							<ErrorMessage
+								name="reorder_point"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -199,9 +206,10 @@ export const EditBranchProductsForm = ({
 								label="Max Balance"
 								disabled={!values.is_sold_in_branch}
 							/>
-							{errors.max_balance && touched.max_balance ? (
-								<FieldError error={errors.max_balance} />
-							) : null}
+							<ErrorMessage
+								name="max_balance"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						{isCurrentBalanceVisible && (
@@ -218,9 +226,10 @@ export const EditBranchProductsForm = ({
 									}
 									disabled={!values.is_sold_in_branch}
 								/>
-								{errors.current_balance && touched.current_balance ? (
-									<FieldError error={errors.current_balance} />
-								) : null}
+								<ErrorMessage
+									name="current_balance"
+									render={(error) => <FieldError error={error} />}
+								/>
 							</Col>
 						)}
 
@@ -237,9 +246,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.price_per_piece && touched.price_per_piece ? (
-								<FieldError error={errors.price_per_piece} />
-							) : null}
+							<ErrorMessage
+								name="price_per_piece"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
@@ -248,10 +258,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.discounted_price_per_piece1 &&
-							touched.discounted_price_per_piece1 ? (
-								<FieldError error={errors.discounted_price_per_piece1} />
-							) : null}
+							<ErrorMessage
+								name="discounted_price_per_piece1"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
@@ -262,10 +272,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.discounted_price_per_piece2 &&
-							touched.discounted_price_per_piece2 ? (
-								<FieldError error={errors.discounted_price_per_piece2} />
-							) : null}
+							<ErrorMessage
+								name="discounted_price_per_piece2"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col md={8} sm={12} xs={24}>
@@ -276,9 +286,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.price_per_bulk && touched.price_per_bulk ? (
-								<FieldError error={errors.price_per_bulk} />
-							) : null}
+							<ErrorMessage
+								name="price_per_bulk"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
@@ -288,10 +299,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.discounted_price_per_bulk1 &&
-							touched.discounted_price_per_bulk1 ? (
-								<FieldError error={errors.discounted_price_per_bulk1} />
-							) : null}
+							<ErrorMessage
+								name="discounted_price_per_bulk1"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
@@ -302,10 +313,10 @@ export const EditBranchProductsForm = ({
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
-							{errors.discounted_price_per_bulk2 &&
-							touched.discounted_price_per_bulk2 ? (
-								<FieldError error={errors.discounted_price_per_bulk2} />
-							) : null}
+							<ErrorMessage
+								name="discounted_price_per_bulk2"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 					</DetailsRow>
 

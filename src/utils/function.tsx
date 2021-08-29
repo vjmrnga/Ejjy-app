@@ -6,7 +6,6 @@ import {
 	AddedToOSBadgePill,
 	AvailableBadgePill,
 	ColoredText,
-	coloredTextType,
 	CompletedBadgePill,
 	DoneBadgePill,
 	ErrorBadgePill,
@@ -70,7 +69,7 @@ export const confirmPassword = ({
 	Modal.confirm({
 		title,
 		centered: true,
-		className: 'ConfirmPassword',
+		className: 'Modal__hasFooter',
 		okText: 'Submit',
 		content: (
 			<UncontrolledInput
@@ -166,11 +165,11 @@ export const getColoredText = (
 
 	if (isDefault) {
 		text = isOverOnlyIfDefault ? text : y;
-		component = <ColoredText type={coloredTextType.DEFAULT} text={text} />;
+		component = <ColoredText variant="default" text={text} />;
 	} else if (x !== y) {
-		component = <ColoredText type={coloredTextType.ERROR} text={text} />;
+		component = <ColoredText variant="error" text={text} />;
 	} else if (x === y) {
-		component = <ColoredText type={coloredTextType.PRIMARY} text={text} />;
+		component = <ColoredText variant="primary" text={text} />;
 	}
 
 	return component;

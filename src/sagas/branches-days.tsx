@@ -1,7 +1,7 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../ducks/branches-days';
+import { call, select, takeLatest } from 'redux-saga/effects';
+import { types } from '../ducks/branches-days';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
-import { IS_APP_LIVE, MAX_PAGE_SIZE } from '../global/constants';
+import { IS_APP_LIVE } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/branches-days';
 import { getLocalIpAddress } from '../utils/function';
@@ -65,99 +65,74 @@ function* list({ payload }: any) {
 }
 
 function* getBranchDay({ payload }: any) {
-	const { branch_id, callback } = payload;
+	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(
-		branchesSelectors.selectURLByBranchId(branch_id),
-	);
-	if (!baseURL && branch_id && IS_APP_LIVE) {
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
 
 	const localURL = getLocalIpAddress();
 
-	const data = {
-		page: 1,
-		page_size: MAX_PAGE_SIZE,
-	};
-
 	try {
-		const response = yield call(
-			service.get,
-			data,
-			IS_APP_LIVE ? baseURL : localURL,
-		);
-
-		yield put(
-			actions.save({ type: types.GET_BRANCH_DAY, branchDay: response.data }),
-		);
-		callback({ status: request.SUCCESS });
+		const response = yield call(service.get, IS_APP_LIVE ? baseURL : localURL);
+		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
 function* create({ payload }: any) {
-	const { callback, branch_id, started_by_id, online_started_by_id } = payload;
+	const { branchId, startedById, onlineStartedById, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(
-		branchesSelectors.selectURLByBranchId(branch_id),
-	);
-	if (!baseURL && branch_id && IS_APP_LIVE) {
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
 
+	const localURL = getLocalIpAddress();
+
 	try {
 		const response = yield call(
 			service.create,
-			{ started_by_id, online_started_by_id },
+			{ started_by_id: startedById, online_started_by_id: onlineStartedById },
 			IS_APP_LIVE ? baseURL : localURL,
 		);
 
-		yield put(
-			actions.save({ type: types.CREATE_BRANCH_DAY, branchDay: response.data }),
-		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
 }
 
 function* edit({ payload }: any) {
-	const { callback, id, ended_by_id, branch_id, online_ended_by_id } = payload;
+	const { id, branchId, endedById, onlineEndedById, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(
-		branchesSelectors.selectURLByBranchId(branch_id),
-	);
-	if (!baseURL && branch_id && IS_APP_LIVE) {
+	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
+	if (!baseURL && branchId && IS_APP_LIVE) {
 		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
 		return;
 	}
+
+	const localURL = getLocalIpAddress();
 
 	try {
 		const response = yield call(
 			service.edit,
 			id,
-			{ ended_by_id, online_ended_by_id },
+			{ ended_by_id: endedById, online_ended_by_id: onlineEndedById },
 			IS_APP_LIVE ? baseURL : localURL,
 		);
 
-		yield put(
-			actions.save({ type: types.EDIT_BRANCH_DAY, branchDay: response.data }),
-		);
-		callback({ status: request.SUCCESS });
+		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}

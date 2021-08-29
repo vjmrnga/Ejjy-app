@@ -7,6 +7,7 @@ import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { useAuth } from '../../../hooks/useAuth';
 import { getUrlPrefix } from '../../../utils/function';
+import { ViewBranchCheckings } from './components/ViewBranchCheckings';
 import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';
 import { ViewBranchProducts } from './components/ViewBranchProducts';
@@ -26,6 +27,7 @@ const tabs = {
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
 	SITE_SETTINGS: 'Site Settings',
+	CHECKINGS: 'Checkings',
 };
 
 export const ViewBranch = ({ match }: Props) => {
@@ -39,7 +41,7 @@ export const ViewBranch = ({ match }: Props) => {
 	const history = useHistory();
 	const { user } = useAuth();
 
-	// Effect: Fetch branch products
+	// METHODS
 	useEffect(() => {
 		if (!branch?.online_url) {
 			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
@@ -113,6 +115,14 @@ export const ViewBranch = ({ match }: Props) => {
 						disabled={!branch?.online_url}
 					>
 						<ViewBranchSiteSettings branchId={branchId} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.CHECKINGS}
+						tab={tabs.CHECKINGS}
+						disabled={!branch?.online_url}
+					>
+						<ViewBranchCheckings branchId={branchId} />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

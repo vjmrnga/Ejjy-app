@@ -1,65 +1,23 @@
-import { message } from 'antd';
-import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
 import { Content } from '../../../components';
 import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
-import { selectors as authSelectors } from '../../../ducks/auth';
-import { IS_APP_LIVE } from '../../../global/constants';
 import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
-import { useBranchesDays } from '../../../hooks/useBranchesDays';
 import { BackupServerUrlForm } from './components/BackupServerUrlForm';
 import { LocalServerUrlForm } from './components/LocalServerUrlForm';
 import { MachineReportTable } from './components/MachineReportTable';
 import './style.scss';
 
 export const Dashboard = () => {
-	// STATES
-	const [branchDay, setBranchDay] = useState(null);
-
 	// CUSTOM HOOKS
-	const {
-		branchDay: latestBranchDay,
-		getBranchDay,
-		createBranchDay,
-		editBranchDay,
-		status: branchDayStatus,
-		errors: branchDayErrors,
-	} = useBranchesDays();
 	const { branch, getBranch, status: branchStatus } = useBranches();
-	const user = useSelector(authSelectors.selectUser());
+	const { user } = useAuth();
 
 	// METHODS
 	useEffect(() => {
-		getBranchDay(user?.branch?.id);
 		getBranch(user?.branch?.id);
 	}, []);
-
-	useEffect(() => {
-		if (latestBranchDay && dayjs(latestBranchDay.datetime_created)?.isToday()) {
-			setBranchDay(latestBranchDay);
-		}
-	}, [latestBranchDay]);
-
-	// Effect: Display errors from branch cashiering
-	useEffect(() => {
-		if (branchDayErrors?.length && branchDayStatus === request.ERROR) {
-			message.error(branchDayErrors);
-		}
-	}, [branchDayErrors, branchDayStatus]);
-
-	const onStartDay = () => {
-		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		const startedById = IS_APP_LIVE ? null : user.id;
-		createBranchDay(user?.branch?.id, startedById, onlineStartedById);
-	};
-
-	const onEndDay = () => {
-		const onlineEndedById = IS_APP_LIVE ? user.id : null;
-		const endedById = IS_APP_LIVE ? null : user.id;
-		editBranchDay(user?.branch?.id, branchDay.id, endedById, onlineEndedById);
-	};
 
 	return (
 		<Content className="Dashboard" title="Dashboard">
@@ -73,12 +31,7 @@ export const Dashboard = () => {
 				loading={branchStatus === request.REQUESTING}
 			/>
 
-			<CashieringCard
-				branchDay={branchDay}
-				onConfirm={branchDay ? onEndDay : onStartDay}
-				loading={branchDayStatus === request.REQUESTING}
-				disabled={false}
-			/>
+			<CashieringCard branchId={user?.branch?.id} />
 
 			<MachineReportTable />
 		</Content>

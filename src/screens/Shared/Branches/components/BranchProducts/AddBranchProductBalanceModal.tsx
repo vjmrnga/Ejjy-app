@@ -1,14 +1,14 @@
 import { Divider, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DetailsSingle } from '../../../../../components';
+import { DetailsSingle, RequestErrors } from '../../../../../components';
 import { DetailsRow } from '../../../../../components/Details/DetailsRow';
-import { FieldError } from '../../../../../components/elements';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
 import { useAuth } from '../../../../../hooks/useAuth';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
+	convertIntoArray,
 	formatBalance,
 	getKeyDownCombination,
 } from '../../../../../utils/function';
@@ -101,9 +101,7 @@ export const AddBranchProductBalanceModal = ({
 			closable
 			destroyOnClose
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<DetailsRow>
 				<DetailsSingle

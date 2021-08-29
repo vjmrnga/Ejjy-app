@@ -14,6 +14,7 @@ interface IFulfillPreparationSlip {
 	assigned_store_id: number;
 	is_prepared?: boolean;
 	products: PreparattionSlipProduct[];
+	is_online: boolean;
 }
 
 interface IListPreparationSlipsRequest extends IListRequest {

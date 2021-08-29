@@ -68,6 +68,12 @@ const columns: ColumnsType = [
 		sorter: true,
 	},
 	{
+		title: 'Average Daily Consumption',
+		dataIndex: 'average_daily_consumption',
+		key: 'average_daily_consumption',
+		align: 'center',
+	},
+	{
 		title: 'Status',
 		dataIndex: 'status',
 		key: 'status',
@@ -195,6 +201,7 @@ export const ReportsBranch = ({
 				quantity_sold,
 				daily_average_sold,
 				daily_average_sold_percentage,
+				average_daily_consumption,
 			} = branchProduct;
 			const { barcode, name, textcode, unit_of_measurement } = product;
 			const remainingBalance =
@@ -215,6 +222,10 @@ export const ReportsBranch = ({
 				quantity_sold,
 				daily_average_sold,
 				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
+				average_daily_consumption: formatBalance(
+					unit_of_measurement,
+					average_daily_consumption,
+				),
 				status: getBranchProductStatus(product_status),
 				actions: (
 					<TableActions

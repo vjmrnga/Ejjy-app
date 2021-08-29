@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { CheckIcon, Content, TableNormal } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
-import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
+import { IS_APP_LIVE, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { getKeyDownCombination } from '../../../utils/function';
@@ -205,6 +205,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			id: preparationSlip.id,
 			is_prepared: isPrepared,
 			assigned_store_id: user.branch.id,
+			is_online: IS_APP_LIVE,
 			products: Object.keys(psProducts).map((key) => {
 				const psProduct = psProducts[key];
 

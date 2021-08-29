@@ -97,6 +97,9 @@ function* execute({ payload }: any) {
 			url,
 			data: request_body,
 			params: request_query_params,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
 		});
 
 		callback({ status: request.SUCCESS });

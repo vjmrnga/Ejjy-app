@@ -1,42 +1,56 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Divider, Input, Row, Select, Table } from 'antd';
-import dayjs from 'dayjs';
+import { ColumnsType } from 'antd/lib/table/interface';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ColoredText } from '../../../../components';
 import { CashieringCard } from '../../../../components/CashieringCard/CashieringCard';
 import { FieldError, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import {
-	IS_APP_LIVE,
-	SEARCH_DEBOUNCE_TIME,
-} from '../../../../global/constants';
+import { SEARCH_DEBOUNCE_TIME, EMPTY_CELL } from '../../../../global/constants';
 import {
 	branchProductStatusOptions,
 	pageSizeOptions,
 } from '../../../../global/options';
-import { request } from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useBranchesDays } from '../../../../hooks/useBranchesDays';
+import { request, requisitionSlipTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useNetwork } from '../../../../hooks/useNetwork';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
 	formatBalance,
+	formatDateTime,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 
-const columns = [
+const columns: ColumnsType = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
 	{
 		title: 'Balance',
 		dataIndex: 'balance',
 		key: 'balance',
-		align: 'center' as 'center',
+		align: 'center',
 	},
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{
+		title: 'Requisition Slip',
+		children: [
+			{
+				title: 'Delivery Date',
+				dataIndex: 'deliveryDate',
+				key: 'deliveryDate',
+				align: 'center',
+			},
+			{
+				title: 'Type',
+				dataIndex: 'type',
+				key: 'type',
+				align: 'center',
+			},
+		],
+	},
 ];
 
 const FETCH_INTERVAL_MS = 30000;
@@ -102,6 +116,7 @@ export const BranchBalanceItem = ({
 					}
 				});
 			};
+			fn();
 			networkIntervalRef.current = setInterval(fn, NETWORK_INTERVAL_MS);
 		} else {
 			clearInterval(fetchIntervalRef.current);
@@ -115,9 +130,15 @@ export const BranchBalanceItem = ({
 		}
 
 		const newBranchProducts = branchProducts?.map((branchProduct) => {
-			const { product, max_balance, current_balance, product_status } =
-				branchProduct;
+			const {
+				product,
+				max_balance,
+				current_balance,
+				product_status,
+				latest_requisition_slip,
+			} = branchProduct;
 			const { barcode, name, textcode, unit_of_measurement } = product;
+			const { datetime_created, type } = latest_requisition_slip || {};
 
 			const currentBalance = formatBalance(
 				unit_of_measurement,
@@ -131,6 +152,10 @@ export const BranchBalanceItem = ({
 				name,
 				balance: `${currentBalance} / ${maxBalance}`,
 				status: getBranchProductStatus(product_status),
+				deliveryDate: datetime_created
+					? formatDateTime(datetime_created)
+					: EMPTY_CELL,
+				type: type ? renderRsType(type) : EMPTY_CELL,
 			};
 		});
 
@@ -211,16 +236,31 @@ export const BranchBalanceItem = ({
 		}, FETCH_INTERVAL_MS);
 	};
 
+	const renderRsType = (type) => {
+		let component = null;
+
+		if (requisitionSlipTypes.AUTOMATIC === type) {
+			component = <ColoredText variant="primary" text="Automatic" />;
+		} else if (requisitionSlipTypes.MANUAL === type) {
+			component = <ColoredText variant="secondary" text="Out of Stock" />;
+		}
+
+		return component;
+	};
+
 	return (
 		<div className="BranchBalanceItem">
 			{hasInternetConnection === false && (
 				<FieldError error="Cannot reach branch's API" />
 			)}
-			<BranchDay
-				branchId={branchId}
-				isActive={isActive}
-				disabled={disabled || !hasInternetConnection}
-			/>
+			{isActive && (
+				<CashieringCard
+					branchId={branchId}
+					className="BranchBalanceItem_cashieringCard"
+					disabled={disabled || !hasInternetConnection}
+					bordered
+				/>
+			)}
 
 			<Divider dashed />
 
@@ -242,10 +282,10 @@ export const BranchBalanceItem = ({
 			/>
 
 			<Table
-				className="TableNoPadding BranchBalanceItem_table"
+				className="BranchBalanceItem_table"
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 600 }}
+				scroll={{ x: 1000 }}
 				pagination={{
 					current: currentPage,
 					total: pageCount,
@@ -260,6 +300,7 @@ export const BranchBalanceItem = ({
 						? false
 						: branchProductsStatus === request.REQUESTING
 				}
+				bordered
 			/>
 		</div>
 	);
@@ -284,6 +325,7 @@ const Filter = ({
 			<Input
 				prefix={<SearchOutlined />}
 				onChange={(event) => onSearch(event.target.value.trim())}
+				allowClear
 			/>
 		</Col>
 
@@ -318,74 +360,3 @@ const Filter = ({
 		</Col>
 	</Row>
 );
-
-interface BranchDayProps {
-	branchId: number;
-	isActive: boolean;
-	disabled: boolean;
-}
-
-const BranchDay = ({ branchId, isActive, disabled }: BranchDayProps) => {
-	// STATES
-	const [branchDay, setBranchDay] = useState(null);
-
-	// CUSTOM HOOKS
-	const { user } = useAuth();
-	const {
-		branchDay: latestBranchDay,
-		getBranchDay,
-		createBranchDay,
-		editBranchDay,
-		status: branchesDaysStatus,
-		errors: branchesDaysErrors,
-		warnings: branchesDaysWarnings,
-	} = useBranchesDays();
-
-	// METHODS
-	useEffect(() => {
-		if (isActive) {
-			getBranchDay(branchId);
-		}
-	}, [isActive]);
-
-	useEffect(() => {
-		if (latestBranchDay && dayjs(latestBranchDay.datetime_created)?.isToday()) {
-			setBranchDay(latestBranchDay);
-		}
-	}, [latestBranchDay]);
-
-	const onStartDay = () => {
-		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		const startedById = IS_APP_LIVE ? null : user.id;
-		createBranchDay(branchId, startedById, onlineStartedById);
-	};
-
-	const onEndDay = () => {
-		const onlineEndedById = IS_APP_LIVE ? user.id : null;
-		const endedById = IS_APP_LIVE ? null : user.id;
-		editBranchDay(branchId, branchDay.id, endedById, onlineEndedById);
-	};
-
-	return (
-		<>
-			<RequestErrors
-				errors={convertIntoArray(branchesDaysErrors, 'Branch Day')}
-				withSpaceBottom
-			/>
-
-			<RequestWarnings
-				warnings={convertIntoArray(branchesDaysWarnings, 'Branch Day')}
-				withSpaceBottom
-			/>
-
-			<CashieringCard
-				classNames="BranchBalanceItem_cashieringCard"
-				branchDay={branchDay}
-				onConfirm={branchDay ? onEndDay : onStartDay}
-				loading={branchesDaysStatus === request.REQUESTING}
-				disabled={disabled}
-				bordered
-			/>
-		</>
-	);
-};

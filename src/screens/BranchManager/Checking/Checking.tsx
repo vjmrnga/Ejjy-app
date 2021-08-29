@@ -9,6 +9,7 @@ import { useProductChecks } from '../hooks/useProductChecks';
 import { DailyCheckCard } from './components/DailyCheckCard';
 import { FulfillCheckModal } from './components/FulfillCheckModal';
 import './style.scss';
+import { pageSizeOptions } from '../../../global/options';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
@@ -19,20 +20,25 @@ export const Checking = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [dailyCheck, setDailyCheck] = useState(null);
-	const [randomChecks, setRandomCheck] = useState([]);
 	const [selectedProductCheck, setSelectedProductCheck] = useState(null);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const { getProductChecks: getDailyCheck } = useProductChecks();
-	const { getProductChecks: getRandomChecks, status: randomChecksStatus } =
-		useProductChecks();
+	const { getProductCheckDaily } = useProductChecks();
+	const {
+		productChecks: randomChecks,
+		getProductChecks: getRandomChecks,
+		pageCount,
+		pageSize,
+		currentPage,
+		status: randomChecksStatus,
+	} = useProductChecks();
 
 	// METHODS
 	useEffect(() => {
-		getDailyCheck(
+		getProductCheckDaily(
 			{
-				assignedStoreId: user?.branch?.id,
+				branchId: user?.branch?.id,
 				type: productCheckingTypes.DAILY,
 				isFilledUp: false,
 			},
@@ -45,15 +51,12 @@ export const Checking = () => {
 
 		getRandomChecks(
 			{
-				assignedStoreId: user?.branch?.id,
+				page: 1,
+				branchId: user?.branch?.id,
 				type: productCheckingTypes.RANDOM,
 				isFilledUp: false,
 			},
-			({ status, response }) => {
-				if (status === request.SUCCESS) {
-					setRandomCheck(response);
-				}
-			},
+			true,
 		);
 	}, []);
 
@@ -70,6 +73,19 @@ export const Checking = () => {
 			})),
 		);
 	}, [randomChecks]);
+
+	const onPageChange = (page, newPageSize) => {
+		getRandomChecks(
+			{
+				branchId: user?.branch?.id,
+				type: productCheckingTypes.RANDOM,
+				isFilledUp: false,
+				page,
+				pageSize: newPageSize,
+			},
+			newPageSize !== pageSize,
+		);
+	};
 
 	return (
 		<Content className="Checking" title="Checking">
@@ -88,7 +104,15 @@ export const Checking = () => {
 					columns={columns}
 					dataSource={data}
 					scroll={{ x: 650 }}
-					pagination={false}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
 					loading={randomChecksStatus === request.REQUESTING}
 				/>
 			</Box>

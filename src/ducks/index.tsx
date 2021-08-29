@@ -6,7 +6,6 @@ import { APP_KEY } from '../global/constants';
 import history from '../utils/history';
 import { adminReducers } from './Admin';
 import authReducer, { key as AUTH_KEY, types } from './auth';
-import branchesDaysReducer, { key as BRANCHES_DAYS_KEY } from './branches-days';
 import { branchManagerReducers } from './BranchManager';
 import { branchPersonnelReducers } from './BranchPersonnel';
 import networkReducer, { key as NETWORK_KEY } from './network';
@@ -23,7 +22,6 @@ const appReducer = combineReducers({
 	[AUTH_KEY]: authReducer,
 	[REQUEST_KEY]: requestReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
-	[BRANCHES_DAYS_KEY]: branchesDaysReducer,
 	[XREAD_REPORTS_KEY]: xreadReportsReducer,
 	[UI_KEY]: uiReducer,
 	[NETWORK_KEY]: networkReducer,

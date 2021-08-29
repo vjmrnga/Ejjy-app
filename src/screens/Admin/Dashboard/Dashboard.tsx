@@ -1,9 +1,8 @@
 import { Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Content } from '../../../components';
+import { CashieringCard, Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { useBranches } from '../../../hooks/useBranches';
-import { BranchDay } from './components/BranchDay';
 
 export const Dashboard = () => {
 	// STATES
@@ -13,16 +12,11 @@ export const Dashboard = () => {
 	const { branches } = useBranches();
 
 	// METHODS
-
 	useEffect(() => {
 		if (branches) {
-			onTabClick(branches?.[0]?.id);
+			setCurrentActiveKey(branches?.[0]?.id);
 		}
 	}, [branches]);
-
-	const onTabClick = (branchId) => {
-		setCurrentActiveKey(branchId);
-	};
 
 	return (
 		<Content title="Dashboard">
@@ -30,15 +24,20 @@ export const Dashboard = () => {
 				<Tabs
 					defaultActiveKey={branches?.[0]?.id}
 					type="card"
-					onTabClick={onTabClick}
+					onTabClick={(branchId) => {
+						setCurrentActiveKey(branchId);
+					}}
 				>
 					{branches.map(({ name, id, online_url }) => (
 						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-							<BranchDay
-								branchId={id}
-								isActive={id === Number(currentActiveKey)}
-								disabled={!online_url}
-							/>
+							{id === Number(currentActiveKey) && (
+								<CashieringCard
+									className="BranchBalanceItem_cashieringCard"
+									branchId={id}
+									disabled={!online_url}
+									bordered
+								/>
+							)}
 						</Tabs.TabPane>
 					))}
 				</Tabs>

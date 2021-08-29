@@ -97,7 +97,7 @@ export const Users = () => {
 		const newData =
 			usersStatus === request.SUCCESS
 				? users?.map((user) => {
-						const { id, first_name, last_name, user_type } = user;
+						const { id, first_name, last_name, user_type, employee_id } = user;
 						const userWithBranch = {
 							...user,
 							branch: { id: branchId },
@@ -130,7 +130,8 @@ export const Users = () => {
 						}
 
 						return {
-							id,
+							key: id,
+							id: employee_id,
 							name: `${first_name} ${last_name}`,
 							type: getUserTypeName(user_type),
 							action,

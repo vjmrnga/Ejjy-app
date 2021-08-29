@@ -6,6 +6,7 @@ import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
+import { ViewBranchCheck } from '../Shared/Branches/ViewBranchCheck';
 import { Products } from '../Shared/Products/Products';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
@@ -92,7 +93,16 @@ const OfficeManager = () => {
 					<Route path="/office-manager/dashboard" component={Dashboard} />
 					<Route path="/office-manager/products" component={Products} />
 					<Route path="/office-manager/branches" exact component={Branches} />
-					<Route path="/office-manager/branches/:id" component={ViewBranch} />
+					<Route
+						path="/office-manager/branches/:id"
+						exact
+						component={ViewBranch}
+					/>
+					<Route
+						path="/office-manager/branches/:id/product-checks/:productCheckId"
+						exact
+						component={ViewBranchCheck}
+					/>
 
 					<Route
 						path="/office-manager/requisition-slips"

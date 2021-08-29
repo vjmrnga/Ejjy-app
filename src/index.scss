@@ -132,37 +132,37 @@ body {
 	}
 }
 
-.ant-table:not(.TableNoPadding) {
-	.ant-table-thead {
-		.ant-table-cell {
-			padding: 20px;
-			@include font(0.9rem, bold);
-			color: $color-dark;
-			background-color: $color-main-background;
+// .ant-table:not(.TableNoPadding) {
+// 	.ant-table-thead {
+// 		.ant-table-cell {
+// 			padding: 20px;
+// 			@include font(0.9rem, bold);
+// 			color: $color-dark;
+// 			background-color: $color-main-background;
 
-			&:first-child {
-				padding-left: 25px;
-			}
+// 			&:first-child {
+// 				padding-left: 25px;
+// 			}
 
-			&:last-child {
-				padding-right: 25px;
-			}
-		}
-	}
+// 			&:last-child {
+// 				padding-right: 25px;
+// 			}
+// 		}
+// 	}
 
-	.ant-table-tbody {
-		.ant-table-cell {
-			@include font(0.9rem, 500);
-			padding: 15px;
-			color: $color-dark-gray;
+// 	.ant-table-tbody {
+// 		.ant-table-cell {
+// 			@include font(0.9rem, 500);
+// 			padding: 15px;
+// 			color: $color-dark-gray;
 
-			&:first-child {
-				padding-left: 25px;
-			}
+// 			&:first-child {
+// 				padding-left: 25px;
+// 			}
 
-			&:last-child {
-				padding-right: 25px;
-			}
-		}
-	}
-}
+// 			&:last-child {
+// 				padding-right: 25px;
+// 			}
+// 		}
+// 	}
+// }

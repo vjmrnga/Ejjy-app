@@ -21,12 +21,14 @@ interface ICreateOrderSlip {
 	assigned_store_id: number;
 	requisition_slip_id: number;
 	products: Product[];
+	is_online: boolean;
 }
 
 interface IEditOrderSlip {
 	id: number;
 	assigned_store_id: number;
 	products: EditProduct[];
+	is_online: boolean;
 }
 
 interface IListOrderSlipsRequest extends IListRequest {
