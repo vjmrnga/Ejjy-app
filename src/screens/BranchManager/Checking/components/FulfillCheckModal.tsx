@@ -23,12 +23,14 @@ import { FulfillCheckForm } from './FulfillCheckForm';
 interface Props {
 	branchId?: number;
 	productCheck?: any;
+	onSuccess: any;
 	onClose: any;
 }
 
 export const FulfillCheckModal = ({
 	branchId,
 	productCheck,
+	onSuccess,
 	onClose,
 }: Props) => {
 	// STATES
@@ -84,6 +86,7 @@ export const FulfillCheckModal = ({
 			},
 			({ status }) => {
 				if (status === request.SUCCESS) {
+					onSuccess();
 					onClose();
 				}
 			},

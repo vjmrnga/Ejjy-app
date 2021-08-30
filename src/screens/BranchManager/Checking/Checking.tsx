@@ -44,7 +44,7 @@ export const Checking = () => {
 			},
 			({ status, response }) => {
 				if (status === request.SUCCESS) {
-					setDailyCheck(response?.[0]);
+					setDailyCheck(response);
 				}
 			},
 		);
@@ -55,6 +55,7 @@ export const Checking = () => {
 				branchId: user?.branch?.id,
 				type: productCheckingTypes.RANDOM,
 				isFilledUp: false,
+				onlyOfToday: true,
 			},
 			true,
 		);
@@ -80,6 +81,7 @@ export const Checking = () => {
 				branchId: user?.branch?.id,
 				type: productCheckingTypes.RANDOM,
 				isFilledUp: false,
+				onlyOfToday: true,
 				page,
 				pageSize: newPageSize,
 			},
@@ -121,6 +123,7 @@ export const Checking = () => {
 				<FulfillCheckModal
 					branchId={user?.branch?.id}
 					productCheck={selectedProductCheck}
+					onSuccess={() => setDailyCheck(null)}
 					onClose={() => setSelectedProductCheck(null)}
 				/>
 			)}

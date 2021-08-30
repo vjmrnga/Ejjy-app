@@ -103,24 +103,20 @@ export const Products = () => {
 		);
 	};
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
-			getBranchProducts(
-				{
-					search: lowerCaseKeyword,
-					branchId: user?.branch?.id,
-					productCategory,
-					productStatus: status,
-					page: 1,
-				},
-				true,
-			);
+	const onSearch = (value) => {
+		getBranchProducts(
+			{
+				search: value,
+				branchId: user?.branch?.id,
+				productCategory,
+				productStatus: status,
+				page: 1,
+			},
+			true,
+		);
 
-			setSearchedKeyword(lowerCaseKeyword);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
+		setSearchedKeyword(value);
+	};
 
 	const onSelectProductCategory = (value) => {
 		getBranchProducts(
@@ -216,43 +212,53 @@ const Filter = ({
 	onSelectProductCategory,
 	onSelectStatus,
 	onSearch,
-}: FilterProps) => (
-	<Row className="Products_filter" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Search" spacing />
-			<Input
-				prefix={<SearchOutlined />}
-				onChange={(event) => onSearch(event.target.value.trim())}
-			/>
-		</Col>
+}: FilterProps) => {
+	const onSearchDebounced = useCallback(
+		debounce((keyword) => {
+			onSearch(keyword?.toLowerCase());
+		}, SEARCH_DEBOUNCE_TIME),
+		[onSearch],
+	);
 
-		<Col lg={12} span={24}>
-			<Label label="Product Category" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={onSelectProductCategory}
-				loading={productCategoriesStatus === request.REQUESTING}
-				allowClear
-			>
-				{productCategories.map(({ name }) => (
-					<Select.Option value={name}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
+	return (
+		<Row className="Products_filter" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					prefix={<SearchOutlined />}
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					allowClear
+				/>
+			</Col>
 
-		<Col lg={12} span={24}>
-			<Label label="Status" spacing />
-			<Select style={{ width: '100%' }} onChange={onSelectStatus} allowClear>
-				<Select.Option value={branchProductStatus.AVAILABLE}>
-					Available
-				</Select.Option>
-				<Select.Option value={branchProductStatus.REORDER}>
-					Reorder
-				</Select.Option>
-				<Select.Option value={branchProductStatus.OUT_OF_STOCK}>
-					Out of Stock
-				</Select.Option>
-			</Select>
-		</Col>
-	</Row>
-);
+			<Col lg={12} span={24}>
+				<Label label="Product Category" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={onSelectProductCategory}
+					loading={productCategoriesStatus === request.REQUESTING}
+					allowClear
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option value={name}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select style={{ width: '100%' }} onChange={onSelectStatus} allowClear>
+					<Select.Option value={branchProductStatus.AVAILABLE}>
+						Available
+					</Select.Option>
+					<Select.Option value={branchProductStatus.REORDER}>
+						Reorder
+					</Select.Option>
+					<Select.Option value={branchProductStatus.OUT_OF_STOCK}>
+						Out of Stock
+					</Select.Option>
+				</Select>
+			</Col>
+		</Row>
+	);
+};

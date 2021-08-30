@@ -13,10 +13,11 @@ import { Box, Button } from '../elements';
 import './style.scss';
 
 interface Props {
+	branchId: number;
 	className?: string;
-	branchId?: number;
 	bordered?: boolean;
 	disabled?: boolean;
+	loading?: boolean;
 }
 
 export const CashieringCard = ({
@@ -24,6 +25,7 @@ export const CashieringCard = ({
 	branchId,
 	bordered,
 	disabled,
+	loading,
 }: Props) => {
 	// STATES
 	const [branchDay, setBranchDay] = useState(null);
@@ -125,7 +127,7 @@ export const CashieringCard = ({
 				CashieringCard__bordered: bordered,
 			})}
 		>
-			<Spin spinning={branchesDaysStatus === request.REQUESTING}>
+			<Spin spinning={branchesDaysStatus === request.REQUESTING || loading}>
 				<div className="CashieringCard_container">
 					<RequestErrors
 						errors={convertIntoArray(branchesDaysErrors)}
@@ -154,4 +156,11 @@ export const CashieringCard = ({
 			</Spin>
 		</Box>
 	);
+};
+
+CashieringCard.defaultProps = {
+	className: undefined,
+	bordered: false,
+	disabled: false,
+	loading: false,
 };

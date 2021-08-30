@@ -159,24 +159,20 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		);
 	};
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
-			getBranchProducts(
-				{
-					search: lowerCaseKeyword,
-					branchId: branch?.id,
-					isSoldInBranch,
-					productCategory,
-					page: 1,
-				},
-				true,
-			);
+	const onSearch = (value) => {
+		getBranchProducts(
+			{
+				search: value,
+				branchId: branch?.id,
+				isSoldInBranch,
+				productCategory,
+				page: 1,
+			},
+			true,
+		);
 
-			setSeachedKeyword(lowerCaseKeyword);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
+		setSeachedKeyword(value);
+	};
 
 	const onSelectProductCategory = (value) => {
 		setProductCategory(value);
@@ -309,48 +305,58 @@ const Filter = ({
 	onSelectProductCategory,
 	onSelectSoldInBranch,
 	onSearch,
-}: FilterProps) => (
-	<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Search" spacing />
-			<Input
-				prefix={<SearchOutlined />}
-				onChange={(event) => onSearch(event.target.value.trim())}
-			/>
-		</Col>
+}: FilterProps) => {
+	const onSearchDebounced = useCallback(
+		debounce((keyword) => {
+			onSearch(keyword?.toLowerCase());
+		}, SEARCH_DEBOUNCE_TIME),
+		[onSearch],
+	);
 
-		<Col lg={12} span={24}>
-			<Label label="Product Category" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={(value) => {
-					onSelectProductCategory(value);
-				}}
-				loading={productCategoriesStatus === request.REQUESTING}
-				allowClear
-			>
-				{productCategories.map(({ name }) => (
-					<Select.Option value={name}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
+	return (
+		<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					prefix={<SearchOutlined />}
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					allowClear
+				/>
+			</Col>
 
-		<Col lg={12} span={24}>
-			<Label label="Show Sold In Branch" spacing />
-			<Radio.Group
-				options={[
-					{ label: 'Show All', value: null },
-					{ label: 'Show Not Sold', value: false },
-					{ label: 'Show In Stock', value: true },
-				]}
-				onChange={(e) => {
-					const { value } = e.target;
-					onSelectSoldInBranch(value);
-				}}
-				// eslint-disable-next-line react/jsx-boolean-value
-				defaultValue={true}
-				optionType="button"
-			/>
-		</Col>
-	</Row>
-);
+			<Col lg={12} span={24}>
+				<Label label="Product Category" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						onSelectProductCategory(value);
+					}}
+					loading={productCategoriesStatus === request.REQUESTING}
+					allowClear
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option value={name}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Show Sold In Branch" spacing />
+				<Radio.Group
+					options={[
+						{ label: 'Show All', value: null },
+						{ label: 'Show Not Sold', value: false },
+						{ label: 'Show In Stock', value: true },
+					]}
+					onChange={(e) => {
+						const { value } = e.target;
+						onSelectSoldInBranch(value);
+					}}
+					// eslint-disable-next-line react/jsx-boolean-value
+					defaultValue={true}
+					optionType="button"
+				/>
+			</Col>
+		</Row>
+	);
+};

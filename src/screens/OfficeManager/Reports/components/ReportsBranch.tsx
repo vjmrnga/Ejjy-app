@@ -212,6 +212,8 @@ export const ReportsBranch = ({
 				current_balance,
 			);
 
+			const quantitySold = formatBalance(unit_of_measurement, quantity_sold);
+
 			const maxBalance = formatBalance(unit_of_measurement, max_balance);
 
 			return {
@@ -219,7 +221,7 @@ export const ReportsBranch = ({
 				name,
 				balance: `${currentBalance} / ${maxBalance}`,
 				remaining_balance: `${remainingBalance.toFixed(2)}%`,
-				quantity_sold,
+				quantity_sold: quantitySold,
 				daily_average_sold,
 				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
 				average_daily_consumption: formatBalance(

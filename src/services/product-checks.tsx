@@ -13,6 +13,7 @@ interface IFulfillProductCheck {
 interface IListProductChecks extends IListRequest {
 	type: 'daily' | 'random';
 	is_filled_up: boolean;
+	only_of_today?: boolean;
 }
 
 export const service = {

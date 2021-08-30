@@ -99,6 +99,7 @@ export const BranchBalanceItem = ({
 		() => () => {
 			// Cleanup in case logged out due to single sign on
 			clearInterval(fetchIntervalRef.current);
+			clearInterval(networkIntervalRef.current);
 		},
 		[],
 	);
@@ -174,23 +175,19 @@ export const BranchBalanceItem = ({
 		);
 	};
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
-			setSearchedKeyword(lowerCaseKeyword);
+	const onSearch = (value) => {
+		fetchBranchProducts(
+			{
+				search: value,
+				productCategory,
+				productStatus,
+			},
+			1,
+			pageSize,
+		);
 
-			fetchBranchProducts(
-				{
-					search: lowerCaseKeyword,
-					productCategory,
-					productStatus,
-				},
-				1,
-				pageSize,
-			);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
+		setSearchedKeyword(value);
+	};
 
 	const onSelectProductCategory = (value) => {
 		setProductCategory(value);
@@ -318,45 +315,54 @@ const Filter = ({
 	onSearch,
 	onSelectProductStatus,
 	onSelectProductCategory,
-}: FilterProps) => (
-	<Row gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Search" spacing />
-			<Input
-				prefix={<SearchOutlined />}
-				onChange={(event) => onSearch(event.target.value.trim())}
-				allowClear
-			/>
-		</Col>
+}: FilterProps) => {
+	const onSearchDebounced = useCallback(
+		debounce((keyword) => {
+			onSearch(keyword?.toLowerCase());
+		}, SEARCH_DEBOUNCE_TIME),
+		[onSearch],
+	);
 
-		<Col lg={12} span={24}>
-			<Label label="Category" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={(value) => {
-					onSelectProductCategory(value);
-				}}
-				allowClear
-			>
-				{productCategories.map(({ name }) => (
-					<Select.Option value={name}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
+	return (
+		<Row gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					prefix={<SearchOutlined />}
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					allowClear
+				/>
+			</Col>
 
-		<Col lg={12} span={24}>
-			<Label label="Status" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={(value) => {
-					onSelectProductStatus(value);
-				}}
-				allowClear
-			>
-				{branchProductStatusOptions.map(({ name, value }) => (
-					<Select.Option value={value}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
-	</Row>
-);
+			<Col lg={12} span={24}>
+				<Label label="Category" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						onSelectProductCategory(value);
+					}}
+					allowClear
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option value={name}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						onSelectProductStatus(value);
+					}}
+					allowClear
+				>
+					{branchProductStatusOptions.map(({ name, value }) => (
+						<Select.Option value={value}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
+	);
+};

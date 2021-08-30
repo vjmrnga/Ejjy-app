@@ -8,7 +8,8 @@ import { getLocalIpAddress } from '../utils/function';
 
 /* WORKERS */
 function* getProductChecks({ payload }: any) {
-	const { type, branchId, isFilledUp, page, pageSize, callback } = payload;
+	const { type, branchId, isFilledUp, onlyOfToday, page, pageSize, callback } =
+		payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL
@@ -30,6 +31,7 @@ function* getProductChecks({ payload }: any) {
 				page_size: pageSize,
 				type,
 				is_filled_up: isFilledUp,
+				only_of_today: onlyOfToday,
 			},
 			IS_APP_LIVE ? baseURL : localURL,
 		);
@@ -43,7 +45,7 @@ function* getProductChecks({ payload }: any) {
 function* getProductCheckDaily({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
-
+	console.log('test');
 	// Required: Branch must have an online URL
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId && IS_APP_LIVE) {
@@ -63,10 +65,11 @@ function* getProductCheckDaily({ payload }: any) {
 				page_size: 10,
 				type: 'daily',
 				is_filled_up: false,
+				only_of_today: true,
 			},
 			IS_APP_LIVE ? baseURL : localURL,
 		);
-
+		console.log('test', response.data);
 		callback({ status: request.SUCCESS, response: response.data.results?.[0] });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

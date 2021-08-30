@@ -42,7 +42,7 @@ export const BackupServerUrlForm = ({ branch, loading }: Props) => {
 	return (
 		<Box className="BackupServerUrl">
 			<Spin size="large" spinning={loading || status === request.REQUESTING}>
-				<Row gutter={[15, 0]}>
+				<Row gutter={[15, 15]}>
 					<Col xs={24} sm={20} md={20}>
 						<Label label="Backup Server URL" spacing />
 						<ControlledInput

@@ -37,6 +37,9 @@ export const useProductChecks = () => {
 	// ACTIONS
 	const getProductChecksAction = useActionDispatch(actions.getProductChecks);
 	const getProductCheckAction = useActionDispatch(actions.getProductCheck);
+	const getProductCheckDailyAction = useActionDispatch(
+		actions.getProductCheckDaily,
+	);
 	const fulfillProductCheckAction = useActionDispatch(
 		actions.fulfillProductCheck,
 	);
@@ -102,7 +105,7 @@ export const useProductChecks = () => {
 	};
 
 	const getProductCheckDaily = (data, extraCallback = null) => {
-		getProductChecksAction({
+		getProductCheckDailyAction({
 			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});

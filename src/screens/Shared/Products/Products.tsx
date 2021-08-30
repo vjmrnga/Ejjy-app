@@ -159,16 +159,11 @@ export const Products = () => {
 		);
 	};
 
-	const onSearch = useCallback(
-		debounce((keyword) => {
-			const lowerCaseKeyword = keyword?.toLowerCase();
+	const onSearch = (value) => {
+		getProducts({ search: value, productCategory, page: 1 }, true);
 
-			getProducts({ search: lowerCaseKeyword, productCategory, page: 1 }, true);
-
-			setSeachedKeyword(lowerCaseKeyword);
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
+		setSeachedKeyword(value);
+	};
 
 	const onSelectProductCategory = (value) => {
 		setProductCategory(value);
@@ -274,30 +269,40 @@ const Filter = ({
 	productCategoriesLoading,
 	onSearch,
 	onSelectProductCategory,
-}: FilterProps) => (
-	<Row className="PaddingHorizontal" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Search" spacing />
-			<Input
-				prefix={<SearchOutlined />}
-				onChange={(event) => onSearch(event.target.value.trim())}
-			/>
-		</Col>
+}: FilterProps) => {
+	const onSearchDebounced = useCallback(
+		debounce((keyword) => {
+			onSearch(keyword?.toLowerCase());
+		}, SEARCH_DEBOUNCE_TIME),
+		[onSearch],
+	);
 
-		<Col lg={12} span={24}>
-			<Label label="Category" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={(value) => {
-					onSelectProductCategory(value);
-				}}
-				loading={productCategoriesLoading}
-				allowClear
-			>
-				{productCategories.map(({ name }) => (
-					<Select.Option value={name}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
-	</Row>
-);
+	return (
+		<Row className="PaddingHorizontal" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					prefix={<SearchOutlined />}
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					allowClear
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Category" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						onSelectProductCategory(value);
+					}}
+					loading={productCategoriesLoading}
+					allowClear
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option value={name}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
+	);
+};

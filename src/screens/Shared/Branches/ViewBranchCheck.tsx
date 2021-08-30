@@ -133,7 +133,11 @@ export const ViewBranchCheck = ({ match }: Props) => {
 						barcode: barcode || textcode,
 						current: current_quantity_piece,
 						fulfilled: fulfilled_quantity_piece,
-						match_status: getMatchStatus(is_match),
+						match_status: is_match ? (
+							<BadgePill label="Matched" variant="primary" />
+						) : (
+							<BadgePill label="Not Matched" variant="error" />
+						),
 						adjustment: EMPTY_CELL,
 						actions: EMPTY_CELL,
 					};
@@ -141,18 +145,6 @@ export const ViewBranchCheck = ({ match }: Props) => {
 			);
 		}
 	}, [productCheck]);
-
-	const getMatchStatus = (isMatch) => {
-		if (!productCheck.datetime_fulfilled) {
-			return <BadgePill label="Not yet fulfilled" variant="secondary" />;
-		}
-
-		return isMatch ? (
-			<BadgePill label="Matched" variant="primary" />
-		) : (
-			<BadgePill label="Not Matched" variant="error" />
-		);
-	};
 
 	const getBreadcrumbItems = useCallback(
 		() => [

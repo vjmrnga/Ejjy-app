@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RequestErrors, TableHeader } from '../../../../components';
-import { Label } from '../../../../components/elements';
+import { BadgePill, Label } from '../../../../components/elements';
 import { pageSizeOptions } from '../../../../global/options';
 import { productCheckingTypes, request } from '../../../../global/types';
 import {
@@ -19,6 +19,7 @@ const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
 	{ title: 'Date & Time Fulfilled', dataIndex: 'datetime_fulfilled' },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
 interface Props {
@@ -57,7 +58,8 @@ export const ViewBranchCheckings = ({ branchId }: Props) => {
 	useEffect(() => {
 		setData(
 			productChecks.map((productCheck) => {
-				const { id, datetime_created, datetime_fulfilled } = productCheck;
+				const { id, datetime_created, datetime_fulfilled, is_success } =
+					productCheck;
 
 				return {
 					key: id,
@@ -74,6 +76,11 @@ export const ViewBranchCheckings = ({ branchId }: Props) => {
 					datetime_fulfilled: datetime_fulfilled
 						? formatDateTime(datetime_fulfilled)
 						: EMPTY_CELL,
+					status: is_success ? (
+						<BadgePill label="Success" variant="primary" />
+					) : (
+						<BadgePill label="Error" variant="error" />
+					),
 				};
 			}),
 		);
