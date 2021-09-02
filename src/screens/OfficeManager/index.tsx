@@ -6,8 +6,9 @@ import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
-import { ViewBranchCheck } from '../Shared/Branches/ViewBranchCheck';
 import { Products } from '../Shared/Products/Products';
+import { Checkings } from './Checkings/Checkings';
+import { ViewChecking } from './Checkings/ViewChecking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { Reports } from './Reports/Reports';
@@ -39,7 +40,13 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-branches.svg'),
 		link: '/office-manager/branches',
 	},
-
+	{
+		key: 'checking',
+		name: 'Checking',
+		activeIcon: require('../../assets/images/icon-checking-active.svg'),
+		defaultIcon: require('../../assets/images/icon-checking.svg'),
+		link: '/office-manager/checkings',
+	},
 	{
 		key: 'requisition-slips',
 		name: 'Requisition Slips',
@@ -91,17 +98,21 @@ const OfficeManager = () => {
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/office-manager/dashboard" component={Dashboard} />
+
 					<Route path="/office-manager/products" component={Products} />
+
 					<Route path="/office-manager/branches" exact component={Branches} />
 					<Route
 						path="/office-manager/branches/:id"
 						exact
 						component={ViewBranch}
 					/>
+
+					<Route path="/office-manager/checkings" exact component={Checkings} />
 					<Route
-						path="/office-manager/branches/:id/product-checks/:productCheckId"
+						path="/office-manager/checkings/:branchId/:id"
 						exact
-						component={ViewBranchCheck}
+						component={ViewChecking}
 					/>
 
 					<Route
