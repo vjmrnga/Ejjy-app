@@ -1,12 +1,12 @@
 @import '../../../assets/styles/main';
 
 .Sidebar {
-	height: 100vh;
+	height: 100%;
 	padding: 30px 30px 50px 30px;
 	position: fixed !important;
 	left: 0;
 	background-color: white;
-	overflow: 'auto';
+	overflow: auto;
 
 	.ant-layout-sider-zero-width-trigger {
 		@include flex(center, center);
@@ -19,6 +19,7 @@
 
 	.ant-layout-sider-children {
 		@include flex($direction: column);
+		height: 100%;
 	}
 
 	&__collapsed {
