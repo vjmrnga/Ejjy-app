@@ -45,7 +45,7 @@ function* getProductChecks({ payload }: any) {
 function* getProductCheckDaily({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
-	console.log('test');
+
 	// Required: Branch must have an online URL
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId && IS_APP_LIVE) {
@@ -69,7 +69,7 @@ function* getProductCheckDaily({ payload }: any) {
 			},
 			IS_APP_LIVE ? baseURL : localURL,
 		);
-		console.log('test', response.data);
+
 		callback({ status: request.SUCCESS, response: response.data.results?.[0] });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });

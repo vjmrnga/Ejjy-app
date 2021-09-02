@@ -56,7 +56,7 @@ export const getDataForCurrentPage = ({ data, currentPage, pageSize }) => {
 export const addInCachedData = ({ data, item }) => [item, ...data];
 
 export const updateInCachedData = ({ data, item }) => {
-	const index = data.findIndex(({ id }) => id === item.id);
+	const index = data.findIndex((d) => d?.id === item.id);
 
 	if (index !== NOT_FOUND_INDEX) {
 		const clonedData = cloneDeep(data);

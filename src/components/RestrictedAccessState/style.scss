@@ -1,0 +1,25 @@
+@import '../../assets/styles/main';
+
+.RestrictedAccessState {
+	padding: 12px 24px;
+
+	&_icon {
+		width: 100px;
+		display: block;
+		margin: auto;
+	}
+
+	&_title {
+		margin: 16px 0 0 0;
+		text-align: center;
+		color: $color-dark;
+		@include font(1.75rem, bold);
+	}
+
+	&_description {
+		margin: 12px 0 0 0;
+		text-align: center;
+		color: $color-dark-gray;
+		@include font(1rem);
+	}
+}

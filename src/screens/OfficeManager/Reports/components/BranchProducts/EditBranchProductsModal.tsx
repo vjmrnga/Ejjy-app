@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { RestrictedAccessState } from '../../../../../components';
 import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
@@ -101,12 +102,19 @@ export const EditBranchProductsModal = ({
 		>
 			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
-			<EditBranchProductsForm
-				branchProduct={branchProduct}
-				onSubmit={onEditBranchProduct}
-				onClose={handleClose}
-				loading={branchProductStatus === request.REQUESTING}
-			/>
+			{isCurrentBalanceVisible ? (
+				<EditBranchProductsForm
+					branchProduct={branchProduct}
+					onSubmit={onEditBranchProduct}
+					onClose={handleClose}
+					loading={branchProductStatus === request.REQUESTING}
+				/>
+			) : (
+				<RestrictedAccessState
+					title="Authorization"
+					description={`An admin authorization is required to edit ${branchProduct?.product?.name}.`}
+				/>
+			)}
 		</Modal>
 	);
 };

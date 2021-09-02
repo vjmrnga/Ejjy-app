@@ -15,6 +15,7 @@ export * from './PendingTransactionsSection/PendingTransactionsSection';
 export * from './QuantitySelect/QuantitySelect';
 export * from './RequestErrors/RequestErrors';
 export * from './RequestWarnings/RequestWarnings';
+export * from './RestrictedAccessState';
 export * from './Route/CommonRoute';
 export * from './Route/NoAuthRoute';
 export * from './Table/TableActions/TableActions';

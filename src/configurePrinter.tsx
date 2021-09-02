@@ -1,4 +1,4 @@
-/* eslint-disable no-eval */
+/* eslint-disable */
 import { message } from 'antd';
 import dayjs from 'dayjs';
 import qz from 'qz-tray';
