@@ -1,4 +1,4 @@
-import { FieldArray, Form, Formik } from 'formik';
+import { ErrorMessage, FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
@@ -40,15 +40,16 @@ export const FulfillCheckForm = ({
 					product_check_product_id: product.product_check_product_id,
 					pieces_in_bulk: product.pieces_in_bulk,
 					quantity_type: quantityTypes.PIECE,
-					fulfilled_quantity_piece: '',
+					fulfilled_quantity_piece: 0,
 				})),
 			},
 			Schema: Yup.object().shape({
 				products: Yup.array().of(
 					Yup.object().shape({
 						fulfilled_quantity_piece: Yup.number()
-							.min(1, 'Must greater than zero')
-							.required('Qty required'),
+							.min(0)
+							.required()
+							.label('Qty'),
 					}),
 				),
 			}),
@@ -56,7 +57,7 @@ export const FulfillCheckForm = ({
 		[products],
 	);
 
-	const getFulfilledQuantity = (index, touched, errors) => (
+	const getFulfilledQuantity = (index) => (
 		<>
 			<div className="QuantityContainer">
 				<FormInput
@@ -68,12 +69,10 @@ export const FulfillCheckForm = ({
 					options={quantityTypeOptions}
 				/>
 			</div>
-			{errors?.products?.[index]?.fulfilled_quantity_piece &&
-			touched?.products?.[index]?.fulfilled_quantity_piece ? (
-				<FieldError
-					error={errors?.products?.[index]?.fulfilled_quantity_piece}
-				/>
-			) : null}
+			<ErrorMessage
+				name={`products.${index}.fulfilled_quantity_piece`}
+				render={(error) => <FieldError error={error} />}
+			/>
 		</>
 	);
 
@@ -89,42 +88,40 @@ export const FulfillCheckForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors, touched }) => (
-				<FieldArray
-					name="products"
-					render={() => (
-						<Form className="form">
-							<TableNormal
-								columns={columns}
-								data={products.map((product, index) => [
-									// Name
-									product?.name,
-									// Barcode
-									product?.barcode,
-									// Quantity / Bulk | Pieces
-									getFulfilledQuantity(index, touched, errors),
-								])}
-							/>
+			<FieldArray
+				name="products"
+				render={() => (
+					<Form>
+						<TableNormal
+							columns={columns}
+							data={products.map((product, index) => [
+								// Name
+								product?.name,
+								// Barcode
+								product?.barcode,
+								// Quantity / Bulk | Pieces
+								getFulfilledQuantity(index),
+							])}
+						/>
 
-							<div className="ModalCustomFooter">
-								<Button
-									type="button"
-									text="Cancel"
-									onClick={onClose}
-									classNames="mr-10"
-									disabled={loading || isSubmitting}
-								/>
-								<Button
-									type="submit"
-									text="Submit"
-									variant="primary"
-									loading={loading || isSubmitting}
-								/>
-							</div>
-						</Form>
-					)}
-				/>
-			)}
+						<div className="ModalCustomFooter">
+							<Button
+								type="button"
+								text="Cancel"
+								onClick={onClose}
+								classNames="mr-10"
+								disabled={loading || isSubmitting}
+							/>
+							<Button
+								type="submit"
+								text="Submit"
+								variant="primary"
+								loading={loading || isSubmitting}
+							/>
+						</div>
+					</Form>
+				)}
+			/>
 		</Formik>
 	);
 };
