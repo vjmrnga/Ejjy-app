@@ -1,7 +1,8 @@
+/* eslint-disable no-confusing-arrow */
 import { Spin, Tooltip } from 'antd';
 import cn from 'classnames';
-import React, { ReactNode } from 'react';
-import { ROW_HEIGHT } from '../../global/constants';
+import React, { ReactNode, useEffect, useRef } from 'react';
+import { NOT_FOUND_INDEX, ROW_HEIGHT } from '../../global/constants';
 import { calculateTableHeight } from '../../utils/function';
 import './style.scss';
 
@@ -28,34 +29,43 @@ export const TableNormal = ({
 	loading,
 	displayInPage,
 	hasCustomHeaderComponent,
-}: Props) => (
-	<Spin size="large" spinning={loading}>
-		<div
-			className={cn('TableNormal', {
-				page: displayInPage,
-				hasCustomHeaderComponent,
-			})}
-			style={{ height: calculateTableHeight(data?.length + 1) + 25 }}
-		>
-			<table>
-				<thead>
-					<tr>
-						{columns.map(
-							({ name, width, center = false, tooltip = null }, index) => (
-								<th
-									key={`th-${index}`}
-									style={{ width, textAlign: center ? 'center' : 'left' }}
-								>
-									{tooltip ? <Tooltip title={tooltip}>{name}</Tooltip> : name}
-								</th>
-							),
-						)}
-					</tr>
-				</thead>
-				<tbody>
-					{data?.map((row, rowIndex) => {
-						if (row?.isCustom) {
-							return (
+}: Props) => {
+	const rowRefs = useRef([]);
+
+	// Effect: Focus active item
+	useEffect(() => {
+		if (activeRow !== NOT_FOUND_INDEX) {
+			rowRefs.current?.[activeRow]?.focus();
+		}
+	}, [activeRow]);
+
+	return (
+		<Spin size="large" spinning={loading}>
+			<div
+				className={cn('TableNormal', {
+					page: displayInPage,
+					hasCustomHeaderComponent,
+				})}
+				style={{ height: calculateTableHeight(data?.length + 1) + 25 }}
+			>
+				<table>
+					<thead>
+						<tr>
+							{columns.map(
+								({ name, width, center = false, tooltip = null }, index) => (
+									<th
+										key={`th-${index}`}
+										style={{ width, textAlign: center ? 'center' : 'left' }}
+									>
+										{tooltip ? <Tooltip title={tooltip}>{name}</Tooltip> : name}
+									</th>
+								),
+							)}
+						</tr>
+					</thead>
+					<tbody>
+						{data?.map((row, rowIndex) =>
+							row?.isCustom ? (
 								<tr
 									key={`tr-${rowIndex}`}
 									style={{ height: `${row?.height || ROW_HEIGHT}px` }}
@@ -64,38 +74,42 @@ export const TableNormal = ({
 										{row.content}
 									</td>
 								</tr>
-							);
-						}
-						return (
-							<tr
-								className={cn({ active: rowIndex === activeRow })}
-								key={`tr-${rowIndex}`}
-								style={{ height: `${ROW_HEIGHT}px` }}
-							>
-								{row
-									.filter((item) => !item?.isHidden)
-									.map((item, columnIndex) => (
-										<td
-											key={`td-${columnIndex}`}
-											style={{
-												textAlign: columns?.[columnIndex].center
-													? 'center'
-													: 'left',
-											}}
-										>
-											{item}
-										</td>
-									))}
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-		</div>
-	</Spin>
-);
+							) : (
+								<tr
+									ref={(el) => {
+										rowRefs.current[rowIndex] = el;
+									}}
+									className={cn({ active: rowIndex === activeRow })}
+									tabIndex={rowIndex}
+									key={`tr-${rowIndex}`}
+									style={{ height: `${ROW_HEIGHT}px` }}
+								>
+									{row
+										.filter((item) => !item?.isHidden)
+										.map((item, columnIndex) => (
+											<td
+												key={`td-${columnIndex}`}
+												style={{
+													textAlign: columns?.[columnIndex].center
+														? 'center'
+														: 'left',
+												}}
+											>
+												{item}
+											</td>
+										))}
+								</tr>
+							),
+						)}
+					</tbody>
+				</table>
+			</div>
+		</Spin>
+	);
+};
 
 TableNormal.defaultProps = {
 	loading: false,
 	displayInPage: false,
+	activeRow: NOT_FOUND_INDEX,
 };
