@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FieldError, Label } from '../../../../components/elements';
 import { selectors as authSelectors } from '../../../../ducks/auth';
-import { types } from '../../../../ducks/BranchPersonnel/preparation-slips';
+import { types } from '../../../../ducks/preparation-slips';
 import { quantityTypes, request } from '../../../../global/types';
 import { convertToBulk, convertToPieces } from '../../../../utils/function';
-import { usePreparationSlips } from '../../hooks/usePreparationSlips';
+import { usePreparationSlips } from '../../../../hooks/usePreparationSlips';
 import { FulfillPreparationSlipForm } from './FulfillPreparationSlipForm';
-import { PreparationSlipDetails } from './PreparationSlipDetails';
+import { PreparationSlipDetails } from '../../../../components';
 
 interface Props {
 	preparationSlip: any;

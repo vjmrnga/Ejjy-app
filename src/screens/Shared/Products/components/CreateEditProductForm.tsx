@@ -126,6 +126,7 @@ export const CreateEditProductForm = ({
 				product_category: product?.product_category,
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
+				quantity_allowance: product?.quantity_allowance || '',
 			},
 			Schema: Yup.object().shape(
 				{
@@ -181,6 +182,10 @@ export const CreateEditProductForm = ({
 							otherwise: Yup.number().notRequired().nullable(),
 						})
 						.label('Allowable Spoilage'),
+					quantity_allowance: Yup.number()
+						.required()
+						.min(0)
+						.label('Quantity Allowance'),
 					reorder_point: Yup.number()
 						.required()
 						.min(0)
@@ -411,6 +416,19 @@ export const CreateEditProductForm = ({
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited" />
 							)}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<FormInputLabel
+								min={0}
+								type="number"
+								id="quantity_allowance"
+								label="Quantity Allowance"
+							/>
+							<ErrorMessage
+								name="quantity_allowance"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Divider dashed>

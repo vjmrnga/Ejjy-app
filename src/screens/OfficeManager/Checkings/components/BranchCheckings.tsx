@@ -44,9 +44,9 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 		if (isActive) {
 			getProductChecks(
 				{
-					page: 1,
 					branchId,
 					type,
+					page: 1,
 				},
 				true,
 			);
@@ -115,7 +115,7 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 650 }}
-				rowKey="rowId"
+				rowKey="key"
 				pagination={{
 					current: currentPage,
 					total: pageCount,

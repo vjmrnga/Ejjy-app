@@ -15,13 +15,12 @@ const columns: ColumnsType = [
 	{
 		title: 'Barcode',
 		dataIndex: 'barcode',
-		key: 'barcode',
 		width: 150,
 		fixed: 'left',
 	},
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
-	{ title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
-	{ title: 'Personnel', dataIndex: 'personnel', key: 'personnel' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Quantity', dataIndex: 'quantity' },
+	{ title: 'Personnel', dataIndex: 'personnel' },
 ];
 
 interface Props {

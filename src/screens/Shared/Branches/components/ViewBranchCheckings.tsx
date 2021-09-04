@@ -47,9 +47,9 @@ export const ViewBranchCheckings = ({ branchId }: Props) => {
 	useEffect(() => {
 		getProductChecks(
 			{
-				page: 1,
 				branchId,
 				type,
+				page: 1,
 			},
 			true,
 		);
@@ -125,7 +125,7 @@ export const ViewBranchCheckings = ({ branchId }: Props) => {
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 650 }}
-				rowKey="rowId"
+				rowKey="key"
 				pagination={{
 					current: currentPage,
 					total: pageCount,

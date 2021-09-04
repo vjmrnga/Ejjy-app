@@ -140,7 +140,7 @@ export const RestoreButtonIcon = ({
 export const CheckButtonIcon = ({
 	type,
 	tooltip,
-	imgSrc = require('../../assets/images/icon-check.svg'),
+	imgSrc = require('../../assets/images/icon-check-antd.svg'),
 	onClick,
 	classNames,
 }: Props) => (

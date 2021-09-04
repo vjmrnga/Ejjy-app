@@ -3,11 +3,11 @@
 .QuantitySelect {
 	@include flex($align-items: center);
 
-	span {
+	&_label {
 		margin-right: 10px;
 	}
 
-	.quantity-select {
+	&_select {
 		max-width: 100px;
 	}
 }

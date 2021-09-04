@@ -1,28 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Modal, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { QuantitySelect, TableNormal } from '../../../../components';
+import {
+	PreparationSlipDetails,
+	QuantitySelect,
+	TableNormal,
+} from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
 import { convertToBulk, getColoredText } from '../../../../utils/function';
-import { PreparationSlipDetails } from './PreparationSlipDetails';
 
 interface Props {
-	visible: boolean;
 	preparationSlip: any;
 	onClose: any;
 }
 
 export const ViewPreparationSlipModal = ({
 	preparationSlip,
-	visible,
 	onClose,
 }: Props) => {
+	// STATES
 	const [requestedProducts, setRequestedProducts] = useState([]);
 	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
 		[],
 	);
 
+	// METHODS
 	useEffect(() => {
 		if (preparationSlip) {
 			const formattedQuantities = [];
@@ -106,29 +109,28 @@ export const ViewPreparationSlipModal = ({
 
 	return (
 		<Modal
-			className="ViewPreparationSlipModal Modal__large Modal__hasFooter"
+			className="Modal__large Modal__hasFooter"
 			title="View Preparation Slip"
-			visible={visible}
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
+			visible
 			centered
 			closable
 		>
 			<PreparationSlipDetails preparationSlip={preparationSlip} />
 
-			<div className="requested-products">
-				<Row gutter={[15, 15]} align="middle">
-					<Col span={24}>
-						<Label label="Requested Products" />
-					</Col>
-				</Row>
-			</div>
-
-			<TableNormal
-				columns={getColumns()}
-				data={requestedProducts}
-				hasCustomHeaderComponent
-			/>
+			<Row gutter={[15, 15]} align="middle">
+				<Col span={24}>
+					<Label label="Requested Products" spacing />
+				</Col>
+				<Col span={24}>
+					<TableNormal
+						columns={getColumns()}
+						data={requestedProducts}
+						hasCustomHeaderComponent
+					/>
+				</Col>
+			</Row>
 		</Modal>
 	);
 };

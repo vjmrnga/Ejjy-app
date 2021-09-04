@@ -4,10 +4,10 @@ import authSagas from './auth';
 import branchProductsSagas from './branch-products';
 import branchesDaysSagas from './branches-days';
 import { branchManagerSagas } from './BranchManager';
-import { branchPersonnelSagas } from './BranchPersonnel';
 import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
+import preparationSlipsSagas from './preparation-slips';
 import productCategoriesSagas from './product-categories';
 import productChecksSagas from './product-checks';
 import requisitionSlipsSagas from './requisition-slips';
@@ -24,6 +24,7 @@ export default function* rootSaga() {
 		...branchProductsSagas,
 		...networkSagas,
 		...orderSlipsSagas,
+		...preparationSlipsSagas,
 		...productCategoriesSagas,
 		...productChecksSagas,
 		...requisitionSlipsSagas,
@@ -35,6 +36,5 @@ export default function* rootSaga() {
 		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,
-		...branchPersonnelSagas,
 	]);
 }

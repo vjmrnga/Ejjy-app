@@ -1,12 +1,11 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { lowerCase } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AddButtonIcon, Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { types } from '../../../ducks/BranchPersonnel/preparation-slips';
+import { types } from '../../../ducks/preparation-slips';
 import { preparationSlipStatusOptions } from '../../../global/options';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
@@ -15,7 +14,7 @@ import {
 	getPreparationSlipStatus,
 } from '../../../utils/function';
 import { useOrderSlips } from '../../BranchManager/hooks/useOrderSlips';
-import { usePreparationSlips } from '../hooks/usePreparationSlips';
+import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';
 
@@ -34,8 +33,6 @@ export const PreparationSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [tableData, setTableData] = useState([]);
-	const [viewPreparationSlipModalVisible, setViewPreparationSlipModalVisible] =
-		useState(false);
 	const [selectedPreparationSlip, setSelectedPreparationSlip] = useState(null);
 	const [pendingCount, setPendingCount] = useState(0);
 
@@ -52,7 +49,7 @@ export const PreparationSlips = () => {
 
 	// METHODS
 	useEffect(() => {
-		getPreparationSlips(user.id);
+		getPreparationSlips({ assignedPersonnelId: user.id, page: 1 });
 		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
 			if (status === request.SUCCESS) {
 				setPendingCount(count);
@@ -82,7 +79,12 @@ export const PreparationSlips = () => {
 					_id: id,
 					_datetime_created: dateTime,
 					_status: status,
-					id: <ButtonLink text={id} onClick={() => onView(preparationSlip)} />,
+					id: (
+						<ButtonLink
+							text={id}
+							onClick={() => setSelectedPreparationSlip(preparationSlip)}
+						/>
+					),
 					datetime_created: dateTime,
 					status: getPreparationSlipStatus(status),
 					action,
@@ -101,25 +103,6 @@ export const PreparationSlips = () => {
 		[preparationSlipsStatus, recentRequest],
 	);
 
-	const onView = (preparationSlip) => {
-		setSelectedPreparationSlip(preparationSlip);
-		setViewPreparationSlipModalVisible(true);
-	};
-
-	const onSearch = (keyword) => {
-		const lowerCaseKeyword = lowerCase(keyword);
-		const filteredData =
-			lowerCaseKeyword.length > 0
-				? data.filter(
-						({ _id, _datetime_created }) =>
-							_id.toString() === lowerCaseKeyword ||
-							_datetime_created.includes(lowerCaseKeyword),
-				  )
-				: data;
-
-		setTableData(filteredData);
-	};
-
 	const onStatusSelect = (status) => {
 		const filteredData =
 			status !== 'all'
@@ -134,7 +117,6 @@ export const PreparationSlips = () => {
 				<TableHeader
 					statuses={preparationSlipStatusOptions}
 					onStatusSelect={onStatusSelect}
-					onSearch={onSearch}
 					pending={pendingCount}
 				/>
 
@@ -145,11 +127,12 @@ export const PreparationSlips = () => {
 					loading={getFetchLoading()}
 				/>
 
-				<ViewPreparationSlipModal
-					preparationSlip={selectedPreparationSlip}
-					visible={viewPreparationSlipModalVisible}
-					onClose={() => setViewPreparationSlipModalVisible(false)}
-				/>
+				{selectedPreparationSlip && (
+					<ViewPreparationSlipModal
+						preparationSlip={selectedPreparationSlip}
+						onClose={() => setSelectedPreparationSlip(null)}
+					/>
+				)}
 			</Box>
 		</Content>
 	);

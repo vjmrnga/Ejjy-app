@@ -41,7 +41,6 @@ export const Products = () => {
 	const [data, setData] = useState([]);
 	const [createEditProductModalVisible, setCreateEditProductModalVisible] =
 		useState(false);
-	const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
 	const [editPriceCostModalVisible, setEditPriceCostModalVisible] =
 		useState(false);
 	const [productCategories, setProductCategories] = useState([]);
@@ -92,7 +91,7 @@ export const Products = () => {
 					barcode: (
 						<ButtonLink
 							text={barcode || textcode}
-							onClick={() => onView(product)}
+							onClick={() => setSelectedProduct(product)}
 						/>
 					),
 					name,
@@ -116,11 +115,6 @@ export const Products = () => {
 			{ search: searchedKeyword, productCategory, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
 		);
-	};
-
-	const onView = (product) => {
-		setSelectedProduct(product);
-		setViewProductModalVisible(true);
 	};
 
 	const onCreate = () => {
@@ -217,11 +211,12 @@ export const Products = () => {
 					}
 				/>
 
-				<ViewProductModal
-					product={selectedProduct}
-					visible={viewProductModalVisible}
-					onClose={() => setViewProductModalVisible(false)}
-				/>
+				{selectedProduct && (
+					<ViewProductModal
+						product={selectedProduct}
+						onClose={() => setSelectedProduct(null)}
+					/>
+				)}
 
 				<CreateEditProductModal
 					product={selectedProduct}

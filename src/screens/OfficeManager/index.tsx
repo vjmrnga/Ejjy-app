@@ -17,6 +17,7 @@ import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
+import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 
 const sidebarItems = [
 	{
@@ -68,7 +69,13 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-report.svg'),
 		link: '/office-manager/reports',
 	},
-
+	{
+		key: 'pending-transactions',
+		name: 'Pending Transactions',
+		activeIcon: require('../../assets/images/icon-failed-transfers-active.svg'),
+		defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
+		link: '/office-manager/pending-transactions',
+	},
 	{
 		key: 'notifications',
 		name: 'Notifications',
@@ -141,6 +148,12 @@ const OfficeManager = () => {
 						component={Notifications}
 					/>
 					<Route path="/office-manager/reports" component={Reports} />
+
+					<Route
+						path="/office-manager/pending-transactions"
+						exact
+						component={PendingTransactions}
+					/>
 
 					<Redirect to="/office-manager/dashboard" />
 				</Switch>

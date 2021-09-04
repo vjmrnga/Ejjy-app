@@ -16,9 +16,9 @@ export const QuantitySelect = ({
 	onQuantityTypeChange,
 }: Props) => (
 	<div className="QuantitySelect">
-		<span>{quantityText}</span>
+		<span className="QuantitySelect_label">{quantityText}</span>
 		<Select
-			classNames="quantity-select"
+			classNames="QuantitySelect_select"
 			options={quantityTypeOptions}
 			placeholder="quantity"
 			value={quantityValue}

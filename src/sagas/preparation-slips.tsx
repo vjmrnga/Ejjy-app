@@ -1,22 +1,14 @@
-import { call, put, retry, takeLatest } from 'redux-saga/effects';
-import { actions, types } from '../../ducks/BranchPersonnel/preparation-slips';
-import {
-	MAX_PAGE_SIZE,
-	MAX_RETRY,
-	RETRY_INTERVAL_MS,
-} from '../../global/constants';
-import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
-import { service } from '../../services/BranchPersonnel/preparation-slips';
+import { call, retry, takeLatest } from 'redux-saga/effects';
+import { types } from '../ducks/preparation-slips';
+import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
+import { request } from '../global/types';
+import { ONLINE_API_URL } from '../services';
+import { service } from '../services/preparation-slips';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const {
-		requisition_slip_id = null,
-		assigned_store_id = null,
-		assigned_personnel_id,
-		callback,
-	} = payload;
+	const { assignedPersonnelId, isPsForApproval, page, pageSize, callback } =
+		payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -26,22 +18,23 @@ function* list({ payload }: any) {
 			service.list,
 			{
 				ordering: 'id',
-				page: 1,
-				page_size: MAX_PAGE_SIZE,
-				requisition_slip_id,
-				assigned_store_id,
-				assigned_personnel_id,
+				assigned_personnel_id: assignedPersonnelId,
+				is_ps_for_approval: isPsForApproval,
+				page,
+				page_size: pageSize,
 			},
 			ONLINE_API_URL,
 		);
 
-		yield put(
-			actions.save({
-				type: types.GET_PREPARATION_SLIPS,
-				preparationSlips: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS });
+		// TODO: Refactor once endpoint supports pagination
+		const data = {
+			count: response.data.length,
+			next: null,
+			previous: null,
+			results: response.data,
+		};
+
+		callback({ status: request.SUCCESS, data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -80,6 +73,26 @@ function* fulfill({ payload }: any) {
 	}
 }
 
+function* approveOrDisapprove({ payload }: any) {
+	const { id, isApproved, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield call(
+			service.approveOrDisapprove,
+			id,
+			{
+				is_approved: isApproved,
+			},
+			ONLINE_API_URL,
+		);
+
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_PREPARATION_SLIPS, list);
@@ -93,4 +106,17 @@ const fulfillWatcherSaga = function* fulfillWatcherSaga() {
 	yield takeLatest(types.FULFILL_PREPARATION_SLIP, fulfill);
 };
 
-export default [listWatcherSaga(), getByIdWatcherSaga(), fulfillWatcherSaga()];
+const approveOrDisapproveWatcherSaga =
+	function* approveOrDisapproveWatcherSaga() {
+		yield takeLatest(
+			types.APPROVE_OR_DISAPPROVE_PREPARATION_SLIP,
+			approveOrDisapprove,
+		);
+	};
+
+export default [
+	listWatcherSaga(),
+	getByIdWatcherSaga(),
+	fulfillWatcherSaga(),
+	approveOrDisapproveWatcherSaga(),
+];

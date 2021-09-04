@@ -1,5 +1,14 @@
 import axios from 'axios';
-import { IListRequest } from '../interfaces';
+import { IListRequest } from './interfaces';
+
+interface IListPreparationSlipsRequest extends IListRequest {
+	assigned_personnel_id?: number;
+	is_ps_for_approval?: boolean;
+}
+
+interface IGetPreparationSlipByIdRequest {
+	assigned_personnel_id: number;
+}
 
 interface PreparattionSlipProduct {
 	order_slip_product_id: number;
@@ -17,15 +26,8 @@ interface IFulfillPreparationSlip {
 	is_online: boolean;
 }
 
-interface IListPreparationSlipsRequest extends IListRequest {
-	id?: number;
-	requisition_slip_id: number;
-	assigned_store_id: number;
-	assigned_personnel_id: number;
-}
-
-interface IGetPreparationSlipByIdRequest {
-	assigned_personnel_id: number;
+interface IApproveOrDisapprovePreparationSlip {
+	is_approved: boolean;
 }
 
 export const service = {
@@ -43,4 +45,13 @@ export const service = {
 
 	fulfill: async (body: IFulfillPreparationSlip, baseURL) =>
 		axios.patch(`/order-slips/${body.id}/`, body, { baseURL }),
+
+	approveOrDisapprove: async (
+		id,
+		body: IApproveOrDisapprovePreparationSlip,
+		baseURL,
+	) =>
+		axios.post(`/order-slips/${id}/approve-or-disapprove-ps/`, body, {
+			baseURL,
+		}),
 };

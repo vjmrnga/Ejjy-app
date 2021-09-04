@@ -4,17 +4,21 @@ import { debounce, throttle, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 import { useHistory } from 'react-router-dom';
-import { CheckIcon, Content, TableNormal } from '../../../components';
+import {
+	CheckIcon,
+	Content,
+	PreparationSlipDetails,
+	TableNormal,
+} from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
 import { IS_APP_LIVE, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { getKeyDownCombination } from '../../../utils/function';
-import { usePreparationSlips } from '../hooks/usePreparationSlips';
+import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
-import { PreparationSlipDetails } from './components/PreparationSlipDetails';
 import './style.scss';
 
 const columns = [

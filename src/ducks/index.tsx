@@ -7,7 +7,6 @@ import history from '../utils/history';
 import { adminReducers } from './Admin';
 import authReducer, { key as AUTH_KEY, types } from './auth';
 import { branchManagerReducers } from './BranchManager';
-import { branchPersonnelReducers } from './BranchPersonnel';
 import networkReducer, { key as NETWORK_KEY } from './network';
 import { officeManagerReducers } from './OfficeManager';
 import requestReducer, { REQUEST_KEY } from './request';
@@ -28,7 +27,6 @@ const appReducer = combineReducers({
 	...adminReducers,
 	...officeManagerReducers,
 	...branchManagerReducers,
-	...branchPersonnelReducers,
 });
 
 export default (state, action) => {
