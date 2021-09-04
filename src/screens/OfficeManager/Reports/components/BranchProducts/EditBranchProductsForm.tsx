@@ -1,4 +1,4 @@
-import { Col } from 'antd';
+import { Col, Divider } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -15,6 +15,7 @@ interface Props {
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
+	isCurrentBalanceVisible: boolean;
 }
 
 export const EditBranchProductsForm = ({
@@ -22,6 +23,7 @@ export const EditBranchProductsForm = ({
 	onSubmit,
 	onClose,
 	loading,
+	isCurrentBalanceVisible,
 }: Props) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
@@ -29,12 +31,18 @@ export const EditBranchProductsForm = ({
 		() => ({
 			DefaultValues: {
 				id: branchProduct?.id,
+				max_balance: branchProduct?.max_balance,
 				current_balance: branchProduct?.current_balance,
 				is_daily_checked: branchProduct?.is_daily_checked,
 				is_randomly_checked: branchProduct?.is_randomly_checked,
 				is_sold_in_branch: branchProduct?.is_sold_in_branch,
 			},
 			Schema: Yup.object().shape({
+				max_balance: Yup.number()
+					.required()
+					.min(0)
+					.max(65535)
+					.label('Max Balance'),
 				current_balance: Yup.number()
 					.required()
 					.min(0)
@@ -63,14 +71,32 @@ export const EditBranchProductsForm = ({
 					<Col span={24}>
 						<FormInputLabel
 							type="number"
-							id="current_balance"
-							label="Current Balance"
+							id="max_balance"
+							label="Max Balance"
 						/>
 						<ErrorMessage
-							name="current_balance"
+							name="max_balance"
 							render={(error) => <FieldError error={error} />}
 						/>
 					</Col>
+
+					{isCurrentBalanceVisible && (
+						<>
+							<Divider dashed>HIDDEN FIELDS</Divider>
+
+							<Col span={24}>
+								<FormInputLabel
+									type="number"
+									id="current_balance"
+									label="Current Balance"
+								/>
+								<ErrorMessage
+									name="current_balance"
+									render={(error) => <FieldError error={error} />}
+								/>
+							</Col>
+						</>
+					)}
 				</DetailsRow>
 
 				<div className="ModalCustomFooter">

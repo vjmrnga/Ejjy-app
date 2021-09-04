@@ -212,27 +212,6 @@ export const EditBranchProductsForm = ({
 							/>
 						</Col>
 
-						{isCurrentBalanceVisible && (
-							<Col sm={12} xs={24}>
-								<FormInputLabel
-									type="number"
-									id="current_balance"
-									label="Current Balance"
-									step={
-										branchProduct.product.unit_of_measurement ===
-										unitOfMeasurementTypes.WEIGHING
-											? '.001'
-											: null
-									}
-									disabled={!values.is_sold_in_branch}
-								/>
-								<ErrorMessage
-									name="current_balance"
-									render={(error) => <FieldError error={error} />}
-								/>
-							</Col>
-						)}
-
 						<Divider dashed>
 							MONEY
 							<br />
@@ -318,6 +297,31 @@ export const EditBranchProductsForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
+
+						{isCurrentBalanceVisible && (
+							<>
+								<Divider dashed>HIDDEN FIELDS</Divider>
+
+								<Col sm={12} xs={24}>
+									<FormInputLabel
+										type="number"
+										id="current_balance"
+										label="Current Balance"
+										step={
+											branchProduct.product.unit_of_measurement ===
+											unitOfMeasurementTypes.WEIGHING
+												? '.001'
+												: null
+										}
+										disabled={!values.is_sold_in_branch}
+									/>
+									<ErrorMessage
+										name="current_balance"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+							</>
+						)}
 					</DetailsRow>
 
 					<div className="ModalCustomFooter">

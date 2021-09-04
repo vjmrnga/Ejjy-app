@@ -102,19 +102,13 @@ export const EditBranchProductsModal = ({
 		>
 			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
-			{isCurrentBalanceVisible ? (
-				<EditBranchProductsForm
-					branchProduct={branchProduct}
-					onSubmit={onEditBranchProduct}
-					onClose={handleClose}
-					loading={branchProductStatus === request.REQUESTING}
-				/>
-			) : (
-				<RestrictedAccessState
-					title="Authorization"
-					description={`An admin authorization is required to edit ${branchProduct?.product?.name}.`}
-				/>
-			)}
+			<EditBranchProductsForm
+				branchProduct={branchProduct}
+				onSubmit={onEditBranchProduct}
+				onClose={handleClose}
+				loading={branchProductStatus === request.REQUESTING}
+				isCurrentBalanceVisible={isCurrentBalanceVisible}
+			/>
 		</Modal>
 	);
 };
