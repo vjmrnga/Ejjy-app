@@ -102,7 +102,7 @@ export const useProducts = () => {
 	const getProducts = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
 			requestAction: getProductsAction,
-			requestType: types.CREATE_PRODUCT,
+			requestType: types.GET_PRODUCTS,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,

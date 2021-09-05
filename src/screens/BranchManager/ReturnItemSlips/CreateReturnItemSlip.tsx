@@ -24,11 +24,10 @@ import {
 	branchProductStatus,
 	quantityTypes,
 	request,
-	requisitionSlipTypes,
 } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
+import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
 import {
 	convertIntoArray,
 	convertToPieces,
@@ -47,7 +46,7 @@ const columns: ColumnsType = [
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
-export const CreateRequisitionSlip = () => {
+export const CreateReturnItemSlip = () => {
 	// STATES
 	const [searchedKeyword, setSeachedKeyword] = useState('');
 	const [selectedStatus, setSelectedStatus] = useState('all');
@@ -72,10 +71,10 @@ export const CreateRequisitionSlip = () => {
 		errors: branchProductsErrors,
 	} = useBranchProducts();
 	const {
-		createRequisitionSlip,
-		status: requisitionSlipsStatus,
-		errors: requisitionSlipsErrors,
-	} = useRequisitionSlips();
+		createReturnItemSlip,
+		status: returnItemSlipsStatus,
+		errors: returnItemSlipsErrors,
+	} = useReturnItemSlips();
 
 	// VARIABLES
 	const branchId = user?.branch?.id;
@@ -262,38 +261,30 @@ export const CreateRequisitionSlip = () => {
 
 				return {
 					product_id: id,
-					quantity_piece:
+					quantity_returned:
 						quantityType === quantityTypes.PIECE
 							? quantity
 							: convertToPieces(quantity, piecesInBulk),
 				};
 			});
 
-			createRequisitionSlip(
-				{
-					requestor_id: user?.branch?.id,
-					requesting_user_id: user?.id,
-					type: requisitionSlipTypes.MANUAL,
-					products,
-				},
-				({ status }) => {
-					if (status === request.SUCCESS) {
-						history.push('/branch-manager/requisition-slips');
-					}
-				},
-			);
+			createReturnItemSlip({ senderId: user?.id, products }, ({ status }) => {
+				if (status === request.SUCCESS) {
+					history.push('/branch-manager/return-item-slips');
+				}
+			});
 		}
 	};
 
-	const loading = [requisitionSlipsStatus, branchProductsStatus].includes(
+	const loading = [returnItemSlipsStatus, branchProductsStatus].includes(
 		request.REQUESTING,
 	);
 
 	return (
-		<Content className="CreateRequisitionSlip" title="Requisition Slips">
+		<Content className="CreateReturnItemSlip" title="Return Item Slip">
 			<Box>
 				<TableHeader
-					title="Create Requisition Slip"
+					title="Create Return Item Slip"
 					onSearch={onSearch}
 					statuses={branchProductStatusOptionsWithAll}
 					onStatusSelect={(status) => {
@@ -317,7 +308,7 @@ export const CreateRequisitionSlip = () => {
 					className="PaddingHorizontal"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(requisitionSlipsErrors, 'Requisition Slip'),
+						...convertIntoArray(returnItemSlipsErrors, 'Requisition Slip'),
 					]}
 					withSpaceBottom
 				/>
@@ -371,9 +362,9 @@ export const CreateRequisitionSlip = () => {
 
 							<Divider dashed />
 
-							<div className="CreateRequisitionSlip_createContainer">
+							<div className="CreateReturnItemSlip_createContainer">
 								<Button
-									classNames="CreateRequisitionSlip_btnCreate"
+									classNames="CreateReturnItemSlip_btnCreate"
 									type="submit"
 									text="Create"
 									variant="primary"

@@ -13,6 +13,8 @@ import { Products } from './Products/Products';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
+import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
+import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 
 const sidebarItems = [
 	{
@@ -35,6 +37,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
 		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 		link: '/branch-manager/requisition-slips',
+	},
+	{
+		key: 'return-item-slips',
+		name: 'Return Item Slips',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/branch-manager/return-item-slips',
 	},
 	{
 		key: 'order-slips',
@@ -95,6 +104,17 @@ const OfficeManager = () => {
 					<Route
 						path="/branch-manager/requisition-slips/:id"
 						component={ViewRequisitionSlip}
+						exact
+					/>
+
+					<Route
+						path="/branch-manager/return-item-slips"
+						component={ReturnItemSlips}
+						exact
+					/>
+					<Route
+						path="/branch-manager/return-item-slips/create"
+						component={CreateReturnItemSlip}
 						exact
 					/>
 

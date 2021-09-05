@@ -37,6 +37,7 @@
 		border: 0 !important;
 		box-shadow: none !important;
 		cursor: default;
+		pointer-events: none;
 	}
 
 	&.default {

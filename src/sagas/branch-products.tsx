@@ -20,14 +20,14 @@ function* list({ payload }: any) {
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
 		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
+
+	const localURL = getLocalIpAddress();
 
 	const data = {
 		page,
@@ -87,14 +87,14 @@ function* listWithAnalytics({ payload }: any) {
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
 		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
+
+	const localURL = getLocalIpAddress();
 
 	const data = {
 		page,
@@ -148,14 +148,14 @@ function* get({ payload }: any) {
 	const { page, pageSize, branchId, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
-
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
 	if (!baseURL && branchId) {
 		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 		return;
 	}
+
+	const localURL = getLocalIpAddress();
 
 	const data = {
 		page,

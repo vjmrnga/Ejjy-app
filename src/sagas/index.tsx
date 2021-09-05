@@ -11,6 +11,7 @@ import preparationSlipsSagas from './preparation-slips';
 import productCategoriesSagas from './product-categories';
 import productChecksSagas from './product-checks';
 import requisitionSlipsSagas from './requisition-slips';
+import returnItemSlipsSagas from './return-item-slips';
 import sessionsSagas from './sessions';
 import siteSettingsSagas from './site-settings';
 import transactionsSagas from './transactions';
@@ -28,6 +29,7 @@ export default function* rootSaga() {
 		...productCategoriesSagas,
 		...productChecksSagas,
 		...requisitionSlipsSagas,
+		...returnItemSlipsSagas,
 		...sessionsSagas,
 		...siteSettingsSagas,
 		...transactionsSagas,

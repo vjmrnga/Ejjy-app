@@ -13,7 +13,7 @@ import { pageSizeOptions } from '../../../global/options';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
-	{ title: 'Action', dataIndex: 'action' },
+	{ title: 'Actions', dataIndex: 'action' },
 ];
 
 export const Checking = () => {

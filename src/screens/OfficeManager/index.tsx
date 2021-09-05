@@ -11,13 +11,14 @@ import { Checkings } from './Checkings/Checkings';
 import { ViewChecking } from './Checkings/ViewChecking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
+import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { Reports } from './Reports/Reports';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
+import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
-import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 
 const sidebarItems = [
 	{
@@ -54,6 +55,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
 		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 		link: '/office-manager/requisition-slips',
+	},
+	{
+		key: 'return-item-slips',
+		name: 'Return Item Slips',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/office-manager/return-item-slips',
 	},
 	{
 		key: 'users',
@@ -135,6 +143,12 @@ const OfficeManager = () => {
 					<Route
 						path="/office-manager/requisition-slips/delivery-receipt/:id"
 						component={ViewDeliveryReceipt}
+					/>
+
+					<Route
+						path="/office-manager/return-item-slips"
+						component={ReturnItemSlips}
+						exact
 					/>
 
 					<Route path="/office-manager/users" exact component={Users} />

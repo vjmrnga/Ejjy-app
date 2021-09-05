@@ -12,6 +12,7 @@ import {
 	NewBadgePill,
 	NotAddedToOSBadgePill,
 	OutOfStocksBadgePill,
+	PendingBadgePill,
 	ReorderBadgePill,
 } from '../components';
 import { BadgePill, UncontrolledInput } from '../components/elements';
@@ -30,6 +31,7 @@ import {
 	request,
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
+	returnItemSlipsStatuses,
 	transactionStatus,
 	unitOfMeasurementTypes,
 	userTypes,
@@ -505,6 +507,23 @@ export const getTransactionStatus = memoize((status) => {
 		}
 		case transactionStatus.VOID_EDITED: {
 			return <BadgePill label="Edited" />;
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getReturnItemSlipStatus = memoize((status) => {
+	switch (status) {
+		case returnItemSlipsStatuses.DONE: {
+			return <DoneBadgePill />;
+		}
+		case returnItemSlipsStatuses.PENDING: {
+			return <PendingBadgePill />;
+		}
+		case returnItemSlipsStatuses.ERROR: {
+			return <ErrorBadgePill />;
 		}
 		default: {
 			return EMPTY_CELL;

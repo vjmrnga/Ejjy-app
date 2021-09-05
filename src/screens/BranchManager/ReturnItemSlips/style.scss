@@ -1,0 +1,27 @@
+@import '../../../assets/styles/main';
+
+.ReturnItemSlips {
+	&_tabs {
+		padding-top: 0;
+	}
+}
+
+.CreateReturnItemSlip {
+	&_createContainer {
+		padding: 0 25px 25px 25px;
+	}
+
+	&_btnCreate {
+		display: block;
+		margin-left: auto;
+		width: 150px;
+	}
+
+	&_addedProductsCount {
+		margin-bottom: 10px;
+	}
+
+	&_filter {
+		margin-bottom: 25px;
+	}
+}

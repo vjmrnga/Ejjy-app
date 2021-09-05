@@ -19,14 +19,10 @@ import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal'
 import './style.scss';
 
 const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id', key: 'id' },
-	{
-		title: 'Date & Time Created',
-		dataIndex: 'datetime_created',
-		key: 'datetime_created',
-	},
-	{ title: 'Status', dataIndex: 'status', key: 'status' },
-	{ title: 'Actions', dataIndex: 'action', key: 'action' },
+	{ title: 'ID', dataIndex: 'id' },
+	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
+	{ title: 'Status', dataIndex: 'status' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const PreparationSlips = () => {
@@ -63,7 +59,7 @@ export const PreparationSlips = () => {
 				const { id, datetime_created, status } = preparationSlip;
 				const dateTime = formatDateTime(datetime_created);
 
-				const action =
+				const actions =
 					status === preparationSlipStatus.NEW ? (
 						<AddButtonIcon
 							onClick={() => {
@@ -87,7 +83,7 @@ export const PreparationSlips = () => {
 					),
 					datetime_created: dateTime,
 					status: getPreparationSlipStatus(status),
-					action,
+					actions,
 				};
 			},
 		);

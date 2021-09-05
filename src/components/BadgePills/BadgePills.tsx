@@ -52,3 +52,7 @@ export const PendingApprovalBadgePill = ({ classNames }: Props) => (
 		variant="secondary"
 	/>
 );
+
+export const PendingBadgePill = ({ classNames }: Props) => (
+	<BadgePill classNames={classNames} label="Pending" variant="secondary" />
+);
