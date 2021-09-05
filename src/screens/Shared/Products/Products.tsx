@@ -36,13 +36,16 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
 ];
 
+const modals = {
+	VIEW: 0,
+	CREATE_EDIT: 1,
+	EDIT_PRICE_COST: 2,
+};
+
 export const Products = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [createEditProductModalVisible, setCreateEditProductModalVisible] =
-		useState(false);
-	const [editPriceCostModalVisible, setEditPriceCostModalVisible] =
-		useState(false);
+	const [modalType, setModalType] = useState(null);
 	const [productCategories, setProductCategories] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
@@ -91,7 +94,7 @@ export const Products = () => {
 					barcode: (
 						<ButtonLink
 							text={barcode || textcode}
-							onClick={() => setSelectedProduct(product)}
+							onClick={() => onOpenModal(product, modals.VIEW)}
 						/>
 					),
 					name,
@@ -99,8 +102,8 @@ export const Products = () => {
 						<TableActions
 							onAddName="Edit Price and Cost"
 							onAddIcon={require('../../../assets/images/icon-money.svg')}
-							onAdd={() => onEditPriceCost(product)}
-							onEdit={() => onEdit(product)}
+							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
+							onEdit={() => onOpenModal(product, modals.CREATE_EDIT)}
 							onRemove={() => onRemoveProduct(product)}
 						/>
 					),
@@ -110,26 +113,13 @@ export const Products = () => {
 		setData(formattedProducts);
 	}, [products, hasPendingTransactions]);
 
-	const onPageChange = (page, newPageSize) => {
-		getProducts(
-			{ search: searchedKeyword, productCategory, page, pageSize: newPageSize },
-			newPageSize !== pageSize,
-		);
-	};
+	useEffect(() => {
+		getProducts({ search: searchedKeyword, productCategory, page: 1 }, true);
+	}, [searchedKeyword, productCategory]);
 
-	const onCreate = () => {
-		setSelectedProduct(null);
-		setCreateEditProductModalVisible(true);
-	};
-
-	const onEdit = (product) => {
+	const onOpenModal = (product, type) => {
+		setModalType(type);
 		setSelectedProduct(product);
-		setCreateEditProductModalVisible(true);
-	};
-
-	const onEditPriceCost = (product) => {
-		setSelectedProduct(product);
-		setEditPriceCostModalVisible(true);
 	};
 
 	const onRemoveProduct = (product) => {
@@ -153,25 +143,22 @@ export const Products = () => {
 		);
 	};
 
-	const onSearch = (value) => {
-		getProducts({ search: value, productCategory, page: 1 }, true);
-
-		setSeachedKeyword(value);
-	};
-
-	const onSelectProductCategory = (value) => {
-		setProductCategory(value);
-
+	const onPageChange = (page, newPageSize) => {
 		getProducts(
-			{ search: searchedKeyword, productCategory: value, page: 1 },
-			true,
+			{ search: searchedKeyword, productCategory, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
 		);
 	};
 
 	return (
 		<Content className="Products" title="Products">
 			<Box>
-				<TableHeader buttonName="Create Product" onCreate={onCreate} />
+				<TableHeader
+					buttonName="Create Product"
+					onCreate={() => {
+						onOpenModal(null, modals.CREATE_EDIT);
+					}}
+				/>
 
 				<RequestErrors
 					className="PaddingHorizontal"
@@ -187,8 +174,8 @@ export const Products = () => {
 					productCategoriesLoading={
 						productCategoriesStatus === request.REQUESTING
 					}
-					onSearch={onSearch}
-					onSelectProductCategory={onSelectProductCategory}
+					onSearch={setSeachedKeyword}
+					onSelectProductCategory={setProductCategory}
 				/>
 
 				<Table
@@ -211,34 +198,36 @@ export const Products = () => {
 					}
 				/>
 
-				{selectedProduct && (
+				{modalType === modals.VIEW && selectedProduct && (
 					<ViewProductModal
 						product={selectedProduct}
-						onClose={() => setSelectedProduct(null)}
+						onClose={() => onOpenModal(null, null)}
 					/>
 				)}
 
-				<CreateEditProductModal
-					product={selectedProduct}
-					productCategories={productCategories}
-					visible={createEditProductModalVisible}
-					onFetchPendingTransactions={
-						pendingTransactionsRef.current?.refreshList
-					}
-					onSuccess={() => {
-						getProducts(
-							{ search: searchedKeyword, productCategory, page: currentPage },
-							true,
-						);
-					}}
-					onClose={() => setCreateEditProductModalVisible(false)}
-				/>
+				{modalType === modals.CREATE_EDIT && (
+					<CreateEditProductModal
+						product={selectedProduct}
+						productCategories={productCategories}
+						onFetchPendingTransactions={
+							pendingTransactionsRef.current?.refreshList
+						}
+						onSuccess={() => {
+							getProducts(
+								{ search: searchedKeyword, productCategory, page: currentPage },
+								true,
+							);
+						}}
+						onClose={() => onOpenModal(null, null)}
+					/>
+				)}
 
-				<EditPriceCostModal
-					product={selectedProduct}
-					visible={editPriceCostModalVisible}
-					onClose={() => setEditPriceCostModalVisible(false)}
-				/>
+				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
+					<EditPriceCostModal
+						product={selectedProduct}
+						onClose={() => onOpenModal(null, null)}
+					/>
+				)}
 			</Box>
 
 			<PendingTransactionsSection

@@ -10,11 +10,10 @@ import { EditPriceCostForm } from './EditPriceCostForm';
 
 interface Props {
 	product: any;
-	visible: boolean;
 	onClose: any;
 }
 
-export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
+export const EditPriceCostModal = ({ product, onClose }: Props) => {
 	// VARIABLES
 	const title = (
 		<>
@@ -33,17 +32,17 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		if (visible) {
+		if (product) {
 			setResponse([]);
 			setBranches([]);
 		}
-	}, [visible]);
+	}, [product]);
 
 	useEffect(() => {
-		if (visible) {
+		if (product) {
 			setBranches(branchesData.filter(({ online_url }) => !!online_url));
 		}
-	}, [visible, branchesData]);
+	}, [product, branchesData]);
 
 	const isLoading = useCallback(
 		() => response.some((status) => status === request.REQUESTING),
@@ -174,12 +173,11 @@ export const EditPriceCostModal = ({ product, visible, onClose }: Props) => {
 		<Modal
 			className="EditPriceCostModal Modal__large"
 			title={title}
-			visible={visible}
 			footer={null}
 			onCancel={onClose}
+			visible
 			centered
 			closable
-			destroyOnClose
 		>
 			<EditPriceCostForm
 				product={product}

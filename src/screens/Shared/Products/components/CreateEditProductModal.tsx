@@ -11,7 +11,6 @@ import { CreateEditProductForm } from './CreateEditProductForm';
 interface Props {
 	product: any;
 	productCategories: IProductCategory[];
-	visible: boolean;
 	onSuccess: any;
 	onFetchPendingTransactions: any;
 	onClose: any;
@@ -20,7 +19,6 @@ interface Props {
 export const CreateEditProductModal = ({
 	product,
 	productCategories,
-	visible,
 	onSuccess,
 	onFetchPendingTransactions,
 	onClose,
@@ -86,9 +84,9 @@ export const CreateEditProductModal = ({
 		<Modal
 			className="CreateEditProductModal Modal__large ModalLarge__scrollable"
 			title={title}
-			visible={visible}
 			footer={null}
 			onCancel={onClose}
+			visible
 			centered
 			closable
 		>
