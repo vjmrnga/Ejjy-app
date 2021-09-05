@@ -8,6 +8,7 @@ import {
 	CheckIcon,
 	Content,
 	PreparationSlipDetails,
+	RequestErrors,
 	TableNormal,
 } from '../../../components';
 import { Box, Button, Label } from '../../../components/elements';
@@ -15,8 +16,11 @@ import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButto
 import { IS_APP_LIVE, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { getKeyDownCombination } from '../../../utils/function';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
+import {
+	convertIntoArray,
+	getKeyDownCombination,
+} from '../../../utils/function';
 import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
 import './style.scss';
@@ -55,10 +59,16 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		usePreparationSlips();
 	const {
 		fulfillPreparationSlip: fulfillPrepSlip,
+		reset: fulfillPrepSlipReset,
 		status: fulfillPrepSlipStatus,
+		errors: fulfillPrepSlipErrors,
 	} = usePreparationSlips();
-	const { fulfillPreparationSlip: savePrepSlip, status: savePrepSlipStatus } =
-		usePreparationSlips();
+	const {
+		fulfillPreparationSlip: savePrepSlip,
+		reset: savePrepSlipReset,
+		status: savePrepSlipStatus,
+		errors: savePrepSlipErrors,
+	} = usePreparationSlips();
 
 	// METHODS
 	useEffect(() => {
@@ -223,6 +233,9 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			}),
 		};
 
+		fulfillPrepSlipReset();
+		savePrepSlipReset();
+
 		if (isPrepared) {
 			fulfillPrepSlip(preparationSlipData, ({ status }) => {
 				if (status === request.SUCCESS) {
@@ -344,6 +357,15 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					<PreparationSlipDetails
 						className="PaddingHorizontal PaddingVertical"
 						preparationSlip={preparationSlip}
+					/>
+
+					<RequestErrors
+						className="PaddingHorizontal"
+						errors={[
+							...convertIntoArray(fulfillPrepSlipErrors, 'Fulfill'),
+							...convertIntoArray(savePrepSlipErrors, 'Saving'),
+						]}
+						withSpaceBottom
 					/>
 
 					<div className="FulfillPreparationSlip_keyboardKeys PaddingHorizontal">

@@ -53,6 +53,7 @@ export const AssignReturnItemSlipModal = ({
 			closable
 		>
 			<AssignReturnItemSlipForm
+				returnItemSlip={returnItemSlip}
 				onSubmit={onAssignReturnItemSlip}
 				onClose={onClose}
 				loading={returnItemSlipsStatus === request.REQUESTING}

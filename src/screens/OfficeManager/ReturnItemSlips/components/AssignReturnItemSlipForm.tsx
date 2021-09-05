@@ -11,12 +11,14 @@ import { convertIntoArray, sleep } from '../../../../utils/function';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 
 interface Props {
+	returnItemSlip: any;
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
 }
 
 export const AssignReturnItemSlipForm = ({
+	returnItemSlip,
 	onSubmit,
 	onClose,
 	loading,
@@ -84,9 +86,11 @@ export const AssignReturnItemSlipForm = ({
 										setFieldValue('receiver_id', null);
 									}}
 								>
-									{branches.map(({ id, name }) => (
-										<Select.Option value={id}>{name}</Select.Option>
-									))}
+									{branches
+										.filter(({ id }) => returnItemSlip.sender.branch.id !== id)
+										.map(({ id, name }) => (
+											<Select.Option value={id}>{name}</Select.Option>
+										))}
 								</Select>
 								<ErrorMessage
 									name="branch_id"

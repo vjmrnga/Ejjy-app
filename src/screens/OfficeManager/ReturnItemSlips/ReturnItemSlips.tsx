@@ -100,6 +100,7 @@ export const ReturnItemSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
+					scroll={{ x: 800 }}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
