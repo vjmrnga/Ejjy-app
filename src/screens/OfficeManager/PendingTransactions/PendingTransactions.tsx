@@ -8,7 +8,7 @@ import {
 	TableHeader,
 } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
-import { MAX_PAGE_SIZE } from '../../../global/constants';
+import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import {
@@ -29,7 +29,6 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-// TODO: Refactor once endpoint supports pagination
 export const PendingTransactions = () => {
 	// STATES
 	const [data, setData] = useState([]);
@@ -38,9 +37,9 @@ export const PendingTransactions = () => {
 	// CUSTOM HOOKS
 	const {
 		preparationSlips,
-		// pageCount,
-		// pageSize,
-		// currentPage,
+		pageCount,
+		pageSize,
+		currentPage,
 		removeItemInPagination,
 
 		getPreparationSlips,
@@ -53,7 +52,6 @@ export const PendingTransactions = () => {
 		getPreparationSlips({
 			isPsForApproval: true,
 			page: 1,
-			pageSize: MAX_PAGE_SIZE,
 		});
 	}, []);
 
@@ -104,12 +102,12 @@ export const PendingTransactions = () => {
 		);
 	};
 
-	// const onPageChange = (page, newPageSize) => {
-	// 	getPreparationSlips(
-	// 		{ isPsForApproval: true, page, pageSize: newPageSize },
-	// 		newPageSize !== pageSize,
-	// 	);
-	// };
+	const onPageChange = (page, newPageSize) => {
+		getPreparationSlips(
+			{ isPsForApproval: true, page, pageSize: newPageSize },
+			newPageSize !== pageSize,
+		);
+	};
 
 	return (
 		<Content className="PendingTransactions" title="Pending Transactions">
@@ -120,17 +118,16 @@ export const PendingTransactions = () => {
 					columns={columns}
 					dataSource={data}
 					scroll={{ x: 650 }}
-					pagination={false}
 					rowKey="key"
-					// pagination={{
-					// 	current: currentPage,
-					// 	total: pageCount,
-					// 	pageSize,
-					// 	onChange: onPageChange,
-					// 	disabled: !data,
-					// 	position: ['bottomCenter'],
-					// 	pageSizeOptions,
-					// }}
+					pagination={{
+						current: currentPage,
+						total: pageCount,
+						pageSize,
+						onChange: onPageChange,
+						disabled: !data,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
 					loading={preparationSlipsStatus === request.REQUESTING}
 				/>
 

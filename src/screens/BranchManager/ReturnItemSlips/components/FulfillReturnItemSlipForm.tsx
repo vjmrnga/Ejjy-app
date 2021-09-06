@@ -52,7 +52,7 @@ export const FulfillReturnItemSlipForm = ({
 				products: returnItemSlip.products.map((product) => ({
 					product_id: product.product.id,
 					name: product.product.name,
-					piecesInBulk: 1,
+					piecesInBulk: product.product.pieces_in_bulk,
 					quantity: '',
 					quantityType: quantityTypes.PIECE,
 				})),

@@ -1,5 +1,5 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Input, message, Spin } from 'antd';
+import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Input, message, Modal, Spin } from 'antd';
 import { debounce, throttle, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
@@ -14,7 +14,11 @@ import {
 import { Box, Button, Label } from '../../../components/elements';
 import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
 import { IS_APP_LIVE, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
-import { preparationSlipStatus, request } from '../../../global/types';
+import {
+	preparationSlipStatus,
+	request,
+	unitOfMeasurementTypes,
+} from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import {
@@ -34,6 +38,39 @@ const columns = [
 const MESSAGE_KEY = 'MESSAGE_KEY_BARCODE_SCAN_MSG';
 const MESSAGE_KEY_RESULT = 'MESSAGE_KEY_BARCODE_SCAN_RESULT_MSG';
 
+const showConfirmation = (onOk, productNames) => {
+	Modal.confirm({
+		className: 'Modal__hasFooter',
+		title: 'Confirmation',
+		content: (
+			<>
+				<p>
+					It seems that some products have mismatches in ordered and inputted
+					quantities.
+				</p>
+
+				<p>
+					Products:
+					<ul>
+						{productNames.map((name) => (
+							<li key={name}>{name}</li>
+						))}
+					</ul>
+				</p>
+
+				<p>
+					Are you sure you want to continue fulfilling this preparation slip?
+				</p>
+			</>
+		),
+		icon: <ExclamationCircleOutlined />,
+		okText: 'Yes, fulfill now',
+		cancelText: 'No',
+		onOk,
+		closable: true,
+		centered: true,
+	});
+};
 interface Props {
 	match: any;
 }
@@ -102,6 +139,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 							name: psProduct.product.name,
 							barcode: psProduct.product.barcode,
 							textcode: psProduct.product.textcode,
+							unitOfMeasurement: psProduct.product.unit_of_measurement,
 						};
 					});
 
@@ -215,6 +253,8 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			return;
 		}
 
+		const mismatchProducts = [];
+
 		const preparationSlipData = {
 			id: preparationSlip.id,
 			is_prepared: isPrepared,
@@ -222,6 +262,10 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			is_online: IS_APP_LIVE,
 			products: Object.keys(psProducts).map((key) => {
 				const psProduct = psProducts[key];
+
+				if (psProduct.ordered !== psProduct.fulfilled) {
+					mismatchProducts.push(psProduct.name);
+				}
 
 				return {
 					order_slip_product_id: psProduct.id,
@@ -237,11 +281,19 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		savePrepSlipReset();
 
 		if (isPrepared) {
-			fulfillPrepSlip(preparationSlipData, ({ status }) => {
-				if (status === request.SUCCESS) {
-					history.push('/branch-personnel/preparation-slips');
-				}
-			});
+			const fulfillFn = () => {
+				fulfillPrepSlip(preparationSlipData, ({ status }) => {
+					if (status === request.SUCCESS) {
+						history.push('/branch-personnel/preparation-slips');
+					}
+				});
+			};
+
+			if (mismatchProducts.length > 0) {
+				showConfirmation(fulfillFn, mismatchProducts);
+			} else {
+				fulfillFn();
+			}
 		} else {
 			savePrepSlip(preparationSlipData);
 		}
@@ -249,35 +301,43 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		setIsEdited(false);
 	};
 
-	const handleScan = (scannedBarcode) => {
-		const barcode = toString(scannedBarcode);
-
+	const handleScan = (barcodeNumber) => {
+		const barcode = toString(barcodeNumber);
 		message.info({
 			key: MESSAGE_KEY,
-			content: `Scanned Barcode: ${barcode}`,
+			content: `Scanned Barcode: ${barcodeNumber}`,
 		});
 
-		const foundKey = Object.keys(psProducts).find(
-			(key) => psProducts[key].barcode === barcode,
+		// Search for scanned product
+		const barcodes = [barcode.substr(0, 7), barcode];
+		const foundKey = Object.keys(psProducts).find((key) =>
+			barcodes.includes(psProducts[key].barcode),
 		);
 
 		if (foundKey) {
-			const currentQuantity = psProducts[foundKey].fulfilled;
-			const newQuantity = currentQuantity > 0 ? currentQuantity + 1 : 1;
+			// Calculate quantity
+			let quantity = 1;
+			const product = psProducts[foundKey];
 
-			if (newQuantity > currentQuantity) {
-				message.error({
-					key: MESSAGE_KEY_RESULT,
-					content: `Total quantity must not be greater than ${currentQuantity}.`,
-				});
-			} else {
-				message.success({
-					key: MESSAGE_KEY_RESULT,
-					content: `${psProducts[foundKey].name} successfully edited.`,
-				});
-				onUpdate(foundKey, newQuantity);
+			// Extract the weighing quantity
+			if (product.unitOfMeasurement === unitOfMeasurementTypes.WEIGHING) {
+				const value = barcode.substr(-6);
+				const whole = value.substr(0, 2);
+				const decimal = value.substr(2, 4);
+				quantity = Number(Number(`${whole}.${decimal}`).toFixed(3));
 			}
+
+			// Add quantity
+			const newQuantity = product.fulfilled + quantity;
+			message.success({
+				key: MESSAGE_KEY_RESULT,
+				content: `${product.name} successfully edited.`,
+			});
+
+			// Update
+			onUpdate(foundKey, newQuantity);
 		} else {
+			// Product not found
 			message.error({
 				key: MESSAGE_KEY_RESULT,
 				content: `Cannot find the scanned product: ${barcode}.`,

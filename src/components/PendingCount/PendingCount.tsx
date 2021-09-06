@@ -8,8 +8,5 @@ interface Props {
 }
 
 export const PendingCount = ({ value, classNames }: Props) => (
-	<p className={cn('Pending', classNames)}>
-		Pending:
-		{value}
-	</p>
+	<p className={cn('Pending', classNames)}>{`Pending: ${value}`}</p>
 );

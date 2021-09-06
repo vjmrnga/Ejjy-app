@@ -26,15 +26,7 @@ function* list({ payload }: any) {
 			ONLINE_API_URL,
 		);
 
-		// TODO: Refactor once endpoint supports pagination
-		const data = {
-			count: response.data.length,
-			next: null,
-			previous: null,
-			results: response.data,
-		};
-
-		callback({ status: request.SUCCESS, data });
+		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
