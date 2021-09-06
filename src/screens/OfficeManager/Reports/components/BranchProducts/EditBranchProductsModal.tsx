@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { RestrictedAccessState } from '../../../../../components';
 import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
