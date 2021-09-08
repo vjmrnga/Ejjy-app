@@ -1,7 +1,6 @@
 import { Modal } from 'antd';
 import { cloneDeep, memoize, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { MAX_PAGE_SIZE } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
@@ -63,19 +62,6 @@ export const EditPriceCostModal = ({ product, onClose }: Props) => {
 						pricePerBulk: getValue(data.price_per_bulk),
 					},
 					({ status }) => {
-						setBranches((value) => {
-							const updatedBranches = cloneDeep(value);
-							updatedBranches[index] = {
-								...updatedBranches[index],
-								costPerPiece: getValue(data.cost_per_piece),
-								costPerBulk: getValue(data.cost_per_bulk),
-								pricePerPiece: getValue(data.price_per_piece),
-								pricePerBulk: getValue(data.price_per_bulk),
-							};
-
-							return updatedBranches;
-						});
-
 						setResponse((value) => {
 							const newValue = cloneDeep(value);
 							newValue[index] = {
@@ -100,10 +86,10 @@ export const EditPriceCostModal = ({ product, onClose }: Props) => {
 					const updatedBranches = cloneDeep(value);
 					updatedBranches[index] = {
 						...updatedBranches[index],
-						cost_per_piece: '',
-						cost_per_bulk: '',
-						price_per_piece: '',
-						price_per_bulk: '',
+						cost_per_piece: null,
+						cost_per_bulk: null,
+						price_per_piece: null,
+						price_per_bulk: null,
 					};
 
 					return updatedBranches;
@@ -125,7 +111,6 @@ export const EditPriceCostModal = ({ product, onClose }: Props) => {
 		getBranchProduct(
 			{
 				page: 1,
-				pageSize: MAX_PAGE_SIZE,
 				branchId,
 				productIds: product.id,
 			},

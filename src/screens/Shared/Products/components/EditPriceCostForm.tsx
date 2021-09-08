@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Divider, Row, Spin, Typography } from 'antd';
-import { Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { FetchButtonIcon } from '../../../../components';
@@ -86,11 +86,10 @@ export const EditPriceCostForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors: formErrors, touched: formTouched }) => (
+			{({ errors: formErrors }) => (
 				<Form className="form">
 					{branches.map(({ id, name }, index) => {
 						const errors: any = formErrors[index];
-						const touched: any = formTouched[index];
 
 						return (
 							<Spin
@@ -137,9 +136,10 @@ export const EditPriceCostForm = ({
 											label="Cost (Piece)"
 											isMoney
 										/>
-										{errors?.cost_per_piece && touched?.cost_per_piece ? (
-											<FieldError error={errors?.cost_per_piece} />
-										) : null}
+										<ErrorMessage
+											name={`${index}.cost_per_piece`}
+											render={(error) => <FieldError error={error} />}
+										/>
 									</Col>
 
 									<Col sm={12} xs={24}>
@@ -151,9 +151,10 @@ export const EditPriceCostForm = ({
 											step=".01"
 											isMoney
 										/>
-										{errors?.cost_per_bulk && touched?.cost_per_bulk ? (
-											<FieldError error={errors?.cost_per_bulk} />
-										) : null}
+										<ErrorMessage
+											name={`${index}.cost_per_bulk`}
+											render={(error) => <FieldError error={error} />}
+										/>
 									</Col>
 
 									<Col sm={12} xs={24}>
@@ -164,9 +165,10 @@ export const EditPriceCostForm = ({
 											label="Price (Piece)"
 											isMoney
 										/>
-										{errors?.price_per_piece && touched?.price_per_piece ? (
-											<FieldError error={errors?.price_per_piece} />
-										) : null}
+										<ErrorMessage
+											name={`${index}.price_per_piece`}
+											render={(error) => <FieldError error={error} />}
+										/>
 									</Col>
 
 									<Col sm={12} xs={24}>
@@ -178,9 +180,10 @@ export const EditPriceCostForm = ({
 											step=".01"
 											isMoney
 										/>
-										{errors?.price_per_bulk && touched?.price_per_bulk ? (
-											<FieldError error={errors?.price_per_bulk} />
-										) : null}
+										<ErrorMessage
+											name={`${index}.price_per_bulk`}
+											render={(error) => <FieldError error={error} />}
+										/>
 									</Col>
 
 									{index !== branches.length - 1 && <Divider />}
