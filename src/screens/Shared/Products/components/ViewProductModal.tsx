@@ -47,6 +47,10 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 				label="TT-003"
 				value={product.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
 			/>
+			<DetailsSingle
+				label="Has Quantity Allowance?"
+				value={product.has_quantity_allowance ? 'Yes' : 'No'}
+			/>
 
 			<Divider dashed>
 				<Label label="QUANTITY" />
@@ -60,11 +64,6 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 			<DetailsSingle
 				label="Allowable Spoilage (%)"
 				value={product.allowable_spoilage * 100}
-			/>
-
-			<DetailsSingle
-				label="Quantity Allowance"
-				value={product.quantity_allowance}
 			/>
 
 			<Divider dashed>

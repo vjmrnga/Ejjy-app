@@ -272,7 +272,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					product_id: psProduct.productId,
 					assigned_person_id: psProduct.assignedPersonId,
 					quantity_piece: psProduct.ordered,
-					fulfilled_quantity_piece: psProduct.fulfilled || undefined,
+					fulfilled_quantity_piece: psProduct.fulfilled || 0,
 				};
 			}),
 		};

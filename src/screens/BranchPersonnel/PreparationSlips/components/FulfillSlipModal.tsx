@@ -38,14 +38,7 @@ export const FulfillSlipModal = ({
 			(type === FULFILL_TYPES.ADD ? quantityValue : -quantityValue);
 
 		if (newQuantity < 0) {
-			message.error('Total quantity must be greater than or equals to zero');
-			return;
-		}
-
-		if (newQuantity > product.ordered) {
-			message.error(
-				`Total quantity must not be greater than ${product.ordered}`,
-			);
+			message.error('Total quantity must be greater than or equals to zero.');
 			return;
 		}
 

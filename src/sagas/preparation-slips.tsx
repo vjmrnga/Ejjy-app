@@ -17,7 +17,6 @@ function* list({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.list,
 			{
-				ordering: 'id',
 				assigned_personnel_id: assignedPersonnelId,
 				is_ps_for_approval: isPsForApproval,
 				page,

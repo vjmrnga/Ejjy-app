@@ -126,7 +126,7 @@ export const CreateEditProductForm = ({
 				product_category: product?.product_category,
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
-				quantity_allowance: product?.quantity_allowance || '',
+				has_quantity_allowance: product?.has_quantity_allowance || false,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -182,7 +182,7 @@ export const CreateEditProductForm = ({
 							otherwise: Yup.number().notRequired().nullable(),
 						})
 						.label('Allowable Spoilage'),
-					quantity_allowance: Yup.number()
+					has_quantity_allowance: Yup.number()
 						.required()
 						.min(0)
 						.label('Quantity Allowance'),
@@ -355,6 +355,18 @@ export const CreateEditProductForm = ({
 							/>
 						</Col>
 
+						<Col sm={12} xs={24}>
+							<Label label="Has Quantity Allowance?" spacing />
+							<FormRadioButton
+								id="has_quantity_allowance"
+								items={booleanOptions}
+							/>
+							<ErrorMessage
+								name="has_quantity_allowance"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
 						<Divider dashed>QUANTITY</Divider>
 
 						<Col sm={12} xs={24}>
@@ -416,19 +428,6 @@ export const CreateEditProductForm = ({
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited" />
 							)}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								min={0}
-								type="number"
-								id="quantity_allowance"
-								label="Quantity Allowance"
-							/>
-							<ErrorMessage
-								name="quantity_allowance"
-								render={(error) => <FieldError error={error} />}
-							/>
 						</Col>
 
 						<Divider dashed>

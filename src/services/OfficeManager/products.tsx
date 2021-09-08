@@ -21,7 +21,7 @@ interface ICreateProduct {
 	price_per_bulk: number;
 	is_shown_in_scale_list?: boolean;
 	acting_user_id: number;
-	quantity_allowance: number;
+	has_quantity_allowance: boolean;
 }
 
 interface IEditProduct {
@@ -41,7 +41,7 @@ interface IEditProduct {
 	price_per_bulk?: number;
 	is_shown_in_scale_list?: boolean;
 	acting_user_id: number;
-	quantity_allowance: number;
+	has_quantity_allowance: boolean;
 }
 
 interface IDeleteProduct extends IListRequest {

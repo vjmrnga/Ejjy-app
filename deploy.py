@@ -1,10 +1,6 @@
 import os
 
 if __name__ == '__main__':
-  print('Setting gcloud project...')
-  os.system('gcloud config set project ejjy-311409')
-  print('DONE\n')
-
   print('1. Installing dependencies...')
   os.system('npm install')
   print('DONE\n')
@@ -19,6 +15,7 @@ if __name__ == '__main__':
   print('DONE\n')
 
   print('4. Deploying to Cloud Run...')
+  os.system('gcloud config set project ejjy-311409')
   os.chdir('deployment')
   os.system('gcloud builds submit --tag gcr.io/ejjy-311409/ejjy-app-production')
   os.system('gcloud run deploy ejjy-app-production --platform managed --region asia-southeast1 --image gcr.io/ejjy-311409/ejjy-app-production:latest')
