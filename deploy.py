@@ -1,10 +1,6 @@
 import os
 
 if __name__ == '__main__':
-  print('1. Installing dependencies...')
-  os.system('npm install')
-  print('DONE\n')
-
   print('2. Building Online Version...')
   os.system('npm run build:online')
   print('DONE\n')

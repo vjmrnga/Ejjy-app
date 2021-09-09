@@ -48,7 +48,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 				value={product.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}
 			/>
 			<DetailsSingle
-				label="Qty Allowance?"
+				label="Qty Allowance"
 				value={product.has_quantity_allowance ? 'Yes' : 'No'}
 			/>
 

@@ -60,27 +60,6 @@ const isVatExemptedTypes = [
 	},
 ];
 
-interface ICreateProduct {
-	id?: number;
-	barcode?: string;
-	textcode?: string;
-	name: string;
-	type: 'Wet' | 'Dry';
-	unit_of_measurement: 'Weighing' | 'Non-Weighing';
-	product_category?: any;
-	print_details: string;
-	description: string;
-	allowable_spoilage?: number | string;
-	cost_per_piece: number;
-	cost_per_bulk: number;
-	reorder_point: number;
-	max_balance: number;
-	price_per_piece: number;
-	price_per_bulk: number;
-	is_vat_exempted: boolean;
-	is_shown_in_scale_list: boolean;
-}
-
 interface Props {
 	product: any;
 	productCategories: IProductCategory[];
@@ -182,10 +161,14 @@ export const CreateEditProductForm = ({
 							otherwise: Yup.number().notRequired().nullable(),
 						})
 						.label('Allowable Spoilage'),
-					has_quantity_allowance: Yup.number()
-						.required()
-						.min(0)
-						.label('Quantity Allowance'),
+					has_quantity_allowance: Yup.boolean()
+						.when(['unit_of_measurement'], {
+							is: (unitOfMeasurementValue) =>
+								unitOfMeasurementValue === unitOfMeasurementTypes.WEIGHING,
+							then: Yup.boolean().required(),
+							otherwise: Yup.boolean().notRequired().nullable(),
+						})
+						.label('Qty Allowance'),
 					reorder_point: Yup.number()
 						.required()
 						.min(0)
@@ -229,7 +212,7 @@ export const CreateEditProductForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (formData: ICreateProduct, { resetForm }) => {
+			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
@@ -243,6 +226,10 @@ export const CreateEditProductForm = ({
 						price_per_piece: removeCommas(formData.price_per_piece || 0),
 						price_per_bulk: removeCommas(formData.price_per_bulk || 0),
 						product_category: formData.product_category,
+						has_quantity_allowance:
+							formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+								? formData.has_quantity_allowance
+								: product?.has_quantity_allowance,
 						allowable_spoilage:
 							formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 								? formData.allowable_spoilage
@@ -356,15 +343,23 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Has Quantity Allowance?" spacing />
+							<Label label="Qty Allowance" spacing />
 							<FormRadioButton
 								id="has_quantity_allowance"
 								items={booleanOptions}
+								disabled={
+									values?.unit_of_measurement !==
+									unitOfMeasurementTypes.WEIGHING
+								}
 							/>
 							<ErrorMessage
 								name="has_quantity_allowance"
 								render={(error) => <FieldError error={error} />}
 							/>
+							{values?.unit_of_measurement !==
+								unitOfMeasurementTypes.WEIGHING && (
+								<FieldWarning message="Qty Allowance won't be included when submited" />
+							)}
 						</Col>
 
 						<Divider dashed>QUANTITY</Divider>
