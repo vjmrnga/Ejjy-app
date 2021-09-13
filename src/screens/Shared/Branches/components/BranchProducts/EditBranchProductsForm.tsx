@@ -105,14 +105,9 @@ export const EditBranchProductsForm = ({
 					.required()
 					.min(0)
 					.label('Special Price (bulk)'),
-				current_balance: Yup.number()
-					.nullable()
-					.min(0)
-					.max(65535)
-					.label('Current Balance'),
 			}),
 		}),
-		[branchProduct],
+		[branchProduct, isCurrentBalanceVisible],
 	);
 
 	return (
@@ -140,6 +135,11 @@ export const EditBranchProductsForm = ({
 						...data,
 						id: branchProduct?.id,
 						is_sold_in_branch: formData.is_sold_in_branch,
+
+						// NOTE: Hidden fields must be visible in order to be saved.
+						current_balance: isCurrentBalanceVisible
+							? formData.current_balance
+							: undefined,
 					},
 					resetForm,
 				);
