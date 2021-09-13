@@ -1,32 +1,18 @@
-import { Space, Table } from 'antd';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useState } from 'react';
-import {
-	CancelButtonIcon,
-	CheckButtonIcon,
-	Content,
-	TableHeader,
-} from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
+import { Link } from 'react-router-dom';
+import { Content, TableHeader } from '../../../components';
+import { Box } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
-import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
-import {
-	formatDateTime,
-	getPreparationSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime } from '../../../utils/function';
+import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 
 const columns: ColumnsType = [
-	{
-		title: 'ID',
-		dataIndex: 'id',
-		width: 100,
-		fixed: 'left',
-	},
+	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
-	{ title: 'Status', dataIndex: 'status', align: 'center' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const PendingTransactions = () => {
@@ -40,16 +26,14 @@ export const PendingTransactions = () => {
 		pageCount,
 		pageSize,
 		currentPage,
-		removeItemInPagination,
 
-		getPreparationSlips,
-		approveOrDisapprovePreparationSlip,
+		list,
 		status: preparationSlipsStatus,
 	} = usePreparationSlips();
 
 	// METHODS
 	useEffect(() => {
-		getPreparationSlips({
+		list({
 			isPsForApproval: true,
 			page: 1,
 		});
@@ -60,50 +44,19 @@ export const PendingTransactions = () => {
 			preparationSlips.map((preparationSlip) => ({
 				key: preparationSlip.id,
 				id: (
-					<ButtonLink
-						text={preparationSlip.id}
-						onClick={() => setSelectedPreparationSlip(preparationSlip)}
-					/>
+					<Link
+						to={`/office-manager/pending-transactions/${preparationSlip.id}`}
+					>
+						{preparationSlip.id}
+					</Link>
 				),
 				datetime_created: formatDateTime(preparationSlip.datetime_created),
-				status: getPreparationSlipStatus(preparationSlip.status),
-				actions: (
-					<Space size={10}>
-						<CheckButtonIcon
-							tooltip="Approve"
-							onClick={() => {
-								onApproveOrDisapprovePreparationSlip(preparationSlip, true);
-							}}
-						/>
-
-						<CancelButtonIcon
-							tooltip="Disapprove"
-							onClick={() => {
-								onApproveOrDisapprovePreparationSlip(preparationSlip, false);
-							}}
-						/>
-					</Space>
-				),
 			})),
 		);
 	}, [preparationSlips]);
 
-	const onApproveOrDisapprovePreparationSlip = (
-		preparationSlip,
-		isApproved,
-	) => {
-		approveOrDisapprovePreparationSlip(
-			{ id: preparationSlip.id, isApproved },
-			({ status }) => {
-				if (status === request.SUCCESS) {
-					removeItemInPagination(preparationSlip);
-				}
-			},
-		);
-	};
-
 	const onPageChange = (page, newPageSize) => {
-		getPreparationSlips(
+		list(
 			{ isPsForApproval: true, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
 		);

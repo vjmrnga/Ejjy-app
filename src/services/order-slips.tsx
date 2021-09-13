@@ -35,6 +35,15 @@ interface IListOrderSlipsRequest extends IListRequest {
 	requisition_slip_id?: number;
 	assigned_store_id?: number;
 	is_out_of_stock?: boolean;
+	is_ps_for_approval?: boolean;
+}
+
+interface IRetrieveWithAssignedPersonelDetails {
+	requisition_slip_id?: number;
+	assigned_store_id?: number;
+	assigned_personnel_id?: number;
+	is_ps_for_approval?: boolean;
+	requesting_user_id?: number;
 }
 
 export const service = {
@@ -46,6 +55,16 @@ export const service = {
 
 	getPendingCount: async (params, baseURL) =>
 		axios.get('/order-slips/pending-count/', { baseURL, params }),
+
+	retrieveWithAssignedPersonelDetails: async (
+		id,
+		params: IRetrieveWithAssignedPersonelDetails,
+		baseURL,
+	) =>
+		axios.get(`/order-slips/${id}/with-assigned-personnel-details/`, {
+			baseURL,
+			params,
+		}),
 
 	create: async (body: ICreateOrderSlip, baseURL) =>
 		axios.post('/order-slips/', body, { baseURL }),

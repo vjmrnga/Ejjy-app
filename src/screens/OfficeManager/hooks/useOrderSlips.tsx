@@ -18,12 +18,15 @@ const REMOVE_SUCCESS_MESSAGE = 'Order slip was removed successfully';
 const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the order slip';
 
 export const useOrderSlips = () => {
+	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
+	// SELECTORS
 	const orderSlips = useSelector(selectors.selectOrderSlips());
-	const getOrderSlipsAction = useActionDispatch(actions.getOrderSlips);
+
+	// ACTIONS
 	const getOrderSlipsExtendedAction = useActionDispatch(
 		actions.getOrderSlipsExtended,
 	);
@@ -32,6 +35,7 @@ export const useOrderSlips = () => {
 	const editOrderSlipAction = useActionDispatch(actions.editOrderSlip);
 	const removeOrderSlipAction = useActionDispatch(actions.removeOrderSlip);
 
+	// GENERAL METHODS
 	const reset = () => {
 		resetError();
 		resetStatus();
@@ -40,11 +44,6 @@ export const useOrderSlips = () => {
 	const resetError = () => setErrors([]);
 
 	const resetStatus = () => setStatus(request.NONE);
-
-	const getOrderSlip = (requisitionSlipId) => {
-		setRecentRequest(types.GET_ORDER_SLIPS);
-		getOrderSlipsAction({ requisition_slip_id: requisitionSlipId, callback });
-	};
 
 	const getOrderSlipsExtended = (requisitionSlipId) => {
 		setRecentRequest(types.GET_ORDER_SLIPS_EXTENDED);
@@ -108,7 +107,6 @@ export const useOrderSlips = () => {
 
 	return {
 		orderSlips,
-		getOrderSlip,
 		getOrderSlipsExtended,
 		getPendingCount,
 		createOrderSlip,

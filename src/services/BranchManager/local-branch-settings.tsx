@@ -5,7 +5,8 @@ interface IEditLocalBranchSettings {
 }
 
 export const service = {
-	get: async (baseURL) => axios.get('/local-branches-settings/', { baseURL }),
+	retrieve: async (baseURL) =>
+		axios.get('/local-branches-settings/', { baseURL }),
 
 	edit: async (id: number, body: IEditLocalBranchSettings, baseURL) =>
 		axios.patch(`/local-branches-settings/${id}/`, body, { baseURL }),

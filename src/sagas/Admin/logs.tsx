@@ -15,7 +15,7 @@ function* listLogs({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.listLogs,
+			service.list,
 			{
 				page,
 				page_size: pageSize,

@@ -27,7 +27,7 @@ function* get({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.get,
+			service.retrieve,
 			baseURL || localURL,
 		);
 		yield put(

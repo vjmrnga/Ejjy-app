@@ -16,7 +16,7 @@ function* getById({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.getById,
+			service.retrieve,
 			id,
 			ONLINE_API_URL,
 		);

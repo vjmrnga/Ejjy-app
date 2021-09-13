@@ -68,7 +68,9 @@ export const orderSlipStatus = {
 export const preparationSlipStatus = {
 	NEW: 'new',
 	PREPARING: 'preparing',
+	PARTIALLY_COMPLETED: 'partially_completed',
 	COMPLETED: 'completed',
+	ERROR: 'error',
 };
 
 export const deliveryReceiptProductStatus = {

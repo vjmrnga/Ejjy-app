@@ -13,7 +13,7 @@ interface IReceiveDeliveryReceipt {
 }
 
 export const service = {
-	getById: async (id, baseURL) =>
+	retrieve: async (id, baseURL) =>
 		axios.get(`/delivery-receipts/${id}/`, { baseURL }),
 
 	receive: async (body: IReceiveDeliveryReceipt, baseURL) =>

@@ -19,6 +19,7 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
+import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
 
 const sidebarItems = [
 	{
@@ -167,6 +168,11 @@ const OfficeManager = () => {
 						path="/office-manager/pending-transactions"
 						exact
 						component={PendingTransactions}
+					/>
+					<Route
+						path="/office-manager/pending-transactions/:id"
+						exact
+						component={ViewPendingTransaction}
 					/>
 
 					<Redirect to="/office-manager/dashboard" />

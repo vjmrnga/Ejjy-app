@@ -403,6 +403,12 @@ export const getPreparationSlipStatus = memoize((status) => {
 		case preparationSlipStatus.COMPLETED: {
 			return <CompletedBadgePill />;
 		}
+		case preparationSlipStatus.PARTIALLY_COMPLETED: {
+			return <BadgePill label="Partially Completed" variant="secondary" />;
+		}
+		case preparationSlipStatus.ERROR: {
+			return <ErrorBadgePill />;
+		}
 		default:
 			return null;
 	}

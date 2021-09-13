@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { actions, types } from '../../../ducks/order-slips';
+import { actions } from '../../../ducks/OfficeManager/order-slip-adjustment-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
 import { modifiedExtraCallback, onCallback } from '../../../utils/function';
@@ -11,9 +11,9 @@ import {
 	updateInCachedData,
 } from '../../../utils/pagination';
 
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching order slips';
+const LIST_ERROR_MESSAGE = 'An error occurred while fetching adjustment slips';
 
-export const useOrderSlips = () => {
+export const useOrderSlipAdjustmentSlips = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -27,39 +27,28 @@ export const useOrderSlips = () => {
 	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-	const getOrderSlipsExtendedAction = useActionDispatch(
-		actions.getOrderSlipsExtended,
-	);
-	const getPendingCountAction = useActionDispatch(actions.getPendingCount);
+	const listAction = useActionDispatch(actions.list);
+	const createAction = useActionDispatch(actions.create);
 
 	// GENERAL METHODS
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
+	const executeRequest = (data, requestCallback, action, type) => {
+		setRecentRequest(type);
+		action({
+			...data,
+			callback: onCallback(
+				callback,
+				requestCallback?.onSuccess,
+				requestCallback?.onError,
+			),
+		});
 	};
 
-	const requestCallback = ({
+	const callback = ({
 		status: callbackStatus,
 		errors: callbackErrors = [],
 	}) => {
 		setStatus(callbackStatus);
 		setErrors(callbackErrors);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
-		setRecentRequest(type);
-		action({
-			...data,
-			callback: onCallback(
-				requestCallback,
-				callback?.onSuccess,
-				callback?.onError,
-			),
-		});
 	};
 
 	// PAGINATION METHODS
@@ -86,10 +75,10 @@ export const useOrderSlips = () => {
 	};
 
 	// REQUEST METHODS
-	const getOrderSlipsExtended = (data, shouldReset = false) => {
+	const list = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
-			requestAction: getOrderSlipsExtendedAction,
-			requestType: types.GET_ORDER_SLIPS_EXTENDED,
+			requestAction: listAction,
+			requestType: null,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,
@@ -101,16 +90,15 @@ export const useOrderSlips = () => {
 		});
 	};
 
-	const getPendingCount = (data, extraCallback = null) => {
-		setRecentRequest(types.GET_PENDING_COUNT);
-		getPendingCountAction({
+	const create = (data, extraCallback = null) => {
+		createAction({
 			...data,
-			callback: modifiedExtraCallback(requestCallback, extraCallback),
+			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
 
 	return {
-		orderSlips: currentPageData,
+		adjustmentSlips: currentPageData,
 		pageCount,
 		currentPage,
 		pageSize,
@@ -118,13 +106,10 @@ export const useOrderSlips = () => {
 		updateItemInPagination,
 		removeItemInPagination,
 
-		getOrderSlipsExtended,
-		getPendingCount,
+		list,
+		create,
 		status,
 		errors,
 		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
 	};
 };
