@@ -82,7 +82,7 @@ export const CreateEditProductModal = ({
 
 	return (
 		<Modal
-			className="CreateEditProductModal Modal__large ModalLarge__scrollable"
+			className="CreateEditProduct Modal__large ModalLarge__scrollable"
 			title={title}
 			footer={null}
 			onCancel={onClose}

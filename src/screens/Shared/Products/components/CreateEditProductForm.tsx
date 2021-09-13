@@ -1,11 +1,13 @@
 /* eslint-disable newline-per-chained-call */
-import { Col, Divider, Row, Typography } from 'antd';
+import { Col, Divider, Row, Space, Typography } from 'antd';
+import cn from 'classnames';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
 	Button,
 	FieldError,
+	FormCheckbox,
 	FormInputLabel,
 	FormRadioButton,
 	FormSelect,
@@ -15,9 +17,10 @@ import {
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
 import { booleanOptions } from '../../../../global/options';
 import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
+import { useAuth } from '../../../../hooks/useAuth';
 import { IProductCategory } from '../../../../models';
 import { removeCommas, sleep } from '../../../../utils/function';
-import { useAuth } from '../../../../hooks/useAuth';
+import '../style.scss';
 
 const { Text } = Typography;
 
@@ -106,6 +109,7 @@ export const CreateEditProductForm = ({
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
 				has_quantity_allowance: product?.has_quantity_allowance || false,
+				will_carry_over_to_branch_products: product ? false : null,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -241,7 +245,7 @@ export const CreateEditProductForm = ({
 			enableReinitialize
 		>
 			{({ values }) => (
-				<Form className="form">
+				<Form>
 					<Row gutter={[15, 15]}>
 						<Col sm={6} xs={24}>
 							<FormInputLabel id="barcode" label="Barcode" />
@@ -476,20 +480,32 @@ export const CreateEditProductForm = ({
 						</Col>
 					</Row>
 
-					<div className="ModalCustomFooter">
-						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
-							classNames="mr-10"
-							disabled={loading || isSubmitting}
-						/>
-						<Button
-							type="submit"
-							text={product ? 'Edit' : 'Create'}
-							variant="primary"
-							loading={loading || isSubmitting}
-						/>
+					<div
+						className={cn('ModalCustomFooter', {
+							CreateEditProduct_modalCustomFooter: product,
+						})}
+					>
+						{product && (
+							<FormCheckbox
+								id="will_carry_over_to_branch_products"
+								label="Carry over to branch products"
+							/>
+						)}
+
+						<Space>
+							<Button
+								type="button"
+								text="Cancel"
+								onClick={onClose}
+								disabled={loading || isSubmitting}
+							/>
+							<Button
+								type="submit"
+								text={product ? 'Edit' : 'Create'}
+								variant="primary"
+								loading={loading || isSubmitting}
+							/>
+						</Space>
 					</div>
 				</Form>
 			)}

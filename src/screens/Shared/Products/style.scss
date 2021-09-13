@@ -1,9 +1,9 @@
 @import '../../../assets/styles/main';
 
-.CreateEditProductModal {
-	.custom-field-error {
-		padding-left: 10px;
-		margin-top: 0 !important;
+.CreateEditProduct {
+	&_modalCustomFooter {
+		justify-content: space-between !important;
+		align-items: center !important;
 	}
 }
 

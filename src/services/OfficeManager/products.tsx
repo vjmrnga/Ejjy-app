@@ -42,6 +42,7 @@ interface IEditProduct {
 	is_shown_in_scale_list?: boolean;
 	acting_user_id: number;
 	has_quantity_allowance: boolean;
+	will_carry_over_to_branch_products: boolean;
 }
 
 interface IDeleteProduct extends IListRequest {
