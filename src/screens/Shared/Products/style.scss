@@ -1,9 +1,14 @@
 @import '../../../assets/styles/main';
 
 .CreateEditProduct {
-	&_modalCustomFooter {
-		justify-content: space-between !important;
-		align-items: center !important;
+	&_carryOverCheckbox {
+		margin: 5px;
+
+		.ant-checkbox + span {
+			display: block;
+			color: $color-dark-gray;
+			@include font(0.875rem, bold);
+		}
 	}
 }
 

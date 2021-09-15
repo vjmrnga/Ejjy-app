@@ -10,7 +10,10 @@ interface Props {
 }
 
 const Label = ({ id, label: inputLabel, spacing, classNames }: Props) => (
-	<label htmlFor={id} className={cn('Label', classNames, { spacing })}>
+	<label
+		htmlFor={id}
+		className={cn('Label', classNames, { Label___spacing: spacing })}
+	>
 		{inputLabel}
 	</label>
 );
