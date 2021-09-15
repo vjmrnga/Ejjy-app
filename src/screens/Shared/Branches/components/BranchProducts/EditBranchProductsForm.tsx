@@ -107,7 +107,7 @@ export const EditBranchProductsForm = ({
 					.label('Special Price (bulk)'),
 			}),
 		}),
-		[branchProduct, isCurrentBalanceVisible],
+		[branchProduct],
 	);
 
 	return (

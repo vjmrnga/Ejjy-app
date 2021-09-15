@@ -1,5 +1,7 @@
+/* eslint-disable no-confusing-arrow */
 import { Col, Row } from 'antd';
 import { Form, Formik, ErrorMessage } from 'formik';
+import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -8,14 +10,17 @@ import {
 	FormInputLabel,
 } from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
+import { unitOfMeasurementTypes } from '../../../../../global/types';
 
 interface Props {
+	branchProduct?: any;
 	onSubmit: any;
 	onClose: any;
 	loading: boolean;
 }
 
 export const AddBranchProductBalanceForm = ({
+	branchProduct,
 	onSubmit,
 	onClose,
 	loading,
@@ -29,10 +34,22 @@ export const AddBranchProductBalanceForm = ({
 			},
 			Schema: Yup.object().shape({
 				// eslint-disable-next-line newline-per-chained-call
-				balance: Yup.number().required().min(1).max(65535).label('Balance'),
+				balance: Yup.number()
+					.required()
+					.moreThan(0)
+					.test(
+						'is-whole-number',
+						'Non-weighing items require whole number quantity.',
+						(value) =>
+							branchProduct?.product?.unit_of_measurement ===
+							unitOfMeasurementTypes.NON_WEIGHING
+								? isInteger(Number(value))
+								: true,
+					)
+					.label('Balance'),
 			}),
 		}),
-		[],
+		[branchProduct],
 	);
 
 	return (

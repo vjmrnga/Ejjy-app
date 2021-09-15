@@ -134,6 +134,7 @@ export const AddBranchProductBalanceModal = ({
 			<Divider dashed />
 
 			<AddBranchProductBalanceForm
+				branchProduct={branchProduct}
 				onSubmit={onAddBranchProductBalance}
 				onClose={handleClose}
 				loading={branchProductStatus === request.REQUESTING}

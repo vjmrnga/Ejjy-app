@@ -118,7 +118,11 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 
 	useEffect(() => {
 		getPreparationSlipById(
-			{ id: preparationSlipId, assignedPersonnelId: user?.id },
+			{
+				id: preparationSlipId,
+				assignedPersonnelId: user?.id,
+				requestingUserId: user.id,
+			},
 			({ status, data: psData }) => {
 				if (status === request.SUCCESS) {
 					// Save preparation slip

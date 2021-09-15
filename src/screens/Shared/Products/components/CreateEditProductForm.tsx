@@ -113,32 +113,6 @@ export const CreateEditProductForm = ({
 			},
 			Schema: Yup.object().shape(
 				{
-					// barcode: Yup.string()
-					// 	.max(50, 'Barcode/Textcode must be at most 50 characters')
-					// 	.test(
-					// 		'notBothAtTheSameTime',
-					// 		'You can only input either barcode or textcode',
-					// 		function (barcode) {
-					// 			return !(this.parent.textcode && barcode);
-					// 		},
-					// 	)
-					// 	.when('textcode', {
-					// 		is: (value) => !value?.length,
-					// 		then: Yup.string().required('Barcode/Textcode is a required field'),
-					// 	}),
-					// textcode: Yup.string()
-					// 	.max(50, 'Barcode/Textcode must be at most 50 characters')
-					// 	.test(
-					// 		'notBothAtTheSameTime',
-					// 		'You can only input either barcode or textcode',
-					// 		function (textcode) {
-					// 			return !(this.parent.barcode && textcode);
-					// 		},
-					// 	)
-					// 	.when('barcode', {
-					// 		is: (value) => !value?.length,
-					// 		then: Yup.string().required('Barcode/Textcode is a required field'),
-					// 	}),
 					barcode: Yup.string().max(
 						50,
 						'Barcode/Textcode must be at most 50 characters',

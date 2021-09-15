@@ -47,7 +47,18 @@ export const ViewPendingTransaction = ({ match }: Props) => {
 	// STATES
 	const [pendingTransaction, setPendingTransaction] = useState(null);
 
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const { user } = useAuth();
+	const { retrieve, status: preparationSlipsStatus } = usePreparationSlips();
+
 	// METHODS
+	useEffect(() => {
+		if (pendingTransactionId) {
+			retrievePreparationSlip();
+		}
+	}, [pendingTransactionId]);
+
 	const getBreadcrumbItems = useCallback(
 		() => [
 			{
@@ -59,6 +70,19 @@ export const ViewPendingTransaction = ({ match }: Props) => {
 		[pendingTransactionId],
 	);
 
+	const retrievePreparationSlip = () => {
+		retrieve(
+			{ id: pendingTransactionId, requestingUserId: user.id },
+			({ status, data }) => {
+				if (status === request.SUCCESS) {
+					setPendingTransaction(data);
+				} else if (status === request.ERROR) {
+					history.replace('/404');
+				}
+			},
+		);
+	};
+
 	return (
 		<Content
 			title="[VIEW] F-PS1"
@@ -66,50 +90,33 @@ export const ViewPendingTransaction = ({ match }: Props) => {
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
 			<Details
+				pendingTransaction={pendingTransaction}
+				preparationSlipsStatus={preparationSlipsStatus}
+			/>
+			<AdjustmentSlips
 				pendingTransactionId={pendingTransactionId}
 				pendingTransaction={pendingTransaction}
-				setPendingTransaction={setPendingTransaction}
+				retrievePreparationSlip={retrievePreparationSlip}
 			/>
-			<AdjustmentSlips pendingTransaction={pendingTransaction} />
 		</Content>
 	);
 };
 
 interface DetailsProps {
-	pendingTransactionId: string;
 	pendingTransaction?: any;
-	setPendingTransaction: any;
+	preparationSlipsStatus: number;
 }
 
 const Details = ({
-	pendingTransactionId,
 	pendingTransaction,
-	setPendingTransaction,
+	preparationSlipsStatus,
 }: DetailsProps) => {
-	const history = useHistory();
-
 	// STATES
 	const [requestedProducts, setRequestedProducts] = useState([]);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
-	const { retrieve, status: preparationSlipsStatus } = usePreparationSlips();
 
 	// Effect: Fetch delivery receipt of order slip
-	useEffect(() => {
-		if (pendingTransactionId) {
-			retrieve(
-				{ id: pendingTransactionId, requestingUserId: user.id },
-				({ status, data }) => {
-					if (status === request.SUCCESS) {
-						setPendingTransaction(data);
-					} else if (status === request.ERROR) {
-						history.replace('/404');
-					}
-				},
-			);
-		}
-	}, [pendingTransactionId]);
 
 	useEffect(() => {
 		if (pendingTransaction) {
@@ -161,9 +168,15 @@ const Details = ({
 };
 
 interface AdjustmentSlipsProps {
+	pendingTransactionId: string;
 	pendingTransaction?: any;
+	retrievePreparationSlip?: any;
 }
-const AdjustmentSlips = ({ pendingTransaction }: AdjustmentSlipsProps) => {
+const AdjustmentSlips = ({
+	pendingTransactionId,
+	pendingTransaction,
+	retrievePreparationSlip,
+}: AdjustmentSlipsProps) => {
 	// STATE
 	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
 		useState(false);
@@ -177,17 +190,17 @@ const AdjustmentSlips = ({ pendingTransaction }: AdjustmentSlipsProps) => {
 	} = useOrderSlipAdjustmentSlips();
 
 	useEffect(() => {
-		if (pendingTransaction) {
-			fetchAdjustmentSlips();
+		if (pendingTransactionId) {
+			listAdjustmentSlips();
 		}
-	}, [pendingTransaction]);
+	}, [pendingTransactionId]);
 
-	const fetchAdjustmentSlips = () => {
+	const listAdjustmentSlips = () => {
 		list(
 			{
 				page: 1,
 				pageSize: MAX_PAGE_SIZE,
-				orderSlipId: pendingTransaction.id,
+				orderSlipId: pendingTransactionId,
 			},
 			true,
 		);
@@ -224,7 +237,10 @@ const AdjustmentSlips = ({ pendingTransaction }: AdjustmentSlipsProps) => {
 			{createAdjustmentSlipVisible && (
 				<CreateAdjustmentSlipModal
 					preparationSlip={pendingTransaction}
-					onSuccess={fetchAdjustmentSlips}
+					onSuccess={() => {
+						retrievePreparationSlip();
+						listAdjustmentSlips();
+					}}
 					onClose={() => setCreateAdjustmentSlipVisible(false)}
 				/>
 			)}

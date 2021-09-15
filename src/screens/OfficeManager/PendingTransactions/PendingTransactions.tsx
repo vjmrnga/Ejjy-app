@@ -8,7 +8,6 @@ import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { formatDateTime } from '../../../utils/function';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
-import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -18,7 +17,6 @@ const columns: ColumnsType = [
 export const PendingTransactions = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [selectedPreparationSlip, setSelectedPreparationSlip] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -83,13 +81,6 @@ export const PendingTransactions = () => {
 					}}
 					loading={preparationSlipsStatus === request.REQUESTING}
 				/>
-
-				{selectedPreparationSlip && (
-					<ViewPreparationSlipModal
-						preparationSlip={selectedPreparationSlip}
-						onClose={() => setSelectedPreparationSlip(null)}
-					/>
-				)}
 			</Box>
 		</Content>
 	);

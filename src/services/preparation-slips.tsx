@@ -4,10 +4,12 @@ import { IListRequest } from './interfaces';
 interface IListPreparationSlipsRequest extends IListRequest {
 	assigned_personnel_id?: number;
 	is_ps_for_approval?: boolean;
+	requesting_user_id: number;
 }
 
 interface IGetPreparationSlipByIdRequest {
 	assigned_personnel_id: number;
+	requesting_user_id: number;
 }
 
 interface PreparattionSlipProduct {

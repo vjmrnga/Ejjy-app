@@ -47,7 +47,11 @@ export const PreparationSlips = () => {
 
 	// METHODS
 	useEffect(() => {
-		getPreparationSlips({ assignedPersonnelId: user.id, page: 1 });
+		getPreparationSlips({
+			assignedPersonnelId: user.id,
+			requestingUserId: user.id,
+			page: 1,
+		});
 		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
 			if (status === request.SUCCESS) {
 				setPendingCount(count);
@@ -86,7 +90,12 @@ export const PreparationSlips = () => {
 
 	const onPageChange = (page, newPageSize) => {
 		getPreparationSlips(
-			{ assignedPersonnelId: user.id, page, pageSize: newPageSize },
+			{
+				assignedPersonnelId: user.id,
+				requestingUserId: user.id,
+				page,
+				pageSize: newPageSize,
+			},
 			newPageSize !== pageSize,
 		);
 	};

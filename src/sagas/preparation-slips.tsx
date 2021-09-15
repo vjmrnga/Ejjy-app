@@ -7,8 +7,14 @@ import { service } from '../services/preparation-slips';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { assignedPersonnelId, isPsForApproval, page, pageSize, callback } =
-		payload;
+	const {
+		assignedPersonnelId,
+		isPsForApproval,
+		requestingUserId,
+		page,
+		pageSize,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -19,6 +25,7 @@ function* list({ payload }: any) {
 			{
 				assigned_personnel_id: assignedPersonnelId,
 				is_ps_for_approval: isPsForApproval,
+				requesting_user_id: requestingUserId,
 				page,
 				page_size: pageSize,
 			},
@@ -32,7 +39,7 @@ function* list({ payload }: any) {
 }
 
 function* getById({ payload }: any) {
-	const { id, assignedPersonnelId, callback } = payload;
+	const { id, assignedPersonnelId, requestingUserId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -41,7 +48,10 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
-			{ assigned_personnel_id: assignedPersonnelId },
+			{
+				assigned_personnel_id: assignedPersonnelId,
+				requesting_user_id: requestingUserId,
+			},
 			ONLINE_API_URL,
 		);
 
