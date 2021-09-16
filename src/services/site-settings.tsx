@@ -10,6 +10,12 @@ interface IEditSiteSettings {
 	software_developer_tin: string;
 	pos_accreditation_number: string;
 	pos_accreditation_date: string;
+	pos_accreditation_valid_until_date: string;
+	ptu_number: string;
+	ptu_date: string;
+	ptu_valid_until_date: string;
+	product_version: string;
+	thank_you_message: string;
 }
 
 export const service = {

@@ -3,10 +3,10 @@ import { Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../components';
-import { Button } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { formatBalance, numberWithCommas } from '../../../../utils/function';
+import { DetailsRow, DetailsSingle } from '../../../../../components';
+import { Button } from '../../../../../components/elements';
+import { EMPTY_CELL } from '../../../../../global/constants';
+import { formatBalance, numberWithCommas } from '../../../../../utils/function';
 
 interface Props {
 	transaction: any;
@@ -51,7 +51,7 @@ export const ViewTransactionModal = ({
 	return (
 		<Modal
 			title="View Transaction"
-			className="ViewTransactionModal Modal__large Modal__hasFooter"
+			className="ViewTransaction Modal__large Modal__hasFooter"
 			visible={visible}
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
@@ -102,7 +102,7 @@ export const ViewTransactionModal = ({
 
 			<Divider />
 
-			<h4 className="official-receipt-label">OFFICIAL RECEIPT</h4>
+			<h4 className="ViewTransaction_label">OFFICIAL RECEIPT</h4>
 
 			<Divider />
 
@@ -238,28 +238,28 @@ export const ViewTransactionModal = ({
 
 			<DetailsRow>
 				<DetailsSingle
-					classNamesValue="value-center"
+					classNamesValue="ViewTransaction_value___center"
 					labelSpan={0}
 					valueSpan={24}
 					label=""
 					value={transaction?.invoice?.software_developer || EMPTY_CELL}
 				/>
 				<DetailsSingle
-					classNamesValue="value-center"
+					classNamesValue="ViewTransaction_value___center"
 					labelSpan={0}
 					valueSpan={24}
 					label=""
 					value={transaction?.invoice?.software_developer_tin || EMPTY_CELL}
 				/>
 				<DetailsSingle
-					classNamesValue="value-center"
+					classNamesValue="ViewTransaction_value___center"
 					labelSpan={0}
 					valueSpan={24}
 					label=""
 					value={transaction?.invoice?.pos_accreditation_number || EMPTY_CELL}
 				/>
 				<DetailsSingle
-					classNamesValue="value-center"
+					classNamesValue="ViewTransaction_value___center"
 					labelSpan={0}
 					valueSpan={24}
 					label=""

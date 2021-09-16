@@ -65,7 +65,7 @@ export const AddBranchProductBalanceForm = ({
 			}}
 			enableReinitialize
 		>
-			<Form className="form">
+			<Form>
 				<Row gutter={[15, 15]}>
 					<Col span={24}>
 						<FormInputLabel type="number" id="balance" label="Qty Delivered" />

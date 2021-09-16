@@ -66,19 +66,21 @@
 	}
 }
 
-.ViewTransactionModal {
-	.official-receipt-label {
+.ViewTransaction {
+	&_label {
 		@include font(20px, bold);
 		text-align: center;
 	}
 
-	.value-center {
-		display: block;
-		text-align: center;
+	&_value {
+		&___center {
+			display: block;
+			text-align: center;
+		}
 	}
 }
 
-.AddBranchProductBalanceModal {
+.AddBranchProductBalance {
 	.FormInput {
 		font-size: 30px;
 		text-align: center;

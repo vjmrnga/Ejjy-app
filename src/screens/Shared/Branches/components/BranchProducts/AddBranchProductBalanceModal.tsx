@@ -92,7 +92,7 @@ export const AddBranchProductBalanceModal = ({
 
 	return (
 		<Modal
-			className="AddBranchProductBalanceModal"
+			className="AddBranchProductBalance"
 			title="Supplier Delivery"
 			visible={visible}
 			footer={null}
