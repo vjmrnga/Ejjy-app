@@ -109,15 +109,14 @@ export const CreateEditProductForm = ({
 				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
 				has_quantity_allowance: product?.has_quantity_allowance || false,
-				will_carry_over_to_branch_products: product ? false : null,
 
-				is_pieces_in_bulk_carried_over: !product,
-				is_cost_per_piece_carried_over: !product,
-				is_cost_per_bulk_carried_over: !product,
-				is_reorder_point_carried_over: !product,
-				is_max_balance_carried_over: !product,
-				is_price_per_piece_carried_over: !product,
-				is_price_per_bulk_carried_over: !product,
+				will_carry_over_max_balance: !product,
+				will_carry_over_reorder_point: !product,
+				will_carry_over_price_per_piece: !product,
+				will_carry_over_price_per_bulk: !product,
+				will_carry_over_cost_per_piece: !product,
+				will_carry_over_cost_per_bulk: !product,
+				will_carry_over_allowable_spoilage: !product,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -195,13 +194,14 @@ export const CreateEditProductForm = ({
 	);
 
 	const renderCommonFieldLabel = useCallback(
-		(inputName, label, checkboxName, setFieldValue) =>
+		(inputName, label, checkboxName, setFieldValue, disabledCheckbox = false) =>
 			product ? (
 				<Checkbox
 					className="CreateEditProduct_carryOverCheckbox"
 					onChange={(e) => {
 						setFieldValue(checkboxName, e.target.checked);
 					}}
+					disabled={disabledCheckbox}
 				>
 					{label}
 				</Checkbox>
@@ -220,6 +220,9 @@ export const CreateEditProductForm = ({
 				await sleep(500);
 				setSubmitting(false);
 
+				const isWeighing =
+					formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING;
+
 				const data = {
 					...formData,
 					id: product?.id,
@@ -228,50 +231,26 @@ export const CreateEditProductForm = ({
 					price_per_piece: removeCommas(formData.price_per_piece || 0),
 					price_per_bulk: removeCommas(formData.price_per_bulk || 0),
 					product_category: formData.product_category,
-					has_quantity_allowance:
-						formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
-							? formData.has_quantity_allowance
-							: product?.has_quantity_allowance,
-					allowable_spoilage:
-						formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
-							? formData.allowable_spoilage
-							: null,
+					has_quantity_allowance: isWeighing
+						? formData.has_quantity_allowance
+						: product?.has_quantity_allowance,
+					allowable_spoilage: isWeighing ? formData.allowable_spoilage : null,
+					will_carry_over_allowable_spoilage: isWeighing
+						? formData.will_carry_over_allowable_spoilage
+						: false,
 				};
 
-				if (product) {
-					// NOTE: Set only the values that will be carried over.
-					data.reorder_point = data.is_reorder_point_carried_over
-						? data.reorder_point
-						: undefined;
-					data.max_balance = data.is_max_balance_carried_over
-						? data.max_balance
-						: undefined;
-					data.pieces_in_bulk = data.is_pieces_in_bulk_carried_over
-						? data.pieces_in_bulk
-						: undefined;
-					data.cost_per_piece = data.is_cost_per_piece_carried_over
-						? data.cost_per_piece
-						: undefined;
-					data.cost_per_bulk = data.is_cost_per_bulk_carried_over
-						? data.cost_per_bulk
-						: undefined;
-					data.price_per_piece = data.is_price_per_piece_carried_over
-						? data.price_per_piece
-						: undefined;
-					data.price_per_bulk = data.is_price_per_bulk_carried_over
-						? data.price_per_bulk
-						: undefined;
+				if (!product) {
+					// NOTE: We need to remove the will_carry_over_xxx form data values
+					// so it will not get included in the request.
+					data.will_carry_over_max_balance = undefined;
+					data.will_carry_over_reorder_point = undefined;
+					data.will_carry_over_price_per_piece = undefined;
+					data.will_carry_over_price_per_bulk = undefined;
+					data.will_carry_over_cost_per_piece = undefined;
+					data.will_carry_over_cost_per_bulk = undefined;
+					data.will_carry_over_allowable_spoilage = undefined;
 				}
-
-				// NOTE: We need to remove the is_xxx_carried_over form data values
-				// so it will not get included in the request.
-				data.is_reorder_point_carried_over = undefined;
-				data.is_max_balance_carried_over = undefined;
-				data.is_pieces_in_bulk_carried_over = undefined;
-				data.is_cost_per_piece_carried_over = undefined;
-				data.is_cost_per_bulk_carried_over = undefined;
-				data.is_price_per_piece_carried_over = undefined;
-				data.is_price_per_bulk_carried_over = undefined;
 
 				onSubmit(data, resetForm);
 			}}
@@ -405,19 +384,19 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'reorder_point',
 								'Reorder Point',
-								'is_reorder_point_carried_over',
+								'will_carry_over_reorder_point',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="reorder_point"
-								disabled={!values.is_reorder_point_carried_over}
+								disabled={!values.will_carry_over_reorder_point}
 							/>
 							<ErrorMessage
 								name="reorder_point"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_reorder_point_carried_over && (
+							{!values.will_carry_over_reorder_point && (
 								<FieldWarning message="Reorder Point won't be included when submited." />
 							)}
 						</Col>
@@ -426,60 +405,59 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'max_balance',
 								'Max Balance',
-								'is_max_balance_carried_over',
+								'will_carry_over_max_balance',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="max_balance"
-								disabled={!values.is_max_balance_carried_over}
+								disabled={!values.will_carry_over_max_balance}
 							/>
 							<ErrorMessage
 								name="max_balance"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_max_balance_carried_over && (
+							{!values.will_carry_over_max_balance && (
 								<FieldWarning message="Max Balance won't be included when submited." />
-							)}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
-								'pieces_in_bulk',
-								'Pieces in Bulk',
-								'is_pieces_in_bulk_carried_over',
-								setFieldValue,
-							)}
-							<FormInput
-								type="number"
-								id="pieces_in_bulk"
-								disabled={!values.is_pieces_in_bulk_carried_over}
-							/>
-							<ErrorMessage
-								name="pieces_in_bulk"
-								render={(error) => <FieldError error={error} />}
-							/>
-							{!values.is_pieces_in_bulk_carried_over && (
-								<FieldWarning message="Pieces in Bulk won't be included when submited." />
 							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
 								type="number"
+								id="pieces_in_bulk"
+								label="Pieces in Bulk"
+							/>
+							<ErrorMessage
+								name="pieces_in_bulk"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCommonFieldLabel(
+								'allowable_spoilage',
+								'Allowable Spoilage (%)',
+								'will_carry_over_allowable_spoilage',
+								setFieldValue,
+								values?.unit_of_measurement !== unitOfMeasurementTypes.WEIGHING,
+							)}
+							<FormInput
+								type="number"
 								id="allowable_spoilage"
-								label="Allowable Spoilage (%)"
 								disabled={
 									values?.unit_of_measurement !==
-									unitOfMeasurementTypes.WEIGHING
+										unitOfMeasurementTypes.WEIGHING ||
+									!values.will_carry_over_allowable_spoilage
 								}
 							/>
 							<ErrorMessage
 								name="allowable_spoilage"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{values?.unit_of_measurement !==
-								unitOfMeasurementTypes.WEIGHING && (
+							{(values?.unit_of_measurement !==
+								unitOfMeasurementTypes.WEIGHING ||
+								!values.will_carry_over_allowable_spoilage) && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited." />
 							)}
 						</Col>
@@ -494,20 +472,20 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'cost_per_piece',
 								'Cost (Piece)',
-								'is_cost_per_piece_carried_over',
+								'will_carry_over_cost_per_piece',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="cost_per_piece"
-								disabled={!values.is_cost_per_piece_carried_over}
+								disabled={!values.will_carry_over_cost_per_piece}
 								isMoney
 							/>
 							<ErrorMessage
 								name="cost_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_cost_per_piece_carried_over && (
+							{!values.will_carry_over_cost_per_piece && (
 								<FieldWarning message="Cost (Piece) won't be included when submited." />
 							)}
 						</Col>
@@ -516,20 +494,20 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'cost_per_bulk',
 								'Cost (Bulk)',
-								'is_cost_per_bulk_carried_over',
+								'will_carry_over_cost_per_bulk',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="cost_per_bulk"
-								disabled={!values.is_cost_per_bulk_carried_over}
+								disabled={!values.will_carry_over_cost_per_bulk}
 								isMoney
 							/>
 							<ErrorMessage
 								name="cost_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_cost_per_bulk_carried_over && (
+							{!values.will_carry_over_cost_per_bulk && (
 								<FieldWarning message="Cost (Bulk) won't be included when submited." />
 							)}
 						</Col>
@@ -538,20 +516,20 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'price_per_piece',
 								'Price (Piece)',
-								'is_price_per_piece_carried_over',
+								'will_carry_over_price_per_piece',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="price_per_piece"
-								disabled={!values.is_price_per_piece_carried_over}
+								disabled={!values.will_carry_over_price_per_piece}
 								isMoney
 							/>
 							<ErrorMessage
 								name="price_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_price_per_piece_carried_over && (
+							{!values.will_carry_over_price_per_piece && (
 								<FieldWarning message="Price (Piece) won't be included when submited." />
 							)}
 						</Col>
@@ -560,20 +538,20 @@ export const CreateEditProductForm = ({
 							{renderCommonFieldLabel(
 								'price_per_bulk',
 								'Price (Bulk)',
-								'is_price_per_bulk_carried_over',
+								'will_carry_over_price_per_bulk',
 								setFieldValue,
 							)}
 							<FormInput
 								type="number"
 								id="price_per_bulk"
-								disabled={!values.is_price_per_bulk_carried_over}
+								disabled={!values.will_carry_over_price_per_bulk}
 								isMoney
 							/>
 							<ErrorMessage
 								name="price_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.is_price_per_bulk_carried_over && (
+							{!values.will_carry_over_price_per_bulk && (
 								<FieldWarning message="Price (Bulk) won't be included when submited." />
 							)}
 						</Col>
