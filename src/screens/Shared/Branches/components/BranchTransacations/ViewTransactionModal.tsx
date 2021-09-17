@@ -6,7 +6,10 @@ import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
-import { formatBalance, numberWithCommas } from '../../../../../utils/function';
+import {
+	formatQuantity,
+	numberWithCommas,
+} from '../../../../../utils/function';
 
 interface Props {
 	transaction: any;
@@ -35,7 +38,7 @@ export const ViewTransactionModal = ({
 			transaction?.products.map(
 				({ branch_product, quantity, price_per_piece }) => ({
 					item: branch_product.product.name,
-					qty: formatBalance(
+					qty: formatQuantity(
 						branch_product.product.unit_of_measurement,
 						quantity,
 					),

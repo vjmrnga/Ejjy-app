@@ -19,7 +19,7 @@ import { useNetwork } from '../../../../hooks/useNetwork';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
-	formatBalance,
+	formatQuantity,
 	formatDateTime,
 	getBranchProductStatus,
 } from '../../../../utils/function';
@@ -141,12 +141,12 @@ export const BranchBalanceItem = ({
 			const { barcode, name, textcode, unit_of_measurement } = product;
 			const { datetime_created, type } = latest_requisition_slip || {};
 
-			const currentBalance = formatBalance(
+			const currentBalance = formatQuantity(
 				unit_of_measurement,
 				current_balance,
 			);
 
-			const maxBalance = formatBalance(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
 
 			return {
 				barcode: barcode || textcode,

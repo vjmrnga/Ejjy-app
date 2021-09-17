@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import { request, preparationSlipStatus } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import {
 	formatDateTime,
+	formatQuantity,
 	getPreparationSlipStatus,
 } from '../../../utils/function';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
@@ -124,9 +126,20 @@ const Details = ({
 				pendingTransaction.products.map((item) => ({
 					code: item.product.barcode || item.product.textcode,
 					name: item.product.name,
-					qty_fulfilled: item.fulfilled_quantity_piece || EMPTY_CELL,
-					qty_requested: item.quantity_piece,
-					current_balance: item.current_balance,
+					qty_fulfilled: item?.fulfilled_quantity_piece
+						? formatQuantity(
+								item.product.unit_of_measurement,
+								item.fulfilled_quantity_piece,
+						  )
+						: EMPTY_CELL,
+					qty_requested: formatQuantity(
+						item.product.unit_of_measurement,
+						item.quantity_piece,
+					),
+					current_balance: formatQuantity(
+						item.product.unit_of_measurement,
+						item.current_balance,
+					),
 					personnel: `${item.assigned_person.first_name} ${item.assigned_person.last_name}`,
 					has_qty_allowance: item.product.has_quantity_allowance ? (
 						<ColoredText variant="primary" text="Yes" />

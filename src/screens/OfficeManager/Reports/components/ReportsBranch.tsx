@@ -13,7 +13,7 @@ import { useProducts } from '../../../../hooks/useProducts';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
-	formatBalance,
+	formatQuantity,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
@@ -207,14 +207,14 @@ export const ReportsBranch = ({
 			const remainingBalance =
 				(Number(current_balance) / Number(max_balance)) * 100;
 
-			const currentBalance = formatBalance(
+			const currentBalance = formatQuantity(
 				unit_of_measurement,
 				current_balance,
 			);
 
-			const quantitySold = formatBalance(unit_of_measurement, quantity_sold);
+			const quantitySold = formatQuantity(unit_of_measurement, quantity_sold);
 
-			const maxBalance = formatBalance(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
 
 			return {
 				barcode: barcode || textcode,
@@ -224,7 +224,7 @@ export const ReportsBranch = ({
 				quantity_sold: quantitySold,
 				daily_average_sold,
 				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
-				average_daily_consumption: formatBalance(
+				average_daily_consumption: formatQuantity(
 					unit_of_measurement,
 					average_daily_consumption,
 				),

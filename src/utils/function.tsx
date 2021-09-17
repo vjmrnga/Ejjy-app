@@ -602,11 +602,11 @@ export const getUrlPrefix = memoize((userType) => {
 	return prefix;
 });
 
-export const formatBalance = (
+export const formatQuantity = (
 	unitOfMeasurement: string,
-	currentBalance: number,
+	quantity: number,
 ): string => {
-	const balance = Number(currentBalance);
+	const balance = Number(quantity);
 
 	return unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
 		? balance.toFixed(3)

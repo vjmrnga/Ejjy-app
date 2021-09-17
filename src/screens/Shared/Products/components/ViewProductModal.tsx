@@ -4,7 +4,7 @@ import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import {
-	formatBalance,
+	formatQuantity,
 	getProductType,
 	getUnitOfMeasurement,
 } from '../../../../utils/function';
@@ -58,7 +58,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 			<DetailsSingle label="Reorder Point" value={product.reorder_point} />
 			<DetailsSingle
 				label="Max Balance"
-				value={formatBalance(product.unit_of_measurement, product.max_balance)}
+				value={formatQuantity(product.unit_of_measurement, product.max_balance)}
 			/>
 			<DetailsSingle label="Pieces in Bulk" value={product.pieces_in_bulk} />
 			<DetailsSingle

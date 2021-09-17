@@ -11,7 +11,6 @@ import {
 } from '../../../components';
 import { Box, ButtonLink, Label } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
-import { types } from '../../../ducks/OfficeManager/products';
 import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { pendingTransactionTypes, request } from '../../../global/types';
@@ -67,7 +66,6 @@ export const Products = () => {
 		removeProduct,
 		status: productsStatus,
 		errors: productsErrors,
-		recentRequest,
 	} = useProducts();
 	const {
 		getProductCategories,
@@ -192,10 +190,7 @@ export const Products = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={
-						productsStatus === request.REQUESTING &&
-						recentRequest !== types.GET_PRODUCTS
-					}
+					loading={productsStatus === request.REQUESTING}
 				/>
 
 				{modalType === modals.VIEW && selectedProduct && (

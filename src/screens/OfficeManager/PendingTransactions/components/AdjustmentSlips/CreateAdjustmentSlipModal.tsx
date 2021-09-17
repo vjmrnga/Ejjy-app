@@ -5,8 +5,11 @@ import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { request } from '../../../../../global/types';
+import { formatQuantity } from '../../../../../utils/function';
 import { useOrderSlipAdjustmentSlips } from '../../../hooks/useOrderSlipAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
+
+const DEFAULT_APPROVED_FULFILLED_QUANTITY = -1;
 
 interface Props {
 	preparationSlip: any;
@@ -36,14 +39,16 @@ export const CreateAdjustmentSlipModal = ({
 		if (preparationSlip) {
 			setPreparationSlipProducts(
 				preparationSlip.products
-					.filter(
-						(item) => item.fulfilled_quantity_piece !== item.quantity_piece,
-					)
+					.filter(({ is_success }) => !is_success)
 					.map((item) => ({
 						id: item.id,
 						code: item.product.barcode || item.product.textcode,
 						name: item.product.name,
-						fulfilledQuantityPiece: item.fulfilled_quantity_piece,
+						fulfilledQuantityPiece: formatQuantity(
+							item.product.unit_of_measurement,
+							item.fulfilled_quantity_piece,
+						),
+						hasQuantityAllowance: item.product.has_quantity_allowance,
 					})),
 			);
 		}
@@ -51,7 +56,7 @@ export const CreateAdjustmentSlipModal = ({
 
 	const hasErrors = (values) => {
 		const productLength = values.filter(
-			(product) => product.selected && product.new_fulfilled_quantity_piece,
+			(product) => product.selected || product.approved,
 		).length;
 
 		if (!productLength) {
@@ -79,7 +84,9 @@ export const CreateAdjustmentSlipModal = ({
 				remarks,
 				products: data.map((item) => ({
 					order_slip_product_id: item.id,
-					new_fulfilled_quantity_piece: item.new_fulfilled_quantity_piece,
+					new_fulfilled_quantity_piece: item.approved
+						? DEFAULT_APPROVED_FULFILLED_QUANTITY
+						: item.newFulfilledQuantityPiece,
 				})),
 			},
 			({ status }) => {

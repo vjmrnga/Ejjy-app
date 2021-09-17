@@ -12,7 +12,8 @@ import {
 import { sleep } from '../../../../../utils/function';
 
 const columns: ColumnsType = [
-	{ title: '', dataIndex: 'selected', width: 50 },
+	{ title: 'Select', dataIndex: 'selected', width: 50, align: 'center' },
+	{ title: 'Approve', dataIndex: 'approved', width: 50, align: 'center' },
 	{ title: 'Code', dataIndex: 'code' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Fulfilled Quantity', dataIndex: 'fulfilled_quantity' },
@@ -35,22 +36,23 @@ export const CreateAdjustmentSlipForm = ({
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// METHODS
-
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: preparationSlipProducts.map((item) => ({
 				selected: true,
+				approved: false,
 				id: item.id,
 				code: item.code,
 				name: item.name,
-				new_fulfilled_quantity_piece: null,
+				newFulfilledQuantityPiece: null,
+				hasQuantityAllowance: item.hasQuantityAllowance,
 			})),
 			Schema: Yup.array().of(
 				Yup.object().shape({
-					new_fulfilled_quantity_piece: Yup.number()
+					newFulfilledQuantityPiece: Yup.number()
 						.when('selected', {
 							is: true,
-							then: Yup.number().positive(),
+							then: Yup.number().positive().required(),
 							otherwise: Yup.number().notRequired(),
 						})
 						.nullable()
@@ -65,11 +67,11 @@ export const CreateAdjustmentSlipForm = ({
 		<>
 			<FormInput
 				type="number"
-				id={`${index}.new_fulfilled_quantity_piece`}
-				disabled={!values?.[index]?.selected}
+				id={`${index}.newFulfilledQuantityPiece`}
+				disabled={!values?.[index]?.selected || values?.[index]?.approved}
 			/>
 			<ErrorMessage
-				name={`${index}.new_fulfilled_quantity_piece`}
+				name={`${index}.newFulfilledQuantityPiece`}
 				render={(error) => <FieldError error={error} />}
 			/>
 		</>
@@ -87,14 +89,34 @@ export const CreateAdjustmentSlipForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values }) => (
+			{({ values, setFieldValue }) => (
 				<Form>
 					<Table
 						rowKey="key"
 						columns={columns}
 						dataSource={preparationSlipProducts.map((item, index) => ({
 							key: item.id,
-							selected: <FormCheckbox id={`${index}.selected`} />,
+							selected: (
+								<FormCheckbox
+									id={`${index}.selected`}
+									onChange={(value) => {
+										if (value) {
+											setFieldValue(`${index}.approved`, false);
+										}
+									}}
+								/>
+							),
+							approved: item.hasQuantityAllowance ? (
+								<FormCheckbox
+									id={`${index}.approved`}
+									onChange={(value) => {
+										if (value) {
+											setFieldValue(`${index}.selected`, false);
+											setFieldValue(`${index}.newFulfilledQuantityPiece`, '');
+										}
+									}}
+								/>
+							) : null,
 							code: item.code,
 							name: item.name,
 							fulfilled_quantity: item.fulfilledQuantityPiece,

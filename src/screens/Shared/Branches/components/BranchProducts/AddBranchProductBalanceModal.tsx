@@ -9,7 +9,7 @@ import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
 	convertIntoArray,
-	formatBalance,
+	formatQuantity,
 	getKeyDownCombination,
 } from '../../../../../utils/function';
 import '../../style.scss';
@@ -115,7 +115,7 @@ export const AddBranchProductBalanceModal = ({
 				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
 				<DetailsSingle
 					label="Max Balance"
-					value={formatBalance(
+					value={formatQuantity(
 						branchProduct?.product?.unit_of_measurement,
 						branchProduct?.max_balance,
 					)}
@@ -123,7 +123,7 @@ export const AddBranchProductBalanceModal = ({
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"
-						value={formatBalance(
+						value={formatQuantity(
 							branchProduct?.product?.unit_of_measurement,
 							branchProduct?.current_balance,
 						)}

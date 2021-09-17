@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
-import { formatDateTime } from '../../../../../utils/function';
+import { formatDateTime, formatQuantity } from '../../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },
@@ -47,8 +47,14 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 				name:
 					item.order_slip_product.product.barcode ||
 					item.order_slip_product.product.textcode,
-				previous_quantity: item.previous_fulfilled_quantity_piece,
-				new_quantity: item.new_fulfilled_quantity_piece,
+				previous_quantity: formatQuantity(
+					item.order_slip_product.product.unit_of_measurement,
+					item.previous_fulfilled_quantity_piece,
+				),
+				new_quantity: formatQuantity(
+					item.order_slip_product.product.unit_of_measurement,
+					item.new_fulfilled_quantity_piece,
+				),
 			}))}
 			scroll={{ x: 800 }}
 			pagination={false}

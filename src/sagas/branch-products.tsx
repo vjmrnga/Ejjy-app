@@ -32,6 +32,7 @@ function* list({ payload }: any) {
 	const data = {
 		page,
 		page_size: pageSize,
+		ordering: '-product__textcode',
 		search,
 		product_ids: productIds,
 		is_sold_in_branch: isSoldInBranch,
@@ -99,6 +100,7 @@ function* listWithAnalytics({ payload }: any) {
 	const data = {
 		page,
 		page_size: pageSize,
+		ordering: '-product__textcode',
 		product_ids: productIds,
 		sorting,
 		product_category: productCategory,

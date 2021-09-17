@@ -5,7 +5,7 @@ import { Button, Label } from '../../../../../components/elements';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import {
 	confirmPassword,
-	formatBalance,
+	formatQuantity,
 	getKeyDownCombination,
 	numberWithCommas,
 } from '../../../../../utils/function';
@@ -110,7 +110,7 @@ export const ViewBranchProductModal = ({
 					/>
 					<DetailsSingle
 						label="Max Balance"
-						value={formatBalance(
+						value={formatQuantity(
 							branchProduct.product.unit_of_measurement,
 							branchProduct.max_balance,
 						)}
@@ -124,7 +124,7 @@ export const ViewBranchProductModal = ({
 					{isCurrentBalanceVisible && (
 						<DetailsSingle
 							label="Current Balance"
-							value={formatBalance(
+							value={formatQuantity(
 								branchProduct.product.unit_of_measurement,
 								branchProduct.current_balance,
 							)}

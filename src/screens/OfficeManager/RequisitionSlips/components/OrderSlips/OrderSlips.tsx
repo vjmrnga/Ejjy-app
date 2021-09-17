@@ -18,7 +18,7 @@ import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import {
 	convertIntoArray,
 	convertToBulk,
-	formatBalance,
+	formatQuantity,
 } from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
@@ -248,13 +248,13 @@ export const OrderSlips = ({
 				pieces_in_bulk,
 			),
 			quantity_type: quantityTypes.PIECE,
-			branch_current: formatBalance(unit_of_measurement, current),
-			branch_max_balance: formatBalance(unit_of_measurement, max_balance),
-			branch_current_bulk: formatBalance(
+			branch_current: formatQuantity(unit_of_measurement, current),
+			branch_max_balance: formatQuantity(unit_of_measurement, max_balance),
+			branch_current_bulk: formatQuantity(
 				unit_of_measurement,
 				convertToBulk(current, pieces_in_bulk),
 			),
-			branch_max_balance_bulk: formatBalance(
+			branch_max_balance_bulk: formatQuantity(
 				unit_of_measurement,
 				convertToBulk(max_balance, pieces_in_bulk),
 			),

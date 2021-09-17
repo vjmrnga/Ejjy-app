@@ -19,7 +19,7 @@ import { IProductCategory } from '../../../../models';
 import {
 	confirmPassword,
 	convertIntoArray,
-	formatBalance,
+	formatQuantity,
 	getKeyDownCombination,
 } from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
@@ -99,12 +99,12 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				max_balance,
 			} = branchProduct;
 
-			const currentBalance = formatBalance(
+			const currentBalance = formatQuantity(
 				unit_of_measurement,
 				current_balance,
 			);
 
-			const maxBalance = formatBalance(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
 
 			return {
 				barcode: (
