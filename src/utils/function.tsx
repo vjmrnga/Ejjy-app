@@ -22,6 +22,7 @@ import {
 	ROW_HEIGHT,
 } from '../global/constants';
 import {
+	backOrdersStatuses,
 	branchProductStatus,
 	deliveryReceiptStatus,
 	orderSlipStatus,
@@ -529,6 +530,23 @@ export const getReturnItemSlipStatus = memoize((status) => {
 			return <PendingBadgePill />;
 		}
 		case returnItemSlipsStatuses.ERROR: {
+			return <ErrorBadgePill />;
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
+export const getBackOrderStatus = memoize((status) => {
+	switch (status) {
+		case backOrdersStatuses.DONE: {
+			return <DoneBadgePill />;
+		}
+		case backOrdersStatuses.PENDING: {
+			return <PendingBadgePill />;
+		}
+		case backOrdersStatuses.ERROR: {
 			return <ErrorBadgePill />;
 		}
 		default: {

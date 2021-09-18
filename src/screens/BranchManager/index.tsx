@@ -5,6 +5,8 @@ import { Container } from '../../components';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
+import { BackOrders } from './BackOrders/BackOrders';
+import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
@@ -44,6 +46,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
 		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 		link: '/branch-manager/return-item-slips',
+	},
+	{
+		key: 'back-orders',
+		name: 'Back Orders',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/branch-manager/back-orders',
 	},
 	{
 		key: 'order-slips',
@@ -115,6 +124,17 @@ const OfficeManager = () => {
 					<Route
 						path="/branch-manager/return-item-slips/create"
 						component={CreateReturnItemSlip}
+						exact
+					/>
+
+					<Route
+						path="/branch-manager/back-orders"
+						component={BackOrders}
+						exact
+					/>
+					<Route
+						path="/branch-manager/back-orders/create"
+						component={CreateBackOrder}
 						exact
 					/>
 

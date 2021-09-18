@@ -1,6 +1,7 @@
 import { all } from 'redux-saga/effects';
 import { adminSagas } from './Admin';
 import authSagas from './auth';
+import backOrdersSagas from './back-orders';
 import branchProductsSagas from './branch-products';
 import branchesDaysSagas from './branches-days';
 import { branchManagerSagas } from './BranchManager';
@@ -21,6 +22,7 @@ import xreadReportsSagas from './xread-reports';
 export default function* rootSaga() {
 	yield all([
 		...authSagas,
+		...backOrdersSagas,
 		...branchesDaysSagas,
 		...branchProductsSagas,
 		...networkSagas,
@@ -36,6 +38,7 @@ export default function* rootSaga() {
 		...usersSagas,
 		...xreadReportsSagas,
 		...adminSagas,
+
 		...officeManagerSagas,
 		...branchManagerSagas,
 	]);

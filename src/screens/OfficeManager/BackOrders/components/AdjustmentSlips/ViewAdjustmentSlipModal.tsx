@@ -42,16 +42,14 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 			columns={columns}
 			dataSource={adjustmentSlip.adjustment_slip_products.map((item) => ({
 				key: item.id,
-				name:
-					item.order_slip_product.product.barcode ||
-					item.order_slip_product.product.textcode,
+				name: item.back_order_product.product.name,
 				previous_quantity: formatQuantity(
-					item.order_slip_product.product.unit_of_measurement,
-					item.previous_fulfilled_quantity_piece,
+					item.back_order_product.product.unit_of_measurement,
+					item.previous_quantity_received,
 				),
 				new_quantity: formatQuantity(
-					item.order_slip_product.product.unit_of_measurement,
-					item.new_fulfilled_quantity_piece,
+					item.back_order_product.product.unit_of_measurement,
+					item.new_quantity_received,
 				),
 			}))}
 			scroll={{ x: 800 }}

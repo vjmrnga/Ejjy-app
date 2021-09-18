@@ -7,11 +7,14 @@ import { useBranches } from '../../hooks/useBranches';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { Products } from '../Shared/Products/Products';
+import { BackOrders } from './BackOrders/BackOrders';
+import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
 import { ViewChecking } from './Checkings/ViewChecking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
+import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
 import { Reports } from './Reports/Reports';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
@@ -19,7 +22,6 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
-import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
 
 const sidebarItems = [
 	{
@@ -63,6 +65,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
 		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 		link: '/office-manager/return-item-slips',
+	},
+	{
+		key: 'back-orders',
+		name: 'Back Orders',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/office-manager/back-orders',
 	},
 	{
 		key: 'users',
@@ -117,29 +126,29 @@ const OfficeManager = () => {
 
 					<Route path="/office-manager/products" component={Products} />
 
-					<Route path="/office-manager/branches" exact component={Branches} />
+					<Route path="/office-manager/branches" component={Branches} exact />
 					<Route
 						path="/office-manager/branches/:id"
-						exact
 						component={ViewBranch}
+						exact
 					/>
 
-					<Route path="/office-manager/checkings" exact component={Checkings} />
+					<Route path="/office-manager/checkings" component={Checkings} exact />
 					<Route
 						path="/office-manager/checkings/:branchId/:id"
-						exact
 						component={ViewChecking}
+						exact
 					/>
 
 					<Route
 						path="/office-manager/requisition-slips"
-						exact
 						component={RequisitionSlips}
+						exact
 					/>
 					<Route
 						path="/office-manager/requisition-slips/:id"
-						exact
 						component={ViewRequisitionSlip}
+						exact
 					/>
 					<Route
 						path="/office-manager/requisition-slips/delivery-receipt/:id"
@@ -152,11 +161,22 @@ const OfficeManager = () => {
 						exact
 					/>
 
+					<Route
+						path="/office-manager/back-orders"
+						component={BackOrders}
+						exact
+					/>
+					<Route
+						path="/office-manager/back-orders/:id"
+						component={ViewBackOrder}
+						exact
+					/>
+
 					<Route path="/office-manager/users" exact component={Users} />
 					<Route
 						path="/office-manager/users/assign/:id"
-						exact
 						component={AssignUser}
+						exact
 					/>
 					<Route
 						path="/office-manager/notifications"
@@ -166,13 +186,13 @@ const OfficeManager = () => {
 
 					<Route
 						path="/office-manager/pending-transactions"
-						exact
 						component={PendingTransactions}
+						exact
 					/>
 					<Route
 						path="/office-manager/pending-transactions/:id"
-						exact
 						component={ViewPendingTransaction}
+						exact
 					/>
 
 					<Redirect to="/office-manager/dashboard" />

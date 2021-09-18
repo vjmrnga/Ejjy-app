@@ -1,15 +1,17 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-interface IListBranchProducts extends IListRequest {
+// Interfaces
+interface List extends IListRequest {
 	search?: string;
 	product_ids?: number[];
 	product_status?: string;
 	is_sold_in_branch?: boolean;
 	product_category?: string;
+	has_bo_balance?: boolean;
 }
 
-interface IEditBranchProduct {
+interface Edit {
 	id?: number;
 	reorder_point?: number;
 	max_balance?: number;
@@ -23,14 +25,14 @@ interface IEditBranchProduct {
 	is_sold_in_branch?: boolean;
 }
 
-interface IEditBranchProductBalance {
+interface EditBalance {
 	product_id: number;
 	added_balance: number;
 	destination_branch_id: number;
 	updating_user_id: number;
 }
 
-interface IEditBranchProductPriceCost {
+interface EditPriceCost {
 	product_id: number;
 	cost_per_piece: string;
 	cost_per_bulk: string;
@@ -38,21 +40,22 @@ interface IEditBranchProductPriceCost {
 	price_per_bulk: string;
 }
 
+// Service
 export const service = {
-	list: async (params: IListBranchProducts, baseURL) =>
+	list: async (params: List, baseURL) =>
 		axios.get('/branches-products/', { baseURL, params }),
 
-	listWithAnalytics: async (params: IListBranchProducts, baseURL) =>
+	listWithAnalytics: async (params: List, baseURL) =>
 		axios.get('/branches-products/with-analytics/', { baseURL, params }),
 
-	edit: async (body: IEditBranchProduct, baseURL) =>
+	edit: async (body: Edit, baseURL) =>
 		axios.patch(`/branches-products/${body.id}/`, body, { baseURL }),
 
-	editBalance: async (body: IEditBranchProductBalance, baseURL) =>
+	editBalance: async (body: EditBalance, baseURL) =>
 		axios.patch('/branches-products/update-balance-and-retrieve/', body, {
 			baseURL,
 		}),
 
-	editPriceCost: async (body: IEditBranchProductPriceCost, baseURL) =>
+	editPriceCost: async (body: EditPriceCost, baseURL) =>
 		axios.patch('/branches-products/update-price-and-cost/', body, { baseURL }),
 };

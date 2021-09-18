@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Divider, Input, Row, Select, Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table/interface';
+import { Col, Divider, Input, Radio, Row, Select, Table } from 'antd';
+import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ColoredText } from '../../../../components';
@@ -8,7 +8,11 @@ import { CashieringCard } from '../../../../components/CashieringCard/Cashiering
 import { FieldError, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import { SEARCH_DEBOUNCE_TIME, EMPTY_CELL } from '../../../../global/constants';
+import {
+	EMPTY_CELL,
+	MAIN_BRANCH_ID,
+	SEARCH_DEBOUNCE_TIME,
+} from '../../../../global/constants';
 import {
 	branchProductStatusOptions,
 	pageSizeOptions,
@@ -19,34 +23,43 @@ import { useNetwork } from '../../../../hooks/useNetwork';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
-	formatQuantity,
 	formatDateTime,
+	formatQuantity,
 	getBranchProductStatus,
 } from '../../../../utils/function';
 
+const currentBalanceColumn: ColumnType<any> = {
+	title: 'Current Balance',
+	dataIndex: 'current_balance',
+	align: 'center',
+};
+
 const columns: ColumnsType = [
-	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Barcode', dataIndex: 'barcode' },
+	{ title: 'Name', dataIndex: 'name' },
 	{
 		title: 'Balance',
-		dataIndex: 'balance',
-		key: 'balance',
-		align: 'center',
+		children: [
+			currentBalanceColumn,
+			{
+				title: 'BO Balance',
+				dataIndex: 'bo_balance',
+				align: 'center',
+			},
+		],
 	},
-	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{ title: 'Status', dataIndex: 'status', align: 'center' },
 	{
 		title: 'Requisition Slip',
 		children: [
 			{
 				title: 'Delivery Date',
-				dataIndex: 'deliveryDate',
-				key: 'deliveryDate',
+				dataIndex: 'delivery_date',
 				align: 'center',
 			},
 			{
 				title: 'Type',
 				dataIndex: 'type',
-				key: 'type',
 				align: 'center',
 			},
 		],
@@ -64,8 +77,8 @@ interface Props {
 }
 
 export const BranchBalanceItem = ({
-	productCategories,
 	branchId,
+	productCategories,
 	isActive,
 	disabled,
 }: Props) => {
@@ -75,6 +88,7 @@ export const BranchBalanceItem = ({
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 	const [productCategory, setProductCategory] = useState(null);
 	const [productStatus, setProductStatus] = useState(null);
+	const [hasBoBalance, setHasBoBalance] = useState(null);
 	const [hasInternetConnection, setHasInternetConnection] = useState(null);
 
 	// CUSTOM HOOKS
@@ -103,6 +117,12 @@ export const BranchBalanceItem = ({
 		},
 		[],
 	);
+
+	useEffect(() => {
+		if (branchId !== MAIN_BRANCH_ID) {
+			columns[2] = currentBalanceColumn;
+		}
+	}, [branchId]);
 
 	useEffect(() => {
 		if (isActive) {
@@ -135,6 +155,7 @@ export const BranchBalanceItem = ({
 				product,
 				max_balance,
 				current_balance,
+				bo_balance,
 				product_status,
 				latest_requisition_slip,
 			} = branchProduct;
@@ -148,12 +169,16 @@ export const BranchBalanceItem = ({
 
 			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
 
+			const boBalance = formatQuantity(unit_of_measurement, bo_balance);
+
 			return {
+				key: branchProduct.id,
 				barcode: barcode || textcode,
 				name,
-				balance: `${currentBalance} / ${maxBalance}`,
+				current_balance: `${currentBalance} / ${maxBalance}`,
+				bo_balance: boBalance,
 				status: getBranchProductStatus(product_status),
-				deliveryDate: datetime_created
+				delivery_date: datetime_created
 					? formatDateTime(datetime_created)
 					: EMPTY_CELL,
 				type: type ? renderRsType(type) : EMPTY_CELL,
@@ -181,6 +206,7 @@ export const BranchBalanceItem = ({
 				search: value,
 				productCategory,
 				productStatus,
+				hasBoBalance,
 			},
 			1,
 			pageSize,
@@ -197,6 +223,7 @@ export const BranchBalanceItem = ({
 				search: searchedKeyword,
 				productCategory: value,
 				productStatus,
+				hasBoBalance,
 			},
 			1,
 			pageSize,
@@ -211,6 +238,22 @@ export const BranchBalanceItem = ({
 				search: searchedKeyword,
 				productCategory,
 				productStatus: value,
+				hasBoBalance,
+			},
+			1,
+			pageSize,
+		);
+	};
+
+	const onSelectHasBoBalance = (value) => {
+		setHasBoBalance(value);
+
+		fetchBranchProducts(
+			{
+				search: searchedKeyword,
+				productCategory,
+				productStatus,
+				hasBoBalance: value,
 			},
 			1,
 			pageSize,
@@ -266,6 +309,9 @@ export const BranchBalanceItem = ({
 				onSearch={onSearch}
 				onSelectProductStatus={onSelectProductStatus}
 				onSelectProductCategory={onSelectProductCategory}
+				onSelectHasBoBalance={
+					branchId === MAIN_BRANCH_ID ? onSelectHasBoBalance : null
+				}
 			/>
 
 			<RequestErrors
@@ -279,6 +325,7 @@ export const BranchBalanceItem = ({
 			/>
 
 			<Table
+				rowKey="key"
 				className="BranchBalanceItem_table"
 				columns={columns}
 				dataSource={data}
@@ -308,6 +355,7 @@ interface FilterProps {
 	onSearch: any;
 	onSelectProductStatus: any;
 	onSelectProductCategory: any;
+	onSelectHasBoBalance?: any;
 }
 
 const Filter = ({
@@ -315,6 +363,7 @@ const Filter = ({
 	onSearch,
 	onSelectProductStatus,
 	onSelectProductCategory,
+	onSelectHasBoBalance,
 }: FilterProps) => {
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
@@ -363,6 +412,24 @@ const Filter = ({
 					))}
 				</Select>
 			</Col>
+
+			{onSelectHasBoBalance && (
+				<Col lg={12} span={24}>
+					<Label label="Show has BO Balance" spacing />
+					<Radio.Group
+						options={[
+							{ label: 'Show All', value: null },
+							{ label: 'Has BO Balance', value: true },
+						]}
+						onChange={(e) => {
+							const { value } = e.target;
+							onSelectHasBoBalance(value);
+						}}
+						defaultValue={null}
+						optionType="button"
+					/>
+				</Col>
+			)}
 		</Row>
 	);
 };

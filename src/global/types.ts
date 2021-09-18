@@ -73,6 +73,14 @@ export const preparationSlipStatus = {
 	ERROR: 'error',
 };
 
+export const backOrderStatus = {
+	NEW: 'new',
+	PREPARING: 'preparing',
+	PARTIALLY_COMPLETED: 'partially_completed',
+	COMPLETED: 'completed',
+	ERROR: 'error',
+};
+
 export const deliveryReceiptProductStatus = {
 	RESOLVED: 'resolved',
 	INVESTIGATION: 'investigation',
@@ -127,6 +135,12 @@ export const userPendingApprovalTypes = {
 };
 
 export const returnItemSlipsStatuses = {
+	DONE: 'done',
+	PENDING: 'pending',
+	ERROR: 'error',
+};
+
+export const backOrdersStatuses = {
 	DONE: 'done',
 	PENDING: 'pending',
 	ERROR: 'error',

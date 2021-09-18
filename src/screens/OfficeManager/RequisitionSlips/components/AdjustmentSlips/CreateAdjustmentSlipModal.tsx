@@ -27,9 +27,11 @@ export const CreateAdjustmentSlipModal = ({
 	visible,
 	onClose,
 }: Props) => {
+	// STATES
 	const [remarks, setRemarks] = useState('');
 	const [deliveryReceiptProducts, setDeliveryReceiptProducts] = useState([]);
 
+	// CUSTOM HOOKS
 	const user = useSelector(authSelectors.selectUser());
 	const {
 		createAdjustmentSlip,
@@ -39,7 +41,7 @@ export const CreateAdjustmentSlipModal = ({
 		reset,
 	} = useAdjustmentSlips();
 
-	// Effect: Format delivery receipt products
+	// METHODS
 	useEffect(() => {
 		if (deliveryReceipt && visible) {
 			const formattedDeliveryReceiptProducts =

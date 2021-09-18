@@ -428,7 +428,7 @@ export const ReportsBranch = ({
 					<Label label="Show Sold In Branch" spacing />
 					<Radio.Group
 						options={[
-							{ label: 'Show All', value: false },
+							{ label: 'Show All', value: null },
 							{ label: 'In Stock', value: true },
 						]}
 						onChange={(e) => {

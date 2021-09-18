@@ -16,6 +16,7 @@ function* list({ payload }: any) {
 		productIds,
 		productStatus,
 		productCategory,
+		hasBoBalance,
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
@@ -38,6 +39,7 @@ function* list({ payload }: any) {
 		is_sold_in_branch: isSoldInBranch,
 		product_status: productStatus,
 		product_category: productCategory,
+		has_bo_balance: hasBoBalance,
 	};
 
 	let isFetchedFromBackupURL = false;

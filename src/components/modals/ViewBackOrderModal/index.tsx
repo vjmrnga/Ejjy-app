@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
@@ -5,7 +6,8 @@ import { DetailsHalf, DetailsRow } from '../..';
 import { EMPTY_CELL } from '../../../global/constants';
 import {
 	formatDateTime,
-	getReturnItemSlipStatus,
+	formatQuantity,
+	getBackOrderStatus,
 } from '../../../utils/function';
 import { Button, Label } from '../../elements';
 
@@ -17,30 +19,37 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	returnItemSlip: any;
+	backOrder: any;
 	onClose: any;
 }
 
-export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
+export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
 	// METHODS
 	useEffect(() => {
 		setData(
-			returnItemSlip.products.map((item) => ({
-				key: item.id,
+			backOrder.products.map((item) => ({
 				name: item.product.name,
-				qty_returned: item.quantity_returned,
-				qty_received: item.quantity_received,
-				status: getReturnItemSlipStatus(returnItemSlip.status),
+				qty_returned: formatQuantity(
+					item.product.unit_of_measurement,
+					item.quantity_returned,
+				),
+				qty_received: item?.quantity_received
+					? formatQuantity(
+							item.product.unit_of_measurement,
+							item.quantity_received,
+					  )
+					: EMPTY_CELL,
+				status: getBackOrderStatus(item.status),
 			})),
 		);
-	}, [returnItemSlip]);
+	}, [backOrder]);
 
 	return (
 		<Modal
-			title="[View] Return Item Slip"
+			title="[View] Back Order"
 			className="Modal__large Modal__hasFooter"
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
@@ -50,33 +59,33 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 		>
 			<DetailsRow>
 				<Col span={24}>
-					<DetailsHalf label="ID" value={returnItemSlip.id} />
+					<DetailsHalf label="ID" value={backOrder.id} />
 				</Col>
 
 				<DetailsHalf
 					label="Datetime Returned"
 					value={
-						returnItemSlip.datetime_sent
-							? formatDateTime(returnItemSlip.datetime_sent)
+						backOrder.datetime_sent
+							? formatDateTime(backOrder.datetime_sent)
 							: EMPTY_CELL
 					}
 				/>
 				<DetailsHalf
 					label="Datetime Received"
 					value={
-						returnItemSlip.datetime_received
-							? formatDateTime(returnItemSlip.datetime_received)
+						backOrder.datetime_received
+							? formatDateTime(backOrder.datetime_received)
 							: EMPTY_CELL
 					}
 				/>
 
 				<DetailsHalf
 					label="Returned By (branch)"
-					value={returnItemSlip.sender.branch.name}
+					value={backOrder.sender.branch.name}
 				/>
 				<DetailsHalf
 					label="Status"
-					value={getReturnItemSlipStatus(returnItemSlip.status)}
+					value={getBackOrderStatus(backOrder.status)}
 				/>
 			</DetailsRow>
 

@@ -119,7 +119,6 @@ const Details = ({
 	// CUSTOM HOOKS
 
 	// Effect: Fetch delivery receipt of order slip
-
 	useEffect(() => {
 		if (pendingTransaction) {
 			setRequestedProducts(

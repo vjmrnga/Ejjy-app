@@ -26,8 +26,8 @@ import {
 	request,
 } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
+import { useBackOrders } from '../../../hooks/useBackOrders';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
 import {
 	convertIntoArray,
 	convertToPieces,
@@ -46,7 +46,7 @@ const columns: ColumnsType = [
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
-export const CreateReturnItemSlip = () => {
+export const CreateBackOrder = () => {
 	// STATES
 	const [searchedKeyword, setSeachedKeyword] = useState('');
 	const [selectedStatus, setSelectedStatus] = useState('all');
@@ -71,10 +71,10 @@ export const CreateReturnItemSlip = () => {
 		errors: branchProductsErrors,
 	} = useBranchProducts();
 	const {
-		createReturnItemSlip,
-		status: returnItemSlipsStatus,
-		errors: returnItemSlipsErrors,
-	} = useReturnItemSlips();
+		createBackOrder,
+		status: backOrdersStatus,
+		errors: backOrdersErrors,
+	} = useBackOrders();
 
 	// VARIABLES
 	const branchId = user?.branch?.id;
@@ -268,23 +268,23 @@ export const CreateReturnItemSlip = () => {
 				};
 			});
 
-			createReturnItemSlip({ senderId: user?.id, products }, ({ status }) => {
+			createBackOrder({ senderId: user?.id, products }, ({ status }) => {
 				if (status === request.SUCCESS) {
-					history.push('/branch-manager/return-item-slips');
+					history.push('/branch-manager/back-orders');
 				}
 			});
 		}
 	};
 
-	const loading = [returnItemSlipsStatus, branchProductsStatus].includes(
+	const loading = [backOrdersStatus, branchProductsStatus].includes(
 		request.REQUESTING,
 	);
 
 	return (
-		<Content className="CreateReturnItemSlip" title="Return Item Slip">
+		<Content className="CreateBackOrder" title="Back Order">
 			<Box>
 				<TableHeader
-					title="Create Return Item Slip"
+					title="Create Back Order"
 					onSearch={onSearch}
 					statuses={branchProductStatusOptionsWithAll}
 					onStatusSelect={(status) => {
@@ -308,7 +308,7 @@ export const CreateReturnItemSlip = () => {
 					className="PaddingHorizontal"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(returnItemSlipsErrors, 'Return Item Slip'),
+						...convertIntoArray(backOrdersErrors, 'Back Orders'),
 					]}
 					withSpaceBottom
 				/>
@@ -362,9 +362,9 @@ export const CreateReturnItemSlip = () => {
 
 							<Divider dashed />
 
-							<div className="CreateReturnItemSlip_createContainer">
+							<div className="CreateBackOrder_createContainer">
 								<Button
-									classNames="CreateReturnItemSlip_btnCreate"
+									classNames="CreateBackOrder_btnCreate"
 									type="submit"
 									text="Create"
 									variant="primary"

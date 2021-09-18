@@ -2,9 +2,12 @@
 import { Tabs } from 'antd';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Content, TableHeader } from '../../../components';
+import {
+	Content,
+	TableHeader,
+	ViewReturnItemSlipModal,
+} from '../../../components';
 import { Box } from '../../../components/elements';
-import { ViewReturnItemSlipModal } from '../../../components/modals/ViewReturnItemSlipModal';
 import { FulfillReturnItemSlipModal } from './components/FulfillReturnItemSlipModal';
 import { ReturnItemSlipsReceive } from './components/ReturnItemSlipsReceive';
 import { ReturnItemSlipsSent } from './components/ReturnItemSlipsSent';

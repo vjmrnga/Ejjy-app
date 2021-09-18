@@ -4,58 +4,61 @@ import { useSelector } from 'react-redux';
 import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { request } from '../../../../../global/types';
+import { request, backOrdersStatuses } from '../../../../../global/types';
 import { formatQuantity } from '../../../../../utils/function';
-import { useOrderSlipAdjustmentSlips } from '../../../hooks/useOrderSlipAdjustmentSlips';
+import { useBackOrderAdjustmentSlips } from '../../../hooks/useBackOrderAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 
-const DEFAULT_APPROVED_FULFILLED_QUANTITY = -1;
-
 interface Props {
-	preparationSlip: any;
+	backOrder: any;
 	onSuccess: any;
 	onClose: any;
 }
 
 export const CreateAdjustmentSlipModal = ({
-	preparationSlip,
+	backOrder,
 	onSuccess,
 	onClose,
 }: Props) => {
 	// STATES
 	const [remarks, setRemarks] = useState('');
-	const [preparationSlipProducts, setPreparationSlipProducts] = useState([]);
+	const [backOrderProducts, setBackOrderProducts] = useState([]);
 
-	// STATES
+	// CUSTOM HOOKS
 	const user = useSelector(authSelectors.selectUser());
 	const {
-		create,
+		createBackOrderAdjustmentSlip,
 		status: adjustmentSlipsStatus,
 		errors,
-	} = useOrderSlipAdjustmentSlips();
+	} = useBackOrderAdjustmentSlips();
 
-	// Effect: Format delivery receipt products
+	// METHODS
 	useEffect(() => {
-		if (preparationSlip) {
-			setPreparationSlipProducts(
-				preparationSlip.products
-					.filter(({ is_success }) => !is_success)
+		if (backOrder) {
+			setBackOrderProducts(
+				backOrder.products
+					// NOTE: We will just use backOrderStatuses instead of product's statuses since
+					// they have the same status values
+					.filter((item) => item.status !== backOrdersStatuses.DONE)
 					.map((item) => ({
 						id: item.id,
 						code: item.product.barcode || item.product.textcode,
 						name: item.product.name,
-						fulfilledQuantityPiece: formatQuantity(
+						returnedQuantity: formatQuantity(
 							item.product.unit_of_measurement,
-							item.fulfilled_quantity_piece,
+							item.quantity_returned,
 						),
-						hasQuantityAllowance: item.product.has_quantity_allowance,
+						receivedQuantity: formatQuantity(
+							item.product.unit_of_measurement,
+							item.quantity_received,
+						),
 					})),
 			);
 		}
-	}, [preparationSlip]);
+	}, [backOrder]);
 
 	const onCreateAdjustmentSlipSubmit = (data) => {
-		const { length } = data.filter((item) => item.selected || item.approved);
+		const { length } = data.filter((item) => item.selected);
 		if (!length) {
 			message.error('Must have at least one (1) adjusted product');
 			return;
@@ -66,18 +69,16 @@ export const CreateAdjustmentSlipModal = ({
 			return;
 		}
 
-		create(
+		createBackOrderAdjustmentSlip(
 			{
-				orderSlipId: preparationSlip.id,
+				backOrderId: backOrder.id,
 				creatingUserId: user.id,
 				remarks,
 				products: data
-					.filter((item) => item.selected || item.approved)
+					.filter((item) => item.selected)
 					.map((item) => ({
-						order_slip_product_id: item.id,
-						new_fulfilled_quantity_piece: item.approved
-							? DEFAULT_APPROVED_FULFILLED_QUANTITY
-							: item.newFulfilledQuantityPiece,
+						back_order_product_id: item.id,
+						new_quantity_received: item.newReceivedQuantity,
 					})),
 			},
 			({ status }) => {
@@ -110,7 +111,7 @@ export const CreateAdjustmentSlipModal = ({
 
 			<Label label="Products" spacing />
 			<CreateAdjustmentSlipForm
-				preparationSlipProducts={preparationSlipProducts}
+				backOrderProducts={backOrderProducts}
 				onSubmit={onCreateAdjustmentSlipSubmit}
 				onClose={onClose}
 				loading={adjustmentSlipsStatus === request.REQUESTING}

@@ -31,6 +31,8 @@ export const PENDING_CREATE_USERS_BRANCH_ID = -2;
 
 export const PENDING_EDIT_USERS_BRANCH_ID = -3;
 
+export const MAIN_BRANCH_ID = 1;
+
 export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
 export const SEARCH_DEBOUNCE_TIME = 500;

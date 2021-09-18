@@ -1,4 +1,5 @@
 import adjustmentSlipsSagas from './adjustment-slips';
+import backOrderAdjustmentSlipsSagas from './back-order-adjustment-slips';
 import branchMachinesSagas from './branch-machines';
 import branchesSagas from './branches';
 import cashieringAssignmentsSagas from './cashiering-assignments';
@@ -11,6 +12,7 @@ import productsSagas from './products';
 
 export const officeManagerSagas = [
 	...adjustmentSlipsSagas,
+	...backOrderAdjustmentSlipsSagas,
 	...branchMachinesSagas,
 	...branchesSagas,
 	...cashieringAssignmentsSagas,
