@@ -23,7 +23,6 @@ export const OrderSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
-	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
 	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
@@ -62,7 +61,10 @@ export const OrderSlips = () => {
 
 				return {
 					id: (
-						<ButtonLink text={id} onClick={() => onViewOrderSlip(orderSlip)} />
+						<ButtonLink
+							text={id}
+							onClick={() => setSelectedOrderSlip(orderSlip)}
+						/>
 					),
 					datetime_created: formatDateTime(datetime_created),
 					status: getOrderSlipStatusBranchManager(
@@ -76,11 +78,6 @@ export const OrderSlips = () => {
 			sleep(500).then(() => setData(formattedOrderSlips));
 		}
 	}, [orderSlips]);
-
-	const onViewOrderSlip = (orderSlip) => {
-		setSelectedOrderSlip(orderSlip);
-		setViewOrderSlipVisible(true);
-	};
 
 	const onPageChange = (page, newPageSize) => {
 		getOrderSlipsExtended(
@@ -115,11 +112,12 @@ export const OrderSlips = () => {
 					loading={orderSlipsStatus === request.REQUESTING}
 				/>
 
-				<ViewOrderSlipModal
-					visible={viewOrderSlipVisible}
-					orderSlip={selectedOrderSlip}
-					onClose={() => setViewOrderSlipVisible(false)}
-				/>
+				{selectedOrderSlip && (
+					<ViewOrderSlipModal
+						orderSlip={selectedOrderSlip}
+						onClose={() => setSelectedOrderSlip(null)}
+					/>
+				)}
 			</Box>
 		</Content>
 	);

@@ -1,4 +1,4 @@
-import { ErrorMessage, FieldArray, Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../components';
@@ -13,7 +13,7 @@ import { quantityTypes } from '../../../../global/types';
 import { sleep } from '../../../../utils/function';
 
 const columns = [
-	{ name: 'Barcode' },
+	{ name: 'Code' },
 	{ name: 'Name' },
 	{ name: 'Quantity', width: '200px' },
 ];
@@ -88,40 +88,35 @@ export const FulfillCheckForm = ({
 			}}
 			enableReinitialize
 		>
-			<FieldArray
-				name="products"
-				render={() => (
-					<Form>
-						<TableNormal
-							columns={columns}
-							data={products.map((product, index) => [
-								// Name
-								product?.name,
-								// Barcode
-								product?.barcode,
-								// Quantity / Bulk | Pieces
-								getFulfilledQuantity(index),
-							])}
-						/>
+			<Form>
+				<TableNormal
+					columns={columns}
+					data={products.map((product, index) => [
+						// Code
+						product?.barcode || product?.textcode,
+						// Name
+						product?.name,
+						// Quantity / Bulk | Pieces
+						getFulfilledQuantity(index),
+					])}
+				/>
 
-						<div className="ModalCustomFooter">
-							<Button
-								type="button"
-								text="Cancel"
-								onClick={onClose}
-								classNames="mr-10"
-								disabled={loading || isSubmitting}
-							/>
-							<Button
-								type="submit"
-								text="Submit"
-								variant="primary"
-								loading={loading || isSubmitting}
-							/>
-						</div>
-					</Form>
-				)}
-			/>
+				<div className="ModalCustomFooter">
+					<Button
+						type="button"
+						text="Cancel"
+						onClick={onClose}
+						classNames="mr-10"
+						disabled={loading || isSubmitting}
+					/>
+					<Button
+						type="submit"
+						text="Submit"
+						variant="primary"
+						loading={loading || isSubmitting}
+					/>
+				</div>
+			</Form>
 		</Formik>
 	);
 };

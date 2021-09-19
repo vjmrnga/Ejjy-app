@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { request, backOrdersStatuses } from '../../../../../global/types';
+import { backOrdersStatuses, request } from '../../../../../global/types';
 import { formatQuantity } from '../../../../../utils/function';
 import { useBackOrderAdjustmentSlips } from '../../../hooks/useBackOrderAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
@@ -52,6 +52,7 @@ export const CreateAdjustmentSlipModal = ({
 							item.product.unit_of_measurement,
 							item.quantity_received,
 						),
+						unitOfMeasurement: item.product.unit_of_measurement,
 					})),
 			);
 		}

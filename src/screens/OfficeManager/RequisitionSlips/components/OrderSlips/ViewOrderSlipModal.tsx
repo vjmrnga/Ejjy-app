@@ -31,7 +31,6 @@ interface Props {
 export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-
 	const [quantityType, setQuantityType] = useState(quantityTypes.PIECE);
 	const [personnels, setPersonnels] = useState([]);
 	const [personnel, setPersonnel] = useState(null);
@@ -115,18 +114,13 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 		});
 	};
 
-	const close = () => {
-		setQuantityType(quantityTypes.PIECE);
-		onClose();
-	};
-
 	return (
 		<Modal
 			title="View Order Slip"
 			className="Modal__large Modal__hasFooter"
 			footer={[
 				<Space size={10}>
-					<Button text="Close" onClick={close} />
+					<Button text="Close" onClick={onClose} />
 					<Button
 						variant="primary"
 						text="Print"
@@ -135,7 +129,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 					/>
 				</Space>,
 			]}
-			onCancel={close}
+			onCancel={onClose}
 			visible
 			centered
 			closable

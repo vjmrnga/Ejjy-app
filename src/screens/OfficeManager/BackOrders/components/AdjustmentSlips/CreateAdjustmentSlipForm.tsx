@@ -1,6 +1,7 @@
 import { Table } from 'antd/';
 import { ColumnsType } from 'antd/lib/table';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -9,6 +10,7 @@ import {
 	FormCheckbox,
 	FormInput,
 } from '../../../../../components/elements';
+import { unitOfMeasurementTypes } from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
 
 const columns: ColumnsType = [
@@ -41,13 +43,31 @@ export const CreateAdjustmentSlipForm = ({
 				selected: true,
 				id: item.id,
 				newReceivedQuantity: null,
+				unitOfMeasurement: item.unitOfMeasurement,
 			})),
 			Schema: Yup.array().of(
 				Yup.object().shape({
 					newReceivedQuantity: Yup.number()
 						.when('selected', {
 							is: true,
-							then: Yup.number().positive().required(),
+							then: Yup.number()
+								.positive()
+								.test(
+									'is-whole-number',
+									'Non-weighing items require whole number quantity.',
+									function test(value) {
+										// NOTE: We need to use a no-named function so
+										// we can use 'this' and access the other form field value.
+
+										// eslint-disable-next-line react/no-this-in-sfc
+										return this.parent.unitOfMeasurement ===
+											unitOfMeasurementTypes.NON_WEIGHING
+											? isInteger(Number(value))
+											: true;
+									},
+								)
+								.required(),
+
 							otherwise: Yup.number().notRequired(),
 						})
 						.nullable()

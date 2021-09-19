@@ -46,7 +46,7 @@ export const AddBranchProductBalanceForm = ({
 								? isInteger(Number(value))
 								: true,
 					)
-					.label('Balance'),
+					.label('Quantity'),
 			}),
 		}),
 		[branchProduct],

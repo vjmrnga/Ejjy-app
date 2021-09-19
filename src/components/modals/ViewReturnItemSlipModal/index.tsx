@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
@@ -5,6 +6,7 @@ import { DetailsHalf, DetailsRow } from '../..';
 import { EMPTY_CELL } from '../../../global/constants';
 import {
 	formatDateTime,
+	formatQuantity,
 	getReturnItemSlipStatus,
 } from '../../../utils/function';
 import { Button, Label } from '../../elements';
@@ -31,8 +33,16 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 			returnItemSlip.products.map((item) => ({
 				key: item.id,
 				name: item.product.name,
-				qty_returned: item.quantity_returned,
-				qty_received: item.quantity_received,
+				qty_returned: formatQuantity(
+					item.product.unit_of_measurement,
+					item.quantity_returned,
+				),
+				qty_received: item?.quantity_received
+					? formatQuantity(
+							item.product.unit_of_measurement,
+							item.quantity_received,
+					  )
+					: EMPTY_CELL,
 				status: getReturnItemSlipStatus(returnItemSlip.status),
 			})),
 		);

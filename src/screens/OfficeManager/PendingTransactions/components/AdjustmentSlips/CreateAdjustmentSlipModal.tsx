@@ -49,6 +49,7 @@ export const CreateAdjustmentSlipModal = ({
 							item.fulfilled_quantity_piece,
 						),
 						hasQuantityAllowance: item.product.has_quantity_allowance,
+						unitOfMeasurement: item.product.unit_of_measurement,
 					})),
 			);
 		}

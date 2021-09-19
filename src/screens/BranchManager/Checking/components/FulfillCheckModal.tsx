@@ -1,22 +1,13 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Divider, Modal, Row } from 'antd';
+import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {
-	DetailsRow,
-	DetailsSingle,
-	RequestErrors,
-} from '../../../../components';
-import { Label } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components';
 import {
 	productCheckingTypes,
 	quantityTypes,
 	request,
 } from '../../../../global/types';
-import {
-	convertIntoArray,
-	convertToBulk,
-	formatDateTime,
-} from '../../../../utils/function';
+import { convertIntoArray, convertToBulk } from '../../../../utils/function';
 import { useProductChecks } from '../../hooks/useProductChecks';
 import { FulfillCheckForm } from './FulfillCheckForm';
 
@@ -111,23 +102,6 @@ export const FulfillCheckModal = ({
 				errors={convertIntoArray(productChecksErrors)}
 				withSpaceBottom
 			/>
-
-			<DetailsRow>
-				<DetailsSingle
-					label="Date & Time Requested"
-					value={formatDateTime(productCheck?.datetime_created)}
-				/>
-
-				<Divider dashed style={{ marginTop: '12px', marginBottom: '17px' }} />
-			</DetailsRow>
-
-			<div className="requested-products">
-				<Row gutter={[15, 15]} align="middle">
-					<Col span={24}>
-						<Label label="Requested Products" />
-					</Col>
-				</Row>
-			</div>
 
 			<FulfillCheckForm
 				products={products}

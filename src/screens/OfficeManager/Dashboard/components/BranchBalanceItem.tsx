@@ -282,7 +282,7 @@ export const BranchBalanceItem = ({
 		if (requisitionSlipTypes.AUTOMATIC === type) {
 			component = <ColoredText variant="primary" text="Automatic" />;
 		} else if (requisitionSlipTypes.MANUAL === type) {
-			component = <ColoredText variant="secondary" text="Out of Stock" />;
+			component = <ColoredText variant="secondary" text="Manual" />;
 		}
 
 		return component;

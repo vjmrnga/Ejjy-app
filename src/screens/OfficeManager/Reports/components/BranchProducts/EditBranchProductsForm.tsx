@@ -1,5 +1,7 @@
+/* eslint-disable no-confusing-arrow */
 import { Col, Divider } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow } from '../../../../../components';
@@ -8,6 +10,7 @@ import {
 	FieldError,
 	FormInputLabel,
 } from '../../../../../components/elements';
+import { unitOfMeasurementTypes } from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
 
 interface Props {
@@ -43,14 +46,24 @@ export const EditBranchProductsForm = ({
 					.min(0)
 					.max(65535)
 					.label('Max Balance'),
-				current_balance: Yup.number()
-					.required()
-					.min(0)
-					.max(65535)
-					.label('Max Balance'),
+				current_balance: isCurrentBalanceVisible
+					? Yup.number()
+							.required()
+							.min(0)
+							.test(
+								'is-whole-number',
+								'Non-weighing items require whole number quantity.',
+								(value) =>
+									branchProduct?.product?.unit_of_measurement ===
+									unitOfMeasurementTypes.NON_WEIGHING
+										? isInteger(Number(value))
+										: true,
+							)
+							.label('Current Balance')
+					: undefined,
 			}),
 		}),
-		[branchProduct],
+		[branchProduct, isCurrentBalanceVisible],
 	);
 
 	return (
@@ -62,7 +75,17 @@ export const EditBranchProductsForm = ({
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit(formData, resetForm);
+				onSubmit(
+					{
+						...formData,
+
+						// NOTE: Hidden fields must be visible in order to be saved.
+						current_balance: isCurrentBalanceVisible
+							? formData.current_balance
+							: undefined,
+					},
+					resetForm,
+				);
 			}}
 			enableReinitialize
 		>

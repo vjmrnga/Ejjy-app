@@ -1,5 +1,7 @@
+/* eslint-disable no-confusing-arrow */
 import { Col, Divider, Typography } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
@@ -105,9 +107,24 @@ export const EditBranchProductsForm = ({
 					.required()
 					.min(0)
 					.label('Special Price (bulk)'),
+				current_balance: isCurrentBalanceVisible
+					? Yup.number()
+							.required()
+							.min(0)
+							.test(
+								'is-whole-number',
+								'Non-weighing items require whole number quantity.',
+								(value) =>
+									branchProduct?.product?.unit_of_measurement ===
+									unitOfMeasurementTypes.NON_WEIGHING
+										? isInteger(Number(value))
+										: true,
+							)
+							.label('Current Balance')
+					: undefined,
 			}),
 		}),
-		[branchProduct],
+		[branchProduct, isCurrentBalanceVisible],
 	);
 
 	return (
