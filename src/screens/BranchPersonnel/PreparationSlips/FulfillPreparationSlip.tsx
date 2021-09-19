@@ -23,6 +23,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import {
 	convertIntoArray,
+	formatQuantity,
 	getKeyDownCombination,
 } from '../../../utils/function';
 import { FULFILL_TYPES } from './components/constants';
@@ -176,7 +177,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		);
 
 		const formattedProducts = productKeys.map((key) => {
-			const { ordered, fulfilled, name } = products[key];
+			const { ordered, fulfilled, name, unitOfMeasurement } = products[key];
 
 			return [
 				{
@@ -187,8 +188,8 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					{fulfilled > 0 ? <CheckIcon /> : null}
 					<span>{name}</span>
 				</div>,
-				ordered,
-				fulfilled,
+				formatQuantity(unitOfMeasurement, ordered),
+				formatQuantity(unitOfMeasurement, fulfilled),
 			];
 		});
 
@@ -479,13 +480,14 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 				</Box>
 			</Spin>
 
-			<FulfillSlipModal
-				visible={fulfillType}
-				type={fulfillType}
-				product={selectedProduct}
-				onSubmit={onUpdate}
-				onClose={() => setFulfillType(false)}
-			/>
+			{fulfillType && (
+				<FulfillSlipModal
+					type={fulfillType}
+					product={selectedProduct}
+					onSubmit={onUpdate}
+					onClose={() => setFulfillType(false)}
+				/>
+			)}
 		</Content>
 	);
 };
