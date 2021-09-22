@@ -37,7 +37,13 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	useEffect(() => {
 		const orderSlipProducts = orderSlip.products.map((product) => {
 			const {
-				product: { barcode, name, pieces_in_bulk, unit_of_measurement },
+				product: {
+					barcode,
+					textcode,
+					name,
+					pieces_in_bulk,
+					unit_of_measurement,
+				},
 				assigned_person: { first_name, last_name },
 				quantity_piece,
 				fulfilled_quantity_piece = 0,
@@ -55,7 +61,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 					: convertToBulk(quantity_piece, pieces_in_bulk);
 
 			return {
-				barcode,
+				code: barcode || textcode,
 				name,
 				quantity: getColoredText(!isFulfilled, inputted, ordered),
 				personnel: `${first_name} ${last_name}`,

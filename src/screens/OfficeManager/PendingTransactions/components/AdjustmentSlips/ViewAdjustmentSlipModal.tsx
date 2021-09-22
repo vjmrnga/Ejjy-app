@@ -1,9 +1,15 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
+import {
+	ColoredText,
+	DetailsRow,
+	DetailsSingle,
+} from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
 import { formatDateTime, formatQuantity } from '../../../../../utils/function';
+import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -49,10 +55,16 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 					item.order_slip_product.product.unit_of_measurement,
 					item.previous_fulfilled_quantity_piece,
 				),
-				new_quantity: formatQuantity(
-					item.order_slip_product.product.unit_of_measurement,
-					item.new_fulfilled_quantity_piece,
-				),
+				new_quantity:
+					Number(item.new_fulfilled_quantity_piece) ===
+					DEFAULT_APPROVED_FULFILLED_QUANTITY ? (
+						<ColoredText variant="primary" text="Approved" />
+					) : (
+						formatQuantity(
+							item.order_slip_product.product.unit_of_measurement,
+							item.new_fulfilled_quantity_piece,
+						)
+					),
 			}))}
 			scroll={{ x: 800 }}
 			pagination={false}

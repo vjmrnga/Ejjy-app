@@ -288,7 +288,7 @@ function* editPriceCost({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeEvery(types.GET_BRANCH_PRODUCTS, list);
+	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
 };
 
 const listWithAnalyticsWatcherSaga = function* listWithAnalyticsWatcherSaga() {

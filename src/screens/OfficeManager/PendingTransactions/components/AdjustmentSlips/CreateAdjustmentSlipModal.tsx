@@ -7,9 +7,8 @@ import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { request } from '../../../../../global/types';
 import { formatQuantity } from '../../../../../utils/function';
 import { useOrderSlipAdjustmentSlips } from '../../../hooks/useOrderSlipAdjustmentSlips';
+import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
-
-const DEFAULT_APPROVED_FULFILLED_QUANTITY = -1;
 
 interface Props {
 	preparationSlip: any;

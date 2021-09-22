@@ -1,8 +1,9 @@
+/* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { isEmpty, toString } from 'lodash';
+import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -21,9 +22,9 @@ import {
 	quantityTypeOptions,
 } from '../../../global/options';
 import {
-	branchProductStatus,
 	quantityTypes,
 	request,
+	unitOfMeasurementTypes,
 } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBackOrders } from '../../../hooks/useBackOrders';
@@ -84,35 +85,6 @@ export const CreateBackOrder = () => {
 		getBranchProducts({ branchId, page: 1 });
 	}, []);
 
-	useEffect(() => {
-		// Get existing keys
-		const productKeys = Object.keys(productsRef.current);
-
-		// Get new keys
-		const newProducts = {};
-		branchProducts
-			.filter(
-				({ product_status, product }) =>
-					product_status !== branchProductStatus.AVAILABLE &&
-					!productKeys.includes(toString(product.id)),
-			)
-			.forEach(({ product, product_status }) => {
-				newProducts[product.id] = {
-					name: product?.name,
-					status: product_status,
-					piecesInBulk: product.pieces_in_bulk,
-					quantityType: quantityTypes.PIECE,
-				};
-			});
-
-		productsRef.current = {
-			...productsRef.current,
-			...newProducts,
-		};
-
-		setCount(Object.keys(productsRef.current).length);
-	}, [branchProducts]);
-
 	// METHODS: Form methods
 	const getFormDetails = useCallback(
 		() => ({
@@ -131,6 +103,8 @@ export const CreateBackOrder = () => {
 									quantity_type: product?.quantityType || quantityTypes.PIECE,
 									pieces_in_bulk: branchProduct.product.pieces_in_bulk,
 									status: branchProduct.product_status,
+									unit_of_measurement:
+										branchProduct.product.unit_of_measurement,
 								};
 						  })
 						: Object.keys(productsRef.current).map((key) => {
@@ -144,6 +118,7 @@ export const CreateBackOrder = () => {
 									quantity_type: product.quantityType,
 									pieces_in_bulk: product.piecesInBulk,
 									status: product.status,
+									unit_of_measurement: product.unitOfMeasurement,
 								};
 						  }),
 			},
@@ -152,12 +127,40 @@ export const CreateBackOrder = () => {
 					Yup.object().shape({
 						selected: Yup.boolean(),
 						quantity: Yup.number()
-							.min(1, 'Must greater than zero')
+							.moreThan(0)
 							.when('selected', {
 								is: true,
-								then: Yup.number().required('Qty required'),
+								then: Yup.number()
+									.required()
+									.test(
+										'is-whole-number',
+										'Non-weighing items or weighing bulk items require whole number quantity.',
+										function test(value) {
+											// NOTE: We need to use a no-named function so
+											// we can use 'this' and access the other form field value.
+
+											// Condition:
+											// 			PIECE   BULK
+											// WE  	D(3)   	WHOLE
+											// NW  	WHOLE	  WHOLE
+
+											const unitOfMeasurement = this.parent.unit_of_measurement;
+											const quantityType = this.parent.quantity_type;
+
+											const isWeighingPiece =
+												unitOfMeasurement === unitOfMeasurementTypes.WEIGHING &&
+												quantityType === quantityTypes.PIECE;
+
+											if (!isWeighingPiece) {
+												return isInteger(Number(value));
+											}
+
+											return true;
+										},
+									),
 								otherwise: Yup.number().notRequired(),
-							}),
+							})
+							.label('Qty'),
 					}),
 				),
 			}),
@@ -423,6 +426,7 @@ const ProductsTable = ({
 									status: product.status,
 									quantityType: quantityTypes.PIECE,
 									piecesInBulk: product.pieces_in_bulk,
+									unitOfMeasurement: product.unit_of_measurement,
 								});
 							}}
 						/>
