@@ -11,23 +11,16 @@ import {
 } from '../../../../../utils/function';
 
 interface Props {
-	visible: boolean;
-	branchName: string;
 	branchProduct: any;
 	onClose: any;
 }
 
-export const ViewBranchProductModal = ({
-	branchProduct,
-	branchName,
-	visible,
-	onClose,
-}: Props) => {
+export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 	// VARIABLES
 	const title = (
 		<>
 			<span>[View] Branch Product</span>
-			<span className="ModalTitleMainInfo">{branchName}</span>
+			<span className="ModalTitleMainInfo">{branchProduct.product.name}</span>
 		</>
 	);
 
@@ -46,7 +39,7 @@ export const ViewBranchProductModal = ({
 	const handleKeyDown = (event) => {
 		const key = getKeyDownCombination(event);
 
-		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+		if (SHOW_HIDE_SHORTCUT.includes(key)) {
 			event.preventDefault();
 			if (isCurrentBalanceVisible) {
 				setIsCurrentBalanceVisible(false);
@@ -67,9 +60,9 @@ export const ViewBranchProductModal = ({
 		<Modal
 			className="ViewBranchProductModal Modal__large Modal__hasFooter"
 			title={title}
-			visible={visible}
 			footer={[<Button text="Close" onClick={handleClose} />]}
 			onCancel={handleClose}
+			visible
 			centered
 			closable
 		>

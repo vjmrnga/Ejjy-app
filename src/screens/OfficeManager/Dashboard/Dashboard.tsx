@@ -1,5 +1,8 @@
 import { Spin, Tabs } from 'antd';
+import { toString } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
@@ -12,15 +15,20 @@ import './style.scss';
 export const Dashboard = () => {
 	// STATES
 	const [productCategories, setProductCategories] = useState([]);
-	const [currentActiveKey, setCurrentActiveKey] = useState(null);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const { branches } = useBranches();
 	const {
 		getProductCategories,
 		status: productCategoriesStatus,
 		errors: productCategoriesErrors,
 	} = useProductCategories();
+
+	// VARIABLES
+	const { branchId: currentBranchId } = queryString.parse(
+		history.location.search,
+	);
 
 	// METHODS
 	useEffect(() => {
@@ -32,13 +40,25 @@ export const Dashboard = () => {
 	}, []);
 
 	useEffect(() => {
-		if (branches) {
+		if (branches && !currentBranchId) {
 			onTabClick(branches?.[0]?.id);
 		}
-	}, [branches]);
+	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		setCurrentActiveKey(branchId);
+		const searchObj = queryString.parse(history.location.search);
+
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					...searchObj,
+					branchId,
+					page: 1,
+					pageSize: 10,
+				},
+			}),
+		);
 	};
 
 	return (
@@ -51,8 +71,8 @@ export const Dashboard = () => {
 					/>
 
 					<Tabs
-						defaultActiveKey={branches?.[0]?.id}
 						type="card"
+						defaultActiveKey={toString(currentBranchId)}
 						onTabClick={onTabClick}
 					>
 						{branches.map(({ name, id, online_url }) => (
@@ -60,7 +80,7 @@ export const Dashboard = () => {
 								<BranchBalanceItem
 									branchId={id}
 									productCategories={productCategories}
-									isActive={id === Number(currentActiveKey)}
+									isActive={id === Number(currentBranchId)}
 									disabled={!online_url}
 								/>
 							</Tabs.TabPane>

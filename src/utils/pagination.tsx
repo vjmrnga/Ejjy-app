@@ -101,7 +101,7 @@ export const executePaginatedRequest = (
 		currentPageSize = newPageSize;
 	}
 
-	setCurrentPage(page);
+	setCurrentPage(Number(page));
 
 	if (
 		!indexHasCachedData({

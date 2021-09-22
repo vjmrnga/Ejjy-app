@@ -2,29 +2,29 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { debounce } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { TableActions, TableHeader } from '../../../../components';
 import { ButtonLink, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import {
-	SEARCH_DEBOUNCE_TIME,
-	SHOW_HIDE_SHORTCUT,
-} from '../../../../global/constants';
+import { SEARCH_DEBOUNCE_TIME } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProductCategories } from '../../../../hooks/useProductCategories';
 import { IProductCategory } from '../../../../models';
-import {
-	confirmPassword,
-	convertIntoArray,
-	formatQuantity,
-	getKeyDownCombination,
-} from '../../../../utils/function';
+import { convertIntoArray, formatQuantity } from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
+
+const modals = {
+	VIEW: 0,
+	ADD: 1,
+	EDIT: 2,
+};
 
 const columns: ColumnsType = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
@@ -39,27 +39,21 @@ interface Props {
 
 export const ViewBranchProducts = ({ branch }: Props) => {
 	// STATES
-	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 	const [data, setData] = useState([]);
 	const [productCategories, setProductCategories] = useState([]);
-	const [editBranchProductModalVisible, setEditBranchProductModalVisible] =
-		useState(false);
-	const [viewBranchProductModalVisible, setViewBranchProductModalVisible] =
-		useState(false);
-	const [addBranchProductModalVisible, setAddBranchProductModalVisible] =
-		useState(false);
+	const [modalType, setModalType] = useState(null);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
-	const [searchedKeyword, setSeachedKeyword] = useState('');
-	const [productCategory, setProductCategory] = useState(null);
-	const [isSoldInBranch, setIsSoldInBranch] = useState(true);
+
+	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
+	const [isCurrentBalanceVisible] = useState(true);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
 		pageSize,
 		currentPage,
-		updateItemInPagination,
 
 		getBranchProducts,
 		status: branchProductsStatus,
@@ -72,28 +66,42 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		errors: productCategoriesErrors,
 	} = useProductCategories();
 
-	// EFFECTS
-	useEffect(() => {
-		document.addEventListener('keydown', handleKeyDown);
+	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
+	// useEffect(() => {
+	// 	document.addEventListener('keydown', handleKeyDown);
 
-		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-		};
-	});
+	// 	return () => {
+	// 		document.removeEventListener('keydown', handleKeyDown);
+	// 	};
+	// });
 
+	// METHODS
 	useEffect(() => {
-		getBranchProducts({ branchId: branch?.id, isSoldInBranch, page: 1 });
 		getProductCategories(({ status, data: responseData }) => {
 			if (status === request.SUCCESS) {
 				setProductCategories(responseData);
 			}
 		});
+
+		// Set default values for filter query parameters
+		const searchObj = queryString.parse(history.location.search);
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					isSoldInBranch: true,
+					page: currentPage,
+					pageSize,
+					...searchObj,
+				},
+			}),
+		);
 	}, []);
 
-	// Effect: Format branch products to be rendered in Table
 	useEffect(() => {
 		const formattedBranchProducts = branchProducts.map((branchProduct) => {
 			const {
+				id,
 				product: { barcode, name, textcode, unit_of_measurement },
 				current_balance,
 				max_balance,
@@ -107,10 +115,14 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
 
 			return {
+				key: id,
 				barcode: (
 					<ButtonLink
 						text={barcode || textcode}
-						onClick={() => onView(branchProduct)}
+						onClick={() => {
+							setSelectedBranchProduct(branchProduct);
+							setModalType(modals.VIEW);
+						}}
 					/>
 				),
 				name,
@@ -120,111 +132,64 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				actions: (
 					<TableActions
 						onAddName="Supplier Delivery"
-						onAdd={() => onAdd(branchProduct)}
-						onEdit={() => onEdit(branchProduct)}
+						onAdd={() => {
+							setSelectedBranchProduct(branchProduct);
+							setModalType(modals.ADD);
+						}}
+						onEdit={() => {
+							setSelectedBranchProduct(branchProduct);
+							setModalType(modals.EDIT);
+						}}
 					/>
 				),
 			};
 		});
 
 		setData(formattedBranchProducts);
-	}, [isCurrentBalanceVisible, branchProducts]);
+	}, [branchProducts]);
 
-	const onView = (branchProduct) => {
-		setSelectedBranchProduct(branchProduct);
-		setViewBranchProductModalVisible(true);
-	};
+	useEffect(() => {
+		fetchBranchProducts();
+	}, [history.location]);
 
-	const onEdit = (branchProduct) => {
-		setSelectedBranchProduct(branchProduct);
-		setEditBranchProductModalVisible(true);
-	};
+	const fetchBranchProducts = () => {
+		const searchObj = queryString.parse(history.location.search);
 
-	const onAdd = (branchProduct) => {
-		setSelectedBranchProduct(branchProduct);
-		setAddBranchProductModalVisible(true);
-	};
+		const newPageSize = searchObj.pageSize || pageSize;
+		let isSoldInBranch = null;
+		if (searchObj.isSoldInBranch === 'true') {
+			isSoldInBranch = true;
+		} else if (searchObj.isSoldInBranch === 'false') {
+			isSoldInBranch = false;
+		}
 
-	const onPageChange = (page, newPageSize) => {
 		getBranchProducts(
 			{
-				search: searchedKeyword,
-				branchId: branch?.id,
+				...searchObj,
 				isSoldInBranch,
-				productCategory,
-				page,
+				branchId: branch?.id,
 				pageSize: newPageSize,
 			},
-			newPageSize !== pageSize,
-		);
-	};
-
-	const onSearch = (value) => {
-		getBranchProducts(
-			{
-				search: value,
-				branchId: branch?.id,
-				isSoldInBranch,
-				productCategory,
-				page: 1,
-			},
-			true,
-		);
-
-		setSeachedKeyword(value);
-	};
-
-	const onSelectProductCategory = (value) => {
-		setProductCategory(value);
-
-		getBranchProducts(
-			{
-				search: searchedKeyword,
-				branchId: branch?.id,
-				isSoldInBranch,
-				productCategory: value,
-				page: 1,
-			},
 			true,
 		);
 	};
 
-	const onSelectSoldInBranch = (value) => {
-		getBranchProducts(
-			{
-				search: searchedKeyword,
-				branchId: branch?.id,
-				isSoldInBranch: value,
-				productCategory,
-				page: 1,
-			},
-			true,
-		);
-		setIsSoldInBranch(value);
-	};
+	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
+	// const handleKeyDown = (event) => {
+	// 	const key = getKeyDownCombination(event);
 
-	const handleKeyDown = (event) => {
-		const key = getKeyDownCombination(event);
+	// 	if (SHOW_HIDE_SHORTCUT.includes(key) && modalType !== null) {
+	// 		event.preventDefault();
 
-		if (
-			SHOW_HIDE_SHORTCUT.includes(key) &&
-			![
-				viewBranchProductModalVisible,
-				editBranchProductModalVisible,
-				addBranchProductModalVisible,
-			].includes(true)
-		) {
-			event.preventDefault();
-
-			if (isCurrentBalanceVisible) {
-				setIsCurrentBalanceVisible(false);
-			} else {
-				confirmPassword({
-					onSuccess: () => setIsCurrentBalanceVisible(true),
-				});
-			}
-		}
-	};
+	// 		if (isCurrentBalanceVisible) {
+	// 			setIsCurrentBalanceVisible(false);
+	// 		} else {
+	// 			confirmPassword({
+	// 				onSuccess: () => setIsCurrentBalanceVisible(true),
+	// 			});
+	// 		}
+	// 	}
+	// };
 
 	return (
 		<div className="ViewBranchProducts">
@@ -233,23 +198,20 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 			<Filter
 				productCategoriesStatus={productCategoriesStatus}
 				productCategories={productCategories}
-				onSelectProductCategory={onSelectProductCategory}
-				onSelectSoldInBranch={onSelectSoldInBranch}
-				onSearch={onSearch}
 			/>
-
-			<br />
 
 			<RequestErrors
 				errors={[
 					...convertIntoArray(branchProductsErrors, 'Branch Product'),
 					...convertIntoArray(productCategoriesErrors, 'Product Category'),
 				]}
+				withSpaceTop
 				withSpaceBottom
 			/>
 			<RequestWarnings warnings={convertIntoArray(warnings)} withSpaceBottom />
 
 			<Table
+				rowKey="key"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 800 }}
@@ -257,7 +219,19 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
+					onChange: (page, newPageSize) => {
+						const searchObj = queryString.parse(history.location.search);
+						history.push(
+							queryString.stringifyUrl({
+								url: '',
+								query: {
+									...searchObj,
+									page,
+									pageSize: newPageSize,
+								},
+							}),
+						);
+					},
 					disabled: !data,
 					position: ['bottomCenter'],
 					pageSizeOptions,
@@ -265,28 +239,30 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				loading={branchProductsStatus === request.REQUESTING}
 			/>
 
-			<ViewBranchProductModal
-				branchName={branch?.name}
-				branchProduct={selectedBranchProduct}
-				visible={viewBranchProductModalVisible}
-				onClose={() => setViewBranchProductModalVisible(false)}
-			/>
+			{selectedBranchProduct && modalType === modals.VIEW && (
+				<ViewBranchProductModal
+					branchProduct={selectedBranchProduct}
+					onClose={() => setModalType(null)}
+				/>
+			)}
 
-			<EditBranchProductsModal
-				branch={branch}
-				branchProduct={selectedBranchProduct}
-				updateItemInPagination={updateItemInPagination}
-				visible={editBranchProductModalVisible}
-				onClose={() => setEditBranchProductModalVisible(false)}
-			/>
+			{selectedBranchProduct && modalType === modals.EDIT && (
+				<EditBranchProductsModal
+					branch={branch}
+					branchProduct={selectedBranchProduct}
+					refreshList={fetchBranchProducts}
+					onClose={() => setModalType(null)}
+				/>
+			)}
 
-			<AddBranchProductBalanceModal
-				branch={branch}
-				branchProduct={selectedBranchProduct}
-				updateItemInPagination={updateItemInPagination}
-				visible={addBranchProductModalVisible}
-				onClose={() => setAddBranchProductModalVisible(false)}
-			/>
+			{selectedBranchProduct && modalType === modals.ADD && (
+				<AddBranchProductBalanceModal
+					branch={branch}
+					branchProduct={selectedBranchProduct}
+					refreshList={fetchBranchProducts}
+					onClose={() => setModalType(null)}
+				/>
+			)}
 		</div>
 	);
 };
@@ -294,24 +270,34 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 interface FilterProps {
 	productCategories: IProductCategory[];
 	productCategoriesStatus: number;
-	onSelectProductCategory: any;
-	onSelectSoldInBranch: any;
-	onSearch: any;
 }
 
 const Filter = ({
 	productCategories,
 	productCategoriesStatus,
-	onSelectProductCategory,
-	onSelectSoldInBranch,
-	onSearch,
 }: FilterProps) => {
+	const history = useHistory();
+	const searchObj = queryString.parse(history.location.search);
+
+	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			onSearch(keyword?.toLowerCase());
+			onFilter({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
-		[onSearch],
+		[searchObj],
 	);
+
+	const onFilter = (filter) => {
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					...searchObj,
+					...filter,
+				},
+			}),
+		);
+	};
 
 	return (
 		<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
@@ -319,6 +305,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
+					defaultValue={searchObj.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -328,14 +315,17 @@ const Filter = ({
 				<Label label="Product Category" spacing />
 				<Select
 					style={{ width: '100%' }}
+					value={searchObj.productCategory}
 					onChange={(value) => {
-						onSelectProductCategory(value);
+						onFilter({ productCategory: value });
 					}}
 					loading={productCategoriesStatus === request.REQUESTING}
 					allowClear
 				>
 					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
+						<Select.Option key={name} value={name}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -343,6 +333,7 @@ const Filter = ({
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
+					value={searchObj.isSoldInBranch}
 					options={[
 						{ label: 'Show All', value: null },
 						{ label: 'Show Not Sold', value: false },
@@ -350,7 +341,7 @@ const Filter = ({
 					]}
 					onChange={(e) => {
 						const { value } = e.target;
-						onSelectSoldInBranch(value);
+						onFilter({ isSoldInBranch: value });
 					}}
 					// eslint-disable-next-line react/jsx-boolean-value
 					defaultValue={true}

@@ -15,16 +15,14 @@ import { EditBranchProductsForm } from './EditBranchProductsForm';
 interface Props {
 	branch: any;
 	branchProduct: any;
-	updateItemInPagination: any;
-	visible: boolean;
+	refreshList: any;
 	onClose: any;
 }
 
 export const EditBranchProductsModal = ({
 	branch,
 	branchProduct,
-	updateItemInPagination,
-	visible,
+	refreshList,
 	onClose,
 }: Props) => {
 	// VARIABLES
@@ -56,24 +54,21 @@ export const EditBranchProductsModal = ({
 	});
 
 	const onEditBranchProduct = (product, resetForm) => {
-		editBranchProduct(
-			{ ...product, branchId: branch?.id },
-			({ status, data }) => {
-				if (status === request.SUCCESS) {
-					updateItemInPagination(data);
-					reset();
+		editBranchProduct({ ...product, branchId: branch?.id }, ({ status }) => {
+			if (status === request.SUCCESS) {
+				refreshList();
+				reset();
 
-					resetForm();
-					handleClose();
-				}
-			},
-		);
+				resetForm();
+				handleClose();
+			}
+		});
 	};
 
 	const handleKeyDown = (event) => {
 		const key = getKeyDownCombination(event);
 
-		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+		if (SHOW_HIDE_SHORTCUT.includes(key)) {
 			event.preventDefault();
 			if (isCurrentBalanceVisible) {
 				setIsCurrentBalanceVisible(false);
@@ -94,9 +89,9 @@ export const EditBranchProductsModal = ({
 		<Modal
 			title={title}
 			className="Modal__large ModalLarge__scrollable"
-			visible={visible}
 			footer={null}
 			onCancel={handleClose}
+			visible
 			centered
 			closable
 		>

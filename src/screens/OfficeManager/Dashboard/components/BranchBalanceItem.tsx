@@ -2,7 +2,9 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Col, Divider, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
 import { debounce } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ColoredText } from '../../../../components';
 import { CashieringCard } from '../../../../components/CashieringCard/CashieringCard';
 import { FieldError, Label } from '../../../../components/elements';
@@ -84,14 +86,11 @@ export const BranchBalanceItem = ({
 }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [searchedKeyword, setSearchedKeyword] = useState('');
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
-	const [productCategory, setProductCategory] = useState(null);
-	const [productStatus, setProductStatus] = useState(null);
-	const [hasBoBalance, setHasBoBalance] = useState(null);
 	const [hasInternetConnection, setHasInternetConnection] = useState(null);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
@@ -126,8 +125,6 @@ export const BranchBalanceItem = ({
 
 	useEffect(() => {
 		if (isActive) {
-			fetchBranchProducts({}, 1, pageSize);
-
 			const fn = () => {
 				testBranchConnection({ branchId }, ({ status }) => {
 					if (status === request.SUCCESS) {
@@ -188,89 +185,38 @@ export const BranchBalanceItem = ({
 		setData(newBranchProducts);
 	}, [branchProducts]);
 
-	const onPageChange = (page, newPageSize) => {
-		fetchBranchProducts(
-			{
-				search: searchedKeyword,
-				productCategory,
-				productStatus,
-			},
-			page,
-			newPageSize,
-		);
-	};
+	useEffect(() => {
+		if (isActive) {
+			fetchBranchProducts();
+		}
+	}, [history.location, isActive]);
 
-	const onSearch = (value) => {
-		fetchBranchProducts(
-			{
-				search: value,
-				productCategory,
-				productStatus,
-				hasBoBalance,
-			},
-			1,
-			pageSize,
-		);
-
-		setSearchedKeyword(value);
-	};
-
-	const onSelectProductCategory = (value) => {
-		setProductCategory(value);
-
-		fetchBranchProducts(
-			{
-				search: searchedKeyword,
-				productCategory: value,
-				productStatus,
-				hasBoBalance,
-			},
-			1,
-			pageSize,
-		);
-	};
-
-	const onSelectProductStatus = (value) => {
-		setProductStatus(value);
-
-		fetchBranchProducts(
-			{
-				search: searchedKeyword,
-				productCategory,
-				productStatus: value,
-				hasBoBalance,
-			},
-			1,
-			pageSize,
-		);
-	};
-
-	const onSelectHasBoBalance = (value) => {
-		setHasBoBalance(value);
-
-		fetchBranchProducts(
-			{
-				search: searchedKeyword,
-				productCategory,
-				productStatus,
-				hasBoBalance: value,
-			},
-			1,
-			pageSize,
-		);
-	};
-
-	const fetchBranchProducts = (params, page, newPageSize) => {
+	const fetchBranchProducts = () => {
 		setIsCompletedInitialFetch(false);
+
+		const searchObj = queryString.parse(history.location.search);
+		const newPageSize = searchObj.pageSize || pageSize;
+		const hasBoBalance = searchObj.hasBoBalance === 'true';
+
 		getBranchProducts(
-			{ ...params, branchId, page, pageSize: newPageSize },
+			{
+				...searchObj,
+				hasBoBalance,
+				branchId,
+				pageSize: newPageSize,
+			},
 			true,
 		);
 
 		clearInterval(fetchIntervalRef.current);
 		fetchIntervalRef.current = setInterval(() => {
 			getBranchProducts(
-				{ ...params, branchId, page, pageSize: newPageSize },
+				{
+					...searchObj,
+					hasBoBalance,
+					branchId,
+					pageSize: newPageSize,
+				},
 				true,
 			);
 		}, FETCH_INTERVAL_MS);
@@ -293,29 +239,28 @@ export const BranchBalanceItem = ({
 			{hasInternetConnection === false && (
 				<FieldError error="Cannot reach branch's API" />
 			)}
+
 			{isActive && (
-				<CashieringCard
-					branchId={branchId}
-					className="BranchBalanceItem_cashieringCard"
-					disabled={disabled || !hasInternetConnection}
-					bordered
-				/>
+				<>
+					<CashieringCard
+						branchId={branchId}
+						className="BranchBalanceItem_cashieringCard"
+						disabled={disabled || !hasInternetConnection}
+						bordered
+					/>
+
+					<Divider dashed />
+
+					<Filter
+						productCategories={productCategories}
+						hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
+					/>
+				</>
 			)}
-
-			<Divider dashed />
-
-			<Filter
-				productCategories={productCategories}
-				onSearch={onSearch}
-				onSelectProductStatus={onSelectProductStatus}
-				onSelectProductCategory={onSelectProductCategory}
-				onSelectHasBoBalance={
-					branchId === MAIN_BRANCH_ID ? onSelectHasBoBalance : null
-				}
-			/>
 
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
+				withSpaceTop
 				withSpaceBottom
 			/>
 
@@ -334,7 +279,19 @@ export const BranchBalanceItem = ({
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
+					onChange: (page, newPageSize) => {
+						const searchObj = queryString.parse(history.location.search);
+						history.push(
+							queryString.stringifyUrl({
+								url: '',
+								query: {
+									...searchObj,
+									page,
+									pageSize: newPageSize,
+								},
+							}),
+						);
+					},
 					disabled: !data,
 					position: ['bottomCenter'],
 					pageSizeOptions,
@@ -352,25 +309,32 @@ export const BranchBalanceItem = ({
 
 interface FilterProps {
 	productCategories: IProductCategory[];
-	onSearch: any;
-	onSelectProductStatus: any;
-	onSelectProductCategory: any;
-	onSelectHasBoBalance?: any;
+	hasBoBalanceFilter: boolean;
 }
 
-const Filter = ({
-	productCategories,
-	onSearch,
-	onSelectProductStatus,
-	onSelectProductCategory,
-	onSelectHasBoBalance,
-}: FilterProps) => {
+const Filter = ({ productCategories, hasBoBalanceFilter }: FilterProps) => {
+	const history = useHistory();
+	const searchObj = queryString.parse(history.location.search);
+
+	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			onSearch(keyword?.toLowerCase());
+			onFilter({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
-		[onSearch],
+		[searchObj],
 	);
+
+	const onFilter = (filter) => {
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					...searchObj,
+					...filter,
+				},
+			}),
+		);
+	};
 
 	return (
 		<Row gutter={[15, 15]}>
@@ -378,6 +342,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
+					defaultValue={searchObj.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -387,13 +352,16 @@ const Filter = ({
 				<Label label="Category" spacing />
 				<Select
 					style={{ width: '100%' }}
+					value={searchObj.productCategory}
 					onChange={(value) => {
-						onSelectProductCategory(value);
+						onFilter({ productCategory: value });
 					}}
 					allowClear
 				>
 					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
+						<Select.Option key={name} value={name}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -402,8 +370,9 @@ const Filter = ({
 				<Label label="Status" spacing />
 				<Select
 					style={{ width: '100%' }}
+					value={searchObj.productStatus}
 					onChange={(value) => {
-						onSelectProductStatus(value);
+						onFilter({ productStatus: value });
 					}}
 					allowClear
 				>
@@ -413,7 +382,7 @@ const Filter = ({
 				</Select>
 			</Col>
 
-			{onSelectHasBoBalance && (
+			{hasBoBalanceFilter && (
 				<Col lg={12} span={24}>
 					<Label label="Show has BO Balance" spacing />
 					<Radio.Group
@@ -421,9 +390,10 @@ const Filter = ({
 							{ label: 'Show All', value: null },
 							{ label: 'Has BO Balance', value: true },
 						]}
+						value={searchObj.hasBoBalance}
 						onChange={(e) => {
 							const { value } = e.target;
-							onSelectHasBoBalance(value);
+							onFilter({ hasBoBalance: value });
 						}}
 						defaultValue={null}
 						optionType="button"

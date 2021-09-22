@@ -18,16 +18,14 @@ import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 interface Props {
 	branch: any;
 	branchProduct: any;
-	updateItemInPagination: any;
-	visible: boolean;
+	refreshList: any;
 	onClose: any;
 }
 
 export const AddBranchProductBalanceModal = ({
 	branch,
 	branchProduct,
-	updateItemInPagination,
-	visible,
+	refreshList,
 	onClose,
 }: Props) => {
 	// STATES
@@ -59,9 +57,9 @@ export const AddBranchProductBalanceModal = ({
 				productId: branchProduct.product.id,
 				updatingUserId: user.id,
 			},
-			({ status, data }) => {
+			({ status }) => {
 				if (status === request.SUCCESS) {
-					updateItemInPagination(data);
+					refreshList();
 					reset();
 					onClose();
 				}
@@ -72,7 +70,7 @@ export const AddBranchProductBalanceModal = ({
 	const handleKeyDown = (event) => {
 		const key = getKeyDownCombination(event);
 
-		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+		if (SHOW_HIDE_SHORTCUT.includes(key)) {
 			event.preventDefault();
 
 			if (isCurrentBalanceVisible) {
@@ -94,9 +92,9 @@ export const AddBranchProductBalanceModal = ({
 		<Modal
 			className="AddBranchProductBalance"
 			title="Supplier Delivery"
-			visible={visible}
 			footer={null}
 			onCancel={handleClose}
+			visible
 			centered
 			closable
 			destroyOnClose

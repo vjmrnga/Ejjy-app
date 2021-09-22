@@ -2,7 +2,9 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, message, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { debounce } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
 	Content,
 	RequestErrors,
@@ -48,13 +50,12 @@ export const Products = () => {
 	const [productCategories, setProductCategories] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
-	const [productCategory, setProductCategory] = useState(null);
-	const [searchedKeyword, setSeachedKeyword] = useState('');
 
 	// REFS
 	const pendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const { user } = useAuth();
 	const {
 		products,
@@ -75,7 +76,6 @@ export const Products = () => {
 
 	// METHODS
 	useEffect(() => {
-		getProducts({ page: 1 });
 		getProductCategories(({ status, data: responseData }) => {
 			if (status === request.SUCCESS) {
 				setProductCategories(responseData);
@@ -112,8 +112,8 @@ export const Products = () => {
 	}, [products, hasPendingTransactions]);
 
 	useEffect(() => {
-		getProducts({ search: searchedKeyword, productCategory, page: 1 }, true);
-	}, [searchedKeyword, productCategory]);
+		fetchProducts();
+	}, [history.location]);
 
 	const onOpenModal = (product, type) => {
 		setModalType(type);
@@ -132,20 +132,18 @@ export const Products = () => {
 
 						pendingTransactionsRef.current?.refreshList();
 					}
-					getProducts(
-						{ search: searchedKeyword, productCategory, page: currentPage },
-						true,
-					);
+					fetchProducts();
 				}
 			},
 		);
 	};
 
-	const onPageChange = (page, newPageSize) => {
-		getProducts(
-			{ search: searchedKeyword, productCategory, page, pageSize: newPageSize },
-			newPageSize !== pageSize,
-		);
+	const fetchProducts = () => {
+		const searchObj = queryString.parse(history.location.search);
+		const newPageSize = searchObj.pageSize || pageSize;
+		const page = searchObj.page || currentPage;
+
+		getProducts({ ...searchObj, page, pageSize: newPageSize }, true);
 	};
 
 	return (
@@ -172,8 +170,6 @@ export const Products = () => {
 					productCategoriesLoading={
 						productCategoriesStatus === request.REQUESTING
 					}
-					onSearch={setSeachedKeyword}
-					onSelectProductCategory={setProductCategory}
 				/>
 
 				<Table
@@ -185,7 +181,19 @@ export const Products = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: (page, newPageSize) => {
+							const searchObj = queryString.parse(history.location.search);
+							history.push(
+								queryString.stringifyUrl({
+									url: '',
+									query: {
+										...searchObj,
+										page,
+										pageSize: newPageSize,
+									},
+								}),
+							);
+						},
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions,
@@ -207,12 +215,7 @@ export const Products = () => {
 						onFetchPendingTransactions={
 							pendingTransactionsRef.current?.refreshList
 						}
-						onSuccess={() => {
-							getProducts(
-								{ search: searchedKeyword, productCategory, page: currentPage },
-								true,
-							);
-						}}
+						onSuccess={fetchProducts}
 						onClose={() => onOpenModal(null, null)}
 					/>
 				)}
@@ -239,22 +242,34 @@ export const Products = () => {
 interface FilterProps {
 	productCategories: IProductCategory[];
 	productCategoriesLoading: boolean;
-	onSearch: any;
-	onSelectProductCategory: any;
 }
 
 const Filter = ({
 	productCategories,
 	productCategoriesLoading,
-	onSearch,
-	onSelectProductCategory,
 }: FilterProps) => {
+	const history = useHistory();
+	const searchObj = queryString.parse(history.location.search);
+
+	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			onSearch(keyword?.toLowerCase());
+			onFilter({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
-		[onSearch],
+		[searchObj],
 	);
+
+	const onFilter = (filter) => {
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					...searchObj,
+					...filter,
+				},
+			}),
+		);
+	};
 
 	return (
 		<Row className="PaddingHorizontal" gutter={[15, 15]}>
@@ -262,6 +277,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
+					defaultValue={searchObj.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -271,8 +287,9 @@ const Filter = ({
 				<Label label="Category" spacing />
 				<Select
 					style={{ width: '100%' }}
+					defaultValue={searchObj.productCategory}
 					onChange={(value) => {
-						onSelectProductCategory(value);
+						onFilter({ productCategory: value });
 					}}
 					loading={productCategoriesLoading}
 					allowClear
