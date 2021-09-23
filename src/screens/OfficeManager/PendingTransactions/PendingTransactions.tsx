@@ -2,7 +2,7 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Content, TableHeader } from '../../../components';
+import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
@@ -63,8 +63,6 @@ export const PendingTransactions = () => {
 	return (
 		<Content className="PendingTransactions" title="Pending Transactions">
 			<Box>
-				<TableHeader />
-
 				<Table
 					columns={columns}
 					dataSource={data}

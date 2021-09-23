@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import { message, Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
@@ -24,14 +25,13 @@ import {
 	userTypes,
 } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { useUsers } from '../../../hooks/useUsers';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
 import { BranchUsers } from './components/BranchUsers';
 import { CreateUserModal } from './components/CreateUserModal';
 import { EditUserModal } from './components/EditUserModal';
 import './style.scss';
-
-const { TabPane } = Tabs;
 
 const NOT_BRANCH_IDS = [
 	NO_BRANCH_ID,
@@ -48,7 +48,6 @@ const BRANCH_USERS = [userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL];
 
 export const Users = () => {
 	// STATES
-	const [tabActiveKey, setTabActiveKey] = useState(null);
 	const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -71,12 +70,42 @@ export const Users = () => {
 		reset,
 	} = useUsers();
 
+	const { setQueryParams } = useQueryParams({
+		page: 1,
+		pageSize: 10,
+		onQueryParamChange: (params) => {
+			const { branchId } = params;
+			if (branchId) {
+				const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
+
+				const getUserFn = isNotBranchId ? getOnlineUsers : getLocalUsers;
+				getUserFn(
+					{
+						page: 1,
+						pageSize: MAX_PAGE_SIZE,
+						branchId: isNotBranchId ? null : branchId,
+						isPendingCreateApproval:
+							Number(branchId) === PENDING_CREATE_USERS_BRANCH_ID,
+						isPendingUpdateUserTypeApproval:
+							Number(branchId) === PENDING_EDIT_USERS_BRANCH_ID,
+					},
+					true,
+				);
+			}
+		},
+	});
+
+	// VARIABLES
+	const { branchId: currentBranchId } = queryString.parse(
+		history.location.search,
+	);
+
 	// METHODS
 	useEffect(() => {
-		if (branches?.length) {
+		if (branches && !currentBranchId) {
 			onTabClick(branches?.[0]?.id);
 		}
-	}, [branches]);
+	}, [branches, currentBranchId]);
 
 	useEffect(() => {
 		if (usersStatus === request.ERROR && errors?.length) {
@@ -142,25 +171,6 @@ export const Users = () => {
 		return newData;
 	};
 
-	const onTabClick = (branchId) => {
-		const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
-
-		const getUserFn = isNotBranchId ? getOnlineUsers : getLocalUsers;
-		getUserFn(
-			{
-				page: 1,
-				pageSize: MAX_PAGE_SIZE,
-				branchId: isNotBranchId ? null : branchId,
-				isPendingCreateApproval:
-					Number(branchId) === PENDING_CREATE_USERS_BRANCH_ID,
-				isPendingUpdateUserTypeApproval:
-					Number(branchId) === PENDING_EDIT_USERS_BRANCH_ID,
-			},
-			true,
-		);
-		setTabActiveKey(toString(branchId));
-	};
-
 	const onEditUser = (user) => {
 		setEditUserModalVisible(true);
 		setSelectedUser(user);
@@ -185,13 +195,17 @@ export const Users = () => {
 		});
 	};
 
+	const onTabClick = (branchId) => {
+		setQueryParams({ branchId });
+	};
+
 	return (
 		<Content title="Users">
 			<Box>
 				<Spin spinning={usersStatus === request.REQUESTING}>
 					<Tabs
 						type="card"
-						activeKey={tabActiveKey}
+						activeKey={toString(currentBranchId)}
 						onTabClick={onTabClick}
 						tabBarExtraContent={
 							<Button
@@ -205,32 +219,32 @@ export const Users = () => {
 						style={{ padding: '20px 25px' }}
 					>
 						{branches.map(({ name, id, online_url }) => (
-							<TabPane key={id} tab={name} disabled={!online_url}>
+							<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
 								<BranchUsers dataSource={getTableDataSource(id)} />
-							</TabPane>
+							</Tabs.TabPane>
 						))}
 
-						<TabPane key={NO_BRANCH_ID} tab="No Branches">
+						<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branches">
 							<BranchUsers dataSource={getTableDataSource(NO_BRANCH_ID)} />
-						</TabPane>
+						</Tabs.TabPane>
 
-						<TabPane
+						<Tabs.TabPane
 							key={PENDING_CREATE_USERS_BRANCH_ID}
 							tab="Pending Create Users"
 						>
 							<BranchUsers
 								dataSource={getTableDataSource(PENDING_CREATE_USERS_BRANCH_ID)}
 							/>
-						</TabPane>
+						</Tabs.TabPane>
 
-						<TabPane
+						<Tabs.TabPane
 							key={PENDING_EDIT_USERS_BRANCH_ID}
 							tab="Pending Edit Users"
 						>
 							<BranchUsers
 								dataSource={getTableDataSource(PENDING_EDIT_USERS_BRANCH_ID)}
 							/>
-						</TabPane>
+						</Tabs.TabPane>
 					</Tabs>
 				</Spin>
 

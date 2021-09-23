@@ -24,12 +24,11 @@ export const BranchUsers = ({ dataSource }: Props) => {
 
 	return (
 		<Table
+			rowKey="key"
 			columns={columns}
 			dataSource={data}
 			scroll={{ x: 800 }}
-			rowKey="key"
 			pagination={false}
-			bordered
 		/>
 	);
 };

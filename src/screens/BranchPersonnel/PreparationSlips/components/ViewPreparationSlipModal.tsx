@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Col, Modal, Row } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-	PreparationSlipDetails,
-	QuantitySelect,
-	TableNormal,
-} from '../../../../components';
+import { Col, Modal, Radio, Row, Space, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import React, { useEffect, useState } from 'react';
+import { PreparationSlipDetails } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, getColoredText } from '../../../../utils/function';
+import { convertToBulk, formatQuantity } from '../../../../utils/function';
+
+const columns: ColumnsType = [
+	{
+		title: 'Code',
+		dataIndex: 'code',
+		width: 150,
+		fixed: 'left',
+	},
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Quantity', dataIndex: 'quantity' },
+];
 
 interface Props {
 	preparationSlip: any;
@@ -20,92 +28,40 @@ export const ViewPreparationSlipModal = ({
 	onClose,
 }: Props) => {
 	// STATES
-	const [requestedProducts, setRequestedProducts] = useState([]);
-	const [requestedProductsQuantity, setRequestedProductsQuantity] = useState(
-		[],
-	);
+	const [data, setData] = useState([]);
+	const [quantityType, setQuantityType] = useState(quantityTypes.PIECE);
 
 	// METHODS
 	useEffect(() => {
-		if (preparationSlip) {
-			const formattedQuantities = [];
-			const formattedPreparationSlip = [];
-
-			preparationSlip?.products?.forEach((requestedProduct) => {
-				const {
-					product,
-					quantity_piece,
-					fulfilled_quantity_piece = 0,
-				} = requestedProduct;
-				const { barcode, name, pieces_in_bulk } = product;
-
-				const quantity = {
+		const preparationSlipProducts = preparationSlip.products.map((product) => {
+			const {
+				id,
+				product: {
 					barcode,
-					isFulfilled: fulfilled_quantity_piece !== null,
-					piecesInputted: fulfilled_quantity_piece || 0,
-					piecesOrdered: quantity_piece,
-					bulkInputted: convertToBulk(fulfilled_quantity_piece, pieces_in_bulk),
-					bulkOrdered: convertToBulk(quantity_piece, pieces_in_bulk),
-				};
-
-				formattedQuantities.push(quantity);
-				formattedPreparationSlip.push([
-					barcode,
+					textcode,
 					name,
-					getColoredText(
-						!quantity.isFulfilled,
-						quantity.piecesInputted,
-						quantity.piecesOrdered,
-					),
-				]);
-			});
-
-			setRequestedProducts(formattedPreparationSlip);
-			setRequestedProductsQuantity(formattedQuantities);
-		}
-	}, [preparationSlip]);
-
-	const onQuantityTypeChange = useCallback(
-		(quantityType) => {
-			const QUANTITY_INDEX = 2;
-			const formattedRequestedProducts = requestedProducts.map(
-				(requestedProduct, index) => {
-					const requestedProd = requestedProduct;
-					const quantity = requestedProductsQuantity[index];
-					const isPiece = quantityType === quantityTypes.PIECE;
-					const inputted = isPiece
-						? quantity.piecesInputted
-						: quantity.bulkInputted;
-					const ordered = isPiece
-						? quantity.piecesOrdered
-						: quantity.bulkOrdered;
-					const key = `${
-						preparationSlip?.id
-					}-${!quantity.isFulfilled}-${inputted}-${ordered}`;
-
-					requestedProd[QUANTITY_INDEX] = getColoredText(
-						key,
-						!quantity.isFulfilled,
-						inputted,
-						ordered,
-					);
-
-					return requestedProd;
+					pieces_in_bulk,
+					unit_of_measurement,
 				},
-			);
-			setRequestedProducts(formattedRequestedProducts);
-		},
-		[requestedProducts, requestedProductsQuantity, preparationSlip],
-	);
+				fulfilled_quantity_piece,
+			} = product;
+			const fulfilledQuantityPiece = fulfilled_quantity_piece || 0;
 
-	const getColumns = useCallback(
-		() => [
-			{ name: 'Barcode' },
-			{ name: 'Name' },
-			{ name: <QuantitySelect onQuantityTypeChange={onQuantityTypeChange} /> },
-		],
-		[onQuantityTypeChange],
-	);
+			const inputted =
+				quantityType === quantityTypes.PIECE
+					? formatQuantity(unit_of_measurement, fulfilledQuantityPiece)
+					: convertToBulk(fulfilledQuantityPiece, pieces_in_bulk);
+
+			return {
+				key: id,
+				code: barcode || textcode,
+				name,
+				quantity: inputted,
+			};
+		});
+
+		setData(preparationSlipProducts);
+	}, [preparationSlip, quantityType]);
 
 	return (
 		<Modal
@@ -119,18 +75,36 @@ export const ViewPreparationSlipModal = ({
 		>
 			<PreparationSlipDetails preparationSlip={preparationSlip} />
 
-			<Row gutter={[15, 15]} align="middle">
-				<Col span={24}>
-					<Label label="Requested Products" spacing />
+			<Row gutter={[15, 15]} justify="space-between" align="middle">
+				<Col sm={12} span={24}>
+					<Label label="Products" spacing />
 				</Col>
-				<Col span={24}>
-					<TableNormal
-						columns={getColumns()}
-						data={requestedProducts}
-						hasCustomHeaderComponent
-					/>
+
+				<Col sm={12} span={24}>
+					<Space direction="horizontal">
+						<Label label="Quantity Type" />
+						<Radio.Group
+							options={[
+								{ label: 'Piece', value: quantityTypes.PIECE },
+								{ label: 'Bulk', value: quantityTypes.BULK },
+							]}
+							onChange={(e) => {
+								setQuantityType(e.target.value);
+							}}
+							defaultValue={quantityTypes.PIECE}
+							optionType="button"
+						/>
+					</Space>
 				</Col>
 			</Row>
+
+			<Table
+				rowKey="key"
+				columns={columns}
+				dataSource={data}
+				scroll={{ x: 650, y: 250 }}
+				pagination={false}
+			/>
 		</Modal>
 	);
 };

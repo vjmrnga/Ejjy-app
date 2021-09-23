@@ -1,14 +1,16 @@
-import { Table } from 'antd';
+import { Col, Row, Select, Table } from 'antd';
 import { upperFirst } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import * as queryString from 'query-string';
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeaderRequisitionSlip } from '../../../components';
-import { Box } from '../../../components/elements';
+import { Box, Label } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	formatDateTime,
@@ -28,12 +30,9 @@ const columns = [
 export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [selectedStatus, setSelectedStatus] = useState('all');
-	const [selectedBranch, setSelectedBranch] = useState('all');
 	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
 	const { user } = useAuth();
 	const {
 		requisitionSlips,
@@ -44,6 +43,27 @@ export const RequisitionSlips = () => {
 		status: requisitionSlipsStatus,
 	} = useRequisitionSlips();
 	const { getPendingCount } = useRequisitionSlips();
+
+	const { setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			getRequisitionSlipsExtended(
+				{
+					...params,
+					branchId: params.branchId === 'all' ? null : params.branchId,
+					status: params.status === 'all' ? null : params.status,
+				},
+				true,
+			);
+
+			getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+				if (status === request.SUCCESS) {
+					setPendingCount(count);
+				}
+			});
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -73,43 +93,6 @@ export const RequisitionSlips = () => {
 		setData(formattedProducts);
 	}, [requisitionSlips]);
 
-	// Filter by status and branch
-	useEffect(() => {
-		onFetchRequisitionSlips(1, pageSize, true);
-		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
-			if (status === request.SUCCESS) {
-				setPendingCount(count);
-			}
-		});
-	}, [selectedStatus, selectedBranch]);
-
-	const getBranchOptions = useCallback(
-		() => [
-			{
-				value: 'all',
-				name: 'All',
-			},
-			...branches.map(({ id, name }) => ({ value: id, name })),
-		],
-		[branches],
-	);
-
-	const onFetchRequisitionSlips = (page, newPageSize, shouldReset) => {
-		getRequisitionSlipsExtended(
-			{
-				branchId: selectedBranch === 'all' ? null : selectedBranch,
-				status: selectedStatus === 'all' ? null : selectedStatus,
-				page,
-				pageSize: newPageSize,
-			},
-			shouldReset,
-		);
-	};
-
-	const onPageChange = (page, newPageSize) => {
-		onFetchRequisitionSlips(page, newPageSize, newPageSize !== pageSize);
-	};
-
 	return (
 		<Content
 			className="RequisitionSlips"
@@ -117,13 +100,9 @@ export const RequisitionSlips = () => {
 			description="Requests from branches"
 		>
 			<Box>
-				<TableHeaderRequisitionSlip
-					statuses={requisitionSlipActionsOptionsWithAll}
-					onStatusSelect={(status) => setSelectedStatus(status)}
-					branches={getBranchOptions()}
-					onBranchSelect={(branch) => setSelectedBranch(branch)}
-					pending={pendingCount}
-				/>
+				<TableHeaderRequisitionSlip pending={pendingCount} />
+
+				<Filter setQueryParams={setQueryParams} />
 
 				<Table
 					columns={columns}
@@ -132,7 +111,12 @@ export const RequisitionSlips = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: (page, newPageSize) => {
+							setQueryParams({
+								page,
+								pageSize: newPageSize,
+							});
+						},
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions: ['5', '10', '15'],
@@ -141,5 +125,59 @@ export const RequisitionSlips = () => {
 				/>
 			</Box>
 		</Content>
+	);
+};
+
+interface FilterProps {
+	setQueryParams: any;
+}
+const Filter = ({ setQueryParams }: FilterProps) => {
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const params = queryString.parse(history.location.search);
+	const { branches } = useBranches();
+
+	return (
+		<Row
+			className="RequisitionSlips_filter PaddingHorizontal"
+			gutter={[15, 15]}
+		>
+			<Col lg={12} span={24}>
+				<Label label="Branch" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ branchId: value }, true);
+					}}
+					// NOTE: Need to convert to Number so default value will work
+					defaultValue={params.branchId ? Number(params.branchId) : 'all'}
+					allowClear
+				>
+					<Select.Option value="all">All</Select.Option>
+					{branches.map(({ id, name }) => (
+						<Select.Option key={id} value={id}>
+							{name}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ status: value }, true);
+					}}
+					defaultValue={params.status || 'all'}
+					allowClear
+				>
+					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (
+						<Select.Option key={value} value={value}>
+							{name}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
 	);
 };

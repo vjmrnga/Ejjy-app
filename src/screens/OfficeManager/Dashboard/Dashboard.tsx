@@ -46,13 +46,11 @@ export const Dashboard = () => {
 	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		const searchObj = queryString.parse(history.location.search);
-
 		history.push(
 			queryString.stringifyUrl({
 				url: '',
 				query: {
-					...searchObj,
+					...queryString.parse(history.location.search),
 					branchId,
 					page: 1,
 					pageSize: 10,

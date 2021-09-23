@@ -1,12 +1,14 @@
 import { Col, Radio, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { RequestErrors, TableHeader } from '../../../../components';
 import { BadgePill, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { productCheckingTypes, request } from '../../../../global/types';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { convertIntoArray, formatDateTime } from '../../../../utils/function';
 import { useProductChecks } from '../../../BranchManager/hooks/useProductChecks';
 import '../style.scss';
@@ -26,7 +28,6 @@ interface Props {
 export const BranchCheckings = ({ branchId, isActive }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [type, setType] = useState(productCheckingTypes.DAILY);
 
 	// CUSTOM HOOKS
 	const {
@@ -39,19 +40,17 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 		errors,
 	} = useProductChecks();
 
+	const { setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			if (isActive) {
+				getProductChecks(params, true);
+			}
+		},
+	});
+
 	// METHODS
-	useEffect(() => {
-		if (isActive) {
-			getProductChecks(
-				{
-					branchId,
-					type,
-					page: 1,
-				},
-				true,
-			);
-		}
-	}, [isActive]);
 
 	useEffect(() => {
 		setData(
@@ -76,38 +75,17 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 		);
 	}, [productChecks]);
 
-	const onSelectType = (value) => {
-		getProductChecks(
-			{
-				branchId,
-				type: value,
-				page: 1,
-			},
-			true,
-		);
-
-		setType(value);
-	};
-
-	const onPageChange = (page, newPageSize) => {
-		getProductChecks(
-			{
-				branchId,
-				type,
-				page,
-				pageSize: newPageSize,
-			},
-			newPageSize !== pageSize,
-		);
-	};
-
 	return (
 		<div className="BranchCheckings">
 			<TableHeader title="Checkings" />
 
-			<RequestErrors errors={convertIntoArray(errors)} />
+			<Filter setQueryParams={setQueryParams} />
 
-			<Filter onSelectType={onSelectType} />
+			<RequestErrors
+				errors={convertIntoArray(errors)}
+				withSpaceTop
+				withSpaceBottom
+			/>
 
 			<br />
 
@@ -120,7 +98,12 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
 					disabled: !data,
 					position: ['bottomCenter'],
 					pageSizeOptions,
@@ -132,24 +115,35 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 };
 
 interface FilterProps {
-	onSelectType: any;
+	setQueryParams: any;
 }
-const Filter = ({ onSelectType }: FilterProps) => (
-	<Row className="BranchCheckings_filter" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Type" spacing />
-			<Radio.Group
-				optionType="button"
-				options={[
-					{ label: 'Daily', value: productCheckingTypes.DAILY },
-					{ label: 'Random', value: productCheckingTypes.RANDOM },
-				]}
-				onChange={(e) => {
-					const { value } = e.target;
-					onSelectType(value);
-				}}
-				defaultValue={productCheckingTypes.DAILY}
-			/>
-		</Col>
-	</Row>
-);
+const Filter = ({ setQueryParams }: FilterProps) => {
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const params = queryString.parse(history.location.search);
+
+	useEffect(() => {
+		if (!params.type) {
+			setQueryParams({ type: productCheckingTypes.DAILY });
+		}
+	}, []);
+
+	return (
+		<Row className="BranchCheckings_filter" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Type" spacing />
+				<Radio.Group
+					optionType="button"
+					options={[
+						{ label: 'Daily', value: productCheckingTypes.DAILY },
+						{ label: 'Random', value: productCheckingTypes.RANDOM },
+					]}
+					onChange={(e) => {
+						setQueryParams({ type: e.target.value }, true);
+					}}
+					defaultValue={params.type || productCheckingTypes.DAILY}
+				/>
+			</Col>
+		</Row>
+	);
+};

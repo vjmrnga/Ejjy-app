@@ -1,5 +1,11 @@
 @import '../../../assets/styles/main';
 
+.RequisitionSlips {
+	&_filter {
+		margin-bottom: 25px;
+	}
+}
+
 .ViewDeliveryReceipt {
 	.details {
 		padding: 25px 25px 0 25px;

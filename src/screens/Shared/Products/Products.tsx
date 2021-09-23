@@ -19,6 +19,7 @@ import { pendingTransactionTypes, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { IProductCategory } from '../../../models';
 import { convertIntoArray } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
@@ -55,7 +56,6 @@ export const Products = () => {
 	const pendingTransactionsRef = useRef(null);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { user } = useAuth();
 	const {
 		products,
@@ -73,6 +73,14 @@ export const Products = () => {
 		status: productCategoriesStatus,
 		errors: productCategoriesErrors,
 	} = useProductCategories();
+
+	const { refreshList, setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			getProducts(params, true);
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -111,10 +119,6 @@ export const Products = () => {
 		setData(formattedProducts);
 	}, [products, hasPendingTransactions]);
 
-	useEffect(() => {
-		fetchProducts();
-	}, [history.location]);
-
 	const onOpenModal = (product, type) => {
 		setModalType(type);
 		setSelectedProduct(product);
@@ -132,18 +136,11 @@ export const Products = () => {
 
 						pendingTransactionsRef.current?.refreshList();
 					}
-					fetchProducts();
+
+					refreshList();
 				}
 			},
 		);
-	};
-
-	const fetchProducts = () => {
-		const searchObj = queryString.parse(history.location.search);
-		const newPageSize = searchObj.pageSize || pageSize;
-		const page = searchObj.page || currentPage;
-
-		getProducts({ ...searchObj, page, pageSize: newPageSize }, true);
 	};
 
 	return (
@@ -167,9 +164,8 @@ export const Products = () => {
 
 				<Filter
 					productCategories={productCategories}
-					productCategoriesLoading={
-						productCategoriesStatus === request.REQUESTING
-					}
+					productCategoriesStatus={productCategoriesStatus}
+					setQueryParams={setQueryParams}
 				/>
 
 				<Table
@@ -182,17 +178,10 @@ export const Products = () => {
 						total: pageCount,
 						pageSize,
 						onChange: (page, newPageSize) => {
-							const searchObj = queryString.parse(history.location.search);
-							history.push(
-								queryString.stringifyUrl({
-									url: '',
-									query: {
-										...searchObj,
-										page,
-										pageSize: newPageSize,
-									},
-								}),
-							);
+							setQueryParams({
+								page,
+								pageSize: newPageSize,
+							});
 						},
 						disabled: !data,
 						position: ['bottomCenter'],
@@ -215,7 +204,7 @@ export const Products = () => {
 						onFetchPendingTransactions={
 							pendingTransactionsRef.current?.refreshList
 						}
-						onSuccess={fetchProducts}
+						onSuccess={refreshList}
 						onClose={() => onOpenModal(null, null)}
 					/>
 				)}
@@ -241,35 +230,26 @@ export const Products = () => {
 
 interface FilterProps {
 	productCategories: IProductCategory[];
-	productCategoriesLoading: boolean;
+	productCategoriesStatus: number;
+	setQueryParams: any;
 }
 
 const Filter = ({
 	productCategories,
-	productCategoriesLoading,
+	productCategoriesStatus,
+	setQueryParams,
 }: FilterProps) => {
+	// CUSTOM HOOKS
 	const history = useHistory();
-	const searchObj = queryString.parse(history.location.search);
+	const currentParams = queryString.parse(history.location.search);
 
 	// METHODS
 	const onSearchDebounced = useCallback(
-		debounce((keyword) => {
-			onFilter({ search: keyword });
+		debounce((search) => {
+			setQueryParams({ search }, true);
 		}, SEARCH_DEBOUNCE_TIME),
-		[searchObj],
+		[],
 	);
-
-	const onFilter = (filter) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...searchObj,
-					...filter,
-				},
-			}),
-		);
-	};
 
 	return (
 		<Row className="PaddingHorizontal" gutter={[15, 15]}>
@@ -277,7 +257,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
-					defaultValue={searchObj.search}
+					defaultValue={currentParams.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -287,11 +267,11 @@ const Filter = ({
 				<Label label="Category" spacing />
 				<Select
 					style={{ width: '100%' }}
-					defaultValue={searchObj.productCategory}
+					defaultValue={currentParams.productCategory}
 					onChange={(value) => {
-						onFilter({ productCategory: value });
+						setQueryParams({ productCategory: value }, true);
 					}}
-					loading={productCategoriesLoading}
+					loading={productCategoriesStatus === request.REQUESTING}
 					allowClear
 				>
 					{productCategories.map(({ name }) => (
