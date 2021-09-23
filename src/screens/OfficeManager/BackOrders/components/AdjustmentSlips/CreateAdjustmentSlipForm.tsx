@@ -67,7 +67,6 @@ export const CreateAdjustmentSlipForm = ({
 									},
 								)
 								.required(),
-
 							otherwise: Yup.number().notRequired(),
 						})
 						.nullable()
@@ -83,6 +82,10 @@ export const CreateAdjustmentSlipForm = ({
 			<FormInput
 				type="number"
 				id={`${index}.newReceivedQuantity`}
+				isWholeNumber={
+					values?.[index]?.unitOfMeasurement ===
+					unitOfMeasurementTypes.NON_WEIGHING
+				}
 				disabled={!values?.[index]?.selected || values?.[index]?.approved}
 			/>
 			<ErrorMessage

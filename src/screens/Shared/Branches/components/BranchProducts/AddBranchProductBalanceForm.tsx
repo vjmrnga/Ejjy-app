@@ -41,7 +41,7 @@ export const AddBranchProductBalanceForm = ({
 						'is-whole-number',
 						'Non-weighing items require whole number quantity.',
 						(value) =>
-							branchProduct?.product?.unit_of_measurement ===
+							branchProduct.product.unit_of_measurement ===
 							unitOfMeasurementTypes.NON_WEIGHING
 								? isInteger(Number(value))
 								: true,
@@ -68,7 +68,15 @@ export const AddBranchProductBalanceForm = ({
 			<Form>
 				<Row gutter={[15, 15]}>
 					<Col span={24}>
-						<FormInputLabel type="number" id="balance" label="Qty Delivered" />
+						<FormInputLabel
+							type="number"
+							id="balance"
+							label="Qty Delivered"
+							isWholeNumber={
+								branchProduct.product.unit_of_measurement ===
+								unitOfMeasurementTypes.NON_WEIGHING
+							}
+						/>
 						<ErrorMessage
 							name="balance"
 							render={(error) => <FieldError error={error} />}

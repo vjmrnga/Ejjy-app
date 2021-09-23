@@ -1,7 +1,7 @@
 import { Divider, Modal } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { FieldError } from '../../../../../components/elements';
+import { RequestErrors } from '../../../../../components';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/BranchManager/delivery-receipts';
 import {
@@ -9,6 +9,7 @@ import {
 	request,
 	requisitionSlipActions,
 } from '../../../../../global/types';
+import { convertIntoArray } from '../../../../../utils/function';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import {
 	RequisitionSlipDetails,
@@ -51,7 +52,7 @@ export const ReceiveDeliveryReceiptModal = ({
 	const {
 		receiveDeliveryReceipt,
 		status: deliveryReceiptStatus,
-		errors,
+		errors: deliveryReceiptErrors,
 		recentRequest,
 		reset,
 	} = useDeliveryReceipt();
@@ -66,6 +67,7 @@ export const ReceiveDeliveryReceiptModal = ({
 					name: product.name,
 					order_slip_product_id: id,
 					received_quantity_piece: '',
+					unit_of_measurement: product.unit_of_measurement,
 				};
 			});
 
@@ -91,7 +93,7 @@ export const ReceiveDeliveryReceiptModal = ({
 		[deliveryReceiptStatus, recentRequest],
 	);
 
-	const onReceiveDeliveryReceiptSubmit = (values) => {
+	const onReceiveDeliveryReceiptSubmit = (data) => {
 		const deliveredOrderSlips = orderSlips
 			.filter(({ id }) => id !== orderSlip.id)
 			.map(({ status }) => status.value === orderSlipStatus.DELIVERED);
@@ -100,7 +102,7 @@ export const ReceiveDeliveryReceiptModal = ({
 			id: orderSlip.delivery_receipt.id,
 			order_slip_id: orderSlip.id,
 			receiving_user_id: user.id,
-			received_products: values.products,
+			received_products: data,
 			requisitionSlipAction:
 				deliveredOrderSlips.length === orderSlips.length - 1
 					? requisitionSlipActions.F_DS1_DELIVERED_DONE
@@ -118,9 +120,10 @@ export const ReceiveDeliveryReceiptModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors
+				errors={convertIntoArray(deliveryReceiptErrors)}
+				withSpaceBottom
+			/>
 
 			<RequisitionSlipDetails
 				requisitionSlip={requisitionSlip}

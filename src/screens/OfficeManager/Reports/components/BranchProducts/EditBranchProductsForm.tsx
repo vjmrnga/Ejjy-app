@@ -43,8 +43,16 @@ export const EditBranchProductsForm = ({
 			Schema: Yup.object().shape({
 				max_balance: Yup.number()
 					.required()
-					.min(0)
-					.max(65535)
+					.moreThan(0)
+					.test(
+						'is-whole-number',
+						'Non-weighing items require whole number quantity.',
+						(value) =>
+							branchProduct?.product?.unit_of_measurement ===
+							unitOfMeasurementTypes.NON_WEIGHING
+								? isInteger(Number(value))
+								: true,
+					)
 					.label('Max Balance'),
 				current_balance: isCurrentBalanceVisible
 					? Yup.number()
@@ -112,6 +120,10 @@ export const EditBranchProductsForm = ({
 									type="number"
 									id="current_balance"
 									label="Current Balance"
+									isWholeNumber={
+										branchProduct?.product?.unit_of_measurement ===
+										unitOfMeasurementTypes.NON_WEIGHING
+									}
 								/>
 								<ErrorMessage
 									name="current_balance"

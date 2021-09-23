@@ -15,21 +15,21 @@ import { EditBranchProductsForm } from './EditBranchProductsForm';
 interface Props {
 	branch: any;
 	branchProduct: any;
-	refreshList: any;
+	onSuccess: any;
 	onClose: any;
 }
 
 export const EditBranchProductsModal = ({
 	branch,
 	branchProduct,
-	refreshList,
+	onSuccess,
 	onClose,
 }: Props) => {
 	// VARIABLES
 	const title = (
 		<>
 			<span>{branchProduct ? '[Edit]' : '[Create]'} Branch Product</span>
-			<span className="ModalTitleMainInfo">{branchProduct?.product?.name}</span>
+			<span className="ModalTitleMainInfo">{branchProduct.product.name}</span>
 		</>
 	);
 
@@ -39,9 +39,8 @@ export const EditBranchProductsModal = ({
 	// CUSTOM HOOKS
 	const {
 		editBranchProduct,
-		status: branchProductStatus,
-		errors,
-		reset,
+		status: branchProductsStatus,
+		errors: branchProductsErrors,
 	} = useBranchProducts();
 
 	// METHODS
@@ -54,11 +53,9 @@ export const EditBranchProductsModal = ({
 	});
 
 	const onEditBranchProduct = (product, resetForm) => {
-		editBranchProduct({ ...product, branchId: branch?.id }, ({ status }) => {
+		editBranchProduct({ ...product, branchId: branch.id }, ({ status }) => {
 			if (status === request.SUCCESS) {
-				refreshList();
-				reset();
-
+				onSuccess();
 				resetForm();
 				handleClose();
 			}
@@ -95,13 +92,16 @@ export const EditBranchProductsModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchProductsErrors)}
+				withSpaceBottom
+			/>
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
 				onSubmit={onEditBranchProduct}
 				onClose={handleClose}
-				loading={branchProductStatus === request.REQUESTING}
+				loading={branchProductsStatus === request.REQUESTING}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
 			/>
 		</Modal>

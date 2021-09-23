@@ -1,12 +1,10 @@
 @import '../../../assets/styles/main';
 
-.Dashboard {
-	.BackupServerUrl,
-	.LocalServerUrl {
-		padding: 20px 25px;
+.BackupServerUrl {
+	@include flex(space-between, flex-end);
 
-		&_buttonColumn {
-			@include flex(center, flex-end);
-		}
+	&_inputWrapper {
+		flex: 1;
+		margin-right: 8px;
 	}
 }

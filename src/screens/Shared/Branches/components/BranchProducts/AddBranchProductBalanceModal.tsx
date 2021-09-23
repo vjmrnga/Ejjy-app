@@ -18,14 +18,14 @@ import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 interface Props {
 	branch: any;
 	branchProduct: any;
-	refreshList: any;
+	onSuccess: any;
 	onClose: any;
 }
 
 export const AddBranchProductBalanceModal = ({
 	branch,
 	branchProduct,
-	refreshList,
+	onSuccess,
 	onClose,
 }: Props) => {
 	// STATES
@@ -35,9 +35,8 @@ export const AddBranchProductBalanceModal = ({
 	const { user } = useAuth();
 	const {
 		editBranchProductBalance,
-		status: branchProductStatus,
-		errors,
-		reset,
+		status: branchProductsStatus,
+		errors: branchProductsErrors,
 	} = useBranchProducts();
 
 	// METHODS
@@ -49,18 +48,17 @@ export const AddBranchProductBalanceModal = ({
 		};
 	});
 
-	const onAddBranchProductBalance = (value) => {
+	const onAddBranchProductBalance = (data) => {
 		editBranchProductBalance(
 			{
 				branchId: branch?.id,
-				addedBalance: value.balance,
+				addedBalance: data.balance,
 				productId: branchProduct.product.id,
 				updatingUserId: user.id,
 			},
 			({ status }) => {
 				if (status === request.SUCCESS) {
-					refreshList();
-					reset();
+					onSuccess();
 					onClose();
 				}
 			},
@@ -99,31 +97,31 @@ export const AddBranchProductBalanceModal = ({
 			closable
 			destroyOnClose
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchProductsErrors)}
+				withSpaceBottom
+			/>
 
 			<DetailsRow>
-				<DetailsSingle
-					label="Barcode"
-					value={branchProduct?.product?.barcode}
-				/>
+				<DetailsSingle label="Barcode" value={branchProduct.product.barcode} />
 				<DetailsSingle
 					label="Textcode"
-					value={branchProduct?.product?.textcode}
+					value={branchProduct.product.textcode}
 				/>
-				<DetailsSingle label="Name" value={branchProduct?.product?.name} />
+				<DetailsSingle label="Name" value={branchProduct.product.name} />
 				<DetailsSingle
 					label="Max Balance"
 					value={formatQuantity(
-						branchProduct?.product?.unit_of_measurement,
-						branchProduct?.max_balance,
+						branchProduct.product.unit_of_measurement,
+						branchProduct.max_balance,
 					)}
 				/>
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"
 						value={formatQuantity(
-							branchProduct?.product?.unit_of_measurement,
-							branchProduct?.current_balance,
+							branchProduct.product.unit_of_measurement,
+							branchProduct.current_balance,
 						)}
 					/>
 				)}
@@ -135,7 +133,7 @@ export const AddBranchProductBalanceModal = ({
 				branchProduct={branchProduct}
 				onSubmit={onAddBranchProductBalance}
 				onClose={handleClose}
-				loading={branchProductStatus === request.REQUESTING}
+				loading={branchProductsStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);

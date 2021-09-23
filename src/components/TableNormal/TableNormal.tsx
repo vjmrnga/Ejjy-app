@@ -40,7 +40,7 @@ export const TableNormal = ({
 	}, [activeRow]);
 
 	return (
-		<Spin size="large" spinning={loading}>
+		<Spin spinning={loading}>
 			<div
 				className={cn('TableNormal', {
 					page: displayInPage,

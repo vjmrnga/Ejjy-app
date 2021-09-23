@@ -1,3 +1,4 @@
+/* eslint-disable no-confusing-arrow */
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { floor, isArray, isString, memoize } from 'lodash';

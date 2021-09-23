@@ -1,7 +1,9 @@
+/* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable newline-per-chained-call */
 import { Checkbox, Col, Divider, Row, Typography } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
@@ -19,7 +21,11 @@ import { booleanOptions } from '../../../../global/options';
 import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { IProductCategory } from '../../../../models';
-import { removeCommas, sleep } from '../../../../utils/function';
+import {
+	formatQuantity,
+	removeCommas,
+	sleep,
+} from '../../../../utils/function';
 import '../style.scss';
 
 const { Text } = Typography;
@@ -37,7 +43,7 @@ const type = [
 	},
 ];
 
-const unitOfMeasurement = [
+const unitOfMeasurementOptions = [
 	{
 		id: unitOfMeasurementTypes.WEIGHING,
 		label: 'Weighing',
@@ -50,7 +56,7 @@ const unitOfMeasurement = [
 	},
 ];
 
-const isVatExemptedTypes = [
+const isVatExemptedOptions = [
 	{
 		id: 'vat',
 		label: 'VAT',
@@ -101,8 +107,12 @@ export const CreateEditProductForm = ({
 				pieces_in_bulk: product?.pieces_in_bulk,
 				cost_per_piece: product?.cost_per_piece || '',
 				cost_per_bulk: product?.cost_per_bulk || '',
-				reorder_point: product?.reorder_point,
-				max_balance: product?.max_balance,
+				reorder_point: product?.reorder_point
+					? formatQuantity(product?.unit_of_measurement, product.reorder_point)
+					: '',
+				max_balance: product?.max_balance
+					? formatQuantity(product?.unit_of_measurement, product.max_balance)
+					: '',
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',
 				product_category: product?.product_category,
@@ -156,13 +166,35 @@ export const CreateEditProductForm = ({
 						.label('Qty Allowance'),
 					reorder_point: Yup.number()
 						.required()
-						.min(0)
-						.max(65535)
+						.moreThan(0)
+						.test(
+							'is-whole-number',
+							'Non-weighing items require whole number quantity.',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								const unitOfMeasurement = this.parent.unit_of_measurement;
+								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
+									? isInteger(Number(value))
+									: true;
+							},
+						)
 						.label('Reorder Point'),
 					max_balance: Yup.number()
 						.required()
-						.min(0)
-						.max(65535)
+						.moreThan(0)
+						.test(
+							'is-whole-number',
+							'Non-weighing items require whole number quantity.',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								const unitOfMeasurement = this.parent.unit_of_measurement;
+								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
+									? isInteger(Number(value))
+									: true;
+							},
+						)
 						.label('Max Balance'),
 					cost_per_piece: Yup.string()
 						.required()
@@ -338,7 +370,7 @@ export const CreateEditProductForm = ({
 							<Label label="TT-002" spacing />
 							<FormRadioButton
 								id="unit_of_measurement"
-								items={unitOfMeasurement}
+								items={unitOfMeasurementOptions}
 							/>
 							<ErrorMessage
 								name="unit_of_measurement"
@@ -350,7 +382,7 @@ export const CreateEditProductForm = ({
 							<Label label="TT-003" spacing />
 							<FormRadioButton
 								id="is_vat_exempted"
-								items={isVatExemptedTypes}
+								items={isVatExemptedOptions}
 							/>
 							<ErrorMessage
 								name="is_vat_exempted"
@@ -390,6 +422,10 @@ export const CreateEditProductForm = ({
 							<FormInput
 								type="number"
 								id="reorder_point"
+								isWholeNumber={
+									values.unit_of_measurement ===
+									unitOfMeasurementTypes.NON_WEIGHING
+								}
 								disabled={!values.will_carry_over_reorder_point}
 							/>
 							<ErrorMessage
@@ -411,6 +447,10 @@ export const CreateEditProductForm = ({
 							<FormInput
 								type="number"
 								id="max_balance"
+								isWholeNumber={
+									values.unit_of_measurement ===
+									unitOfMeasurementTypes.NON_WEIGHING
+								}
 								disabled={!values.will_carry_over_max_balance}
 							/>
 							<ErrorMessage

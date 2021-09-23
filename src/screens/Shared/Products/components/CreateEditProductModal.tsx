@@ -1,5 +1,6 @@
 import { message, Modal } from 'antd';
 import React from 'react';
+import { FieldInfo } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';
@@ -94,6 +95,15 @@ export const CreateEditProductModal = ({
 				errors={convertIntoArray(productsErrors)}
 				withSpaceBottom
 			/>
+
+			{product && (
+				<FieldInfo
+					message="Tick the checkboxes if you want to carry over the update to all the
+				branches."
+					withSpaceBottom
+				/>
+			)}
+
 			<CreateEditProductForm
 				product={product}
 				productCategories={productCategories}

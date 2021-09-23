@@ -58,7 +58,7 @@ export const CreateEditOrderSlipModal = ({
 	const {
 		createOrderSlip,
 		editOrderSlip,
-		status,
+		status: orderSlipsStatus,
 		errors: orderSlipsErrors,
 		recentRequest,
 		reset,
@@ -72,12 +72,15 @@ export const CreateEditOrderSlipModal = ({
 	useEffect(() => {
 		const recentRequests = [types.CREATE_ORDER_SLIP, types.EDIT_ORDER_SLIP];
 
-		if (status === request.SUCCESS && recentRequests.includes(recentRequest)) {
+		if (
+			orderSlipsStatus === request.SUCCESS &&
+			recentRequests.includes(recentRequest)
+		) {
 			updateRequisitionSlipByFetching();
 			reset();
 			onClose();
 		}
-	}, [status, recentRequest]);
+	}, [orderSlipsStatus, recentRequest]);
 
 	const getBranchOptions = useCallback(
 		() =>
@@ -185,7 +188,7 @@ export const CreateEditOrderSlipModal = ({
 
 			<Row gutter={[15, 15]} align="middle">
 				<Col span={12}>
-					<Label label="Requested Products" />
+					<Label label="Requested Products" spacing />
 				</Col>
 				<Col span={12}>
 					<Select
@@ -203,7 +206,7 @@ export const CreateEditOrderSlipModal = ({
 				assignedPersonnelOptions={getAssignedPersonnelOptions()}
 				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={status === request.REQUESTING || loading}
+				loading={orderSlipsStatus === request.REQUESTING || loading}
 			/>
 		</Modal>
 	);

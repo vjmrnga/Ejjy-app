@@ -1,5 +1,6 @@
-import { FieldArray, Form, Formik } from 'formik';
-import { min } from 'lodash';
+/* eslint-disable react/no-this-in-sfc */
+import { ErrorMessage, FieldArray, Form, Formik } from 'formik';
+import { isInteger, min } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { TableNormal } from '../../../../../components';
@@ -11,14 +12,17 @@ import {
 	FormSelect,
 } from '../../../../../components/elements';
 import { quantityTypeOptions } from '../../../../../global/options';
-import { quantityTypes } from '../../../../../global/types';
+import {
+	quantityTypes,
+	unitOfMeasurementTypes,
+} from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
 
 const columns = [
-	{ name: '', width: '80px' },
+	{ name: '', width: '50px' },
 	{ name: 'Barcode' },
 	{ name: 'Name' },
-	{ name: 'Quantity', width: '200px' },
+	{ name: 'Quantity', width: '250px' },
 	{ name: 'Qty Reqstd', tooltip: 'Quantity Requested' },
 	{ name: 'Balance', tooltip: "Assigned branch's remaining balance" },
 	{ name: 'Assigned Personnel' },
@@ -54,16 +58,44 @@ export const CreateEditOrderSlipForm = ({
 					product_id: requestedProduct?.product_id,
 					assigned_personnel: requestedProduct?.assigned_personnel,
 					pieces_in_bulk: requestedProduct?.product_pieces_in_bulk,
+					unit_of_measurement: requestedProduct?.product?.unit_of_measurement,
 				})),
 			},
 			Schema: Yup.object().shape({
 				requestedProducts: Yup.array().of(
 					Yup.object().shape({
 						quantity: Yup.number()
-							.positive()
+							.moreThan(0)
 							.when('selected', {
 								is: true,
-								then: Yup.number().required('Qty required'),
+								then: Yup.number()
+									.required()
+									.test(
+										'is-whole-number',
+										'Non-weighing items or weighing bulk items require whole number quantity.',
+										function test(value) {
+											// NOTE: We need to use a no-named function so
+											// we can use 'this' and access the other form field value.
+
+											// Condition:
+											// 			PIECE   BULK
+											// WE  	D(3)   	WHOLE
+											// NW  	WHOLE	  WHOLE
+
+											const unitOfMeasurement = this.parent.unit_of_measurement;
+											const quantityType = this.parent.quantity_type;
+
+											const isWeighingPiece =
+												unitOfMeasurement === unitOfMeasurementTypes.WEIGHING &&
+												quantityType === quantityTypes.PIECE;
+
+											if (!isWeighingPiece) {
+												return isInteger(Number(value));
+											}
+
+											return true;
+										},
+									),
 								otherwise: Yup.number().notRequired(),
 							})
 							.label('Qty'),
@@ -83,7 +115,7 @@ export const CreateEditOrderSlipForm = ({
 		<FormCheckbox id={`requestedProducts.${index}.selected`} />
 	);
 
-	const getQuantity = (index, values, touched, errors, maxPiece, maxBulk) => (
+	const getQuantity = (index, values, maxPiece, maxBulk) => (
 		<>
 			<div className="QuantityContainer">
 				<FormInput
@@ -104,10 +136,10 @@ export const CreateEditOrderSlipForm = ({
 					disabled={!values?.requestedProducts?.[index]?.selected}
 				/>
 			</div>
-			{errors?.requestedProducts?.[index]?.quantity &&
-			touched?.requestedProducts?.[index]?.quantity ? (
-				<FieldError error={errors?.requestedProducts?.[index]?.quantity} />
-			) : null}
+			<ErrorMessage
+				name={`requestedProducts.${index}.quantity`}
+				render={(error) => <FieldError error={error} />}
+			/>
 		</>
 	);
 
@@ -158,7 +190,7 @@ export const CreateEditOrderSlipForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ values, errors, touched }) => (
+			{({ values }) => (
 				<FieldArray
 					name="requestedProducts"
 					render={() => (
@@ -177,8 +209,6 @@ export const CreateEditOrderSlipForm = ({
 									getQuantity(
 										index,
 										values,
-										touched,
-										errors,
 										min([
 											requestedProduct?.branch_current,
 											requestedProduct?.ordered_quantity_piece,

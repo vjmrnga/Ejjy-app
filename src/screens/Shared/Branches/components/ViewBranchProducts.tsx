@@ -250,7 +250,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				<EditBranchProductsModal
 					branch={branch}
 					branchProduct={selectedBranchProduct}
-					refreshList={fetchBranchProducts}
+					onSuccess={fetchBranchProducts}
 					onClose={() => setModalType(null)}
 				/>
 			)}
@@ -259,7 +259,7 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				<AddBranchProductBalanceModal
 					branch={branch}
 					branchProduct={selectedBranchProduct}
-					refreshList={fetchBranchProducts}
+					onSuccess={fetchBranchProducts}
 					onClose={() => setModalType(null)}
 				/>
 			)}

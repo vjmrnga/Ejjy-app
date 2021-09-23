@@ -324,11 +324,9 @@ export const EditBranchProductsForm = ({
 										type="number"
 										id="current_balance"
 										label="Current Balance"
-										step={
+										isWholeNumber={
 											branchProduct.product.unit_of_measurement ===
-											unitOfMeasurementTypes.WEIGHING
-												? '.001'
-												: null
+											unitOfMeasurementTypes.NON_WEIGHING
 										}
 										disabled={!values.is_sold_in_branch}
 									/>

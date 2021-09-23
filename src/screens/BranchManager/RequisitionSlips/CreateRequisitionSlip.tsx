@@ -170,7 +170,12 @@ export const CreateRequisitionSlip = () => {
 	);
 
 	const renderQuantity = (fieldKey, product) => {
-		const { selected = null, product_id: productId = null } = product;
+		const {
+			selected = null,
+			product_id: productId = null,
+			quantity_type,
+			unit_of_measurement,
+		} = product;
 
 		return (
 			<>
@@ -181,6 +186,12 @@ export const CreateRequisitionSlip = () => {
 						onChange={(value) => {
 							onChangeQuantity(productId, value);
 						}}
+						isWholeNumber={
+							!(
+								quantity_type === quantityTypes.PIECE &&
+								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+							)
+						}
 						disabled={!selected}
 					/>
 					<FormSelect
@@ -339,7 +350,7 @@ export const CreateRequisitionSlip = () => {
 					enableReinitialize
 				>
 					{({ values, setFieldValue }) => (
-						<Form className="form">
+						<Form>
 							<div className="PaddingHorizontal">
 								<Tabs
 									type="card"

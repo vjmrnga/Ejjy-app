@@ -6,30 +6,15 @@ interface Props extends IInputProps {
 	label: string;
 }
 
-const FormInputLabel = ({
-	id,
-	type,
-	label: inputLabel,
-	placeholder,
-	max,
-	min,
-	step,
-	disabled,
-	isMoney,
-}: Props) => (
-	<>
-		<Label id={id} label={inputLabel} spacing />
-		<FormInput
-			type={type}
-			id={id}
-			max={max}
-			min={min}
-			step={step}
-			placeholder={placeholder}
-			disabled={disabled}
-			isMoney={isMoney}
-		/>
-	</>
-);
+const FormInputLabel = (props: Props) => {
+	const { id, label, ...inputProps } = props;
+
+	return (
+		<>
+			<Label id={id} label={label} spacing />
+			<FormInput id={id} {...inputProps} />
+		</>
+	);
+};
 
 export default FormInputLabel;

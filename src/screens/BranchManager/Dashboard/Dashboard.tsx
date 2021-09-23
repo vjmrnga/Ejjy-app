@@ -52,14 +52,10 @@ export const Dashboard = () => {
 
 	return (
 		<Content className="Dashboard" title="Dashboard">
-			{/* <LocalServerUrlForm
-				branch={branch}
-				loading={branchStatus === request.REQUESTING}
-			/> */}
-
 			{hasInternetConnection === false && (
-				<FieldError error="Cannot reach branch's API" />
+				<FieldError error="Cannot reach branch's API" withSpaceBottom />
 			)}
+
 			<CashieringCard
 				branchId={user?.branch?.id}
 				disabled={!hasInternetConnection}

@@ -33,7 +33,7 @@ export const FulfillBackOrderModal = ({
 
 	// METHODS
 	const onFulfill = (formData) => {
-		const products = formData.products.map((product) => ({
+		const products = formData.map((product) => ({
 			product_id: product.product_id,
 			quantity_received:
 				product.quantityType === quantityTypes.PIECE

@@ -16,7 +16,7 @@ import {
 	getTransactionStatus,
 	numberWithCommas,
 } from '../../../../utils/function';
-import { ViewTransactionModal } from './BranchTransacations/ViewTransactionModal';
+import { ViewTransactionModal } from './BranchTransactions/ViewTransactionModal';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },

@@ -87,6 +87,10 @@ export const CreateAdjustmentSlipForm = ({
 			<FormInput
 				type="number"
 				id={`${index}.newFulfilledQuantityPiece`}
+				isWholeNumber={
+					values?.[index]?.unitOfMeasurement ===
+					unitOfMeasurementTypes.NON_WEIGHING
+				}
 				disabled={!values?.[index]?.selected || values?.[index]?.approved}
 			/>
 			<ErrorMessage

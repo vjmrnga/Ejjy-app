@@ -7,13 +7,29 @@ import './style.scss';
 interface Props {
 	message: string | FormikErrors<any> | string[] | FormikErrors<any>[];
 	className?: string;
+	withSpaceTop?: boolean;
+	withSpaceBottom?: boolean;
 }
 
-const FieldSuccess = ({ message, className }: Props) => (
-	<div className={cn('FieldInfo', className)}>
+const FieldInfo = ({
+	message,
+	className,
+	withSpaceTop,
+	withSpaceBottom,
+}: Props) => (
+	<div
+		className={cn(
+			'FieldInfo',
+			{
+				FieldInfo__spaceTop: withSpaceTop,
+				FieldInfo__spaceBottom: withSpaceBottom,
+			},
+			className,
+		)}
+	>
 		<InfoCircleOutlined className="FieldInfo_icon" />
 		<span className="FieldInfo_text">{message}</span>
 	</div>
 );
 
-export default FieldSuccess;
+export default FieldInfo;

@@ -17,6 +17,7 @@ export interface IInputProps {
 	step?: string;
 	onChange?: any;
 	isMoney?: boolean;
+	isWholeNumber?: boolean;
 	disabled?: boolean;
 }
 
@@ -28,8 +29,9 @@ const FormInput = ({
 	min,
 	step,
 	onChange,
-	disabled,
 	isMoney,
+	isWholeNumber,
+	disabled,
 }: IInputProps) => {
 	const [field, , helpers] = useField(id);
 	const inputRe = /^[0-9/.\b]+\.?$/g;
@@ -79,6 +81,11 @@ const FormInput = ({
 
 			// Not allowed mathematical notations
 			if (['e', 'E', '+', '-'].includes(key) || /[a-zA-Z\s]+/g.test(key)) {
+				event.preventDefault();
+			}
+
+			// Cannot input decimal if non-weighing
+			if (isWholeNumber && key === '.') {
 				event.preventDefault();
 			}
 		}

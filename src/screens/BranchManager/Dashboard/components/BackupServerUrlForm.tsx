@@ -1,4 +1,4 @@
-import { Col, message, Row, Spin } from 'antd';
+import { message, Spin } from 'antd';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -40,26 +40,22 @@ export const BackupServerUrlForm = ({ branch, loading }: Props) => {
 	};
 
 	return (
-		<Box className="BackupServerUrl">
-			<Spin size="large" spinning={loading || status === request.REQUESTING}>
-				<Row gutter={[15, 15]}>
-					<Col xs={24} sm={20} md={20}>
-						<Label label="Backup Server URL" spacing />
-						<ControlledInput
-							value={backupServerUrl}
-							onChange={(value) => setBackupServerUrl(value)}
-							max={75}
-						/>
-					</Col>
-					<Col xs={24} sm={4} md={4} className="button-column">
-						<Button
-							text="Save Settings"
-							variant="primary"
-							onClick={onSaveSettings}
-						/>
-					</Col>
-				</Row>
-			</Spin>
-		</Box>
+		<Spin spinning={loading || status === request.REQUESTING}>
+			<Box className="BackupServerUrl" padding>
+				<div className="BackupServerUrl_inputWrapper">
+					<Label label="Backup Server URL" spacing />
+					<ControlledInput
+						value={backupServerUrl}
+						onChange={(value) => setBackupServerUrl(value)}
+						max={75}
+					/>
+				</div>
+				<Button
+					text="Save Settings"
+					variant="primary"
+					onClick={onSaveSettings}
+				/>
+			</Box>
+		</Spin>
 	);
 };
