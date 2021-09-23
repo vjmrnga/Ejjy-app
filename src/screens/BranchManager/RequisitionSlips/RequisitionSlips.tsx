@@ -1,14 +1,16 @@
 /* eslint-disable no-underscore-dangle */
-import { Table } from 'antd';
+import { Col, Row, Select, Table } from 'antd';
 import { upperFirst } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeader } from '../../../components';
-import { Box } from '../../../components/elements';
+import { Box, Label } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	formatDateTime,
@@ -28,7 +30,6 @@ const columns = [
 export const RequisitionSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [selectedStatus, setSelectedStatus] = useState('all');
 	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
@@ -44,21 +45,29 @@ export const RequisitionSlips = () => {
 	} = useRequisitionSlips();
 	const { getPendingCount } = useRequisitionSlips();
 
+	const { setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			getRequisitionSlipsExtended(
+				{
+					...params,
+					branchId: user?.branch?.id,
+					status: params.status === 'all' ? null : params.status,
+				},
+				true,
+			);
+
+			getPendingCount({ userId: user.id }, ({ status, data: count }) => {
+				if (status === request.SUCCESS) {
+					setPendingCount(count);
+				}
+			});
+		},
+	});
+
 	// METHODS
-	useEffect(() => {
-		onFetchRequisitionSlips(1, pageSize, true);
-		getPendingCount({ userId: user.id }, ({ status, data: count }) => {
-			if (status === request.SUCCESS) {
-				setPendingCount(count);
-			}
-		});
-	}, []);
 
-	useEffect(() => {
-		onFetchRequisitionSlips(1, pageSize, true);
-	}, [selectedStatus]);
-
-	// Effect: Format requisitionSlips to be rendered in Table
 	useEffect(() => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
 			const {
@@ -94,34 +103,18 @@ export const RequisitionSlips = () => {
 		setData(formattedProducts);
 	}, [requisitionSlips]);
 
-	const onFetchRequisitionSlips = (page, newPageSize, shouldReset) => {
-		getRequisitionSlipsExtended(
-			{
-				branchId: user?.branch?.id,
-				status: selectedStatus === 'all' ? null : selectedStatus,
-				page,
-				pageSize: newPageSize,
-			},
-			shouldReset,
-		);
-	};
-
-	const onPageChange = (page, newPageSize) => {
-		onFetchRequisitionSlips(page, newPageSize, newPageSize !== pageSize);
-	};
-
 	return (
 		<Content className="RequisitionSlips" title="Requisition Slips">
 			<Box>
 				<TableHeader
 					buttonName="Create Requisition Slip"
-					statuses={requisitionSlipActionsOptionsWithAll}
-					onStatusSelect={(status) => setSelectedStatus(status)}
 					onCreate={() => {
 						history.push('/branch-manager/requisition-slips/create');
 					}}
 					pending={pendingCount}
 				/>
+
+				<Filter setQueryParams={setQueryParams} />
 
 				<Table
 					columns={columns}
@@ -131,7 +124,12 @@ export const RequisitionSlips = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: (page, newPageSize) => {
+							setQueryParams({
+								page,
+								pageSize: newPageSize,
+							});
+						},
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions: ['5', '10', '15'],
@@ -140,5 +138,39 @@ export const RequisitionSlips = () => {
 				/>
 			</Box>
 		</Content>
+	);
+};
+
+interface FilterProps {
+	setQueryParams: any;
+}
+const Filter = ({ setQueryParams }: FilterProps) => {
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const params = queryString.parse(history.location.search);
+
+	return (
+		<Row
+			className="RequisitionSlips_filter PaddingHorizontal"
+			gutter={[15, 15]}
+		>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ status: value }, true);
+					}}
+					defaultValue={params.status || 'all'}
+					allowClear
+				>
+					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (
+						<Select.Option key={value} value={value}>
+							{name}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
 	);
 };

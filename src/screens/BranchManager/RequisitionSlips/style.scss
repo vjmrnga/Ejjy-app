@@ -1,5 +1,11 @@
 @import '../../../assets/styles/main';
 
+.RequisitionSlips {
+	&_filter {
+		margin-bottom: 25px;
+	}
+}
+
 .ViewRequisitionSlip {
 	&_requestedProducts {
 		padding: 0 25px 10px 25px;
