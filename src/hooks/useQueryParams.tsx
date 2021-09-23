@@ -2,11 +2,17 @@ import * as queryString from 'query-string';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
+interface Props {
+	page?: number | string;
+	pageSize?: number | string;
+	onQueryParamChange?: any;
+}
+
 export const useQueryParams = ({
 	page: currentPage,
 	pageSize: currentPageSize,
 	onQueryParamChange,
-}) => {
+}: Props = {}) => {
 	const history = useHistory();
 
 	useEffect(() => {
@@ -36,7 +42,9 @@ export const useQueryParams = ({
 		const pageSize = params.pageSize || currentPageSize;
 		const page = params.page || currentPage;
 
-		onQueryParamChange({ ...params, page, pageSize });
+		if (onQueryParamChange) {
+			onQueryParamChange({ ...params, page, pageSize });
+		}
 	};
 
 	return { setQueryParams, refreshList: onChange };

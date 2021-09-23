@@ -10,7 +10,6 @@ interface Props {
 	title?: string;
 	totalSales: number;
 	timeRange: string;
-	timeRangeOption: string;
 	firstTimeLoading: boolean;
 	loading: boolean;
 }
@@ -19,18 +18,17 @@ export const SalesTotalCard = ({
 	title,
 	totalSales,
 	timeRange,
-	timeRangeOption,
 	firstTimeLoading,
 	loading,
 }: Props) => {
 	const getTotalSalesDescription = useCallback(() => {
 		let description = null;
 
-		if (timeRangeOption === timeRangeTypes.DAILY) {
+		if (timeRange === timeRangeTypes.DAILY) {
 			description = 'Daily';
-		} else if (timeRangeOption === timeRangeTypes.MONTHLY) {
+		} else if (timeRange === timeRangeTypes.MONTHLY) {
 			description = 'Monthly';
-		} else if (timeRangeOption === timeRangeTypes.DATE_RANGE && timeRange) {
+		} else {
 			const dates = timeRange.split(',');
 
 			if (dates.length === 2) {
@@ -39,7 +37,7 @@ export const SalesTotalCard = ({
 		}
 
 		return description;
-	}, [timeRangeOption, timeRange]);
+	}, [timeRange]);
 
 	return (
 		<Box className="SalesTotalCard">

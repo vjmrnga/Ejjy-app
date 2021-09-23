@@ -241,7 +241,7 @@ const Filter = ({
 }: FilterProps) => {
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const currentParams = queryString.parse(history.location.search);
+	const params = queryString.parse(history.location.search);
 
 	// METHODS
 	const onSearchDebounced = useCallback(
@@ -257,7 +257,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
-					defaultValue={currentParams.search}
+					defaultValue={params.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -267,7 +267,7 @@ const Filter = ({
 				<Label label="Category" spacing />
 				<Select
 					style={{ width: '100%' }}
-					defaultValue={currentParams.productCategory}
+					defaultValue={params.productCategory}
 					onChange={(value) => {
 						setQueryParams({ productCategory: value }, true);
 					}}

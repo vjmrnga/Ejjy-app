@@ -1,6 +1,11 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, DatePicker, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { toString } from 'lodash';
+import moment from 'moment';
+import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { Content } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
@@ -8,6 +13,7 @@ import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useLogs } from '../../../hooks/useLogs';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { useUsers } from '../../../hooks/useUsers';
 import { IBranch, IUser } from '../../../models';
 import { formatDateTimeExtended } from '../../../utils/function';
@@ -22,9 +28,6 @@ const columns: ColumnsType = [
 export const Logs = () => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [branchId, setBranchId] = useState(null);
-	const [userId, setUserId] = useState(null);
-	const [timeRange, setTimeRange] = useState(null);
 
 	// CUSTOM HOOKS
 	const { branches, getBranches, status: branchesStatus } = useBranches();
@@ -38,9 +41,13 @@ export const Logs = () => {
 		status: logsStatus,
 	} = useLogs();
 
-	useEffect(() => {
-		listLogs({ page: 1 });
-	}, []);
+	const { setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			listLogs(params, true);
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -62,73 +69,16 @@ export const Logs = () => {
 		setData(formattedLogs);
 	}, [logs]);
 
-	const onPageChange = (page, newPageSize) => {
-		listLogs(
-			{
-				branchId,
-				actingUserId: userId,
-				timeRange,
-				page,
-				pageSize: newPageSize,
-			},
-			newPageSize !== pageSize,
-		);
-	};
-
-	const onSelectUser = (value) => {
-		listLogs(
-			{
-				branchId,
-				actingUserId: value,
-				timeRange,
-				page: 1,
-			},
-			true,
-		);
-
-		setUserId(value);
-	};
-
-	const onSelectBranch = (value) => {
-		listLogs(
-			{
-				branchId: value,
-				actingUserId: userId,
-				timeRange,
-				page: 1,
-			},
-			true,
-		);
-
-		setBranchId(value);
-	};
-
-	const onSelectDateRange = (value) => {
-		listLogs(
-			{
-				branchId,
-				actingUserId: userId,
-				timeRange: value,
-				page: 1,
-			},
-			true,
-		);
-
-		setTimeRange(value);
-	};
-
 	return (
 		<Content title="Logs">
 			<section className="Logs">
 				<Box>
 					<Filter
 						users={users}
-						onSelectUser={onSelectUser}
 						usersLoading={usersStatus === request.REQUESTING}
 						branches={branches}
-						onSelectBranch={onSelectBranch}
 						branchesLoading={branchesStatus === request.REQUESTING}
-						onSelectDateRange={onSelectDateRange}
+						setQueryParams={setQueryParams}
 					/>
 					<Table
 						columns={columns}
@@ -138,7 +88,12 @@ export const Logs = () => {
 							current: currentPage,
 							total: pageCount,
 							pageSize,
-							onChange: onPageChange,
+							onChange: (page, newPageSize) => {
+								setQueryParams({
+									page,
+									pageSize: newPageSize,
+								});
+							},
 							disabled: !data,
 							position: ['bottomCenter'],
 							pageSizeOptions,
@@ -153,65 +108,89 @@ export const Logs = () => {
 
 interface FilterProps {
 	users: IUser[];
-	onSelectUser: any;
 	usersLoading: boolean;
 	branches: IBranch[];
-	onSelectBranch: any;
 	branchesLoading: boolean;
-	onSelectDateRange: any;
+	setQueryParams: any;
 }
 
 const Filter = ({
 	users,
-	onSelectUser,
 	usersLoading,
 	branches,
-	onSelectBranch,
 	branchesLoading,
-	onSelectDateRange,
-}: FilterProps) => (
-	<Row className="PaddingHorizontal PaddingVertical" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Branches" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={onSelectBranch}
-				loading={branchesLoading}
-				allowClear
-			>
-				{branches.map(({ id, name }) => (
-					<Select.Option value={id}>{name}</Select.Option>
-				))}
-			</Select>
-		</Col>
+	setQueryParams,
+}: FilterProps) => {
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const params = queryString.parse(history.location.search);
 
-		<Col lg={12} span={24}>
-			<Label label="Users" spacing />
-			<Select
-				style={{ width: '100%' }}
-				onChange={onSelectUser}
-				loading={usersLoading}
-				allowClear
-			>
-				{users.map(({ id, first_name, last_name }) => (
-					<Select.Option value={id}>
-						{`${first_name} ${last_name}`}
-					</Select.Option>
-				))}
-			</Select>
-		</Col>
+	return (
+		<Row className="PaddingHorizontal PaddingVertical" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Branch" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ branchId: value }, true);
+					}}
+					defaultValue={params.branchId}
+					loading={branchesLoading}
+					allowClear
+				>
+					{branches.map(({ id, name }) => (
+						<Select.Option value={id}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
 
-		<Col lg={12} span={24}>
-			<Label label="Date Range" spacing />
-			<DatePicker.RangePicker
-				style={{ width: '100%' }}
-				format="MM/DD/YY"
-				onCalendarChange={(dates, dateStrings) => {
-					if (dates?.[0] && dates?.[1]) {
-						onSelectDateRange(dateStrings.join(','));
+			<Col lg={12} span={24}>
+				<Label label="User" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ actingUserId: value }, true);
+					}}
+					defaultValue={params.actingUserId}
+					loading={usersLoading}
+					allowClear
+				>
+					{users.map(({ id, first_name, last_name }) => (
+						<Select.Option value={id}>
+							{`${first_name} ${last_name}`}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Date Range" spacing />
+				<DatePicker.RangePicker
+					style={{ width: '100%' }}
+					format="MM/DD/YY"
+					onCalendarChange={(dates, dateStrings) => {
+						if (dates?.[0] && dates?.[1]) {
+							setQueryParams({ timeRange: dateStrings.join(',') }, true);
+						}
+					}}
+					defaultValue={
+						toString(params.timeRange).split(',')?.length === 2
+							? [
+									moment(toString(params.timeRange).split(',')[0]),
+									moment(toString(params.timeRange).split(',')[1]),
+							  ]
+							: undefined
 					}
-				}}
-			/>
-		</Col>
-	</Row>
-);
+					defaultPickerValue={
+						toString(params.timeRange).split(',')?.length === 2
+							? [
+									moment(toString(params.timeRange).split(',')[0]),
+									moment(toString(params.timeRange).split(',')[1]),
+							  ]
+							: undefined
+					}
+				/>
+			</Col>
+		</Row>
+	);
+};

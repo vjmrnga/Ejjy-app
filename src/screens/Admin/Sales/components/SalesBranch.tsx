@@ -1,9 +1,13 @@
 import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
+import { toString } from 'lodash';
+import * as queryString from 'query-string';
 import React, { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { request, timeRangeTypes } from '../../../../global/types';
+import { request } from '../../../../global/types';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { convertIntoArray, numberWithCommas } from '../../../../utils/function';
 import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';
@@ -23,17 +27,10 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: number;
-	timeRange: string;
-	timeRangeOption: string;
 	isActive: boolean;
 }
 
-export const SalesBranch = ({
-	branchId,
-	timeRange,
-	timeRangeOption,
-	isActive,
-}: Props) => {
+export const SalesBranch = ({ branchId, isActive }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [sales, setSales] = useState([]);
@@ -41,11 +38,35 @@ export const SalesBranch = ({
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
+	const currentParams = queryString.parse(history.location.search);
 	const {
 		retrieveBranchMachineSales,
 		status: branchMachinesStatus,
 		errors: branchMachinesErrors,
 	} = useBranchMachines();
+
+	useQueryParams({
+		onQueryParamChange: (params) => {
+			const { timeRange } = params;
+
+			if (isActive && timeRange) {
+				setIsCompletedInitialFetch(false);
+				const onCallback = ({ status, data: branchSales }) => {
+					if (status === request.SUCCESS) {
+						setSales(branchSales);
+					}
+				};
+
+				retrieveBranchMachineSales({ branchId, timeRange }, onCallback);
+
+				clearInterval(intervalRef.current);
+				intervalRef.current = setInterval(() => {
+					retrieveBranchMachineSales({ branchId, timeRange }, onCallback);
+				}, INTERVAL_MS);
+			}
+		},
+	});
 
 	// REFS
 	const intervalRef = useRef(null);
@@ -64,24 +85,6 @@ export const SalesBranch = ({
 			clearInterval(intervalRef.current);
 		}
 	}, [isActive]);
-
-	useEffect(() => {
-		if (timeRangeOption !== timeRangeTypes.DATE_RANGE && isActive) {
-			setIsCompletedInitialFetch(false);
-			fetchBranchMachineSales(timeRangeOption);
-		}
-	}, [timeRangeOption, isActive]);
-
-	useEffect(() => {
-		if (
-			timeRangeOption === timeRangeTypes.DATE_RANGE &&
-			timeRange !== null &&
-			isActive
-		) {
-			setIsCompletedInitialFetch(false);
-			fetchBranchMachineSales(timeRange);
-		}
-	}, [timeRange, timeRangeOption, isActive]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && sales.length) {
@@ -105,21 +108,6 @@ export const SalesBranch = ({
 		setTotalSales(newTotalSales);
 	}, [sales]);
 
-	const fetchBranchMachineSales = (range) => {
-		const onCallback = ({ status, data: branchSales }) => {
-			if (status === request.SUCCESS) {
-				setSales(branchSales);
-			}
-		};
-
-		retrieveBranchMachineSales({ branchId, timeRange: range }, onCallback);
-
-		clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => {
-			retrieveBranchMachineSales({ branchId, timeRange: range }, onCallback);
-		}, INTERVAL_MS);
-	};
-
 	return (
 		<div>
 			<RequestErrors
@@ -132,8 +120,7 @@ export const SalesBranch = ({
 					<SalesTotalCard
 						title="Total Sales"
 						totalSales={totalSales}
-						timeRange={timeRange}
-						timeRangeOption={timeRangeOption}
+						timeRange={toString(currentParams.timeRange)}
 						loading={branchMachinesStatus === request.REQUESTING}
 						firstTimeLoading={
 							isCompletedInitialFetch
