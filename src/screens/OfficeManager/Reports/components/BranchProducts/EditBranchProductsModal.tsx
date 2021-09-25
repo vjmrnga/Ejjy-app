@@ -15,16 +15,14 @@ import { EditBranchProductsForm } from './EditBranchProductsForm';
 interface Props {
 	branchId: any;
 	branchProduct: any;
-	updateItemInPagination: any;
-	visible: boolean;
+	onSuccess: any;
 	onClose: any;
 }
 
 export const EditBranchProductsModal = ({
 	branchId,
 	branchProduct,
-	updateItemInPagination,
-	visible,
+	onSuccess,
 	onClose,
 }: Props) => {
 	// VARIABLES
@@ -41,9 +39,8 @@ export const EditBranchProductsModal = ({
 	// CUSTOM HOOKS
 	const {
 		editBranchProduct,
-		status: branchProductStatus,
-		errors,
-		reset,
+		status: branchProductsStatus,
+		errors: branchProductsErrors,
 	} = useBranchProducts();
 
 	// METHODS
@@ -56,14 +53,9 @@ export const EditBranchProductsModal = ({
 	});
 
 	const onEditBranchProduct = (product, resetForm) => {
-		editBranchProduct({ ...product, branchId }, ({ status, data }) => {
+		editBranchProduct({ ...product, branchId }, ({ status }) => {
 			if (status === request.SUCCESS) {
-				updateItemInPagination({
-					...branchProduct,
-					...data,
-				});
-				reset();
-
+				onSuccess();
 				resetForm();
 				handleClose();
 			}
@@ -73,7 +65,7 @@ export const EditBranchProductsModal = ({
 	const handleKeyDown = (event) => {
 		const key = getKeyDownCombination(event);
 
-		if (SHOW_HIDE_SHORTCUT.includes(key) && visible) {
+		if (SHOW_HIDE_SHORTCUT.includes(key)) {
 			event.preventDefault();
 			if (isCurrentBalanceVisible) {
 				setIsCurrentBalanceVisible(false);
@@ -93,19 +85,22 @@ export const EditBranchProductsModal = ({
 	return (
 		<Modal
 			title={title}
-			visible={visible}
 			footer={null}
 			onCancel={handleClose}
+			visible
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchProductsErrors)}
+				withSpaceBottom
+			/>
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
 				onSubmit={onEditBranchProduct}
 				onClose={handleClose}
-				loading={branchProductStatus === request.REQUESTING}
+				loading={branchProductsStatus === request.REQUESTING}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
 			/>
 		</Modal>

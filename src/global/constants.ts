@@ -39,5 +39,7 @@ export const SEARCH_DEBOUNCE_TIME = 500;
 
 export const ROW_HEIGHT = 65;
 
+export const ALL_OPTION_KEY = 'all';
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

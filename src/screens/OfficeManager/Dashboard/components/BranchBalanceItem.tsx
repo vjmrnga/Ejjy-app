@@ -22,6 +22,7 @@ import {
 import { request, requisitionSlipTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useNetwork } from '../../../../hooks/useNetwork';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
@@ -102,6 +103,27 @@ export const BranchBalanceItem = ({
 		warnings: branchProductsWarnings,
 	} = useBranchProducts();
 	const { testBranchConnection } = useNetwork();
+
+	const { setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			if (isActive) {
+				setIsCompletedInitialFetch(false);
+				const newData = {
+					...params,
+					hasBoBalance: params.hasBoBalance === 'true',
+				};
+
+				getBranchProducts(newData, true);
+
+				clearInterval(fetchIntervalRef.current);
+				fetchIntervalRef.current = setInterval(() => {
+					getBranchProducts(newData, true);
+				}, FETCH_INTERVAL_MS);
+			}
+		},
+	});
 
 	// REFS
 	const fetchIntervalRef = useRef(null);
@@ -185,43 +207,6 @@ export const BranchBalanceItem = ({
 		setData(newBranchProducts);
 	}, [branchProducts]);
 
-	useEffect(() => {
-		if (isActive) {
-			fetchBranchProducts();
-		}
-	}, [history.location, isActive]);
-
-	const fetchBranchProducts = () => {
-		setIsCompletedInitialFetch(false);
-
-		const searchObj = queryString.parse(history.location.search);
-		const newPageSize = searchObj.pageSize || pageSize;
-		const hasBoBalance = searchObj.hasBoBalance === 'true';
-
-		getBranchProducts(
-			{
-				...searchObj,
-				hasBoBalance,
-				branchId,
-				pageSize: newPageSize,
-			},
-			true,
-		);
-
-		clearInterval(fetchIntervalRef.current);
-		fetchIntervalRef.current = setInterval(() => {
-			getBranchProducts(
-				{
-					...searchObj,
-					hasBoBalance,
-					branchId,
-					pageSize: newPageSize,
-				},
-				true,
-			);
-		}, FETCH_INTERVAL_MS);
-	};
-
 	const renderRsType = (type) => {
 		let component = null;
 
@@ -254,6 +239,7 @@ export const BranchBalanceItem = ({
 					<Filter
 						productCategories={productCategories}
 						hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
+						setQueryParams={setQueryParams}
 					/>
 				</>
 			)}
@@ -310,31 +296,24 @@ export const BranchBalanceItem = ({
 interface FilterProps {
 	productCategories: IProductCategory[];
 	hasBoBalanceFilter: boolean;
+	setQueryParams: any;
 }
 
-const Filter = ({ productCategories, hasBoBalanceFilter }: FilterProps) => {
+const Filter = ({
+	productCategories,
+	hasBoBalanceFilter,
+	setQueryParams,
+}: FilterProps) => {
 	const history = useHistory();
 	const searchObj = queryString.parse(history.location.search);
 
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			onFilter({ search: keyword });
+			setQueryParams({ search: keyword }, true);
 		}, SEARCH_DEBOUNCE_TIME),
 		[searchObj],
 	);
-
-	const onFilter = (filter) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...searchObj,
-					...filter,
-				},
-			}),
-		);
-	};
 
 	return (
 		<Row gutter={[15, 15]}>
@@ -354,7 +333,7 @@ const Filter = ({ productCategories, hasBoBalanceFilter }: FilterProps) => {
 					style={{ width: '100%' }}
 					value={searchObj.productCategory}
 					onChange={(value) => {
-						onFilter({ productCategory: value });
+						setQueryParams({ productCategory: value }, true);
 					}}
 					allowClear
 				>
@@ -372,7 +351,7 @@ const Filter = ({ productCategories, hasBoBalanceFilter }: FilterProps) => {
 					style={{ width: '100%' }}
 					value={searchObj.productStatus}
 					onChange={(value) => {
-						onFilter({ productStatus: value });
+						setQueryParams({ productStatus: value }, true);
 					}}
 					allowClear
 				>
@@ -393,7 +372,7 @@ const Filter = ({ productCategories, hasBoBalanceFilter }: FilterProps) => {
 						value={searchObj.hasBoBalance}
 						onChange={(e) => {
 							const { value } = e.target;
-							onFilter({ hasBoBalance: value });
+							setQueryParams({ hasBoBalance: value }, true);
 						}}
 						defaultValue={null}
 						optionType="button"

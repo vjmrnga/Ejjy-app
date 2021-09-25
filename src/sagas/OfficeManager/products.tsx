@@ -7,7 +7,7 @@ import { service } from '../../services/OfficeManager/products';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, search, productCategory, callback } = payload;
+	const { page, pageSize, search, productCategory, ids, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -15,7 +15,13 @@ function* list({ payload }: any) {
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
 			service.list,
-			{ page, page_size: pageSize, search, product_category: productCategory },
+			{
+				page,
+				page_size: pageSize,
+				search,
+				product_category: productCategory,
+				ids,
+			},
 			ONLINE_API_URL,
 		);
 

@@ -3,6 +3,7 @@ import { IListRequest } from '../interfaces';
 
 interface IListProducts extends IListRequest {
 	product_category?: string;
+	ids?: string;
 }
 
 interface ICreateProduct {

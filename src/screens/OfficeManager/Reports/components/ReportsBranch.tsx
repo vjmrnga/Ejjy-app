@@ -1,15 +1,22 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
+import { isEmpty, toString } from 'lodash';
 import debounce from 'lodash/debounce';
-import React, { useEffect, useRef, useState } from 'react';
+import moment from 'moment';
+import * as queryString from 'query-string';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { TableActions } from '../../../../components';
 import { Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
+import { ALL_OPTION_KEY } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { request, timeRangeTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProducts } from '../../../../hooks/useProducts';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
@@ -17,8 +24,6 @@ import {
 	getBranchProductStatus,
 } from '../../../../utils/function';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
-
-const { RangePicker } = DatePicker;
 
 const columns: ColumnsType = [
 	{
@@ -88,27 +93,45 @@ const columns: ColumnsType = [
 const INTERVAL_MS = 30000;
 const SEARCH_DEBOUNCE_TIME = 1000;
 
-const getSorting = (column, order) => {
-	let sorting = null;
+const sorts = {
+	CURRENT_BALANCE_ASC: 'current_balance',
+	CURRENT_BALANCE_DES: '-current_balance',
+	QUANTITY_SOLD_ASC: 'quantity_sold',
+	QUANTITY_SOLD_DES: '-quantity_sold',
+	DAILY_AVERAGE_SOLD_ASC: 'daily_average_sold',
+	DAILY_AVERAGE_SOLD_DES: '-daily_average_sold',
+	DAILY_AVERAGE_SOLD_PERCENTAGE_ASC: 'daily_average_sold_percentage',
+	DAILY_AVERAGE_SOLD_PERCENTAGE_DES: '-daily_average_sold_percentage',
+};
+
+const getSortOrder = (column, order) => {
+	let sortOrder = null;
 
 	if (!order) {
-		return sorting;
+		return sortOrder;
 	}
 
 	if (column === 'balance') {
-		sorting = order === 'ascend' ? 'current_balance' : '-current_balance';
-	} else if (column === 'quantity_sold') {
-		sorting = order === 'ascend' ? 'quantity_sold' : '-quantity_sold';
-	} else if (column === 'daily_average_sold') {
-		sorting = order === 'ascend' ? 'daily_average_sold' : '-daily_average_sold';
-	} else if (column === 'daily_average_sold_percentage') {
-		sorting =
+		sortOrder =
 			order === 'ascend'
-				? 'daily_average_sold_percentage'
-				: '-daily_average_sold_percentage';
+				? sorts.CURRENT_BALANCE_ASC
+				: sorts.CURRENT_BALANCE_DES;
+	} else if (column === 'quantity_sold') {
+		sortOrder =
+			order === 'ascend' ? sorts.QUANTITY_SOLD_ASC : sorts.QUANTITY_SOLD_DES;
+	} else if (column === 'daily_average_sold') {
+		sortOrder =
+			order === 'ascend'
+				? sorts.DAILY_AVERAGE_SOLD_ASC
+				: sorts.DAILY_AVERAGE_SOLD_DES;
+	} else if (column === 'daily_average_sold_percentage') {
+		sortOrder =
+			order === 'ascend'
+				? sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC
+				: sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES;
 	}
 
-	return sorting;
+	return sortOrder;
 };
 
 interface Props {
@@ -124,31 +147,46 @@ export const ReportsBranch = ({
 }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [tags, setTags] = useState('');
-	const [timeRange, setTimeRange] = useState(timeRangeTypes.DAILY);
-	const [timeRangeOption, setTimeRangeOption] = useState(timeRangeTypes.DAILY);
-	const [sorting, setSorting] = useState(null);
-	const [productCategory, setProductCategory] = useState(null);
-	const [productOptions, setProductOptions] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
-	const [showSoldOnly, setShowSoldOnly] = useState(true);
-	const [editBranchProductModalVisible, setEditBranchProductModalVisible] =
-		useState(false);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
 		pageSize,
 		currentPage,
 		getBranchProductsWithAnalytics,
-		updateItemInPagination,
 		status: branchProductsStatus,
 		errors,
 		warnings,
 	} = useBranchProducts();
-	const { products, getProducts, status: productsStatus } = useProducts();
+
+	const { refreshList, setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			if (isActive) {
+				const newData = {
+					...params,
+					productIds:
+						params?.productIds?.length > 0 ? params.productIds : undefined,
+					isSoldInBranch:
+						params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
+							? undefined
+							: true,
+				};
+
+				getBranchProductsWithAnalytics(newData, true);
+
+				clearInterval(intervalRef.current);
+				intervalRef.current = setInterval(() => {
+					getBranchProductsWithAnalytics(newData, true);
+				}, INTERVAL_MS);
+			}
+		},
+	});
 
 	// REFS
 	const intervalRef = useRef(null);
@@ -163,29 +201,44 @@ export const ReportsBranch = ({
 	);
 
 	useEffect(() => {
-		if (isActive) {
-			fetchBranchProducts(
-				null,
-				null,
-				null,
-				timeRangeTypes.DAILY,
-				showSoldOnly,
-				1,
-				pageSize,
-			);
-		} else {
+		const params = queryString.parse(history.location.search);
+		const ordering = toString(params.ordering);
+
+		switch (ordering) {
+			case sorts.CURRENT_BALANCE_ASC:
+				columns[2].sortOrder = 'ascend';
+				break;
+			case sorts.CURRENT_BALANCE_DES:
+				columns[2].sortOrder = 'descend';
+				break;
+			case sorts.QUANTITY_SOLD_ASC:
+				columns[4].sortOrder = 'ascend';
+				break;
+			case sorts.QUANTITY_SOLD_DES:
+				columns[4].sortOrder = 'descend';
+				break;
+			case sorts.DAILY_AVERAGE_SOLD_ASC:
+				columns[5].sortOrder = 'ascend';
+				break;
+			case sorts.DAILY_AVERAGE_SOLD_DES:
+				columns[5].sortOrder = 'descend';
+				break;
+			case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC:
+				columns[6].sortOrder = 'ascend';
+				break;
+			case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES:
+				columns[6].sortOrder = 'descend';
+				break;
+			default:
+			// Do nothing
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!isActive) {
 			clearInterval(intervalRef.current);
 		}
 	}, [isActive]);
-
-	useEffect(() => {
-		setProductOptions(
-			products.map((product) => ({
-				label: product.name,
-				value: product.id,
-			})),
-		);
-	}, [products]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && branchProducts.length) {
@@ -233,7 +286,6 @@ export const ReportsBranch = ({
 					<TableActions
 						onEdit={() => {
 							setSelectedBranchProduct(branchProduct);
-							setEditBranchProductModalVisible(true);
 						}}
 					/>
 				),
@@ -242,64 +294,6 @@ export const ReportsBranch = ({
 
 		setData(newBranchProducts);
 	}, [branchProducts]);
-
-	const fetchBranchProducts = (
-		productIds,
-		sort,
-		category,
-		range,
-		isSoldInBranch,
-		page,
-		newPageSize,
-	) => {
-		getBranchProductsWithAnalytics(
-			{
-				branchId,
-				productIds: productIds?.length ? productIds : null,
-				sorting: sort,
-				productCategory: category,
-				timeRange: range,
-				isSoldInBranch: isSoldInBranch || undefined,
-				page,
-				pageSize: newPageSize,
-			},
-			true,
-		);
-
-		clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => {
-			getBranchProductsWithAnalytics(
-				{
-					branchId,
-					productIds: productIds?.length ? productIds : null,
-					sorting,
-					productCategory,
-					timeRange,
-					isSoldInBranch,
-					page,
-					pageSize: newPageSize,
-				},
-				true,
-			);
-		}, INTERVAL_MS);
-	};
-
-	const debounceFetchProducts = React.useMemo(() => {
-		const loadOptions = (value: string) => {
-			setProductOptions([]);
-
-			getProducts(
-				{
-					search: value.toLowerCase(),
-					page: 1,
-					pageSize: 500,
-				},
-				true,
-			);
-		};
-
-		return debounce(loadOptions, SEARCH_DEBOUNCE_TIME);
-	}, [SEARCH_DEBOUNCE_TIME]);
 
 	return (
 		<div className="ReportsBranch">
@@ -313,185 +307,46 @@ export const ReportsBranch = ({
 				withSpaceBottom
 			/>
 
-			<Row gutter={[15, 15]}>
-				<Col lg={12} span={24}>
-					<Label label="Product Name" spacing />
-					<Select
-						mode="multiple"
-						style={{ width: '100%' }}
-						filterOption={false}
-						onSearch={debounceFetchProducts}
-						notFoundContent={
-							productsStatus === request.REQUESTING ? (
-								<Spin size="small" />
-							) : null
-						}
-						options={productOptions}
-						onChange={(value: string[]) => {
-							const joinedValue = value.join(',');
-							setTags(joinedValue);
-							setIsCompletedInitialFetch(false);
-
-							fetchBranchProducts(
-								joinedValue,
-								sorting,
-								productCategory,
-								timeRange,
-								showSoldOnly,
-								1,
-								pageSize,
-							);
-						}}
-					/>
-				</Col>
-				<Col lg={12} span={24}>
-					<Label label="Product Category" spacing />
-					<Select
-						style={{ width: '100%' }}
-						onChange={(value) => {
-							setProductCategory(value);
-							setIsCompletedInitialFetch(false);
-
-							fetchBranchProducts(
-								tags,
-								sorting,
-								value,
-								timeRange,
-								showSoldOnly,
-								1,
-								pageSize,
-							);
-						}}
-						allowClear
-					>
-						{productCategories.map(({ name }) => (
-							<Select.Option value={name}>{name}</Select.Option>
-						))}
-					</Select>
-				</Col>
-				<Col lg={12} span={24}>
-					<Label label="Quantity Sold Date" spacing />
-					<Radio.Group
-						options={[
-							{ label: 'Daily', value: timeRangeTypes.DAILY },
-							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-							{
-								label: 'Select Date Range',
-								value: timeRangeTypes.DATE_RANGE,
-							},
-						]}
-						onChange={(e) => {
-							const { value } = e.target;
-							setTimeRange(value);
-							setTimeRangeOption(value);
-
-							if (value !== 'date_range') {
-								setIsCompletedInitialFetch(false);
-								fetchBranchProducts(
-									tags,
-									sorting,
-									productCategory,
-									value,
-									showSoldOnly,
-									1,
-									pageSize,
-								);
-							}
-						}}
-						defaultValue="daily"
-						optionType="button"
-					/>
-					{timeRangeOption === 'date_range' && (
-						<RangePicker
-							format="MM/DD/YY"
-							onCalendarChange={(dates, dateStrings) => {
-								if (dates?.[0] && dates?.[1]) {
-									const value = dateStrings.join(',');
-									setTimeRange(value);
-									setIsCompletedInitialFetch(false);
-
-									fetchBranchProducts(
-										tags,
-										sorting,
-										productCategory,
-										value,
-										showSoldOnly,
-										1,
-										pageSize,
-									);
-								}
-							}}
-						/>
-					)}
-				</Col>
-				<Col lg={12} span={24}>
-					<Label label="Show Sold In Branch" spacing />
-					<Radio.Group
-						options={[
-							{ label: 'Show All', value: null },
-							{ label: 'In Stock', value: true },
-						]}
-						onChange={(e) => {
-							const { value } = e.target;
-							setShowSoldOnly(value);
-
-							fetchBranchProducts(
-								tags,
-								sorting,
-								productCategory,
-								timeRange,
-								value,
-								1,
-								pageSize,
-							);
-						}}
-						// eslint-disable-next-line react/jsx-boolean-value
-						defaultValue={true}
-						optionType="button"
-					/>
-				</Col>
-			</Row>
+			<Filter
+				productCategories={productCategories}
+				setQueryParams={(params, shouldResetPage) => {
+					setIsCompletedInitialFetch(false);
+					setQueryParams(params, shouldResetPage);
+				}}
+			/>
 
 			<Table
 				className="ReportsBranch_table TableNoPadding"
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 1200 }}
+				scroll={{ x: 1400 }}
 				pagination={{
 					current: currentPage,
 					total: pageCount,
 					pageSize,
 					position: ['bottomCenter'],
 					onChange: (page, newPageSize) => {
-						setIsCompletedInitialFetch(false);
-						fetchBranchProducts(
-							'',
-							sorting,
-							productCategory,
-							timeRange,
-							showSoldOnly,
+						setQueryParams({
 							page,
-							newPageSize,
-						);
+							pageSize: newPageSize,
+						});
 					},
 					disabled: !data,
 					pageSizeOptions,
 				}}
 				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
 					if (extra.action === 'sort') {
-						const value = getSorting(sorter.columnKey, sorter.order);
-						setSorting(value);
-						setIsCompletedInitialFetch(false);
+						columns[2].sortOrder = null;
+						columns[4].sortOrder = null;
+						columns[5].sortOrder = null;
+						columns[6].sortOrder = null;
+						// eslint-disable-next-line no-param-reassign
+						sorter.column.sortOrder = sorter.order;
 
-						fetchBranchProducts(
-							tags,
-							value,
-							productCategory,
-							timeRange,
-							showSoldOnly,
-							currentPage,
-							pageSize,
-						);
+						setIsCompletedInitialFetch(false);
+						setQueryParams({
+							ordering: getSortOrder(sorter.columnKey, sorter.order),
+						});
 					}
 				}}
 				loading={
@@ -501,13 +356,227 @@ export const ReportsBranch = ({
 				}
 			/>
 
-			<EditBranchProductsModal
-				branchId={branchId}
-				branchProduct={selectedBranchProduct}
-				updateItemInPagination={updateItemInPagination}
-				visible={editBranchProductModalVisible}
-				onClose={() => setEditBranchProductModalVisible(false)}
-			/>
+			{selectedBranchProduct && (
+				<EditBranchProductsModal
+					branchId={branchId}
+					branchProduct={selectedBranchProduct}
+					onSuccess={refreshList}
+					onClose={() => setSelectedBranchProduct(false)}
+				/>
+			)}
 		</div>
+	);
+};
+
+interface FilterProps {
+	productCategories: IProductCategory[];
+	setQueryParams: any;
+}
+
+const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
+	// STATES
+	const [productOptions, setProductOptions] = useState([]);
+	const [isTimeRange, setIsTimeRange] = useState(false);
+	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
+	const [selectedProducts, setSelectedProducts] = useState([]);
+
+	// CUSTOM HOOKS
+	const history = useHistory();
+	const params = queryString.parse(history.location.search);
+	const { products, getProducts, status: productsStatus } = useProducts();
+
+	// METHODS
+	useEffect(() => {
+		getProducts(
+			{
+				ids: params?.tags,
+				page: 1,
+				pageSize: 10,
+			},
+			true,
+		);
+
+		const newParams = {};
+
+		const timeRange = toString(params.timeRange);
+		if (!timeRange) {
+			// eslint-disable-next-line dot-notation
+			newParams['timeRange'] = timeRangeTypes.DAILY;
+		} else if (timeRange?.includes(',')) {
+			setIsTimeRange(true);
+		}
+
+		const isSoldInBranch = toString(params.isSoldInBranch);
+		if (!isSoldInBranch) {
+			// eslint-disable-next-line dot-notation
+			newParams['isSoldInBranch'] = '1';
+		}
+
+		if (!isEmpty(newParams)) {
+			setQueryParams({ ...newParams, ...params });
+		}
+	}, []);
+
+	useEffect(() => {
+		setProductOptions(
+			products.map((product) => ({
+				label: product.name,
+				value: product.id,
+			})),
+		);
+
+		if (!isDefaultProductFetched) {
+			const tags = toString(params.tags)
+				.split(',')
+				.map((x) => Number(x));
+			const options = products
+				.filter((product) => tags.includes(product.id))
+				.map((product) => ({
+					label: product.name,
+					value: product.id,
+				}));
+
+			setSelectedProducts(options);
+
+			// Only set default product fetched true if exact same length;
+			if (options.length === tags.length) {
+				setIsDefaultProductFetched(true);
+			}
+		}
+	}, [products]);
+
+	const onSearchDebounced = useCallback(
+		debounce((keyword) => {
+			setProductOptions([]);
+
+			getProducts(
+				{ search: keyword.toLowerCase(), page: 1, pageSize: 25 },
+				true,
+			);
+		}, SEARCH_DEBOUNCE_TIME),
+		[params],
+	);
+
+	return (
+		<Row gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<Label label="Product Name" spacing />
+				<Select
+					mode="multiple"
+					style={{ width: '100%' }}
+					filterOption={false}
+					onSearch={onSearchDebounced}
+					notFoundContent={
+						productsStatus === request.REQUESTING ? <Spin size="small" /> : null
+					}
+					options={productOptions}
+					value={selectedProducts}
+					onChange={(values) => {
+						setSelectedProducts(values);
+
+						setQueryParams(
+							{ tags: values.map(({ value }) => value).join(',') },
+							true,
+						);
+					}}
+					labelInValue
+				/>
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Product Category" spacing />
+				<Select
+					style={{ width: '100%' }}
+					defaultValue={params.productCategory}
+					onChange={(value) => {
+						setQueryParams({ productCategory: value }, true);
+					}}
+					allowClear
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option value={name}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Quantity Sold Date" spacing />
+				<Radio.Group
+					options={[
+						{ label: 'Daily', value: timeRangeTypes.DAILY },
+						{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
+						{
+							label: 'Select Date Range',
+							value: timeRangeTypes.DATE_RANGE,
+						},
+					]}
+					onChange={(e) => {
+						const { value } = e.target;
+
+						if (value !== timeRangeTypes.DATE_RANGE) {
+							setQueryParams({ timeRange: value }, true);
+						} else {
+							setIsTimeRange(true);
+						}
+					}}
+					defaultValue={(() => {
+						const timeRange = toString(params.timeRange);
+
+						if (
+							[timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange)
+						) {
+							return timeRange;
+						}
+
+						if (timeRange?.indexOf(',')) {
+							return timeRangeTypes.DATE_RANGE;
+						}
+
+						return timeRangeTypes.DAILY;
+					})()}
+					optionType="button"
+				/>
+				{isTimeRange && (
+					<DatePicker.RangePicker
+						format="MM/DD/YY"
+						onCalendarChange={(dates, dateStrings) => {
+							if (dates?.[0] && dates?.[1]) {
+								setQueryParams({ timeRange: dateStrings.join(',') }, true);
+							}
+						}}
+						defaultValue={
+							toString(params.timeRange).split(',')?.length === 2
+								? [
+										moment(toString(params.timeRange).split(',')[0]),
+										moment(toString(params.timeRange).split(',')[1]),
+								  ]
+								: undefined
+						}
+						defaultPickerValue={
+							toString(params.timeRange).split(',')?.length === 2
+								? [
+										moment(toString(params.timeRange).split(',')[0]),
+										moment(toString(params.timeRange).split(',')[1]),
+								  ]
+								: undefined
+						}
+					/>
+				)}
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Show Sold In Branch" spacing />
+				<Radio.Group
+					options={[
+						{ label: 'Show All', value: ALL_OPTION_KEY },
+						{ label: 'In Stock', value: '1' },
+					]}
+					value={params.isSoldInBranch}
+					onChange={(e) => {
+						setQueryParams({ isSoldInBranch: e.target.value }, true);
+					}}
+					// eslint-disable-next-line react/jsx-boolean-value
+					defaultValue={params.isSoldInBranch}
+					optionType="button"
+				/>
+			</Col>
+		</Row>
 	);
 };

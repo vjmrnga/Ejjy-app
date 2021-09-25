@@ -90,7 +90,7 @@ export const Sales = () => {
 											moment(toString(params.timeRange).split(',')[0]),
 											moment(toString(params.timeRange).split(',')[1]),
 									  ]
-									: [moment(), moment()]
+									: undefined
 							}
 							defaultPickerValue={
 								toString(params.timeRange).split(',')?.length === 2
@@ -98,7 +98,7 @@ export const Sales = () => {
 											moment(toString(params.timeRange).split(',')[0]),
 											moment(toString(params.timeRange).split(',')[1]),
 									  ]
-									: [moment(), moment()]
+									: undefined
 							}
 						/>
 					)}
