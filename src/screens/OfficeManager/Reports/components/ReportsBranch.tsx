@@ -389,7 +389,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 	useEffect(() => {
 		getProducts(
 			{
-				ids: params?.tags,
+				ids: params?.productIds,
 				page: 1,
 				pageSize: 10,
 			},
@@ -426,11 +426,11 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 		);
 
 		if (!isDefaultProductFetched) {
-			const tags = toString(params.tags)
+			const productIds = toString(params.productIds)
 				.split(',')
 				.map((x) => Number(x));
 			const options = products
-				.filter((product) => tags.includes(product.id))
+				.filter((product) => productIds.includes(product.id))
 				.map((product) => ({
 					label: product.name,
 					value: product.id,
@@ -439,7 +439,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 			setSelectedProducts(options);
 
 			// Only set default product fetched true if exact same length;
-			if (options.length === tags.length) {
+			if (options.length === productIds.length) {
 				setIsDefaultProductFetched(true);
 			}
 		}
@@ -475,7 +475,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 						setSelectedProducts(values);
 
 						setQueryParams(
-							{ tags: values.map(({ value }) => value).join(',') },
+							{ productIds: values.map(({ value }) => value).join(',') },
 							true,
 						);
 					}}
