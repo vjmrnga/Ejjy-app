@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
@@ -14,6 +15,7 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProductCategories } from '../../../../hooks/useProductCategories';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { IProductCategory } from '../../../../models';
 import { convertIntoArray, formatQuantity } from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
@@ -26,6 +28,12 @@ const modals = {
 	EDIT: 2,
 };
 
+const isSoldInBranchOptions = {
+	SHOW_ALL: 'show_all',
+	SHOW_NOT_SOLD: 'show_not_sold',
+	SHOW_IN_STOCK: 'show_in_stocks',
+};
+
 const columns: ColumnsType = [
 	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
@@ -34,10 +42,10 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	branch: any;
+	branchId: any;
 }
 
-export const ViewBranchProducts = ({ branch }: Props) => {
+export const ViewBranchProducts = ({ branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [productCategories, setProductCategories] = useState([]);
@@ -48,7 +56,6 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 	const [isCurrentBalanceVisible] = useState(true);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
@@ -66,6 +73,43 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		errors: productCategoriesErrors,
 	} = useProductCategories();
 
+	const { refreshList, setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onParamsCheck: (params) => {
+			const newParams = {};
+
+			if (!params.isSoldInBranch) {
+				newParams['isSoldInBranch'] = isSoldInBranchOptions.SHOW_IN_STOCK;
+			}
+
+			if (!params.page) {
+				newParams['page'] = 1;
+			}
+
+			return newParams;
+		},
+		onQueryParamChange: (params) => {
+			let isSoldInBranch = null;
+			if (params.isSoldInBranch === isSoldInBranchOptions.SHOW_IN_STOCK) {
+				isSoldInBranch = true;
+			} else if (
+				params.isSoldInBranch === isSoldInBranchOptions.SHOW_NOT_SOLD
+			) {
+				isSoldInBranch = false;
+			}
+
+			getBranchProducts(
+				{
+					...params,
+					isSoldInBranch,
+					branchId,
+				},
+				true,
+			);
+		},
+	});
+
 	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
 	// useEffect(() => {
 	// 	document.addEventListener('keydown', handleKeyDown);
@@ -82,20 +126,6 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 				setProductCategories(responseData);
 			}
 		});
-
-		// Set default values for filter query parameters
-		const searchObj = queryString.parse(history.location.search);
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					isSoldInBranch: true,
-					page: currentPage,
-					pageSize,
-					...searchObj,
-				},
-			}),
-		);
 	}, []);
 
 	useEffect(() => {
@@ -148,32 +178,6 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 		setData(formattedBranchProducts);
 	}, [branchProducts]);
 
-	useEffect(() => {
-		fetchBranchProducts();
-	}, [history.location]);
-
-	const fetchBranchProducts = () => {
-		const searchObj = queryString.parse(history.location.search);
-
-		const newPageSize = searchObj.pageSize || pageSize;
-		let isSoldInBranch = null;
-		if (searchObj.isSoldInBranch === 'true') {
-			isSoldInBranch = true;
-		} else if (searchObj.isSoldInBranch === 'false') {
-			isSoldInBranch = false;
-		}
-
-		getBranchProducts(
-			{
-				...searchObj,
-				isSoldInBranch,
-				branchId: branch?.id,
-				pageSize: newPageSize,
-			},
-			true,
-		);
-	};
-
 	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
 	// const handleKeyDown = (event) => {
 	// 	const key = getKeyDownCombination(event);
@@ -198,6 +202,9 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 			<Filter
 				productCategoriesStatus={productCategoriesStatus}
 				productCategories={productCategories}
+				setQueryParams={(params) => {
+					setQueryParams(params, { shouldResetPage: true });
+				}}
 			/>
 
 			<RequestErrors
@@ -220,17 +227,10 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 					total: pageCount,
 					pageSize,
 					onChange: (page, newPageSize) => {
-						const searchObj = queryString.parse(history.location.search);
-						history.push(
-							queryString.stringifyUrl({
-								url: '',
-								query: {
-									...searchObj,
-									page,
-									pageSize: newPageSize,
-								},
-							}),
-						);
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
 					},
 					disabled: !data,
 					position: ['bottomCenter'],
@@ -248,18 +248,18 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 
 			{selectedBranchProduct && modalType === modals.EDIT && (
 				<EditBranchProductsModal
-					branch={branch}
+					branchId={branchId}
 					branchProduct={selectedBranchProduct}
-					onSuccess={fetchBranchProducts}
+					onSuccess={refreshList}
 					onClose={() => setModalType(null)}
 				/>
 			)}
 
 			{selectedBranchProduct && modalType === modals.ADD && (
 				<AddBranchProductBalanceModal
-					branch={branch}
+					branchId={branchId}
 					branchProduct={selectedBranchProduct}
-					onSuccess={fetchBranchProducts}
+					onSuccess={refreshList}
 					onClose={() => setModalType(null)}
 				/>
 			)}
@@ -270,11 +270,13 @@ export const ViewBranchProducts = ({ branch }: Props) => {
 interface FilterProps {
 	productCategories: IProductCategory[];
 	productCategoriesStatus: number;
+	setQueryParams: any;
 }
 
 const Filter = ({
 	productCategories,
 	productCategoriesStatus,
+	setQueryParams,
 }: FilterProps) => {
 	const history = useHistory();
 	const searchObj = queryString.parse(history.location.search);
@@ -282,22 +284,10 @@ const Filter = ({
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			onFilter({ search: keyword });
+			setQueryParams({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
 		[searchObj],
 	);
-
-	const onFilter = (filter) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...searchObj,
-					...filter,
-				},
-			}),
-		);
-	};
 
 	return (
 		<Row className="ViewBranchProducts_filter" gutter={[15, 15]}>
@@ -317,7 +307,7 @@ const Filter = ({
 					style={{ width: '100%' }}
 					value={searchObj.productCategory}
 					onChange={(value) => {
-						onFilter({ productCategory: value });
+						setQueryParams({ productCategory: value });
 					}}
 					loading={productCategoriesStatus === request.REQUESTING}
 					allowClear
@@ -335,16 +325,20 @@ const Filter = ({
 				<Radio.Group
 					value={searchObj.isSoldInBranch}
 					options={[
-						{ label: 'Show All', value: null },
-						{ label: 'Show Not Sold', value: false },
-						{ label: 'Show In Stock', value: true },
+						{ label: 'Show All', value: isSoldInBranchOptions.SHOW_ALL },
+						{
+							label: 'Show Not Sold',
+							value: isSoldInBranchOptions.SHOW_NOT_SOLD,
+						},
+						{
+							label: 'Show In Stock',
+							value: isSoldInBranchOptions.SHOW_IN_STOCK,
+						},
 					]}
 					onChange={(e) => {
 						const { value } = e.target;
-						onFilter({ isSoldInBranch: value });
+						setQueryParams({ isSoldInBranch: value });
 					}}
-					// eslint-disable-next-line react/jsx-boolean-value
-					defaultValue={true}
 					optionType="button"
 				/>
 			</Col>

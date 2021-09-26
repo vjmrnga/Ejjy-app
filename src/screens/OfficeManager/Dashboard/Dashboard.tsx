@@ -70,7 +70,7 @@ export const Dashboard = () => {
 
 					<Tabs
 						type="card"
-						defaultActiveKey={toString(currentBranchId)}
+						activeKey={toString(currentBranchId)}
 						onTabClick={onTabClick}
 					>
 						{branches.map(({ name, id, online_url }) => (

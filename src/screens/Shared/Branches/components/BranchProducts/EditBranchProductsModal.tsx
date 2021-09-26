@@ -13,14 +13,14 @@ import {
 import { EditBranchProductsForm } from './EditBranchProductsForm';
 
 interface Props {
-	branch: any;
+	branchId: any;
 	branchProduct: any;
 	onSuccess: any;
 	onClose: any;
 }
 
 export const EditBranchProductsModal = ({
-	branch,
+	branchId,
 	branchProduct,
 	onSuccess,
 	onClose,
@@ -53,7 +53,7 @@ export const EditBranchProductsModal = ({
 	});
 
 	const onEditBranchProduct = (product, resetForm) => {
-		editBranchProduct({ ...product, branchId: branch.id }, ({ status }) => {
+		editBranchProduct({ ...product, branchId }, ({ status }) => {
 			if (status === request.SUCCESS) {
 				onSuccess();
 				resetForm();

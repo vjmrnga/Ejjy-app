@@ -1,4 +1,5 @@
 import { message, Tabs } from 'antd';
+import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -6,10 +7,12 @@ import { Breadcrumb, Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { useAuth } from '../../../hooks/useAuth';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { getUrlPrefix } from '../../../utils/function';
 import { ViewBranchCheckings } from './components/ViewBranchCheckings';
 import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';
+import { ViewBranchPendingPriceUpdates } from './components/ViewBranchPendingPriceUpdates';
 import { ViewBranchProducts } from './components/ViewBranchProducts';
 import { ViewBranchSessions } from './components/ViewBranchSessions';
 import { ViewBranchSiteSettings } from './components/ViewBranchSiteSettings';
@@ -22,6 +25,7 @@ interface Props {
 
 const tabs = {
 	PRODUCTS: 'Products',
+	PENDING_PRICE_UPDATES: 'Pending Price Updates',
 	MACHINES: 'Machines',
 	TRANSACTIONS: 'Transactions',
 	SESSIONS: 'Sessions',
@@ -40,8 +44,18 @@ export const ViewBranch = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const { user } = useAuth();
+	const {
+		params: { tab: currentTab },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
+	useEffect(() => {
+		if (!currentTab) {
+			onTabClick(tabs.PRODUCTS);
+		}
+	}, []);
+
 	useEffect(() => {
 		if (!branch?.online_url) {
 			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
@@ -57,6 +71,13 @@ export const ViewBranch = ({ match }: Props) => {
 		[branch, user],
 	);
 
+	const onTabClick = (tab) => {
+		setQueryParams(
+			{ tab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
+
 	return (
 		<Content
 			title="[VIEW] Branch"
@@ -65,16 +86,26 @@ export const ViewBranch = ({ match }: Props) => {
 		>
 			<Box className="ViewBranch">
 				<Tabs
-					defaultActiveKey={tabs.PRODUCTS}
-					style={{ padding: '20px 25px' }}
 					type="card"
+					className="PaddingHorizontal PaddingVertical"
+					activeKey={toString(currentTab)}
+					onTabClick={onTabClick}
+					destroyInactiveTabPane
 				>
 					<Tabs.TabPane
 						key={tabs.PRODUCTS}
 						tab={tabs.PRODUCTS}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchProducts branch={branch} />
+						<ViewBranchProducts branchId={branchId} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.PENDING_PRICE_UPDATES}
+						tab={tabs.PENDING_PRICE_UPDATES}
+						disabled={!branch?.online_url}
+					>
+						<ViewBranchPendingPriceUpdates branchId={branchId} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane

@@ -20,6 +20,7 @@ import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
+import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
@@ -158,6 +159,11 @@ const OfficeManager = () => {
 					<Route
 						path="/office-manager/return-item-slips"
 						component={ReturnItemSlips}
+						exact
+					/>
+					<Route
+						path="/office-manager/return-item-slips/:id"
+						component={ViewReturnItemSlip}
 						exact
 					/>
 

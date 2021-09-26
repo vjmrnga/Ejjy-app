@@ -1,21 +1,18 @@
 import { Tabs } from 'antd';
 import { toString } from 'lodash';
-import * as queryString from 'query-string';
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { Box } from '../../../../components/elements';
 import { useBranches } from '../../../../hooks/useBranches';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { SalesBranch } from './SalesBranch';
 
 export const SalesBranchSection = () => {
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { branches } = useBranches();
-
-	// VARIABLES
-	const { branchId: currentBranchId } = queryString.parse(
-		history.location.search,
-	);
+	const {
+		params: { currentBranchId },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
 	useEffect(() => {
@@ -25,15 +22,9 @@ export const SalesBranchSection = () => {
 	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...queryString.parse(history.location.search),
-					branchId,
-				},
-			}),
-		);
+		setQueryParams({
+			branchId,
+		});
 	};
 
 	return (
@@ -43,13 +34,11 @@ export const SalesBranchSection = () => {
 				type="card"
 				defaultActiveKey={toString(currentBranchId)}
 				onTabClick={onTabClick}
+				destroyInactiveTabPane
 			>
 				{branches.map(({ name, id, online_url }) => (
 					<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-						<SalesBranch
-							branchId={id}
-							isActive={id === Number(currentBranchId)}
-						/>
+						<SalesBranch branchId={id} />
 					</Tabs.TabPane>
 				))}
 			</Tabs>

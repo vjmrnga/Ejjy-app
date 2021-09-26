@@ -165,7 +165,9 @@ export const Products = () => {
 				<Filter
 					productCategories={productCategories}
 					productCategoriesStatus={productCategoriesStatus}
-					setQueryParams={setQueryParams}
+					setQueryParams={(params) => {
+						setQueryParams(params, { shouldResetPage: true });
+					}}
 				/>
 
 				<Table
@@ -246,7 +248,7 @@ const Filter = ({
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((search) => {
-			setQueryParams({ search }, true);
+			setQueryParams({ search });
 		}, SEARCH_DEBOUNCE_TIME),
 		[],
 	);
@@ -269,7 +271,7 @@ const Filter = ({
 					style={{ width: '100%' }}
 					defaultValue={params.productCategory}
 					onChange={(value) => {
-						setQueryParams({ productCategory: value }, true);
+						setQueryParams({ productCategory: value });
 					}}
 					loading={productCategoriesStatus === request.REQUESTING}
 					allowClear

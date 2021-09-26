@@ -13,14 +13,14 @@ import {
 import { Box } from '../../../components/elements';
 import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
-import { backOrdersStatuses, request } from '../../../global/types';
-import { useBackOrders } from '../../../hooks/useBackOrders';
+import { request, returnItemSlipsStatuses } from '../../../global/types';
+import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
 import {
 	formatDateTime,
 	formatQuantity,
-	getBackOrderStatus,
+	getReturnItemSlipStatus,
 } from '../../../utils/function';
-import { useBackOrderAdjustmentSlips } from '../hooks/useBackOrderAdjustmentSlips';
+import { useReturnItemSlipAdjustmentSlips } from '../hooks/useReturnItemSlipAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
 import { ViewAdjustmentSlipModal } from './components/AdjustmentSlips/ViewAdjustmentSlipModal';
@@ -36,37 +36,40 @@ interface Props {
 	match: any;
 }
 
-export const ViewBackOrder = ({ match }: Props) => {
-	const backOrderId = match?.params?.id;
+export const ViewReturnItemSlip = ({ match }: Props) => {
+	// VARIABLES
+	const returnItemSlipId = match?.params?.id;
+
 	// STATES
-	const [backOrder, setBackOrder] = useState(null);
+	const [returnItemSlip, setReturnItemSlip] = useState(null);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { retrieveBackOrder, status: backOrdersStatus } = useBackOrders();
+	const { retrieveReturnItemSlip, status: returnItemSlipsStatus } =
+		useReturnItemSlips();
 
 	// METHODS
 	useEffect(() => {
-		if (backOrderId) {
-			retrieveBackOrderFn();
+		if (returnItemSlipId) {
+			retrieveReturnItemSlipFn();
 		}
-	}, [backOrderId]);
+	}, [returnItemSlipId]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
 			{
-				name: 'Back Orders',
-				link: '/office-manager/back-orders',
+				name: 'Return Item Slips',
+				link: '/office-manager/return-item-slips',
 			},
-			{ name: `#${backOrderId}` },
+			{ name: `#${returnItemSlipId}` },
 		],
-		[backOrderId],
+		[returnItemSlipId],
 	);
 
-	const retrieveBackOrderFn = () => {
-		retrieveBackOrder(backOrderId, ({ status, data }) => {
+	const retrieveReturnItemSlipFn = () => {
+		retrieveReturnItemSlip(returnItemSlipId, ({ status, data }) => {
 			if (status === request.SUCCESS) {
-				setBackOrder(data);
+				setReturnItemSlip(data);
 			} else if (status === request.ERROR) {
 				history.replace('/404');
 			}
@@ -75,34 +78,37 @@ export const ViewBackOrder = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Back Order"
-			rightTitle={`#${backOrderId}`}
+			title="[VIEW] Return Item Slip"
+			rightTitle={`#${returnItemSlipId}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<Details backOrder={backOrder} backOrdersStatus={backOrdersStatus} />
+			<Details
+				returnItemSlip={returnItemSlip}
+				returnItemSlipsStatus={returnItemSlipsStatus}
+			/>
 			<AdjustmentSlips
-				backOrderId={backOrderId}
-				backOrder={backOrder}
-				retrieveBackOrder={retrieveBackOrderFn}
+				returnItemSlipId={returnItemSlipId}
+				returnItemSlip={returnItemSlip}
+				retrieveReturnItemSlip={retrieveReturnItemSlipFn}
 			/>
 		</Content>
 	);
 };
 
 interface DetailsProps {
-	backOrder?: any;
-	backOrdersStatus: number;
+	returnItemSlip?: any;
+	returnItemSlipsStatus: number;
 }
 
-const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
+const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 	// STATES
 	const [requestedProducts, setRequestedProducts] = useState([]);
 
 	// METHODS
 	useEffect(() => {
-		if (backOrder) {
+		if (returnItemSlip) {
 			setRequestedProducts(
-				backOrder.products.map((item) => ({
+				returnItemSlip.products.map((item) => ({
 					key: item.id,
 					name: item.product.name,
 					qty_returned: formatQuantity(
@@ -115,44 +121,44 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 								item.quantity_received,
 						  )
 						: EMPTY_CELL,
-					status: getBackOrderStatus(item.status),
+					status: getReturnItemSlipStatus(item.status),
 				})),
 			);
 		}
-	}, [backOrder]);
+	}, [returnItemSlip]);
 
 	return (
-		<Spin size="large" spinning={backOrdersStatus === request.REQUESTING}>
+		<Spin size="large" spinning={returnItemSlipsStatus === request.REQUESTING}>
 			<Box className="PaddingHorizontal PaddingVertical">
 				<DetailsRow>
 					<Col span={24}>
-						<DetailsHalf label="ID" value={backOrder?.id} />
+						<DetailsHalf label="ID" value={returnItemSlip?.id} />
 					</Col>
 
 					<DetailsHalf
 						label="Datetime Returned"
 						value={
-							backOrder?.datetime_sent
-								? formatDateTime(backOrder?.datetime_sent)
+							returnItemSlip?.datetime_sent
+								? formatDateTime(returnItemSlip?.datetime_sent)
 								: EMPTY_CELL
 						}
 					/>
 					<DetailsHalf
 						label="Datetime Received"
 						value={
-							backOrder?.datetime_received
-								? formatDateTime(backOrder?.datetime_received)
+							returnItemSlip?.datetime_received
+								? formatDateTime(returnItemSlip?.datetime_received)
 								: EMPTY_CELL
 						}
 					/>
 
 					<DetailsHalf
 						label="Returned By (branch)"
-						value={backOrder?.sender.branch.name}
+						value={returnItemSlip?.sender.branch.name}
 					/>
 					<DetailsHalf
 						label="Status"
-						value={getBackOrderStatus(backOrder?.status)}
+						value={getReturnItemSlipStatus(returnItemSlip?.status)}
 					/>
 				</DetailsRow>
 
@@ -173,14 +179,14 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 };
 
 interface AdjustmentSlipsProps {
-	backOrderId: string;
-	backOrder?: any;
-	retrieveBackOrder: any;
+	returnItemSlipId: string;
+	returnItemSlip?: any;
+	retrieveReturnItemSlip: any;
 }
 const AdjustmentSlips = ({
-	backOrderId,
-	backOrder,
-	retrieveBackOrder,
+	returnItemSlipId,
+	returnItemSlip,
+	retrieveReturnItemSlip,
 }: AdjustmentSlipsProps) => {
 	// STATE
 	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
@@ -190,22 +196,22 @@ const AdjustmentSlips = ({
 	// CUSTOM HOOKS
 	const {
 		adjustmentSlips,
-		listBackOrderAdjustmentSlips,
+		listReturnItemSlipAdjustmentSlips,
 		status: orderSlipAdjustmentSlipsStatus,
-	} = useBackOrderAdjustmentSlips();
+	} = useReturnItemSlipAdjustmentSlips();
 
 	useEffect(() => {
-		if (backOrderId) {
-			listBackOrderAdjustmentSlipsFn();
+		if (returnItemSlipId) {
+			listReturnItemSlipAdjustmentSlipsFn();
 		}
-	}, [backOrderId]);
+	}, [returnItemSlipId]);
 
-	const listBackOrderAdjustmentSlipsFn = () => {
-		listBackOrderAdjustmentSlips(
+	const listReturnItemSlipAdjustmentSlipsFn = () => {
+		listReturnItemSlipAdjustmentSlips(
 			{
 				page: 1,
 				pageSize: MAX_PAGE_SIZE,
-				backOrderId,
+				returnItemSlipId,
 			},
 			true,
 		);
@@ -219,7 +225,9 @@ const AdjustmentSlips = ({
 				onCreate={() => {
 					setCreateAdjustmentSlipVisible(true);
 				}}
-				onCreateDisabled={backOrder?.status !== backOrdersStatuses.ERROR}
+				onCreateDisabled={
+					returnItemSlip?.status !== returnItemSlipsStatuses.ERROR
+				}
 			/>
 
 			<AdjustmentSlipsTable
@@ -239,10 +247,10 @@ const AdjustmentSlips = ({
 
 			{createAdjustmentSlipVisible && (
 				<CreateAdjustmentSlipModal
-					backOrder={backOrder}
+					returnItemSlip={returnItemSlip}
 					onSuccess={() => {
-						retrieveBackOrder();
-						listBackOrderAdjustmentSlipsFn();
+						retrieveReturnItemSlip();
+						listReturnItemSlipAdjustmentSlipsFn();
 					}}
 					onClose={() => setCreateAdjustmentSlipVisible(false)}
 				/>

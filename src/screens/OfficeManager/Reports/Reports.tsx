@@ -1,12 +1,11 @@
 import { Spin, Tabs } from 'antd';
-import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useProductCategories } from '../../../hooks/useProductCategories';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray } from '../../../utils/function';
 import { ReportsBranch } from './components/ReportsBranch';
 import './style.scss';
@@ -16,7 +15,6 @@ export const Reports = () => {
 	const [productCategories, setProductCategories] = useState([]);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { branches } = useBranches();
 	const {
 		getProductCategories,
@@ -25,9 +23,10 @@ export const Reports = () => {
 	} = useProductCategories();
 
 	// VARIABLES
-	const { branchId: currentBranchId } = queryString.parse(
-		history.location.search,
-	);
+	const {
+		params: { currentBranchId },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
 	useEffect(() => {
@@ -45,17 +44,11 @@ export const Reports = () => {
 	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...queryString.parse(history.location.search),
-					branchId,
-					page: 1,
-					pageSize: 10,
-				},
-			}),
-		);
+		setQueryParams({
+			branchId,
+			page: 1,
+			pageSize: 10,
+		});
 	};
 
 	return (

@@ -1,44 +1,44 @@
+import { isEmpty } from 'lodash';
 import * as queryString from 'query-string';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDebouncedCallback } from 'use-debounce';
 
 interface Props {
 	page?: number | string;
 	pageSize?: number | string;
+	debounceTime?: number;
+	onParamsCheck?: any;
 	onQueryParamChange?: any;
 }
 
 export const useQueryParams = ({
 	page: currentPage,
 	pageSize: currentPageSize,
+	debounceTime,
+	onParamsCheck,
 	onQueryParamChange,
 }: Props = {}) => {
 	const history = useHistory();
+	const params = queryString.parse(history.location.search);
 
 	useEffect(() => {
-		onChange();
-	}, [history.location]);
+		const newParams = onParamsCheck?.(params);
 
-	const setQueryParams = (param, shouldResetPage = false) => {
-		const params = queryString.parse(history.location.search);
-
-		if (shouldResetPage) {
-			params.page = '1';
+		if (!isEmpty(newParams)) {
+			history.push(
+				queryString.stringifyUrl({
+					url: '',
+					query: {
+						...newParams,
+						...params,
+					},
+				}),
+			);
 		}
-
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...params,
-					...param,
-				},
-			}),
-		);
-	};
+	}, []);
 
 	const onChange = () => {
-		const params = queryString.parse(history.location.search);
 		const pageSize = params.pageSize || currentPageSize;
 		const page = params.page || currentPage;
 
@@ -47,5 +47,31 @@ export const useQueryParams = ({
 		}
 	};
 
-	return { setQueryParams, refreshList: onChange };
+	const debouncedOnChange = useDebouncedCallback(onChange, debounceTime || 500);
+
+	useEffect(() => {
+		debouncedOnChange();
+	}, [history.location.search]);
+
+	/**
+	 * @param param
+	 * @param options
+	 */
+	const setQueryParams = (
+		param,
+		{ shouldResetPage = false, shouldIncludeCurrentParams = true } = {},
+	) => {
+		history.push(
+			queryString.stringifyUrl({
+				url: '',
+				query: {
+					...(shouldIncludeCurrentParams ? params : {}),
+					...(shouldResetPage ? { page: 1 } : {}),
+					...param,
+				},
+			}),
+		);
+	};
+
+	return { params, setQueryParams, refreshList: onChange };
 };

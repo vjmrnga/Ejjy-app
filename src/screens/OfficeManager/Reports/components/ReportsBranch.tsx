@@ -151,7 +151,6 @@ export const ReportsBranch = ({
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
@@ -163,7 +162,11 @@ export const ReportsBranch = ({
 		warnings,
 	} = useBranchProducts();
 
-	const { refreshList, setQueryParams } = useQueryParams({
+	const {
+		params: { ordering },
+		refreshList,
+		setQueryParams,
+	} = useQueryParams({
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
@@ -201,9 +204,6 @@ export const ReportsBranch = ({
 	);
 
 	useEffect(() => {
-		const params = queryString.parse(history.location.search);
-		const ordering = toString(params.ordering);
-
 		switch (ordering) {
 			case sorts.CURRENT_BALANCE_ASC:
 				columns[2].sortOrder = 'ascend';
@@ -309,9 +309,9 @@ export const ReportsBranch = ({
 
 			<Filter
 				productCategories={productCategories}
-				setQueryParams={(params, shouldResetPage) => {
+				setQueryParams={(params) => {
 					setIsCompletedInitialFetch(false);
-					setQueryParams(params, shouldResetPage);
+					setQueryParams(params, { shouldResetPage: true });
 				}}
 			/>
 
@@ -474,10 +474,9 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					onChange={(values) => {
 						setSelectedProducts(values);
 
-						setQueryParams(
-							{ productIds: values.map(({ value }) => value).join(',') },
-							true,
-						);
+						setQueryParams({
+							productIds: values.map(({ value }) => value).join(','),
+						});
 					}}
 					labelInValue
 				/>
@@ -488,7 +487,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					style={{ width: '100%' }}
 					defaultValue={params.productCategory}
 					onChange={(value) => {
-						setQueryParams({ productCategory: value }, true);
+						setQueryParams({ productCategory: value });
 					}}
 					allowClear
 				>
@@ -512,7 +511,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 						const { value } = e.target;
 
 						if (value !== timeRangeTypes.DATE_RANGE) {
-							setQueryParams({ timeRange: value }, true);
+							setQueryParams({ timeRange: value });
 						} else {
 							setIsTimeRange(true);
 						}
@@ -539,7 +538,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 						format="MM/DD/YY"
 						onCalendarChange={(dates, dateStrings) => {
 							if (dates?.[0] && dates?.[1]) {
-								setQueryParams({ timeRange: dateStrings.join(',') }, true);
+								setQueryParams({ timeRange: dateStrings.join(',') });
 							}
 						}}
 						defaultValue={

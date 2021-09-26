@@ -91,7 +91,6 @@ export const BranchBalanceItem = ({
 	const [hasInternetConnection, setHasInternetConnection] = useState(null);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const {
 		branchProducts,
 		pageCount,
@@ -239,7 +238,9 @@ export const BranchBalanceItem = ({
 					<Filter
 						productCategories={productCategories}
 						hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
-						setQueryParams={setQueryParams}
+						setQueryParams={(params) => {
+							setQueryParams(params, { shouldResetPage: true });
+						}}
 					/>
 				</>
 			)}
@@ -266,17 +267,10 @@ export const BranchBalanceItem = ({
 					total: pageCount,
 					pageSize,
 					onChange: (page, newPageSize) => {
-						const searchObj = queryString.parse(history.location.search);
-						history.push(
-							queryString.stringifyUrl({
-								url: '',
-								query: {
-									...searchObj,
-									page,
-									pageSize: newPageSize,
-								},
-							}),
-						);
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
 					},
 					disabled: !data,
 					position: ['bottomCenter'],
@@ -305,14 +299,14 @@ const Filter = ({
 	setQueryParams,
 }: FilterProps) => {
 	const history = useHistory();
-	const searchObj = queryString.parse(history.location.search);
+	const params = queryString.parse(history.location.search);
 
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			setQueryParams({ search: keyword }, true);
+			setQueryParams({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
-		[searchObj],
+		[params],
 	);
 
 	return (
@@ -321,7 +315,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
-					defaultValue={searchObj.search}
+					defaultValue={params.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -331,9 +325,9 @@ const Filter = ({
 				<Label label="Category" spacing />
 				<Select
 					style={{ width: '100%' }}
-					value={searchObj.productCategory}
+					value={params.productCategory}
 					onChange={(value) => {
-						setQueryParams({ productCategory: value }, true);
+						setQueryParams({ productCategory: value });
 					}}
 					allowClear
 				>
@@ -349,9 +343,9 @@ const Filter = ({
 				<Label label="Status" spacing />
 				<Select
 					style={{ width: '100%' }}
-					value={searchObj.productStatus}
+					value={params.productStatus}
 					onChange={(value) => {
-						setQueryParams({ productStatus: value }, true);
+						setQueryParams({ productStatus: value });
 					}}
 					allowClear
 				>
@@ -369,10 +363,10 @@ const Filter = ({
 							{ label: 'Show All', value: null },
 							{ label: 'Has BO Balance', value: true },
 						]}
-						value={searchObj.hasBoBalance}
+						value={params.hasBoBalance}
 						onChange={(e) => {
 							const { value } = e.target;
-							setQueryParams({ hasBoBalance: value }, true);
+							setQueryParams({ hasBoBalance: value });
 						}}
 						defaultValue={null}
 						optionType="button"

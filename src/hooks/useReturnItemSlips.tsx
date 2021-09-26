@@ -42,18 +42,11 @@ export const useReturnItemSlips = () => {
 	const [pageSize, setPageSize] = useState(5);
 
 	// ACTIONS
-	const getReturnItemSlipsAction = useActionDispatch(
-		actions.getReturnItemSlips,
-	);
-	const createReturnItemSlipAction = useActionDispatch(
-		actions.createReturnItemSlip,
-	);
-	const editReturnItemSlipAction = useActionDispatch(
-		actions.editReturnItemSlip,
-	);
-	const receiveReturnItemSlipAction = useActionDispatch(
-		actions.receiveReturnItemSlip,
-	);
+	const listAction = useActionDispatch(actions.list);
+	const retrieveAction = useActionDispatch(actions.retrieve);
+	const createAction = useActionDispatch(actions.create);
+	const editAction = useActionDispatch(actions.edit);
+	const receiveAction = useActionDispatch(actions.receive);
 
 	// GENERAL METHODS
 	const executeRequest = (data, requestCallback, action) => {
@@ -98,8 +91,8 @@ export const useReturnItemSlips = () => {
 	// REQUEST METHODS
 	const getReturnItemSlips = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
-			requestAction: getReturnItemSlipsAction,
-			requestType: types.GET_RETURN_ITEM_SLIPS,
+			requestAction: listAction,
+			requestType: types.LIST,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,
@@ -111,8 +104,15 @@ export const useReturnItemSlips = () => {
 		});
 	};
 
+	const retrieveReturnItemSlip = (id, extraCallback = null) => {
+		retrieveAction({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
 	const createReturnItemSlip = (data, extraCallback = null) => {
-		createReturnItemSlipAction({
+		createAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
@@ -126,7 +126,7 @@ export const useReturnItemSlips = () => {
 	};
 
 	const editReturnItemSlip = (data, extraCallback = null) => {
-		editReturnItemSlipAction({
+		editAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
@@ -136,7 +136,7 @@ export const useReturnItemSlips = () => {
 	};
 
 	const receiveReturnItemSlip = (data, extraCallback = null) => {
-		receiveReturnItemSlipAction({
+		receiveAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
@@ -159,6 +159,7 @@ export const useReturnItemSlips = () => {
 		removeItemInPagination,
 
 		getReturnItemSlips,
+		retrieveReturnItemSlip,
 		createReturnItemSlip,
 		editReturnItemSlip,
 		receiveReturnItemSlip,

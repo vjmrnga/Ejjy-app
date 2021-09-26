@@ -27,10 +27,9 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: number;
-	isActive: boolean;
 }
 
-export const SalesBranch = ({ branchId, isActive }: Props) => {
+export const SalesBranch = ({ branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [sales, setSales] = useState([]);
@@ -50,7 +49,7 @@ export const SalesBranch = ({ branchId, isActive }: Props) => {
 		onQueryParamChange: (params) => {
 			const { timeRange } = params;
 
-			if (isActive && timeRange) {
+			if (timeRange) {
 				setIsCompletedInitialFetch(false);
 				const onCallback = ({ status, data: branchSales }) => {
 					if (status === request.SUCCESS) {
@@ -79,12 +78,6 @@ export const SalesBranch = ({ branchId, isActive }: Props) => {
 		},
 		[],
 	);
-
-	useEffect(() => {
-		if (!isActive) {
-			clearInterval(intervalRef.current);
-		}
-	}, [isActive]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && sales.length) {

@@ -1,9 +1,9 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AddButtonIcon, Content } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { ViewReturnItemSlipModal } from '../../../components/modals/ViewReturnItemSlipModal';
+import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
@@ -23,16 +23,10 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-const modals = {
-	VIEW: 0,
-	ASSIGN: 1,
-};
-
 export const ReturnItemSlips = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedReturnItemSlip, setSelectedReturnItemSlip] = useState(null);
-	const [modalType, setModalType] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -54,10 +48,9 @@ export const ReturnItemSlips = () => {
 			returnItemSlips.map((returnItemSlip) => ({
 				key: returnItemSlip.id,
 				id: (
-					<ButtonLink
-						text={returnItemSlip.id}
-						onClick={() => onOpenModal(returnItemSlip, modals.VIEW)}
-					/>
+					<Link to={`/office-manager/return-item-slips/${returnItemSlip.id}`}>
+						{returnItemSlip.id}
+					</Link>
 				),
 				datetime_sent: returnItemSlip.datetime_sent
 					? formatDateTime(returnItemSlip.datetime_sent)
@@ -69,7 +62,7 @@ export const ReturnItemSlips = () => {
 				status: getReturnItemSlipStatus(returnItemSlip.status),
 				actions: !returnItemSlip.receiver ? (
 					<AddButtonIcon
-						onClick={() => onOpenModal(returnItemSlip, modals.ASSIGN)}
+						onClick={() => setSelectedReturnItemSlip(returnItemSlip)}
 						tooltip="Assign"
 					/>
 				) : (
@@ -78,11 +71,6 @@ export const ReturnItemSlips = () => {
 			})),
 		);
 	}, [returnItemSlips]);
-
-	const onOpenModal = (returnItemSlip, type) => {
-		setModalType(type);
-		setSelectedReturnItemSlip(returnItemSlip);
-	};
 
 	const onPageChange = (page, newPageSize) => {
 		getReturnItemSlips(
@@ -113,18 +101,12 @@ export const ReturnItemSlips = () => {
 					loading={returnItemSlipsStatus === request.REQUESTING}
 				/>
 			</Box>
-			{modalType === modals.VIEW && selectedReturnItemSlip && (
-				<ViewReturnItemSlipModal
-					returnItemSlip={selectedReturnItemSlip}
-					onClose={() => onOpenModal(null, null)}
-				/>
-			)}
 
-			{modalType === modals.ASSIGN && selectedReturnItemSlip && (
+			{selectedReturnItemSlip && (
 				<AssignReturnItemSlipModal
 					returnItemSlip={selectedReturnItemSlip}
 					onSuccess={() => getReturnItemSlips({ page: 1 }, true)}
-					onClose={() => onOpenModal(null, null)}
+					onClose={() => setSelectedReturnItemSlip(null)}
 				/>
 			)}
 		</Content>

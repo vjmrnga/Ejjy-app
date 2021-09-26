@@ -1,22 +1,21 @@
 import { Tabs } from 'antd';
 import { toString } from 'lodash';
-import * as queryString from 'query-string';
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { useBranches } from '../../../hooks/useBranches';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { BranchCheckings } from './components/BranchCheckings';
 
 export const Checkings = () => {
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { branches } = useBranches();
 
 	// VARIABLES
-	const { branchId: currentBranchId } = queryString.parse(
-		history.location.search,
-	);
+	const {
+		params: { currentBranchId },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
 	useEffect(() => {
@@ -26,17 +25,11 @@ export const Checkings = () => {
 	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...queryString.parse(history.location.search),
-					branchId,
-					page: 1,
-					pageSize: 10,
-				},
-			}),
-		);
+		setQueryParams({
+			branchId,
+			page: 1,
+			pageSize: 10,
+		});
 	};
 
 	return (

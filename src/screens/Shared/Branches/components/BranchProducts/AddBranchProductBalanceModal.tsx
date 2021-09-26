@@ -16,14 +16,14 @@ import '../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 
 interface Props {
-	branch: any;
+	branchId: any;
 	branchProduct: any;
 	onSuccess: any;
 	onClose: any;
 }
 
 export const AddBranchProductBalanceModal = ({
-	branch,
+	branchId,
 	branchProduct,
 	onSuccess,
 	onClose,
@@ -51,7 +51,7 @@ export const AddBranchProductBalanceModal = ({
 	const onAddBranchProductBalance = (data) => {
 		editBranchProductBalance(
 			{
-				branchId: branch?.id,
+				branchId,
 				addedBalance: data.balance,
 				productId: branchProduct.product.id,
 				updatingUserId: user.id,

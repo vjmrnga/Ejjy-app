@@ -31,6 +31,25 @@ function* list({ payload }: any) {
 	}
 }
 
+function* retrieve({ payload }: any) {
+	const { id, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.retrieve,
+			id,
+			ONLINE_API_URL,
+		);
+
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
 function* create({ payload }: any) {
 	const { senderId, products, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -95,23 +114,28 @@ function* receive({ payload }: any) {
 
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.GET_RETURN_ITEM_SLIPS, list);
+	yield takeLatest(types.LIST, list);
+};
+
+const retrieveWatcherSaga = function* retrieveWatcherSaga() {
+	yield takeLatest(types.RETRIEVE, retrieve);
 };
 
 const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_RETURN_ITEM_SLIP, create);
+	yield takeLatest(types.CREATE, create);
 };
 
 const editWatcherSaga = function* editWatcherSaga() {
-	yield takeLatest(types.EDIT_RETURN_ITEM_SLIP, edit);
+	yield takeLatest(types.EDIT, edit);
 };
 
 const receiveWatcherSaga = function* receiveWatcherSaga() {
-	yield takeLatest(types.RECEIVE_RETURN_ITEM_SLIP, receive);
+	yield takeLatest(types.RECEIVE, receive);
 };
 
 export default [
 	listWatcherSaga(),
+	retrieveWatcherSaga(),
 	createWatcherSaga(),
 	editWatcherSaga(),
 	receiveWatcherSaga(),

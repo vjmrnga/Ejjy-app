@@ -67,7 +67,6 @@ export const RequisitionSlips = () => {
 	});
 
 	// METHODS
-
 	useEffect(() => {
 		const formattedProducts = requisitionSlips.map((requisitionSlip) => {
 			const {
@@ -114,7 +113,11 @@ export const RequisitionSlips = () => {
 					pending={pendingCount}
 				/>
 
-				<Filter setQueryParams={setQueryParams} />
+				<Filter
+					setQueryParams={(params) => {
+						setQueryParams(params, { shouldResetPage: true });
+					}}
+				/>
 
 				<Table
 					columns={columns}
@@ -159,7 +162,7 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ status: value }, true);
+						setQueryParams({ status: value });
 					}}
 					defaultValue={params.status || 'all'}
 					allowClear

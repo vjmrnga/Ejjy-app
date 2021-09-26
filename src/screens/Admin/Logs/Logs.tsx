@@ -78,7 +78,9 @@ export const Logs = () => {
 						usersLoading={usersStatus === request.REQUESTING}
 						branches={branches}
 						branchesLoading={branchesStatus === request.REQUESTING}
-						setQueryParams={setQueryParams}
+						setQueryParams={(params) => {
+							setQueryParams(params, { shouldResetPage: true });
+						}}
 					/>
 					<Table
 						columns={columns}
@@ -132,7 +134,7 @@ const Filter = ({
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ branchId: value }, true);
+						setQueryParams({ branchId: value });
 					}}
 					defaultValue={params.branchId}
 					loading={branchesLoading}
@@ -149,7 +151,7 @@ const Filter = ({
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ actingUserId: value }, true);
+						setQueryParams({ actingUserId: value });
 					}}
 					defaultValue={params.actingUserId}
 					loading={usersLoading}
@@ -170,7 +172,7 @@ const Filter = ({
 					format="MM/DD/YY"
 					onCalendarChange={(dates, dateStrings) => {
 						if (dates?.[0] && dates?.[1]) {
-							setQueryParams({ timeRange: dateStrings.join(',') }, true);
+							setQueryParams({ timeRange: dateStrings.join(',') });
 						}
 					}}
 					defaultValue={

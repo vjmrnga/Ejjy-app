@@ -196,7 +196,10 @@ export const Users = () => {
 	};
 
 	const onTabClick = (branchId) => {
-		setQueryParams({ branchId });
+		setQueryParams(
+			{ branchId },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
 	};
 
 	return (

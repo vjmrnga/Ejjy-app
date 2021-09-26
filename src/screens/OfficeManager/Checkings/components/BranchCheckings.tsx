@@ -51,7 +51,6 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 	});
 
 	// METHODS
-
 	useEffect(() => {
 		setData(
 			productChecks.map((productCheck) => {
@@ -79,7 +78,11 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 		<div className="BranchCheckings">
 			<TableHeader title="Checkings" />
 
-			<Filter setQueryParams={setQueryParams} />
+			<Filter
+				setQueryParams={(params) => {
+					setQueryParams(params, { shouldResetPage: true });
+				}}
+			/>
 
 			<RequestErrors
 				errors={convertIntoArray(errors)}
@@ -139,7 +142,7 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 						{ label: 'Random', value: productCheckingTypes.RANDOM },
 					]}
 					onChange={(e) => {
-						setQueryParams({ type: e.target.value }, true);
+						setQueryParams({ type: e.target.value });
 					}}
 					defaultValue={params.type || productCheckingTypes.DAILY}
 				/>

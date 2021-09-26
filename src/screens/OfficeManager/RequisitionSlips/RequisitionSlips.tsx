@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Content, TableHeaderRequisitionSlip } from '../../../components';
 import { Box, Label } from '../../../components/elements';
-import { EMPTY_CELL } from '../../../global/constants';
+import { ALL_OPTION_KEY, EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
@@ -51,8 +51,8 @@ export const RequisitionSlips = () => {
 			getRequisitionSlipsExtended(
 				{
 					...params,
-					branchId: params.branchId === 'all' ? null : params.branchId,
-					status: params.status === 'all' ? null : params.status,
+					branchId: params.branchId === ALL_OPTION_KEY ? null : params.branchId,
+					status: params.status === ALL_OPTION_KEY ? null : params.status,
 				},
 				true,
 			);
@@ -102,7 +102,11 @@ export const RequisitionSlips = () => {
 			<Box>
 				<TableHeaderRequisitionSlip pending={pendingCount} />
 
-				<Filter setQueryParams={setQueryParams} />
+				<Filter
+					setQueryParams={(params) => {
+						setQueryParams(params, { shouldResetPage: true });
+					}}
+				/>
 
 				<Table
 					columns={columns}
@@ -147,10 +151,12 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ branchId: value }, true);
+						setQueryParams({ branchId: value });
 					}}
 					// NOTE: Need to convert to Number so default value will work
-					defaultValue={params.branchId ? Number(params.branchId) : 'all'}
+					defaultValue={
+						params.branchId ? Number(params.branchId) : ALL_OPTION_KEY
+					}
 					allowClear
 				>
 					<Select.Option value="all">All</Select.Option>
@@ -166,9 +172,9 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ status: value }, true);
+						setQueryParams({ status: value });
 					}}
-					defaultValue={params.status || 'all'}
+					defaultValue={params.status || ALL_OPTION_KEY}
 					allowClear
 				>
 					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (
