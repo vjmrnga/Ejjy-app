@@ -3,6 +3,7 @@ import {
 	branchProductStatus,
 	deliveryReceiptProductStatus,
 	preparationSlipStatus,
+	productCheckingTypes,
 	quantityTypes,
 	requisitionSlipActions,
 	userTypes,
@@ -173,5 +174,18 @@ export const userTypeOptions = [
 	{
 		name: 'Admin',
 		value: userTypes.ADMIN,
+	},
+];
+
+export const checkingTypesOptions = [
+	{
+		id: productCheckingTypes.DAILY,
+		label: 'Daily',
+		value: productCheckingTypes.DAILY,
+	},
+	{
+		id: productCheckingTypes.RANDOM,
+		label: 'Random',
+		value: productCheckingTypes.RANDOM,
 	},
 ];

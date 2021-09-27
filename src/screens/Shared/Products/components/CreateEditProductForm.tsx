@@ -17,8 +17,15 @@ import {
 	Label,
 } from '../../../../components/elements';
 import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
-import { booleanOptions } from '../../../../global/options';
-import { productTypes, unitOfMeasurementTypes } from '../../../../global/types';
+import {
+	booleanOptions,
+	checkingTypesOptions,
+} from '../../../../global/options';
+import {
+	productCheckingTypes,
+	productTypes,
+	unitOfMeasurementTypes,
+} from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { IProductCategory } from '../../../../models';
 import {
@@ -89,7 +96,7 @@ export const CreateEditProductForm = ({
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-
+	console.log('product', product);
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({
@@ -120,13 +127,34 @@ export const CreateEditProductForm = ({
 				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
 				has_quantity_allowance: product?.has_quantity_allowance || false,
 
-				will_carry_over_max_balance: !product,
-				will_carry_over_reorder_point: !product,
-				will_carry_over_price_per_piece: !product,
-				will_carry_over_price_per_bulk: !product,
-				will_carry_over_cost_per_piece: !product,
-				will_carry_over_cost_per_bulk: !product,
-				will_carry_over_allowable_spoilage: !product,
+				will_carry_over_max_balance: product ? false : undefined,
+				will_carry_over_reorder_point: product ? false : undefined,
+				will_carry_over_price_per_piece: product ? false : undefined,
+				will_carry_over_price_per_bulk: product ? false : undefined,
+				will_carry_over_cost_per_piece: product ? false : undefined,
+				will_carry_over_cost_per_bulk: product ? false : undefined,
+				will_carry_over_allowable_spoilage: product ? false : undefined,
+
+				// NOTE: Branch product settings
+				checking: undefined,
+				is_daily_checked: undefined,
+				is_randomly_checked: undefined,
+				is_sold_in_branch: undefined,
+				discounted_price_per_piece1: undefined,
+				discounted_price_per_piece2: undefined,
+				discounted_price_per_bulk1: undefined,
+				discounted_price_per_bulk2: undefined,
+
+				will_carry_over_checking: product ? false : undefined,
+				will_carry_over_is_sold_in_branch: product ? false : undefined,
+				will_carry_over_discounted_price_per_piece1: product
+					? false
+					: undefined,
+				will_carry_over_discounted_price_per_bulk1: product ? false : undefined,
+				will_carry_over_discounted_price_per_piece2: product
+					? false
+					: undefined,
+				will_carry_over_discounted_price_per_bulk2: product ? false : undefined,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -209,6 +237,22 @@ export const CreateEditProductForm = ({
 						.required()
 						.min(0)
 						.label('Price per Bulk'),
+
+					checking: Yup.string().label('Checking'),
+					is_daily_checked: Yup.boolean(),
+					is_randomly_checked: Yup.boolean(),
+					discounted_price_per_piece1: Yup.number()
+						.min(0)
+						.label('Wholesale Price (piece)'),
+					discounted_price_per_piece2: Yup.number()
+						.min(0)
+						.label('Special Price (piece)'),
+					discounted_price_per_bulk1: Yup.number()
+						.min(0)
+						.label('Wholesale Price (bulk)'),
+					discounted_price_per_bulk2: Yup.number()
+						.min(0)
+						.label('Special Price (bulk)'),
 				},
 				[['barcode', 'textcode']],
 			),
@@ -225,7 +269,7 @@ export const CreateEditProductForm = ({
 		[productCategories],
 	);
 
-	const renderCommonFieldLabel = useCallback(
+	const renderCarryOverFieldLabel = useCallback(
 		(inputName, label, checkboxName, setFieldValue, disabledCheckbox = false) =>
 			product ? (
 				<Checkbox
@@ -243,6 +287,17 @@ export const CreateEditProductForm = ({
 		[product],
 	);
 
+	const renderCarryOverFieldNote = useCallback(
+		(carryOverCheckboxValue, fieldName) =>
+			product &&
+			carryOverCheckboxValue && (
+				<FieldWarning
+					message={`${fieldName} value will be carried over to branches when submited.`}
+				/>
+			),
+		[product],
+	);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -255,7 +310,7 @@ export const CreateEditProductForm = ({
 				const isWeighing =
 					formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING;
 
-				const data = {
+				let data = {
 					...formData,
 					id: product?.id,
 					cost_per_piece: removeCommas(formData.cost_per_piece || 0),
@@ -270,18 +325,57 @@ export const CreateEditProductForm = ({
 					will_carry_over_allowable_spoilage: isWeighing
 						? formData.will_carry_over_allowable_spoilage
 						: false,
+
+					// NOTE: Branch product values
+					checking: undefined,
+					is_daily_checked: undefined,
+					is_randomly_checked: undefined,
+					is_sold_in_branch: undefined,
+					discounted_price_per_piece1: undefined,
+					discounted_price_per_piece2: undefined,
+					discounted_price_per_bulk1: undefined,
+					discounted_price_per_bulk2: undefined,
+					will_carry_over_checking: undefined,
+					will_carry_over_is_sold_in_branch: undefined,
+					will_carry_over_discounted_price_per_piece1: undefined,
+					will_carry_over_discounted_price_per_bulk1: undefined,
+					will_carry_over_discounted_price_per_piece2: undefined,
+					will_carry_over_discounted_price_per_bulk2: undefined,
 				};
 
-				if (!product) {
-					// NOTE: We need to remove the will_carry_over_xxx form data values
-					// so it will not get included in the request.
-					data.will_carry_over_max_balance = undefined;
-					data.will_carry_over_reorder_point = undefined;
-					data.will_carry_over_price_per_piece = undefined;
-					data.will_carry_over_price_per_bulk = undefined;
-					data.will_carry_over_cost_per_piece = undefined;
-					data.will_carry_over_cost_per_bulk = undefined;
-					data.will_carry_over_allowable_spoilage = undefined;
+				if (formData.is_sold_in_branch) {
+					data = {
+						...data,
+						is_sold_in_branch: formData.will_carry_over_is_sold_in_branch
+							? formData.is_sold_in_branch
+							: undefined,
+						discounted_price_per_piece1:
+							formData.will_carry_over_discounted_price_per_piece1
+								? formData.discounted_price_per_piece1
+								: undefined,
+						discounted_price_per_piece2:
+							formData.will_carry_over_discounted_price_per_piece2
+								? formData.discounted_price_per_piece2
+								: undefined,
+						discounted_price_per_bulk1:
+							formData.will_carry_over_discounted_price_per_bulk1
+								? formData.discounted_price_per_bulk1
+								: undefined,
+						discounted_price_per_bulk2:
+							formData.will_carry_over_discounted_price_per_bulk2
+								? formData.discounted_price_per_bulk2
+								: undefined,
+					};
+
+					if (formData.will_carry_over_checking && formData.checking) {
+						data = {
+							...data,
+							is_daily_checked:
+								formData.checking === productCheckingTypes.DAILY,
+							is_randomly_checked:
+								formData.checking === productCheckingTypes.RANDOM,
+						};
+					}
 				}
 
 				onSubmit(data, resetForm);
@@ -413,7 +507,7 @@ export const CreateEditProductForm = ({
 						<Divider dashed>QUANTITY</Divider>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'reorder_point',
 								'Reorder Point',
 								'will_carry_over_reorder_point',
@@ -426,19 +520,19 @@ export const CreateEditProductForm = ({
 									values.unit_of_measurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
-								disabled={!values.will_carry_over_reorder_point}
 							/>
 							<ErrorMessage
 								name="reorder_point"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_reorder_point && (
-								<FieldWarning message="Reorder Point won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_reorder_point,
+								'Reorder Point',
 							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'max_balance',
 								'Max Balance',
 								'will_carry_over_max_balance',
@@ -451,14 +545,14 @@ export const CreateEditProductForm = ({
 									values.unit_of_measurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
-								disabled={!values.will_carry_over_max_balance}
 							/>
 							<ErrorMessage
 								name="max_balance"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_max_balance && (
-								<FieldWarning message="Max Balance won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_max_balance,
+								'Max Balance',
 							)}
 						</Col>
 
@@ -475,7 +569,7 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'allowable_spoilage',
 								'Allowable Spoilage (%)',
 								'will_carry_over_allowable_spoilage',
@@ -487,18 +581,20 @@ export const CreateEditProductForm = ({
 								id="allowable_spoilage"
 								disabled={
 									values?.unit_of_measurement !==
-										unitOfMeasurementTypes.WEIGHING ||
-									!values.will_carry_over_allowable_spoilage
+									unitOfMeasurementTypes.WEIGHING
 								}
 							/>
 							<ErrorMessage
 								name="allowable_spoilage"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{(values?.unit_of_measurement !==
-								unitOfMeasurementTypes.WEIGHING ||
-								!values.will_carry_over_allowable_spoilage) && (
+							{values?.unit_of_measurement !==
+								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited." />
+							)}
+							{renderCarryOverFieldNote(
+								values.will_carry_over_allowable_spoilage,
+								'Allowable Spoilage',
 							)}
 						</Col>
 
@@ -509,91 +605,223 @@ export const CreateEditProductForm = ({
 						</Divider>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'cost_per_piece',
 								'Cost (Piece)',
 								'will_carry_over_cost_per_piece',
 								setFieldValue,
 							)}
-							<FormInput
-								type="number"
-								id="cost_per_piece"
-								disabled={!values.will_carry_over_cost_per_piece}
-								isMoney
-							/>
+							<FormInput type="number" id="cost_per_piece" isMoney />
 							<ErrorMessage
 								name="cost_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_cost_per_piece && (
-								<FieldWarning message="Cost (Piece) won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_cost_per_piece,
+								'Cost (Piece)',
 							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'cost_per_bulk',
 								'Cost (Bulk)',
 								'will_carry_over_cost_per_bulk',
 								setFieldValue,
 							)}
-							<FormInput
-								type="number"
-								id="cost_per_bulk"
-								disabled={!values.will_carry_over_cost_per_bulk}
-								isMoney
-							/>
+							<FormInput type="number" id="cost_per_bulk" isMoney />
 							<ErrorMessage
 								name="cost_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_cost_per_bulk && (
-								<FieldWarning message="Cost (Bulk) won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_cost_per_bulk,
+								'Cost (Bulk)',
 							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'price_per_piece',
 								'Price (Piece)',
 								'will_carry_over_price_per_piece',
 								setFieldValue,
 							)}
-							<FormInput
-								type="number"
-								id="price_per_piece"
-								disabled={!values.will_carry_over_price_per_piece}
-								isMoney
-							/>
+							<FormInput type="number" id="price_per_piece" isMoney />
 							<ErrorMessage
 								name="price_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_price_per_piece && (
-								<FieldWarning message="Price (Piece) won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_price_per_piece,
+								'Price (Piece)',
 							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCommonFieldLabel(
+							{renderCarryOverFieldLabel(
 								'price_per_bulk',
 								'Price (Bulk)',
 								'will_carry_over_price_per_bulk',
 								setFieldValue,
 							)}
-							<FormInput
-								type="number"
-								id="price_per_bulk"
-								disabled={!values.will_carry_over_price_per_bulk}
-								isMoney
-							/>
+							<FormInput type="number" id="price_per_bulk" isMoney />
 							<ErrorMessage
 								name="price_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{!values.will_carry_over_price_per_bulk && (
-								<FieldWarning message="Price (Bulk) won't be included when submited." />
+							{renderCarryOverFieldNote(
+								values.will_carry_over_price_per_bulk,
+								'Price (Bulk)',
 							)}
+						</Col>
+
+						<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'is_sold_in_branch',
+								'In Stock',
+								'will_carry_over_is_sold_in_branch',
+								setFieldValue,
+							)}
+							<FormRadioButton
+								id="is_sold_in_branch"
+								items={booleanOptions}
+								disabled={!values.will_carry_over_is_sold_in_branch}
+							/>
+							<ErrorMessage
+								name="is_sold_in_branch"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'checking',
+								'Checking',
+								'will_carry_over_checking',
+								setFieldValue,
+								!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch,
+							)}
+							<FormRadioButton
+								id="checking"
+								items={checkingTypesOptions}
+								disabled={
+									!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch ||
+									!values.will_carry_over_checking
+								}
+							/>
+							<ErrorMessage
+								name="checking"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'discounted_price_per_piece1',
+								'Wholesale Price (piece)',
+								'will_carry_over_discounted_price_per_piece1',
+								setFieldValue,
+								!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch,
+							)}
+							<FormInput
+								type="number"
+								id="discounted_price_per_piece1"
+								step=".01"
+								disabled={
+									!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch ||
+									!values.will_carry_over_discounted_price_per_piece1
+								}
+								isMoney
+							/>
+							<ErrorMessage
+								name="discounted_price_per_piece1"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'discounted_price_per_piece2',
+								'Special Price (piece)',
+								'will_carry_over_discounted_price_per_piece2',
+								setFieldValue,
+								!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch,
+							)}
+							<FormInput
+								type="number"
+								id="discounted_price_per_piece2"
+								step=".01"
+								disabled={
+									!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch ||
+									!values.will_carry_over_discounted_price_per_piece2
+								}
+								isMoney
+							/>
+							<ErrorMessage
+								name="discounted_price_per_piece2"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'discounted_price_per_bulk1',
+								'Wholesale Price (bulk)',
+								'will_carry_over_discounted_price_per_bulk1',
+								setFieldValue,
+								!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch,
+							)}
+							<FormInput
+								type="number"
+								id="discounted_price_per_bulk1"
+								step=".01"
+								disabled={
+									!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch ||
+									!values.will_carry_over_discounted_price_per_bulk1
+								}
+								isMoney
+							/>
+							<ErrorMessage
+								name="discounted_price_per_bulk1"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderCarryOverFieldLabel(
+								'discounted_price_per_bulk2',
+								'Special Price (bulk)',
+								'will_carry_over_discounted_price_per_bulk2',
+								setFieldValue,
+								!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch,
+							)}
+							<FormInput
+								type="number"
+								id="discounted_price_per_bulk2"
+								step=".01"
+								disabled={
+									!values.is_sold_in_branch ||
+									!values.will_carry_over_is_sold_in_branch ||
+									!values.will_carry_over_discounted_price_per_bulk2
+								}
+								isMoney
+							/>
+							<ErrorMessage
+								name="discounted_price_per_bulk2"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 					</Row>
 

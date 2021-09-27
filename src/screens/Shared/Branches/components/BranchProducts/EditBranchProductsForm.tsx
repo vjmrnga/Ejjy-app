@@ -12,7 +12,10 @@ import {
 	FormRadioButton,
 	Label,
 } from '../../../../../components/elements';
-import { booleanOptions } from '../../../../../global/options';
+import {
+	booleanOptions,
+	checkingTypesOptions,
+} from '../../../../../global/options';
 import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
@@ -20,19 +23,6 @@ import {
 import { sleep } from '../../../../../utils/function';
 
 const { Text } = Typography;
-
-const checkingTypesOptions = [
-	{
-		id: productCheckingTypes.DAILY,
-		label: 'Daily',
-		value: productCheckingTypes.DAILY,
-	},
-	{
-		id: productCheckingTypes.RANDOM,
-		label: 'Random',
-		value: productCheckingTypes.RANDOM,
-	},
-];
 
 interface Props {
 	branchProduct: any;
