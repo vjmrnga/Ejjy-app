@@ -137,14 +137,9 @@ const getSortOrder = (column, order) => {
 interface Props {
 	branchId: number;
 	productCategories: IProductCategory[];
-	isActive: boolean;
 }
 
-export const ReportsBranch = ({
-	isActive,
-	branchId,
-	productCategories,
-}: Props) => {
+export const ReportsBranch = ({ branchId, productCategories }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
@@ -170,24 +165,22 @@ export const ReportsBranch = ({
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
-			if (isActive) {
-				const newData = {
-					...params,
-					productIds:
-						params?.productIds?.length > 0 ? params.productIds : undefined,
-					isSoldInBranch:
-						params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
-							? undefined
-							: true,
-				};
+			const newData = {
+				...params,
+				productIds:
+					params?.productIds?.length > 0 ? params.productIds : undefined,
+				isSoldInBranch:
+					params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
+						? undefined
+						: true,
+			};
 
+			getBranchProductsWithAnalytics(newData, true);
+
+			clearInterval(intervalRef.current);
+			intervalRef.current = setInterval(() => {
 				getBranchProductsWithAnalytics(newData, true);
-
-				clearInterval(intervalRef.current);
-				intervalRef.current = setInterval(() => {
-					getBranchProductsWithAnalytics(newData, true);
-				}, INTERVAL_MS);
-			}
+			}, INTERVAL_MS);
 		},
 	});
 
@@ -233,12 +226,6 @@ export const ReportsBranch = ({
 			// Do nothing
 		}
 	}, []);
-
-	useEffect(() => {
-		if (!isActive) {
-			clearInterval(intervalRef.current);
-		}
-	}, [isActive]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && branchProducts.length) {

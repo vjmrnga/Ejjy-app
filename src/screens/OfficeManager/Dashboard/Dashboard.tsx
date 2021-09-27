@@ -1,13 +1,12 @@
 import { Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
-import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import { Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useProductCategories } from '../../../hooks/useProductCategories';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray } from '../../../utils/function';
 import { BranchBalanceItem } from './components/BranchBalanceItem';
 import './style.scss';
@@ -17,7 +16,6 @@ export const Dashboard = () => {
 	const [productCategories, setProductCategories] = useState([]);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { branches } = useBranches();
 	const {
 		getProductCategories,
@@ -26,9 +24,10 @@ export const Dashboard = () => {
 	} = useProductCategories();
 
 	// VARIABLES
-	const { branchId: currentBranchId } = queryString.parse(
-		history.location.search,
-	);
+	const {
+		params: { branchId: currentBranchId },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
 	useEffect(() => {
@@ -46,17 +45,11 @@ export const Dashboard = () => {
 	}, [branches, currentBranchId]);
 
 	const onTabClick = (branchId) => {
-		history.push(
-			queryString.stringifyUrl({
-				url: '',
-				query: {
-					...queryString.parse(history.location.search),
-					branchId,
-					page: 1,
-					pageSize: 10,
-				},
-			}),
-		);
+		setQueryParams({
+			branchId,
+			page: 1,
+			pageSize: 10,
+		});
 	};
 
 	return (
@@ -72,13 +65,13 @@ export const Dashboard = () => {
 						type="card"
 						activeKey={toString(currentBranchId)}
 						onTabClick={onTabClick}
+						destroyInactiveTabPane
 					>
 						{branches.map(({ name, id, online_url }) => (
 							<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
 								<BranchBalanceItem
 									branchId={id}
 									productCategories={productCategories}
-									isActive={id === Number(currentBranchId)}
 									disabled={!online_url}
 								/>
 							</Tabs.TabPane>

@@ -10,7 +10,7 @@ export const SalesBranchSection = () => {
 	// CUSTOM HOOKS
 	const { branches } = useBranches();
 	const {
-		params: { currentBranchId },
+		params: { branchId: currentBranchId },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -30,9 +30,9 @@ export const SalesBranchSection = () => {
 	return (
 		<Box>
 			<Tabs
-				className="PaddingHorizontal PaddingVertical"
 				type="card"
-				defaultActiveKey={toString(currentBranchId)}
+				className="PaddingHorizontal PaddingVertical"
+				activeKey={toString(currentBranchId)}
 				onTabClick={onTabClick}
 				destroyInactiveTabPane
 			>

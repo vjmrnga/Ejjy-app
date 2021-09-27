@@ -76,13 +76,11 @@ interface Props {
 	branchId: number;
 	productCategories: IProductCategory[];
 	disabled: boolean;
-	isActive: boolean;
 }
 
 export const BranchBalanceItem = ({
 	branchId,
 	productCategories,
-	isActive,
 	disabled,
 }: Props) => {
 	// STATES
@@ -107,20 +105,18 @@ export const BranchBalanceItem = ({
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
-			if (isActive) {
-				setIsCompletedInitialFetch(false);
-				const newData = {
-					...params,
-					hasBoBalance: params.hasBoBalance === 'true',
-				};
+			setIsCompletedInitialFetch(false);
+			const newData = {
+				...params,
+				hasBoBalance: params.hasBoBalance === 'true',
+			};
 
+			getBranchProducts(newData, true);
+
+			clearInterval(fetchIntervalRef.current);
+			fetchIntervalRef.current = setInterval(() => {
 				getBranchProducts(newData, true);
-
-				clearInterval(fetchIntervalRef.current);
-				fetchIntervalRef.current = setInterval(() => {
-					getBranchProducts(newData, true);
-				}, FETCH_INTERVAL_MS);
-			}
+			}, FETCH_INTERVAL_MS);
 		},
 	});
 
@@ -129,39 +125,36 @@ export const BranchBalanceItem = ({
 	const networkIntervalRef = useRef(null);
 
 	// METHODS
-	useEffect(
-		() => () => {
+	useEffect(() => () => {}, []);
+
+	useEffect(() => {
+		const testBranchConnectionFn = () => {
+			testBranchConnection({ branchId }, ({ status }) => {
+				if (status === request.SUCCESS) {
+					setHasInternetConnection(true);
+				} else if (status === request.ERROR) {
+					setHasInternetConnection(false);
+				}
+			});
+		};
+		testBranchConnectionFn();
+		networkIntervalRef.current = setInterval(
+			testBranchConnectionFn,
+			NETWORK_INTERVAL_MS,
+		);
+
+		return () => {
 			// Cleanup in case logged out due to single sign on
 			clearInterval(fetchIntervalRef.current);
 			clearInterval(networkIntervalRef.current);
-		},
-		[],
-	);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (branchId !== MAIN_BRANCH_ID) {
 			columns[2] = currentBalanceColumn;
 		}
 	}, [branchId]);
-
-	useEffect(() => {
-		if (isActive) {
-			const fn = () => {
-				testBranchConnection({ branchId }, ({ status }) => {
-					if (status === request.SUCCESS) {
-						setHasInternetConnection(true);
-					} else if (status === request.ERROR) {
-						setHasInternetConnection(false);
-					}
-				});
-			};
-			fn();
-			networkIntervalRef.current = setInterval(fn, NETWORK_INTERVAL_MS);
-		} else {
-			clearInterval(fetchIntervalRef.current);
-			clearInterval(networkIntervalRef.current);
-		}
-	}, [isActive]);
 
 	useEffect(() => {
 		if (!isCompletedInitialFetch && branchProducts.length) {
@@ -224,26 +217,24 @@ export const BranchBalanceItem = ({
 				<FieldError error="Cannot reach branch's API" />
 			)}
 
-			{isActive && (
-				<>
-					<CashieringCard
-						branchId={branchId}
-						className="BranchBalanceItem_cashieringCard"
-						disabled={disabled || !hasInternetConnection}
-						bordered
-					/>
+			<>
+				<CashieringCard
+					branchId={branchId}
+					className="BranchBalanceItem_cashieringCard"
+					disabled={disabled || !hasInternetConnection}
+					bordered
+				/>
 
-					<Divider dashed />
+				<Divider dashed />
 
-					<Filter
-						productCategories={productCategories}
-						hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
-						setQueryParams={(params) => {
-							setQueryParams(params, { shouldResetPage: true });
-						}}
-					/>
-				</>
-			)}
+				<Filter
+					productCategories={productCategories}
+					hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
+					setQueryParams={(params) => {
+						setQueryParams(params, { shouldResetPage: true });
+					}}
+				/>
+			</>
 
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}

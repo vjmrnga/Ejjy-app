@@ -13,7 +13,7 @@ export const Checkings = () => {
 
 	// VARIABLES
 	const {
-		params: { currentBranchId },
+		params: { branchId: currentBranchId },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -37,15 +37,13 @@ export const Checkings = () => {
 			<Box padding>
 				<Tabs
 					type="card"
-					defaultActiveKey={toString(currentBranchId)}
+					activeKey={toString(currentBranchId)}
 					onTabClick={onTabClick}
+					destroyInactiveTabPane
 				>
 					{branches.map(({ name, id, online_url }) => (
 						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-							<BranchCheckings
-								branchId={id}
-								isActive={id === Number(currentBranchId)}
-							/>
+							<BranchCheckings branchId={id} />
 						</Tabs.TabPane>
 					))}
 				</Tabs>

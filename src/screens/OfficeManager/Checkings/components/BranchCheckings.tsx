@@ -22,10 +22,9 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: any;
-	isActive: boolean;
 }
 
-export const BranchCheckings = ({ branchId, isActive }: Props) => {
+export const BranchCheckings = ({ branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -44,9 +43,7 @@ export const BranchCheckings = ({ branchId, isActive }: Props) => {
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
-			if (isActive) {
-				getProductChecks(params, true);
-			}
+			getProductChecks(params, true);
 		},
 	});
 

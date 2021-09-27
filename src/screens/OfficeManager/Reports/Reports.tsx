@@ -1,4 +1,5 @@
 import { Spin, Tabs } from 'antd';
+import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
@@ -24,7 +25,7 @@ export const Reports = () => {
 
 	// VARIABLES
 	const {
-		params: { currentBranchId },
+		params: { branchId: currentBranchId },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -64,17 +65,17 @@ export const Reports = () => {
 					/>
 
 					<Tabs
-						defaultActiveKey={branches?.[0]?.id}
-						className="PaddingHorizontal PaddingVertical"
 						type="card"
+						className="PaddingHorizontal PaddingVertical"
+						activeKey={toString(currentBranchId)}
 						onTabClick={onTabClick}
+						destroyInactiveTabPane
 					>
 						{branches.map(({ name, id, online_url }) => (
 							<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
 								<ReportsBranch
 									branchId={id}
 									productCategories={productCategories}
-									isActive={id === Number(currentBranchId)}
 								/>
 							</Tabs.TabPane>
 						))}
