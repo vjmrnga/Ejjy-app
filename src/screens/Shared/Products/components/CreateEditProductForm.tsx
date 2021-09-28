@@ -96,7 +96,7 @@ export const CreateEditProductForm = ({
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	console.log('product', product);
+
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({

@@ -1,7 +1,8 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
-import { isEmpty, toString } from 'lodash';
+import { toString } from 'lodash';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import * as queryString from 'query-string';
@@ -164,6 +165,21 @@ export const ReportsBranch = ({ branchId, productCategories }: Props) => {
 	} = useQueryParams({
 		page: currentPage,
 		pageSize,
+		onParamsCheck: (params) => {
+			const newParams = {};
+
+			const timeRange = toString(params.timeRange);
+			if (!timeRange) {
+				newParams['timeRange'] = timeRangeTypes.DAILY;
+			}
+
+			const isSoldInBranch = toString(params.isSoldInBranch);
+			if (!isSoldInBranch) {
+				newParams['isSoldInBranch'] = '1';
+			}
+
+			return newParams;
+		},
 		onQueryParamChange: (params) => {
 			const newData = {
 				...params,
@@ -363,7 +379,7 @@ interface FilterProps {
 const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 	// STATES
 	const [productOptions, setProductOptions] = useState([]);
-	const [isTimeRange, setIsTimeRange] = useState(false);
+	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -383,24 +399,15 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 			true,
 		);
 
-		const newParams = {};
-
-		const timeRange = toString(params.timeRange);
-		if (!timeRange) {
-			// eslint-disable-next-line dot-notation
-			newParams['timeRange'] = timeRangeTypes.DAILY;
-		} else if (timeRange?.includes(',')) {
-			setIsTimeRange(true);
-		}
-
-		const isSoldInBranch = toString(params.isSoldInBranch);
-		if (!isSoldInBranch) {
-			// eslint-disable-next-line dot-notation
-			newParams['isSoldInBranch'] = '1';
-		}
-
-		if (!isEmpty(newParams)) {
-			setQueryParams({ ...newParams, ...params });
+		// Set default time range type
+		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
+		if (
+			![timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange) &&
+			timeRange?.indexOf(',')
+		) {
+			setTimeRangeType(timeRangeTypes.DATE_RANGE);
+		} else {
+			setTimeRangeType(timeRange);
 		}
 	}, []);
 
@@ -486,6 +493,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Quantity Sold Date" spacing />
 				<Radio.Group
+					value={timeRangeType}
 					options={[
 						{ label: 'Daily', value: timeRangeTypes.DAILY },
 						{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
@@ -496,31 +504,15 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					]}
 					onChange={(e) => {
 						const { value } = e.target;
+						setTimeRangeType(value);
 
 						if (value !== timeRangeTypes.DATE_RANGE) {
 							setQueryParams({ timeRange: value });
-						} else {
-							setIsTimeRange(true);
 						}
 					}}
-					defaultValue={(() => {
-						const timeRange = toString(params.timeRange);
-
-						if (
-							[timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange)
-						) {
-							return timeRange;
-						}
-
-						if (timeRange?.indexOf(',')) {
-							return timeRangeTypes.DATE_RANGE;
-						}
-
-						return timeRangeTypes.DAILY;
-					})()}
 					optionType="button"
 				/>
-				{isTimeRange && (
+				{timeRangeType === timeRangeTypes.DATE_RANGE && (
 					<DatePicker.RangePicker
 						format="MM/DD/YY"
 						onCalendarChange={(dates, dateStrings) => {
