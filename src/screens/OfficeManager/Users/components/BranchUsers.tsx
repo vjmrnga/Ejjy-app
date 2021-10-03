@@ -27,7 +27,7 @@ export const BranchUsers = ({ dataSource }: Props) => {
 			rowKey="key"
 			columns={columns}
 			dataSource={data}
-			scroll={{ x: 800 }}
+			scroll={{ x: 650 }}
 			pagination={false}
 		/>
 	);

@@ -34,6 +34,7 @@ import {
 	sleep,
 } from '../../../../utils/function';
 import '../style.scss';
+import { Space } from 'antd';
 
 const { Text } = Typography;
 
@@ -825,20 +826,23 @@ export const CreateEditProductForm = ({
 						</Col>
 					</Row>
 
-					<div className="ModalCustomFooter">
-						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
-							classNames="mr-10"
-							disabled={loading || isSubmitting}
-						/>
-						<Button
-							type="submit"
-							text={product ? 'Edit' : 'Create'}
-							variant="primary"
-							loading={loading || isSubmitting}
-						/>
+					<div className="ModalCustomFooter ModalCustomFooter___withFooterTitle">
+						<span className="ModalTitleMainInfo">{product?.name}</span>
+						<div>
+							<Button
+								type="button"
+								text="Cancel"
+								onClick={onClose}
+								classNames="mr-10"
+								disabled={loading || isSubmitting}
+							/>
+							<Button
+								type="submit"
+								text={product ? 'Edit' : 'Create'}
+								variant="primary"
+								loading={loading || isSubmitting}
+							/>
+						</div>
 					</div>
 				</Form>
 			)}

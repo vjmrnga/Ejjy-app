@@ -2,7 +2,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import { message, Spin, Tabs } from 'antd';
 import { toString } from 'lodash';
-import * as queryString from 'query-string';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
@@ -70,7 +69,10 @@ export const Users = () => {
 		reset,
 	} = useUsers();
 
-	const { setQueryParams } = useQueryParams({
+	const {
+		params: { branchId: currentBranchId },
+		setQueryParams,
+	} = useQueryParams({
 		page: 1,
 		pageSize: 10,
 		onQueryParamChange: (params) => {
@@ -94,11 +96,6 @@ export const Users = () => {
 			}
 		},
 	});
-
-	// VARIABLES
-	const { branchId: currentBranchId } = queryString.parse(
-		history.location.search,
-	);
 
 	// METHODS
 	useEffect(() => {

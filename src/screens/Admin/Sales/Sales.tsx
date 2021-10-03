@@ -1,10 +1,9 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { DatePicker, Radio, Space } from 'antd';
 import { toString } from 'lodash';
 import moment from 'moment';
-import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import { Content } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { timeRangeTypes } from '../../../global/types';
@@ -12,25 +11,34 @@ import { useQueryParams } from '../../../hooks/useQueryParams';
 import { SalesBranchSection } from './components/SalesBranchSection';
 import { SalesGrandTotalSection } from './components/SalesGrandTotalSection';
 
-const { RangePicker } = DatePicker;
-
 export const Sales = () => {
 	// STATES
-	const [isTimeRange, setIsTimeRange] = useState(false);
+	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 
 	// CUSTOM HOOKS
-	const { setQueryParams } = useQueryParams();
-	const history = useHistory();
-	const params = queryString.parse(history.location.search);
+	const { params, setQueryParams } = useQueryParams({
+		onParamsCheck: ({ timeRange }) => {
+			const newParams = {};
+
+			if (!toString(timeRange)) {
+				newParams['timeRange'] = timeRangeTypes.DAILY;
+			}
+
+			return newParams;
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
-		const timeRange = toString(params.timeRange);
-
-		if (!timeRange) {
-			setQueryParams({ timeRange: timeRangeTypes.DAILY });
-		} else if (timeRange?.includes(',')) {
-			setIsTimeRange(true);
+		// Set default time range type
+		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
+		if (
+			![timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange) &&
+			timeRange?.indexOf(',')
+		) {
+			setTimeRangeType(timeRangeTypes.DATE_RANGE);
+		} else {
+			setTimeRangeType(timeRange);
 		}
 	}, []);
 
@@ -40,6 +48,7 @@ export const Sales = () => {
 				<Space direction="vertical" size={10}>
 					<Label label="Quantity Sold Date" />
 					<Radio.Group
+						value={timeRangeType}
 						options={[
 							{ label: 'Daily', value: timeRangeTypes.DAILY },
 							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
@@ -50,34 +59,16 @@ export const Sales = () => {
 						]}
 						onChange={(e) => {
 							const { value } = e.target;
+							setTimeRangeType(value);
 
 							if (value !== timeRangeTypes.DATE_RANGE) {
 								setQueryParams({ timeRange: value });
-							} else {
-								setIsTimeRange(true);
 							}
 						}}
-						defaultValue={(() => {
-							const timeRange = toString(params.timeRange);
-
-							if (
-								[timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(
-									timeRange,
-								)
-							) {
-								return timeRange;
-							}
-
-							if (timeRange?.indexOf(',')) {
-								return timeRangeTypes.DATE_RANGE;
-							}
-
-							return timeRangeTypes.DAILY;
-						})()}
 						optionType="button"
 					/>
-					{isTimeRange && (
-						<RangePicker
+					{timeRangeType === timeRangeTypes.DATE_RANGE && (
+						<DatePicker.RangePicker
 							format="MM/DD/YY"
 							onCalendarChange={(dates, dateStrings) => {
 								if (dates?.[0] && dates?.[1]) {
