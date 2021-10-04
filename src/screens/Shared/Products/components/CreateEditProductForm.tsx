@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import {
 	Button,
 	FieldError,
+	FieldInfo,
 	FormInput,
 	FormInputLabel,
 	FormRadioButton,
@@ -34,7 +35,6 @@ import {
 	sleep,
 } from '../../../../utils/function';
 import '../style.scss';
-import { Space } from 'antd';
 
 const { Text } = Typography;
 
@@ -109,8 +109,8 @@ export const CreateEditProductForm = ({
 				type: product?.type || productTypes.WET,
 				unit_of_measurement:
 					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
-				print_details: product?.name || '',
-				description: product?.name || '',
+				print_details: product?.print_details || '',
+				description: product?.description || '',
 				allowable_spoilage: product?.allowable_spoilage * 100 || '',
 				pieces_in_bulk: product?.pieces_in_bulk,
 				cost_per_piece: product?.cost_per_piece || '',
@@ -344,7 +344,7 @@ export const CreateEditProductForm = ({
 					will_carry_over_discounted_price_per_bulk2: undefined,
 				};
 
-				if (formData.is_sold_in_branch) {
+				if (product) {
 					data = {
 						...data,
 						is_sold_in_branch: formData.will_carry_over_is_sold_in_branch
@@ -703,17 +703,11 @@ export const CreateEditProductForm = ({
 								'Checking',
 								'will_carry_over_checking',
 								setFieldValue,
-								!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch,
 							)}
 							<FormRadioButton
 								id="checking"
 								items={checkingTypesOptions}
-								disabled={
-									!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch ||
-									!values.will_carry_over_checking
-								}
+								disabled={!values.will_carry_over_checking}
 							/>
 							<ErrorMessage
 								name="checking"
@@ -727,18 +721,12 @@ export const CreateEditProductForm = ({
 								'Wholesale Price (piece)',
 								'will_carry_over_discounted_price_per_piece1',
 								setFieldValue,
-								!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch,
 							)}
 							<FormInput
 								type="number"
 								id="discounted_price_per_piece1"
 								step=".01"
-								disabled={
-									!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch ||
-									!values.will_carry_over_discounted_price_per_piece1
-								}
+								disabled={!values.will_carry_over_discounted_price_per_piece1}
 								isMoney
 							/>
 							<ErrorMessage
@@ -753,18 +741,12 @@ export const CreateEditProductForm = ({
 								'Special Price (piece)',
 								'will_carry_over_discounted_price_per_piece2',
 								setFieldValue,
-								!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch,
 							)}
 							<FormInput
 								type="number"
 								id="discounted_price_per_piece2"
 								step=".01"
-								disabled={
-									!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch ||
-									!values.will_carry_over_discounted_price_per_piece2
-								}
+								disabled={!values.will_carry_over_discounted_price_per_piece2}
 								isMoney
 							/>
 							<ErrorMessage
@@ -779,18 +761,12 @@ export const CreateEditProductForm = ({
 								'Wholesale Price (bulk)',
 								'will_carry_over_discounted_price_per_bulk1',
 								setFieldValue,
-								!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch,
 							)}
 							<FormInput
 								type="number"
 								id="discounted_price_per_bulk1"
 								step=".01"
-								disabled={
-									!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch ||
-									!values.will_carry_over_discounted_price_per_bulk1
-								}
+								disabled={!values.will_carry_over_discounted_price_per_bulk1}
 								isMoney
 							/>
 							<ErrorMessage
@@ -805,18 +781,12 @@ export const CreateEditProductForm = ({
 								'Special Price (bulk)',
 								'will_carry_over_discounted_price_per_bulk2',
 								setFieldValue,
-								!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch,
 							)}
 							<FormInput
 								type="number"
 								id="discounted_price_per_bulk2"
 								step=".01"
-								disabled={
-									!values.is_sold_in_branch ||
-									!values.will_carry_over_is_sold_in_branch ||
-									!values.will_carry_over_discounted_price_per_bulk2
-								}
+								disabled={!values.will_carry_over_discounted_price_per_bulk2}
 								isMoney
 							/>
 							<ErrorMessage
@@ -827,7 +797,15 @@ export const CreateEditProductForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter ModalCustomFooter___withFooterTitle">
-						<span className="ModalTitleMainInfo">{product?.name}</span>
+						<div>
+							{product && (
+								<FieldInfo
+									message="Tick the checkboxes if you want to carry over the update to all the
+				branches."
+									withSpaceBottom
+								/>
+							)}
+						</div>
 						<div>
 							<Button
 								type="button"

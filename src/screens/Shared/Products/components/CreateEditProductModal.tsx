@@ -96,14 +96,6 @@ export const CreateEditProductModal = ({
 				withSpaceBottom
 			/>
 
-			{product && (
-				<FieldInfo
-					message="Tick the checkboxes if you want to carry over the update to all the
-				branches."
-					withSpaceBottom
-				/>
-			)}
-
 			<CreateEditProductForm
 				product={product}
 				productCategories={productCategories}
