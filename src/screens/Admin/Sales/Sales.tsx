@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Content } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { timeRangeTypes } from '../../../global/types';
+import { useBranches } from '../../../hooks/useBranches';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { SalesBranchSection } from './components/SalesBranchSection';
 import { SalesGrandTotalSection } from './components/SalesGrandTotalSection';
@@ -16,12 +17,17 @@ export const Sales = () => {
 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 
 	// CUSTOM HOOKS
+	const { branches } = useBranches();
 	const { params, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
+		onParamsCheck: ({ timeRange, branchId }) => {
 			const newParams = {};
 
 			if (!toString(timeRange)) {
 				newParams['timeRange'] = timeRangeTypes.DAILY;
+			}
+
+			if (!toString(branchId)) {
+				newParams['branchId'] = branches?.[0]?.id;
 			}
 
 			return newParams;
