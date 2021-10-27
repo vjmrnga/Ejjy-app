@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk } from '../../../../utils/function';
+import { convertToBulk, formatQuantity } from '../../../../utils/function';
 import '../style.scss';
 import {
 	RequisitionSlipDetails,
@@ -22,14 +22,20 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 			setData(
 				requisitionSlip?.products?.map((requestedProduct) => {
 					const { product, quantity_piece } = requestedProduct;
-					const { barcode, textcode, name, pieces_in_bulk } = product;
+					const {
+						barcode,
+						textcode,
+						name,
+						pieces_in_bulk,
+						unit_of_measurement,
+					} = product;
 
 					return {
-						quantityPiece: quantity_piece,
+						quantityPiece: formatQuantity(unit_of_measurement, quantity_piece),
 						quantityBulk: convertToBulk(quantity_piece, pieces_in_bulk),
 						barcode: barcode || textcode,
 						name,
-						quantity: quantity_piece,
+						quantity: formatQuantity(unit_of_measurement, quantity_piece),
 					};
 				}),
 			);

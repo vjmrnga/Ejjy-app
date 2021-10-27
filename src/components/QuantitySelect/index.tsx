@@ -20,7 +20,7 @@ export const QuantitySelect = ({
 		<Select
 			classNames="QuantitySelect_select"
 			options={quantityTypeOptions}
-			placeholder="quantity"
+			placeholder="Quantity"
 			value={quantityValue}
 			onChange={onQuantityTypeChange}
 		/>

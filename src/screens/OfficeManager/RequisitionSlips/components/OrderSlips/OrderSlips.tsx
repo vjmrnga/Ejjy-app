@@ -242,7 +242,10 @@ export const OrderSlips = ({
 			product_textcode: textcode,
 			product_pieces_in_bulk: pieces_in_bulk,
 			quantity: quantityPiece,
-			ordered_quantity_piece: orderedQuantityPiece,
+			ordered_quantity_piece: formatQuantity(
+				unit_of_measurement,
+				orderedQuantityPiece,
+			),
 			ordered_quantity_bulk: convertToBulk(
 				orderedQuantityPiece,
 				pieces_in_bulk,
