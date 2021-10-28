@@ -504,6 +504,9 @@ export const getProductType = memoize((type) => {
 
 export const getTransactionStatus = memoize((status) => {
 	switch (status) {
+		case transactionStatus.NEW: {
+			return <BadgePill label="New" variant="secondary" />;
+		}
 		case transactionStatus.FULLY_PAID: {
 			return <BadgePill label="Fully Paid" variant="primary" />;
 		}

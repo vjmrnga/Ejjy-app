@@ -103,6 +103,7 @@ export const productCheckingTypes = {
 };
 
 export const transactionStatus = {
+	NEW: 'new',
 	FULLY_PAID: 'fully_paid',
 	HOLD: 'hold',
 	VOID_EDITED: 'void_edited',

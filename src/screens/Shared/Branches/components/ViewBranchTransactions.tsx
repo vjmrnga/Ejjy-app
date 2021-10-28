@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import {
@@ -6,10 +6,11 @@ import {
 	RequestWarnings,
 	TableHeader,
 } from '../../../../components';
-import { ButtonLink } from '../../../../components/elements';
+import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
+import { request, transactionStatus } from '../../../../global/types';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useTransactions } from '../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
@@ -25,6 +26,29 @@ const columns: ColumnsType = [
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
+const transactionStatusOptions = [
+	{
+		value: transactionStatus.NEW,
+		title: 'New',
+	},
+	{
+		value: transactionStatus.HOLD,
+		title: 'Hold',
+	},
+	{
+		value: transactionStatus.VOID_EDITED,
+		title: 'Void Edited',
+	},
+	{
+		value: transactionStatus.VOID_CANCELLED,
+		title: 'Void Cancelled',
+	},
+	{
+		value: transactionStatus.FULLY_PAID,
+		title: 'Fully Paid',
+	},
+];
+
 interface Props {
 	branchId: any;
 }
@@ -32,8 +56,6 @@ interface Props {
 export const ViewBranchTransactions = ({ branchId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
-	const [viewTransactionModalVisible, setViewTransactionModalVisible] =
-		useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
@@ -49,12 +71,21 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		warnings,
 	} = useTransactions();
 
-	// METHODS
-	useEffect(() => {
-		listTransactions({ branchId, page: 1 });
-	}, []);
+	const { params: queryParams, setQueryParams } = useQueryParams({
+		page: currentPage,
+		pageSize,
+		onQueryParamChange: (params) => {
+			listTransactions(
+				{
+					...params,
+					branchId,
+				},
+				true,
+			);
+		},
+	});
 
-	// Effect: Format branch transactions to be rendered in Table
+	// METHODS
 	useEffect(() => {
 		const formattedBranchTransactions = transactions.map(
 			(branchTransaction) => {
@@ -62,16 +93,19 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 					id,
 					invoice,
 					total_amount,
-					status: transactionStatus,
+					status: branchTransactionStatus,
 				} = branchTransaction;
 
 				return {
 					id: (
-						<ButtonLink text={id} onClick={() => onView(branchTransaction)} />
+						<ButtonLink
+							text={id}
+							onClick={() => setSelectedTransaction(branchTransaction)}
+						/>
 					),
 					invoice: invoice?.or_number || EMPTY_CELL,
 					amount: `₱${numberWithCommas(total_amount?.toFixed(2))}`,
-					status: getTransactionStatus(transactionStatus),
+					status: getTransactionStatus(branchTransactionStatus),
 				};
 			},
 		);
@@ -79,21 +113,16 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		setData(formattedBranchTransactions);
 	}, [transactions]);
 
-	const onView = (transaction) => {
-		setSelectedTransaction(transaction);
-		setViewTransactionModalVisible(true);
-	};
-
-	const onPageChange = (page, newPageSize) => {
-		listTransactions(
-			{ branchId, page, pageSize: newPageSize },
-			newPageSize !== pageSize,
-		);
-	};
-
 	return (
 		<>
 			<TableHeader title="Transactions" />
+
+			<Filter
+				params={queryParams}
+				setQueryParams={(params) => {
+					setQueryParams(params, { shouldResetPage: true });
+				}}
+			/>
 
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
@@ -106,7 +135,12 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
 					disabled: !data,
 					position: ['bottomCenter'],
 					pageSizeOptions,
@@ -114,11 +148,39 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 				loading={status === request.REQUESTING}
 			/>
 
-			<ViewTransactionModal
-				transaction={selectedTransaction}
-				visible={viewTransactionModalVisible}
-				onClose={() => setViewTransactionModalVisible(false)}
-			/>
+			{selectedTransaction && (
+				<ViewTransactionModal
+					transaction={selectedTransaction}
+					onClose={() => setSelectedTransaction(false)}
+				/>
+			)}
 		</>
 	);
 };
+
+interface FilterProps {
+	params: any;
+	setQueryParams: any;
+}
+
+const Filter = ({ params, setQueryParams }: FilterProps) => (
+	<Row className="ViewBranchTransactions_filter" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Status" spacing />
+			<Select
+				style={{ width: '100%' }}
+				value={params.status}
+				onChange={(value) => {
+					setQueryParams({ status: value });
+				}}
+				allowClear
+			>
+				{transactionStatusOptions.map((option) => (
+					<Select.Option key={option.value} value={option.value}>
+						{option.title}
+					</Select.Option>
+				))}
+			</Select>
+		</Col>
+	</Row>
+);

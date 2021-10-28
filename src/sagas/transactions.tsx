@@ -6,7 +6,7 @@ import { service } from '../services/transactions';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, callback } = payload;
+	const { page, pageSize, branchId, status, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -17,6 +17,7 @@ function* list({ payload }: any) {
 	}
 
 	const data = {
+		status,
 		page,
 		page_size: pageSize,
 	};

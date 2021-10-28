@@ -13,7 +13,6 @@ import {
 
 interface Props {
 	transaction: any;
-	visible: boolean;
 	onClose: any;
 }
 
@@ -24,11 +23,7 @@ const columns: ColumnsType = [
 	{ title: 'Amount', dataIndex: 'amount', key: 'amount' },
 ];
 
-export const ViewTransactionModal = ({
-	transaction,
-	visible,
-	onClose,
-}: Props) => {
+export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -55,9 +50,9 @@ export const ViewTransactionModal = ({
 		<Modal
 			title="View Transaction"
 			className="ViewTransaction Modal__large Modal__hasFooter"
-			visible={visible}
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
+			visible
 			centered
 			closable
 		>
