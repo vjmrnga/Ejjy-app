@@ -25,3 +25,4 @@ export * from './Table/TableHeaders/TableHeader';
 export * from './Table/TableHeaders/TableHeaderOrderSlip';
 export * from './Table/TableHeaders/TableHeaderRequisitionSlip';
 export * from './TableNormal/TableNormal';
+export * from './TimeRangeFilter/TimeRangeFilter';

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce/lib';
 import { actions, types } from '../ducks/transactions';
 import { request } from '../global/types';
 import { onCallback } from '../utils/function';
@@ -100,6 +101,7 @@ export const useTransactions = () => {
 			setPageSize,
 		});
 	};
+	const listTransactionsDebounced = useDebouncedCallback(listTransactions, 500);
 
 	return {
 		transactions: currentPageData,
@@ -110,7 +112,7 @@ export const useTransactions = () => {
 		updateItemInPagination,
 		removeItemInPagination,
 
-		listTransactions,
+		listTransactions: listTransactionsDebounced,
 		status,
 		errors,
 		warnings,

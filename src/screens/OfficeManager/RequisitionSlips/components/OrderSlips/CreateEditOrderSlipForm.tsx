@@ -115,33 +115,39 @@ export const CreateEditOrderSlipForm = ({
 		<FormCheckbox id={`requestedProducts.${index}.selected`} />
 	);
 
-	const getQuantity = (index, values, maxPiece, maxBulk) => (
-		<>
-			<div className="QuantityContainer">
-				<FormInput
-					type="number"
-					id={`requestedProducts.${index}.quantity`}
-					min={0}
-					max={
-						values?.requestedProducts?.[index]?.quantity_type ===
-						quantityTypes.PIECE
-							? maxPiece
-							: maxBulk
-					}
-					disabled={!values?.requestedProducts?.[index]?.selected}
+	const getQuantity = (index, values, maxPiece, maxBulk) => {
+		const product = values?.requestedProducts?.[index] || {};
+
+		return (
+			<>
+				<div className="QuantityContainer">
+					<FormInput
+						type="number"
+						id={`requestedProducts.${index}.quantity`}
+						isWholeNumber={
+							!(
+								product?.quantity_type === quantityTypes.PIECE &&
+								product.unit_of_measurement === unitOfMeasurementTypes.WEIGHING
+							)
+						}
+						max={
+							product.quantity_type === quantityTypes.PIECE ? maxPiece : maxBulk
+						}
+						disabled={!product.selected}
+					/>
+					<FormSelect
+						id={`requestedProducts.${index}.quantity_type`}
+						options={quantityTypeOptions}
+						disabled={!product.selected}
+					/>
+				</div>
+				<ErrorMessage
+					name={`requestedProducts.${index}.quantity`}
+					render={(error) => <FieldError error={error} />}
 				/>
-				<FormSelect
-					id={`requestedProducts.${index}.quantity_type`}
-					options={quantityTypeOptions}
-					disabled={!values?.requestedProducts?.[index]?.selected}
-				/>
-			</div>
-			<ErrorMessage
-				name={`requestedProducts.${index}.quantity`}
-				render={(error) => <FieldError error={error} />}
-			/>
-		</>
-	);
+			</>
+		);
+	};
 
 	const getOrdered = (index, quantity_piece, quantity_bulk, values) => {
 		const quantityType = values?.requestedProducts?.[index]?.quantity_type;

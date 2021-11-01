@@ -8,13 +8,17 @@ import { Button, Label } from '../../../../../components/elements';
 import { printOrderSlip } from '../../../../../configurePrinter';
 import { quantityTypes } from '../../../../../global/types';
 import { useAuth } from '../../../../../hooks/useAuth';
-import { convertToBulk, getColoredText } from '../../../../../utils/function';
+import {
+	convertToBulk,
+	formatQuantity,
+	getColoredText,
+} from '../../../../../utils/function';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [
 	{
-		title: 'Barcode',
-		dataIndex: 'barcode',
+		title: 'Code',
+		dataIndex: 'code',
 		width: 150,
 		fixed: 'left',
 	},
@@ -67,7 +71,13 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 				})
 				?.map((product) => {
 					const {
-						product: { barcode, name, pieces_in_bulk },
+						product: {
+							barcode,
+							textcode,
+							name,
+							pieces_in_bulk,
+							unit_of_measurement,
+						},
 						assigned_person: { first_name, last_name },
 						quantity_piece,
 						fulfilled_quantity_piece = 0,
@@ -77,15 +87,15 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 					const isFulfilled = fulfilledQuantityPiece > 0;
 					const inputted =
 						quantityType === quantityTypes.PIECE
-							? fulfilledQuantityPiece
+							? formatQuantity(unit_of_measurement, fulfilledQuantityPiece)
 							: convertToBulk(fulfilledQuantityPiece, pieces_in_bulk);
 					const ordered =
 						quantityType === quantityTypes.PIECE
-							? quantity_piece
+							? formatQuantity(unit_of_measurement, quantity_piece)
 							: convertToBulk(quantity_piece, pieces_in_bulk);
 
 					return {
-						barcode,
+						code: barcode || textcode,
 						name,
 						quantity: getColoredText(!isFulfilled, inputted, ordered),
 						personnel: `${first_name} ${last_name}`,

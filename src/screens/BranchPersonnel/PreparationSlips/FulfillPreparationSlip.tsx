@@ -268,7 +268,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			products: Object.keys(psProducts).map((key) => {
 				const psProduct = psProducts[key];
 
-				if (psProduct.ordered !== psProduct.fulfilled) {
+				if (Number(psProduct.ordered) !== Number(psProduct.fulfilled)) {
 					mismatchProducts.push(psProduct.name);
 				}
 

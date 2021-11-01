@@ -1,7 +1,7 @@
 /* eslint-disable no-confusing-arrow */
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
-import { floor, isArray, isString, memoize } from 'lodash';
+import { floor, isArray, isNaN, isString, memoize, round } from 'lodash';
 import React from 'react';
 import {
 	AddedToOSBadgePill,
@@ -525,6 +525,29 @@ export const getTransactionStatus = memoize((status) => {
 	}
 });
 
+export const getTransactionStatusDescription = memoize((status) => {
+	switch (status) {
+		case transactionStatus.NEW: {
+			return 'New';
+		}
+		case transactionStatus.FULLY_PAID: {
+			return 'Fully Paid';
+		}
+		case transactionStatus.HOLD: {
+			return 'Hold';
+		}
+		case transactionStatus.VOID_CANCELLED: {
+			return 'Cancelled';
+		}
+		case transactionStatus.VOID_EDITED: {
+			return 'Edited';
+		}
+		default: {
+			return EMPTY_CELL;
+		}
+	}
+});
+
 export const getReturnItemSlipStatus = memoize((status) => {
 	switch (status) {
 		case returnItemSlipsStatuses.DONE: {
@@ -633,4 +656,14 @@ export const formatQuantity = (
 	return unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
 		? balance.toFixed(3)
 		: balance.toFixed(0);
+};
+
+export const standardRound = (value) => round(value, 3).toFixed(2);
+
+export const formatInPeso = (value, pesoSign = '₱') => {
+	const x = Number(value);
+
+	return isNaN(x)
+		? EMPTY_CELL
+		: `${pesoSign}${numberWithCommas(standardRound(Number(x)))}`;
 };

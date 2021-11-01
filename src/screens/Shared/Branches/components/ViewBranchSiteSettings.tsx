@@ -11,9 +11,10 @@ import {
 	FormInputLabel,
 	Label,
 } from '../../../../components/elements';
-import { request } from '../../../../global/types';
+import { request, taxTypes } from '../../../../global/types';
 import { useSiteSettings } from '../../../../hooks/useSiteSettings';
 import { convertIntoArray, sleep } from '../../../../utils/function';
+import { Radio } from 'antd';
 
 const getValidTimeTest = (label) =>
 	Yup.string()
@@ -72,6 +73,7 @@ export const ViewBranchSiteSettings = ({ branchId }: Props) => {
 					: null,
 
 				proprietor: siteSettings?.proprietor || '',
+				tax_type: siteSettings?.tax_type || null,
 				tin: siteSettings?.tin || '',
 				permit_number: siteSettings?.permit_number || '',
 
@@ -90,12 +92,12 @@ export const ViewBranchSiteSettings = ({ branchId }: Props) => {
 						  )
 						: null,
 
-				ptu_number: siteSettings?.ptuNumber || '',
-				ptu_date: siteSettings?.ptuDate
-					? moment(siteSettings.ptuDate, 'YYYY-MM-DD')
+				ptu_number: siteSettings?.ptu_number || '',
+				ptu_date: siteSettings?.ptu_date
+					? moment(siteSettings.ptu_date, 'YYYY-MM-DD')
 					: null,
-				ptu_valid_until_date: siteSettings?.ptuValidUntilDate
-					? moment(siteSettings.ptuValidUntilDate, 'YYYY-MM-DD')
+				ptu_valid_until_date: siteSettings?.ptu_valid_until_date
+					? moment(siteSettings.ptu_valid_until_date, 'YYYY-MM-DD')
 					: null,
 
 				product_version: siteSettings?.product_version || '',
@@ -106,6 +108,7 @@ export const ViewBranchSiteSettings = ({ branchId }: Props) => {
 				close_day_deadline: getValidTimeTest('Close Day Deadline'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
+				tax_type: Yup.string().required().label('Tax Type'),
 				tin: Yup.string().required().label('TIN'),
 				permit_number: Yup.string().required().label('Permit Number'),
 				software_developer: Yup.string().required().label('Software Developer'),
@@ -248,13 +251,28 @@ export const ViewBranchSiteSettings = ({ branchId }: Props) => {
 								)}
 							</Col>
 
-							<Col xs={24} sm={12} md={8}>
+							<Col xs={24} sm={12}>
 								{renderInputField('proprietor', 'Proprietor')}
 							</Col>
-							<Col xs={24} sm={12} md={8}>
+							<Col xs={24} sm={12}>
+								<Label label="VAT Type" spacing />
+								<Radio.Group
+									value={values.tax_type}
+									options={[
+										{ label: 'VAT', value: taxTypes.VAT },
+										{ label: 'NVAT', value: taxTypes.NVAT },
+									]}
+									onChange={(e) => {
+										setFieldValue('tax_type', e.target.value);
+									}}
+									optionType="button"
+								/>
+							</Col>
+							<Col xs={24} sm={12}>
 								{renderInputField('tin', 'TIN')}
 							</Col>
-							<Col xs={24} sm={12} md={8}>
+
+							<Col xs={24} sm={12}>
 								{renderInputField('permit_number', 'Permit Number')}
 							</Col>
 							<Col xs={24} sm={12}>

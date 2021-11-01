@@ -36,28 +36,26 @@ export const ReceiveDeliveryReceiptForm = ({
 				received_quantity_piece: product.received_quantity_piece,
 				unit_of_measurement: product.unit_of_measurement,
 			})),
-			Schema: Yup.object().shape({
-				products: Yup.array().of(
-					Yup.object().shape({
-						received_quantity_piece: Yup.number()
-							.min(0)
-							.required()
-							.test(
-								'is-whole-number',
-								'Non-weighing items require whole number quantity.',
-								function test(value) {
-									// NOTE: We need to use a no-named function so
-									// we can use 'this' and access the other form field value.
-									return this.parent.unit_of_measurement ===
-										unitOfMeasurementTypes.NON_WEIGHING
-										? isInteger(Number(value))
-										: true;
-								},
-							)
-							.label('Quantity'),
-					}),
-				),
-			}),
+			Schema: Yup.array().of(
+				Yup.object().shape({
+					received_quantity_piece: Yup.number()
+						.min(0)
+						.required()
+						.test(
+							'is-whole-number',
+							'Non-weighing items require whole number quantity.',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								return this.parent.unit_of_measurement ===
+									unitOfMeasurementTypes.NON_WEIGHING
+									? isInteger(Number(value))
+									: true;
+							},
+						)
+						.label('Quantity'),
+				}),
+			),
 		}),
 		[products],
 	);

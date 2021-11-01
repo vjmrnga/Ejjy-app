@@ -1,4 +1,4 @@
-import { call, select, takeLatest } from 'redux-saga/effects';
+import { call, select, takeLatest, takeEvery } from 'redux-saga/effects';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { types } from '../ducks/transactions';
 import { request } from '../global/types';
@@ -6,7 +6,7 @@ import { service } from '../services/transactions';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, status, callback } = payload;
+	const { page, pageSize, branchId, statuses, timeRange, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
@@ -17,7 +17,8 @@ function* list({ payload }: any) {
 	}
 
 	const data = {
-		status,
+		statuses,
+		time_range: timeRange,
 		page,
 		page_size: pageSize,
 	};
@@ -59,7 +60,7 @@ function* list({ payload }: any) {
 /* WATCHERS */
 
 const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.LIST_TRANSACTIONS, list);
+	yield takeEvery(types.LIST_TRANSACTIONS, list);
 };
 
 export default [listWatcherSaga()];

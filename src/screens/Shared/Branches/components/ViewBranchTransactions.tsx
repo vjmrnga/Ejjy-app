@@ -5,18 +5,25 @@ import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
+	TimeRangeFilter,
 } from '../../../../components';
 import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
-import { request, transactionStatus } from '../../../../global/types';
+import {
+	request,
+	timeRangeTypes,
+	transactionStatus,
+} from '../../../../global/types';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useTimeRange } from '../../../../hooks/useTimeRange';
 import { useTransactions } from '../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
 	getTransactionStatus,
 	numberWithCommas,
 } from '../../../../utils/function';
+import { TransactionsCancelled } from './BranchTransactions/TransactionsCancelled';
 import { ViewTransactionModal } from './BranchTransactions/ViewTransactionModal';
 
 const columns: ColumnsType = [
@@ -74,6 +81,16 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 	const { params: queryParams, setQueryParams } = useQueryParams({
 		page: currentPage,
 		pageSize,
+		onParamsCheck: ({ timeRange }) => {
+			const newParams = {};
+
+			if (!String(timeRange)) {
+				// eslint-disable-next-line dot-notation
+				newParams['timeRange'] = timeRangeTypes.DAILY;
+			}
+
+			return newParams;
+		},
 		onQueryParamChange: (params) => {
 			listTransactions(
 				{
@@ -127,6 +144,17 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
+			{[
+				transactionStatus.VOID_CANCELLED,
+				transactionStatus.VOID_EDITED,
+			].includes(String(queryParams?.statuses)) && (
+				<TransactionsCancelled
+					branchId={branchId}
+					timeRange={String(queryParams?.timeRange)}
+					statuses={String(queryParams?.statuses)}
+				/>
+			)}
+
 			<Table
 				columns={columns}
 				dataSource={data}
@@ -163,24 +191,36 @@ interface FilterProps {
 	setQueryParams: any;
 }
 
-const Filter = ({ params, setQueryParams }: FilterProps) => (
-	<Row className="ViewBranchTransactions_filter" gutter={[15, 15]}>
-		<Col lg={12} span={24}>
-			<Label label="Status" spacing />
-			<Select
-				style={{ width: '100%' }}
-				value={params.status}
-				onChange={(value) => {
-					setQueryParams({ status: value });
-				}}
-				allowClear
-			>
-				{transactionStatusOptions.map((option) => (
-					<Select.Option key={option.value} value={option.value}>
-						{option.title}
-					</Select.Option>
-				))}
-			</Select>
-		</Col>
-	</Row>
-);
+const Filter = ({ params, setQueryParams }: FilterProps) => {
+	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
+
+	return (
+		<Row className="ViewBranchTransactions_filter" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<TimeRangeFilter
+					timeRange={params.timeRange}
+					timeRangeType={timeRangeType}
+					setTimeRangeType={setTimeRangeType}
+					setQueryParams={setQueryParams}
+				/>
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					style={{ width: '100%' }}
+					value={params.statuses}
+					onChange={(value) => {
+						setQueryParams({ statuses: value });
+					}}
+					allowClear
+				>
+					{transactionStatusOptions.map((option) => (
+						<Select.Option key={option.value} value={option.value}>
+							{option.title}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
+	);
+};

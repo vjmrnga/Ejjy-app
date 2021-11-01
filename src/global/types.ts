@@ -146,3 +146,8 @@ export const backOrdersStatuses = {
 	PENDING: 'pending',
 	ERROR: 'error',
 };
+
+export const taxTypes  = {
+	VAT: 'VAT',
+	NVAT: 'NVAT',
+};

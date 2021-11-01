@@ -15,7 +15,7 @@ interface Props {
 export const useQueryParams = ({
 	page: currentPage,
 	pageSize: currentPageSize,
-	debounceTime,
+	debounceTime = 500,
 	onParamsCheck,
 	onQueryParamChange,
 }: Props = {}) => {
@@ -47,7 +47,7 @@ export const useQueryParams = ({
 		}
 	};
 
-	const debouncedOnChange = useDebouncedCallback(onChange, debounceTime || 500);
+	const debouncedOnChange = useDebouncedCallback(onChange, debounceTime);
 
 	useEffect(() => {
 		debouncedOnChange();
