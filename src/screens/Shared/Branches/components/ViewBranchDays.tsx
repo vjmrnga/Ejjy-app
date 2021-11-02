@@ -63,8 +63,12 @@ export const ViewBranchDays = ({ branchId }: Props) => {
 	}, [branchDays]);
 
 	const getUser = (startedBy, endedBy) => {
-		const startedByUser = `${startedBy.first_name} ${startedBy.last_name}`;
-		const endedByUser = `${endedBy?.first_name} ${endedBy?.last_name}`;
+		const startedByUser = startedBy
+			? `${startedBy.first_name} ${startedBy.last_name}`
+			: EMPTY_CELL;
+		const endedByUser = endedBy
+			? `${endedBy.first_name} ${endedBy.last_name}`
+			: EMPTY_CELL;
 
 		return (
 			<div className="branch-day-column">
