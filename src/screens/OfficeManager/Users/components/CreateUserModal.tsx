@@ -17,10 +17,11 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 	const { createUser, status: userStatus, errors, reset } = useUsers();
 
 	// METHODS
-	const onCreateUser = (data) => {
+	const onCreateUser = (data, resetForm) => {
 		createUser(data, ({ status }) => {
 			if (status === request.SUCCESS) {
 				onSuccess(data.user_type);
+				resetForm();
 				reset();
 				onClose();
 			}

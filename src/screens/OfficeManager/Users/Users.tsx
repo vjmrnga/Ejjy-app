@@ -72,6 +72,7 @@ export const Users = () => {
 	const {
 		params: { branchId: currentBranchId },
 		setQueryParams,
+		refreshList,
 	} = useQueryParams({
 		page: 1,
 		pageSize: 10,
@@ -193,6 +194,11 @@ export const Users = () => {
 	};
 
 	const onTabClick = (branchId) => {
+		// eslint-disable-next-line eqeqeq
+		if (Number(branchId) === Number(currentBranchId)) {
+			refreshList();
+		}
+
 		setQueryParams(
 			{ branchId },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },

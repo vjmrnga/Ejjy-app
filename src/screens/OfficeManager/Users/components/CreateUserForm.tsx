@@ -72,11 +72,13 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit({
-					...formData,
-					confirm_password: undefined,
-				});
-				resetForm();
+				onSubmit(
+					{
+						...formData,
+						confirm_password: undefined,
+					},
+					resetForm,
+				);
 			}}
 			enableReinitialize
 		>
