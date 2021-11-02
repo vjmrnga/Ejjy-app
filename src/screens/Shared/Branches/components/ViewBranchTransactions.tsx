@@ -1,5 +1,6 @@
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
 	RequestErrors,
@@ -84,7 +85,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 		onParamsCheck: ({ timeRange }) => {
 			const newParams = {};
 
-			if (!String(timeRange)) {
+			if (!toString(timeRange)) {
 				// eslint-disable-next-line dot-notation
 				newParams['timeRange'] = timeRangeTypes.DAILY;
 			}
@@ -139,6 +140,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
+				isLoading={status === request.REQUESTING}
 			/>
 
 			<RequestErrors errors={convertIntoArray(errors)} />
@@ -147,11 +149,11 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 			{[
 				transactionStatus.VOID_CANCELLED,
 				transactionStatus.VOID_EDITED,
-			].includes(String(queryParams?.statuses)) && (
+			].includes(toString(queryParams?.statuses)) && (
 				<TransactionsCancelled
 					branchId={branchId}
-					timeRange={String(queryParams?.timeRange)}
-					statuses={String(queryParams?.statuses)}
+					timeRange={toString(queryParams?.timeRange)}
+					statuses={toString(queryParams?.statuses)}
 				/>
 			)}
 
@@ -188,10 +190,11 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 interface FilterProps {
 	params: any;
+	isLoading: boolean;
 	setQueryParams: any;
 }
 
-const Filter = ({ params, setQueryParams }: FilterProps) => {
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
 
 	return (
@@ -202,6 +205,7 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 					timeRangeType={timeRangeType}
 					setTimeRangeType={setTimeRangeType}
 					setQueryParams={setQueryParams}
+					disabled={isLoading}
 				/>
 			</Col>
 			<Col lg={12} span={24}>
@@ -212,6 +216,7 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 					onChange={(value) => {
 						setQueryParams({ statuses: value });
 					}}
+					disabled={isLoading}
 					allowClear
 				>
 					{transactionStatusOptions.map((option) => (

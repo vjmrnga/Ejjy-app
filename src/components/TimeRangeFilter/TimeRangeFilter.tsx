@@ -10,6 +10,7 @@ import { Label } from '../elements';
 interface Props {
 	timeRange: string;
 	timeRangeType: string;
+	disabled: boolean;
 	setTimeRangeType: any;
 	setQueryParams: any;
 }
@@ -17,6 +18,7 @@ interface Props {
 export const TimeRangeFilter = ({
 	timeRange,
 	timeRangeType,
+	disabled,
 	setTimeRangeType,
 	setQueryParams,
 }: Props) => (
@@ -42,6 +44,7 @@ export const TimeRangeFilter = ({
 					}
 				}}
 				optionType="button"
+				disabled={disabled}
 			/>
 			{timeRangeType === timeRangeTypes.DATE_RANGE && (
 				<DatePicker.RangePicker
@@ -67,6 +70,7 @@ export const TimeRangeFilter = ({
 							  ]
 							: undefined
 					}
+					disabled={disabled}
 				/>
 			)}
 		</Space>
