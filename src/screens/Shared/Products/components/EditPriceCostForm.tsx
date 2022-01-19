@@ -134,6 +134,7 @@ export const EditPriceCostForm = ({
 											type="number"
 											id={`${index}.cost_per_piece`}
 											label="Cost (Piece)"
+											step=".01"
 											isMoney
 										/>
 										<ErrorMessage
@@ -163,6 +164,7 @@ export const EditPriceCostForm = ({
 											type="number"
 											id={`${index}.price_per_piece`}
 											label="Price (Piece)"
+											step=".01"
 											isMoney
 										/>
 										<ErrorMessage
