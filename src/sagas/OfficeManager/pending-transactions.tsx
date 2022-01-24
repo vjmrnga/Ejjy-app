@@ -35,8 +35,8 @@ function* list({ payload }: any) {
 }
 
 function* count({ payload }: any) {
-	const { isPendingApproval, callback } = payload;
-	callback({ status: request.REQUESTING });
+	// No callback is used in this endpoint as request status is not needed.
+	const { isPendingApproval } = payload;
 
 	try {
 		const response = yield retry(
@@ -55,10 +55,8 @@ function* count({ payload }: any) {
 				pendingTransactionsCount: response.data,
 			}),
 		);
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
+		// eslint-disable-next-line no-empty
+	} catch (e) {}
 }
 
 function* edit({ payload }: any) {

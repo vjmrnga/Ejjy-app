@@ -50,8 +50,9 @@ export const useProductCategories = () => {
 		setErrors(callbackErrors);
 	};
 
-	const getProductCategories = (extraCallback = null) => {
+	const getProductCategories = (data, extraCallback = null) => {
 		getProductCategoriesAction({
+			...data,
 			callback: modifiedExtraCallback(callback, extraCallback),
 		});
 	};
@@ -80,9 +81,9 @@ export const useProductCategories = () => {
 		});
 	};
 
-	const removeProductCategory = (producCategoryId, extraCallback = null) => {
+	const removeProductCategory = (data, extraCallback = null) => {
 		removeProductCategoryAction({
-			id: producCategoryId,
+			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
 					callback,

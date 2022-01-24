@@ -15,11 +15,10 @@ import { ProductCategories } from './ProductCategories/ProductCategories';
 import { Sales } from './Sales/Sales';
 import { Users } from './Users/Users';
 
-const POLL_INTERVAL_MS = 5000;
+const POLL_INTERVAL_MS = 10000;
 
 const Admin = () => {
 	// STATES
-
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
@@ -30,7 +29,6 @@ const Admin = () => {
 
 	// REFS
 	const pendingTransactionsCountRef = useRef(null);
-	const logsCountRef = useRef(null);
 	const notificationsCountRef = useRef(null);
 
 	// METHODS
@@ -43,7 +41,7 @@ const Admin = () => {
 			getPendingTransactionsCount({ isPendingApproval: true });
 		}, POLL_INTERVAL_MS);
 
-		// Notifications Coun
+		// Notifications Count
 		const fetchFailedTransferNotifications = () => {
 			branches.forEach(({ id, name }) => {
 				getFailedTansferCount({ branchId: id, branchName: name });
@@ -57,7 +55,6 @@ const Admin = () => {
 
 		return () => {
 			clearInterval(pendingTransactionsCountRef.current);
-			clearInterval(logsCountRef.current);
 			clearInterval(notificationsCountRef.current);
 		};
 	}, []);

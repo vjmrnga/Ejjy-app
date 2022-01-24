@@ -7,8 +7,8 @@ import { service } from '../../services/Admin/failed-transfers';
 
 /* WORKERS */
 function* getCount({ payload }: any) {
+	// No callback is used in this endpoint as request status is not needed.
 	const { branchId, branchName, callback } = payload;
-	callback({ status: request.REQUESTING });
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -27,10 +27,8 @@ function* getCount({ payload }: any) {
 				branchName,
 			}),
 		);
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
+		// eslint-disable-next-line no-empty
+	} catch (e) {}
 }
 
 /* WATCHERS */

@@ -16,11 +16,11 @@ import {
 } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
+import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
+import { service as ProductCategoryService } from '../../../services/product-categories';
 import { convertIntoArray } from '../../../utils/function';
 import { CreateEditProductCategoryModal } from './components/CreateEditProductCategoryModal';
-import { service as ProductCategoryService } from '../../../services/product-categories';
-import { ONLINE_API_URL } from '../../../services';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -44,6 +44,7 @@ export const ProductCategories = () => {
 	const sortedProductCategories = useRef([]);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		getProductCategories,
 		removeProductCategory,
@@ -57,25 +58,28 @@ export const ProductCategories = () => {
 	}, []);
 
 	const fetchProductCategories = () => {
-		getProductCategories(({ status, data: responseData }) => {
-			if (status === request.SUCCESS) {
-				setInitialProductCategories(responseData);
-				setData(
-					responseData.map((productCategory, index) => ({
-						index,
-						key: productCategory.id,
-						id: productCategory.id,
-						name: productCategory.name,
-						actions: (
-							<TableActions
-								onEdit={() => onEdit(productCategory)}
-								onRemove={() => onRemove(productCategory.id)}
-							/>
-						),
-					})),
-				);
-			}
-		});
+		getProductCategories(
+			{ branchId: user?.branch?.id },
+			({ status, data: responseData }) => {
+				if (status === request.SUCCESS) {
+					setInitialProductCategories(responseData);
+					setData(
+						responseData.map((productCategory, index) => ({
+							index,
+							key: productCategory.id,
+							id: productCategory.id,
+							name: productCategory.name,
+							actions: (
+								<TableActions
+									onEdit={() => onEdit(productCategory)}
+									onRemove={() => onRemove(productCategory.id)}
+								/>
+							),
+						})),
+					);
+				}
+			},
+		);
 	};
 
 	const onCreate = () => {
@@ -89,11 +93,17 @@ export const ProductCategories = () => {
 	};
 
 	const onRemove = (productCategoryId) => {
-		removeProductCategory(productCategoryId, ({ status }) => {
-			if (status === request.SUCCESS) {
-				fetchProductCategories();
-			}
-		});
+		removeProductCategory(
+			{
+				id: productCategoryId,
+				branchId: user?.branch?.id,
+			},
+			({ status }) => {
+				if (status === request.SUCCESS) {
+					fetchProductCategories();
+				}
+			},
+		);
 	};
 
 	const onEditOrder = useCallback(() => {
@@ -101,16 +111,20 @@ export const ProductCategories = () => {
 			const productCategory = initialProductCategories[index];
 
 			if (productCategory.id !== pc.id) {
-				ProductCategoryService.edit(
-					{
-						id: pc.id,
-						name: pc.name,
-						priority_level: index,
-					},
-					ONLINE_API_URL,
-				).catch(() => {
-					// Do nothing
-				});
+				const onlineUrl = user?.branch?.online_url;
+
+				if (onlineUrl) {
+					ProductCategoryService.edit(
+						{
+							id: pc.id,
+							name: pc.name,
+							priority_level: index,
+						},
+						onlineUrl,
+					).catch(() => {
+						// Do nothing
+					});
+				}
 			}
 		});
 

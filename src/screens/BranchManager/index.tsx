@@ -17,6 +17,7 @@ import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
+import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 
 const sidebarItems = [
 	{
@@ -32,6 +33,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-product-active.svg'),
 		defaultIcon: require('../../assets/images/icon-product.svg'),
 		link: '/branch-manager/products',
+	},
+	{
+		key: 'product-categories',
+		name: 'Product Categories',
+		activeIcon: require('../../assets/images/icon-product-active.svg'),
+		defaultIcon: require('../../assets/images/icon-product.svg'),
+		link: '/branch-manager/product-categories',
 	},
 	{
 		key: 'requisition-slips',
@@ -99,6 +107,10 @@ const OfficeManager = () => {
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/branch-manager/dashboard" component={Dashboard} />
+					<Route
+						path="/branch-manager/product-categories"
+						component={ProductCategories}
+					/>
 					<Route path="/branch-manager/products" component={Products} />
 					<Route
 						path="/branch-manager/requisition-slips"
