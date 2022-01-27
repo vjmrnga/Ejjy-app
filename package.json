@@ -1,6 +1,6 @@
 {
 	"name": "ejjy",
-	"version": "0.1.51",
+	"version": "0.1.55",
 	"private": true,
 	"homepage": "./",
 	"main": "./electron/main.js",

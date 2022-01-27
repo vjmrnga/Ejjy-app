@@ -13,14 +13,14 @@ interface IEditProductCategory {
 
 export const service = {
 	list: async (params: IListRequest, baseURL) =>
-		axios.get('/online-product-categories/', { baseURL, params }),
+		axios.get('/product-categories/', { baseURL, params }),
 
 	create: async (body: ICreateProductCategory, baseURL) =>
-		axios.post('/online-product-categories/', body, { baseURL }),
+		axios.post('/product-categories/', body, { baseURL }),
 
 	edit: async (body: IEditProductCategory, baseURL) =>
-		axios.patch(`/online-product-categories/${body.id}/`, body, { baseURL }),
+		axios.patch(`/product-categories/${body.id}/`, body, { baseURL }),
 
 	remove: async (id, baseURL) =>
-		axios.delete(`/online-product-categories/${id}/`, { baseURL }),
+		axios.delete(`/product-categories/${id}/`, { baseURL }),
 };
