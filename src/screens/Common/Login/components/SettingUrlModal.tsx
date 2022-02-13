@@ -20,7 +20,7 @@ export const SettingUrlModal = ({ visible, onClose }: Props) => {
 	return (
 		<Modal
 			title="Set Local URL"
-			className="SettingUrl"
+			className="SettingUrl Modal"
 			visible={visible}
 			footer={null}
 			onCancel={onClose}

@@ -84,7 +84,7 @@ export const Products = () => {
 
 	// METHODS
 	useEffect(() => {
-		getProductCategories(({ status, data: responseData }) => {
+		getProductCategories({}, ({ status, data: responseData }) => {
 			if (status === request.SUCCESS) {
 				setProductCategories(responseData);
 			}

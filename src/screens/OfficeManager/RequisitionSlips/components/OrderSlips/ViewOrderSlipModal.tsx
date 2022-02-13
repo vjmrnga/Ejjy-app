@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { Col, Divider, Modal, Radio, Row, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { jsPDF } from 'jspdf';

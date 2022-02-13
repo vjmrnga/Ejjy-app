@@ -11,7 +11,7 @@ import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
-import { Products } from './Products/Products';
+import { Products } from '../Shared/Products/Products';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
@@ -91,9 +91,10 @@ const OfficeManager = () => {
 
 	// METHODS
 	useEffect(() => {
-		if (IS_APP_LIVE) {
-			getBranches();
-		}
+		// TODO: Remove once online app is fixed.
+		// if (IS_APP_LIVE) {
+		getBranches();
+		// }
 	}, []);
 
 	if (getBranchesStatus === request.REQUESTING) {

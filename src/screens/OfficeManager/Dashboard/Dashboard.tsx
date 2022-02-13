@@ -31,11 +31,14 @@ export const Dashboard = () => {
 
 	// METHODS
 	useEffect(() => {
-		getProductCategories(({ status, data: responseData }) => {
-			if (status === request.SUCCESS) {
-				setProductCategories(responseData);
-			}
-		});
+		getProductCategories(
+			{ branchId: currentBranchId },
+			({ status, data: responseData }) => {
+				if (status === request.SUCCESS) {
+					setProductCategories(responseData);
+				}
+			},
+		);
 	}, []);
 
 	useEffect(() => {

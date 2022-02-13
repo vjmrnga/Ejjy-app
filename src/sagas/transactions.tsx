@@ -1,4 +1,4 @@
-import { call, select, takeLatest, takeEvery } from 'redux-saga/effects';
+import { call, select, takeEvery } from 'redux-saga/effects';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { types } from '../ducks/transactions';
 import { request } from '../global/types';

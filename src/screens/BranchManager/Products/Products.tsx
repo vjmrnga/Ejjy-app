@@ -55,11 +55,14 @@ export const Products = () => {
 	// METHODS
 	useEffect(() => {
 		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
-		getProductCategories(({ status: requestStatus, data: responseData }) => {
-			if (requestStatus === request.SUCCESS) {
-				setProductCategories(responseData);
-			}
-		});
+		getProductCategories(
+			{ branchId: user?.branch?.id },
+			({ status: requestStatus, data: responseData }) => {
+				if (requestStatus === request.SUCCESS) {
+					setProductCategories(responseData);
+				}
+			},
+		);
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table

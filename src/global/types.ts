@@ -147,7 +147,7 @@ export const backOrdersStatuses = {
 	ERROR: 'error',
 };
 
-export const taxTypes  = {
+export const taxTypes = {
 	VAT: 'VAT',
 	NVAT: 'NVAT',
 };

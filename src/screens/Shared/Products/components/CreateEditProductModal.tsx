@@ -1,6 +1,5 @@
 import { message, Modal } from 'antd';
 import React from 'react';
-import { FieldInfo } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { request } from '../../../../global/types';
 import { useProducts } from '../../../../hooks/useProducts';

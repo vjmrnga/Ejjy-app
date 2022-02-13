@@ -35,11 +35,7 @@ export const TransactionsCancelled = ({
 		status: transactionsStatus,
 		errors: transactionsErrors,
 	} = useTransactions();
-	const {
-		getSiteSettings,
-		status: siteSettingsStatus,
-		errors: siteSettingsErrors,
-	} = useSiteSettings();
+	const { getSiteSettings, errors: siteSettingsErrors } = useSiteSettings();
 
 	useEffect(() => {
 		listTransactions(

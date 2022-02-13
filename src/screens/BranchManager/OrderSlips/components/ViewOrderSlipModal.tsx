@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Divider, Modal, Radio, Row, Space } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';

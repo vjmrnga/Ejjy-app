@@ -1,9 +1,19 @@
 import { call, retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../../ducks/OfficeManager/products';
-import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
+import {
+	IS_APP_LIVE,
+	MAX_RETRY,
+	RETRY_INTERVAL_MS,
+} from '../../global/constants';
 import { request } from '../../global/types';
 import { ONLINE_API_URL } from '../../services';
 import { service } from '../../services/OfficeManager/products';
+import { getLocalIpAddress } from '../../utils/function';
+
+function _getBaseUrl() {
+	// TODO: Remove once online app is fixed.
+	return IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+}
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -22,7 +32,7 @@ function* list({ payload }: any) {
 				product_category: productCategory,
 				ids,
 			},
-			ONLINE_API_URL,
+			_getBaseUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -36,7 +46,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, ONLINE_API_URL);
+		const response = yield call(service.create, data, _getBaseUrl());
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
@@ -49,7 +59,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data, ONLINE_API_URL);
+		const response = yield call(service.edit, data, _getBaseUrl());
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
@@ -66,7 +76,7 @@ function* remove({ payload }: any) {
 			service.remove,
 			id,
 			{ acting_user_id: actingUserId },
-			ONLINE_API_URL,
+			_getBaseUrl(),
 		);
 
 		callback({ status: request.SUCCESS, response: response.data });

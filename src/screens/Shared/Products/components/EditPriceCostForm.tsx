@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Col, Divider, Row, Spin, Typography } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

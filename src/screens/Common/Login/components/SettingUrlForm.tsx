@@ -56,12 +56,12 @@ export const SettingUrlForm = ({
 						<FieldError error={errors.localIpAddress} />
 					) : null}
 
-					<div className="custom-footer">
+					<div className="ModalCustomFooter">
 						<Button
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							classNames="btn-cancel"
+							classNames="mr-10"
 							disabled={isSubmitting}
 						/>
 						<Button
