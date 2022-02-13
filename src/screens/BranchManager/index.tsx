@@ -25,13 +25,13 @@ import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
 const sidebarItems = [
-	// {
-	// 	key: 'dashboard',
-	// 	name: 'Dashboard',
-	// 	activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-dashboard.svg'),
-	// 	link: '/branch-manager/dashboard',
-	// },
+	{
+		key: 'dashboard',
+		name: 'Dashboard',
+		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
+		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
+		link: '/branch-manager/dashboard',
+	},
 	{
 		key: 'products',
 		name: 'Products',
@@ -60,34 +60,34 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-branches.svg'),
 		link: '/branch-manager/branch-machines',
 	},
-	// {
-	// 	key: 'requisition-slips',
-	// 	name: 'Requisition Slips',
-	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-	// 	link: '/branch-manager/requisition-slips',
-	// },
-	// {
-	// 	key: 'return-item-slips',
-	// 	name: 'Return Item Slips',
-	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-	// 	link: '/branch-manager/return-item-slips',
-	// },
-	// {
-	// 	key: 'back-orders',
-	// 	name: 'Back Orders',
-	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-	// 	link: '/branch-manager/back-orders',
-	// },
-	// {
-	// 	key: 'order-slips',
-	// 	name: 'Order Slips',
-	// 	activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-order-slips.svg'),
-	// 	link: '/branch-manager/order-slips',
-	// },
+	{
+		key: 'requisition-slips',
+		name: 'Requisition Slips',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/branch-manager/requisition-slips',
+	},
+	{
+		key: 'return-item-slips',
+		name: 'Return Item Slips',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/branch-manager/return-item-slips',
+	},
+	{
+		key: 'back-orders',
+		name: 'Back Orders',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/branch-manager/back-orders',
+	},
+	{
+		key: 'order-slips',
+		name: 'Order Slips',
+		activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
+		defaultIcon: require('../../assets/images/icon-order-slips.svg'),
+		link: '/branch-manager/order-slips',
+	},
 	{
 		key: 'checking',
 		name: 'Checking',
@@ -102,13 +102,13 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-settings.svg'),
 		link: '/branch-manager/site-settings',
 	},
-	// {
-	// 	key: 'notifications',
-	// 	name: 'Notifications',
-	// 	activeIcon: require('../../assets/images/icon-notifications-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-notifications.svg'),
-	// 	link: '/branch-manager/notifications',
-	// },
+	{
+		key: 'notifications',
+		name: 'Notifications',
+		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
+		defaultIcon: require('../../assets/images/icon-notifications.svg'),
+		link: '/branch-manager/notifications',
+	},
 ];
 
 const BranchManager = () => {
