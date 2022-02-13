@@ -1,9 +1,11 @@
 import { Modal } from 'antd';
 import React, { useEffect } from 'react';
+import { RequestErrors } from '../../../../../components';
 import { FieldError } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/OfficeManager/branches';
 import { request } from '../../../../../global/types';
 import { useBranches } from '../../../../../hooks/useBranches';
+import { convertIntoArray } from '../../../../../utils/function';
 import { CreateEditBranchForm } from './CreateEditBranchForm';
 
 interface Props {
@@ -34,9 +36,7 @@ export const CreateEditBranchModal = ({ branch, visible, onClose }: Props) => {
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<CreateEditBranchForm
 				branch={branch}

@@ -5,28 +5,33 @@ import { Container } from '../../components';
 import { IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
+import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
+import { Products } from '../Shared/Products/Products';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
+import { BranchMachines } from './BranchMachines/BranchMachines';
+import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
-import { Products } from '../Shared/Products/Products';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
-import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
+import { SiteSettings } from './SiteSettings/SiteSettings';
+import { AssignUser } from './Users/AssignUser';
+import { Users } from './Users/Users';
 
 const sidebarItems = [
-	{
-		key: 'dashboard',
-		name: 'Dashboard',
-		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
-		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
-		link: '/branch-manager/dashboard',
-	},
+	// {
+	// 	key: 'dashboard',
+	// 	name: 'Dashboard',
+	// 	activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-dashboard.svg'),
+	// 	link: '/branch-manager/dashboard',
+	// },
 	{
 		key: 'products',
 		name: 'Products',
@@ -42,33 +47,47 @@ const sidebarItems = [
 		link: '/branch-manager/product-categories',
 	},
 	{
-		key: 'requisition-slips',
-		name: 'Requisition Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/requisition-slips',
+		key: 'users',
+		name: 'Users',
+		activeIcon: require('../../assets/images/icon-users-active.svg'),
+		defaultIcon: require('../../assets/images/icon-users.svg'),
+		link: '/branch-manager/users',
 	},
 	{
-		key: 'return-item-slips',
-		name: 'Return Item Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/return-item-slips',
+		key: 'branch-machines',
+		name: 'Branch Machines',
+		activeIcon: require('../../assets/images/icon-branches-active.svg'),
+		defaultIcon: require('../../assets/images/icon-branches.svg'),
+		link: '/branch-manager/branch-machines',
 	},
-	{
-		key: 'back-orders',
-		name: 'Back Orders',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/back-orders',
-	},
-	{
-		key: 'order-slips',
-		name: 'Order Slips',
-		activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
-		defaultIcon: require('../../assets/images/icon-order-slips.svg'),
-		link: '/branch-manager/order-slips',
-	},
+	// {
+	// 	key: 'requisition-slips',
+	// 	name: 'Requisition Slips',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/branch-manager/requisition-slips',
+	// },
+	// {
+	// 	key: 'return-item-slips',
+	// 	name: 'Return Item Slips',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/branch-manager/return-item-slips',
+	// },
+	// {
+	// 	key: 'back-orders',
+	// 	name: 'Back Orders',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/branch-manager/back-orders',
+	// },
+	// {
+	// 	key: 'order-slips',
+	// 	name: 'Order Slips',
+	// 	activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-order-slips.svg'),
+	// 	link: '/branch-manager/order-slips',
+	// },
 	{
 		key: 'checking',
 		name: 'Checking',
@@ -77,24 +96,30 @@ const sidebarItems = [
 		link: '/branch-manager/checking',
 	},
 	{
-		key: 'notifications',
-		name: 'Notifications',
-		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
-		defaultIcon: require('../../assets/images/icon-notifications.svg'),
-		link: '/branch-manager/notifications',
+		key: 'site-settings',
+		name: 'Site Settings',
+		activeIcon: require('../../assets/images/icon-settings-active.svg'),
+		defaultIcon: require('../../assets/images/icon-settings.svg'),
+		link: '/branch-manager/site-settings',
 	},
+	// {
+	// 	key: 'notifications',
+	// 	name: 'Notifications',
+	// 	activeIcon: require('../../assets/images/icon-notifications-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-notifications.svg'),
+	// 	link: '/branch-manager/notifications',
+	// },
 ];
 
-const OfficeManager = () => {
+const BranchManager = () => {
 	// CUSTOM HOOKS
 	const { getBranches, status: getBranchesStatus } = useBranches();
 
 	// METHODS
 	useEffect(() => {
-		// TODO: Remove once online app is fixed.
-		// if (IS_APP_LIVE) {
-		getBranches();
-		// }
+		if (IS_APP_LIVE) {
+			getBranches();
+		}
 	}, []);
 
 	if (getBranchesStatus === request.REQUESTING) {
@@ -113,6 +138,25 @@ const OfficeManager = () => {
 						component={ProductCategories}
 					/>
 					<Route path="/branch-manager/products" component={Products} />
+
+					<Route path="/branch-manager/users" exact component={Users} />
+					<Route
+						path="/branch-manager/users/assign/:id"
+						component={AssignUser}
+						exact
+					/>
+
+					<Route
+						path="/branch-manager/branch-machines"
+						component={BranchMachines}
+						exact
+					/>
+					<Route
+						path="/branch-manager/branch-machines/:id"
+						component={ViewBranchMachine}
+						exact
+					/>
+
 					<Route
 						path="/branch-manager/requisition-slips"
 						component={RequisitionSlips}
@@ -160,6 +204,11 @@ const OfficeManager = () => {
 						component={Notifications}
 					/>
 
+					<Route
+						path="/branch-manager/site-settings"
+						component={SiteSettings}
+					/>
+
 					<Redirect to="/branch-manager/dashboard" />
 				</Switch>
 			</React.Suspense>
@@ -167,4 +216,4 @@ const OfficeManager = () => {
 	);
 };
 
-export default OfficeManager;
+export default BranchManager;

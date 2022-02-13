@@ -1,9 +1,10 @@
 import { Modal } from 'antd';
 import React, { useEffect } from 'react';
-import { FieldError } from '../../../../../components/elements';
-import { types } from '../../../../../ducks/OfficeManager/branch-machines';
+import { RequestErrors } from '../../../../../components';
+import { types } from '../../../../../ducks/branch-machines';
 import { request } from '../../../../../global/types';
 import { useBranchMachines } from '../../../../../hooks/useBranchMachines';
+import { convertIntoArray } from '../../../../../utils/function';
 import { CreateEditBranchMachineForm } from './CreateEditBranchMachineForm';
 
 interface Props {
@@ -63,9 +64,7 @@ export const CreateEditBranchMachineModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<CreateEditBranchMachineForm
 				branchMachine={branchMachine}

@@ -44,9 +44,13 @@ const getValidDateTest = (label) =>
 
 interface Props {
 	branchId: any;
+	withHeader?: boolean;
 }
 
-export const ViewBranchSiteSettings = ({ branchId }: Props) => {
+export const ViewBranchSiteSettings = ({
+	branchId,
+	withHeader = true,
+}: Props) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [siteSettings, setSiteSettings] = useState(null);
@@ -220,7 +224,7 @@ export const ViewBranchSiteSettings = ({ branchId }: Props) => {
 			size="large"
 			spinning={siteSettingsStatus === request.REQUESTING || isSubmitting}
 		>
-			<TableHeader title="Site Settings" />
+			{withHeader && <TableHeader title="Site Settings" />}
 
 			<RequestErrors
 				errors={convertIntoArray(siteSettingsErrors)}

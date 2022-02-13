@@ -3,7 +3,7 @@ import { types } from '../ducks/branch-products';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
 import { service } from '../services/branch-products';
-import { getLocalIpAddress } from '../utils/function';
+import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -21,14 +21,7 @@ function* list({ payload }: any) {
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
-
-	const localURL = getLocalIpAddress();
+	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
 		page,
@@ -49,7 +42,7 @@ function* list({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.list, data, baseURL || localURL);
+			response = yield call(service.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -90,14 +83,7 @@ function* listWithAnalytics({ payload }: any) {
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
-
-	const localURL = getLocalIpAddress();
+	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
 		page,
@@ -116,11 +102,7 @@ function* listWithAnalytics({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(
-				service.listWithAnalytics,
-				data,
-				baseURL || localURL,
-			);
+			response = yield call(service.listWithAnalytics, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -151,14 +133,7 @@ function* get({ payload }: any) {
 	const { page, pageSize, branchId, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
-
-	const localURL = getLocalIpAddress();
+	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
 		page,
@@ -173,7 +148,7 @@ function* get({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.list, data, baseURL || localURL);
+			response = yield call(service.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -204,12 +179,7 @@ function* edit({ payload }: any) {
 	const { callback, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		const response = yield call(service.edit, data, baseURL);
@@ -224,12 +194,7 @@ function* editBalance({ payload }: any) {
 		payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		const response = yield call(
@@ -260,12 +225,7 @@ function* editPriceCost({ payload }: any) {
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		const response = yield call(

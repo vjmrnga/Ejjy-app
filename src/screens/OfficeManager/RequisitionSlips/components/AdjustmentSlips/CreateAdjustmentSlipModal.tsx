@@ -1,7 +1,11 @@
 import { Divider, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
+import {
+	DetailsRow,
+	DetailsSingle,
+	RequestErrors,
+} from '../../../../../components';
 import {
 	FieldError,
 	Label,
@@ -10,7 +14,10 @@ import {
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/OfficeManager/adjustment-slips';
 import { deliveryReceiptStatus, request } from '../../../../../global/types';
-import { confirmPassword } from '../../../../../utils/function';
+import {
+	confirmPassword,
+	convertIntoArray,
+} from '../../../../../utils/function';
 import { useAdjustmentSlips } from '../../../hooks/useAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 
@@ -155,9 +162,7 @@ export const CreateAdjustmentSlipModal = ({
 			centered
 			closable
 		>
-			{errors.map((error, index) => (
-				<FieldError key={index} error={error} />
-			))}
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<div>
 				<Label label="Remarks" spacing />

@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	actions,
-	selectors,
-	types,
-} from '../ducks/OfficeManager/branch-machines';
+import { actions, selectors, types } from '../ducks/branch-machines';
 import { request } from '../global/types';
 import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
 import { useActionDispatch } from './useActionDispatch';
@@ -28,6 +24,7 @@ export const useBranchMachines = () => {
 
 	// ACTIONS
 	const getBranchMachinesAction = useActionDispatch(actions.getBranchMachines);
+	const getBranchMachineAction = useActionDispatch(actions.getBranchMachine);
 	const retrieveBranchMachineSalesAction = useActionDispatch(
 		actions.retrieveBranchMachineSales,
 	);
@@ -59,9 +56,17 @@ export const useBranchMachines = () => {
 		setWarnings(callbackWarnings);
 	};
 
-	const getBranchMachines = (branchId) => {
+	const getBranchMachines = (branchId = null) => {
 		setRecentRequest(types.GET_BRANCH_MACHINES);
 		getBranchMachinesAction({ branchId, callback });
+	};
+
+	const getBranchMachine = (id, extraCallback = null) => {
+		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES);
+		getBranchMachineAction({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
 	};
 
 	const retrieveBranchMachineSales = (data, extraCallback = null) => {
@@ -109,6 +114,7 @@ export const useBranchMachines = () => {
 	return {
 		branchMachines,
 		getBranchMachines,
+		getBranchMachine,
 		retrieveBranchMachineSales,
 		retrieveBranchMachineSalesAll,
 		createBranchMachine,

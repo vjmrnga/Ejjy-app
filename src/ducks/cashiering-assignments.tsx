@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../../global/constants';
+import { NOT_FOUND_INDEX } from '../global/constants';
 
 export const key = 'OM_CASHIERING_ASSIGNMENTS';
 

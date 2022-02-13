@@ -61,7 +61,7 @@ export const Users = () => {
 	const { branches } = useBranches();
 	const {
 		users,
-		getLocalUsers,
+		getUsers,
 		getOnlineUsers,
 		removeUser,
 		status: usersStatus,
@@ -82,7 +82,7 @@ export const Users = () => {
 			if (branchId) {
 				const isNotBranchId = NOT_BRANCH_IDS.includes(Number(branchId));
 
-				const getUserFn = isNotBranchId ? getOnlineUsers : getLocalUsers;
+				const getUserFn = isNotBranchId ? getOnlineUsers : getUsers;
 				getUserFn(
 					{
 						page: 1,

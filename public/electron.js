@@ -37,22 +37,24 @@ function createWindow() {
 		mainWindow = null;
 	});
 
-	const template = [
-		{
-			label: 'Development',
-			submenu: [
-				{
-					label: 'Toggle Developer Tools',
-					role: 'toggleDevTools',
-				},
-				{
-					label: 'Reload',
-					role: 'reload',
-				},
-			],
-		},
-	];
-	Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+	if (!isDev) {
+		const template = [
+			{
+				label: 'Development',
+				submenu: [
+					{
+						label: 'Toggle Developer Tools',
+						role: 'toggleDevTools',
+					},
+					{
+						label: 'Reload',
+						role: 'reload',
+					},
+				],
+			},
+		];
+		Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+	}
 }
 
 //-------------------------------------------------------------------

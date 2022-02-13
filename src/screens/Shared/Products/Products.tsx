@@ -15,13 +15,17 @@ import { Box, ButtonLink, Label } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
-import { pendingTransactionTypes, request } from '../../../global/types';
+import {
+	pendingTransactionTypes,
+	request,
+	userTypes,
+} from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { IProductCategory } from '../../../models';
-import { convertIntoArray } from '../../../utils/function';
+import { convertIntoArray, isUserFromBranch } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
 import { EditPriceCostModal } from './components/EditPriceCostModal';
 import { ViewProductModal } from './components/ViewProductModal';
@@ -146,12 +150,14 @@ export const Products = () => {
 	return (
 		<Content className="Products" title="Products">
 			<Box>
-				<TableHeader
-					buttonName="Create Product"
-					onCreate={() => {
-						onOpenModal(null, modals.CREATE_EDIT);
-					}}
-				/>
+				{!isUserFromBranch(user.user_type) && (
+					<TableHeader
+						buttonName="Create Product"
+						onCreate={() => {
+							onOpenModal(null, modals.CREATE_EDIT);
+						}}
+					/>
+				)}
 
 				<RequestErrors
 					className="PaddingHorizontal"
@@ -219,13 +225,15 @@ export const Products = () => {
 				)}
 			</Box>
 
-			<PendingTransactionsSection
-				ref={pendingTransactionsRef}
-				title="Pending Product Transactions"
-				transactionType={pendingTransactionTypes.PRODUCTS}
-				setHasPendingTransactions={setHasPendingTransactions}
-				withActionColumn
-			/>
+			{!isUserFromBranch(user.user_type) && (
+				<PendingTransactionsSection
+					ref={pendingTransactionsRef}
+					title="Pending Product Transactions"
+					transactionType={pendingTransactionTypes.PRODUCTS}
+					setHasPendingTransactions={setHasPendingTransactions}
+					withActionColumn
+				/>
+			)}
 		</Content>
 	);
 };
@@ -254,7 +262,7 @@ const Filter = ({
 	);
 
 	return (
-		<Row className="PaddingHorizontal" gutter={[15, 15]}>
+		<Row className="PaddingHorizontal PaddingVertical" gutter={[15, 15]}>
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input

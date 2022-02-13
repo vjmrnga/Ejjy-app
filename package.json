@@ -1,9 +1,10 @@
 {
 	"name": "ejjy",
-	"version": "0.1.55",
+	"productName": "EJJY Inventory",
+	"version": "0.1.61",
 	"private": true,
 	"homepage": "./",
-	"main": "./electron/main.js",
+	"main": "./public/electron.js",
 	"scripts": {
 		"lint": "cd src && eslint . --ext .tsx --ext .ts",
 		"lint:fix": "cd src && eslint . --ext .tsx --ext .ts --fix",
@@ -16,9 +17,8 @@
 		"start:electron": "PORT=3005 env-cmd -f .env.local react-scripts start",
 		"dev:electron": "concurrently \"npm run start:electron\" \"wait-on http://localhost:3005 && electron .\"",
 		"electron": "wait-on http://localhost:3005 && electron .",
-		"pack:build": "npm run build:local && electron-packager . EJJY-Inventory --no-prune --platform=win32 --ignore=/.vscode --ignore=/deployment --ignore=/node_modules --ignore=/public --ignore=/src --ignore=/.prettierignore --ignore=/.prettierrc --ignore=/.config-overrides.js --ignore=/package-lock.json --ignore=/README.md --ignore=/tsconfig.json --ignore=/yarn.lock --ignore=/electron-dev --overwrite",
-		"pack:zip": "7z a -tzip EJJY-Inventory-win32-ia32.zip EJJY-Inventory-win32-ia32",
-		"pack": "npm run pack:build && npm run pack:zip"
+		"postinstall": "electron-builder install-app-deps",
+		"publish": "npm version patch --no-git-tag-version && npm run build:local && electron-builder -w -p always"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
@@ -27,9 +27,10 @@
 		"axios": "^0.21.1",
 		"classnames": "^2.2.6",
 		"connected-react-router": "^6.8.0",
-		"craco-less": "^1.17.0",
 		"dayjs": "^1.10.4",
-		"electron-is-dev": "^1.2.0",
+		"electron-is-dev": "^2.0.0",
+		"electron-log": "^4.4.1",
+		"electron-updater": "4.3.9",
 		"formik": "^2.2.6",
 		"history": "^4.10.1",
 		"jspdf": "^2.3.1",
@@ -86,25 +87,27 @@
 		"@types/react-router-dom": "^5.1.5",
 		"@types/redux-actions": "^2.6.1",
 		"@types/yup": "^0.29.6",
-		"@typescript-eslint/eslint-plugin": "^4.28.1",
-		"@typescript-eslint/parser": "^4.28.1",
 		"concurrently": "^5.3.0",
 		"copy-webpack-plugin": "^6.1.0",
 		"electron": "^11.2.1",
-		"electron-builder": "^22.9.1",
-		"electron-packager": "^15.2.0",
+		"electron-builder": "^22.14.5",
 		"env-cmd": "^10.1.0",
-		"eslint": "^7.29.0",
-		"eslint-config-airbnb": "^18.2.1",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-import": "^2.23.4",
-		"eslint-plugin-jsx-a11y": "^6.4.1",
-		"eslint-plugin-prettier": "^3.4.0",
-		"eslint-plugin-react": "^7.24.0",
-		"eslint-plugin-react-hooks": "^4.2.0",
 		"node-sass": "^4.14.1",
 		"prettier": "^2.3.2",
 		"react-app-rewired": "^2.1.6",
 		"wait-on": "^5.2.1"
+	},
+	"build": {
+		"appId": "com.ejjy.inventory",
+		"mac": {
+			"category": "your.app.category.type"
+		},
+		"publish": [
+			{
+				"provider": "github",
+				"owner": "EJJY-Devs",
+				"repo": "ejjy-app"
+			}
+		]
 	}
 }

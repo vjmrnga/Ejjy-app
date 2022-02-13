@@ -1,24 +1,17 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
-import {
-	actions,
-	types,
-} from '../../ducks/OfficeManager/cashiering-assignments';
-import { MAX_PAGE_SIZE } from '../../global/constants';
-import { request } from '../../global/types';
-import { service } from '../../services/OfficeManager/cashiering-assignments';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
+import { actions, types } from '../ducks/cashiering-assignments';
+import { IS_APP_LIVE, MAX_PAGE_SIZE } from '../global/constants';
+import { request } from '../global/types';
+import { service } from '../services/cashiering-assignments';
+import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* listByUserId({ payload }: any) {
 	const { userId, branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
 		page: 1,
@@ -35,16 +28,18 @@ function* listByUserId({ payload }: any) {
 			// Fetch in branch url
 			response = yield call(service.listByUserId, data, baseURL);
 		} catch (e) {
-			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(
-				branchesSelectors.selectBackUpURLByBranchId(branchId),
-			);
-			if (baseURL && baseBackupURL) {
-				// Fetch branch url
-				response = yield call(service.listByUserId, data, baseBackupURL);
-				isFetchedFromBackupURL = true;
-			} else {
-				throw e;
+			if (IS_APP_LIVE) {
+				// Retry to fetch in backup branch url
+				const baseBackupURL = yield select(
+					branchesSelectors.selectBackUpURLByBranchId(branchId),
+				);
+				if (baseURL && baseBackupURL) {
+					// Fetch branch url
+					response = yield call(service.listByUserId, data, baseBackupURL);
+					isFetchedFromBackupURL = true;
+				} else {
+					throw e;
+				}
 			}
 		}
 
@@ -69,12 +64,7 @@ function* create({ payload }: any) {
 	const { callback, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		const response = yield call(service.create, data, baseURL);
@@ -95,12 +85,7 @@ function* edit({ payload }: any) {
 	const { callback, branchId, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		const response = yield call(service.edit, data, baseURL);
@@ -121,12 +106,7 @@ function* remove({ payload }: any) {
 	const { callback, branchId, id } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
 		yield call(service.remove, id, baseURL);

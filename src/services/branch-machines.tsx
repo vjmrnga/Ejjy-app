@@ -1,6 +1,6 @@
 /* eslint-disable no-confusing-arrow */
 import axios from 'axios';
-import { IListRequest } from '../interfaces';
+import { IListRequest } from './interfaces';
 
 interface ICreateProduct {
 	name: string;
@@ -19,18 +19,21 @@ interface IRetrieveSales extends IListRequest {
 
 export const service = {
 	list: async (params: IListRequest, baseURL) =>
-		axios.get('/branches-machines/', { baseURL, params }),
+		axios.get('/branch-machines/', { baseURL, params }),
+
+	getById: async (id, baseURL) =>
+		axios.get(`/branch-machines/${id}/`, { baseURL }),
 
 	retrieveSales: async (params: IRetrieveSales, baseURL, withCatch = false) =>
 		withCatch
 			? axios
-					.get('/branches-machines/sales/', { baseURL, params })
+					.get('/branch-machines/sales/', { baseURL, params })
 					.catch(() => null)
-			: axios.get('/branches-machines/sales/', { baseURL, params }),
+			: axios.get('/branch-machines/sales/', { baseURL, params }),
 
 	create: async (body: ICreateProduct, baseURL) =>
-		axios.post('/branches-machines/', body, { baseURL }),
+		axios.post('/branch-machines/', body, { baseURL }),
 
 	edit: async (id: number, body: IEditProduct, baseURL) =>
-		axios.patch(`/branches-machines/${id}/`, body, { baseURL }),
+		axios.patch(`/branch-machines/${id}/`, body, { baseURL }),
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IListRequest } from '../interfaces';
+import { IListRequest } from './interfaces';
 
 interface ICreateCashieringAssignment {
 	user_id: number;
@@ -21,8 +21,6 @@ export const service = {
 		params: IListCashieringAssignmentsByUserIdRequest,
 		baseURL,
 	) => axios.get('/cashiering-assignments/', { baseURL, params }),
-
-	getById: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
 
 	create: async (body: ICreateCashieringAssignment, baseURL) =>
 		axios.post('/cashiering-assignments/', body, { baseURL }),

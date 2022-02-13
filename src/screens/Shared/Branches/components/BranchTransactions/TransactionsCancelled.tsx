@@ -6,21 +6,25 @@ import { Box, Button } from '../../../../../components/elements';
 import { printCancelledTransactions } from '../../../../../configurePrinter';
 import { MAX_PAGE_SIZE } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
+import { useAuth } from '../../../../../hooks/useAuth';
 import { useSiteSettings } from '../../../../../hooks/useSiteSettings';
 import { useTransactions } from '../../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
+	isUserFromBranch,
 	numberWithCommas,
 } from '../../../../../utils/function';
 
 interface Props {
-	branchId: string;
+	branchId?: string;
+	serverUrl?: string;
 	timeRange?: string;
 	statuses?: string;
 }
 
 export const TransactionsCancelled = ({
 	branchId,
+	serverUrl,
 	timeRange,
 	statuses,
 }: Props) => {
@@ -29,6 +33,7 @@ export const TransactionsCancelled = ({
 	const [isPrinting, setIsPrinting] = useState(false);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		transactions,
 		listTransactions,
@@ -43,6 +48,7 @@ export const TransactionsCancelled = ({
 				timeRange,
 				statuses,
 				branchId,
+				serverUrl,
 				page: 1,
 				pageSize: MAX_PAGE_SIZE,
 			},
@@ -101,13 +107,15 @@ export const TransactionsCancelled = ({
 						</span>
 					</div>
 
-					<Button
-						text="Print"
-						variant="primary"
-						onClick={onPrint}
-						loading={isPrinting}
-						disabled={transactions.length === 0}
-					/>
+					{!isUserFromBranch(user.user_type) && (
+						<Button
+							text="Print"
+							variant="primary"
+							onClick={onPrint}
+							loading={isPrinting}
+							disabled={transactions.length === 0}
+						/>
+					)}
 				</div>
 			</Spin>
 		</Box>

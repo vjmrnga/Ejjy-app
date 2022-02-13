@@ -84,7 +84,7 @@ export const ViewBranch = ({ match }: Props) => {
 			rightTitle={branch?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<Box className="ViewBranch">
+			<Box className="ViewBranchMachine">
 				<Tabs
 					type="card"
 					className="PaddingHorizontal PaddingVertical"

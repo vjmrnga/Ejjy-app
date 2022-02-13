@@ -41,5 +41,8 @@ export const ROW_HEIGHT = 65;
 
 export const ALL_OPTION_KEY = 'all';
 
+export const GENERIC_ERROR_MESSAGE =
+	'An error occurred while processing you request.';
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

@@ -2,8 +2,10 @@ import { Modal } from 'antd';
 import { cloneDeep, memoize, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { request } from '../../../../global/types';
+import { useAuth } from '../../../../hooks/useAuth';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
+import { isUserFromBranch } from '../../../../utils/function';
 import '../style.scss';
 import { EditPriceCostForm } from './EditPriceCostForm';
 
@@ -26,6 +28,7 @@ export const EditPriceCostModal = ({ product, onClose }: Props) => {
 	const [branches, setBranches] = useState([]);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const { branches: branchesData } = useBranches();
 	const { getBranchProduct, editBranchProductPriceCost } = useBranchProducts();
 
@@ -39,9 +42,23 @@ export const EditPriceCostModal = ({ product, onClose }: Props) => {
 
 	useEffect(() => {
 		if (product) {
-			setBranches(branchesData.filter(({ online_url }) => !!online_url));
+			let filteredBranches = [];
+
+			if (isUserFromBranch(user.user_type)) {
+				// If branch user, set only 1 branch
+				filteredBranches.push({
+					id: 0,
+					name: 'Branch',
+				});
+			} else {
+				filteredBranches = branchesData.filter(
+					({ online_url }) => !!online_url,
+				);
+			}
+
+			setBranches(filteredBranches);
 		}
-	}, [product, branchesData]);
+	}, [user, product, branchesData]);
 
 	const isLoading = useCallback(
 		() => response.some((status) => status === request.REQUESTING),

@@ -5,9 +5,10 @@ export const key = 'OM_USERS';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
-	GET_LOCAL_USERS: `${key}/GET_LOCAL_USERS`,
+	GET_USERS: `${key}/GET_USERS`,
 	GET_ONLINE_USERS: `${key}/GET_ONLINE_USERS`,
 	GET_USER_BY_ID: `${key}/GET_USER_BY_ID`,
+	GET_ONLINE_USER_BY_ID: `${key}/GET_ONLINE_USER_BY_ID`,
 	REMOVE_USER: `${key}/REMOVE_USER`,
 	CREATE_USER: `${key}/CREATE_USER`,
 	EDIT_USER: `${key}/EDIT_USER`,
@@ -42,9 +43,10 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
-	getLocalUsers: createAction(types.GET_LOCAL_USERS),
+	getUsers: createAction(types.GET_USERS),
 	getOnlineUsers: createAction(types.GET_ONLINE_USERS),
 	getUserById: createAction(types.GET_USER_BY_ID),
+	getOnlineUserById: createAction(types.GET_ONLINE_USER_BY_ID),
 	createUser: createAction(types.CREATE_USER),
 	editUser: createAction(types.EDIT_USER),
 	removeUser: createAction(types.REMOVE_USER),

@@ -8,6 +8,8 @@ export const service = {
 	listOnline: async (params, baseURL) =>
 		axios.get('/online-users/', { baseURL, params }),
 
+	getById: async (id, baseURL) => axios.get(`/users/${id}/`, { baseURL }),
+
 	getByIdOnline: async (id, baseURL) =>
 		axios.get(`/online-users/${id}/`, { baseURL }),
 

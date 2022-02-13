@@ -13,12 +13,12 @@ import {
 } from '../../../components';
 import { Box, Select } from '../../../components/elements';
 import { RequestWarnings } from '../../../components/RequestWarnings/RequestWarnings';
-import { types } from '../../../ducks/OfficeManager/cashiering-assignments';
+import { types } from '../../../ducks/cashiering-assignments';
 import { request, userTypes } from '../../../global/types';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useUsers } from '../../../hooks/useUsers';
 import { convertIntoArray } from '../../../utils/function';
-import { useCashieringAssignments } from '../hooks/useCashieringAssignments';
+import { useCashieringAssignments } from '../../../hooks/useCashieringAssignments';
 import './style.scss';
 
 const columns = [
@@ -43,7 +43,7 @@ export const AssignUser = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const userId = match?.params?.id;
 	const history = useHistory();
-	const { user, getUserById, status: userStatus } = useUsers();
+	const { user, getOnlineUserById, status: userStatus } = useUsers();
 	const {
 		branchMachines,
 		getBranchMachines,
@@ -64,7 +64,7 @@ export const AssignUser = ({ match }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		getUserById(userId, ({ status, data: userData }) => {
+		getOnlineUserById(userId, ({ status, data: userData }) => {
 			if (status === request.ERROR) {
 				history.replace('/404');
 			} else if (

@@ -22,7 +22,7 @@ dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isToday);
-dayjs.tz.setDefault('Asia/Manila');
+dayjs.tz.setDefault('Asia/Taipei');
 
 // Start Interceptor
 const store = configureStore({}, history);

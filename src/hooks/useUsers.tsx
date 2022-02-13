@@ -45,9 +45,10 @@ export const useUsers = () => {
 	const [pageSize, setPageSize] = useState(10);
 
 	// ACTIONS
-	const getLocalUsersAction = useActionDispatch(actions.getLocalUsers);
+	const getUsersAction = useActionDispatch(actions.getUsers);
 	const getOnlineUsersAction = useActionDispatch(actions.getOnlineUsers);
 	const getUserByIdAction = useActionDispatch(actions.getUserById);
+	const getOnlineUserByIdAction = useActionDispatch(actions.getOnlineUserById);
 	const createUserAction = useActionDispatch(actions.createUser);
 	const editUserAction = useActionDispatch(actions.editUser);
 	const removeUserAction = useActionDispatch(actions.removeUser);
@@ -109,10 +110,10 @@ export const useUsers = () => {
 	};
 
 	// REQUEST METHODS
-	const getLocalUsers = (data, shouldReset = false) => {
+	const getUsers = (data, shouldReset = false) => {
 		executePaginatedRequest(data, shouldReset, {
-			requestAction: getLocalUsersAction,
-			requestType: types.GET_LOCAL_USERS,
+			requestAction: getUsersAction,
+			requestType: types.GET_USERS,
 			errorMessage: LIST_ERROR_MESSAGE,
 			allData,
 			pageSize,
@@ -139,7 +140,15 @@ export const useUsers = () => {
 		});
 	};
 
-	const getUserById = (id = 0, extraCallback = null) => {
+	const getOnlineUserById = (id = 0, extraCallback = null) => {
+		setRecentRequest(types.GET_ONLINE_USER_BY_ID);
+		getOnlineUserByIdAction({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
+	const getUserById = (id, extraCallback = null) => {
 		setRecentRequest(types.GET_USER_BY_ID);
 		getUserByIdAction({
 			id,
@@ -214,9 +223,10 @@ export const useUsers = () => {
 		removeItemInPagination,
 
 		user,
-		getLocalUsers,
+		getUsers,
 		getOnlineUsers,
 		getUserById,
+		getOnlineUserById,
 		createUser,
 		editUser,
 		removeUser,

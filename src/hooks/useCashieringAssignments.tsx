@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	actions,
-	selectors,
-	types,
-} from '../../../ducks/OfficeManager/cashiering-assignments';
-import { request } from '../../../global/types';
-import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback } from '../../../utils/function';
+import { actions, selectors, types } from '../ducks/cashiering-assignments';
+import { request } from '../global/types';
+import { useActionDispatch } from './useActionDispatch';
+import { modifiedCallback } from '../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Assignment was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the assignment';

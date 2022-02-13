@@ -1,13 +1,14 @@
 import _, { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../../global/constants';
+import { NOT_FOUND_INDEX } from '../global/constants';
 
 export const key = 'OM_BRANCH_MACHINES';
 
 export const types = {
 	SAVE: `${key}/SAVE`,
 	GET_BRANCH_MACHINES: `${key}/GET_BRANCH_MACHINES`,
+	GET_BRANCH_MACHINE: `${key}/GET_BRANCH_MACHINE`,
 	RETRIEVE_BRANCH_MACHINE_SALES: `${key}/RETRIEVE_BRANCH_MACHINE_SALES`,
 	RETRIEVE_BRANCH_MACHINE_SALES_ALL: `${key}/RETRIEVE_BRANCH_MACHINE_SALES_ALL`,
 	CREATE_BRANCH_MACHINE: `${key}/CREATE_BRANCH_MACHINE`,
@@ -74,6 +75,7 @@ const reducer = handleActions(
 export const actions = {
 	save: createAction(types.SAVE),
 	getBranchMachines: createAction(types.GET_BRANCH_MACHINES),
+	getBranchMachine: createAction(types.GET_BRANCH_MACHINE),
 	retrieveBranchMachineSales: createAction(types.RETRIEVE_BRANCH_MACHINE_SALES),
 	retrieveBranchMachineSalesAll: createAction(
 		types.RETRIEVE_BRANCH_MACHINE_SALES_ALL,

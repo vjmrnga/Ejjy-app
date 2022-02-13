@@ -16,18 +16,14 @@ import {
 import { request } from '../global/types';
 import { ONLINE_API_URL } from '../services/index';
 import { service } from '../services/users';
+import { getBaseUrl } from './helper';
 
 /* WORKERS */
-function* listLocalUsers({ payload }: any) {
+function* listUsers({ payload }: any) {
 	const { branchId, userType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
 		page: 1,
@@ -100,6 +96,28 @@ function* listOnlineUsers({ payload }: any) {
 }
 
 function* getByIdOnline({ payload }: any) {
+	const { id, callback } = payload;
+	callback({ status: request.REQUESTING });
+
+	try {
+		const response = yield retry(
+			MAX_RETRY,
+			RETRY_INTERVAL_MS,
+			service.getByIdOnline,
+			id,
+			ONLINE_API_URL,
+		);
+
+		yield put(
+			actions.save({ type: types.GET_USER_BY_ID, user: response.data }),
+		);
+		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* getById({ payload }: any) {
 	const { id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -206,16 +224,20 @@ function* requestUserTypeChange({ payload }: any) {
 }
 
 /* WATCHERS */
-const listLocalUsersWatcherSaga = function* listLocalUsersWatcherSaga() {
-	yield takeLatest(types.GET_LOCAL_USERS, listLocalUsers);
+const listUsersWatcherSaga = function* listUsersWatcherSaga() {
+	yield takeLatest(types.GET_USERS, listUsers);
 };
 
 const listOnlineUsersWatcherSaga = function* listOnlineUsersWatcherSaga() {
 	yield takeEvery(types.GET_ONLINE_USERS, listOnlineUsers);
 };
 
+const getByIdWatcherSaga = function* getByIdWatcherSaga() {
+	yield takeLatest(types.GET_USER_BY_ID, getById);
+};
+
 const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
-	yield takeLatest(types.GET_USER_BY_ID, getByIdOnline);
+	yield takeLatest(types.GET_ONLINE_USER_BY_ID, getByIdOnline);
 };
 
 const createOnlineWatcherSaga = function* createOnlineWatcherSaga() {
@@ -240,8 +262,9 @@ const requestUserTypeChangeWatcherSaga =
 	};
 
 export default [
-	listLocalUsersWatcherSaga(),
+	listUsersWatcherSaga(),
 	listOnlineUsersWatcherSaga(),
+	getByIdWatcherSaga(),
 	getByIdOnlineWatcherSaga(),
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),

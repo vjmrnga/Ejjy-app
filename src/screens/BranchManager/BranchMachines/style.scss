@@ -1,0 +1,39 @@
+@import '../../../assets/styles/main';
+
+.BranchMachines,
+.ViewBranchMachine {
+	.TableHeader {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+}
+
+.ViewBranchMachine {
+	.ViewBranchMachineSessions {
+		&_filter {
+			margin-bottom: 25px;
+		}
+
+		.branch-session-column {
+			.first-row {
+				margin-bottom: 6px;
+			}
+
+			.label {
+				font-weight: bold;
+				width: 50px;
+				display: inline-block;
+			}
+
+			.value {
+				font-weight: 400;
+			}
+		}
+	}
+
+	.ViewBranchMachineTransactions {
+		&_filter {
+			margin-bottom: 25px;
+		}
+	}
+}

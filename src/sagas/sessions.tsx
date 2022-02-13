@@ -3,22 +3,20 @@ import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches'
 import { types } from '../ducks/sessions';
 import { request } from '../global/types';
 import { service } from '../services/sessions';
+import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, callback } = payload;
+	const { page, pageSize, branchId, serverUrl, isUnauthorized, callback } =
+		payload;
 	callback({ status: request.REQUESTING });
 
-	// Required: Branch must have an online URL (Requested by Office)
-	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
-	if (!baseURL && branchId) {
-		callback({ status: request.ERROR, errors: 'Branch has no online url.' });
-		return;
-	}
+	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
 		page,
 		page_size: pageSize,
+		is_unauthorized: isUnauthorized,
 	};
 
 	let isFetchedFromBackupURL = false;
