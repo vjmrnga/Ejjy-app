@@ -52,14 +52,14 @@ interface IDeleteProduct extends IListRequest {
 
 export const service = {
 	list: async (params: IListProducts, baseURL) =>
-		axios.get('/online-products/', { baseURL, params }),
+		axios.get('/products/', { baseURL, params }),
 
 	create: async (body: ICreateProduct, baseURL) =>
-		axios.post('/online-products/', body, { baseURL }),
+		axios.post('/products/', body, { baseURL }),
 
 	edit: async (body: IEditProduct, baseURL) =>
-		axios.patch(`/online-products/${body.id}/`, body, { baseURL }),
+		axios.patch(`/products/${body.id}/`, body, { baseURL }),
 
 	remove: async (id, body: IDeleteProduct, baseURL) =>
-		axios.delete(`/online-products/${id}/`, { data: body, baseURL }),
+		axios.delete(`/products/${id}/`, { data: body, baseURL }),
 };

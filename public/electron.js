@@ -37,24 +37,22 @@ function createWindow() {
 		mainWindow = null;
 	});
 
-	if (!isDev) {
-		const template = [
-			{
-				label: 'Development',
-				submenu: [
-					{
-						label: 'Toggle Developer Tools',
-						role: 'toggleDevTools',
-					},
-					{
-						label: 'Reload',
-						role: 'reload',
-					},
-				],
-			},
-		];
-		Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-	}
+	// const template = [
+	// 	{
+	// 		label: 'Development',
+	// 		submenu: [
+	// 			{
+	// 				label: 'Toggle Developer Tools',
+	// 				role: 'toggleDevTools',
+	// 			},
+	// 			{
+	// 				label: 'Reload',
+	// 				role: 'reload',
+	// 			},
+	// 		],
+	// 	},
+	// ];
+	// Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 //-------------------------------------------------------------------

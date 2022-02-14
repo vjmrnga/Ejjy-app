@@ -48,6 +48,7 @@ const modals = {
 	EDIT_PRICE_COST: 2,
 };
 
+// TODO: Hide Create Product button once OfficeManager and Admin side is fixed.
 export const Products = () => {
 	// STATES
 	const [data, setData] = useState([]);
@@ -150,14 +151,12 @@ export const Products = () => {
 	return (
 		<Content className="Products" title="Products">
 			<Box>
-				{!isUserFromBranch(user.user_type) && (
-					<TableHeader
-						buttonName="Create Product"
-						onCreate={() => {
-							onOpenModal(null, modals.CREATE_EDIT);
-						}}
-					/>
-				)}
+				<TableHeader
+					buttonName="Create Product"
+					onCreate={() => {
+						onOpenModal(null, modals.CREATE_EDIT);
+					}}
+				/>
 
 				<RequestErrors
 					className="PaddingHorizontal"

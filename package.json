@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.61",
+	"version": "0.1.63",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -12,10 +12,9 @@
 		"deploy": "npm version patch --no-git-tag-version && python deploy.py",
 		"start:online": "env-cmd -f .env.online react-scripts start",
 		"start:local": "env-cmd -f .env.local react-scripts start",
+		"start:electron": "concurrently \"PORT=3005 env-cmd -f .env.local react-scripts start\" \"wait-on http://localhost:3005 && electron .\"",
 		"build:online": "env-cmd -f .env.online react-scripts build",
 		"build:local": "env-cmd -f .env.local react-scripts build",
-		"start:electron": "PORT=3005 env-cmd -f .env.local react-scripts start",
-		"dev:electron": "concurrently \"npm run start:electron\" \"wait-on http://localhost:3005 && electron .\"",
 		"electron": "wait-on http://localhost:3005 && electron .",
 		"postinstall": "electron-builder install-app-deps",
 		"publish": "npm version patch --no-git-tag-version && npm run build:local && electron-builder -w -p always"
