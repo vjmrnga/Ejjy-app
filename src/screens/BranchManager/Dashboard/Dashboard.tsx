@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Content } from '../../../components';
 import { CashieringCard } from '../../../components/CashieringCard/CashieringCard';
 import { FieldError } from '../../../components/elements';
+import { IS_APP_LIVE } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
@@ -27,23 +28,28 @@ export const Dashboard = () => {
 
 	// METHODS
 	useEffect(() => {
-		getBranch(user?.branch?.id);
+		if (IS_APP_LIVE) {
+			getBranch(user?.branch?.id);
 
-		const fn = () => {
-			testBranchConnection({ branchId: user?.branch?.id }, ({ status }) => {
-				if (status === request.SUCCESS) {
-					setHasInternetConnection(true);
-				} else if (status === request.ERROR) {
-					setHasInternetConnection(false);
-				}
+			const fn = () => {
+				testBranchConnection({ branchId: user?.branch?.id }, ({ status }) => {
+					if (status === request.SUCCESS) {
+						setHasInternetConnection(true);
+					} else if (status === request.ERROR) {
+						setHasInternetConnection(false);
+					}
 
-				if (status !== request.REQUESTING && isFirstTimeRequest) {
-					setIsFirstTimeRequest(false);
-				}
-			});
-		};
-		fn();
-		networkIntervalRef.current = setInterval(fn, NETWORK_INTERVAL_MS);
+					if (status !== request.REQUESTING && isFirstTimeRequest) {
+						setIsFirstTimeRequest(false);
+					}
+				});
+			};
+			fn();
+			networkIntervalRef.current = setInterval(fn, NETWORK_INTERVAL_MS);
+		} else {
+			setIsFirstTimeRequest(false);
+			setHasInternetConnection(true);
+		}
 
 		return () => {
 			clearInterval(networkIntervalRef.current);
