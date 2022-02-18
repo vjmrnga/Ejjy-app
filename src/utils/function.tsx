@@ -100,18 +100,20 @@ export const numberWithCommas = (x) =>
 export const removeCommas = (x) => x?.toString()?.replace(/,/g, '') || '';
 
 export const formatDateTime = memoize((datetime) =>
-	dayjs(datetime).format('MM/DD/YYYY h:mma'),
+	dayjs.tz(datetime).format('MM/DD/YYYY h:mma'),
 );
 
 export const formatDateTimeExtended = memoize((datetime) =>
-	dayjs(datetime).format('MMMM D, YYYY h:mma'),
+	dayjs.tz(datetime).format('MMMM D, YYYY h:mma'),
 );
 
 export const formatDateTimeShortMonth = memoize((datetime) =>
-	dayjs(datetime).format('MMM D, YYYY h:mma'),
+	dayjs.tz(datetime).format('MMM D, YYYY h:mma'),
 );
 
-export const formatDate = memoize((date) => dayjs(date).format('MM/DD/YYYY'));
+export const formatDate = memoize((date) =>
+	dayjs.tz(date).format('MM/DD/YYYY'),
+);
 
 export const convertToBulk = (pieces, piecesInBulk) =>
 	floor(pieces / piecesInBulk);

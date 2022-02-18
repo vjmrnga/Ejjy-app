@@ -70,7 +70,7 @@ export const AssignUser = ({ match }: Props) => {
 			const formattedAssignments = days.map((item) => {
 				const isDateAfter = today.isAfter(item.date);
 				const assignment = cashieringAssignments.find((ca) =>
-					dayjs(ca.date, 'YYYY-MM-DD').isSame(item.date, 'date'),
+					dayjs.tz(ca.date, 'YYYY-MM-DD').isSame(item.date, 'date'),
 				);
 
 				return {

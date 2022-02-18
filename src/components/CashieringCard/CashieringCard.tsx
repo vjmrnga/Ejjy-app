@@ -48,7 +48,7 @@ export const CashieringCard = ({
 
 	const onBranchDayResponse = ({ status, response }) => {
 		if (status === request.SUCCESS) {
-			const date = dayjs(response?.datetime_created, 'MM/DD/YYYY hh:mm:ss');
+			const date = dayjs.tz(response?.datetime_created, 'MM/DD/YYYY hh:mm:ss');
 			if (date?.isToday()) {
 				setBranchDay(response);
 			}
