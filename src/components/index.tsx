@@ -3,6 +3,7 @@ export * from './Breadcrumb/Breadcrumb';
 export * from './ButtonIcons/ButtonIcons';
 export * from './CashieringCard/CashieringCard';
 export * from './ColoredText/ColoredText';
+export { default as ConnectivityType } from './ConnectivityType';
 export * from './Details/DetailsHalf';
 export * from './Details/DetailsRow';
 export * from './Details/DetailsSingle';

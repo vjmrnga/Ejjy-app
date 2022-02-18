@@ -6,6 +6,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -29,15 +30,19 @@ const store = configureStore({}, history);
 configureAxios();
 configurePrinter();
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<PersistGate loading={null} persistor={persistStore(store)}>
-				<ConnectedRouter history={history}>
-					<App />
-				</ConnectedRouter>
-			</PersistGate>
-		</Provider>
+		<QueryClientProvider client={queryClient}>
+			<Provider store={store}>
+				<PersistGate loading={null} persistor={persistStore(store)}>
+					<ConnectedRouter history={history}>
+						<App />
+					</ConnectedRouter>
+				</PersistGate>
+			</Provider>
+		</QueryClientProvider>
 	</React.StrictMode>,
 	document.getElementById('root'),
 );

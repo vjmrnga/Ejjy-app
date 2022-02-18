@@ -1,5 +1,9 @@
 import axios from 'axios';
 import { flatten, values } from 'lodash';
+import {
+	GENERIC_BRANCH_ERROR_MESSAGE,
+	GENERIC_ERROR_MESSAGE,
+} from './global/constants';
 import { API_TIMEOUT, ONLINE_API_URL } from './services';
 
 export default function configureAxios() {
@@ -22,13 +26,9 @@ export default function configureAxios() {
 				error?.config.baseURL !== ONLINE_API_URL &&
 				error?.isAxiosError
 			) {
-				modifiedError.errors = [
-					'An error occurred while requesting on a local branch',
-				];
+				modifiedError.errors = [GENERIC_BRANCH_ERROR_MESSAGE];
 			} else {
-				modifiedError.errors = [
-					'An error occurred while executing your request',
-				];
+				modifiedError.errors = [GENERIC_ERROR_MESSAGE];
 			}
 		}
 

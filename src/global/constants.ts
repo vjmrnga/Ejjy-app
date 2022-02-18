@@ -44,5 +44,8 @@ export const ALL_OPTION_KEY = 'all';
 export const GENERIC_ERROR_MESSAGE =
 	'An error occurred while processing you request.';
 
+export const GENERIC_BRANCH_ERROR_MESSAGE =
+	'An error occurred while requesting on a local branch';
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

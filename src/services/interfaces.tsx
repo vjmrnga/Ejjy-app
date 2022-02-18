@@ -5,3 +5,8 @@ export interface IListRequest {
 	fields?: string;
 	search?: string;
 }
+
+export interface IListReponse {
+	results: any[];
+	count: number;
+}

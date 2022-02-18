@@ -8,7 +8,9 @@ import { GENERIC_ERROR_MESSAGE } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
+import { ViewBranchConnectivityLogs } from './components/ViewBranchConnectivityLogs';
 import { ViewBranchSessions } from './components/ViewBranchSessions';
 import { ViewBranchTransactions } from './components/ViewBranchTransactions';
 import './style.scss';
@@ -20,6 +22,7 @@ interface Props {
 const tabs = {
 	TRANSACTIONS: 'Transactions',
 	SESSIONS: 'Sessions',
+	CONNECTIVITY_LOGS: 'Connectivity Logs',
 };
 
 export const ViewBranchMachine = ({ match }: Props) => {
@@ -28,9 +31,12 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 	// STATES
 	const [branchMachine, setBranchMachine] = useState(null);
-	const [currentTab, setCurrentTab] = useState(tabs.TRANSACTIONS);
 
 	// CUSTOM HOOKS
+	const {
+		params: { tab: currentTab },
+		setQueryParams,
+	} = useQueryParams();
 	const { user } = useAuth();
 	const history = useHistory();
 	const {
@@ -40,7 +46,12 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	} = useBranchMachines();
 
 	// METHODS
+
 	useEffect(() => {
+		if (!currentTab) {
+			onTabClick(tabs.TRANSACTIONS);
+		}
+
 		getBranchMachine(branchMachineId, ({ status, data }) => {
 			if (status === request.SUCCESS) {
 				setBranchMachine(data);
@@ -62,6 +73,13 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		[branchMachine, user],
 	);
 
+	const onTabClick = (tab) => {
+		setQueryParams(
+			{ tab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
+
 	return (
 		<Content
 			title="[VIEW] Branch Machine"
@@ -81,9 +99,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							type="card"
 							className="PaddingHorizontal PaddingVertical"
 							activeKey={toString(currentTab)}
-							onTabClick={(tab) => {
-								setCurrentTab(tab);
-							}}
+							onTabClick={onTabClick}
 							destroyInactiveTabPane
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
@@ -92,6 +108,15 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
 								<ViewBranchSessions serverUrl={branchMachine.server_url} />
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={tabs.CONNECTIVITY_LOGS}
+								tab={tabs.CONNECTIVITY_LOGS}
+							>
+								<ViewBranchConnectivityLogs
+									serverUrl={branchMachine.server_url}
+								/>
 							</Tabs.TabPane>
 						</Tabs>
 					)}

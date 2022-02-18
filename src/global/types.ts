@@ -151,3 +151,8 @@ export const taxTypes = {
 	VAT: 'VAT',
 	NVAT: 'NVAT',
 };
+
+export const connectivityTypes = {
+	ONLINE_TO_OFFLINE: 'online_to_offline',
+	OFFLINE_TO_ONLINE: 'offline_to_online',
+};
