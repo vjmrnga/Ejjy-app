@@ -323,9 +323,7 @@ export const CreateEditProductForm = ({
 						? formData.has_quantity_allowance
 						: product?.has_quantity_allowance,
 					allowable_spoilage: isWeighing ? formData.allowable_spoilage : null,
-					will_carry_over_allowable_spoilage: isWeighing
-						? formData.will_carry_over_allowable_spoilage
-						: false,
+					will_carry_over_allowable_spoilage: undefined,
 
 					// NOTE: Branch product values
 					checking: undefined,
@@ -342,6 +340,13 @@ export const CreateEditProductForm = ({
 					will_carry_over_discounted_price_per_bulk1: undefined,
 					will_carry_over_discounted_price_per_piece2: undefined,
 					will_carry_over_discounted_price_per_bulk2: undefined,
+
+					will_carry_over_max_balance: undefined,
+					will_carry_over_reorder_point: undefined,
+					will_carry_over_price_per_piece: undefined,
+					will_carry_over_price_per_bulk: undefined,
+					will_carry_over_cost_per_piece: undefined,
+					will_carry_over_cost_per_bulk: undefined,
 				};
 
 				if (product) {
