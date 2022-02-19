@@ -18,8 +18,9 @@ import { Label } from '../../../../components/elements';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
 
 const columns: ColumnsType = [
-	{ title: 'User', dataIndex: 'user', key: 'user' },
-	{ title: 'Date & Time', dataIndex: 'datetime', key: 'datetime' },
+	{ title: 'User', dataIndex: 'user' },
+	{ title: 'Date & Time', dataIndex: 'datetime' },
+	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorized_time_range' },
 ];
 
 const sessionTypes = {
@@ -52,7 +53,6 @@ export const ViewBranchSessions = ({ serverUrl }: Props) => {
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
-			console.log();
 			listSessions(
 				{
 					...params,
@@ -68,11 +68,19 @@ export const ViewBranchSessions = ({ serverUrl }: Props) => {
 	// METHODS
 	useEffect(() => {
 		const formattedBranchSession = sessions.map((session) => {
-			const { user, datetime_started, datetime_ended } = session;
+			const {
+				user,
+				datetime_started,
+				datetime_ended,
+				is_unauthorized_datetime_ended,
+			} = session;
 
 			return {
 				user: `${user.first_name} ${user.last_name}`,
 				datetime: renderDateTime(datetime_started, datetime_ended),
+				unauthorized_time_range: is_unauthorized_datetime_ended
+					? renderDateTime(datetime_started, is_unauthorized_datetime_ended)
+					: EMPTY_CELL,
 			};
 		});
 
