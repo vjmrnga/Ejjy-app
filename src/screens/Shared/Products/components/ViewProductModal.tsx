@@ -4,6 +4,7 @@ import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import {
+	formatInPeso,
 	formatQuantity,
 	getProductType,
 	getUnitOfMeasurement,
@@ -69,10 +70,41 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 			<Divider dashed>
 				<Label label="MONEY" />
 			</Divider>
-			<DetailsSingle label="Cost (Piece)" value={product.cost_per_piece} />
-			<DetailsSingle label="Cost (Bulk)" value={product.cost_per_bulk} />
-			<DetailsSingle label="Price (Piece)" value={product.price_per_piece} />
-			<DetailsSingle label="Price (Bulk)" value={product.price_per_bulk} />
+			<DetailsSingle
+				label="Cost (Piece)"
+				value={formatInPeso(product.cost_per_piece)}
+			/>
+			<DetailsSingle
+				label="Cost (Bulk)"
+				value={formatInPeso(product.cost_per_bulk)}
+			/>
+
+			{/* TOOD: I think this is temporary */}
+			<DetailsSingle
+				label="Price (Piece)"
+				value={formatInPeso(product.price_per_piece)}
+			/>
+			<DetailsSingle
+				label="Wholesale Price (piece)"
+				value={formatInPeso(product.discounted_price_per_piece1)}
+			/>
+			<DetailsSingle
+				label="Special Price (piece)"
+				value={formatInPeso(product.discounted_price_per_piece2)}
+			/>
+
+			<DetailsSingle
+				label="Price (Bulk)"
+				value={formatInPeso(product.price_per_bulk)}
+			/>
+			<DetailsSingle
+				label="Wholesale Price (bulk)"
+				value={formatInPeso(product.discounted_price_per_bulk1)}
+			/>
+			<DetailsSingle
+				label="Special Price (Bulk)"
+				value={formatInPeso(product.discounted_price_per_bulk2)}
+			/>
 		</DetailsRow>
 	</Modal>
 );

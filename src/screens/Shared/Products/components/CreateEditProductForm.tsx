@@ -270,35 +270,6 @@ export const CreateEditProductForm = ({
 		[productCategories],
 	);
 
-	const renderCarryOverFieldLabel = useCallback(
-		(inputName, label, checkboxName, setFieldValue, disabledCheckbox = false) =>
-			product ? (
-				<Checkbox
-					className="CreateEditProduct_carryOverCheckbox"
-					onChange={(e) => {
-						setFieldValue(checkboxName, e.target.checked);
-					}}
-					disabled={disabledCheckbox}
-				>
-					{label}
-				</Checkbox>
-			) : (
-				<Label id={inputName} label={label} spacing />
-			),
-		[product],
-	);
-
-	const renderCarryOverFieldNote = useCallback(
-		(carryOverCheckboxValue, fieldName) =>
-			product &&
-			carryOverCheckboxValue && (
-				<FieldWarning
-					message={`${fieldName} value will be carried over to branches when submited.`}
-				/>
-			),
-		[product],
-	);
-
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -513,12 +484,7 @@ export const CreateEditProductForm = ({
 						<Divider dashed>QUANTITY</Divider>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'reorder_point',
-								'Reorder Point',
-								'will_carry_over_reorder_point',
-								setFieldValue,
-							)}
+							<Label label="Reorder Point" spacing />
 							<FormInput
 								type="number"
 								id="reorder_point"
@@ -531,19 +497,10 @@ export const CreateEditProductForm = ({
 								name="reorder_point"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_reorder_point,
-								'Reorder Point',
-							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'max_balance',
-								'Max Balance',
-								'will_carry_over_max_balance',
-								setFieldValue,
-							)}
+							<Label label="Max Balance" spacing />
 							<FormInput
 								type="number"
 								id="max_balance"
@@ -556,10 +513,6 @@ export const CreateEditProductForm = ({
 								name="max_balance"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_max_balance,
-								'Max Balance',
-							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -575,13 +528,7 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'allowable_spoilage',
-								'Allowable Spoilage (%)',
-								'will_carry_over_allowable_spoilage',
-								setFieldValue,
-								values?.unit_of_measurement !== unitOfMeasurementTypes.WEIGHING,
-							)}
+							<Label label="Allowable Spoilage (%)" spacing />
 							<FormInput
 								type="number"
 								id="allowable_spoilage"
@@ -598,10 +545,6 @@ export const CreateEditProductForm = ({
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited." />
 							)}
-							{renderCarryOverFieldNote(
-								values.will_carry_over_allowable_spoilage,
-								'Allowable Spoilage',
-							)}
 						</Col>
 
 						<Divider dashed>
@@ -611,91 +554,47 @@ export const CreateEditProductForm = ({
 						</Divider>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'cost_per_piece',
-								'Cost (Piece)',
-								'will_carry_over_cost_per_piece',
-								setFieldValue,
-							)}
+							<Label label="Cost (Piece)" spacing />
+
 							<FormInput type="number" id="cost_per_piece" isMoney />
 							<ErrorMessage
 								name="cost_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_cost_per_piece,
-								'Cost (Piece)',
-							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'cost_per_bulk',
-								'Cost (Bulk)',
-								'will_carry_over_cost_per_bulk',
-								setFieldValue,
-							)}
+							<Label label="Cost (Bulk)" spacing />
 							<FormInput type="number" id="cost_per_bulk" isMoney />
 							<ErrorMessage
 								name="cost_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_cost_per_bulk,
-								'Cost (Bulk)',
-							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'price_per_piece',
-								'Price (Piece)',
-								'will_carry_over_price_per_piece',
-								setFieldValue,
-							)}
+							<Label label="Price (Piece)" spacing />
 							<FormInput type="number" id="price_per_piece" isMoney />
 							<ErrorMessage
 								name="price_per_piece"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_price_per_piece,
-								'Price (Piece)',
-							)}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'price_per_bulk',
-								'Price (Bulk)',
-								'will_carry_over_price_per_bulk',
-								setFieldValue,
-							)}
+							<Label label="Price (Bulk)" spacing />
 							<FormInput type="number" id="price_per_bulk" isMoney />
 							<ErrorMessage
 								name="price_per_bulk"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{renderCarryOverFieldNote(
-								values.will_carry_over_price_per_bulk,
-								'Price (Bulk)',
-							)}
 						</Col>
 
 						<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'is_sold_in_branch',
-								'In Stock',
-								'will_carry_over_is_sold_in_branch',
-								setFieldValue,
-							)}
-							<FormRadioButton
-								id="is_sold_in_branch"
-								items={booleanOptions}
-								disabled={!values.will_carry_over_is_sold_in_branch}
-							/>
+							<Label label="In Stock" spacing />
+							<FormRadioButton id="is_sold_in_branch" items={booleanOptions} />
 							<ErrorMessage
 								name="is_sold_in_branch"
 								render={(error) => <FieldError error={error} />}
@@ -703,17 +602,8 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'checking',
-								'Checking',
-								'will_carry_over_checking',
-								setFieldValue,
-							)}
-							<FormRadioButton
-								id="checking"
-								items={checkingTypesOptions}
-								disabled={!values.will_carry_over_checking}
-							/>
+							<Label label="Checking" spacing />
+							<FormRadioButton id="checking" items={checkingTypesOptions} />
 							<ErrorMessage
 								name="checking"
 								render={(error) => <FieldError error={error} />}
@@ -721,17 +611,11 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'discounted_price_per_piece1',
-								'Wholesale Price (piece)',
-								'will_carry_over_discounted_price_per_piece1',
-								setFieldValue,
-							)}
+							<Label label="Wholesale Price (piece)" spacing />
 							<FormInput
 								type="number"
 								id="discounted_price_per_piece1"
 								step=".01"
-								disabled={!values.will_carry_over_discounted_price_per_piece1}
 								isMoney
 							/>
 							<ErrorMessage
@@ -741,17 +625,11 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'discounted_price_per_piece2',
-								'Special Price (piece)',
-								'will_carry_over_discounted_price_per_piece2',
-								setFieldValue,
-							)}
+							<Label label="Special Price (piece)" spacing />
 							<FormInput
 								type="number"
 								id="discounted_price_per_piece2"
 								step=".01"
-								disabled={!values.will_carry_over_discounted_price_per_piece2}
 								isMoney
 							/>
 							<ErrorMessage
@@ -761,17 +639,11 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'discounted_price_per_bulk1',
-								'Wholesale Price (bulk)',
-								'will_carry_over_discounted_price_per_bulk1',
-								setFieldValue,
-							)}
+							<Label label="Wholesale Price (bulk)" spacing />
 							<FormInput
 								type="number"
 								id="discounted_price_per_bulk1"
 								step=".01"
-								disabled={!values.will_carry_over_discounted_price_per_bulk1}
 								isMoney
 							/>
 							<ErrorMessage
@@ -781,17 +653,11 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							{renderCarryOverFieldLabel(
-								'discounted_price_per_bulk2',
-								'Special Price (bulk)',
-								'will_carry_over_discounted_price_per_bulk2',
-								setFieldValue,
-							)}
+							<Label label="Special Price (bulk)" spacing />
 							<FormInput
 								type="number"
 								id="discounted_price_per_bulk2"
 								step=".01"
-								disabled={!values.will_carry_over_discounted_price_per_bulk2}
 								isMoney
 							/>
 							<ErrorMessage
@@ -801,31 +667,20 @@ export const CreateEditProductForm = ({
 						</Col>
 					</Row>
 
-					<div className="ModalCustomFooter ModalCustomFooter___withFooterTitle">
-						<div>
-							{product && (
-								<FieldInfo
-									message="Tick the checkboxes if you want to carry over the update to all the
-				branches."
-									withSpaceBottom
-								/>
-							)}
-						</div>
-						<div>
-							<Button
-								type="button"
-								text="Cancel"
-								onClick={onClose}
-								classNames="mr-10"
-								disabled={loading || isSubmitting}
-							/>
-							<Button
-								type="submit"
-								text={product ? 'Edit' : 'Create'}
-								variant="primary"
-								loading={loading || isSubmitting}
-							/>
-						</div>
+					<div className="ModalCustomFooter">
+						<Button
+							type="button"
+							text="Cancel"
+							onClick={onClose}
+							classNames="mr-10"
+							disabled={loading || isSubmitting}
+						/>
+						<Button
+							type="submit"
+							text={product ? 'Edit' : 'Create'}
+							variant="primary"
+							loading={loading || isSubmitting}
+						/>
 					</div>
 				</Form>
 			)}
