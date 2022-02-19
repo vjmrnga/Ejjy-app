@@ -8,7 +8,7 @@ import { RequestErrors } from '../../../../components/RequestErrors/RequestError
 import { request } from '../../../../global/types';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
-import { convertIntoArray, numberWithCommas } from '../../../../utils/function';
+import { convertIntoArray, formatInPeso } from '../../../../utils/function';
 import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';
 
@@ -88,7 +88,7 @@ export const SalesBranch = ({ branchId }: Props) => {
 			({ id: key, folder_name, sales: branchSales }) => ({
 				key,
 				machine_name: folder_name,
-				sales: `₱${numberWithCommas(branchSales.toFixed(2))}`,
+				sales: formatInPeso(branchSales),
 			}),
 		);
 

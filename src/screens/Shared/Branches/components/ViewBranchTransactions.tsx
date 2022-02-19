@@ -21,8 +21,8 @@ import { useTimeRange } from '../../../../hooks/useTimeRange';
 import { useTransactions } from '../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
+	formatInPeso,
 	getTransactionStatus,
-	numberWithCommas,
 } from '../../../../utils/function';
 import { TransactionsCancelled } from './BranchTransactions/TransactionsCancelled';
 import { ViewTransactionModal } from './BranchTransactions/ViewTransactionModal';
@@ -122,7 +122,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 						/>
 					),
 					invoice: invoice?.or_number || EMPTY_CELL,
-					amount: `₱${numberWithCommas(total_amount?.toFixed(2))}`,
+					amount: formatInPeso(total_amount),
 					status: getTransactionStatus(branchTransactionStatus),
 				};
 			},

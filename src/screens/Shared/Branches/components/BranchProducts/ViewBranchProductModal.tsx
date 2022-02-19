@@ -5,9 +5,9 @@ import { Button, Label } from '../../../../../components/elements';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import {
 	confirmPassword,
+	formatInPeso,
 	formatQuantity,
 	getKeyDownCombination,
-	numberWithCommas,
 } from '../../../../../utils/function';
 
 interface Props {
@@ -130,40 +130,28 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 
 					<DetailsSingle
 						label="Price (Piece)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.price_per_piece).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.price_per_piece)}
 					/>
 					<DetailsSingle
 						label="Wholesale Price (piece)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.discounted_price_per_piece1).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.discounted_price_per_piece1)}
 					/>
 					<DetailsSingle
 						label="Special Price (piece)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.discounted_price_per_piece2).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.discounted_price_per_piece2)}
 					/>
 
 					<DetailsSingle
 						label="Price (Bulk)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.price_per_bulk).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.price_per_bulk)}
 					/>
 					<DetailsSingle
 						label="Wholesale Price (bulk)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.discounted_price_per_bulk1).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.discounted_price_per_bulk1)}
 					/>
 					<DetailsSingle
 						label="Special Price (Bulk)"
-						value={`₱${numberWithCommas(
-							Number(branchProduct.discounted_price_per_bulk2).toFixed(2),
-						)}`}
+						value={formatInPeso(branchProduct.discounted_price_per_bulk2)}
 					/>
 				</DetailsRow>
 			)}

@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import React, { useCallback } from 'react';
 import { Box } from '../../../../components/elements';
 import { timeRangeTypes } from '../../../../global/types';
-import { numberWithCommas } from '../../../../utils/function';
+import { formatInPeso } from '../../../../utils/function';
 import '../style.scss';
 
 interface Props {
@@ -55,7 +55,7 @@ export const SalesTotalCard = ({
 					</div>
 
 					<span className="SalesTotalCard_total">
-						{`₱${numberWithCommas(totalSales.toFixed(2))}`}
+						{formatInPeso(totalSales)}
 					</span>
 				</div>
 			</Spin>

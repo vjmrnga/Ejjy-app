@@ -11,8 +11,8 @@ import { useSiteSettings } from '../../../../../hooks/useSiteSettings';
 import { useTransactions } from '../../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
+	formatInPeso,
 	isUserFromBranch,
-	numberWithCommas,
 } from '../../../../../utils/function';
 
 interface Props {
@@ -100,7 +100,7 @@ export const TransactionsCancelled = ({
 
 					<div>
 						<p className="TransactionsCancelled_title">
-							{`₱${numberWithCommas(amount?.toFixed(2))}`}
+							{formatInPeso(amount)}
 						</p>
 						<span className="TransactionsCancelled_date">
 							{transactions.length} Cancelled Transactions

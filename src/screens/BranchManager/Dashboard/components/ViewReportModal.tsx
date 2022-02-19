@@ -3,7 +3,7 @@ import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../components';
 import { Button } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
-import { numberWithCommas } from '../../../../utils/function';
+import { formatInPeso } from '../../../../utils/function';
 
 interface Props {
 	visible: boolean;
@@ -67,19 +67,19 @@ export const ViewReportModal = ({ report, visible, onClose }: Props) => (
 				labelSpan={12}
 				valueSpan={12}
 				label="Cash Sales"
-				value={`₱${numberWithCommas(Number(report?.cash_sales).toFixed(2))}`}
+				value={formatInPeso(report?.cash_sales)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="Check Sales"
-				value={`₱${numberWithCommas(Number(report?.check_sales).toFixed(2))}`}
+				value={formatInPeso(report?.check_sales)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="Credit Pay"
-				value={`₱${numberWithCommas(Number(report?.credit_pay).toFixed(2))}`}
+				value={formatInPeso(report?.credit_pay)}
 			/>
 
 			<Divider dashed />
@@ -88,13 +88,13 @@ export const ViewReportModal = ({ report, visible, onClose }: Props) => (
 				labelSpan={12}
 				valueSpan={12}
 				label="Sales Return"
-				value={`₱${numberWithCommas(Number(report?.sales_return).toFixed(2))}`}
+				value={formatInPeso(report?.sales_return)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="Total Sales"
-				value={`₱${numberWithCommas(Number(report?.total_sales).toFixed(2))}`}
+				value={formatInPeso(report?.total_sales)}
 			/>
 
 			<Divider dashed />
@@ -103,21 +103,19 @@ export const ViewReportModal = ({ report, visible, onClose }: Props) => (
 				labelSpan={12}
 				valueSpan={12}
 				label="VAT Exempt"
-				value={`₱${numberWithCommas(Number(report?.vat_exempt).toFixed(2))}`}
+				value={formatInPeso(report?.vat_exempt)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="VAT Sales"
-				value={`₱${numberWithCommas(Number(report?.vat_sales).toFixed(2))}`}
+				value={formatInPeso(report?.vat_sales)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="12% of VAT"
-				value={`₱${numberWithCommas(
-					Number(report?.vat_12_percent).toFixed(2),
-				)}`}
+				value={formatInPeso(report?.vat_12_percent)}
 			/>
 
 			<Divider dashed />
@@ -156,21 +154,19 @@ export const ViewReportModal = ({ report, visible, onClose }: Props) => (
 				labelSpan={12}
 				valueSpan={12}
 				label="Beginning Sales"
-				value={`₱${numberWithCommas(
-					Number(report?.beginning_sales).toFixed(2),
-				)}`}
+				value={formatInPeso(report?.beginning_sales)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="Current Sales"
-				value={`₱${numberWithCommas(Number(report?.total_sales).toFixed(2))}`}
+				value={formatInPeso(report?.total_sales)}
 			/>
 			<DetailsSingle
 				labelSpan={12}
 				valueSpan={12}
 				label="Ending Sales"
-				value={`₱${numberWithCommas(Number(report?.ending_sales).toFixed(2))}`}
+				value={formatInPeso(report?.ending_sales)}
 			/>
 
 			<Divider dashed />

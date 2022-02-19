@@ -6,10 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
-import {
-	formatQuantity,
-	numberWithCommas,
-} from '../../../../../utils/function';
+import { formatInPeso, formatQuantity } from '../../../../../utils/function';
 
 interface Props {
 	transaction: any;
@@ -37,10 +34,8 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 						branch_product.product.unit_of_measurement,
 						quantity,
 					),
-					rate: `₱${numberWithCommas(Number(price_per_piece).toFixed(2))}`,
-					amount: `₱${numberWithCommas(
-						(quantity * Number(price_per_piece)).toFixed(2),
-					)}`,
+					rate: formatInPeso(price_per_piece),
+					amount: formatInPeso(quantity * Number(price_per_piece)),
 				}),
 			),
 		);
@@ -118,25 +113,19 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					labelSpan={8}
 					valueSpan={16}
 					label="Subtotal"
-					value={`₱${numberWithCommas(
-						Number(transaction?.total_amount).toFixed(2),
-					)}`}
+					value={formatInPeso(transaction?.total_amount)}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="Amount Received"
-					value={`₱${numberWithCommas(
-						Number(transaction?.total_paid_amount).toFixed(2),
-					)}`}
+					value={formatInPeso(transaction?.total_paid_amount)}
 				/>
 				<DetailsSingle
 					labelSpan={8}
 					valueSpan={16}
 					label="Amount Due"
-					value={`₱${numberWithCommas(
-						Number(transaction?.total_amount).toFixed(2),
-					)}`}
+					value={formatInPeso(transaction?.total_amount)}
 				/>
 				<DetailsSingle
 					labelSpan={8}
@@ -144,9 +133,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					label="VAT Exempt"
 					value={
 						transaction?.invoice
-							? `₱${numberWithCommas(
-									Number(transaction?.invoice?.vat_exempt).toFixed(2),
-							  )}`
+							? formatInPeso(transaction?.invoice?.vat_exempt)
 							: EMPTY_CELL
 					}
 				/>
@@ -156,9 +143,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					label="VAT Sales"
 					value={
 						transaction?.invoice
-							? `₱${numberWithCommas(
-									Number(transaction?.invoice?.vat_sales).toFixed(2),
-							  )}`
+							? formatInPeso(transaction?.invoice?.vat_sales)
 							: EMPTY_CELL
 					}
 				/>
@@ -168,9 +153,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					label="12% VAT"
 					value={
 						transaction?.invoice
-							? `₱${numberWithCommas(
-									Number(transaction?.invoice?.vat_12_percent).toFixed(2),
-							  )}`
+							? formatInPeso(transaction?.invoice?.vat_12_percent)
 							: EMPTY_CELL
 					}
 				/>
