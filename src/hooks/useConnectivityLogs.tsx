@@ -21,9 +21,7 @@ const useConnectivityLogs = ({ params }) =>
 					type: params.type,
 				},
 				params.baseUrl,
-			).catch((e) => {
-				return Promise.reject(e.errors);
-			}),
+			).catch((e) => Promise.reject(e.errors)),
 		{
 			refetchOnWindowFocus: false,
 			retry: false,
