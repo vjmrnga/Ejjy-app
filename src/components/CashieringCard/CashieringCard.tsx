@@ -6,6 +6,10 @@ import swal from 'sweetalert';
 import { RequestErrors, RequestWarnings } from '..';
 import { EMPTY_CELL, IS_APP_LIVE } from '../../global/constants';
 import { request } from '../../global/types';
+import {
+	useBranchesDayAuthorizationsCreate,
+	useBranchesDayAuthorizationsRetrieve,
+} from '../../hooks';
 import { useAuth } from '../../hooks/useAuth';
 import { useBranchesDays } from '../../hooks/useBranchesDays';
 import { convertIntoArray, formatDateTimeExtended } from '../../utils/function';
@@ -18,6 +22,7 @@ interface Props {
 	bordered?: boolean;
 	disabled?: boolean;
 	loading?: boolean;
+	isAuthorization?: boolean;
 }
 
 export const CashieringCard = ({
@@ -26,11 +31,13 @@ export const CashieringCard = ({
 	bordered,
 	disabled,
 	loading,
+	isAuthorization,
 }: Props) => {
 	// STATES
 	const [branchDay, setBranchDay] = useState(null);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		getBranchDay,
 		createBranchDay,
@@ -39,16 +46,35 @@ export const CashieringCard = ({
 		errors: branchesDaysErrors,
 		warnings: branchesDaysWarnings,
 	} = useBranchesDays();
-	const { user } = useAuth();
+	const {
+		data: branchDayAuthorization,
+		isFetching: isFetchingBranchDayAuthorization,
+	} = useBranchesDayAuthorizationsRetrieve({
+		branchId,
+	});
+	const {
+		mutate: createBranchDayAuthorization,
+		isLoading: isCreatingBranchDayAuthorization,
+	} = useBranchesDayAuthorizationsCreate(branchId);
 
 	// METHODS
 	useEffect(() => {
-		getBranchDay(branchId, onBranchDayResponse);
-	}, []);
+		if (!isAuthorization) {
+			getBranchDay(branchId, onBranchDayResponse);
+		}
+	}, [isAuthorization]);
+
+	useEffect(() => {
+		if (branchDayAuthorization && isAuthorization) {
+			console.log('branchDayAuthorization', branchDayAuthorization);
+			const date = dayjs.tz(branchDayAuthorization?.datetime_created);
+			setBranchDay(branchDayAuthorization);
+		}
+	}, [branchDayAuthorization, isAuthorization]);
 
 	const onBranchDayResponse = ({ status, response }) => {
 		if (status === request.SUCCESS) {
-			const date = dayjs.tz(response?.datetime_created, 'MM/DD/YYYY hh:mm:ss');
+			const date = dayjs.tz(response?.datetime_created);
 			if (date?.isToday()) {
 				setBranchDay(response);
 			}
@@ -78,10 +104,27 @@ export const CashieringCard = ({
 	const onStartDay = () => {
 		const onlineStartedById = IS_APP_LIVE ? user.id : null;
 		const startedById = IS_APP_LIVE ? null : user.id;
-		createBranchDay(
-			{ branchId, startedById, onlineStartedById },
-			onBranchDayResponse,
-		);
+
+		if (isAuthorization) {
+			createBranchDayAuthorization(
+				{
+					branchId,
+					startedById,
+					onlineStartedById,
+				},
+				{
+					onSuccess: (data) => {
+						console.log('created auth data', data);
+						setBranchDay(data);
+					},
+				},
+			);
+		} else {
+			createBranchDay(
+				{ branchId, startedById, onlineStartedById },
+				onBranchDayResponse,
+			);
+		}
 	};
 
 	const onEndDay = () => {
@@ -129,7 +172,14 @@ export const CashieringCard = ({
 				CashieringCard__bordered: bordered,
 			})}
 		>
-			<Spin spinning={branchesDaysStatus === request.REQUESTING || loading}>
+			<Spin
+				spinning={
+					branchesDaysStatus === request.REQUESTING ||
+					isCreatingBranchDayAuthorization ||
+					isFetchingBranchDayAuthorization ||
+					loading
+				}
+			>
 				<div className="CashieringCard_container">
 					<RequestErrors
 						errors={convertIntoArray(branchesDaysErrors)}

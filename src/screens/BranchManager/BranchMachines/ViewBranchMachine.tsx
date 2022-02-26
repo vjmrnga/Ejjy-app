@@ -11,6 +11,7 @@ import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
 import { ViewBranchConnectivityLogs } from './components/ViewBranchConnectivityLogs';
+import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchSessions } from './components/ViewBranchSessions';
 import { ViewBranchTransactions } from './components/ViewBranchTransactions';
 import './style.scss';
@@ -22,6 +23,7 @@ interface Props {
 const tabs = {
 	TRANSACTIONS: 'Transactions',
 	SESSIONS: 'Sessions',
+	DAYS: 'Days',
 	CONNECTIVITY_LOGS: 'Connectivity Logs',
 };
 
@@ -108,6 +110,10 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
 								<ViewBranchSessions serverUrl={branchMachine.server_url} />
+							</Tabs.TabPane>
+
+							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
+								<ViewBranchDays serverUrl={branchMachine.server_url} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane

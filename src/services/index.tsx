@@ -6,4 +6,5 @@ export const NO_VERIFICATION_NEEDED = 'NO_VERIFICATION_NEEDED';
 
 export const NO_VERIFICATION_CONFIG = { params: NO_VERIFICATION_NEEDED };
 
+export { default as BranchesDayService } from './BranchesDayService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';

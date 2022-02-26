@@ -7,10 +7,10 @@ import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, callback } = payload;
+	const { page, pageSize, branchId, serverUrl, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const baseURL = getBaseUrl(branchId, callback);
+	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
 		page,

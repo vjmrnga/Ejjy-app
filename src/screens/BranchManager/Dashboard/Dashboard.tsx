@@ -66,6 +66,7 @@ export const Dashboard = () => {
 				branchId={user?.branch?.id}
 				disabled={!hasInternetConnection}
 				loading={isFirstTimeRequest}
+				isAuthorization
 			/>
 
 			<BackupServerUrlForm
