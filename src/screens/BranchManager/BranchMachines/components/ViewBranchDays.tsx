@@ -23,7 +23,7 @@ const columns: ColumnsType = [
 ];
 
 const branchDayTypes = {
-	AUTHORIZED: 'AUTHORIZED',
+	ALL: 'all',
 	UNAUTHORIZED: 'unauthorized',
 };
 
@@ -56,6 +56,8 @@ export const ViewBranchDays = ({ serverUrl }: Props) => {
 				{
 					...params,
 					serverUrl,
+					isUnauthorized:
+						params.type === branchDayTypes.UNAUTHORIZED ? true : undefined,
 				},
 				true,
 			);
@@ -123,8 +125,8 @@ export const ViewBranchDays = ({ serverUrl }: Props) => {
 	);
 
 	return (
-		<div className="ViewBranchMachineSessions">
-			<TableHeader title="Sessions" />
+		<div className="ViewBranchMachineDays">
+			<TableHeader title="Days" />
 
 			<Filter
 				params={queryParams}
@@ -169,16 +171,17 @@ const Filter = ({ params, setQueryParams }: FilterProps) => (
 	<Row className="ViewBranchMachineSessions_filter" gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Type" spacing />
+
 			<Radio.Group
 				optionType="button"
 				options={[
-					{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
+					{ label: 'All', value: branchDayTypes.ALL },
 					{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
 				]}
 				onChange={(e) => {
 					setQueryParams({ type: e.target.value });
 				}}
-				defaultValue={params.type || branchDayTypes.AUTHORIZED}
+				defaultValue={params.type || branchDayTypes.ALL}
 			/>
 		</Col>
 	</Row>

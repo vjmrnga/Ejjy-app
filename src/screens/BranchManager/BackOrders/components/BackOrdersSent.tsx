@@ -11,7 +11,7 @@ import { formatDateTime, getBackOrderStatus } from '../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date Returned', dataIndex: 'datetime_sent' },
+	{ title: 'Date Sent', dataIndex: 'datetime_sent' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
@@ -43,6 +43,7 @@ export const BackOrdersSent = ({ selectBackOrder }: Props) => {
 	}, []);
 
 	useEffect(() => {
+		// NOTE: We temporarily override the datetime_sent into datetime_created. Need to verify this will be continued or not.
 		setData(
 			backOrders.map((backOrder) => ({
 				key: backOrder.id,
@@ -52,8 +53,8 @@ export const BackOrdersSent = ({ selectBackOrder }: Props) => {
 						onClick={() => selectBackOrder(backOrder)}
 					/>
 				),
-				datetime_sent: backOrder.datetime_sent
-					? formatDateTime(backOrder.datetime_sent)
+				datetime_sent: backOrder.datetime_created
+					? formatDateTime(backOrder.datetime_created)
 					: EMPTY_CELL,
 				status: getBackOrderStatus(backOrder.status),
 			})),

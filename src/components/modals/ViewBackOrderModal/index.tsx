@@ -81,7 +81,7 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 
 				<DetailsHalf
 					label="Returned By (branch)"
-					value={backOrder.sender.branch.name}
+					value={backOrder?.sender?.branch?.name}
 				/>
 				<DetailsHalf
 					label="Status"

@@ -114,6 +114,9 @@ export const ViewBranchSiteSettings = ({
 
 				product_version: siteSettings?.product_version || '',
 				thank_you_message: siteSettings?.thank_you_message || '',
+
+				reporting_period_day_of_month:
+					siteSettings?.reporting_period_day_of_month,
 			},
 			Schema: Yup.object().shape({
 				close_session_deadline: getValidTimeTest('Close Session Deadline'),
@@ -142,6 +145,11 @@ export const ViewBranchSiteSettings = ({
 
 				product_version: Yup.string().required().label('Product Version'),
 				thank_you_message: Yup.string().required().label('Thank You Message'),
+
+				reporting_period_day_of_month: Yup.number()
+					.min(1)
+					.max(28)
+					.label('Reporting Day of the Month'),
 			}),
 		}),
 		[siteSettings],
@@ -186,9 +194,9 @@ export const ViewBranchSiteSettings = ({
 		</>
 	);
 
-	const renderInputField = (name, label) => (
+	const renderInputField = (name, label, type = 'text') => (
 		<>
-			<FormInputLabel id={name} label={label} />
+			<FormInputLabel id={name} label={label} type={type} />
 			<ErrorMessage
 				name={name}
 				render={(error) => <FieldError error={error} />}
@@ -266,7 +274,7 @@ export const ViewBranchSiteSettings = ({
 							<Col xs={24} sm={12}>
 								{renderInputField('proprietor', 'Proprietor')}
 							</Col>
-							<Col xs={24} sm={12}>
+							<Col xs={24} sm={6}>
 								<Label label="VAT Type" spacing />
 								<Radio.Group
 									value={values.tax_type}
@@ -279,6 +287,13 @@ export const ViewBranchSiteSettings = ({
 									}}
 									optionType="button"
 								/>
+							</Col>
+							<Col xs={24} sm={6}>
+								{renderInputField(
+									'reporting_period_day_of_month',
+									'Reporting Day of the Month',
+									'number',
+								)}
 							</Col>
 							<Col xs={24} sm={12}>
 								{renderInputField('tin', 'TIN')}

@@ -36,14 +36,23 @@ export const BackOrders = () => {
 	return (
 		<Content className="BackOrders" title="Back Orders">
 			<Box>
-				{user?.branch?.id !== MAIN_BRANCH_ID && (
+				<BackOrdersSent
+					selectBackOrder={(backOrder) => {
+						onOpenModal(backOrder, modals.VIEW);
+					}}
+				/>
+
+				{/* {user?.branch?.id !== MAIN_BRANCH_ID && (
 					// NOTE: Only managers not from Main branch can create back order
+					// NOTE: Temporarily commented out since we cannot create BO as of the moment
 					<TableHeader
 						buttonName="Create Back Order"
 						onCreate={() => history.push('/branch-manager/back-orders/create')}
 					/>
-				)}
+				)} */}
 
+				{/* 
+				// NOTE: Temporarily commented out since we cannot create BO as of the moment
 				{user?.branch?.id !== MAIN_BRANCH_ID ? (
 					// NOTE: Only managers not from Main branch can create back order
 					<BackOrdersSent
@@ -62,7 +71,8 @@ export const BackOrders = () => {
 							onOpenModal(backOrder, modals.FULFILL);
 						}}
 					/>
-				)}
+				)} 
+				*/}
 
 				{modalType === modals.VIEW && selectedBackOrder && (
 					<ViewBackOrderModal

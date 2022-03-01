@@ -5,6 +5,7 @@ import { request } from '../global/types';
 import { ONLINE_API_URL } from '../services';
 import { service } from '../services/back-orders';
 import { getLocalIpAddress } from '../utils/function';
+import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -22,7 +23,7 @@ function* list({ payload }: any) {
 				page,
 				page_size: pageSize,
 			},
-			ONLINE_API_URL,
+			getBaseUrl(null, callback),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });

@@ -66,7 +66,6 @@ export const CashieringCard = ({
 
 	useEffect(() => {
 		if (branchDayAuthorization && isAuthorization) {
-			console.log('branchDayAuthorization', branchDayAuthorization);
 			const date = dayjs.tz(branchDayAuthorization?.datetime_created);
 			setBranchDay(branchDayAuthorization);
 		}
@@ -114,7 +113,6 @@ export const CashieringCard = ({
 				},
 				{
 					onSuccess: (data) => {
-						console.log('created auth data', data);
 						setBranchDay(data);
 					},
 				},
