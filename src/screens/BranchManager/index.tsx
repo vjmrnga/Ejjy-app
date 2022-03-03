@@ -12,6 +12,7 @@ import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines/BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Checking } from './Checking/Checking';
+import { Clients } from './Clients/Clients';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
@@ -52,6 +53,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-users-active.svg'),
 		defaultIcon: require('../../assets/images/icon-users.svg'),
 		link: '/branch-manager/users',
+	},
+	{
+		key: 'clients',
+		name: 'Clients',
+		activeIcon: require('../../assets/images/icon-users-active.svg'),
+		defaultIcon: require('../../assets/images/icon-users.svg'),
+		link: '/branch-manager/clients',
 	},
 	{
 		key: 'branch-machines',
@@ -145,6 +153,8 @@ const BranchManager = () => {
 						component={AssignUser}
 						exact
 					/>
+
+					<Route path="/branch-manager/clients" exact component={Clients} />
 
 					<Route
 						path="/branch-manager/branch-machines"
