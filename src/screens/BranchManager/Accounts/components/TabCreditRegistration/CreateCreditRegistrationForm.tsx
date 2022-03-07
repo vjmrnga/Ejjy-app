@@ -83,7 +83,6 @@ export const CreateCreditRegistrationForm = ({
 								notFoundContent={isFetching ? <Spin size="small" /> : null}
 								value={values.accountId}
 								onChange={(value) => {
-									console.log('value', value);
 									setFieldValue('accountId', value);
 								}}
 								showSearch
