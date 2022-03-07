@@ -38,6 +38,7 @@ export const BranchMachines = () => {
 	// Effect: Format branch machines to be rendered in Table
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
+			key: branchMachine.id,
 			name: (
 				<Link to={`/branch-manager/branch-machines/${branchMachine.id}`}>
 					{branchMachine.name}

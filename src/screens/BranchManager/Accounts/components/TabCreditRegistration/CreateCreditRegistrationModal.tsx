@@ -1,8 +1,7 @@
 import { Modal } from 'antd';
 import React from 'react';
 import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
-import { request } from '../../../../../global/types';
-import { useProducts } from '../../../../../hooks/useProducts';
+import { useCreditRegistrationsCreate } from '../../../../../hooks';
 import { convertIntoArray } from '../../../../../utils/function';
 import { CreateCreditRegistrationForm } from './CreateCreditRegistrationForm';
 
@@ -16,11 +15,17 @@ export const CreateCreditRegistrationModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { status, errors } = useProducts();
+	const {
+		mutateAsync: createCreditRegistration,
+		isLoading,
+		error,
+	} = useCreditRegistrationsCreate();
 
 	// METHODS
-	const onCreate = (formData) => {
+	const onCreate = async (formData) => {
+		await createCreditRegistration(formData);
 		onSuccess();
+		onClose();
 	};
 
 	return (
@@ -33,10 +38,10 @@ export const CreateCreditRegistrationModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<CreateCreditRegistrationForm
-				loading={status === request.REQUESTING}
+				loading={isLoading}
 				onSubmit={onCreate}
 				onClose={onClose}
 			/>

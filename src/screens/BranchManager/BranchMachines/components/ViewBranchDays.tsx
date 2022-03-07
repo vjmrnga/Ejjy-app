@@ -67,10 +67,11 @@ export const ViewBranchDays = ({ serverUrl }: Props) => {
 	// METHODS
 	useEffect(() => {
 		const formattedBranchDays = branchDays.map((branchDay) => {
-			const { started_by, ended_by, datetime_created, datetime_ended } =
+			const { id, started_by, ended_by, datetime_created, datetime_ended } =
 				branchDay;
 
 			return {
+				key: id,
 				user: renderUser(started_by, ended_by),
 				datetime: renderDateTime(datetime_created, datetime_ended),
 			};

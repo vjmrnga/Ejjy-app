@@ -1,21 +1,24 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Table } from 'antd';
+import { Button, Col, Input, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { debounce } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	RequestErrors,
-	RequestWarnings,
+	TableActions,
 	TableHeader,
 } from '../../../../../components';
 import { Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
-import { request } from '../../../../../global/types';
+import { useCreditRegistrations } from '../../../../../hooks';
 import { useQueryParams } from '../../../../../hooks/useQueryParams';
-import { useSessions } from '../../../../../hooks/useSessions';
-import { convertIntoArray } from '../../../../../utils/function';
-import { ViewClientAccountModal } from '../ClientAccounts/ViewClientAccountModal';
+import {
+	convertIntoArray,
+	formatDate,
+	formatInPeso,
+} from '../../../../../utils/function';
+import { ViewAccountModal } from '../TabAccounts/ViewAccountModal';
 import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
 
 const columns: ColumnsType = [
@@ -23,46 +26,55 @@ const columns: ColumnsType = [
 	{ title: 'Client Name', dataIndex: 'client_name' },
 	{ title: 'Credit Limit', dataIndex: 'credit_limit' },
 	{ title: 'Total Balance', dataIndex: 'total_balance' },
-	{ title: 'Date of Registration', dataIndex: 'date' },
+	{ title: 'Date of Registration', dataIndex: 'datetime_created' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const ClientCreditRegistrations = () => {
+export const TabCreditRegistrations = () => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(false);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
-		sessions,
-		pageCount,
-		currentPage,
-		pageSize,
-
-		listSessions,
-		status,
-		errors,
-		warnings,
-	} = useSessions();
-
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onQueryParamChange: (params) => {
-			listSessions(
-				{
-					...params,
-				},
-				true,
-			);
-		},
-	});
+		isFetching,
+		data: { creditRegistrations, total },
+		refetch: refetchCreditRegistrations,
+		error,
+	} = useCreditRegistrations({ params: queryParams });
 
 	// METHODS
+	useEffect(() => {
+		const data = creditRegistrations.map((creditRegistration) => {
+			const { id, account, credit_limit, total_balance } = creditRegistration;
+
+			return {
+				key: id,
+				client_code: (
+					<Button type="link" onClick={() => setSelectedAccount(account)}>
+						{account.id}
+					</Button>
+				),
+				client_name: `${account.first_name} ${account.last_name}`,
+				credit_limit: formatInPeso(credit_limit),
+				total_balance: formatInPeso(total_balance),
+				datetime_created: formatDate(account.datetime_created),
+				actions: (
+					<TableActions
+						onView={() => {}}
+						onViewName="View Credit Transactions"
+					/>
+				),
+			};
+		});
+
+		setDataSource(data);
+	}, [creditRegistrations]);
 
 	return (
-		<div className="ClientCreditRegistrations">
+		<div>
 			<TableHeader
 				title="Credit Registrations"
 				buttonName="Create Credit Registration"
@@ -76,31 +88,31 @@ export const ClientCreditRegistrations = () => {
 				}}
 			/>
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
+				rowKey="key"
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(queryParams.page) || 1,
+					total,
+					pageSize: Number(queryParams.pageSize) || 10,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
+				loading={isFetching}
 			/>
 
 			{selectedAccount && (
-				<ViewClientAccountModal
+				<ViewAccountModal
 					account={selectedAccount}
 					onClose={() => setSelectedAccount(null)}
 				/>
@@ -108,7 +120,7 @@ export const ClientCreditRegistrations = () => {
 
 			{isCreateModalVisible && (
 				<CreateCreditRegistrationModal
-					onSuccess={() => {}}
+					onSuccess={refetchCreditRegistrations}
 					onClose={() => setIsCreateModalVisible(false)}
 				/>
 			)}
@@ -130,7 +142,7 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 	);
 
 	return (
-		<Row className="ClientCreditRegistrations_filter" gutter={[15, 15]}>
+		<Row className="TabCreditRegistrations_filter" gutter={[15, 15]}>
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input

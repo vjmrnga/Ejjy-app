@@ -7,12 +7,12 @@ import { request } from '../../global/types';
 import { useBranches } from '../../hooks/useBranches';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
+import { Accounts } from './Accounts/Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines/BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Checking } from './Checking/Checking';
-import { Clients } from './Clients/Clients';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
@@ -55,11 +55,11 @@ const sidebarItems = [
 		link: '/branch-manager/users',
 	},
 	{
-		key: 'clients',
-		name: 'Clients',
+		key: 'accounts',
+		name: 'Accounts',
 		activeIcon: require('../../assets/images/icon-users-active.svg'),
 		defaultIcon: require('../../assets/images/icon-users.svg'),
-		link: '/branch-manager/clients',
+		link: '/branch-manager/accounts',
 	},
 	{
 		key: 'branch-machines',
@@ -154,7 +154,7 @@ const BranchManager = () => {
 						exact
 					/>
 
-					<Route path="/branch-manager/clients" exact component={Clients} />
+					<Route path="/branch-manager/accounts" exact component={Accounts} />
 
 					<Route
 						path="/branch-manager/branch-machines"

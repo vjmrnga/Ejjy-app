@@ -69,6 +69,7 @@ export const ViewBranchSessions = ({ serverUrl }: Props) => {
 	useEffect(() => {
 		const formattedBranchSession = sessions.map((session) => {
 			const {
+				id,
 				user,
 				datetime_started,
 				datetime_ended,
@@ -76,6 +77,7 @@ export const ViewBranchSessions = ({ serverUrl }: Props) => {
 			} = session;
 
 			return {
+				key: id,
 				user: `${user.first_name} ${user.last_name}`,
 				datetime: renderDateTime(datetime_started, datetime_ended),
 				unauthorized_time_range: is_unauthorized_datetime_ended

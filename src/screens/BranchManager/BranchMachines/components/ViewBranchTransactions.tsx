@@ -7,6 +7,7 @@ import {
 	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
+	ViewTransactionModal,
 } from '../../../../components';
 import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
@@ -25,7 +26,6 @@ import {
 	getTransactionStatus,
 } from '../../../../utils/function';
 import { TransactionsCancelled } from '../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
-import { ViewTransactionModal } from '../../../Shared/Branches/components/BranchTransactions/ViewTransactionModal';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -57,13 +57,22 @@ const transactionStatusOptions = [
 	},
 ];
 
+const voidedStatuses = [
+	transactionStatus.VOID_CANCELLED,
+	transactionStatus.VOID_EDITED,
+];
+
 interface Props {
+	branchMachineId: number;
 	serverUrl: any;
 }
 
-export const ViewBranchTransactions = ({ serverUrl }: Props) => {
+export const ViewBranchTransactions = ({
+	branchMachineId,
+	serverUrl,
+}: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
@@ -96,6 +105,7 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 			listTransactions(
 				{
 					...params,
+					branchMachineId,
 					serverUrl,
 				},
 				true,
@@ -115,6 +125,7 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 				} = branchTransaction;
 
 				return {
+					key: id,
 					id: (
 						<ButtonLink
 							text={id}
@@ -128,7 +139,7 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 			},
 		);
 
-		setData(formattedBranchTransactions);
+		setDataSource(formattedBranchTransactions);
 	}, [transactions]);
 
 	return (
@@ -146,10 +157,7 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
-			{[
-				transactionStatus.VOID_CANCELLED,
-				transactionStatus.VOID_EDITED,
-			].includes(toString(queryParams?.statuses)) && (
+			{voidedStatuses.includes(toString(queryParams?.statuses)) && (
 				<TransactionsCancelled
 					serverUrl={serverUrl}
 					timeRange={toString(queryParams?.timeRange)}
@@ -158,8 +166,9 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 			)}
 
 			<Table
+				rowKey="key"
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
 					current: currentPage,
@@ -171,7 +180,7 @@ export const ViewBranchTransactions = ({ serverUrl }: Props) => {
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}

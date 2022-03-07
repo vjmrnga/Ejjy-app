@@ -2,15 +2,16 @@ import { Modal } from 'antd';
 import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
+import { formatDate } from '../../../../../utils/function';
 
 interface Props {
 	account: any;
 	onClose: any;
 }
 
-export const ViewClientAccountModal = ({ account, onClose }: Props) => (
+export const ViewAccountModal = ({ account, onClose }: Props) => (
 	<Modal
-		className="ViewClientAccountModal Modal__hasFooter"
+		className="Modal__hasFooter"
 		title="View Product"
 		footer={[<Button text="Close" onClick={onClose} />]}
 		onCancel={onClose}
@@ -25,22 +26,27 @@ export const ViewClientAccountModal = ({ account, onClose }: Props) => (
 
 			<DetailsSingle label="Last Name" value={account.last_name} />
 
-			<DetailsSingle label="Birthday" value={account.birthday} />
+			<DetailsSingle
+				label="Gender"
+				value={account.gender === 'm' ? 'Male' : 'Female'}
+			/>
+
+			<DetailsSingle label="Birthday" value={formatDate(account.birthday)} />
 
 			<DetailsSingle label="Business Name" value={account.business_name} />
 
-			<DetailsSingle label="Address (Home)" value={account.address_home} />
+			<DetailsSingle label="Address (Home)" value={account.home_address} />
 
 			<DetailsSingle
 				label="Address (Business)"
-				value={account.address_business}
+				value={account.business_address}
 			/>
 
 			<DetailsSingle label="Contact Number" value={account.contact_number} />
 
 			<DetailsSingle
 				label="Date of Registration"
-				value={account.date_of_registration}
+				value={formatDate(account.datetime_created)}
 			/>
 		</DetailsRow>
 	</Modal>

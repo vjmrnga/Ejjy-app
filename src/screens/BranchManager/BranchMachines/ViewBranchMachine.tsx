@@ -105,7 +105,10 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							destroyInactiveTabPane
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
-								<ViewBranchTransactions serverUrl={branchMachine.server_url} />
+								<ViewBranchTransactions
+									branchMachineId={branchMachine.id}
+									serverUrl={branchMachine.server_url}
+								/>
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>

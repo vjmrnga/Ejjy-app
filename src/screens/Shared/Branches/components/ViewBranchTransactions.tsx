@@ -7,6 +7,7 @@ import {
 	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
+	ViewTransactionModal,
 } from '../../../../components';
 import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
@@ -25,7 +26,6 @@ import {
 	getTransactionStatus,
 } from '../../../../utils/function';
 import { TransactionsCancelled } from './BranchTransactions/TransactionsCancelled';
-import { ViewTransactionModal } from './BranchTransactions/ViewTransactionModal';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },

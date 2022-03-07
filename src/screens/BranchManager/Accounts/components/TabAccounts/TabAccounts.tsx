@@ -1,69 +1,63 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Table } from 'antd';
+import { Button, Col, Input, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { debounce } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import {
-	RequestErrors,
-	RequestWarnings,
-	TableHeader,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
+import React, { useCallback, useEffect, useState } from 'react';
+import { RequestErrors, TableHeader } from '../../../../../components';
+import { ButtonLink, Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
-import { request } from '../../../../../global/types';
+import { useAccounts } from '../../../../../hooks';
 import { useQueryParams } from '../../../../../hooks/useQueryParams';
-import { useSessions } from '../../../../../hooks/useSessions';
-import { convertIntoArray } from '../../../../../utils/function';
+import { convertIntoArray, formatDate } from '../../../../../utils/function';
 import '../../style.scss';
 import { CreateAccountModal } from './CreateAccountModal';
-import { ViewClientAccountModal } from './ViewClientAccountModal';
+import { ViewAccountModal } from './ViewAccountModal';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'client_code' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Address (Home)', dataIndex: 'address_home' },
-	{ title: 'Address (Business)', dataIndex: 'address_business' },
-	{ title: 'Contact #', dataIndex: 'contact_num' },
-	{ title: 'Date of Registration', dataIndex: 'date' },
+	{ title: 'Address (Home)', dataIndex: 'home_address' },
+	{ title: 'Address (Business)', dataIndex: 'business_address' },
+	{ title: 'Contact #', dataIndex: 'contact_number' },
+	{ title: 'Date of Registration', dataIndex: 'datetime_created' },
 ];
 
-export const ClientAccounts = () => {
+export const TabAccounts = () => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(false);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
-		sessions,
-		pageCount,
-		currentPage,
-		pageSize,
-
-		listSessions,
-		status,
-		errors,
-		warnings,
-	} = useSessions();
-
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onQueryParamChange: (params) => {
-			listSessions(
-				{
-					...params,
-				},
-				true,
-			);
-		},
-	});
+		isFetching,
+		data: { accounts, total },
+		refetch: refetchAccounts,
+		error,
+	} = useAccounts({ params: queryParams });
 
 	// METHODS
+	useEffect(() => {
+		const data = accounts.map((account) => ({
+			client_code: (
+				<Button type="link" onClick={() => setSelectedAccount(account)}>
+					{account.id}
+				</Button>
+			),
+			name: `${account.first_name} ${account.last_name}`,
+			home_address: account.home_address,
+			business_address: account.business_address,
+			contact_number: account.contact_number,
+			datetime_created: formatDate(account.datetime_created),
+		}));
+
+		setDataSource(data);
+	}, [accounts]);
 
 	return (
-		<div className="ClientAccounts">
+		<div>
 			<TableHeader
 				title="Accounts"
 				buttonName="Create Account"
@@ -77,31 +71,30 @@ export const ClientAccounts = () => {
 				}}
 			/>
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(queryParams.page) || 1,
+					total,
+					pageSize: Number(queryParams.pageSize) || 10,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
+				loading={isFetching}
 			/>
 
 			{selectedAccount && (
-				<ViewClientAccountModal
+				<ViewAccountModal
 					account={selectedAccount}
 					onClose={() => setSelectedAccount(null)}
 				/>
@@ -109,7 +102,7 @@ export const ClientAccounts = () => {
 
 			{isCreateModalVisible && (
 				<CreateAccountModal
-					onSuccess={() => {}}
+					onSuccess={refetchAccounts}
 					onClose={() => setIsCreateModalVisible(false)}
 				/>
 			)}
@@ -131,7 +124,7 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 	);
 
 	return (
-		<Row className="ClientAccounts_filter" gutter={[15, 15]}>
+		<Row className="TabAccounts_filter" gutter={[15, 15]}>
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input

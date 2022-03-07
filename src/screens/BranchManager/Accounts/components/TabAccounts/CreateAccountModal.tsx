@@ -1,8 +1,7 @@
 import { Modal } from 'antd';
 import React from 'react';
 import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
-import { request } from '../../../../../global/types';
-import { useProducts } from '../../../../../hooks/useProducts';
+import { useAccountsCreate } from '../../../../../hooks';
 import { convertIntoArray } from '../../../../../utils/function';
 import { CreateAccountForm } from './CreateAccountForm';
 
@@ -13,16 +12,17 @@ interface Props {
 
 export const CreateAccountModal = ({ onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { status, errors } = useProducts();
+	const { mutateAsync: createAccount, isLoading, error } = useAccountsCreate();
 
 	// METHODS
-	const onCreate = (formData) => {
+	const onCreate = async (formData) => {
+		await createAccount(formData);
 		onSuccess();
+		onClose();
 	};
 
 	return (
 		<Modal
-			className="CreateAccountModal"
 			title="[Create] Account"
 			footer={null}
 			onCancel={onClose}
@@ -30,10 +30,10 @@ export const CreateAccountModal = ({ onSuccess, onClose }: Props) => {
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<CreateAccountForm
-				loading={status === request.REQUESTING}
+				loading={isLoading}
 				onSubmit={onCreate}
 				onClose={onClose}
 			/>

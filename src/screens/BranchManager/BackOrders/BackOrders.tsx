@@ -1,12 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Content, TableHeader, ViewBackOrderModal } from '../../../components';
+import {
+	Content,
+	ViewBackOrderModal,
+	ViewTransactionModal,
+} from '../../../components';
 import { Box } from '../../../components/elements';
-import { MAIN_BRANCH_ID } from '../../../global/constants';
 import { useAuth } from '../../../hooks/useAuth';
-import { BackOrdersReceive } from './components/BackOrdersReceive';
-import { BackOrdersSent } from './components/BackOrdersSent';
+import { BackOrdersTable } from './components/BackOrdersTable';
 import { FulfillBackOrderModal } from './components/FulfillBackOrderModal';
 import './style.scss';
 
@@ -18,6 +20,7 @@ const modals = {
 export const BackOrders = () => {
 	// STATES
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
+	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [modalType, setModalType] = useState(null);
 
 	// REFS
@@ -36,11 +39,18 @@ export const BackOrders = () => {
 	return (
 		<Content className="BackOrders" title="Back Orders">
 			<Box>
-				<BackOrdersSent
+				<BackOrdersTable
+					onSelectBackOrder={(backOrder) => {
+						onOpenModal(backOrder, modals.VIEW);
+					}}
+					onSelectTransaction={setSelectedTransaction}
+				/>
+
+				{/* <BackOrdersSent
 					selectBackOrder={(backOrder) => {
 						onOpenModal(backOrder, modals.VIEW);
 					}}
-				/>
+				/> */}
 
 				{/* {user?.branch?.id !== MAIN_BRANCH_ID && (
 					// NOTE: Only managers not from Main branch can create back order
@@ -73,6 +83,13 @@ export const BackOrders = () => {
 					/>
 				)} 
 				*/}
+
+				{selectedTransaction && (
+					<ViewTransactionModal
+						transaction={selectedTransaction}
+						onClose={() => setSelectedTransaction(null)}
+					/>
+				)}
 
 				{modalType === modals.VIEW && selectedBackOrder && (
 					<ViewBackOrderModal

@@ -11,15 +11,20 @@ import { formatDateTime, getBackOrderStatus } from '../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date Sent', dataIndex: 'datetime_sent' },
+	{ title: 'Invoice', dataIndex: 'invoice' },
+	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
 interface Props {
-	selectBackOrder: any;
+	onSelectBackOrder: any;
+	onSelectTransaction: any;
 }
 
-export const BackOrdersSent = ({ selectBackOrder }: Props) => {
+export const BackOrdersTable = ({
+	onSelectBackOrder,
+	onSelectTransaction,
+}: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -43,17 +48,24 @@ export const BackOrdersSent = ({ selectBackOrder }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		// NOTE: We temporarily override the datetime_sent into datetime_created. Need to verify this will be continued or not.
 		setData(
 			backOrders.map((backOrder) => ({
 				key: backOrder.id,
 				id: (
 					<ButtonLink
 						text={backOrder.id}
-						onClick={() => selectBackOrder(backOrder)}
+						onClick={() => onSelectBackOrder(backOrder)}
 					/>
 				),
-				datetime_sent: backOrder.datetime_created
+				invoice: backOrder.transaction ? (
+					<ButtonLink
+						text={backOrder.transaction.invoice.id}
+						onClick={() => onSelectTransaction(backOrder.transaction)}
+					/>
+				) : (
+					EMPTY_CELL
+				),
+				datetime_created: backOrder.datetime_created
 					? formatDateTime(backOrder.datetime_created)
 					: EMPTY_CELL,
 				status: getBackOrderStatus(backOrder.status),
@@ -64,8 +76,6 @@ export const BackOrdersSent = ({ selectBackOrder }: Props) => {
 	const onPageChange = (page, newPageSize) => {
 		listBackOrders(
 			{
-				// NOTE: We temporarily disabled the receiverId. Need to verify this will be continued or not.
-				// receiverId: user?.id,
 				page,
 				pageSize: newPageSize,
 			},

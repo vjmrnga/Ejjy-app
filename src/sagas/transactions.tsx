@@ -7,8 +7,16 @@ import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, statuses, timeRange, serverUrl, callback } =
-		payload;
+	const {
+		page,
+		pageSize,
+		branchId,
+		statuses,
+		timeRange,
+		serverUrl,
+		branchMachineId,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const baseURL = serverUrl || getBaseUrl(branchId, callback);
@@ -30,11 +38,11 @@ function* list({ payload }: any) {
 			response = yield call(service.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(
-				branchesSelectors.selectBackUpURLByBranchId(branchId),
-			);
+			const baseBackupURL = getBaseUrl(null, callback);
+
 			if (baseURL && baseBackupURL) {
 				// Fetch branch url
+				data['branch_machine_id'] = branchMachineId;
 				response = yield call(service.list, data, baseBackupURL);
 				isFetchedFromBackupURL = true;
 			} else {

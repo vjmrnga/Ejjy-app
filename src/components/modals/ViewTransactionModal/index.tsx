@@ -3,10 +3,11 @@ import { Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
-import { Button } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { formatInPeso, formatQuantity } from '../../../../../utils/function';
+import { DetailsRow, DetailsSingle } from '../..';
+import { EMPTY_CELL } from '../../../global/constants';
+import { formatInPeso, formatQuantity } from '../../../utils/function';
+import { Button } from '../../elements';
+import './style.scss';
 
 interface Props {
 	transaction: any;
@@ -44,7 +45,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	return (
 		<Modal
 			title="View Transaction"
-			className="ViewTransaction Modal__large Modal__hasFooter"
+			className="ViewTransactionModal Modal__large Modal__hasFooter"
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
 			visible

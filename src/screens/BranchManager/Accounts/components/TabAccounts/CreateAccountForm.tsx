@@ -1,39 +1,39 @@
 import { Col, DatePicker, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import moment from 'moment';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 import {
 	Button,
 	FieldError,
 	FormInputLabel,
+	FormRadioButton,
 	Label,
 } from '../../../../../components/elements';
 import { sleep } from '../../../../../utils/function';
 
 const formDetails = {
 	defaultValues: {
-		first_name: '',
-		middle_name: '',
-		last_name: '',
+		firstName: '',
+		middleName: '',
+		lastName: '',
 		birthday: null,
-		business_name: '',
-		address_home: '',
-		address_business: '',
-		contact_number: '',
-		date_of_registration: moment(),
+		businessName: '',
+		homeAddress: '',
+		businessAddress: '',
+		contactNumber: '',
+		gender: '',
 	},
 	schema: Yup.object().shape(
 		{
-			first_name: Yup.string().required().label('First Name'),
-			middle_name: Yup.string().required().label('Middle Name'),
-			last_name: Yup.string().required().label('Last Name'),
+			firstName: Yup.string().required().label('First Name'),
+			middleName: Yup.string().label('Middle Name'),
+			lastName: Yup.string().required().label('Last Name'),
 			birthday: Yup.date().nullable().required().label('Birthday'),
-			business_name: Yup.string().required().label('Business Name'),
-			address_home: Yup.string().required().label('Address (Home)'),
-			address_business: Yup.string().required().label('Address (Business)'),
-			contact_number: Yup.string().required().label('Contact Number'),
-			date_of_registration: Yup.date().required().label('Date of Registration'),
+			businessName: Yup.string().required().label('Business Name'),
+			homeAddress: Yup.string().required().label('Address (Home)'),
+			businessAddress: Yup.string().required().label('Address (Business)'),
+			contactNumber: Yup.string().required().label('Contact Number'),
+			gender: Yup.string().required().label('Gender'),
 		},
 		[],
 	),
@@ -58,7 +58,12 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit(formData);
+				onSubmit({
+					...formData,
+					birthday: formData.birthday
+						? formData.birthday.format('YYYY-MM-DD')
+						: undefined,
+				});
 			}}
 			enableReinitialize
 		>
@@ -66,33 +71,56 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 				<Form>
 					<Row gutter={[15, 15]}>
 						<Col md={8}>
-							<FormInputLabel id="first_name" label="First Name" />
+							<FormInputLabel id="firstName" label="First Name" />
 							<ErrorMessage
-								name="first_name"
+								name="firstName"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col md={8}>
-							<FormInputLabel id="middle_name" label="Middle Name" />
+							<FormInputLabel id="middleName" label="Middle Name" />
 							<ErrorMessage
-								name="middle_name"
+								name="middleName"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col md={8}>
-							<FormInputLabel id="last_name" label="Last Name" />
+							<FormInputLabel id="lastName" label="Last Name" />
 							<ErrorMessage
-								name="last_name"
+								name="lastName"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
-						<Col span={24}>
+						<Col span={24} md={12}>
+							<Label id="gender" label="Gender" spacing />
+							<FormRadioButton
+								id="gender"
+								items={[
+									{
+										id: 'm',
+										label: 'Male',
+										value: 'm',
+									},
+									{
+										id: 'f',
+										label: 'Female',
+										value: 'f',
+									},
+								]}
+							/>
+							<ErrorMessage
+								name="gender"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24} md={12}>
 							<Label id="birthday" label="Birthday" spacing />
 							<DatePicker
-								format="YYYY-MM-DD"
+								format="MMMM DD, YYYY"
 								size="large"
 								value={values.birthday}
 								onSelect={(value) => setFieldValue('birthday', value)}
@@ -106,58 +134,33 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel id="business_name" label="Business Name" />
+							<FormInputLabel id="businessName" label="Business Name" />
 							<ErrorMessage
-								name="business_name"
+								name="businessName"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col span={12}>
-							<FormInputLabel id="address_home" label="Address (Home)" />
+							<FormInputLabel id="homeAddress" label="Address (Home)" />
 							<ErrorMessage
-								name="address_home"
+								name="homeAddress"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col span={12}>
-							<FormInputLabel
-								id="address_business"
-								label="Address (Business)"
-							/>
+							<FormInputLabel id="businessAddress" label="Address (Business)" />
 							<ErrorMessage
-								name="address_business"
+								name="businessAddress"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel id="contact_number" label="Contact Number" />
+							<FormInputLabel id="contactNumber" label="Contact Number" />
 							<ErrorMessage
-								name="contact_number"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col span={24}>
-							<Label
-								id="date_of_registration"
-								label="Date of Registration"
-								spacing
-							/>
-							<DatePicker
-								format="YYYY-MM-DD"
-								size="large"
-								value={values.date_of_registration}
-								onSelect={(value) =>
-									setFieldValue('date_of_registration', value)
-								}
-								style={{ width: '100%' }}
-								allowClear={false}
-							/>
-							<ErrorMessage
-								name="date_of_registration"
+								name="contactNumber"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

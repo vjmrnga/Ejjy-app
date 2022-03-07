@@ -12,7 +12,7 @@ import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useSessions } from '../../../../hooks/useSessions';
 import { convertIntoArray } from '../../../../utils/function';
 import '../style.scss';
-import { ViewClientAccountModal } from './ClientAccounts/ViewClientAccountModal';
+import { ViewAccountModal } from './TabAccounts/ViewAccountModal';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'datetime' },
@@ -23,7 +23,7 @@ const columns: ColumnsType = [
 	{ title: 'Authorizer', dataIndex: 'authorizer' },
 ];
 
-export const ClientCreditTransactions = () => {
+export const TabCreditTransactions = () => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(false);
@@ -57,7 +57,7 @@ export const ClientCreditTransactions = () => {
 	// METHODS
 
 	return (
-		<div className="ClientCreditTransactions">
+		<div>
 			<TableHeader title="Credit Transactions" />
 
 			<RequestErrors errors={convertIntoArray(errors)} />
@@ -84,7 +84,7 @@ export const ClientCreditTransactions = () => {
 			/>
 
 			{selectedAccount && (
-				<ViewClientAccountModal
+				<ViewAccountModal
 					account={selectedAccount}
 					onClose={() => setSelectedAccount(null)}
 				/>

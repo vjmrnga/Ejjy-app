@@ -72,20 +72,6 @@
 	}
 }
 
-.ViewTransaction {
-	&_label {
-		@include font(20px, bold);
-		text-align: center;
-	}
-
-	&_value {
-		&___center {
-			display: block;
-			text-align: center;
-		}
-	}
-}
-
 .AddBranchProductBalance {
 	.FormInput {
 		font-size: 30px;

@@ -5,9 +5,9 @@ import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { useAuth } from '../../../hooks/useAuth';
 import { useQueryParams } from '../../../hooks/useQueryParams';
-import { ClientAccounts } from './components/ClientAccounts/ClientAccounts';
-import { ClientCreditRegistrations } from './components/ClientCreditRegistration/ClientCreditRegistrations';
-import { ClientCreditTransactions } from './components/ClientCreditTransactions';
+import { TabCreditTransactions } from './components/TabCreditTransactions';
+import { TabAccounts } from './components/TabAccounts/TabAccounts';
+import { TabCreditRegistrations } from './components/TabCreditRegistration/TabCreditRegistrations';
 import './style.scss';
 
 const tabs = {
@@ -16,7 +16,7 @@ const tabs = {
 	CREDIT_TRANSACTIONS: 'Credit Transactions',
 };
 
-export const Clients = () => {
+export const Accounts = () => {
 	// CUSTOM HOOKS
 	const {
 		params: { tab: currentTab },
@@ -39,7 +39,7 @@ export const Clients = () => {
 	};
 
 	return (
-		<Content title="Clients">
+		<Content title="Accounts">
 			<Box className="ViewBranchMachine">
 				<Tabs
 					type="card"
@@ -49,21 +49,21 @@ export const Clients = () => {
 					destroyInactiveTabPane
 				>
 					<Tabs.TabPane key={tabs.ACCOUNTS} tab={tabs.ACCOUNTS}>
-						<ClientAccounts />
+						<TabAccounts />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
 						key={tabs.CREDIT_REGISTRATIONS}
 						tab={tabs.CREDIT_REGISTRATIONS}
 					>
-						<ClientCreditRegistrations />
+						<TabCreditRegistrations />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
 						key={tabs.CREDIT_TRANSACTIONS}
 						tab={tabs.CREDIT_TRANSACTIONS}
 					>
-						<ClientCreditTransactions />
+						<TabCreditTransactions />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>
