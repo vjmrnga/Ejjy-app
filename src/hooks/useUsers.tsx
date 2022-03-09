@@ -8,11 +8,11 @@ import {
 	onCallback,
 } from '../utils/function';
 import {
-	getDataForCurrentPage,
 	addInCachedData,
-	updateInCachedData,
-	removeInCachedData,
 	executePaginatedRequest,
+	getDataForCurrentPage,
+	removeInCachedData,
+	updateInCachedData,
 } from '../utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
 
@@ -50,6 +50,7 @@ export const useUsers = () => {
 	const getUserByIdAction = useActionDispatch(actions.getUserById);
 	const getOnlineUserByIdAction = useActionDispatch(actions.getOnlineUserById);
 	const createUserAction = useActionDispatch(actions.createUser);
+	const createOnlineUserAction = useActionDispatch(actions.createOnlineUser);
 	const editUserAction = useActionDispatch(actions.editUser);
 	const removeUserAction = useActionDispatch(actions.removeUser);
 	const approveUserAction = useActionDispatch(actions.approveUser);
@@ -140,14 +141,6 @@ export const useUsers = () => {
 		});
 	};
 
-	const getOnlineUserById = (id = 0, extraCallback = null) => {
-		setRecentRequest(types.GET_ONLINE_USER_BY_ID);
-		getOnlineUserByIdAction({
-			id,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
 	const getUserById = (id, extraCallback = null) => {
 		setRecentRequest(types.GET_USER_BY_ID);
 		getUserByIdAction({
@@ -156,9 +149,32 @@ export const useUsers = () => {
 		});
 	};
 
+	const getOnlineUserById = (id = 0, extraCallback = null) => {
+		setRecentRequest(types.GET_ONLINE_USER_BY_ID);
+		getOnlineUserByIdAction({
+			id,
+			callback: modifiedExtraCallback(callback, extraCallback),
+		});
+	};
+
 	const createUser = (data, extraCallback = null) => {
 		setRecentRequest(types.EDIT_USER);
 		createUserAction({
+			...data,
+			callback: modifiedExtraCallback(
+				modifiedCallback(
+					callback,
+					CREATE_SUCCESS_MESSAGE,
+					CREATE_ERROR_MESSAGE,
+				),
+				extraCallback,
+			),
+		});
+	};
+
+	const createOnlineUser = (data, extraCallback = null) => {
+		setRecentRequest(types.EDIT_USER);
+		createOnlineUserAction({
 			...data,
 			callback: modifiedExtraCallback(
 				modifiedCallback(
@@ -228,6 +244,7 @@ export const useUsers = () => {
 		getUserById,
 		getOnlineUserById,
 		createUser,
+		createOnlineUser,
 		editUser,
 		removeUser,
 		approveUser,

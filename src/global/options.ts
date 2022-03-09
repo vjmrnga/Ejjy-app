@@ -177,6 +177,17 @@ export const userTypeOptions = [
 	},
 ];
 
+export const userTypeBranchOptions = [
+	{
+		name: 'Branch Manager',
+		value: userTypes.BRANCH_MANAGER,
+	},
+	{
+		name: 'Branch Personnel',
+		value: userTypes.BRANCH_PERSONNEL,
+	},
+];
+
 export const checkingTypesOptions = [
 	{
 		id: productCheckingTypes.DAILY,

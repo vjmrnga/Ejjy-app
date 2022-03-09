@@ -8,11 +8,12 @@ import { useHistory } from 'react-router-dom';
 import {
 	AddIcon,
 	Content,
+	CreateUserModal,
 	PendingApprovalBadgePill,
+	PendingTransactionsSection,
 	TableActions,
 } from '../../../components';
 import { Box, Button } from '../../../components/elements';
-import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import {
 	MAX_PAGE_SIZE,
 	NO_BRANCH_ID,
@@ -29,7 +30,6 @@ import { useQueryParams } from '../../../hooks/useQueryParams';
 import { useUsers } from '../../../hooks/useUsers';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
 import { BranchUsers } from './components/BranchUsers';
-import { CreateUserModal } from './components/CreateUserModal';
 import { EditUserModal } from './components/EditUserModal';
 import './style.scss';
 
@@ -255,15 +255,16 @@ export const Users = () => {
 					</Tabs>
 				</Spin>
 
-				<CreateUserModal
-					visible={createUserModalVisible}
-					onSuccess={(userType) => {
-						[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(userType)
-							? onTabClick(PENDING_CREATE_USERS_BRANCH_ID)
-							: onTabClick(NO_BRANCH_ID);
-					}}
-					onClose={() => setCreateUserModalVisible(false)}
-				/>
+				{createUserModalVisible && (
+					<CreateUserModal
+						onSuccess={(userType) => {
+							[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(userType)
+								? onTabClick(PENDING_CREATE_USERS_BRANCH_ID)
+								: onTabClick(NO_BRANCH_ID);
+						}}
+						onClose={() => setCreateUserModalVisible(false)}
+					/>
+				)}
 
 				<EditUserModal
 					user={selectedUser}

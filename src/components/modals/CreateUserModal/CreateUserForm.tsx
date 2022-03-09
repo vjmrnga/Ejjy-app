@@ -3,15 +3,18 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
+	userTypeBranchOptions,
+	userTypeOptions,
+} from '../../../global/options';
+import { userTypes } from '../../../global/types';
+import { sleep } from '../../../utils/function';
+import {
 	Button,
 	FieldError,
 	FormInputLabel,
 	FormSelect,
 	Label,
-} from '../../../../components/elements';
-import { userTypeOptions } from '../../../../global/options';
-import { userTypes } from '../../../../global/types';
-import { sleep } from '../../../../utils/function';
+} from '../../elements';
 
 interface ICreateUser {
 	username: string;
@@ -25,12 +28,18 @@ interface ICreateUser {
 }
 
 interface Props {
+	branchUsersOnly?: boolean;
+	loading: boolean;
 	onSubmit: any;
 	onClose: any;
-	loading: boolean;
 }
 
-export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
+export const CreateUserForm = ({
+	branchUsersOnly,
+	loading,
+	onSubmit,
+	onClose,
+}: Props) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 
@@ -67,18 +76,13 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (formData: ICreateUser, { resetForm }) => {
+			onSubmit={async (formData: ICreateUser) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 
-				onSubmit(
-					{
-						...formData,
-						confirm_password: undefined,
-					},
-					resetForm,
-				);
+				formData.confirm_password = undefined;
+				onSubmit(formData);
 			}}
 			enableReinitialize
 		>
@@ -110,7 +114,12 @@ export const CreateUserForm = ({ onSubmit, onClose, loading }: Props) => {
 
 					<Col sm={12} xs={24}>
 						<Label label="Type" spacing />
-						<FormSelect id="user_type" options={userTypeOptions} />
+						<FormSelect
+							id="user_type"
+							options={
+								branchUsersOnly ? userTypeBranchOptions : userTypeOptions
+							}
+						/>
 						<ErrorMessage
 							name="user_type"
 							render={(error) => <FieldError error={error} />}

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-export const service = {
+const service = {
 	list: async (params: IListRequest, baseURL) =>
 		axios.get('/users/', { baseURL, params }),
 
@@ -12,6 +12,8 @@ export const service = {
 
 	getByIdOnline: async (id, baseURL) =>
 		axios.get(`/online-users/${id}/`, { baseURL }),
+
+	create: async (body, baseURL) => axios.post('/users/', body, { baseURL }),
 
 	createOnline: async (body, baseURL) =>
 		axios.post('/online-users/', body, { baseURL }),
@@ -30,3 +32,5 @@ export const service = {
 			baseURL,
 		}),
 };
+
+export default service;

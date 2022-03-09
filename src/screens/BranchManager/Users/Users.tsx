@@ -1,15 +1,15 @@
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Content, TableActions } from '../../../components';
-import { Box } from '../../../components/elements';
 import {
-	MAX_PAGE_SIZE,
-	NO_BRANCH_ID,
-	PENDING_CREATE_USERS_BRANCH_ID,
-	PENDING_EDIT_USERS_BRANCH_ID,
-} from '../../../global/constants';
-import { request, userTypes } from '../../../global/types';
+	Content,
+	CreateUserModal,
+	TableActions,
+	TableHeader,
+} from '../../../components';
+import { Box } from '../../../components/elements';
+import { MAX_PAGE_SIZE } from '../../../global/constants';
+import { request } from '../../../global/types';
 import { useUsers } from '../../../hooks/useUsers';
 import { getUserTypeName } from '../../../utils/function';
 import { BranchUsers } from '../../OfficeManager/Users/components/BranchUsers';
@@ -17,6 +17,7 @@ import './style.scss';
 
 export const Users = () => {
 	// STATES
+	const [createUserModalVisible, setCreateUserModalVisible] = useState(false);
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
@@ -25,10 +26,7 @@ export const Users = () => {
 
 	// METHODS
 	useEffect(() => {
-		getUsers({
-			page: 1,
-			pageSize: MAX_PAGE_SIZE,
-		});
+		fetchUsers();
 	}, []);
 
 	useEffect(() => {
@@ -51,13 +49,35 @@ export const Users = () => {
 		setDataSource(formattedUsers);
 	}, [users]);
 
+	const fetchUsers = () => {
+		getUsers(
+			{
+				page: 1,
+				pageSize: MAX_PAGE_SIZE,
+			},
+			true,
+		);
+	};
+
 	return (
 		<Content title="Users">
-			<Box padding>
+			<Box>
 				<Spin spinning={usersStatus === request.REQUESTING}>
+					<TableHeader
+						buttonName="Create User"
+						onCreate={() => setCreateUserModalVisible(true)}
+					/>
 					<BranchUsers dataSource={dataSource} />
 				</Spin>
 			</Box>
+
+			{createUserModalVisible && (
+				<CreateUserModal
+					onSuccess={fetchUsers}
+					onClose={() => setCreateUserModalVisible(false)}
+					branchUsersOnly
+				/>
+			)}
 		</Content>
 	);
 };

@@ -14,8 +14,8 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../global/constants';
 import { request } from '../global/types';
+import { UsersService } from '../services';
 import { ONLINE_API_URL } from '../services/index';
-import { service } from '../services/users';
 import { getBaseUrl } from './helper';
 
 /* WORKERS */
@@ -38,7 +38,7 @@ function* listUsers({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(service.list, data, baseURL);
+			response = yield call(UsersService.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -46,7 +46,7 @@ function* listUsers({ payload }: any) {
 			);
 			if (baseURL && baseBackupURL) {
 				// Fetch branch url
-				response = yield call(service.list, data, baseBackupURL);
+				response = yield call(UsersService.list, data, baseBackupURL);
 				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
@@ -77,7 +77,7 @@ function* listOnlineUsers({ payload }: any) {
 
 	try {
 		const response = yield call(
-			service.listOnline,
+			UsersService.listOnline,
 			{
 				page: 1,
 				page_size: MAX_PAGE_SIZE,
@@ -95,7 +95,7 @@ function* listOnlineUsers({ payload }: any) {
 	}
 }
 
-function* getByIdOnline({ payload }: any) {
+function* getById({ payload }: any) {
 	const { id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -103,7 +103,7 @@ function* getByIdOnline({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.getByIdOnline,
+			UsersService.getByIdOnline,
 			id,
 			ONLINE_API_URL,
 		);
@@ -117,7 +117,7 @@ function* getByIdOnline({ payload }: any) {
 	}
 }
 
-function* getById({ payload }: any) {
+function* getByIdOnline({ payload }: any) {
 	const { id, callback } = payload;
 	callback({ status: request.REQUESTING });
 
@@ -125,7 +125,7 @@ function* getById({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.getByIdOnline,
+			UsersService.getByIdOnline,
 			id,
 			ONLINE_API_URL,
 		);
@@ -134,6 +134,25 @@ function* getById({ payload }: any) {
 			actions.save({ type: types.GET_USER_BY_ID, user: response.data }),
 		);
 		callback({ status: request.SUCCESS, data: response.data });
+	} catch (e) {
+		callback({ status: request.ERROR, errors: e.errors });
+	}
+}
+
+function* create({ payload }: any) {
+	const { callback, ...data } = payload;
+	callback({ status: request.REQUESTING });
+
+	const baseURL = getBaseUrl(null, callback);
+
+	try {
+		const response = yield call(
+			UsersService.create,
+			data,
+			baseURL, // TODO: Need to check first on what URL to use. For now, let's use the local
+		);
+
+		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
 	}
@@ -144,7 +163,11 @@ function* createOnline({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.createOnline, data, ONLINE_API_URL);
+		const response = yield call(
+			UsersService.createOnline,
+			data,
+			ONLINE_API_URL,
+		);
 
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
@@ -158,7 +181,7 @@ function* editOnline({ payload }: any) {
 
 	try {
 		const response = yield call(
-			service.editOnline,
+			UsersService.editOnline,
 			id,
 			{ branch_id: branchId },
 			ONLINE_API_URL,
@@ -176,7 +199,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.removeOnline, id, ONLINE_API_URL);
+		const response = yield call(UsersService.removeOnline, id, ONLINE_API_URL);
 
 		yield put(actions.save({ type: types.REMOVE_USER, id }));
 		callback({ status: request.SUCCESS, response: response.data });
@@ -191,7 +214,7 @@ function* approve({ payload }: any) {
 
 	try {
 		const response = yield call(
-			service.approveOnline,
+			UsersService.approveOnline,
 			id,
 			{
 				pending_approval_type: pendingApprovalType,
@@ -211,7 +234,7 @@ function* requestUserTypeChange({ payload }: any) {
 
 	try {
 		const response = yield call(
-			service.requestUserTypeChange,
+			UsersService.requestUserTypeChange,
 			id,
 			{ new_user_type: newUserType },
 			ONLINE_API_URL,
@@ -240,8 +263,12 @@ const getByIdOnlineWatcherSaga = function* getByIdOnlineWatcherSaga() {
 	yield takeLatest(types.GET_ONLINE_USER_BY_ID, getByIdOnline);
 };
 
+const createWatcherSaga = function* createWatcherSaga() {
+	yield takeLatest(types.CREATE_USER, create);
+};
+
 const createOnlineWatcherSaga = function* createOnlineWatcherSaga() {
-	yield takeLatest(types.CREATE_USER, createOnline);
+	yield takeLatest(types.CREATE_ONLINE_USER, createOnline);
 };
 
 const editOnlineWatcherSaga = function* editOnlineWatcherSaga() {
@@ -266,6 +293,7 @@ export default [
 	listOnlineUsersWatcherSaga(),
 	getByIdWatcherSaga(),
 	getByIdOnlineWatcherSaga(),
+	createWatcherSaga(),
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),
 	removeWatcherSaga(),

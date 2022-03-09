@@ -1,28 +1,30 @@
 import { Modal } from 'antd';
 import React from 'react';
-import { RequestErrors } from '../../../../components';
-import { request } from '../../../../global/types';
-import { convertIntoArray } from '../../../../utils/function';
-import { useUsers } from '../../../../hooks/useUsers';
+import { request } from '../../../global/types';
+import { useUsers } from '../../../hooks/useUsers';
+import { convertIntoArray } from '../../../utils/function';
+import { RequestErrors } from '../../RequestErrors/RequestErrors';
 import { CreateUserForm } from './CreateUserForm';
 
 interface Props {
-	visible: boolean;
+	branchUsersOnly?: boolean;
 	onSuccess: any;
 	onClose: any;
 }
 
-export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
+export const CreateUserModal = ({
+	branchUsersOnly,
+	onSuccess,
+	onClose,
+}: Props) => {
 	// CUSTOM HOOKS
-	const { createUser, status: userStatus, errors, reset } = useUsers();
+	const { createUser, status: userStatus, errors } = useUsers();
 
 	// METHODS
-	const onCreateUser = (data, resetForm) => {
+	const onCreateUser = (data) => {
 		createUser(data, ({ status }) => {
 			if (status === request.SUCCESS) {
 				onSuccess(data.user_type);
-				resetForm();
-				reset();
 				onClose();
 			}
 		});
@@ -31,18 +33,19 @@ export const CreateUserModal = ({ visible, onSuccess, onClose }: Props) => {
 	return (
 		<Modal
 			title="Create User"
-			visible={visible}
 			footer={null}
 			onCancel={onClose}
+			visible
 			centered
 			closable
 		>
 			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<CreateUserForm
+				branchUsersOnly={branchUsersOnly}
+				loading={userStatus === request.REQUESTING}
 				onSubmit={onCreateUser}
 				onClose={onClose}
-				loading={userStatus === request.REQUESTING}
 			/>
 		</Modal>
 	);
