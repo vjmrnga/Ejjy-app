@@ -85,6 +85,14 @@ export const AssignReturnItemSlipForm = ({
 										setFieldValue('branch_id', value);
 										setFieldValue('receiver_id', null);
 									}}
+									optionFilterProp="children"
+									filterOption={(input, option) =>
+										option.children
+											.toString()
+											.toLowerCase()
+											.indexOf(input.toLowerCase()) >= 0
+									}
+									showSearch
 								>
 									{branches
 										.filter(({ id }) => returnItemSlip.sender.branch.id !== id)
@@ -106,6 +114,14 @@ export const AssignReturnItemSlipForm = ({
 									loading={usersStatus === request.REQUESTING}
 									disabled={usersStatus === request.REQUESTING}
 									onChange={(value) => setFieldValue('receiver_id', value)}
+									optionFilterProp="children"
+									filterOption={(input, option) =>
+										option.children
+											.toString()
+											.toLowerCase()
+											.indexOf(input.toLowerCase()) >= 0
+									}
+									showSearch
 								>
 									{users.map(({ id, first_name, last_name }) => (
 										<Select.Option value={id}>

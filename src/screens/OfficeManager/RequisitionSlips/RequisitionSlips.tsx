@@ -157,6 +157,14 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 					defaultValue={
 						params.branchId ? Number(params.branchId) : ALL_OPTION_KEY
 					}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					<Select.Option value="all">All</Select.Option>
@@ -175,6 +183,14 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 						setQueryParams({ status: value });
 					}}
 					defaultValue={params.status || ALL_OPTION_KEY}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (

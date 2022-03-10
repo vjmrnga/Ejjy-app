@@ -172,6 +172,14 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 						onChange={(value) => {
 							setPersonnel(value);
 						}}
+						optionFilterProp="children"
+						filterOption={(input, option) =>
+							option.children
+								.toString()
+								.toLowerCase()
+								.indexOf(input.toLowerCase()) >= 0
+						}
+						showSearch
 						allowClear
 					>
 						{personnels.map(({ id, first_name, last_name }) => (

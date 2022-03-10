@@ -217,6 +217,14 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 						setQueryParams({ statuses: value });
 					}}
 					disabled={isLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{transactionStatusOptions.map((option) => (

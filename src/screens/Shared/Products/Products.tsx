@@ -15,11 +15,7 @@ import { Box, ButtonLink, Label } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
-import {
-	pendingTransactionTypes,
-	request,
-	userTypes,
-} from '../../../global/types';
+import { pendingTransactionTypes, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
@@ -281,6 +277,14 @@ const Filter = ({
 						setQueryParams({ productCategory: value });
 					}}
 					loading={productCategoriesStatus === request.REQUESTING}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{productCategories.map(({ name }) => (

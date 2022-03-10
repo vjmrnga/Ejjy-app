@@ -240,6 +240,14 @@ const Filter = ({
 					style={{ width: '100%' }}
 					onChange={onSelectProductCategory}
 					loading={productCategoriesStatus === request.REQUESTING}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{productCategories.map(({ name }) => (
@@ -250,7 +258,19 @@ const Filter = ({
 
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
-				<Select style={{ width: '100%' }} onChange={onSelectStatus} allowClear>
+				<Select
+					style={{ width: '100%' }}
+					onChange={onSelectStatus}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
 					<Select.Option value={branchProductStatus.AVAILABLE}>
 						Available
 					</Select.Option>

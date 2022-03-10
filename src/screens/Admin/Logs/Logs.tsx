@@ -138,6 +138,14 @@ const Filter = ({
 					}}
 					defaultValue={params.branchId}
 					loading={branchesLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{branches.map(({ id, name }) => (
@@ -155,6 +163,14 @@ const Filter = ({
 					}}
 					defaultValue={params.actingUserId}
 					loading={usersLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{users.map(({ id, first_name, last_name }) => (

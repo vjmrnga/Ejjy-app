@@ -483,6 +483,14 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					onChange={(value) => {
 						setQueryParams({ productCategory: value });
 					}}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{productCategories.map(({ name }) => (

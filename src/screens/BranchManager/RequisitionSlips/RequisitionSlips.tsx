@@ -165,6 +165,14 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 						setQueryParams({ status: value });
 					}}
 					defaultValue={params.status || 'all'}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (

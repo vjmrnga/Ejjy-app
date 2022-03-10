@@ -320,6 +320,14 @@ const Filter = ({
 					onChange={(value) => {
 						setQueryParams({ productCategory: value });
 					}}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{productCategories.map(({ name }) => (
@@ -338,6 +346,14 @@ const Filter = ({
 					onChange={(value) => {
 						setQueryParams({ productStatus: value });
 					}}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
 					allowClear
 				>
 					{branchProductStatusOptions.map(({ name, value }) => (
