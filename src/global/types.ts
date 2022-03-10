@@ -156,3 +156,9 @@ export const connectivityTypes = {
 	ONLINE_TO_OFFLINE: 'online_to_offline',
 	OFFLINE_TO_ONLINE: 'offline_to_online',
 };
+
+export const accountTypes = {
+	REGULAR: 'regular',
+	EMPLOYEE: 'employee',
+	GOVERNMENT: 'government',
+};

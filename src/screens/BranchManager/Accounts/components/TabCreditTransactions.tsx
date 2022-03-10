@@ -5,6 +5,7 @@ import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
+	ViewAccountModal,
 } from '../../../../components';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
@@ -12,7 +13,6 @@ import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useSessions } from '../../../../hooks/useSessions';
 import { convertIntoArray } from '../../../../utils/function';
 import '../style.scss';
-import { ViewAccountModal } from './TabAccounts/ViewAccountModal';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'datetime' },

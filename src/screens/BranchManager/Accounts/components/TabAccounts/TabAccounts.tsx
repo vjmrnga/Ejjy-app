@@ -3,8 +3,12 @@ import { Button, Col, Input, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { RequestErrors, TableHeader } from '../../../../../components';
-import { ButtonLink, Label } from '../../../../../components/elements';
+import {
+	RequestErrors,
+	TableHeader,
+	ViewAccountModal,
+} from '../../../../../components';
+import { Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { useAccounts } from '../../../../../hooks';
@@ -12,7 +16,6 @@ import { useQueryParams } from '../../../../../hooks/useQueryParams';
 import { convertIntoArray, formatDate } from '../../../../../utils/function';
 import '../../style.scss';
 import { CreateAccountModal } from './CreateAccountModal';
-import { ViewAccountModal } from './ViewAccountModal';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'client_code' },

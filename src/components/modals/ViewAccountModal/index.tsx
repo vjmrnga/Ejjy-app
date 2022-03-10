@@ -1,8 +1,9 @@
 import { Modal } from 'antd';
 import React from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
-import { Button } from '../../../../../components/elements';
-import { formatDate } from '../../../../../utils/function';
+import { formatDate } from '../../../utils/function';
+import { DetailsRow } from '../../Details/DetailsRow';
+import { DetailsSingle } from '../../Details/DetailsSingle';
+import { Button } from '../../elements';
 
 interface Props {
 	account: any;
@@ -12,7 +13,7 @@ interface Props {
 export const ViewAccountModal = ({ account, onClose }: Props) => (
 	<Modal
 		className="Modal__hasFooter"
-		title="View Product"
+		title="View Account"
 		footer={[<Button text="Close" onClick={onClose} />]}
 		onCancel={onClose}
 		visible

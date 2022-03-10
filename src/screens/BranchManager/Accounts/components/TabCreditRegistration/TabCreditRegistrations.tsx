@@ -7,6 +7,7 @@ import {
 	RequestErrors,
 	TableActions,
 	TableHeader,
+	ViewAccountModal,
 } from '../../../../../components';
 import { Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
@@ -18,7 +19,6 @@ import {
 	formatDate,
 	formatInPeso,
 } from '../../../../../utils/function';
-import { ViewAccountModal } from '../TabAccounts/ViewAccountModal';
 import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
 
 const columns: ColumnsType = [
