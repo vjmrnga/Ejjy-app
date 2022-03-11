@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table } from 'antd';
+import { Button, Col, Input, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import {
 import { Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
+import { accountTypes } from '../../../../../global/types';
 import { useAccounts } from '../../../../../hooks';
 import { useQueryParams } from '../../../../../hooks/useQueryParams';
 import { convertIntoArray, formatDate } from '../../../../../utils/function';
@@ -136,6 +137,51 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Type" spacing />
+				<Select
+					style={{ width: '100%' }}
+					value={params.type}
+					onChange={(value) => {
+						setQueryParams({ type: value });
+					}}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
+					<Select.Option
+						key={accountTypes.REGULAR}
+						value={accountTypes.REGULAR}
+					>
+						Regular
+					</Select.Option>
+					<Select.Option
+						key={accountTypes.CORPORATE}
+						value={accountTypes.CORPORATE}
+					>
+						Corporate
+					</Select.Option>
+					<Select.Option
+						key={accountTypes.EMPLOYEE}
+						value={accountTypes.EMPLOYEE}
+					>
+						Employee
+					</Select.Option>
+					<Select.Option
+						key={accountTypes.GOVERNMENT}
+						value={accountTypes.GOVERNMENT}
+					>
+						Government
+					</Select.Option>
+				</Select>
 			</Col>
 		</Row>
 	);

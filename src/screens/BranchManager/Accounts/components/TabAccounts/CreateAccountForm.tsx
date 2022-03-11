@@ -1,4 +1,4 @@
-import { Col, DatePicker, Row } from 'antd';
+import { Col, DatePicker, Divider, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
@@ -9,29 +9,44 @@ import {
 	FormRadioButton,
 	Label,
 } from '../../../../../components/elements';
+import { accountTypes } from '../../../../../global/types';
 import { sleep } from '../../../../../utils/function';
 
 const formDetails = {
 	defaultValues: {
+		type: accountTypes.REGULAR,
 		firstName: '',
 		middleName: '',
 		lastName: '',
 		birthday: null,
-		businessName: '',
+		businessName: undefined,
 		homeAddress: '',
-		businessAddress: '',
+		businessAddress: undefined,
 		contactNumber: '',
 		gender: '',
 	},
 	schema: Yup.object().shape(
 		{
+			type: Yup.string().required().label('Type'),
 			firstName: Yup.string().required().label('First Name'),
 			middleName: Yup.string().label('Middle Name'),
 			lastName: Yup.string().required().label('Last Name'),
 			birthday: Yup.date().nullable().required().label('Birthday'),
-			businessName: Yup.string().required().label('Business Name'),
+			businessName: Yup.string()
+				.nullable()
+				.when('type', {
+					is: (type) =>
+						[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
+					then: Yup.string().required().label('Business Name'),
+				}),
 			homeAddress: Yup.string().required().label('Address (Home)'),
-			businessAddress: Yup.string().required().label('Address (Business)'),
+			businessAddress: Yup.string()
+				.nullable()
+				.when('type', {
+					is: (type) =>
+						[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
+					then: Yup.string().required().label('Address (Business)'),
+				}),
 			contactNumber: Yup.string().required().label('Contact Number'),
 			gender: Yup.string().required().label('Gender'),
 		},
@@ -70,6 +85,57 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[15, 15]}>
+						<Col span={24}>
+							<Label id="type" label="Type" spacing />
+							<Select
+								style={{ width: '100%' }}
+								value={values.type}
+								onChange={(value) => {
+									setFieldValue('type', value);
+								}}
+								optionFilterProp="children"
+								filterOption={(input, option) =>
+									option.children
+										.toString()
+										.toLowerCase()
+										.indexOf(input.toLowerCase()) >= 0
+								}
+								showSearch
+							>
+								<Select.Option
+									key={accountTypes.REGULAR}
+									value={accountTypes.REGULAR}
+								>
+									Regular
+								</Select.Option>
+								<Select.Option
+									key={accountTypes.CORPORATE}
+									value={accountTypes.CORPORATE}
+								>
+									Corporate
+								</Select.Option>
+								<Select.Option
+									key={accountTypes.EMPLOYEE}
+									value={accountTypes.EMPLOYEE}
+								>
+									Employee
+								</Select.Option>
+								<Select.Option
+									key={accountTypes.GOVERNMENT}
+									value={accountTypes.GOVERNMENT}
+								>
+									Government
+								</Select.Option>
+							</Select>
+
+							<ErrorMessage
+								name="type"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Divider />
+
 						<Col md={8}>
 							<FormInputLabel id="firstName" label="First Name" />
 							<ErrorMessage
@@ -133,26 +199,45 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 							/>
 						</Col>
 
-						<Col span={24}>
-							<FormInputLabel id="businessName" label="Business Name" />
-							<ErrorMessage
-								name="businessName"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
+						{[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(
+							values.type,
+						) && (
+							<>
+								<Col span={24} md={12}>
+									<FormInputLabel
+										id="businessName"
+										label={
+											values.type == accountTypes.CORPORATE
+												? 'Business Name'
+												: 'Agency Name'
+										}
+									/>
+									<ErrorMessage
+										name="businessName"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col span={24} md={12}>
+									<FormInputLabel
+										id="businessAddress"
+										label={
+											values.type == accountTypes.CORPORATE
+												? 'Address (Business)'
+												: 'Address (Agency)'
+										}
+									/>
+									<ErrorMessage
+										name="businessAddress"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+							</>
+						)}
 
-						<Col span={12}>
+						<Col span={24}>
 							<FormInputLabel id="homeAddress" label="Address (Home)" />
 							<ErrorMessage
 								name="homeAddress"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col span={12}>
-							<FormInputLabel id="businessAddress" label="Address (Business)" />
-							<ErrorMessage
-								name="businessAddress"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

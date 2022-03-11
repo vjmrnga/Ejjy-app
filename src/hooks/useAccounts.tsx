@@ -5,13 +5,14 @@ import { getLocalIpAddress } from '../utils/function';
 
 const useAccounts = ({ params }) =>
 	useQuery<any>(
-		['useAccounts', params.page, params.pageSize, params.search],
+		['useAccounts', params.page, params.pageSize, params.search, params.type],
 		async () =>
 			AccountsService.list(
 				{
 					page: params.page,
 					page_size: params.pageSize,
 					search: params.search,
+					type: params.type,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
@@ -38,6 +39,7 @@ export const useAccountsCreate = (options = {}) =>
 			homeAddress,
 			contactNumber,
 			gender,
+			type,
 		}: any) =>
 			AccountsService.create(
 				{
@@ -50,6 +52,7 @@ export const useAccountsCreate = (options = {}) =>
 					home_address: homeAddress,
 					contact_number: contactNumber,
 					gender,
+					type,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),

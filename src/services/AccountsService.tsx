@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
+interface IList extends IListRequest {
+	type?: string;
+}
+
 interface IModify {
 	first_name?: string;
 	middle_name?: string;
@@ -11,10 +15,11 @@ interface IModify {
 	home_address?: string;
 	contact_number?: string;
 	gender?: string;
+	type: string;
 }
 
 const service = {
-	list: async (params: IListRequest, baseURL: string) =>
+	list: async (params: IList, baseURL: string) =>
 		axios.get('/accounts/', { baseURL, params }),
 
 	create: async (body: IModify, baseURL: string) =>
