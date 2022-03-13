@@ -33,7 +33,7 @@ const columns: ColumnsType = [
 export const TabCreditRegistrations = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [selectedAccount, setSelectedAccount] = useState(false);
+	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS

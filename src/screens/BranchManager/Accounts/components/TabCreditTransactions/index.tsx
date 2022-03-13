@@ -7,19 +7,19 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 	ViewAccountModal,
-} from '../../../../components';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { paymentTypes, timeRangeTypes } from '../../../../global/types';
-import { useTransactions } from '../../../../hooks';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
-import { useTimeRange } from '../../../../hooks/useTimeRange';
+} from '../../../../../components';
+import { EMPTY_CELL } from '../../../../../global/constants';
+import { pageSizeOptions } from '../../../../../global/options';
+import { paymentTypes, timeRangeTypes } from '../../../../../global/types';
+import { useTransactions } from '../../../../../hooks';
+import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useTimeRange } from '../../../../../hooks/useTimeRange';
 import {
 	convertIntoArray,
 	formatDateTime,
 	formatInPeso,
-} from '../../../../utils/function';
-import '../style.scss';
+} from '../../../../../utils/function';
+import '../../style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'datetime' },

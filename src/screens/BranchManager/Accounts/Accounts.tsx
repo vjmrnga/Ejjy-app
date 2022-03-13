@@ -5,15 +5,17 @@ import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { useAuth } from '../../../hooks/useAuth';
 import { useQueryParams } from '../../../hooks/useQueryParams';
+import { TabAccounts } from './components/TabAccounts';
+import { TabCreditRegistrations } from './components/TabCreditRegistration';
 import { TabCreditTransactions } from './components/TabCreditTransactions';
-import { TabAccounts } from './components/TabAccounts/TabAccounts';
-import { TabCreditRegistrations } from './components/TabCreditRegistration/TabCreditRegistrations';
+import { TabOrderOfPayments } from './components/TabOrderOfPayments';
 import './style.scss';
 
 const tabs = {
 	ACCOUNTS: 'Accounts',
 	CREDIT_REGISTRATIONS: 'Credit Registrations',
 	CREDIT_TRANSACTIONS: 'Credit Transactions',
+	ORDER_OF_PAYMENTS: 'Order of Payments',
 };
 
 export const Accounts = () => {
@@ -64,6 +66,13 @@ export const Accounts = () => {
 						tab={tabs.CREDIT_TRANSACTIONS}
 					>
 						<TabCreditTransactions />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.ORDER_OF_PAYMENTS}
+						tab={tabs.ORDER_OF_PAYMENTS}
+					>
+						<TabOrderOfPayments />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

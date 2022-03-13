@@ -168,3 +168,9 @@ export const paymentTypes = {
 	CASH: 'cash',
 	CREDIT: 'credit_pay',
 };
+
+export const orderOfPaymentPurposes = {
+	PARTIAL_PAYMENT: 'partial_payment',
+	FULL_PAYMENT: 'full_payment',
+	OTHERS: 'others',
+};

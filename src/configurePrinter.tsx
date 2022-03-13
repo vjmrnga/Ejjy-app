@@ -2,8 +2,9 @@
 import { message } from 'antd';
 import dayjs from 'dayjs';
 import qz from 'qz-tray';
-import { quantityTypes } from './global/types';
+import { orderOfPaymentPurposes, quantityTypes } from './global/types';
 import {
+	formatDate,
 	formatDateTime,
 	formatInPeso,
 	getOrderSlipStatusBranchManagerText,
@@ -426,6 +427,79 @@ export const printCancelledTransactions = ({
 		'Error occurred while trying to print transactions.',
 		onComplete,
 	);
+};
+
+export const printOrderOfPayment = (orderOfPayment) => {
+	const opNo = orderOfPayment.id;
+	const date = formatDate(orderOfPayment.datetime_created);
+	const payor = `${orderOfPayment.payor.first_name} ${orderOfPayment.payor.last_name}`;
+	const address = orderOfPayment.payor.home_address;
+	const amount = formatInPeso(orderOfPayment.amount, 'P');
+	const invoiceId =
+		orderOfPayment?.charge_sales_transaction?.invoice?.id || '&nbsp;';
+	const invoiceDate = orderOfPayment?.charge_sales_transaction
+		? formatDateTime(
+				orderOfPayment.charge_sales_transaction.invoice.datetime_created,
+		  )
+		: '&nbsp;';
+
+	let purposeDescription = orderOfPayment.extra_description;
+	if (orderOfPayment.purpose === orderOfPaymentPurposes.PARTIAL_PAYMENT) {
+		purposeDescription = 'Partial Payment';
+	} else if (orderOfPayment.purpose === orderOfPaymentPurposes.FULL_PAYMENT) {
+		purposeDescription = 'Full Payment';
+	}
+
+	const letterStyles =
+		'display: inline-block; min-width: 225px; padding: 0 8px; border-bottom: 2px solid black; text-align:center; font-weight: bold';
+
+	const data = `
+		<div style="padding: 24px; width: 795px; font-size: 24px; line-height: 140%; font-family: 'Calibri', monospace;">
+			<div><b>Entity Name: EJ & JY WET MARKET AND ENTERPRISES</b></div>
+			<div style="display:flex; justify-content: space-between">
+				<div>
+					<b>OP No.: <span style="width: 200px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${opNo}</span></b>
+				</div>
+				<div>
+					<b>Date: <span style="width: 200px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${date}</span></b>
+				</div>
+			</div>
+
+			<br/>
+			<br/>
+
+			<div style="font-size: 1.5em; font-weight: bold; text-align: center">ORDER OF PAYMENT</div>
+
+			<br/>
+
+			<div><b>The Cashier</b></div>
+			<div>Cashiering Unit</div>
+
+			<br/>
+			<br/>
+
+			<div style="text-align: justify">&emsp;&emsp;&emsp;Please issue Collection Receipt in favor of 
+				<span style="${letterStyles}">${payor}</span> from 
+				<span style="${letterStyles}; min-width: 300px">${address}</span> in the amount of 
+				<span style="${letterStyles}">${amount}</span> for payment of
+				<span style="${letterStyles}">${purposeDescription}</span> per Bill/SOA No.
+				<span style="${letterStyles}">${invoiceId}</span> dated
+				<span style="${letterStyles}">${invoiceDate}</span>.
+			</div>
+
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+
+			<div style="padding: 0 12px; width: 60%; border-top: 2px solid black; float:right; text-align: center;">
+				Head of the General Manager/Authorized Official
+			</div>
+		</div>
+	`;
+
+	return data;
 };
 
 export default configurePrinter;

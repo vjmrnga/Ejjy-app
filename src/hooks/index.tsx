@@ -5,4 +5,5 @@ export { default as useBranchesDayAuthorizations } from './useBranchesDayAuthori
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
+export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useTransactions } from './useTransactions';
