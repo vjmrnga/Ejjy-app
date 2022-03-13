@@ -18,7 +18,6 @@ import requisitionSlipsSagas from './requisition-slips';
 import returnItemSlipsSagas from './return-item-slips';
 import sessionsSagas from './sessions';
 import siteSettingsSagas from './site-settings';
-import transactionsSagas from './transactions';
 import usersSagas from './users';
 import xreadReportsSagas from './xread-reports';
 
@@ -40,7 +39,6 @@ export default function* rootSaga() {
 		...returnItemSlipsSagas,
 		...sessionsSagas,
 		...siteSettingsSagas,
-		...transactionsSagas,
 		...usersSagas,
 		...xreadReportsSagas,
 		...adminSagas,

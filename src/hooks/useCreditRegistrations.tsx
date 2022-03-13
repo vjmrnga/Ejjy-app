@@ -6,7 +6,7 @@ import { getLocalIpAddress } from '../utils/function';
 const useCreditRegistrations = ({ params }) =>
 	useQuery<any>(
 		['useCreditRegistrations', params.page, params.pageSize, params.search],
-		async () =>
+		() =>
 			CreditRegistrationsService.list(
 				{
 					page: params.page,

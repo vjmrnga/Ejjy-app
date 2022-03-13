@@ -12,14 +12,10 @@ import {
 import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
-import {
-	request,
-	timeRangeTypes,
-	transactionStatus,
-} from '../../../../global/types';
+import { timeRangeTypes, transactionStatus } from '../../../../global/types';
+import { useTransactions } from '../../../../hooks';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useTimeRange } from '../../../../hooks/useTimeRange';
-import { useTransactions } from '../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
 	formatInPeso,
@@ -63,25 +59,11 @@ interface Props {
 
 export const ViewBranchTransactions = ({ branchId }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const {
-		transactions,
-		pageCount,
-		currentPage,
-		pageSize,
-
-		listTransactions,
-		status,
-		errors,
-		warnings,
-	} = useTransactions();
-
 	const { params: queryParams, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
 		onParamsCheck: ({ timeRange }) => {
 			const newParams = {};
 
@@ -92,15 +74,13 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 			return newParams;
 		},
-		onQueryParamChange: (params) => {
-			listTransactions(
-				{
-					...params,
-					branchId,
-				},
-				true,
-			);
-		},
+	});
+	const {
+		data: { transactions, total, warning },
+		isFetching,
+		error,
+	} = useTransactions({
+		params: { branchId, ...queryParams },
 	});
 
 	// METHODS
@@ -128,7 +108,7 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 			},
 		);
 
-		setData(formattedBranchTransactions);
+		setDataSource(formattedBranchTransactions);
 	}, [transactions]);
 
 	return (
@@ -140,11 +120,11 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
-				isLoading={status === request.REQUESTING}
+				isLoading={isFetching}
 			/>
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestWarnings warnings={convertIntoArray(warning)} />
 
 			{[
 				transactionStatus.VOID_CANCELLED,
@@ -159,23 +139,23 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(queryParams.page) || 1,
+					total,
+					pageSize: Number(queryParams.pageSize) || 10,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
+				loading={isFetching}
 			/>
 
 			{selectedTransaction && (

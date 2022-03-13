@@ -6,9 +6,9 @@ import { Box, Button } from '../../../../../components/elements';
 import { printCancelledTransactions } from '../../../../../configurePrinter';
 import { MAX_PAGE_SIZE } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
+import { useTransactions } from '../../../../../hooks';
 import { useAuth } from '../../../../../hooks/useAuth';
 import { useSiteSettings } from '../../../../../hooks/useSiteSettings';
-import { useTransactions } from '../../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
 	formatInPeso,
@@ -35,26 +35,20 @@ export const TransactionsCancelled = ({
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
-		transactions,
-		listTransactions,
-		status: transactionsStatus,
-		errors: transactionsErrors,
-	} = useTransactions();
+		data: { transactions },
+		isFetching: isTransactionsFetching,
+		error: transactionsErrors,
+	} = useTransactions({
+		params: {
+			timeRange,
+			statuses,
+			branchId,
+			serverUrl,
+			page: 1,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 	const { getSiteSettings, errors: siteSettingsErrors } = useSiteSettings();
-
-	useEffect(() => {
-		listTransactions(
-			{
-				timeRange,
-				statuses,
-				branchId,
-				serverUrl,
-				page: 1,
-				pageSize: MAX_PAGE_SIZE,
-			},
-			true,
-		);
-	}, [branchId, timeRange, statuses]);
 
 	useEffect(() => {
 		const totalAmount = transactions.reduce(
@@ -88,7 +82,7 @@ export const TransactionsCancelled = ({
 
 	return (
 		<Box className="TransactionsCancelled">
-			<Spin spinning={transactionsStatus === request.REQUESTING}>
+			<Spin spinning={isTransactionsFetching}>
 				<div className="TransactionsCancelled_container">
 					<RequestErrors
 						errors={[

@@ -10,4 +10,5 @@ export { default as AccountsService } from './AccountsService';
 export { default as BranchesDayService } from './BranchesDayService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
+export { default as TransactionsService } from './TransactionsService';
 export { default as UsersService } from './UsersService';

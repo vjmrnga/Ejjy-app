@@ -12,14 +12,10 @@ import {
 import { ButtonLink, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
-import {
-	request,
-	timeRangeTypes,
-	transactionStatus,
-} from '../../../../global/types';
+import { timeRangeTypes, transactionStatus } from '../../../../global/types';
+import { useTransactions } from '../../../../hooks';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useTimeRange } from '../../../../hooks/useTimeRange';
-import { useTransactions } from '../../../../hooks/useTransactions';
 import {
 	convertIntoArray,
 	formatInPeso,
@@ -76,21 +72,7 @@ export const ViewBranchTransactions = ({
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const {
-		transactions,
-		pageCount,
-		currentPage,
-		pageSize,
-
-		listTransactions,
-		status,
-		errors,
-		warnings,
-	} = useTransactions();
-
 	const { params: queryParams, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
 		onParamsCheck: ({ timeRange }) => {
 			const newParams = {};
 
@@ -101,16 +83,13 @@ export const ViewBranchTransactions = ({
 
 			return newParams;
 		},
-		onQueryParamChange: (params) => {
-			listTransactions(
-				{
-					...params,
-					branchMachineId,
-					serverUrl,
-				},
-				true,
-			);
-		},
+	});
+	const {
+		data: { transactions, total, warning },
+		isFetching,
+		error,
+	} = useTransactions({
+		params: { serverUrl, branchMachineId, ...queryParams },
 	});
 
 	// METHODS
@@ -151,11 +130,11 @@ export const ViewBranchTransactions = ({
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
-				isLoading={status === request.REQUESTING}
+				isLoading={isFetching}
 			/>
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestWarnings warnings={convertIntoArray(warning)} />
 
 			{voidedStatuses.includes(toString(queryParams?.statuses)) && (
 				<TransactionsCancelled
@@ -171,9 +150,9 @@ export const ViewBranchTransactions = ({
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(queryParams.page) || 1,
+					total,
+					pageSize: Number(queryParams.pageSize) || 10,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -184,7 +163,7 @@ export const ViewBranchTransactions = ({
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
+				loading={isFetching}
 			/>
 
 			{selectedTransaction && (

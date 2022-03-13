@@ -12,7 +12,7 @@ const useConnectivityLogs = ({ params }) =>
 			params.timeRange,
 			params.type,
 		],
-		async () =>
+		() =>
 			ConnectivityLogsService.list(
 				{
 					page: params.page,

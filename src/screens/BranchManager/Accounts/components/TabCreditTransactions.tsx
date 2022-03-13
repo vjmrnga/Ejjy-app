@@ -1,17 +1,24 @@
-import { Table } from 'antd';
+import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useState } from 'react';
+import { toString } from 'lodash';
+import React, { useEffect, useState } from 'react';
 import {
 	RequestErrors,
-	RequestWarnings,
 	TableHeader,
+	TimeRangeFilter,
 	ViewAccountModal,
 } from '../../../../components';
+import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
+import { paymentTypes, timeRangeTypes } from '../../../../global/types';
+import { useTransactions } from '../../../../hooks';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
-import { useSessions } from '../../../../hooks/useSessions';
-import { convertIntoArray } from '../../../../utils/function';
+import { useTimeRange } from '../../../../hooks/useTimeRange';
+import {
+	convertIntoArray,
+	formatDateTime,
+	formatInPeso,
+} from '../../../../utils/function';
 import '../style.scss';
 
 const columns: ColumnsType = [
@@ -25,62 +32,95 @@ const columns: ColumnsType = [
 
 export const TabCreditTransactions = () => {
 	// STATES
-	const [data, setData] = useState([]);
-	const [selectedAccount, setSelectedAccount] = useState(false);
+	const [dataSource, setDataSource] = useState([]);
+	const [selectedTransaction, setSelectedTransaction] = useState(null);
+	const [selectedAccount, setSelectedAccount] = useState(null);
 
 	// CUSTOM HOOKS
-	const {
-		sessions,
-		pageCount,
-		currentPage,
-		pageSize,
-
-		listSessions,
-		status,
-		errors,
-		warnings,
-	} = useSessions();
-
 	const { params: queryParams, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onQueryParamChange: (params) => {
-			listSessions(
-				{
-					...params,
-				},
-				true,
-			);
+		onParamsCheck: ({ timeRange }) => {
+			const newParams = {};
+
+			if (!toString(timeRange)) {
+				// eslint-disable-next-line dot-notation
+				newParams['timeRange'] = timeRangeTypes.DAILY;
+			}
+
+			return newParams;
+		},
+	});
+	const {
+		data: { transactions, total },
+		isFetching,
+		error,
+	} = useTransactions({
+		params: {
+			modeOfPayment: paymentTypes.CREDIT,
+			...queryParams,
 		},
 	});
 
 	// METHODS
+	useEffect(() => {
+		const formattedTransactions = transactions.map((transaction) => {
+			const { id, invoice, total_amount, employee_id, datetime_created } =
+				transaction;
+
+			return {
+				key: id,
+				datetime: formatDateTime(datetime_created),
+				client_code: EMPTY_CELL, // TODO: set correct value
+				invoice_number: (
+					<Button
+						type="link"
+						onClick={() => setSelectedTransaction(transaction)}
+					>
+						{invoice.id}
+					</Button>
+				),
+				amount: formatInPeso(total_amount),
+				cashier: employee_id,
+				authorizer: EMPTY_CELL, // TODO: set correct value
+			};
+		});
+
+		setDataSource(formattedTransactions);
+	}, [transactions]);
 
 	return (
 		<div>
 			<TableHeader title="Credit Transactions" />
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<Filter
+				params={queryParams}
+				setQueryParams={(params) => {
+					setQueryParams(params, { shouldResetPage: true });
+				}}
+				isLoading={isFetching}
+			/>
+
+			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
+				rowKey="key"
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
+				scroll={{ x: 800 }}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(queryParams.page) || 1,
+					total,
+					pageSize: Number(queryParams.pageSize) || 10,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
+				loading={isFetching}
 			/>
 
 			{selectedAccount && (
@@ -90,5 +130,29 @@ export const TabCreditTransactions = () => {
 				/>
 			)}
 		</div>
+	);
+};
+
+interface FilterProps {
+	params: any;
+	isLoading: boolean;
+	setQueryParams: any;
+}
+
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
+	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
+
+	return (
+		<Row className="TabCreditTransactions_filter" gutter={[15, 15]}>
+			<Col lg={12} span={24}>
+				<TimeRangeFilter
+					timeRange={params.timeRange}
+					timeRangeType={timeRangeType}
+					setTimeRangeType={setTimeRangeType}
+					setQueryParams={setQueryParams}
+					disabled={isLoading}
+				/>
+			</Col>
+		</Row>
 	);
 };

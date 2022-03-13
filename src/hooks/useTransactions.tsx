@@ -1,124 +1,76 @@
-import { useEffect, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce/lib';
-import { actions, types } from '../ducks/transactions';
-import { request } from '../global/types';
-import { onCallback } from '../utils/function';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from '../utils/pagination';
-import { useActionDispatch } from './useActionDispatch';
+import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
+import { IS_APP_LIVE } from '../global/constants';
+import { ONLINE_API_URL, TransactionsService } from '../services';
+import { getLocalIpAddress } from '../utils/function';
 
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
+const useTransactions = ({ params }) => {
+	let baseURL = useSelector(
+		branchesSelectors.selectURLByBranchId(params.branchId),
+	);
 
-export const useTransactions = () => {
-	// STATES
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-	const [warnings, setWarnings] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
+	return useQuery<any>(
+		[
+			'useTransactions',
+			params.timeRange,
+			params.statuses,
+			params.modeOfPayment,
+			params.branchId,
+			params.serverUrl,
+			params.page,
+			params.pageSize,
+		],
+		async () => {
+			if (!baseURL && params.branchId) {
+				throw ['Branch has no online url.'];
+			} else {
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+			}
 
-	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(10);
+			baseURL = params.serverUrl || baseURL;
 
-	// ACTIONS
-	const listTransactionsAction = useActionDispatch(actions.listTransactions);
+			const data = {
+				statuses: params.statuses,
+				time_range: params.timeRange,
+				mode_of_payment: params.modeOfPayment,
+				page: params.page,
+				page_size: params.pageSize,
+			};
 
-	// GENERAL METHODS
-	const resetError = () => setErrors([]);
+			try {
+				// NOTE: Fetch in branch url
+				return await TransactionsService.list(data, baseURL);
+			} catch (e) {
+				// NOTE: Retry to fetch in local url
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				const response = await TransactionsService.list(
+					{
+						branch_machine_id: params.branchMachineId,
+						...data,
+					},
+					baseURL,
+				);
+				response.data.warning =
+					'Data Source: Backup Server, data might be outdated.';
 
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const requestCallback = ({
-		status: requestStatus,
-		errors: requestErrors = [],
-		warnings: requestWarnings = [],
-	}) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-		setWarnings(requestWarnings);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
-		setRecentRequest(type);
-		action({
-			...data,
-			callback: onCallback(
-				requestCallback,
-				callback?.onSuccess,
-				callback?.onError,
-			),
-		});
-	};
-
-	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
-			}),
-		);
-	}, [allData, currentPage, pageSize]);
-
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
-
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
-
-	// REQUEST METHODS
-	const listTransactions = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: listTransactionsAction,
-			requestType: types.LIST_TRANSACTIONS,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-	const listTransactionsDebounced = useDebouncedCallback(listTransactions, 500);
-
-	return {
-		transactions: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
-		listTransactions: listTransactionsDebounced,
-		status,
-		errors,
-		warnings,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-	};
+				return response;
+			}
+		},
+		{
+			refetchOnWindowFocus: false,
+			retry: false,
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => {
+				console.log('query', query);
+				return {
+					transactions: query.data.results,
+					total: query.data.count,
+					warning: query.data.warning,
+				};
+			},
+		},
+	);
 };
+
+export default useTransactions;

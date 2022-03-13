@@ -163,3 +163,8 @@ export const accountTypes = {
 	EMPLOYEE: 'employee',
 	GOVERNMENT: 'government',
 };
+
+export const paymentTypes = {
+	CASH: 'cash',
+	CREDIT: 'credit_pay',
+};

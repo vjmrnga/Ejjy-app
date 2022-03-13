@@ -15,7 +15,7 @@ const useBranchesDayAuthorizations = ({ params }) =>
 			params.timeRange,
 			params.type,
 		],
-		async () =>
+		() =>
 			BranchesDayService.listAuthorizations(
 				{
 					page: params.page,
