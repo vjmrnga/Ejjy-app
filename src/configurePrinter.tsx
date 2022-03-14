@@ -6,6 +6,7 @@ import { orderOfPaymentPurposes, quantityTypes } from './global/types';
 import {
 	formatDate,
 	formatDateTime,
+	formatDateTime24Hour,
 	formatInPeso,
 	getOrderSlipStatusBranchManagerText,
 	getTransactionStatusDescription,
@@ -185,25 +186,23 @@ const print = (
 		});
 };
 
-const getHeader = ({ proprietor, location, tin, taxType, permitNumber }) => `
-		<div style="text-align: center; display: flex; flex-direction: column">
-			<style>
-				td {
-					padding-top: 0;
-					padding-bottom: 0;
-					line-height: 100%;
-				}
-			</style>
+const getHeader = (headerData) => {
+	const { title, proprietor, location, tin, taxType, permitNumber } =
+		headerData;
 
+	return `
+		<div style="text-align: center; display: flex; flex-direction: column">
 			<div style="font-size: 20px">EJ AND JY</div>
 			<span>WET MARKET AND ENTERPRISES</span>
 			<span>POB., CARMEN, AGUSAN DEL NORTE</span>
 			<span>${proprietor || EMPTY_CELL}</span>
 			<span>Tel# 808-8866</span>
 			<span>${location || EMPTY_CELL}</span>
-			<span>${taxType} ${tin || EMPTY_CELL}</span>
+			<span>${taxType || EMPTY_CELL} ${tin || EMPTY_CELL}</span>
 			<span>${permitNumber || EMPTY_CELL}</span>
+			<span>${title}</span>
 		</div>`;
+};
 
 const getFooter = ({
 	softwareDeveloper,
@@ -497,6 +496,127 @@ export const printOrderOfPayment = (orderOfPayment) => {
 				Head of the General Manager/Authorized Official
 			</div>
 		</div>
+	`;
+
+	return data;
+};
+
+export const printCollectionReceipt = (collectionReceipt) => {
+	const invoice =
+		collectionReceipt.order_of_payment?.charge_sales_transaction?.invoice;
+	const orderOfPayment = collectionReceipt.order_of_payment;
+	const payor = orderOfPayment.payor;
+
+	let description = orderOfPayment.extra_description;
+	if ((orderOfPayment.purpose = orderOfPaymentPurposes.FULL_PAYMENT)) {
+		description = 'Full Payment';
+	} else if (
+		(orderOfPayment.purpose = orderOfPaymentPurposes.PARTIAL_PAYMENT)
+	) {
+		description = 'Partial Payment';
+	}
+
+	const data = `
+	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Calibri', monospace;">
+		${getHeader({
+			title: '[COLLECTION RECEIPT]',
+			proprietor: invoice?.proprietor,
+			location: invoice?.location,
+			tin: invoice?.tin,
+		})}
+	
+		<br />
+
+		<div style="text-align: center">Received payment from</div>
+
+		<br />
+		
+		<table style="width: 100%;">
+			<thead>
+				<tr>
+					<th style="width: 175px"></th>
+					<th></th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				<tr>
+					<td>Name:</td>
+					<td>${payor.first_name} ${payor.last_name}</td>
+				</tr>
+				<tr>
+					<td>Tin:</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>the sum of:</td>
+					<td>${formatInPeso(collectionReceipt.amount, 'P')}</td>
+				</tr>
+				<tr>
+					<td>Description:</td>
+					<td>${description}</td>
+				</tr>
+				<tr>
+					<td>with invoice:</td>
+					<td>${invoice?.id || EMPTY_CELL}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<br />
+
+		<div>[optional if check]</div>
+		<table style="width: 100%;">
+			<thead>
+				<tr>
+					<th style="width: 175px"></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Bank:</td>
+					<td>${collectionReceipt.bank_name || EMPTY_CELL}</td>
+				</tr>
+				<tr>
+					<td>Branch:</td>
+					<td>${collectionReceipt.bank_branch || EMPTY_CELL}</td>
+				</tr>
+				<tr>
+					<td>Check No:</td>
+					<td>${collectionReceipt.check_number || EMPTY_CELL}</td>
+				</tr>
+				<tr>
+					<td>Check Date:</td>
+					<td>${
+						collectionReceipt.check_date
+							? formatDate(collectionReceipt.check_date)
+							: EMPTY_CELL
+					}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${formatDateTime24Hour(collectionReceipt?.datetime_created)}</span>
+			<span style="text-align: right;">${
+				collectionReceipt?.created_by?.employee_id
+			}</span>
+		</div>
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${invoice?.or_number || EMPTY_CELL}</span>
+		</div>
+
+		<br />
+
+		<div style="text-align: center; display: flex; flex-direction: column">
+			<span>THIS RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.</span>
+			<span>THIS DOCUMENT IS NOT VALID FOR CLAIMING INPUT TAXES.</span>
+		</div>
+	</div>
 	`;
 
 	return data;

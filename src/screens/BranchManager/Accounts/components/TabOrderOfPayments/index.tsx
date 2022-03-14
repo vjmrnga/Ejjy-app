@@ -44,8 +44,8 @@ export const TabOrderOfPayments = () => {
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { orderOfPayments, total },
-		isFetching,
 		refetch: refetchOrderOfPayments,
+		isFetching,
 		error,
 	} = useOrderOfPayments({ params: {} });
 
@@ -87,7 +87,9 @@ export const TabOrderOfPayments = () => {
 						<span>
 							{' '}
 							-{' '}
-							{formatDateTime(charge_sales_transaction.invoicedatetime_created)}
+							{formatDateTime(
+								charge_sales_transaction.invoice.datetime_created,
+							)}
 						</span>
 					</>
 				) : (
@@ -127,7 +129,7 @@ export const TabOrderOfPayments = () => {
 					setIsPrinting(null);
 				},
 			});
-		}, 100);
+		}, 500);
 	};
 
 	return (

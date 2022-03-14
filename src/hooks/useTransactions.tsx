@@ -61,14 +61,11 @@ const useTransactions = ({ params }) => {
 			refetchOnWindowFocus: false,
 			retry: false,
 			initialData: { data: { results: [], count: 0 } },
-			select: (query) => {
-				console.log('query', query);
-				return {
-					transactions: query.data.results,
-					total: query.data.count,
-					warning: query.data.warning,
-				};
-			},
+			select: (query) => ({
+				transactions: query.data.results,
+				total: query.data.count,
+				warning: query.data.warning,
+			}),
 		},
 	);
 };

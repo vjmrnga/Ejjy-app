@@ -8,6 +8,7 @@ export const NO_VERIFICATION_CONFIG = { params: NO_VERIFICATION_NEEDED };
 
 export { default as AccountsService } from './AccountsService';
 export { default as BranchesDayService } from './BranchesDayService';
+export { default as CollectionReceiptsService } from './CollectionReceiptsService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';

@@ -6,6 +6,7 @@ import { Box } from '../../../components/elements';
 import { useAuth } from '../../../hooks/useAuth';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { TabAccounts } from './components/TabAccounts';
+import { TabCollectionReceipts } from './components/TabCollectionReceipts';
 import { TabCreditRegistrations } from './components/TabCreditRegistration';
 import { TabCreditTransactions } from './components/TabCreditTransactions';
 import { TabOrderOfPayments } from './components/TabOrderOfPayments';
@@ -16,6 +17,7 @@ const tabs = {
 	CREDIT_REGISTRATIONS: 'Credit Registrations',
 	CREDIT_TRANSACTIONS: 'Credit Transactions',
 	ORDER_OF_PAYMENTS: 'Order of Payments',
+	COLLECTION_RECEIPTS: 'Collection Receipts',
 };
 
 export const Accounts = () => {
@@ -73,6 +75,13 @@ export const Accounts = () => {
 						tab={tabs.ORDER_OF_PAYMENTS}
 					>
 						<TabOrderOfPayments />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.COLLECTION_RECEIPTS}
+						tab={tabs.COLLECTION_RECEIPTS}
+					>
+						<TabCollectionReceipts />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

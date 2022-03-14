@@ -111,6 +111,10 @@ export const formatDateTimeShortMonth = memoize((datetime) =>
 	dayjs.tz(datetime).format('MMM D, YYYY h:mma'),
 );
 
+export const formatDateTime24Hour = memoize((datetime) =>
+	dayjs.tz(datetime).format('MM/DD/YYYY HH:mm'),
+);
+
 export const formatDate = memoize((date) =>
 	dayjs.tz(date).format('MM/DD/YYYY'),
 );
