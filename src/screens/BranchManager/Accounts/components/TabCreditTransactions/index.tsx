@@ -76,7 +76,7 @@ export const TabCreditTransactions = () => {
 						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
 					>
-						{invoice.id}
+						{invoice.or_number}
 					</Button>
 				),
 				amount: formatInPeso(total_amount),

@@ -59,7 +59,7 @@ export const BackOrdersTable = ({
 				),
 				invoice: backOrder.transaction ? (
 					<ButtonLink
-						text={backOrder.transaction.invoice.id}
+						text={backOrder.transaction.invoice.or_number}
 						onClick={() => onSelectTransaction(backOrder.transaction)}
 					/>
 				) : (

@@ -83,7 +83,7 @@ export const TabOrderOfPayments = () => {
 							type="link"
 							onClick={() => setSelectedTransaction(orderOfPayment)}
 						>
-							{charge_sales_transaction.invoice.id}
+							{charge_sales_transaction.invoice.or_number}
 						</Button>
 						<span>
 							{' '}
