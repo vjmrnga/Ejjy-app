@@ -80,6 +80,7 @@ export const TabAccounts = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				scroll={{ x: 800 }}
 				pagination={{
 					current: Number(queryParams.page) || 1,
 					total,

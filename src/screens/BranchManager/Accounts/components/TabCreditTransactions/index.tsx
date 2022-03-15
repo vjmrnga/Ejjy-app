@@ -7,6 +7,7 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 	ViewAccountModal,
+	ViewTransactionModal,
 } from '../../../../../components';
 import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
@@ -126,6 +127,13 @@ export const TabCreditTransactions = () => {
 				<ViewAccountModal
 					account={selectedAccount}
 					onClose={() => setSelectedAccount(null)}
+				/>
+			)}
+
+			{selectedTransaction && (
+				<ViewTransactionModal
+					transaction={selectedTransaction}
+					onClose={() => setSelectedTransaction(null)}
 				/>
 			)}
 		</div>

@@ -611,6 +611,8 @@ export const printCollectionReceipt = (collectionReceipt) => {
 		</div>
 
 		<br />
+		<br />
+		<br />
 
 		<div style="text-align: center; display: flex; flex-direction: column">
 			<span>THIS RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.</span>
