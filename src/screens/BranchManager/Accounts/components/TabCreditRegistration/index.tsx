@@ -91,7 +91,6 @@ export const TabCreditRegistrations = () => {
 			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				pagination={{

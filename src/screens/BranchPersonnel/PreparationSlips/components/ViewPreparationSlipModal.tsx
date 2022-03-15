@@ -98,7 +98,6 @@ export const ViewPreparationSlipModal = ({
 			</Row>
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 650, y: 250 }}

@@ -134,7 +134,6 @@ export const FulfillReturnItemSlipForm = ({
 			{({ values }) => (
 				<Form>
 					<Table
-						rowKey="key"
 						columns={columns}
 						dataSource={returnItemSlip.products.map((product, index) => ({
 							key: product.id,

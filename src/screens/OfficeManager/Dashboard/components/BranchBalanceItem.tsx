@@ -248,7 +248,6 @@ export const BranchBalanceItem = ({
 			/>
 
 			<Table
-				rowKey="key"
 				className="BranchBalanceItem_table"
 				columns={columns}
 				dataSource={data}

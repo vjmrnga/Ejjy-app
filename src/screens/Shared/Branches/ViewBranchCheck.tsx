@@ -194,7 +194,6 @@ export const ViewBranchCheck = ({ match }: Props) => {
 						columns={columns}
 						dataSource={data}
 						scroll={{ x: 800 }}
-						rowKey="key"
 						pagination={false}
 						bordered
 					/>

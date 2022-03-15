@@ -145,7 +145,6 @@ export const ViewBranchTransactions = ({
 			)}
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}

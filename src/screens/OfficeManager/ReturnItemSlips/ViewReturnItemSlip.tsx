@@ -167,7 +167,6 @@ const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 				<Label label="Products" spacing />
 
 				<Table
-					rowKey="key"
 					columns={columns}
 					dataSource={requestedProducts}
 					scroll={{ x: 800 }}

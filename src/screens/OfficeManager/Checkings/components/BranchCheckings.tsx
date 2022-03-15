@@ -93,7 +93,6 @@ export const BranchCheckings = ({ branchId }: Props) => {
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 650 }}
-				rowKey="key"
 				pagination={{
 					current: currentPage,
 					total: pageCount,

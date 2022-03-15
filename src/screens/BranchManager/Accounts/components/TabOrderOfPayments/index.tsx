@@ -70,6 +70,7 @@ export const TabOrderOfPayments = () => {
 			}
 
 			return {
+				key: id,
 				id,
 				datetime_created: formatDateTime(datetime_created),
 				payor: `${payor.first_name} ${payor.last_name}`,
@@ -143,7 +144,6 @@ export const TabOrderOfPayments = () => {
 			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 1200 }}

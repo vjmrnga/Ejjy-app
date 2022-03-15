@@ -161,7 +161,6 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 				<Label label="Products" spacing />
 
 				<Table
-					rowKey="key"
 					columns={columns}
 					dataSource={requestedProducts}
 					scroll={{ x: 800 }}

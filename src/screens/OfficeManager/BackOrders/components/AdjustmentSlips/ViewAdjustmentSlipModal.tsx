@@ -38,7 +38,6 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 
 		<Label label="Products" spacing />
 		<Table
-			rowKey="key"
 			columns={columns}
 			dataSource={adjustmentSlip.adjustment_slip_products.map((item) => ({
 				key: item.id,

@@ -95,7 +95,6 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 			<Label label="Products" spacing />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 800 }}

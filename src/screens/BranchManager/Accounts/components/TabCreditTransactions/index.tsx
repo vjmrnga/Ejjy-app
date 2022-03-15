@@ -102,7 +102,6 @@ export const TabCreditTransactions = () => {
 			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}

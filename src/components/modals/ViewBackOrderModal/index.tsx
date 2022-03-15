@@ -94,7 +94,6 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 			<Label label="Products" spacing />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 800 }}

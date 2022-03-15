@@ -40,6 +40,7 @@ export const TabCollectionReceipts = () => {
 				const { payor } = order_of_payment;
 
 				return {
+					key: id,
 					id,
 					orderOfPaymentId: order_of_payment.id,
 					payor: `${payor.first_name} ${payor.last_name}`,
@@ -89,7 +90,6 @@ export const TabCollectionReceipts = () => {
 			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}

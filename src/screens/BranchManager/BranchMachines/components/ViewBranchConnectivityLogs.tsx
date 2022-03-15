@@ -70,7 +70,6 @@ export const ViewBranchConnectivityLogs = ({ serverUrl }: Props) => {
 			<RequestErrors errors={convertIntoArray(connectivityLogsError)} />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={dataSource}
 				pagination={{

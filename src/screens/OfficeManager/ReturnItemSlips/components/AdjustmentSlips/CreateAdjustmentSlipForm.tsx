@@ -110,7 +110,6 @@ export const CreateAdjustmentSlipForm = ({
 			{({ values }) => (
 				<Form>
 					<Table
-						rowKey="key"
 						columns={columns}
 						dataSource={returnItemSlipProducts.map((item, index) => ({
 							key: item.id,

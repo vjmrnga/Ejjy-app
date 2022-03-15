@@ -218,7 +218,6 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 			<RequestWarnings warnings={convertIntoArray(warnings)} withSpaceBottom />
 
 			<Table
-				rowKey="key"
 				columns={columns}
 				dataSource={data}
 				scroll={{ x: 800 }}

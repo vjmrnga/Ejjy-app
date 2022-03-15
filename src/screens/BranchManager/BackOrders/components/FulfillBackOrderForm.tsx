@@ -133,7 +133,6 @@ export const FulfillBackOrderForm = ({
 			{({ values }) => (
 				<Form>
 					<Table
-						rowKey="key"
 						columns={columns}
 						dataSource={backOrder.products.map((product, index) => ({
 							key: product.id,
