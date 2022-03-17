@@ -14,7 +14,7 @@ import { sleep } from '../../../../../utils/function';
 
 const formDetails = {
 	defaultValues: {
-		type: accountTypes.REGULAR,
+		type: accountTypes.PERSONAL,
 		firstName: '',
 		middleName: undefined,
 		lastName: '',
@@ -99,7 +99,7 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 									setFieldValue('type', value);
 
 									const employees = [
-										accountTypes.REGULAR,
+										accountTypes.PERSONAL,
 										accountTypes.EMPLOYEE,
 									];
 									if (employees.includes(value)) {
@@ -117,10 +117,10 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 								showSearch
 							>
 								<Select.Option
-									key={accountTypes.REGULAR}
-									value={accountTypes.REGULAR}
+									key={accountTypes.PERSONAL}
+									value={accountTypes.PERSONAL}
 								>
-									Regular
+									Personal
 								</Select.Option>
 								<Select.Option
 									key={accountTypes.CORPORATE}

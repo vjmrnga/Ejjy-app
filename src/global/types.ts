@@ -158,7 +158,7 @@ export const connectivityTypes = {
 };
 
 export const accountTypes = {
-	REGULAR: 'regular',
+	PERSONAL: 'personal',
 	CORPORATE: 'corporate',
 	EMPLOYEE: 'employee',
 	GOVERNMENT: 'government',

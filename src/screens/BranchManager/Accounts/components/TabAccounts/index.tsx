@@ -160,10 +160,10 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 					allowClear
 				>
 					<Select.Option
-						key={accountTypes.REGULAR}
-						value={accountTypes.REGULAR}
+						key={accountTypes.PERSONAL}
+						value={accountTypes.PERSONAL}
 					>
-						Regular
+						Personal
 					</Select.Option>
 					<Select.Option
 						key={accountTypes.CORPORATE}
