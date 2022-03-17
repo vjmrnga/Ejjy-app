@@ -16,9 +16,10 @@ const formDetails = {
 	defaultValues: {
 		type: accountTypes.REGULAR,
 		firstName: '',
-		middleName: '',
+		middleName: undefined,
 		lastName: '',
 		birthday: null,
+		tin: '',
 		businessName: undefined,
 		homeAddress: '',
 		businessAddress: undefined,
@@ -29,9 +30,10 @@ const formDetails = {
 		{
 			type: Yup.string().required().label('Type'),
 			firstName: Yup.string().required().label('First Name'),
-			middleName: Yup.string().label('Middle Name'),
+			middleName: Yup.string().nullable().label('Middle Name'),
 			lastName: Yup.string().required().label('Last Name'),
 			birthday: Yup.date().nullable().required().label('Birthday'),
+			tin: Yup.string().required().label('TIN'),
 			businessName: Yup.string()
 				.nullable()
 				.when('type', {
@@ -75,6 +77,9 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 
 				onSubmit({
 					...formData,
+					middleName: formData.middleName || undefined,
+					businessName: formData.businessName || undefined,
+					businessAddress: formData.businessAddress || undefined,
 					birthday: formData.birthday
 						? formData.birthday.format('YYYY-MM-DD')
 						: undefined,
@@ -92,6 +97,15 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 								value={values.type}
 								onChange={(value) => {
 									setFieldValue('type', value);
+
+									const employees = [
+										accountTypes.REGULAR,
+										accountTypes.EMPLOYEE,
+									];
+									if (employees.includes(value)) {
+										setFieldValue('businessName', undefined);
+										setFieldValue('businessAddress', undefined);
+									}
 								}}
 								optionFilterProp="children"
 								filterOption={(input, option) =>
@@ -195,6 +209,14 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 							/>
 							<ErrorMessage
 								name="birthday"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24}>
+							<FormInputLabel id="tin" label="TIN" />
+							<ErrorMessage
+								name="tin"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

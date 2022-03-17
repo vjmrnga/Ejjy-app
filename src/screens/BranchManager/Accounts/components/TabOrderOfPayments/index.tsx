@@ -18,6 +18,7 @@ import {
 	formatDateTime,
 	formatInPeso,
 } from '../../../../../utils/function';
+import { getAccountName } from '../../utils';
 import { CreateOrderOfPaymentModal } from './CreateOrderOfPaymentModal';
 
 const columns: ColumnsType = [
@@ -73,7 +74,7 @@ export const TabOrderOfPayments = () => {
 				key: id,
 				id,
 				datetime_created: formatDateTime(datetime_created),
-				payor: `${payor.first_name} ${payor.last_name}`,
+				payor: getAccountName(payor),
 				address: payor.home_address,
 				amount_of_payment: formatInPeso(amount),
 				purpose: purposeDescription,

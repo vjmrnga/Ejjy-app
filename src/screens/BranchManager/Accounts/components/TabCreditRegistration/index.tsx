@@ -19,6 +19,7 @@ import {
 	formatDate,
 	formatInPeso,
 } from '../../../../../utils/function';
+import { getAccountName } from '../../utils';
 import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
 
 const columns: ColumnsType = [
@@ -57,7 +58,7 @@ export const TabCreditRegistrations = () => {
 						{account.id}
 					</Button>
 				),
-				client_name: `${account.first_name} ${account.last_name}`,
+				client_name: getAccountName(account),
 				credit_limit: formatInPeso(credit_limit),
 				total_balance: formatInPeso(total_balance),
 				datetime_created: formatDate(account.datetime_created),

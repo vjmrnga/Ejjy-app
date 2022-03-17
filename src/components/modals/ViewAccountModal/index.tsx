@@ -7,6 +7,8 @@ import { DetailsRow } from '../../Details/DetailsRow';
 import { DetailsSingle } from '../../Details/DetailsSingle';
 import { Button } from '../../elements';
 
+const employers = [accountTypes.CORPORATE, accountTypes.GOVERNMENT];
+
 interface Props {
 	account: any;
 	onClose: any;
@@ -32,10 +34,9 @@ export const ViewAccountModal = ({ account, onClose }: Props) => (
 				value={account.gender === 'm' ? 'Male' : 'Female'}
 			/>
 			<DetailsSingle label="Birthday" value={formatDate(account.birthday)} />
+			<DetailsSingle label="TIN" value={account.tin} />
 
-			{[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(
-				account.type,
-			) && (
+			{employers.includes(account.type) && (
 				<>
 					<DetailsSingle
 						label={
@@ -57,7 +58,6 @@ export const ViewAccountModal = ({ account, onClose }: Props) => (
 			)}
 
 			<DetailsSingle label="Address (Home)" value={account.home_address} />
-
 			<DetailsSingle label="Contact Number" value={account.contact_number} />
 			<DetailsSingle
 				label="Date of Registration"

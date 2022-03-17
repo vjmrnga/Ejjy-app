@@ -16,6 +16,7 @@ import { useAccounts } from '../../../../../hooks';
 import { useQueryParams } from '../../../../../hooks/useQueryParams';
 import { convertIntoArray, formatDate } from '../../../../../utils/function';
 import '../../style.scss';
+import { getAccountName } from '../../utils';
 import { CreateAccountModal } from './CreateAccountModal';
 
 const columns: ColumnsType = [
@@ -50,7 +51,7 @@ export const TabAccounts = () => {
 					{account.id}
 				</Button>
 			),
-			name: `${account.first_name} ${account.last_name}`,
+			name: getAccountName(account),
 			home_address: account.home_address,
 			business_address: account.business_address,
 			contact_number: account.contact_number,

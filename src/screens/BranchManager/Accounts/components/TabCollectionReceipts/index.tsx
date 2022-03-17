@@ -8,6 +8,7 @@ import { pageSizeOptions } from '../../../../../global/options';
 import useCollectionReceipts from '../../../../../hooks/useCollectionReceipts';
 import { useQueryParams } from '../../../../../hooks/useQueryParams';
 import { convertIntoArray, formatInPeso } from '../../../../../utils/function';
+import { getAccountName } from '../../utils';
 
 const columns: ColumnsType = [
 	{ title: 'CR#', dataIndex: 'id' },
@@ -43,7 +44,7 @@ export const TabCollectionReceipts = () => {
 					key: id,
 					id,
 					orderOfPaymentId: order_of_payment.id,
-					payor: `${payor.first_name} ${payor.last_name}`,
+					payor: getAccountName(payor),
 					amount: formatInPeso(amount),
 					actions: (
 						<Button

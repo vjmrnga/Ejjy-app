@@ -6,15 +6,16 @@ interface IList extends IListRequest {
 }
 
 interface IModify {
-	first_name?: string;
+	first_name: string;
 	middle_name?: string;
-	last_name?: string;
+	last_name: string;
 	business_name?: string;
-	birthday?: string;
+	tin: string;
+	birthday: string;
 	business_address?: string;
-	home_address?: string;
-	contact_number?: string;
-	gender?: string;
+	home_address: string;
+	contact_number: string;
+	gender: string;
 	type: string;
 }
 
@@ -24,9 +25,6 @@ const service = {
 
 	create: async (body: IModify, baseURL: string) =>
 		axios.post('/accounts/', body, { baseURL }),
-
-	edit: async (id: number, body: IModify, baseURL: string) =>
-		axios.patch(`/accounts/${id}/`, body, { baseURL }),
 };
 
 export default service;
