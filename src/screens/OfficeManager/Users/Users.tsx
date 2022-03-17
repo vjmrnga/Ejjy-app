@@ -257,8 +257,8 @@ export const Users = () => {
 
 				{createUserModalVisible && (
 					<CreateUserModal
-						onSuccess={(userType) => {
-							[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(userType)
+						onSuccess={(user) => {
+							[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(user.type)
 								? onTabClick(PENDING_CREATE_USERS_BRANCH_ID)
 								: onTabClick(NO_BRANCH_ID);
 						}}

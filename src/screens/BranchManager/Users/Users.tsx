@@ -1,17 +1,19 @@
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { QueryClient, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import {
 	Content,
 	CreateUserModal,
+	RequestErrors,
 	TableActions,
 	TableHeader,
 } from '../../../components';
 import { Box } from '../../../components/elements';
 import { MAX_PAGE_SIZE } from '../../../global/constants';
-import { request } from '../../../global/types';
-import { useUsers } from '../../../hooks/useUsers';
-import { getUserTypeName } from '../../../utils/function';
+import { useUsers } from '../../../hooks';
+import { useQueryParams } from '../../../hooks/useQueryParams';
+import { convertIntoArray, getUserTypeName } from '../../../utils/function';
 import { BranchUsers } from '../../OfficeManager/Users/components/BranchUsers';
 import './style.scss';
 
@@ -21,14 +23,20 @@ export const Users = () => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const history = useHistory();
-	const { users, getUsers, status: usersStatus } = useUsers();
+	const {
+		isFetching,
+		data: { users },
+		error,
+	} = useUsers({
+		params: {
+			page: 1,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// METHODS
-	useEffect(() => {
-		fetchUsers();
-	}, []);
-
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
 			const { id, first_name, last_name, user_type, employee_id } = user;
@@ -49,31 +57,31 @@ export const Users = () => {
 		setDataSource(formattedUsers);
 	}, [users]);
 
-	const fetchUsers = () => {
-		getUsers(
-			{
-				page: 1,
-				pageSize: MAX_PAGE_SIZE,
-			},
-			true,
-		);
+	const onSuccess = (user) => {
+		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
+			cachedData.data.results = [user, ...cachedData.data.results];
+			return cachedData;
+		});
 	};
 
 	return (
 		<Content title="Users">
 			<Box>
-				<Spin spinning={usersStatus === request.REQUESTING}>
+				<Spin spinning={isFetching}>
 					<TableHeader
 						buttonName="Create User"
 						onCreate={() => setCreateUserModalVisible(true)}
 					/>
+
+					<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+
 					<BranchUsers dataSource={dataSource} />
 				</Spin>
 			</Box>
 
 			{createUserModalVisible && (
 				<CreateUserModal
-					onSuccess={fetchUsers}
+					onSuccess={onSuccess}
 					onClose={() => setCreateUserModalVisible(false)}
 					branchUsersOnly
 				/>

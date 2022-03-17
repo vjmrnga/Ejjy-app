@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/OfficeManager/users';
 import { request } from '../global/types';
+import { UsersService } from '../services';
 import {
+	getLocalIpAddress,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -256,3 +259,27 @@ export const useUsers = () => {
 		reset,
 	};
 };
+
+const useUsersNew = ({ params }) =>
+	useQuery<any>(
+		['useUsers', params.page, params.pageSize],
+		async () =>
+			UsersService.list(
+				{
+					page: params.page,
+					page_size: params.pageSize,
+				},
+				getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			refetchOnWindowFocus: false,
+			retry: false,
+			placeholderData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				users: query?.data?.results || [],
+				total: query?.data?.count || 0,
+			}),
+		},
+	);
+
+export default useUsersNew;

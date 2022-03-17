@@ -79,10 +79,9 @@ export const CreateUserForm = ({
 			onSubmit={async (formData: ICreateUser) => {
 				setSubmitting(true);
 				await sleep(500);
-				setSubmitting(false);
 
-				formData.confirm_password = undefined;
 				onSubmit(formData);
+				setSubmitting(false);
 			}}
 			enableReinitialize
 		>

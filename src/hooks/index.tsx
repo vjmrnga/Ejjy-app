@@ -7,3 +7,4 @@ export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useTransactions } from './useTransactions';
+export { default as useUsers } from './useUsers';

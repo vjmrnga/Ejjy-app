@@ -21,10 +21,10 @@ export const CreateUserModal = ({
 	const { createUser, status: userStatus, errors } = useUsers();
 
 	// METHODS
-	const onCreateUser = (data) => {
-		createUser(data, ({ status }) => {
+	const onCreateUser = (formData) => {
+		createUser(formData, ({ status, response }) => {
 			if (status === request.SUCCESS) {
-				onSuccess(data.user_type);
+				onSuccess(response);
 				onClose();
 			}
 		});
