@@ -653,6 +653,14 @@ export const getUrlPrefix = memoize((userType) => {
 	return prefix;
 });
 
+export const getFullName = (user) => {
+	const name = [user?.first_name, user?.middle_name, user?.last_name].filter(
+		Boolean,
+	);
+
+	return name.join(' ');
+};
+
 export const formatQuantity = (
 	unitOfMeasurement: string,
 	quantity: number,

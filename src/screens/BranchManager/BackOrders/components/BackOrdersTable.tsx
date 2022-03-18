@@ -7,11 +7,16 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useBackOrders } from '../../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from '../../../../utils/function';
+import {
+	formatDateTime,
+	getBackOrderStatus,
+	getFullName,
+} from '../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Invoice', dataIndex: 'invoice' },
+	{ title: 'Cashier', dataIndex: 'cashier' },
 	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
@@ -26,7 +31,7 @@ export const BackOrdersTable = ({
 	onSelectTransaction,
 }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
@@ -48,29 +53,31 @@ export const BackOrdersTable = ({
 	}, []);
 
 	useEffect(() => {
-		setData(
-			backOrders.map((backOrder) => ({
-				key: backOrder.id,
-				id: (
-					<ButtonLink
-						text={backOrder.id}
-						onClick={() => onSelectBackOrder(backOrder)}
-					/>
-				),
-				invoice: backOrder.transaction ? (
-					<ButtonLink
-						text={backOrder.transaction.invoice.or_number}
-						onClick={() => onSelectTransaction(backOrder.transaction)}
-					/>
-				) : (
-					EMPTY_CELL
-				),
-				datetime_created: backOrder.datetime_created
-					? formatDateTime(backOrder.datetime_created)
-					: EMPTY_CELL,
-				status: getBackOrderStatus(backOrder.status),
-			})),
-		);
+		console.log('backOrders', backOrders);
+		const formattedBackOrders = backOrders.map((backOrder) => ({
+			key: backOrder.id,
+			id: (
+				<ButtonLink
+					text={backOrder.id}
+					onClick={() => onSelectBackOrder(backOrder)}
+				/>
+			),
+			invoice: backOrder.transaction ? (
+				<ButtonLink
+					text={backOrder.transaction.invoice.or_number}
+					onClick={() => onSelectTransaction(backOrder.transaction)}
+				/>
+			) : (
+				EMPTY_CELL
+			),
+			cashier: getFullName(backOrder.sender),
+			datetime_created: backOrder.datetime_created
+				? formatDateTime(backOrder.datetime_created)
+				: EMPTY_CELL,
+			status: getBackOrderStatus(backOrder.status),
+		}));
+
+		setDataSource(formattedBackOrders);
 	}, [backOrders]);
 
 	const onPageChange = (page, newPageSize) => {
@@ -86,13 +93,13 @@ export const BackOrdersTable = ({
 	return (
 		<Table
 			columns={columns}
-			dataSource={data}
+			dataSource={dataSource}
 			pagination={{
 				current: currentPage,
 				total: pageCount,
 				pageSize,
 				onChange: onPageChange,
-				disabled: !data,
+				disabled: !dataSource,
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}

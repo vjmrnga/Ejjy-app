@@ -12,8 +12,7 @@ import {
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { orderOfPaymentPurposes } from '../../../../../global/types';
 import { useAccounts } from '../../../../../hooks';
-import { sleep } from '../../../../../utils/function';
-import { getAccountName } from '../../utils';
+import { getFullName, sleep } from '../../../../../utils/function';
 
 const formDetails = {
 	defaultValues: {
@@ -99,7 +98,7 @@ export const CreateOrderOfPaymentForm = ({
 							>
 								{accounts.map((account) => (
 									<Select.Option key={account.id} value={account.id}>
-										{getAccountName(account)}
+										{getFullName(account)}
 									</Select.Option>
 								))}
 							</Select>

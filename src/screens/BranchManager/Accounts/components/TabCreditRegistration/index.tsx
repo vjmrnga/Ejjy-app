@@ -18,8 +18,8 @@ import {
 	convertIntoArray,
 	formatDate,
 	formatInPeso,
+	getFullName,
 } from '../../../../../utils/function';
-import { getAccountName } from '../../utils';
 import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
 
 const columns: ColumnsType = [
@@ -58,7 +58,7 @@ export const TabCreditRegistrations = () => {
 						{account.id}
 					</Button>
 				),
-				client_name: getAccountName(account),
+				client_name: getFullName(account),
 				credit_limit: formatInPeso(credit_limit),
 				total_balance: formatInPeso(total_balance),
 				datetime_created: formatDate(account.datetime_created),

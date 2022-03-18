@@ -3,12 +3,12 @@ import { message } from 'antd';
 import dayjs from 'dayjs';
 import qz from 'qz-tray';
 import { orderOfPaymentPurposes, quantityTypes } from './global/types';
-import { getAccountName } from './screens/BranchManager/Accounts/utils';
 import {
 	formatDate,
 	formatDateTime,
 	formatDateTime24Hour,
 	formatInPeso,
+	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getTransactionStatusDescription,
 } from './utils/function';
@@ -432,7 +432,7 @@ export const printCancelledTransactions = ({
 export const printOrderOfPayment = (orderOfPayment) => {
 	const opNo = orderOfPayment.id;
 	const date = formatDate(orderOfPayment.datetime_created);
-	const payor = getAccountName(orderOfPayment.payor);
+	const payor = getFullName(orderOfPayment.payor);
 	const address = orderOfPayment.payor.home_address;
 	const amount = formatInPeso(orderOfPayment.amount, 'P');
 	const invoiceId =
@@ -543,7 +543,7 @@ export const printCollectionReceipt = (collectionReceipt) => {
 			<tbody>
 				<tr>
 					<td>Name:</td>
-					<td>${getAccountName(payor)}</td>
+					<td>${getFullName(payor)}</td>
 				</tr>
 				<tr>
 					<td>Tin:</td>
