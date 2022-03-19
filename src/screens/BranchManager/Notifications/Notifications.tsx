@@ -1,12 +1,13 @@
 import { Alert, Spin } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { Content, RequestErrors } from '../../../components';
-import { MAX_PAGE_SIZE } from '../../../global/constants';
+import {
+	MAX_PAGE_SIZE,
+	SALES_TRACKER_NOTIFICATION_THRESHOLD,
+} from '../../../global/constants';
 import { useSalesTracker } from '../../../hooks';
 import { convertIntoArray, formatInPeso } from '../../../utils/function';
 import './style.scss';
-
-const SALES_TRACKER_NOTIFICATION_THRESHOLD = 1_000;
 
 export const Notifications = () => {
 	// CUSTOM HOOKS

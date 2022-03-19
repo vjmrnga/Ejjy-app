@@ -1,9 +1,14 @@
 import { Spin } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
-import { IS_APP_LIVE } from '../../global/constants';
+import {
+	IS_APP_LIVE,
+	MAX_PAGE_SIZE,
+	SALES_TRACKER_NOTIFICATION_THRESHOLD,
+} from '../../global/constants';
 import { request } from '../../global/types';
+import { useSalesTracker } from '../../hooks';
 import { useBranches } from '../../hooks/useBranches';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
@@ -25,103 +30,25 @@ import { SiteSettings } from './SiteSettings/SiteSettings';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
-const sidebarItems = [
-	{
-		key: 'dashboard',
-		name: 'Dashboard',
-		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
-		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
-		link: '/branch-manager/dashboard',
-	},
-	{
-		key: 'products',
-		name: 'Products',
-		activeIcon: require('../../assets/images/icon-product-active.svg'),
-		defaultIcon: require('../../assets/images/icon-product.svg'),
-		link: '/branch-manager/products',
-	},
-	{
-		key: 'product-categories',
-		name: 'Product Categories',
-		activeIcon: require('../../assets/images/icon-product-active.svg'),
-		defaultIcon: require('../../assets/images/icon-product.svg'),
-		link: '/branch-manager/product-categories',
-	},
-	{
-		key: 'users',
-		name: 'Users',
-		activeIcon: require('../../assets/images/icon-users-active.svg'),
-		defaultIcon: require('../../assets/images/icon-users.svg'),
-		link: '/branch-manager/users',
-	},
-	{
-		key: 'accounts',
-		name: 'Accounts',
-		activeIcon: require('../../assets/images/icon-users-active.svg'),
-		defaultIcon: require('../../assets/images/icon-users.svg'),
-		link: '/branch-manager/accounts',
-	},
-	{
-		key: 'branch-machines',
-		name: 'Branch Machines',
-		activeIcon: require('../../assets/images/icon-branches-active.svg'),
-		defaultIcon: require('../../assets/images/icon-branches.svg'),
-		link: '/branch-manager/branch-machines',
-	},
-	{
-		key: 'requisition-slips',
-		name: 'Requisition Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/requisition-slips',
-	},
-	{
-		key: 'return-item-slips',
-		name: 'Return Item Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/return-item-slips',
-	},
-	{
-		key: 'back-orders',
-		name: 'Back Orders',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/branch-manager/back-orders',
-	},
-	{
-		key: 'order-slips',
-		name: 'Order Slips',
-		activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
-		defaultIcon: require('../../assets/images/icon-order-slips.svg'),
-		link: '/branch-manager/order-slips',
-	},
-	{
-		key: 'checking',
-		name: 'Checking',
-		activeIcon: require('../../assets/images/icon-checking-active.svg'),
-		defaultIcon: require('../../assets/images/icon-checking.svg'),
-		link: '/branch-manager/checking',
-	},
-	{
-		key: 'site-settings',
-		name: 'Site Settings',
-		activeIcon: require('../../assets/images/icon-settings-active.svg'),
-		defaultIcon: require('../../assets/images/icon-settings.svg'),
-		link: '/branch-manager/site-settings',
-	},
-	{
-		key: 'notifications',
-		name: 'Notifications',
-		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
-		defaultIcon: require('../../assets/images/icon-notifications.svg'),
-		link: '/branch-manager/notifications',
-	},
-];
-
 const BranchManager = () => {
+	// STATES
+	const [notificationsCount, setNotificationsCount] = useState(0);
+
 	// CUSTOM HOOKS
 	const { getBranches, status: getBranchesStatus } = useBranches();
+	const {
+		data: { salesTrackers },
+	} = useSalesTracker({
+		params: {
+			page: 1,
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			refetchInterval: 60000,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: ['data'],
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -130,6 +57,115 @@ const BranchManager = () => {
 		}
 	}, []);
 
+	useEffect(() => {
+		const salesTrackersCount = salesTrackers.filter(
+			({ total_sales }) =>
+				Number(total_sales) >= SALES_TRACKER_NOTIFICATION_THRESHOLD,
+		).length;
+
+		if (salesTrackersCount != notificationsCount) {
+			setNotificationsCount(salesTrackersCount);
+		}
+	}, [salesTrackers]);
+
+	const getSidebarItems = useCallback(
+		() => [
+			{
+				key: 'dashboard',
+				name: 'Dashboard',
+				activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
+				defaultIcon: require('../../assets/images/icon-dashboard.svg'),
+				link: '/branch-manager/dashboard',
+			},
+			{
+				key: 'products',
+				name: 'Products',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/branch-manager/products',
+			},
+			{
+				key: 'product-categories',
+				name: 'Product Categories',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/branch-manager/product-categories',
+			},
+			{
+				key: 'users',
+				name: 'Users',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/branch-manager/users',
+			},
+			{
+				key: 'accounts',
+				name: 'Accounts',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/branch-manager/accounts',
+			},
+			{
+				key: 'branch-machines',
+				name: 'Branch Machines',
+				activeIcon: require('../../assets/images/icon-branches-active.svg'),
+				defaultIcon: require('../../assets/images/icon-branches.svg'),
+				link: '/branch-manager/branch-machines',
+			},
+			{
+				key: 'requisition-slips',
+				name: 'Requisition Slips',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/branch-manager/requisition-slips',
+			},
+			{
+				key: 'return-item-slips',
+				name: 'Return Item Slips',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/branch-manager/return-item-slips',
+			},
+			{
+				key: 'back-orders',
+				name: 'Back Orders',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/branch-manager/back-orders',
+			},
+			{
+				key: 'order-slips',
+				name: 'Order Slips',
+				activeIcon: require('../../assets/images/icon-order-slips-active.svg'),
+				defaultIcon: require('../../assets/images/icon-order-slips.svg'),
+				link: '/branch-manager/order-slips',
+			},
+			{
+				key: 'checking',
+				name: 'Checking',
+				activeIcon: require('../../assets/images/icon-checking-active.svg'),
+				defaultIcon: require('../../assets/images/icon-checking.svg'),
+				link: '/branch-manager/checking',
+			},
+			{
+				key: 'site-settings',
+				name: 'Site Settings',
+				activeIcon: require('../../assets/images/icon-settings-active.svg'),
+				defaultIcon: require('../../assets/images/icon-settings.svg'),
+				link: '/branch-manager/site-settings',
+			},
+			{
+				key: 'notifications',
+				name: 'Notifications',
+				activeIcon: require('../../assets/images/icon-notifications-active.svg'),
+				defaultIcon: require('../../assets/images/icon-notifications.svg'),
+				link: '/branch-manager/notifications',
+				count: notificationsCount,
+			},
+		],
+		[notificationsCount],
+	);
+
 	if (getBranchesStatus === request.REQUESTING) {
 		return (
 			<Spin className="GlobalSpinner" size="large" tip="Fetching data..." />
@@ -137,7 +173,7 @@ const BranchManager = () => {
 	}
 
 	return (
-		<Container sidebarItems={sidebarItems}>
+		<Container sidebarItems={getSidebarItems()}>
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/branch-manager/dashboard" component={Dashboard} />

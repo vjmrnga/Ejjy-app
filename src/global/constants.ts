@@ -49,3 +49,5 @@ export const GENERIC_BRANCH_ERROR_MESSAGE =
 
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);
+
+export const SALES_TRACKER_NOTIFICATION_THRESHOLD = 1_000;
