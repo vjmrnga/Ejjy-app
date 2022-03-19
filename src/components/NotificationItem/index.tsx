@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box } from '../../../../components/elements';
-import '../style.scss';
+import { Box } from '../elements';
+import './style.scss';
 
 interface Props {
 	message: string;
-	datetime: string;
+	datetime?: string;
 }
 
 export const NotificationItem = ({ message, datetime }: Props) => (

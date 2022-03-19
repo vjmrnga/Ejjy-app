@@ -10,10 +10,11 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
-import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
+import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
 import { TabDays } from './components/TabDays';
 import { TabSessions } from './components/TabSessions';
+import { TabTransactionAdjustmentReport } from './components/TabTransactionAdjustmentReport';
 import { TabTransactions } from './components/TabTransactions';
 import './style.scss';
 
@@ -24,6 +25,7 @@ interface Props {
 const tabs = {
 	TRANSACTIONS: 'Transactions',
 	DAILY_INVOICE_REPORT: 'Daily Invoice Report',
+	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
 	CONNECTIVITY_LOGS: 'Connectivity Logs',
@@ -118,6 +120,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 								tab={tabs.DAILY_INVOICE_REPORT}
 							>
 								<TabDailyInvoiceReport
+									branchMachineId={branchMachine.id}
+									serverUrl={branchMachine.server_url}
+								/>
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={tabs.TRANSACTION_ADJUSTMENTS_REPORT}
+								tab={tabs.TRANSACTION_ADJUSTMENTS_REPORT}
+							>
+								<TabTransactionAdjustmentReport
 									branchMachineId={branchMachine.id}
 									serverUrl={branchMachine.server_url}
 								/>

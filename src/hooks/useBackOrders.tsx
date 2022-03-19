@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { actions } from '../ducks/back-orders';
+import { IS_APP_LIVE } from '../global/constants';
 import { request } from '../global/types';
+import { BackOrdersService, ONLINE_API_URL } from '../services';
 import {
+	getLocalIpAddress,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -13,6 +17,7 @@ import {
 	removeInCachedData,
 	updateInCachedData,
 } from '../utils/pagination';
+import { Query } from './inteface';
 import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching back orders';
@@ -165,3 +170,17 @@ export const useBackOrders = () => {
 		errors,
 	};
 };
+
+export const useBackOrderRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useBackOrderRetrieve', id],
+		async () =>
+			BackOrdersService.retrieve(
+				id,
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			select: (query) => query.data,
+			...options,
+		},
+	);

@@ -10,10 +10,6 @@
 
 .ViewBranchMachine {
 	.ViewBranchMachineSessions {
-		&_filter {
-			margin-bottom: 2em;
-		}
-
 		.branch-session-column {
 			.first-row {
 				margin-bottom: 6px;
@@ -28,12 +24,6 @@
 			.value {
 				font-weight: 400;
 			}
-		}
-	}
-
-	.ViewBranchMachineTransactions {
-		&_filter {
-			margin-bottom: 2em;
 		}
 	}
 }

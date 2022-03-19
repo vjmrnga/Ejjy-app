@@ -2,8 +2,7 @@ import { call, retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/back-orders';
 import { IS_APP_LIVE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services';
-import { service } from '../services/back-orders';
+import { BackOrdersService, ONLINE_API_URL } from '../services';
 import { getLocalIpAddress } from '../utils/function';
 import { getBaseUrl } from './helper';
 
@@ -16,7 +15,7 @@ function* list({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.list,
+			BackOrdersService.list,
 			{
 				sender_branch_id: senderBranchId,
 				receiver_id: receiverId,
@@ -40,7 +39,7 @@ function* retrieve({ payload }: any) {
 		const response = yield retry(
 			MAX_RETRY,
 			RETRY_INTERVAL_MS,
-			service.retrieve,
+			BackOrdersService.retrieve,
 			id,
 			ONLINE_API_URL,
 		);
@@ -57,7 +56,7 @@ function* create({ payload }: any) {
 
 	try {
 		yield call(
-			service.create,
+			BackOrdersService.create,
 			{
 				sender_id: senderId,
 				is_online: IS_APP_LIVE,
@@ -78,7 +77,7 @@ function* edit({ payload }: any) {
 
 	try {
 		yield call(
-			service.edit,
+			BackOrdersService.edit,
 			id,
 			{
 				receiver_id: receiverId,
@@ -98,7 +97,7 @@ function* receive({ payload }: any) {
 
 	try {
 		yield call(
-			service.receive,
+			BackOrdersService.receive,
 			id,
 			{
 				is_online: IS_APP_LIVE,

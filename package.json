@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
 		"antd": "^4.16.13",
+		"antd-css-utilities": "^1.0.3",
 		"array-move": "^4.0.0",
 		"axios": "^0.21.1",
 		"classnames": "^2.2.6",

@@ -12,6 +12,9 @@ interface IList extends IListRequest {
 const service = {
 	list: async (params: IList, baseURL) =>
 		axios.get('/transactions/', { baseURL, params }),
+
+	retrieve: async (id: number, baseURL) =>
+		axios.get(`/transactions/${id}/`, { baseURL }),
 };
 
 export default service;

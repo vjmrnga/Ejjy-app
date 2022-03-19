@@ -65,6 +65,7 @@ export const TabDailyInvoiceReport = ({
 	// METHODS
 	useEffect(() => {
 		const data = transactions.map((transaction) => ({
+			key: transaction.id,
 			dateTime: formatDate(transaction.invoice.datetime_created),
 			invoiceNumber: transaction.invoice ? (
 				<ButtonLink

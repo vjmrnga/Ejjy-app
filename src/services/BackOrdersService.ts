@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-// Interfaces
 interface List extends IListRequest {
 	sender_branch_id?: number;
 	receiver_id?: number;
@@ -22,14 +21,12 @@ interface Receive {
 	products: Product[];
 }
 
-// Types
 type Product = {
 	product_id: number;
 	quantity_returned: number | string;
 };
 
-// Service
-export const service = {
+const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/back-orders/', { baseURL, params }),
 
@@ -45,3 +42,4 @@ export const service = {
 	receive: async (id: number, body: Receive, baseURL) =>
 		axios.post(`/back-orders/${id}/receive/`, body, { baseURL }),
 };
+export default service;

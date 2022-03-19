@@ -1,4 +1,5 @@
 @import '~antd/dist/antd.css';
+@import '~antd-css-utilities/utility.min.css';
 @import './assets/styles/main';
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
 
@@ -140,41 +141,6 @@ body {
 		top: 0 !important;
 	}
 }
-
-// .ant-table:not(.TableNoPadding) {
-// 	.ant-table-thead {
-// 		.ant-table-cell {
-// 			padding: 20px;
-// 			@include font(0.9rem, bold);
-// 			color: $color-dark;
-// 			background-color: $color-main-background;
-
-// 			&:first-child {
-// 				padding-left: 25px;
-// 			}
-
-// 			&:last-child {
-// 				padding-right: 25px;
-// 			}
-// 		}
-// 	}
-
-// 	.ant-table-tbody {
-// 		.ant-table-cell {
-// 			@include font(0.9rem, 500);
-// 			padding: 15px;
-// 			color: $color-dark-gray;
-
-// 			&:first-child {
-// 				padding-left: 25px;
-// 			}
-
-// 			&:last-child {
-// 				padding-right: 25px;
-// 			}
-// 		}
-// 	}
-// }
 
 .row-dragging {
 	background: #fafafa;

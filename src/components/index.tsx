@@ -11,6 +11,7 @@ export * from './Icons/Icons';
 export * from './KeyboardButton/KeyboardButton';
 export * from './modals';
 export * from './ModeOfPayment';
+export * from './NotificationItem';
 export * from './Partials/Container/Container';
 export * from './Partials/Content/Content';
 export * from './PendingCount/PendingCount';

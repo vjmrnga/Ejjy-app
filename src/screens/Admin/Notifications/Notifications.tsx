@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Content } from '../../../components';
+import { Content, NotificationItem } from '../../../components';
 import { useBranches } from '../../../hooks/useBranches';
 import { formatDateTime } from '../../../utils/function';
 import { useFailedTransfers } from '../hooks/useFailedTransfers';
-import { NotificationItem } from './components/NotificationItem';
 import './style.scss';
 
 export const Notifications = () => {

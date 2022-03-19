@@ -144,7 +144,7 @@ interface FilterProps {
 	onSelectType: any;
 }
 const Filter = ({ onSelectType }: FilterProps) => (
-	<Row className="ViewBranchCheckings_filter" gutter={[15, 15]}>
+	<Row className="mb-4" gutter={[15, 15]}>
 		<Col lg={12} span={24}>
 			<Label label="Type" spacing />
 			<Radio.Group

@@ -1,11 +1,5 @@
 @import '../../../assets/styles/main';
 
-.RequisitionSlips {
-	&_filter {
-		margin-bottom: 2em;
-	}
-}
-
 .ViewRequisitionSlip {
 	&_requestedProducts {
 		padding: 0 25px 10px 25px;
@@ -25,9 +19,5 @@
 
 	&_addedProductsCount {
 		margin-bottom: 10px;
-	}
-
-	&_filter {
-		margin-bottom: 2em;
 	}
 }

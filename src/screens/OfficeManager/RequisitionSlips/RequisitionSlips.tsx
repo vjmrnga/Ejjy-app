@@ -142,10 +142,7 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 	const { branches } = useBranches();
 
 	return (
-		<Row
-			className="RequisitionSlips_filter PaddingHorizontal"
-			gutter={[15, 15]}
-		>
+		<Row className="mb-4 PaddingHorizontal" gutter={[15, 15]}>
 			<Col lg={12} span={24}>
 				<Label label="Branch" spacing />
 				<Select
