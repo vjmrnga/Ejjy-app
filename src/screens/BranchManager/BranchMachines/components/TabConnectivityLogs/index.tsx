@@ -1,20 +1,22 @@
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
 	ConnectivityType,
 	RequestErrors,
 	TableHeader,
 	TimeRangeFilter,
-} from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { pageSizeOptions } from '../../../../global/options';
-import { connectivityTypes, timeRangeTypes } from '../../../../global/types';
-import { useConnectivityLogs } from '../../../../hooks';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
-import { useTimeRange } from '../../../../hooks/useTimeRange';
-import { convertIntoArray, formatDateTime } from '../../../../utils/function';
+} from '../../../../../components';
+import { Label } from '../../../../../components/elements';
+import { pageSizeOptions } from '../../../../../global/options';
+import { connectivityTypes } from '../../../../../global/types';
+import { useConnectivityLogs } from '../../../../../hooks';
+import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useTimeRange } from '../../../../../hooks/useTimeRange';
+import {
+	convertIntoArray,
+	formatDateTime,
+} from '../../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type' },
@@ -25,7 +27,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const ViewBranchConnectivityLogs = ({ serverUrl }: Props) => {
+export const TabConnectivityLogs = ({ serverUrl }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 

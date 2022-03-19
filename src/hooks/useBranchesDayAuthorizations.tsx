@@ -24,8 +24,6 @@ const useBranchesDayAuthorizations = ({ params }) =>
 				params.baseUrl,
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			refetchOnWindowFocus: false,
-			retry: false,
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				branchDays: query.data.results,
@@ -51,8 +49,6 @@ export const useBranchesDayAuthorizationsRetrieve = ({ branchId }) => {
 			);
 		},
 		{
-			refetchOnWindowFocus: false,
-			retry: false,
 			select: (query) => query.data,
 		},
 	);

@@ -8,10 +8,10 @@ import {
 	TableHeader,
 } from '../../../components';
 import { Box } from '../../../components/elements';
+import { ModifyBranchMachineModal } from '../../../components/modals';
 import { request } from '../../../global/types';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { convertIntoArray } from '../../../utils/function';
-import { ModifyBranchMachineModal } from './components/ModifyBranchMachineModal';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', key: 'name', width: 150, fixed: 'left' },

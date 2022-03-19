@@ -30,7 +30,14 @@ const store = configureStore({}, history);
 configureAxios();
 configurePrinter();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+			retry: false,
+		},
+	},
+});
 
 ReactDOM.render(
 	<React.StrictMode>

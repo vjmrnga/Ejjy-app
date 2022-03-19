@@ -13,11 +13,11 @@ const useTransactions = ({ params }) => {
 	return useQuery<any>(
 		[
 			'useTransactions',
-			params.timeRange,
-			params.statuses,
-			params.modeOfPayment,
 			params.branchId,
+			params.modeOfPayment,
 			params.serverUrl,
+			params.statuses,
+			params.timeRange,
 			params.page,
 			params.pageSize,
 		],
@@ -31,9 +31,10 @@ const useTransactions = ({ params }) => {
 			baseURL = params.serverUrl || baseURL;
 
 			const data = {
+				is_adjusted: params.isAdjusted || false,
+				mode_of_payment: params.modeOfPayment,
 				statuses: params.statuses,
 				time_range: params.timeRange,
-				mode_of_payment: params.modeOfPayment,
 				page: params.page,
 				page_size: params.pageSize,
 			};
@@ -58,8 +59,6 @@ const useTransactions = ({ params }) => {
 			}
 		},
 		{
-			refetchOnWindowFocus: false,
-			retry: false,
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				transactions: query.data.results,

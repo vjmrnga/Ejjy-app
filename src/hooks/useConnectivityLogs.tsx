@@ -23,8 +23,6 @@ const useConnectivityLogs = ({ params }) =>
 				params.baseUrl,
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			refetchOnWindowFocus: false,
-			retry: false,
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				connectivityLogs: query.data.results,

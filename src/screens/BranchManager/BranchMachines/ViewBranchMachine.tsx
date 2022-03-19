@@ -10,10 +10,11 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
-import { ViewBranchConnectivityLogs } from './components/ViewBranchConnectivityLogs';
-import { ViewBranchDays } from './components/ViewBranchDays';
-import { ViewBranchSessions } from './components/ViewBranchSessions';
-import { ViewBranchTransactions } from './components/ViewBranchTransactions';
+import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
+import { TabConnectivityLogs } from './components/TabConnectivityLogs';
+import { TabDays } from './components/TabDays';
+import { TabSessions } from './components/TabSessions';
+import { TabTransactions } from './components/TabTransactions';
 import './style.scss';
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 
 const tabs = {
 	TRANSACTIONS: 'Transactions',
+	DAILY_INVOICE_REPORT: 'Daily Invoice Report',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
 	CONNECTIVITY_LOGS: 'Connectivity Logs',
@@ -105,27 +107,35 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							destroyInactiveTabPane
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
-								<ViewBranchTransactions
+								<TabTransactions
+									branchMachineId={branchMachine.id}
+									serverUrl={branchMachine.server_url}
+								/>
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={tabs.DAILY_INVOICE_REPORT}
+								tab={tabs.DAILY_INVOICE_REPORT}
+							>
+								<TabDailyInvoiceReport
 									branchMachineId={branchMachine.id}
 									serverUrl={branchMachine.server_url}
 								/>
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
-								<ViewBranchSessions serverUrl={branchMachine.server_url} />
+								<TabSessions serverUrl={branchMachine.server_url} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
-								<ViewBranchDays serverUrl={branchMachine.server_url} />
+								<TabDays serverUrl={branchMachine.server_url} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane
 								key={tabs.CONNECTIVITY_LOGS}
 								tab={tabs.CONNECTIVITY_LOGS}
 							>
-								<ViewBranchConnectivityLogs
-									serverUrl={branchMachine.server_url}
-								/>
+								<TabConnectivityLogs serverUrl={branchMachine.server_url} />
 							</Tabs.TabPane>
 						</Tabs>
 					)}

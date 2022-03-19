@@ -5,17 +5,17 @@ import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
-} from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
-import { useBranchesDays } from '../../../../hooks/useBranchesDays';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+} from '../../../../../components';
+import { Label } from '../../../../../components/elements';
+import { EMPTY_CELL } from '../../../../../global/constants';
+import { pageSizeOptions } from '../../../../../global/options';
+import { request } from '../../../../../global/types';
+import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
+import { useQueryParams } from '../../../../../hooks/useQueryParams';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
-} from '../../../../utils/function';
+} from '../../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -31,7 +31,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const ViewBranchDays = ({ serverUrl }: Props) => {
+export const TabDays = ({ serverUrl }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 

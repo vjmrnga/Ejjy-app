@@ -16,8 +16,6 @@ const useCreditRegistrations = ({ params }) =>
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			refetchOnWindowFocus: false,
-			retry: false,
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				creditRegistrations: query.data.results,

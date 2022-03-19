@@ -5,17 +5,17 @@ import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
-} from '../../../../components';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { request } from '../../../../global/types';
-import { useSessions } from '../../../../hooks/useSessions';
+} from '../../../../../components';
+import { Label } from '../../../../../components/elements';
+import { EMPTY_CELL } from '../../../../../global/constants';
+import { pageSizeOptions } from '../../../../../global/options';
+import { request } from '../../../../../global/types';
+import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useSessions } from '../../../../../hooks/useSessions';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
-} from '../../../../utils/function';
-import { pageSizeOptions } from '../../../../global/options';
-import { Label } from '../../../../components/elements';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+} from '../../../../../utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -32,7 +32,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const ViewBranchSessions = ({ serverUrl }: Props) => {
+export const TabSessions = ({ serverUrl }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 

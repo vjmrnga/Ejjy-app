@@ -3,9 +3,10 @@ import { IListRequest } from './interfaces';
 
 interface IList extends IListRequest {
 	branch_machine_id?: number;
+	is_adjusted: boolean;
+	mode_of_payment?: string;
 	statuses?: string;
 	time_range?: string;
-	mode_of_payment?: string;
 }
 
 const service = {

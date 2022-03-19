@@ -8,20 +8,20 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 	ViewTransactionModal,
-} from '../../../../components';
-import { ButtonLink, Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { timeRangeTypes, transactionStatus } from '../../../../global/types';
-import { useTransactions } from '../../../../hooks';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
-import { useTimeRange } from '../../../../hooks/useTimeRange';
+} from '../../../../../components';
+import { ButtonLink, Label } from '../../../../../components/elements';
+import { EMPTY_CELL } from '../../../../../global/constants';
+import { pageSizeOptions } from '../../../../../global/options';
+import { timeRangeTypes, transactionStatus } from '../../../../../global/types';
+import { useTransactions } from '../../../../../hooks';
+import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useTimeRange } from '../../../../../hooks/useTimeRange';
 import {
 	convertIntoArray,
 	formatInPeso,
 	getTransactionStatus,
-} from '../../../../utils/function';
-import { TransactionsCancelled } from '../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
+} from '../../../../../utils/function';
+import { TransactionsCancelled } from '../../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -63,10 +63,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const ViewBranchTransactions = ({
-	branchMachineId,
-	serverUrl,
-}: Props) => {
+export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);

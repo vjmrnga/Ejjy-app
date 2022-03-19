@@ -1,16 +1,65 @@
-import { Col } from 'antd';
+import { Col, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { DetailsRow } from '../../../../components';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-} from '../../../../components/elements';
-import { sleep } from '../../../../utils/function';
+import { DetailsRow, RequestErrors } from '../..';
+import { request } from '../../../global/types';
+import { useBranchMachines } from '../../../hooks/useBranchMachines';
+import { convertIntoArray, sleep } from '../../../utils/function';
+import { Button, FieldError, FormInputLabel } from '../../elements';
 
-interface Props {
+interface ModalProps {
+	branchMachine: any;
+	onClose: any;
+}
+
+export const ModifyBranchMachineModal = ({
+	branchMachine,
+	onClose,
+}: ModalProps) => {
+	// CUSTOM HOOKS
+	const {
+		createBranchMachine,
+		editBranchMachine,
+		status: branchMachineStatus,
+		errors,
+	} = useBranchMachines();
+
+	// METHODS
+	const onSubmit = (formData) => {
+		const modifyBranchMachine = branchMachine
+			? editBranchMachine
+			: createBranchMachine;
+
+		modifyBranchMachine(formData, ({ status }) => {
+			if (status === request.SUCCESS) {
+				onClose();
+			}
+		});
+	};
+
+	return (
+		<Modal
+			title={`${branchMachine ? '[Edit]' : '[Create]'} Branch Machine`}
+			footer={null}
+			onCancel={onClose}
+			visible
+			centered
+			closable
+		>
+			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+
+			<ModifyBranchMachineForm
+				branchMachine={branchMachine}
+				loading={branchMachineStatus === request.REQUESTING}
+				onSubmit={onSubmit}
+				onClose={onClose}
+			/>
+		</Modal>
+	);
+};
+
+interface FormProps {
 	branchMachine?: any;
 	loading: boolean;
 	onSubmit: any;
@@ -22,7 +71,7 @@ export const ModifyBranchMachineForm = ({
 	loading,
 	onSubmit,
 	onClose,
-}: Props) => {
+}: FormProps) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const getFormDetails = useCallback(
