@@ -10,7 +10,7 @@ import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranches } from '../../../hooks/useBranches';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	formatDateTime,

@@ -8,7 +8,7 @@ import { BadgePill, Label } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { productCheckingTypes, request } from '../../../../global/types';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { convertIntoArray, formatDateTime } from '../../../../utils/function';
 import { useProductChecks } from '../../../BranchManager/hooks/useProductChecks';
 import '../style.scss';

@@ -10,7 +10,7 @@ import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import {
 	formatDateTime,

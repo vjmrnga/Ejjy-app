@@ -8,7 +8,7 @@ import { GENERIC_ERROR_MESSAGE } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';

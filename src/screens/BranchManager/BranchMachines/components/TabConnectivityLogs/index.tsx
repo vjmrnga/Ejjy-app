@@ -11,7 +11,7 @@ import { Label } from '../../../../../components/elements';
 import { pageSizeOptions } from '../../../../../global/options';
 import { connectivityTypes } from '../../../../../global/types';
 import { useConnectivityLogs } from '../../../../../hooks';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useTimeRange } from '../../../../../hooks/useTimeRange';
 import {
 	convertIntoArray,

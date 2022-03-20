@@ -17,7 +17,7 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request, timeRangeTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProducts } from '../../../../hooks/useProducts';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,

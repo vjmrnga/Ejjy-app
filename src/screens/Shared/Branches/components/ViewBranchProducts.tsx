@@ -15,7 +15,7 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProductCategories } from '../../../../hooks/useProductCategories';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../../models';
 import { convertIntoArray, formatQuantity } from '../../../../utils/function';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';

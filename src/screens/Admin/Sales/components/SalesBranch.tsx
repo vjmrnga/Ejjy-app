@@ -1,5 +1,6 @@
 import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
+import { useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useEffect, useRef, useState } from 'react';
@@ -7,7 +8,6 @@ import { useHistory } from 'react-router-dom';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { request } from '../../../../global/types';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { convertIntoArray, formatInPeso } from '../../../../utils/function';
 import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';

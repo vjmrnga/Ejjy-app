@@ -6,7 +6,7 @@ import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useProductCategories } from '../../../hooks/useProductCategories';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { convertIntoArray } from '../../../utils/function';
 import { ReportsBranch } from './components/ReportsBranch';
 import './style.scss';

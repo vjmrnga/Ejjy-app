@@ -1,34 +1,42 @@
 import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
 import {
+	CreateOrderOfPaymentModal,
 	RequestErrors,
+	TableActions,
 	TableHeader,
 	TimeRangeFilter,
 	ViewAccountModal,
 	ViewTransactionModal,
-} from '../../../../../components';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { paymentTypes, timeRangeTypes } from '../../../../../global/types';
-import { useTransactions } from '../../../../../hooks';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
-import { useTimeRange } from '../../../../../hooks/useTimeRange';
+} from 'components';
+import {
+	EMPTY_CELL,
+	pageSizeOptions,
+	paymentTypes,
+	timeRangeTypes,
+} from 'global';
+import { useQueryParams, useTransactions } from 'hooks';
+import { useTimeRange } from 'hooks/useTimeRange';
+import _, { toString } from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { AccountTotalBalance } from 'screens/BranchManager/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
+import { accountTabs } from 'screens/BranchManager/Accounts/data';
 import {
 	convertIntoArray,
 	formatDateTime,
 	formatInPeso,
-} from '../../../../../utils/function';
+	getFullName,
+} from 'utils/function';
 import '../../style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Client Code', dataIndex: 'client_code' },
-	{ title: 'Invoice Number', dataIndex: 'invoice_number' },
+	{ title: 'Client Code', dataIndex: 'clientCode' },
+	{ title: 'Invoice Number', dataIndex: 'invoiceNumber' },
 	{ title: 'Amount', dataIndex: 'amount' },
 	{ title: 'Cashier', dataIndex: 'cashier' },
 	{ title: 'Authorizer', dataIndex: 'authorizer' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const TabCreditTransactions = () => {
@@ -36,6 +44,9 @@ export const TabCreditTransactions = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [selectedAccount, setSelectedAccount] = useState(null);
+	const [selectedCreditTransaction, setSelectedCreditTransaction] =
+		useState(null);
+	const [payor, setPayor] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams({
@@ -57,6 +68,7 @@ export const TabCreditTransactions = () => {
 	} = useTransactions({
 		params: {
 			modeOfPayment: paymentTypes.CREDIT,
+			payorCreditorAccountId: payor?.account?.id,
 			...queryParams,
 		},
 	});
@@ -70,8 +82,8 @@ export const TabCreditTransactions = () => {
 			return {
 				key: id,
 				datetime: formatDateTime(datetime_created),
-				client_code: EMPTY_CELL, // TODO: set correct value
-				invoice_number: (
+				clientCode: EMPTY_CELL, // TODO: set correct value
+				invoiceNumber: (
 					<Button
 						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
@@ -81,16 +93,42 @@ export const TabCreditTransactions = () => {
 				),
 				amount: formatInPeso(total_amount),
 				cashier: employee_id,
-				authorizer: EMPTY_CELL, // TODO: set correct value
+				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
+				actions: (
+					<TableActions
+						onAdd={() => setSelectedCreditTransaction(transaction)}
+						onAddName="Create Order of Payment"
+					/>
+				),
 			};
 		});
 
 		setDataSource(formattedTransactions);
 	}, [transactions]);
 
+	useEffect(() => {
+		if (queryParams.payor) {
+			setPayor(JSON.parse(_.toString(queryParams.payor)));
+		}
+	}, [queryParams.payor]);
+
+	const onCreateOrderOfPaymentsSuccess = () => {
+		setQueryParams(
+			{ tab: accountTabs.ORDER_OF_PAYMENTS },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
+
 	return (
 		<div>
 			<TableHeader title="Credit Transactions" />
+
+			{payor && (
+				<AccountTotalBalance
+					account={payor.account}
+					total_balance={payor.total_balance}
+				/>
+			)}
 
 			<Filter
 				params={queryParams}
@@ -105,7 +143,7 @@ export const TabCreditTransactions = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				scroll={{ x: 1000 }}
 				pagination={{
 					current: Number(queryParams.page) || 1,
 					total,
@@ -134,6 +172,14 @@ export const TabCreditTransactions = () => {
 				<ViewTransactionModal
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
+				/>
+			)}
+
+			{selectedCreditTransaction && (
+				<CreateOrderOfPaymentModal
+					transaction={selectedCreditTransaction}
+					onSuccess={onCreateOrderOfPaymentsSuccess}
+					onClose={() => setSelectedCreditTransaction(null)}
 				/>
 			)}
 		</div>

@@ -12,7 +12,7 @@ import { useSalesTracker } from '../../hooks';
 import { useBranches } from '../../hooks/useBranches';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
-import { Accounts } from './Accounts/Accounts';
+import { Accounts } from './Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines/BranchMachines';

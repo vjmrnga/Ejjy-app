@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { useBranches } from '../../../hooks/useBranches';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { BranchCheckings } from './components/BranchCheckings';
 
 export const Checkings = () => {

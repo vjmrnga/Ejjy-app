@@ -6,7 +6,7 @@ import { Box } from '../../../../components/elements';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useBranchMachines } from '../../../../hooks/useBranchMachines';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';
 

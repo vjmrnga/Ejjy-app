@@ -10,7 +10,7 @@ import { Label } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { request } from '../../../../../global/types';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useSessions } from '../../../../../hooks/useSessions';
 import {
 	convertIntoArray,

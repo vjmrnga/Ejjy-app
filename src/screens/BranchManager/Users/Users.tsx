@@ -12,7 +12,7 @@ import {
 import { Box } from '../../../components/elements';
 import { MAX_PAGE_SIZE } from '../../../global/constants';
 import { useUsers } from '../../../hooks';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { convertIntoArray, getUserTypeName } from '../../../utils/function';
 import { BranchUsers } from '../../OfficeManager/Users/components/BranchUsers';
 import './style.scss';

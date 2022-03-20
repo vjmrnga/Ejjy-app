@@ -16,7 +16,7 @@ import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { timeRangeTypes } from '../../../../../global/types';
 import { useTransactions } from '../../../../../hooks';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useTimeRange } from '../../../../../hooks/useTimeRange';
 import {
 	convertIntoArray,

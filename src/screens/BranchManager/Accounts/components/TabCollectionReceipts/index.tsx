@@ -6,7 +6,7 @@ import { RequestErrors, TableHeader } from '../../../../../components';
 import { printCollectionReceipt } from '../../../../../configurePrinter';
 import { pageSizeOptions } from '../../../../../global/options';
 import useCollectionReceipts from '../../../../../hooks/useCollectionReceipts';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatInPeso,

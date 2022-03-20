@@ -1,52 +1,88 @@
-import { Col, Row, Select, Spin } from 'antd';
+import { Col, message, Modal, Row, Select, Spin } from 'antd';
+import { RequestErrors } from 'components';
+import { Button, FieldError, FormInputLabel, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
+import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
+import { convertIntoArray, getFullName, sleep } from 'utils/function';
 import * as Yup from 'yup';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-	Label,
-} from '../../../../../components/elements';
-import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
-import { orderOfPaymentPurposes } from '../../../../../global/types';
-import { useAccounts } from '../../../../../hooks';
-import { getFullName, sleep } from '../../../../../utils/function';
 
-const formDetails = {
-	defaultValues: {
-		payorId: '',
-		amount: '',
-		purpose: '',
-		purposeOthers: '',
-		chargeSalesInvoice: '',
-	},
-	schema: Yup.object().shape(
-		{
-			payorId: Yup.number().required().label('Payor'),
-			amount: Yup.number().required().label('Amount'),
-			purpose: Yup.string().required().label('Purpose'),
-			purposeOthers: Yup.string().when('purpose', {
-				is: orderOfPaymentPurposes.OTHERS,
-				then: Yup.string().required().label('Purpose Description'),
-			}),
-		},
-		[],
-	),
+interface ModalProps {
+	transaction?: any;
+	onSuccess: any;
+	onClose: any;
+}
+
+export const CreateOrderOfPaymentModal = ({
+	transaction,
+	onSuccess,
+	onClose,
+}: ModalProps) => {
+	// CUSTOM HOOKS
+	const { user } = useAuth();
+	const {
+		mutateAsync: createOrderOfPayment,
+		isLoading,
+		error,
+	} = useOrderOfPaymentsCreate();
+
+	// METHODS
+	const onCreate = async (formData) => {
+		await createOrderOfPayment({
+			createdById: user.id,
+			payorId: formData.payorId,
+			amount: formData.amount,
+			purpose: formData.purpose,
+			extraDescription:
+				formData.purpose === orderOfPaymentPurposes.OTHERS
+					? formData.purposeOthers
+					: undefined,
+			chargeSalesTransactionId: formData.chargeSalesTransactionId || undefined,
+		});
+		onSuccess();
+		onClose();
+
+		message.success('Order of Payment successfully created.');
+	};
+
+	return (
+		<Modal
+			className="CreateOrderOfPaymentModal"
+			title="[Create] Order of Payment"
+			footer={null}
+			onCancel={onClose}
+			visible
+			centered
+			closable
+		>
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+
+			<CreateOrderOfPaymentForm
+				transaction={transaction}
+				loading={isLoading}
+				onSubmit={onCreate}
+				onClose={onClose}
+			/>
+		</Modal>
+	);
 };
 
-interface Props {
+interface FormProps {
+	transaction?: any;
 	loading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
 export const CreateOrderOfPaymentForm = ({
+	transaction,
 	loading,
 	onSubmit,
 	onClose,
-}: Props) => {
+}: FormProps) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [accountSearch, setAccountSearch] = useState('');
@@ -58,6 +94,31 @@ export const CreateOrderOfPaymentForm = ({
 	} = useAccounts({ params: { search: accountSearch } });
 
 	// METHODS
+	const getFormDetails = useCallback(
+		() => ({
+			defaultValues: {
+				payorId: '',
+				amount: '',
+				purpose: '',
+				purposeOthers: '',
+				chargeSalesInvoice: transaction?.id,
+			},
+			schema: Yup.object().shape(
+				{
+					payorId: Yup.number().required().label('Payor'),
+					amount: Yup.number().required().label('Amount'),
+					purpose: Yup.string().required().label('Purpose'),
+					purposeOthers: Yup.string().when('purpose', {
+						is: orderOfPaymentPurposes.OTHERS,
+						then: Yup.string().required().label('Purpose Description'),
+					}),
+					chargeSalesInvoice: Yup.string().nullable(),
+				},
+				[],
+			),
+		}),
+		[transaction],
+	);
 
 	const onSearchDebounced = useCallback(
 		debounce((search) => {
@@ -68,8 +129,8 @@ export const CreateOrderOfPaymentForm = ({
 
 	return (
 		<Formik
-			initialValues={formDetails.defaultValues}
-			validationSchema={formDetails.schema}
+			initialValues={getFormDetails().defaultValues}
+			validationSchema={getFormDetails().schema}
 			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -174,6 +235,7 @@ export const CreateOrderOfPaymentForm = ({
 							<FormInputLabel
 								id="chargeSalesInvoice"
 								label="Charge Sales Invoice # (Optional)"
+								disabled={transaction !== null}
 							/>
 							<ErrorMessage
 								name="chargeSalesInvoice"

@@ -22,7 +22,7 @@ import {
 import { request, requisitionSlipTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useNetwork } from '../../../../hooks/useNetwork';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,

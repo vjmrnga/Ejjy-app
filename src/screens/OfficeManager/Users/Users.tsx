@@ -26,7 +26,7 @@ import {
 	userTypes,
 } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useUsers } from '../../../hooks/useUsers';
 import { getUserTypeName, showErrorMessages } from '../../../utils/function';
 import { BranchUsers } from './components/BranchUsers';

@@ -17,6 +17,7 @@ const useTransactions = ({ params }) => {
 			params.branchId,
 			params.isAdjusted,
 			params.modeOfPayment,
+			params.payorCreditorAccountId,
 			params.serverUrl,
 			params.statuses,
 			params.timeRange,
@@ -35,10 +36,11 @@ const useTransactions = ({ params }) => {
 			const data = {
 				is_adjusted: params.isAdjusted || false,
 				mode_of_payment: params.modeOfPayment,
+				payor_creditor_account_id: params.payorCreditorAccountId,
 				statuses: params.statuses,
 				time_range: params.timeRange,
-				page: params.page,
-				page_size: params.pageSize,
+				page: params.page || 1,
+				page_size: params.pageSize || 10,
 			};
 
 			try {

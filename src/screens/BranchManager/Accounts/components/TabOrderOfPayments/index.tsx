@@ -12,14 +12,14 @@ import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { orderOfPaymentPurposes } from '../../../../../global/types';
 import useOrderOfPayments from '../../../../../hooks/useOrderOfPayments';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatDateTime,
 	formatInPeso,
 	getFullName,
 } from '../../../../../utils/function';
-import { CreateOrderOfPaymentModal } from './CreateOrderOfPaymentModal';
+import { CreateOrderOfPaymentModal } from '../../../../../components/modals/CreateOrderOfPaymentModal';
 
 const columns: ColumnsType = [
 	{ title: 'OP #', dataIndex: 'id' },

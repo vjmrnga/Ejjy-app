@@ -9,8 +9,8 @@ const useAccounts = ({ params }) =>
 		async () =>
 			AccountsService.list(
 				{
-					page: params.page,
-					page_size: params.pageSize,
+					page: params.page || 1,
+					page_size: params.pageSize || 10,
 					search: params.search,
 					type: params.type,
 				},

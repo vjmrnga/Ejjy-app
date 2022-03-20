@@ -11,7 +11,7 @@ body {
 
 body {
 	background-color: $color-main-background;
-	font-family: $font-primary;
+	font-family: $font-primary !important;
 	color: $color-dark;
 }
 

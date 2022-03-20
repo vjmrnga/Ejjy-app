@@ -3,7 +3,7 @@ import { toString } from 'lodash';
 import React, { useEffect } from 'react';
 import { Box } from '../../../../components/elements';
 import { useBranches } from '../../../../hooks/useBranches';
-import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { SalesBranch } from './SalesBranch';
 
 export const SalesBranchSection = () => {

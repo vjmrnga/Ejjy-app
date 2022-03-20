@@ -9,8 +9,8 @@ const useOrderOfPayments = ({ params }) =>
 		async () =>
 			OrderOfPaymentsService.list(
 				{
-					page: params.page,
-					page_size: params.pageSize,
+					page: params.page || 1,
+					page_size: params.pageSize || 10,
 					is_pending: params.isPending,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),

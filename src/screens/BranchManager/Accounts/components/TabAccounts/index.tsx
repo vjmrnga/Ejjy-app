@@ -13,7 +13,7 @@ import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { accountTypes } from '../../../../../global/types';
 import { useAccounts } from '../../../../../hooks';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatDate,

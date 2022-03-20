@@ -11,7 +11,7 @@ import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { request } from '../../../../../global/types';
 import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,

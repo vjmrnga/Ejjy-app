@@ -6,7 +6,9 @@ export { default as useBranchesDayAuthorizations } from './useBranchesDayAuthori
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
+export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
+export { default as useQueryParams } from './useQueryParams';
 export { default as useSalesTracker } from './useSalesTracker';
 export * from './useTransactions';
 export { default as useTransactions } from './useTransactions';

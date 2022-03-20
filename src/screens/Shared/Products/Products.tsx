@@ -19,7 +19,7 @@ import { pendingTransactionTypes, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useProducts } from '../../../hooks/useProducts';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../models';
 import { convertIntoArray, isUserFromBranch } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';

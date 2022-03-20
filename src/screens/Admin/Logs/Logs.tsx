@@ -13,7 +13,7 @@ import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useLogs } from '../../../hooks/useLogs';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { useUsers } from '../../../hooks/useUsers';
 import { IBranch, IUser } from '../../../models';
 import { formatDateTimeExtended } from '../../../utils/function';

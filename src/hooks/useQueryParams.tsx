@@ -12,7 +12,7 @@ interface Props {
 	onQueryParamChange?: any;
 }
 
-export const useQueryParams = ({
+const useQueryParams = ({
 	page: currentPage,
 	pageSize: currentPageSize,
 	debounceTime = 500,
@@ -75,3 +75,5 @@ export const useQueryParams = ({
 
 	return { params, setQueryParams, refreshList: onChange };
 };
+
+export default useQueryParams;

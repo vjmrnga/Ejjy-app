@@ -1,3 +1,4 @@
+export * from './CreateOrderOfPaymentModal';
 export * from './CreateUserModal';
 export * from './ModifyBranchMachineModal';
 export * from './ViewAccountModal';

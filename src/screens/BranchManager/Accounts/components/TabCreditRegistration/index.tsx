@@ -13,7 +13,7 @@ import { Label } from '../../../../../components/elements';
 import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
 import { useCreditRegistrations } from '../../../../../hooks';
-import { useQueryParams } from '../../../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatDate,
@@ -21,6 +21,7 @@ import {
 	getFullName,
 } from '../../../../../utils/function';
 import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
+import { accountTabs } from 'screens/BranchManager/Accounts/data';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'client_code' },
@@ -64,7 +65,15 @@ export const TabCreditRegistrations = () => {
 				datetime_created: formatDate(account.datetime_created),
 				actions: (
 					<TableActions
-						onView={() => {}}
+						onView={() =>
+							setQueryParams(
+								{
+									tab: accountTabs.CREDIT_TRANSACTIONS,
+									payor: JSON.stringify(creditRegistration),
+								},
+								{ shouldResetPage: true },
+							)
+						}
 						onViewName="View Credit Transactions"
 					/>
 				),

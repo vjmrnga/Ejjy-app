@@ -8,7 +8,7 @@ import { Content } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { timeRangeTypes } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
-import { useQueryParams } from '../../../hooks/useQueryParams';
+import { useQueryParams } from 'hooks';
 import { SalesBranchSection } from './components/SalesBranchSection';
 import { SalesGrandTotalSection } from './components/SalesGrandTotalSection';
 
