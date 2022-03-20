@@ -48,10 +48,8 @@ export const ViewTransactionModal = ({
 
 	// METHODS
 	useEffect(() => {
-		let products = transaction.products || [];
-		if (transactionRetrieved) {
-			products = transactionRetrieved.products || [];
-		}
+		const products =
+			transaction.products || transactionRetrieved.products || [];
 
 		const formattedProducts = products.map(
 			({ branch_product, quantity, price_per_piece }) => ({
@@ -66,7 +64,7 @@ export const ViewTransactionModal = ({
 		);
 
 		setDataSource(formattedProducts);
-	}, [transaction]);
+	}, [transaction, transactionRetrieved]);
 
 	const transactionData = _.isNumber(transaction)
 		? transactionRetrieved

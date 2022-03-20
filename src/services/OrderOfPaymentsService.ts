@@ -3,6 +3,8 @@ import { IListRequest } from './interfaces';
 
 interface IList extends IListRequest {
 	is_pending?: boolean;
+	payor_id?: number;
+	time_range?: string;
 }
 
 interface IModify {

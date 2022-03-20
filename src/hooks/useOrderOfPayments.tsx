@@ -1,17 +1,27 @@
+import { IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { IS_APP_LIVE } from '../global/constants';
-import { ONLINE_API_URL, OrderOfPaymentsService } from '../services';
-import { getLocalIpAddress } from '../utils/function';
+import { ONLINE_API_URL, OrderOfPaymentsService } from 'services';
+import { getLocalIpAddress } from 'utils/function';
 
-const useOrderOfPayments = ({ params }) =>
+const useOrderOfPayments = ({ params }: Query) =>
 	useQuery<any>(
-		['useOrderOfPayments', params.page, params.pageSize, params.isPending],
+		[
+			'useOrderOfPayments',
+			params?.isPending,
+			params?.payorId,
+			params?.timeRange,
+			params?.page,
+			params?.pageSize,
+		],
 		async () =>
 			OrderOfPaymentsService.list(
 				{
-					page: params.page || 1,
-					page_size: params.pageSize || 10,
-					is_pending: params.isPending,
+					is_pending: params?.isPending,
+					payor_id: params?.payorId,
+					time_range: params?.timeRange,
+					page: params?.page || 1,
+					page_size: params?.pageSize || 10,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),

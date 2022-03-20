@@ -79,7 +79,7 @@ export const useTransactionRetrieve = ({ id, params, options }: Query) => {
 	);
 
 	return useQuery<any>(
-		['useBackOrderRetrieve', id],
+		['useTransactionRetrieve', id],
 
 		async () => {
 			if (!baseURL && params.branchId) {
