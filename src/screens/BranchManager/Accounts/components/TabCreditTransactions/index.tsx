@@ -126,7 +126,7 @@ export const TabCreditTransactions = () => {
 			{payor && (
 				<AccountTotalBalance
 					account={payor.account}
-					total_balance={payor.total_balance}
+					totalBalance={payor.total_balance}
 				/>
 			)}
 

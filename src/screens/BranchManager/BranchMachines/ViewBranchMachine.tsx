@@ -1,14 +1,15 @@
 import { message, Spin, Tabs } from 'antd';
+import { useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
 import { Breadcrumb, Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
 import { GENERIC_ERROR_MESSAGE } from '../../../global/constants';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { useQueryParams } from 'hooks';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
@@ -25,6 +26,7 @@ interface Props {
 const tabs = {
 	TRANSACTIONS: 'Transactions',
 	DAILY_INVOICE_REPORT: 'Daily Invoice Report',
+	DAILY_PRODUCT_SALES_REPORT: 'Daily Product Sales Report',
 	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
@@ -120,6 +122,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 								tab={tabs.DAILY_INVOICE_REPORT}
 							>
 								<TabDailyInvoiceReport
+									branchMachineId={branchMachine.id}
+									serverUrl={branchMachine.server_url}
+								/>
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={tabs.DAILY_PRODUCT_SALES_REPORT}
+								tab={tabs.DAILY_PRODUCT_SALES_REPORT}
+							>
+								<TabDailyProductSalesReport
 									branchMachineId={branchMachine.id}
 									serverUrl={branchMachine.server_url}
 								/>

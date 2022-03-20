@@ -14,5 +14,6 @@ export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as SalesTrackerService } from './SalesTrackerService';
+export { default as TransactionProductsService } from './TransactionProductsService';
 export { default as TransactionsService } from './TransactionsService';
 export { default as UsersService } from './UsersService';

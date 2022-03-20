@@ -10,6 +10,8 @@ export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useQueryParams } from './useQueryParams';
 export { default as useSalesTracker } from './useSalesTracker';
+export * from './useTransactionProducts';
+export { default as useTransactionProducts } from './useTransactionProducts';
 export * from './useTransactions';
 export { default as useTransactions } from './useTransactions';
 export { default as useUsers } from './useUsers';
