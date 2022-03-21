@@ -14,55 +14,76 @@ interface Props {
 	onClose: any;
 }
 
-export const ViewAccountModal = ({ account, onClose }: Props) => (
-	<Modal
-		className="Modal__hasFooter"
-		title="View Account"
-		footer={[<Button text="Close" onClick={onClose} />]}
-		onCancel={onClose}
-		visible
-		centered
-		closable
-	>
-		<DetailsRow>
-			<DetailsSingle label="Type" value={upperFirst(account.type)} />
-			<DetailsSingle label="First Name" value={account.first_name} />
-			<DetailsSingle label="Middle Name" value={account.middle_name} />
-			<DetailsSingle label="Last Name" value={account.last_name} />
-			<DetailsSingle
-				label="Gender"
-				value={account.gender === 'm' ? 'Male' : 'Female'}
-			/>
-			<DetailsSingle label="Birthday" value={formatDate(account.birthday)} />
-			<DetailsSingle label="TIN" value={account.tin} />
+export const ViewAccountModal = ({ account, onClose }: Props) => {
+	const getTypeName = (type) => {
+		let typeName = '';
+		switch (type) {
+			case accountTypes.PERSONAL:
+				typeName = 'Personal';
+				break;
+			case accountTypes.CORPORATE:
+				typeName = 'Corporate';
+				break;
+			case accountTypes.EMPLOYEE:
+				typeName = 'Employee';
+				break;
+			case accountTypes.GOVERNMENT:
+				typeName = 'Government';
+				break;
+		}
 
-			{employers.includes(account.type) && (
-				<>
-					<DetailsSingle
-						label={
-							account.type == accountTypes.CORPORATE
-								? 'Business Name'
-								: 'Agency Name'
-						}
-						value={account.business_name}
-					/>
-					<DetailsSingle
-						label={
-							account.type == accountTypes.CORPORATE
-								? 'Address (Business)'
-								: 'Address (Agency)'
-						}
-						value={account.business_address}
-					/>
-				</>
-			)}
+		return typeName;
+	};
+	return (
+		<Modal
+			className="Modal__hasFooter"
+			title="View Account"
+			footer={[<Button text="Close" onClick={onClose} />]}
+			onCancel={onClose}
+			visible
+			centered
+			closable
+		>
+			<DetailsRow>
+				<DetailsSingle label="Type" value={getTypeName(account.type)} />
+				<DetailsSingle label="First Name" value={account.first_name} />
+				<DetailsSingle label="Middle Name" value={account.middle_name} />
+				<DetailsSingle label="Last Name" value={account.last_name} />
+				<DetailsSingle
+					label="Gender"
+					value={account.gender === 'm' ? 'Male' : 'Female'}
+				/>
+				<DetailsSingle label="Birthday" value={formatDate(account.birthday)} />
+				<DetailsSingle label="TIN" value={account.tin} />
 
-			<DetailsSingle label="Address (Home)" value={account.home_address} />
-			<DetailsSingle label="Contact Number" value={account.contact_number} />
-			<DetailsSingle
-				label="Date of Registration"
-				value={formatDate(account.datetime_created)}
-			/>
-		</DetailsRow>
-	</Modal>
-);
+				{employers.includes(account.type) && (
+					<>
+						<DetailsSingle
+							label={
+								account.type == accountTypes.CORPORATE
+									? 'Business Name'
+									: 'Agency Name'
+							}
+							value={account.business_name}
+						/>
+						<DetailsSingle
+							label={
+								account.type == accountTypes.CORPORATE
+									? 'Address (Business)'
+									: 'Address (Agency)'
+							}
+							value={account.business_address}
+						/>
+					</>
+				)}
+
+				<DetailsSingle label="Address (Home)" value={account.home_address} />
+				<DetailsSingle label="Contact Number" value={account.contact_number} />
+				<DetailsSingle
+					label="Date of Registration"
+					value={formatDate(account.datetime_created)}
+				/>
+			</DetailsRow>
+		</Modal>
+	);
+};

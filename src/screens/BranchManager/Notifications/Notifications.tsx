@@ -35,9 +35,14 @@ export const Notifications = () => {
 					.map((salesTracker) => (
 						<Alert
 							message="Sales Tracker"
-							description={`Current sales tracker value is ${formatInPeso(
-								salesTracker.total_sales,
-							)}, please reset as soon as possible.`}
+							description={
+								<span>
+									Current sales tracker value in{' '}
+									<b>{salesTracker.branch_machine.name}</b> is{' '}
+									<b>{formatInPeso(salesTracker.total_sales)}</b>. Please reset
+									as soon as possible.
+								</span>
+							}
 							type="warning"
 							showIcon
 						/>
