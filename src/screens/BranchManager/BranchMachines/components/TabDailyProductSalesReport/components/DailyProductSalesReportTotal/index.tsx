@@ -27,7 +27,7 @@ export const DailyProductSalesReportTotal = ({
 			</Col>
 			<Col span={24} md={8}>
 				<Statistic
-					title="Total Vat Exmpt Sales"
+					title="Total Vat Exempt Sales"
 					value={formatInPeso(totalVatExemptSales)}
 				/>
 			</Col>
