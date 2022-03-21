@@ -96,11 +96,11 @@ export const TabOrderOfPayments = () => {
 				address: payor.home_address,
 				amount_of_payment: formatInPeso(amount),
 				purpose: purposeDescription,
-				charge_sales_invoice: charge_sales_transaction ? (
+				charge_sales_invoice: charge_sales_transaction?.invoice ? (
 					<>
 						<Button
 							type="link"
-							onClick={() => setSelectedTransaction(orderOfPayment)}
+							onClick={() => setSelectedTransaction(charge_sales_transaction)}
 						>
 							{charge_sales_transaction.invoice.or_number}
 						</Button>

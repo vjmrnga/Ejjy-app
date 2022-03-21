@@ -101,7 +101,7 @@ export const CreateOrderOfPaymentForm = ({
 				amount: '',
 				purpose: '',
 				purposeOthers: '',
-				chargeSalesInvoice: transaction?.id,
+				chargeSalesTransactionId: transaction?.id,
 			},
 			schema: Yup.object().shape(
 				{
@@ -112,7 +112,7 @@ export const CreateOrderOfPaymentForm = ({
 						is: orderOfPaymentPurposes.OTHERS,
 						then: Yup.string().required().label('Purpose Description'),
 					}),
-					chargeSalesInvoice: Yup.string().nullable(),
+					chargeSalesTransactionId: Yup.string().nullable(),
 				},
 				[],
 			),
@@ -233,12 +233,12 @@ export const CreateOrderOfPaymentForm = ({
 
 						<Col span={24}>
 							<FormInputLabel
-								id="chargeSalesInvoice"
+								id="chargeSalesTransactionId"
 								label="Charge Sales Invoice # (Optional)"
 								disabled={transaction !== null}
 							/>
 							<ErrorMessage
-								name="chargeSalesInvoice"
+								name="chargeSalesTransactionId"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
