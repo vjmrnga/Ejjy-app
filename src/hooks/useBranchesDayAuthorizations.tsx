@@ -49,7 +49,7 @@ export const useBranchesDayAuthorizationsRetrieve = ({ branchId }) => {
 			);
 		},
 		{
-			select: (query) => query.data,
+			select: (query) => query?.data,
 		},
 	);
 };
