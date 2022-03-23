@@ -40,7 +40,7 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	// METHODS
 	useEffect(() => {
 		let products = backOrder.products || [];
-		if (backOrderRetrieved) {
+		if (backOrderRetrieved?.products) {
 			products = backOrderRetrieved.products || [];
 		}
 

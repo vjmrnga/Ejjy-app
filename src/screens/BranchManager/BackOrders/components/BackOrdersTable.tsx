@@ -53,7 +53,6 @@ export const BackOrdersTable = ({
 	}, []);
 
 	useEffect(() => {
-		console.log('backOrders', backOrders);
 		const formattedBackOrders = backOrders.map((backOrder) => ({
 			key: backOrder.id,
 			id: (
