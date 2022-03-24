@@ -6,17 +6,24 @@ import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
 import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { debounce } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getFullName, sleep } from 'utils/function';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatInPeso,
+	getFullName,
+	sleep,
+} from 'utils/function';
 import * as Yup from 'yup';
 
 interface ModalProps {
+	payor: any;
 	transaction?: any;
 	onSuccess: any;
 	onClose: any;
 }
 
 export const CreateOrderOfPaymentModal = ({
+	payor,
 	transaction,
 	onSuccess,
 	onClose,
@@ -61,6 +68,7 @@ export const CreateOrderOfPaymentModal = ({
 			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<CreateOrderOfPaymentForm
+				payor={payor}
 				transaction={transaction}
 				loading={isLoading}
 				onSubmit={onCreate}
@@ -71,6 +79,7 @@ export const CreateOrderOfPaymentModal = ({
 };
 
 interface FormProps {
+	payor: any;
 	transaction?: any;
 	loading: boolean;
 	onSubmit: any;
@@ -78,6 +87,7 @@ interface FormProps {
 }
 
 export const CreateOrderOfPaymentForm = ({
+	payor,
 	transaction,
 	loading,
 	onSubmit,
@@ -86,6 +96,7 @@ export const CreateOrderOfPaymentForm = ({
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [accountSearch, setAccountSearch] = useState('');
+	const [maxAmount, setMaxAmount] = useState(0);
 
 	// CUSTOM HOOKS
 	const {
@@ -94,20 +105,28 @@ export const CreateOrderOfPaymentForm = ({
 	} = useAccounts({ params: { search: accountSearch } });
 
 	// METHODS
+	useEffect(() => {
+		const amount = Number(transaction?.total_amount || payor?.total_balance);
+
+		if (amount) {
+			setMaxAmount(amount);
+		}
+	}, [payor, transaction]);
+
 	const getFormDetails = useCallback(
 		() => ({
 			defaultValues: {
-				payorId: '',
-				amount: '',
-				purpose: '',
+				payorId: payor.account.id,
+				amount: transaction?.total_amount || '',
+				purpose: transaction ? orderOfPaymentPurposes.FULL_PAYMENT : null,
 				purposeOthers: '',
 				chargeSalesTransactionId: transaction?.id,
 			},
 			schema: Yup.object().shape(
 				{
 					payorId: Yup.number().required().label('Payor'),
-					amount: Yup.number().required().label('Amount'),
-					purpose: Yup.string().required().label('Purpose'),
+					amount: Yup.number().required().min(1).max(maxAmount).label('Amount'),
+					purpose: Yup.string().required().nullable().label('Purpose'),
 					purposeOthers: Yup.string().when('purpose', {
 						is: orderOfPaymentPurposes.OTHERS,
 						then: Yup.string().required().label('Purpose Description'),
@@ -117,7 +136,7 @@ export const CreateOrderOfPaymentForm = ({
 				[],
 			),
 		}),
-		[transaction],
+		[maxAmount, transaction],
 	);
 
 	const onSearchDebounced = useCallback(
@@ -155,6 +174,7 @@ export const CreateOrderOfPaymentForm = ({
 								onChange={(value) => {
 									setFieldValue('payorId', value);
 								}}
+								disabled={payor !== null}
 								showSearch
 							>
 								{accounts.map((account) => (
@@ -170,7 +190,11 @@ export const CreateOrderOfPaymentForm = ({
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel type="number" id="amount" label="Amount" />
+							<FormInputLabel
+								type="number"
+								id="amount"
+								label={`Amount (Total: ${formatInPeso(maxAmount)})`}
+							/>
 							<ErrorMessage
 								name="amount"
 								render={(error) => <FieldError error={error} />}
@@ -249,7 +273,6 @@ export const CreateOrderOfPaymentForm = ({
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							classNames="mr-10"
 							disabled={loading || isSubmitting}
 						/>
 						<Button

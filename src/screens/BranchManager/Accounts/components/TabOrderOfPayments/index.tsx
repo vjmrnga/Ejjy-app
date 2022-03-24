@@ -43,7 +43,6 @@ export const TabOrderOfPayments = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
-	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// NOTE: Will store the ID of the order of payment that is about to be printed.
 	const [isPrinting, setIsPrinting] = useState(null);
@@ -63,7 +62,6 @@ export const TabOrderOfPayments = () => {
 	});
 	const {
 		data: { orderOfPayments, total },
-		refetch: refetchOrderOfPayments,
 		isFetching,
 		error,
 	} = useOrderOfPayments({ params: queryParams });
@@ -154,11 +152,7 @@ export const TabOrderOfPayments = () => {
 
 	return (
 		<div>
-			<TableHeader
-				title="Order of Payments"
-				buttonName="Create Order of Payment"
-				onCreate={() => setIsCreateModalVisible(true)}
-			/>
+			<TableHeader title="Order of Payments" />
 
 			<Filter
 				params={queryParams}
@@ -195,13 +189,6 @@ export const TabOrderOfPayments = () => {
 				<ViewTransactionModal
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
-				/>
-			)}
-
-			{isCreateModalVisible && (
-				<CreateOrderOfPaymentModal
-					onSuccess={refetchOrderOfPayments}
-					onClose={() => setIsCreateModalVisible(false)}
 				/>
 			)}
 		</div>

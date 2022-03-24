@@ -18,7 +18,7 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import { useTimeRange } from 'hooks/useTimeRange';
 import _, { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AccountTotalBalance } from 'screens/BranchManager/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
 import { accountTabs } from 'screens/BranchManager/Accounts/data';
 import {
@@ -29,16 +29,6 @@ import {
 } from 'utils/function';
 import '../../style.scss';
 
-const columns: ColumnsType = [
-	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Client Code', dataIndex: 'clientCode' },
-	{ title: 'Invoice Number', dataIndex: 'invoiceNumber' },
-	{ title: 'Amount', dataIndex: 'amount' },
-	{ title: 'Cashier', dataIndex: 'cashier' },
-	{ title: 'Authorizer', dataIndex: 'authorizer' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
-
 export const TabCreditTransactions = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
@@ -46,6 +36,10 @@ export const TabCreditTransactions = () => {
 	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [selectedCreditTransaction, setSelectedCreditTransaction] =
 		useState(null);
+	const [
+		isCreateOrderOfPaymentModalVisible,
+		setIsCreateOrderOfPaymentModalVisible,
+	] = useState(false);
 	const [payor, setPayor] = useState(null);
 
 	// CUSTOM HOOKS
@@ -104,13 +98,35 @@ export const TabCreditTransactions = () => {
 		});
 
 		setDataSource(formattedTransactions);
-	}, [transactions]);
+	}, [transactions, payor]);
 
 	useEffect(() => {
 		if (queryParams.payor) {
 			setPayor(JSON.parse(_.toString(queryParams.payor)));
 		}
 	}, [queryParams.payor]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Date & Time', dataIndex: 'datetime' },
+			{ title: 'Client Code', dataIndex: 'clientCode' },
+			{ title: 'Invoice Number', dataIndex: 'invoiceNumber' },
+			{ title: 'Amount', dataIndex: 'amount' },
+			{ title: 'Cashier', dataIndex: 'cashier' },
+			{ title: 'Authorizer', dataIndex: 'authorizer' },
+		];
+
+		if (payor) {
+			columns.push({
+				title: 'Actions',
+				dataIndex: 'actions',
+				width: 150,
+				fixed: 'right',
+			});
+		}
+
+		return columns;
+	}, [payor]);
 
 	const onCreateOrderOfPaymentsSuccess = () => {
 		setQueryParams(
@@ -127,6 +143,7 @@ export const TabCreditTransactions = () => {
 				<AccountTotalBalance
 					account={payor.account}
 					totalBalance={payor.total_balance}
+					onClick={() => setIsCreateOrderOfPaymentModalVisible(true)}
 				/>
 			)}
 
@@ -141,7 +158,7 @@ export const TabCreditTransactions = () => {
 			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
 				scroll={{ x: 1000 }}
 				pagination={{
@@ -175,11 +192,15 @@ export const TabCreditTransactions = () => {
 				/>
 			)}
 
-			{selectedCreditTransaction && (
+			{(selectedCreditTransaction || isCreateOrderOfPaymentModalVisible) && (
 				<CreateOrderOfPaymentModal
+					payor={payor}
 					transaction={selectedCreditTransaction}
 					onSuccess={onCreateOrderOfPaymentsSuccess}
-					onClose={() => setSelectedCreditTransaction(null)}
+					onClose={() => {
+						setSelectedCreditTransaction(null);
+						setIsCreateOrderOfPaymentModalVisible(false);
+					}}
 				/>
 			)}
 		</div>

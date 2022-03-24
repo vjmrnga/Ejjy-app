@@ -61,7 +61,6 @@ export const SettingUrlForm = ({
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							classNames="mr-10"
 							disabled={isSubmitting}
 						/>
 						<Button

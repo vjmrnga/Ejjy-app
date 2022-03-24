@@ -139,7 +139,6 @@ export const EditBranchProductsForm = ({
 						type="button"
 						text="Cancel"
 						onClick={onClose}
-						classNames="mr-10"
 						disabled={loading || isSubmitting}
 					/>
 					<Button

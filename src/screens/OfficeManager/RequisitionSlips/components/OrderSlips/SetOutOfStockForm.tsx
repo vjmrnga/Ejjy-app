@@ -71,7 +71,6 @@ export const SetOutOfStockForm = ({
 						type="button"
 						text="Cancel"
 						onClick={onClose}
-						classNames="mr-10"
 						disabled={loading || isSubmitting}
 					/>
 					<Button
