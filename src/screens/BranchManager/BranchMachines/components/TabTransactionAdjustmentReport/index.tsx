@@ -1,4 +1,4 @@
-import { Col, Row, Table } from 'antd';
+import { Col, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -79,25 +79,26 @@ export const TabTransactionAdjustmentReport = ({
 	// METHODS
 	useEffect(() => {
 		const data = transactions.map((transaction) => {
-			let remarks = null;
-			if (transaction.adjustment_remarks.back_order) {
-				const backOrder = transaction.adjustment_remarks.back_order;
-				remarks = (
-					<ButtonLink
-						text={backOrder.id}
-						onClick={() => setSelectedBackOrder(backOrder.id)}
-					/>
-				);
-			} else if (transaction.adjustment_remarks.previous_voided_transaction) {
-				const voidedTransaction =
-					transaction.adjustment_remarks.previous_voided_transaction;
-				remarks = (
-					<ButtonLink
-						text={voidedTransaction.invoice.or_number}
-						onClick={() => setSelectedTransaction(voidedTransaction.id)}
-					/>
-				);
-			}
+			const backOrder = transaction?.adjustment_remarks?.back_order;
+			const voidedTransaction =
+				transaction?.adjustment_remarks?.previous_voided_transaction;
+
+			const remarks = (
+				<Space direction="vertical">
+					{backOrder && (
+						<ButtonLink
+							text={`Back Order - ${backOrder.id}`}
+							onClick={() => setSelectedBackOrder(backOrder.id)}
+						/>
+					)}
+					{voidedTransaction && (
+						<ButtonLink
+							text={`Invoice - ${voidedTransaction.invoice.or_number}`}
+							onClick={() => setSelectedTransaction(voidedTransaction.id)}
+						/>
+					)}
+				</Space>
+			);
 
 			return {
 				key: transaction.id,

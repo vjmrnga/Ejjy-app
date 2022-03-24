@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.80",
+	"version": "0.1.81",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -19,7 +19,8 @@
 		"postinstall": "electron-builder install-app-deps",
 		"publish": "npm version patch --no-git-tag-version && npm run build:local && electron-builder -w -p always",
 		"server": "cd ../ejjy-api; poetry run python manage.py runserver 0.0.0.0:8000",
-		"server:branch": "concurrently \"npm run server\" \"cd ../ejjy-app-cashiering/api && poetry run python manage.py runserver 8001\""
+		"server:branch": "concurrently \"npm run server\" \"cd ../ejjy-app-cashiering/api && poetry run python manage.py runserver 8001\"",
+		"start": "concurrently \"npm run server:branch\" \"npm start:local\""
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
