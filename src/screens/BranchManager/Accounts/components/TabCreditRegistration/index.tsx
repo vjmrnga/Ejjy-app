@@ -1,34 +1,32 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
 import {
 	RequestErrors,
 	TableActions,
 	TableHeader,
 	ViewAccountModal,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
-import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { useCreditRegistrations } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
+} from 'components';
+import { ModifyCreditRegistrationModal } from 'components/';
+import { Label } from 'components/elements';
+import { pageSizeOptions, SEARCH_DEBOUNCE_TIME } from 'global';
+import { useCreditRegistrations, useQueryParams } from 'hooks';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import { accountTabs } from 'screens/BranchManager/Accounts/data';
 import {
 	convertIntoArray,
 	formatDate,
 	formatInPeso,
 	getFullName,
-} from '../../../../../utils/function';
-import { CreateCreditRegistrationModal } from './CreateCreditRegistrationModal';
-import { accountTabs } from 'screens/BranchManager/Accounts/data';
+} from 'utils/function';
 
 const columns: ColumnsType = [
-	{ title: 'Client Code', dataIndex: 'client_code' },
-	{ title: 'Client Name', dataIndex: 'client_name' },
-	{ title: 'Credit Limit', dataIndex: 'credit_limit' },
-	{ title: 'Total Balance', dataIndex: 'total_balance' },
-	{ title: 'Date of Registration', dataIndex: 'datetime_created' },
+	{ title: 'Client Code', dataIndex: 'clientCode' },
+	{ title: 'Client Name', dataIndex: 'clientName' },
+	{ title: 'Credit Limit', dataIndex: 'creditLimit' },
+	{ title: 'Total Balance', dataIndex: 'totalBalance' },
+	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -36,6 +34,8 @@ export const TabCreditRegistrations = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
+	const [selectedCreditRegistration, setSelectedCreditRegistration] =
+		useState(null);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
@@ -54,15 +54,15 @@ export const TabCreditRegistrations = () => {
 
 			return {
 				key: id,
-				client_code: (
+				clientCode: (
 					<Button type="link" onClick={() => setSelectedAccount(account)}>
 						{account.id}
 					</Button>
 				),
-				client_name: getFullName(account),
-				credit_limit: formatInPeso(credit_limit),
-				total_balance: formatInPeso(total_balance),
-				datetime_created: formatDate(account.datetime_created),
+				clientName: getFullName(account),
+				creditLimit: formatInPeso(credit_limit),
+				totalBalance: formatInPeso(total_balance),
+				datetimeCreated: formatDate(account.datetime_created),
 				actions: (
 					<TableActions
 						onView={() =>
@@ -75,6 +75,9 @@ export const TabCreditRegistrations = () => {
 							)
 						}
 						onViewName="View Credit Transactions"
+						onEdit={() => {
+							setSelectedCreditRegistration(creditRegistration);
+						}}
 					/>
 				),
 			};
@@ -128,10 +131,14 @@ export const TabCreditRegistrations = () => {
 				/>
 			)}
 
-			{isCreateModalVisible && (
-				<CreateCreditRegistrationModal
+			{(isCreateModalVisible || selectedCreditRegistration) && (
+				<ModifyCreditRegistrationModal
+					creditRegistration={selectedCreditRegistration}
 					onSuccess={refetchCreditRegistrations}
-					onClose={() => setIsCreateModalVisible(false)}
+					onClose={() => {
+						setIsCreateModalVisible(false);
+						setSelectedCreditRegistration(null);
+					}}
 				/>
 			)}
 		</div>

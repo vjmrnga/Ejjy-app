@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-interface IList extends IListRequest {
+interface List extends IListRequest {
 	type?: string;
 }
 
-interface IModify {
+interface Modify {
 	first_name: string;
 	middle_name?: string;
 	last_name: string;
@@ -20,11 +20,14 @@ interface IModify {
 }
 
 const service = {
-	list: async (params: IList, baseURL: string) =>
+	list: async (params: List, baseURL: string) =>
 		axios.get('/accounts/', { baseURL, params }),
 
-	create: async (body: IModify, baseURL: string) =>
+	create: async (body: Modify, baseURL: string) =>
 		axios.post('/accounts/', body, { baseURL }),
+
+	edit: async (id: number, body: Modify, baseURL: string) =>
+		axios.patch(`/accounts/${id}/`, body, { baseURL }),
 };
 
 export default service;

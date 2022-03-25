@@ -1,9 +1,10 @@
+import { IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { IS_APP_LIVE } from '../global/constants';
-import { CreditRegistrationsService, ONLINE_API_URL } from '../services';
-import { getLocalIpAddress } from '../utils/function';
+import { CreditRegistrationsService, ONLINE_API_URL } from 'services';
+import { getLocalIpAddress } from 'utils/function';
 
-const useCreditRegistrations = ({ params }) =>
+const useCreditRegistrations = ({ params }: Query = {}) =>
 	useQuery<any>(
 		['useCreditRegistrations', params.page, params.pageSize, params.search],
 		() =>
@@ -24,17 +25,26 @@ const useCreditRegistrations = ({ params }) =>
 		},
 	);
 
-export const useCreditRegistrationsCreate = (options = {}) =>
-	useMutation(
-		({ accountId, creditLimit }: any) =>
-			CreditRegistrationsService.create(
-				{
-					account_id: accountId,
-					credit_limit: creditLimit,
-				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
-			),
-		options,
+export const useCreditRegistrationsCreate = () =>
+	useMutation(({ accountId, creditLimit }: any) =>
+		CreditRegistrationsService.create(
+			{
+				account_id: accountId,
+				credit_limit: creditLimit,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
+	);
+
+export const useCreditRegistrationsEdit = () =>
+	useMutation(({ id, creditLimit }: any) =>
+		CreditRegistrationsService.edit(
+			id,
+			{
+				credit_limit: creditLimit,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
 	);
 
 export default useCreditRegistrations;

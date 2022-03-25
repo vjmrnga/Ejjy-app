@@ -25,7 +25,7 @@ const useAccounts = ({ params }) =>
 		},
 	);
 
-export const useAccountsCreate = (options = {}) =>
+export const useAccountsCreate = () =>
 	useMutation(
 		({
 			firstName,
@@ -56,7 +56,41 @@ export const useAccountsCreate = (options = {}) =>
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),
-		options,
+	);
+
+export const useAccountsEdit = () =>
+	useMutation(
+		({
+			id,
+			firstName,
+			middleName,
+			lastName,
+			businessName,
+			birthday,
+			tin,
+			businessAddress,
+			homeAddress,
+			contactNumber,
+			gender,
+			type,
+		}: any) =>
+			AccountsService.edit(
+				id,
+				{
+					first_name: firstName,
+					middle_name: middleName,
+					last_name: lastName,
+					business_name: businessName,
+					birthday,
+					tin,
+					business_address: businessAddress,
+					home_address: homeAddress,
+					contact_number: contactNumber,
+					gender,
+					type,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
 	);
 
 export default useAccounts;

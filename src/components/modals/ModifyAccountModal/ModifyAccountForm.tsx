@@ -1,80 +1,81 @@
 import { Col, DatePicker, Divider, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import moment from 'moment';
+import React, { useCallback } from 'react';
 import * as Yup from 'yup';
+import { accountTypes } from '../../../global/types';
 import {
 	Button,
 	FieldError,
 	FormInputLabel,
 	FormRadioButton,
 	Label,
-} from '../../../../../components/elements';
-import { accountTypes } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
-
-const formDetails = {
-	defaultValues: {
-		type: accountTypes.PERSONAL,
-		firstName: '',
-		middleName: undefined,
-		lastName: '',
-		birthday: null,
-		tin: '',
-		businessName: undefined,
-		homeAddress: '',
-		businessAddress: undefined,
-		contactNumber: '',
-		gender: '',
-	},
-	schema: Yup.object().shape(
-		{
-			type: Yup.string().required().label('Type'),
-			firstName: Yup.string().required().label('First Name'),
-			middleName: Yup.string().nullable().label('Middle Name'),
-			lastName: Yup.string().required().label('Last Name'),
-			birthday: Yup.date().nullable().required().label('Birthday'),
-			tin: Yup.string().required().label('TIN'),
-			businessName: Yup.string()
-				.nullable()
-				.when('type', {
-					is: (type) =>
-						[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-					then: Yup.string().required().label('Business Name'),
-				}),
-			homeAddress: Yup.string().required().label('Address (Home)'),
-			businessAddress: Yup.string()
-				.nullable()
-				.when('type', {
-					is: (type) =>
-						[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-					then: Yup.string().required().label('Address (Business)'),
-				}),
-			contactNumber: Yup.string().required().label('Contact Number'),
-			gender: Yup.string().required().label('Gender'),
-		},
-		[],
-	),
-};
+} from '../../elements';
 
 interface Props {
+	account?: any;
 	loading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
-export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
-	// STATES
-	const [isSubmitting, setSubmitting] = useState(false);
+export const ModifyAccountForm = ({
+	account,
+	loading,
+	onSubmit,
+	onClose,
+}: Props) => {
+	console.log('account', account);
+	// METHODS
+	const getFormDetails = useCallback(
+		() => ({
+			defaultValues: {
+				type: account?.type || accountTypes.PERSONAL,
+				firstName: account?.first_name || '',
+				middleName: account?.middle_name || undefined,
+				lastName: account?.last_name || '',
+				birthday: account?.birthday ? moment(account?.birthday) : null,
+				tin: account?.tin || '',
+				businessName: account?.business_name || undefined,
+				homeAddress: account?.home_address || '',
+				businessAddress: account?.business_address || undefined,
+				contactNumber: account?.contact_number || '',
+				gender: account?.gender || '',
+			},
+			schema: Yup.object().shape({
+				type: Yup.string().required().label('Type'),
+				firstName: Yup.string().required().label('First Name'),
+				middleName: Yup.string().nullable().label('Middle Name'),
+				lastName: Yup.string().required().label('Last Name'),
+				birthday: Yup.date().nullable().required().label('Birthday'),
+				tin: Yup.string().required().label('TIN'),
+				businessName: Yup.string()
+					.nullable()
+					.when('type', {
+						is: (type) =>
+							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
+						then: Yup.string().required().label('Business Name'),
+					}),
+				homeAddress: Yup.string().required().label('Address (Home)'),
+				businessAddress: Yup.string()
+					.nullable()
+					.when('type', {
+						is: (type) =>
+							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
+						then: Yup.string().required().label('Address (Business)'),
+					}),
+				contactNumber: Yup.string().required().label('Contact Number'),
+				gender: Yup.string().required().label('Gender'),
+			}),
+		}),
+		[account],
+	);
 
 	return (
 		<Formik
-			initialValues={formDetails.defaultValues}
-			validationSchema={formDetails.schema}
-			onSubmit={async (formData) => {
-				setSubmitting(true);
-				await sleep(500);
-				setSubmitting(false);
-
+			initialValues={getFormDetails().defaultValues}
+			validationSchema={getFormDetails().schema}
+			onSubmit={(formData) => {
 				onSubmit({
 					...formData,
 					middleName: formData.middleName || undefined,
@@ -278,13 +279,13 @@ export const CreateAccountForm = ({ loading, onSubmit, onClose }: Props) => {
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							disabled={loading || isSubmitting}
+							disabled={loading}
 						/>
 						<Button
 							type="submit"
 							text="Create"
 							variant="primary"
-							loading={loading || isSubmitting}
+							loading={loading}
 						/>
 					</div>
 				</Form>

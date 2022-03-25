@@ -1,40 +1,36 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
 import {
+	ModifyAccountModal,
 	RequestErrors,
+	TableActions,
 	TableHeader,
 	ViewAccountModal,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
-import { SEARCH_DEBOUNCE_TIME } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { accountTypes } from '../../../../../global/types';
-import { useAccounts } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
-import {
-	convertIntoArray,
-	formatDate,
-	getFullName,
-} from '../../../../../utils/function';
+} from 'components';
+import { Label } from 'components/elements';
+import { accountTypes, pageSizeOptions, SEARCH_DEBOUNCE_TIME } from 'global';
+import { useAccounts, useQueryParams } from 'hooks';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import { convertIntoArray, formatDate, getFullName } from 'utils/function';
 import '../../style.scss';
-import { CreateAccountModal } from './CreateAccountModal';
 
 const columns: ColumnsType = [
-	{ title: 'Client Code', dataIndex: 'client_code' },
+	{ title: 'Client Code', dataIndex: 'clientCode' },
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Address (Home)', dataIndex: 'home_address' },
-	{ title: 'Address (Business)', dataIndex: 'business_address' },
-	{ title: 'Contact #', dataIndex: 'contact_number' },
-	{ title: 'Date of Registration', dataIndex: 'datetime_created' },
+	{ title: 'Address (Home)', dataIndex: 'homeAddress' },
+	{ title: 'Address (Business)', dataIndex: 'businessAddress' },
+	{ title: 'Contact #', dataIndex: 'contactNumber' },
+	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const TabAccounts = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [selectedAccount, setSelectedAccount] = useState(false);
+	const [selectedAccount, setSelectedAccount] = useState(null);
+	const [selectedAccountEdit, setSelectedAccountEdit] = useState(null);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
@@ -49,16 +45,24 @@ export const TabAccounts = () => {
 	// METHODS
 	useEffect(() => {
 		const data = accounts.map((account) => ({
-			client_code: (
+			key: account.id,
+			clientCode: (
 				<Button type="link" onClick={() => setSelectedAccount(account)}>
 					{account.id}
 				</Button>
 			),
 			name: getFullName(account),
-			home_address: account.home_address,
-			business_address: account.business_address,
-			contact_number: account.contact_number,
-			datetime_created: formatDate(account.datetime_created),
+			homeAddress: account.home_address,
+			businessAddress: account.business_address,
+			contactNumber: account.contact_number,
+			datetimeCreated: formatDate(account.datetime_created),
+			actions: (
+				<TableActions
+					onEdit={() => {
+						setSelectedAccountEdit(account);
+					}}
+				/>
+			),
 		}));
 
 		setDataSource(data);
@@ -109,10 +113,14 @@ export const TabAccounts = () => {
 				/>
 			)}
 
-			{isCreateModalVisible && (
-				<CreateAccountModal
+			{(isCreateModalVisible || selectedAccountEdit) && (
+				<ModifyAccountModal
+					account={selectedAccountEdit}
 					onSuccess={refetchAccounts}
-					onClose={() => setIsCreateModalVisible(false)}
+					onClose={() => {
+						setIsCreateModalVisible(false);
+						setSelectedAccountEdit(null);
+					}}
 				/>
 			)}
 		</div>
