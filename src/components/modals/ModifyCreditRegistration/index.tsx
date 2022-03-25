@@ -43,10 +43,10 @@ export const ModifyCreditRegistrationModal = ({
 				id: creditRegistration.id,
 				...formData,
 			});
-			message.success('Credit registration was edited sucessfully.');
+			message.success('Credit account was edited sucessfully.');
 		} else {
 			await createCreditRegistration(formData);
-			message.success('Credit registration was created sucessfully.');
+			message.success('Credit account was created sucessfully.');
 		}
 
 		onSuccess();
@@ -55,8 +55,7 @@ export const ModifyCreditRegistrationModal = ({
 
 	return (
 		<Modal
-			className="CreateCreditRegistrationModal"
-			title="[Create] Credit Registration"
+			title="[Create] Credit Account"
 			footer={null}
 			onCancel={onClose}
 			visible

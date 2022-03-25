@@ -89,8 +89,8 @@ export const TabCreditRegistrations = () => {
 	return (
 		<div>
 			<TableHeader
-				title="Credit Registrations"
-				buttonName="Create Credit Registration"
+				title="Credit Account"
+				buttonName="Create Credit Account"
 				onCreate={() => setIsCreateModalVisible(true)}
 			/>
 

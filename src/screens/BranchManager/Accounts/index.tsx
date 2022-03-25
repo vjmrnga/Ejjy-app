@@ -50,8 +50,8 @@ export const Accounts = () => {
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
-						key={accountTabs.CREDIT_REGISTRATIONS}
-						tab={accountTabs.CREDIT_REGISTRATIONS}
+						key={accountTabs.CREDIT_ACCOUNTS}
+						tab={accountTabs.CREDIT_ACCOUNTS}
 					>
 						<TabCreditRegistrations />
 					</Tabs.TabPane>
