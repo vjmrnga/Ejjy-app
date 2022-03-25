@@ -8,7 +8,7 @@ import { Query } from './inteface';
 
 const useTransactions = ({ params }: Query) => {
 	let baseURL = useSelector(
-		branchesSelectors.selectURLByBranchId(params.branchId),
+		branchesSelectors.selectURLByBranchId(params?.branchId),
 	);
 
 	return useQuery<any>(

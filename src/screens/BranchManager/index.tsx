@@ -8,7 +8,7 @@ import {
 	SALES_TRACKER_NOTIFICATION_THRESHOLD,
 } from '../../global/constants';
 import { request } from '../../global/types';
-import { useSalesTracker } from '../../hooks';
+import { useSalesTracker, useSiteSettingsRetrieve } from '../../hooks';
 import { useBranches } from '../../hooks/useBranches';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
@@ -26,7 +26,7 @@ import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
-import { SiteSettings } from './SiteSettings/SiteSettings';
+import { SiteSettings } from './SiteSettings';
 import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
@@ -36,6 +36,13 @@ const BranchManager = () => {
 
 	// CUSTOM HOOKS
 	const { getBranches, status: getBranchesStatus } = useBranches();
+	const { data: siteSettings } = useSiteSettingsRetrieve({
+		options: {
+			refetchInterval: 60000,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: ['data'],
+		},
+	});
 	const {
 		data: { salesTrackers },
 	} = useSalesTracker({
@@ -58,15 +65,31 @@ const BranchManager = () => {
 	}, []);
 
 	useEffect(() => {
-		const salesTrackersCount = salesTrackers.filter(
-			({ total_sales }) =>
-				Number(total_sales) >= SALES_TRACKER_NOTIFICATION_THRESHOLD,
-		).length;
+		if (siteSettings) {
+			const resetCounterNotificationThresholdAmount =
+				siteSettings?.reset_counter_notification_threshold_amount;
+			const resetCounterNotificationThresholdInvoiceNumber =
+				siteSettings?.reset_counter_notification_threshold_invoice_number;
 
-		if (salesTrackersCount != notificationsCount) {
-			setNotificationsCount(salesTrackersCount);
+			// Reset counter
+			const resetCount = salesTrackers.filter(
+				({ total_sales }) =>
+					Number(total_sales) >= resetCounterNotificationThresholdAmount,
+			).length;
+
+			// Transaction count
+			const transactionCount = salesTrackers.filter(
+				({ transaction_count }) =>
+					Number(transaction_count) >=
+					resetCounterNotificationThresholdInvoiceNumber,
+			).length;
+
+			const newNotificationsCount = resetCount + transactionCount;
+			if (newNotificationsCount != notificationsCount) {
+				setNotificationsCount(newNotificationsCount);
+			}
 		}
-	}, [salesTrackers]);
+	}, [salesTrackers, siteSettings]);
 
 	const getSidebarItems = useCallback(
 		() => [

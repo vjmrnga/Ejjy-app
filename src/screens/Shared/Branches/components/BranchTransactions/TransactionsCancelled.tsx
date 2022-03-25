@@ -1,19 +1,17 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Spin } from 'antd';
+import { CashieringCard, RequestErrors } from 'components';
+import { Box, Button } from 'components/elements';
+import { printCancelledTransactions } from 'configurePrinter';
+import { MAX_PAGE_SIZE } from 'global';
+import { useSiteSettingsRetrieve, useTransactions } from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
-import { CashieringCard, RequestErrors } from '../../../../../components';
-import { Box, Button } from '../../../../../components/elements';
-import { printCancelledTransactions } from '../../../../../configurePrinter';
-import { MAX_PAGE_SIZE } from '../../../../../global/constants';
-import { request } from '../../../../../global/types';
-import { useTransactions } from '../../../../../hooks';
-import { useAuth } from '../../../../../hooks/useAuth';
-import { useSiteSettings } from '../../../../../hooks/useSiteSettings';
 import {
 	convertIntoArray,
 	formatInPeso,
 	isUserFromBranch,
-} from '../../../../../utils/function';
+} from 'utils/function';
 
 interface Props {
 	branchId?: string;
@@ -37,7 +35,7 @@ export const TransactionsCancelled = ({
 	const {
 		data: { transactions },
 		isFetching: isTransactionsFetching,
-		error: transactionsErrors,
+		error: transactionsError,
 	} = useTransactions({
 		params: {
 			timeRange,
@@ -48,7 +46,13 @@ export const TransactionsCancelled = ({
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
-	const { getSiteSettings, errors: siteSettingsErrors } = useSiteSettings();
+	const {
+		data: siteSettings,
+		isFetching: isSiteSettingsFetching,
+		error: siteSettingsError,
+	} = useSiteSettingsRetrieve({
+		params: { branchId },
+	});
 
 	useEffect(() => {
 		const totalAmount = transactions.reduce(
@@ -62,32 +66,27 @@ export const TransactionsCancelled = ({
 
 	const onPrint = () => {
 		setIsPrinting(true);
-		getSiteSettings({ branchId }, ({ status, data: siteSettings }) => {
-			if (status === request.SUCCESS) {
-				printCancelledTransactions({
-					filterStatus: statuses,
-					filterRange: timeRange,
-					amount,
-					transactions,
-					siteSettings,
-					onComplete: () => {
-						setIsPrinting(false);
-					},
-				});
-			} else if (status === request.ERROR) {
+
+		printCancelledTransactions({
+			filterStatus: statuses,
+			filterRange: timeRange,
+			amount,
+			transactions,
+			siteSettings,
+			onComplete: () => {
 				setIsPrinting(false);
-			}
+			},
 		});
 	};
 
 	return (
 		<Box className="TransactionsCancelled">
-			<Spin spinning={isTransactionsFetching}>
+			<Spin spinning={isTransactionsFetching || isSiteSettingsFetching}>
 				<div className="TransactionsCancelled_container">
 					<RequestErrors
 						errors={[
-							...convertIntoArray(transactionsErrors, 'Transactions'),
-							...convertIntoArray(siteSettingsErrors, 'Site Settings'),
+							...convertIntoArray(transactionsError, 'Transactions'),
+							...convertIntoArray(siteSettingsError, 'Site Settings'),
 						]}
 						withSpaceBottom
 					/>

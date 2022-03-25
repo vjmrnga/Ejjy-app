@@ -9,20 +9,15 @@ import {
 	Spin,
 	TimePicker,
 } from 'antd';
+import { RequestErrors, TableHeader } from 'components';
+import { Button, FieldError, FormInputLabel, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { taxTypes } from 'global';
+import { useSiteSettingsEdit, useSiteSettingsRetrieve } from 'hooks';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { convertIntoArray, sleep } from 'utils/function';
 import * as Yup from 'yup';
-import { RequestErrors, TableHeader } from '../../../../components';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-	Label,
-} from '../../../../components/elements';
-import { request, taxTypes } from '../../../../global/types';
-import { useSiteSettings } from '../../../../hooks/useSiteSettings';
-import { convertIntoArray, sleep } from '../../../../utils/function';
 
 const getValidTimeTest = (label) =>
 	Yup.string()
@@ -53,50 +48,52 @@ export const ViewBranchSiteSettings = ({
 }: Props) => {
 	// STATES
 	const [isSubmitting, setSubmitting] = useState(false);
-	const [siteSettings, setSiteSettings] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
-		getSiteSettings,
-		editSiteSettings,
-		status: siteSettingsStatus,
-		errors: siteSettingsErrors,
-	} = useSiteSettings();
+		data: siteSettings,
+		isFetching,
+		error: retrieveError,
+	} = useSiteSettingsRetrieve({
+		params: {
+			branchId,
+		},
+		options: {
+			refetchOnMount: 'always',
+		},
+	});
+	const {
+		mutateAsync: editSiteSettings,
+		isLoading,
+		error: editError,
+	} = useSiteSettingsEdit();
 
 	// METHODS
-	useEffect(() => {
-		getSiteSettings({ branchId }, ({ status, data }) => {
-			if (status === request.SUCCESS) {
-				setSiteSettings(data);
-			}
-		});
-	}, []);
-
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
 				branchId,
 				id: siteSettings?.id,
-				close_session_deadline: siteSettings?.close_session_deadline
+				closeSessionDeadline: siteSettings?.close_session_deadline
 					? moment(siteSettings.close_session_deadline, 'hh:mm:ss')
 					: null,
-				close_day_deadline: siteSettings?.close_day_deadline
+				closeDayDeadline: siteSettings?.close_day_deadline
 					? moment(siteSettings.close_day_deadline, 'hh:mm:ss')
 					: null,
 
 				proprietor: siteSettings?.proprietor || '',
-				tax_type: siteSettings?.tax_type || null,
+				taxType: siteSettings?.tax_type || null,
 				tin: siteSettings?.tin || '',
-				permit_number: siteSettings?.permit_number || '',
+				permitNumber: siteSettings?.permit_number || '',
 
-				software_developer: siteSettings?.software_developer || '',
-				software_developer_tin: siteSettings?.software_developer_tin || '',
+				softwareDeveloper: siteSettings?.software_developer || '',
+				softwareDeveloperTin: siteSettings?.software_developer_tin || '',
 
-				pos_accreditation_number: siteSettings?.pos_accreditation_number || '',
-				pos_accreditation_date: siteSettings?.pos_accreditation_date
+				posAccreditationNumber: siteSettings?.pos_accreditation_number || '',
+				posAccreditationDate: siteSettings?.pos_accreditation_date
 					? moment(siteSettings.pos_accreditation_date, 'YYYY-MM-DD')
 					: null,
-				pos_accreditation_valid_until_date:
+				posAccreditationValidUntilDate:
 					siteSettings?.pos_accreditation_valid_until_date
 						? moment(
 								siteSettings.pos_accreditation_valid_until_date,
@@ -104,52 +101,68 @@ export const ViewBranchSiteSettings = ({
 						  )
 						: null,
 
-				ptu_number: siteSettings?.ptu_number || '',
-				ptu_date: siteSettings?.ptu_date
+				ptuNumber: siteSettings?.ptu_number || '',
+				ptuDate: siteSettings?.ptu_date
 					? moment(siteSettings.ptu_date, 'YYYY-MM-DD')
 					: null,
-				ptu_valid_until_date: siteSettings?.ptu_valid_until_date
+				ptuValidUntilDate: siteSettings?.ptu_valid_until_date
 					? moment(siteSettings.ptu_valid_until_date, 'YYYY-MM-DD')
 					: null,
 
-				product_version: siteSettings?.product_version || '',
-				thank_you_message: siteSettings?.thank_you_message || '',
+				productVersion: siteSettings?.product_version || '',
+				thankYouMessage: siteSettings?.thank_you_message || '',
 
-				reporting_period_day_of_month:
-					siteSettings?.reporting_period_day_of_month,
+				reportingPeriodDayOfMonth: siteSettings?.reporting_period_day_of_month,
+
+				resetCounterNotificationThresholdAmount:
+					siteSettings?.reset_counter_notification_threshold_amount || '',
+				resetCounterNotificationThresholdInvoiceNumber:
+					siteSettings?.reset_counter_notification_threshold_invoice_number ||
+					'',
 			},
 			Schema: Yup.object().shape({
-				close_session_deadline: getValidTimeTest('Close Session Deadline'),
-				close_day_deadline: getValidTimeTest('Close Day Deadline'),
+				closeSessionDeadline: getValidTimeTest('Close Session Deadline'),
+				closeDayDeadline: getValidTimeTest('Close Day Deadline'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
-				tax_type: Yup.string().required().label('Tax Type'),
+				taxType: Yup.string().required().label('Tax Type'),
 				tin: Yup.string().required().label('TIN'),
-				permit_number: Yup.string().required().label('Permit Number'),
-				software_developer: Yup.string().required().label('Software Developer'),
-				software_developer_tin: Yup.string()
+				permitNumber: Yup.string().required().label('Permit Number'),
+				softwareDeveloper: Yup.string().required().label('Software Developer'),
+				softwareDeveloperTin: Yup.string()
 					.required()
 					.label('Software Developer TIN'),
 
-				pos_accreditation_number: Yup.string()
+				posAccreditationNumber: Yup.string()
 					.required()
 					.label('POS Accreditation Number'),
-				pos_accreditation_date: getValidDateTest('POS Accreditation Date'),
-				pos_accreditation_valid_until_date: getValidDateTest(
+				posAccreditationDate: getValidDateTest('POS Accreditation Date'),
+				posAccreditationValidUntilDate: getValidDateTest(
 					'POS Accreditation Valid Until Date',
 				),
 
-				ptu_number: Yup.string().required().label('PTU Number'),
-				ptu_date: getValidDateTest('PTU Date'),
-				ptu_valid_until_date: getValidDateTest('PTU Valid Until Date'),
+				ptuNumber: Yup.string().required().label('PTU Number'),
+				ptuDate: getValidDateTest('PTU Date'),
+				ptuValidUntilDate: getValidDateTest('PTU Valid Until Date'),
 
-				product_version: Yup.string().required().label('Product Version'),
-				thank_you_message: Yup.string().required().label('Thank You Message'),
+				productVersion: Yup.string().required().label('Product Version'),
+				thankYouMessage: Yup.string().required().label('Thank You Message'),
 
-				reporting_period_day_of_month: Yup.number()
+				reportingPeriodDayOfMonth: Yup.number()
 					.min(1)
 					.max(28)
 					.label('Reporting Day of the Month'),
+
+				resetCounterNotificationThresholdAmount: Yup.number()
+					.required()
+					.min(0)
+					.max(1_000_000_000)
+					.label('Reset Counter Notification Threshold Amount'),
+				resetCounterNotificationThresholdInvoiceNumber: Yup.number()
+					.required()
+					.min(0)
+					.max(999_999)
+					.label('Reset Counter Notification Threshold Invoice Number'),
 			}),
 		}),
 		[siteSettings],
@@ -204,38 +217,30 @@ export const ViewBranchSiteSettings = ({
 		</>
 	);
 
-	const onSubmit = (formData) => {
-		editSiteSettings(
-			{
-				...formData,
-				close_session_deadline:
-					formData.close_session_deadline.format('HH:mm:ss'),
-				close_day_deadline: formData.close_day_deadline.format('HH:mm:ss'),
-				pos_accreditation_date:
-					formData.pos_accreditation_date.format('YYYY-MM-DD'),
-				pos_accreditation_valid_until_date:
-					formData.pos_accreditation_valid_until_date.format('YYYY-MM-DD'),
-				ptu_date: formData.ptu_date.format('YYYY-MM-DD'),
-				ptu_valid_until_date:
-					formData.ptu_valid_until_date.format('YYYY-MM-DD'),
-			},
-			(status) => {
-				if (status === request.SUCCESS) {
-					message.success('Successfully updated site settings.');
-				}
-			},
-		);
+	const onSubmit = async (formData) => {
+		await editSiteSettings({
+			...formData,
+			closeSessionDeadline: formData.closeSessionDeadline.format('HH:mm:ss'),
+			closeDayDeadline: formData.closeDayDeadline.format('HH:mm:ss'),
+			posAccreditationDate: formData.posAccreditationDate.format('YYYY-MM-DD'),
+			posAccreditationValidUntilDate:
+				formData.posAccreditationValidUntilDate.format('YYYY-MM-DD'),
+			ptuDate: formData.ptuDate.format('YYYY-MM-DD'),
+			ptuValidUntilDate: formData.ptuValidUntilDate.format('YYYY-MM-DD'),
+		});
+
+		message.success('Successfully updated site settings.');
 	};
 
 	return (
-		<Spin
-			size="large"
-			spinning={siteSettingsStatus === request.REQUESTING || isSubmitting}
-		>
+		<Spin size="large" spinning={isFetching || isLoading || isSubmitting}>
 			{withHeader && <TableHeader title="Site Settings" />}
 
 			<RequestErrors
-				errors={convertIntoArray(siteSettingsErrors)}
+				errors={[
+					...convertIntoArray(retrieveError),
+					...convertIntoArray(editError),
+				]}
 				withSpaceBottom
 			/>
 
@@ -256,7 +261,7 @@ export const ViewBranchSiteSettings = ({
 						<Row gutter={[15, 15]}>
 							<Col xs={24} sm={12}>
 								{renderTimePicker(
-									'close_session_deadline',
+									'closeSessionDeadline',
 									'Close Session Deadline',
 									values,
 									setFieldValue,
@@ -264,7 +269,7 @@ export const ViewBranchSiteSettings = ({
 							</Col>
 							<Col xs={24} sm={12}>
 								{renderTimePicker(
-									'close_day_deadline',
+									'closeDayDeadline',
 									'Close Day Deadline',
 									values,
 									setFieldValue,
@@ -277,20 +282,20 @@ export const ViewBranchSiteSettings = ({
 							<Col xs={24} sm={6}>
 								<Label label="VAT Type" spacing />
 								<Radio.Group
-									value={values.tax_type}
+									value={values.taxType}
 									options={[
 										{ label: 'VAT', value: taxTypes.VAT },
 										{ label: 'NVAT', value: taxTypes.NVAT },
 									]}
 									onChange={(e) => {
-										setFieldValue('tax_type', e.target.value);
+										setFieldValue('taxType', e.target.value);
 									}}
 									optionType="button"
 								/>
 							</Col>
 							<Col xs={24} sm={6}>
 								{renderInputField(
-									'reporting_period_day_of_month',
+									'reportingPeriodDayOfMonth',
 									'Reporting Day of the Month',
 									'number',
 								)}
@@ -300,27 +305,27 @@ export const ViewBranchSiteSettings = ({
 							</Col>
 
 							<Col xs={24} sm={12}>
-								{renderInputField('permit_number', 'Permit Number')}
+								{renderInputField('permitNumber', 'Permit Number')}
 							</Col>
 							<Col xs={24} sm={12}>
-								{renderInputField('software_developer', 'Software Developer')}
+								{renderInputField('softwareDeveloper', 'Software Developer')}
 							</Col>
 							<Col xs={24} sm={12}>
 								{renderInputField(
-									'software_developer_tin',
+									'softwareDeveloperTin',
 									'Software Developer TIN',
 								)}
 							</Col>
 
 							<Col xs={24} sm={8}>
 								{renderInputField(
-									'pos_accreditation_number',
+									'posAccreditationNumber',
 									'POS Accreditation Number',
 								)}
 							</Col>
 							<Col xs={24} sm={8}>
 								{renderDatePicker(
-									'pos_accreditation_date',
+									'posAccreditationDate',
 									'POS Accreditation Date',
 									values,
 									setFieldValue,
@@ -329,7 +334,7 @@ export const ViewBranchSiteSettings = ({
 
 							<Col xs={24} sm={8}>
 								{renderDatePicker(
-									'pos_accreditation_valid_until_date',
+									'posAccreditationValidUntilDate',
 									'POS Accreditation Valid Until Date',
 									values,
 									setFieldValue,
@@ -337,32 +342,45 @@ export const ViewBranchSiteSettings = ({
 							</Col>
 
 							<Col xs={24} sm={8}>
-								{renderInputField('ptu_number', 'PTU Number')}
+								{renderInputField('ptuNumber', 'PTU Number')}
 							</Col>
 							<Col xs={24} sm={8}>
-								{renderDatePicker(
-									'ptu_date',
-									'PTU Date',
-									values,
-									setFieldValue,
-								)}
+								{renderDatePicker('ptuDate', 'PTU Date', values, setFieldValue)}
 							</Col>
 
 							<Col xs={24} sm={8}>
 								{renderDatePicker(
-									'ptu_valid_until_date',
+									'ptuValidUntilDate',
 									'PTU Valid Until Date',
 									values,
 									setFieldValue,
 								)}
 							</Col>
 
-							<Col xs={24}>
-								{renderInputField('product_version', 'Product Version')}
+							<Col span={24}>
+								{renderInputField('productVersion', 'Product Version')}
 							</Col>
 
-							<Col xs={24}>
-								{renderInputField('thank_you_message', 'Thank You Message')}
+							<Col span={24}>
+								{renderInputField('thankYouMessage', 'Thank You Message')}
+							</Col>
+
+							<Divider>Notification</Divider>
+
+							<Col xs={24} sm={12}>
+								{renderInputField(
+									'resetCounterNotificationThresholdAmount',
+									'Reset Counter Notification Threshold Amount',
+									'number',
+								)}
+							</Col>
+
+							<Col xs={24} sm={12}>
+								{renderInputField(
+									'resetCounterNotificationThresholdInvoiceNumber',
+									'Reset Counter Notification Threshold Invoice Number',
+									'number',
+								)}
 							</Col>
 						</Row>
 
@@ -373,7 +391,6 @@ export const ViewBranchSiteSettings = ({
 							classNames="btn-submit-site-settings"
 							text="Save Settings"
 							variant="primary"
-							// disabled={!siteSettings}
 							block
 						/>
 					</Form>

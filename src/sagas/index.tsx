@@ -17,7 +17,6 @@ import productChecksSagas from './product-checks';
 import requisitionSlipsSagas from './requisition-slips';
 import returnItemSlipsSagas from './return-item-slips';
 import sessionsSagas from './sessions';
-import siteSettingsSagas from './site-settings';
 import usersSagas from './users';
 import xreadReportsSagas from './xread-reports';
 
@@ -38,7 +37,6 @@ export default function* rootSaga() {
 		...requisitionSlipsSagas,
 		...returnItemSlipsSagas,
 		...sessionsSagas,
-		...siteSettingsSagas,
 		...usersSagas,
 		...xreadReportsSagas,
 		...adminSagas,

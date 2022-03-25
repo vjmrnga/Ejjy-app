@@ -1,6 +1,7 @@
 export * from './useAccounts';
 export { default as useAccounts } from './useAccounts';
 export * from './useBackOrders';
+export * from './useSiteSettings';
 export * from './useBranchesDayAuthorizations';
 export { default as useBranchesDayAuthorizations } from './useBranchesDayAuthorizations';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
