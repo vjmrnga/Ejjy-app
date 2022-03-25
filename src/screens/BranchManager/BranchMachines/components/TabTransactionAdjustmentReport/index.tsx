@@ -1,29 +1,25 @@
-import { Col, Row, Space, Table } from 'antd';
+import { Col, DatePicker, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
 import {
 	ModeOfPayment,
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
-	TimeRangeFilter,
 	ViewBackOrderModal,
 	ViewTransactionModal,
-} from '../../../../../components';
-import { ButtonLink } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { timeRangeTypes } from '../../../../../global/types';
-import { useTransactions } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
-import { useTimeRange } from '../../../../../hooks/useTimeRange';
+} from 'components';
+import { ButtonLink, Label } from 'components/elements';
+import { pageSizeOptions, timeRangeTypes } from 'global';
+import { useQueryParams, useTransactions } from 'hooks';
+import _ from 'lodash';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDate,
 	formatInPeso,
 	getFullName,
-} from '../../../../../utils/function';
+} from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },
@@ -51,18 +47,7 @@ export const TabTransactionAdjustmentReport = ({
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
-			const newParams = {};
-
-			if (!_.toString(timeRange)) {
-				// eslint-disable-next-line dot-notation
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			return newParams;
-		},
-	});
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total, warning },
 		isFetching,
@@ -72,6 +57,7 @@ export const TabTransactionAdjustmentReport = ({
 			isAdjusted: true,
 			branchMachineId,
 			serverUrl,
+			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},
 	});
@@ -187,20 +173,22 @@ interface FilterProps {
 	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
-
-	return (
-		<Row className="mb-4" gutter={[15, 15]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
-			</Col>
-		</Row>
-	);
-};
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
+	<Row className="mb-4" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Date" spacing />
+			<DatePicker
+				disabled={isLoading}
+				format="MM/DD/YY"
+				value={
+					_.toString(params.timeRange).split(',')?.length === 2
+						? moment(_.toString(params.timeRange).split(',')[0])
+						: null
+				}
+				onChange={(date, dateString) => {
+					setQueryParams({ timeRange: [dateString, dateString].join(',') });
+				}}
+			/>
+		</Col>
+	</Row>
+);

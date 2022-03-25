@@ -1,9 +1,9 @@
+import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global/';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
-import { IS_APP_LIVE } from '../global/constants';
-import { ONLINE_API_URL, TransactionsService } from '../services';
-import { getLocalIpAddress } from '../utils/function';
+import { ONLINE_API_URL, TransactionsService } from 'services';
+import { getLocalIpAddress } from 'utils/function';
 import { Query } from './inteface';
 
 const useTransactions = ({ params }: Query) => {
@@ -41,8 +41,8 @@ const useTransactions = ({ params }: Query) => {
 				payor_creditor_account_id: params?.payorCreditorAccountId,
 				statuses: params?.statuses,
 				time_range: params?.timeRange,
-				page: params?.page || 1,
-				page_size: params?.pageSize || 10,
+				page: params?.page || DEFAULT_PAGE,
+				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 			};
 
 			try {

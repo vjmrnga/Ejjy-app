@@ -1,5 +1,7 @@
-import { Table } from 'antd';
+import { Col, DatePicker, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { useQueryParams } from 'hooks';
+import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import {
@@ -9,12 +11,11 @@ import {
 	TableHeader,
 	ViewTransactionModal,
 } from '../../../../../components';
-import { ButtonLink } from '../../../../../components/elements';
+import { ButtonLink, Label } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
 import { pageSizeOptions } from '../../../../../global/options';
-import { transactionStatus } from '../../../../../global/types';
+import { timeRangeTypes, transactionStatus } from '../../../../../global/types';
 import { useTransactions } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
 import {
 	convertIntoArray,
 	formatDate,
@@ -55,9 +56,7 @@ export const TabDailyInvoiceReport = ({
 			statuses: transactionStatus.FULLY_PAID,
 			branchMachineId,
 			serverUrl,
-			timeRange: `${moment().format('MM/DD/YY')},${moment().format(
-				'MM/DD/YY',
-			)}`,
+			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},
 	});
@@ -86,6 +85,14 @@ export const TabDailyInvoiceReport = ({
 	return (
 		<>
 			<TableHeader title="Daily Invoice Report" />
+
+			<Filter
+				params={queryParams}
+				setQueryParams={(params) => {
+					setQueryParams(params, { shouldResetPage: true });
+				}}
+				isLoading={isFetching}
+			/>
 
 			<RequestErrors errors={convertIntoArray(error)} />
 			<RequestWarnings warnings={convertIntoArray(warning)} />
@@ -120,3 +127,29 @@ export const TabDailyInvoiceReport = ({
 		</>
 	);
 };
+
+interface FilterProps {
+	params: any;
+	isLoading: boolean;
+	setQueryParams: any;
+}
+
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
+	<Row className="mb-4" gutter={[15, 15]}>
+		<Col lg={12} span={24}>
+			<Label label="Date" spacing />
+			<DatePicker
+				disabled={isLoading}
+				format="MM/DD/YY"
+				value={
+					_.toString(params.timeRange).split(',')?.length === 2
+						? moment(_.toString(params.timeRange).split(',')[0])
+						: null
+				}
+				onChange={(date, dateString) => {
+					setQueryParams({ timeRange: [dateString, dateString].join(',') });
+				}}
+			/>
+		</Col>
+	</Row>
+);
