@@ -1,11 +1,10 @@
-import { Col, Modal } from 'antd';
+import { Col, message, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { useBranchMachinesCreate, useBranchMachinesEdit } from 'hooks';
 import React, { useCallback, useState } from 'react';
+import { convertIntoArray, sleep } from 'utils/function';
 import * as Yup from 'yup';
 import { DetailsRow, RequestErrors } from '../..';
-import { request } from '../../../global/types';
-import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { convertIntoArray, sleep } from '../../../utils/function';
 import { Button, FieldError, FormInputLabel } from '../../elements';
 
 interface ModalProps {
@@ -19,23 +18,28 @@ export const ModifyBranchMachineModal = ({
 }: ModalProps) => {
 	// CUSTOM HOOKS
 	const {
-		createBranchMachine,
-		editBranchMachine,
-		status: branchMachineStatus,
-		errors,
-	} = useBranchMachines();
+		mutateAsync: createBranchMachine,
+		isLoading: isCreateLoading,
+		error: createError,
+	} = useBranchMachinesCreate();
+	const {
+		mutateAsync: editBranchMachine,
+		isLoading: isEditLoading,
+		error: editError,
+	} = useBranchMachinesEdit();
 
 	// METHODS
-	const onSubmit = (formData) => {
-		const modifyBranchMachine = branchMachine
-			? editBranchMachine
-			: createBranchMachine;
 
-		modifyBranchMachine(formData, ({ status }) => {
-			if (status === request.SUCCESS) {
-				onClose();
-			}
-		});
+	const onSubmit = async (formData) => {
+		if (branchMachine) {
+			await editBranchMachine(formData);
+			message.success('Branch machine was edited successfully.');
+		} else {
+			await createBranchMachine(formData);
+			message.success('Branch machine was created successfully.');
+		}
+
+		onClose();
 	};
 
 	return (
@@ -47,11 +51,17 @@ export const ModifyBranchMachineModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			<RequestErrors
+				errors={[
+					...convertIntoArray(createError),
+					...convertIntoArray(editError),
+				]}
+				withSpaceBottom
+			/>
 
 			<ModifyBranchMachineForm
 				branchMachine={branchMachine}
-				loading={branchMachineStatus === request.REQUESTING}
+				loading={isCreateLoading || isEditLoading}
 				onSubmit={onSubmit}
 				onClose={onClose}
 			/>
@@ -79,11 +89,13 @@ export const ModifyBranchMachineForm = ({
 			DefaultValues: {
 				id: branchMachine?.id || null,
 				name: branchMachine?.name || '',
-				server_url: branchMachine?.server_url || '',
+				serverUrl: branchMachine?.server_url || '',
+				posTerminal: branchMachine?.pos_terminal || '',
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(30).label('Name'),
-				server_url: Yup.string().required().max(50).label('Server URL'),
+				serverUrl: Yup.string().required().max(75).label('Server URL'),
+				posTerminal: Yup.string().max(75).label('POS Terminal'),
 			}),
 		}),
 		[branchMachine],
@@ -113,9 +125,17 @@ export const ModifyBranchMachineForm = ({
 					</Col>
 
 					<Col xs={24}>
-						<FormInputLabel id="server_url" label="Server URL" />
+						<FormInputLabel id="serverUrl" label="Server URL" />
 						<ErrorMessage
-							name="server_url"
+							name="serverUrl"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
+
+					<Col xs={24}>
+						<FormInputLabel id="posTerminal" label="POS Terminal" />
+						<ErrorMessage
+							name="posTerminal"
 							render={(error) => <FieldError error={error} />}
 						/>
 					</Col>

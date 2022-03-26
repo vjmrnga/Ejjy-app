@@ -1,16 +1,11 @@
+import { actions, selectors, types } from 'ducks/branch-machines';
+import { IS_APP_LIVE, request } from 'global';
 import { useState } from 'react';
+import { useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../ducks/branch-machines';
-import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
+import { BranchMachinesService, ONLINE_API_URL } from 'services';
+import { getLocalIpAddress, modifiedExtraCallback } from 'utils/function';
 import { useActionDispatch } from './useActionDispatch';
-
-const CREATE_SUCCESS_MESSAGE = 'Branch machine was created successfully';
-const CREATE_ERROR_MESSAGE =
-	'An error occurred while creating the branch machine';
-
-const EDIT_SUCCESS_MESSAGE = 'Branch machine was edited successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while editing the branch machine';
 
 export const useBranchMachines = () => {
 	// STATES
@@ -31,10 +26,6 @@ export const useBranchMachines = () => {
 	const retrieveBranchMachineSalesAllAction = useActionDispatch(
 		actions.retrieveBranchMachineSalesAll,
 	);
-	const createBranchMachineAction = useActionDispatch(
-		actions.createBranchMachine,
-	);
-	const editBranchMachineAction = useActionDispatch(actions.editBranchMachine);
 
 	// METHODS
 	const resetError = () => setErrors([]);
@@ -85,40 +76,12 @@ export const useBranchMachines = () => {
 		});
 	};
 
-	const createBranchMachine = (branchMachine, extraCallback = null) => {
-		setRecentRequest(types.CREATE_BRANCH_MACHINE);
-		createBranchMachineAction({
-			...branchMachine,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
-	const editBranchMachine = (branchMachine, extraCallback = null) => {
-		setRecentRequest(types.EDIT_BRANCH_MACHINE);
-		editBranchMachineAction({
-			...branchMachine,
-			callback: modifiedExtraCallback(
-				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
-				extraCallback,
-			),
-		});
-	};
-
 	return {
 		branchMachines,
 		getBranchMachines,
 		getBranchMachine,
 		retrieveBranchMachineSales,
 		retrieveBranchMachineSalesAll,
-		createBranchMachine,
-		editBranchMachine,
 		status,
 		errors,
 		warnings,
@@ -128,3 +91,28 @@ export const useBranchMachines = () => {
 		resetError,
 	};
 };
+
+export const useBranchMachinesCreate = () =>
+	useMutation(({ name, serverUrl, posTerminal }: any) =>
+		BranchMachinesService.create(
+			{
+				name,
+				server_url: serverUrl,
+				pos_terminal: posTerminal,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
+	);
+
+export const useBranchMachinesEdit = () =>
+	useMutation(({ id, name, serverUrl, posTerminal }: any) =>
+		BranchMachinesService.edit(
+			id,
+			{
+				name,
+				server_url: serverUrl,
+				pos_terminal: posTerminal,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
+	);

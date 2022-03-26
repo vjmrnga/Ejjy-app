@@ -1,7 +1,6 @@
-import _, { cloneDeep } from 'lodash';
+import _ from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../global/constants';
 
 export const key = 'OM_BRANCH_MACHINES';
 
@@ -11,8 +10,6 @@ export const types = {
 	GET_BRANCH_MACHINE: `${key}/GET_BRANCH_MACHINE`,
 	RETRIEVE_BRANCH_MACHINE_SALES: `${key}/RETRIEVE_BRANCH_MACHINE_SALES`,
 	RETRIEVE_BRANCH_MACHINE_SALES_ALL: `${key}/RETRIEVE_BRANCH_MACHINE_SALES_ALL`,
-	CREATE_BRANCH_MACHINE: `${key}/CREATE_BRANCH_MACHINE`,
-	EDIT_BRANCH_MACHINE: `${key}/EDIT_BRANCH_MACHINE`,
 };
 
 const initialState = {
@@ -43,25 +40,6 @@ const reducer = handleActions(
 					newData = { sales };
 					break;
 				}
-				case types.CREATE_BRANCH_MACHINE: {
-					newData = {
-						branchMachines: [payload.branchMachine, ...state.branchMachines],
-					};
-					break;
-				}
-				case types.EDIT_BRANCH_MACHINE: {
-					const { branchMachine: editedBranchMachine } = payload;
-					const index = state.branchMachines.findIndex(
-						({ id }) => id === editedBranchMachine.id,
-					);
-
-					if (index !== NOT_FOUND_INDEX) {
-						const branchMachines = cloneDeep(state.branchMachines);
-						branchMachines[index] = editedBranchMachine;
-						newData = { branchMachines };
-					}
-					break;
-				}
 				default:
 					break;
 			}
@@ -80,8 +58,6 @@ export const actions = {
 	retrieveBranchMachineSalesAll: createAction(
 		types.RETRIEVE_BRANCH_MACHINE_SALES_ALL,
 	),
-	createBranchMachine: createAction(types.CREATE_BRANCH_MACHINE),
-	editBranchMachine: createAction(types.EDIT_BRANCH_MACHINE),
 };
 
 const selectState = (state: any) => state[key] || initialState;

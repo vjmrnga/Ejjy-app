@@ -1,11 +1,5 @@
 import { Modal } from 'antd';
-import React, { useEffect } from 'react';
-import { RequestErrors } from '../../../../../components';
-import { types } from '../../../../../ducks/branch-machines';
-import { request } from '../../../../../global/types';
-import { useBranchMachines } from '../../../../../hooks/useBranchMachines';
-import { convertIntoArray } from '../../../../../utils/function';
-import { CreateEditBranchMachineForm } from './CreateEditBranchMachineForm';
+import React from 'react';
 
 interface Props {
 	branchId: any;
@@ -14,46 +8,47 @@ interface Props {
 	onClose: any;
 }
 
+// TODO: Refactor this once we start doing the online version of the app
 export const CreateEditBranchMachineModal = ({
 	branchId,
 	branchMachine,
 	visible,
 	onClose,
 }: Props) => {
-	const {
-		createBranchMachine,
-		editBranchMachine,
-		status,
-		errors,
-		recentRequest,
-		reset,
-	} = useBranchMachines();
+	// const {
+	// 	createBranchMachine,
+	// 	editBranchMachine,
+	// 	status,
+	// 	errors,
+	// 	recentRequest,
+	// 	reset,
+	// } = useBranchMachines();
 
-	// Effect: Close modal if recent requests are Create, Edit or Remove
-	useEffect(() => {
-		if (
-			status === request.SUCCESS &&
-			[types.CREATE_BRANCH_MACHINE, types.EDIT_BRANCH_MACHINE].includes(
-				recentRequest,
-			)
-		) {
-			onClose();
-			reset();
-		}
-	}, [status, recentRequest]);
+	// // Effect: Close modal if recent requests are Create, Edit or Remove
+	// useEffect(() => {
+	// 	if (
+	// 		status === request.SUCCESS &&
+	// 		[types.CREATE_BRANCH_MACHINE, types.EDIT_BRANCH_MACHINE].includes(
+	// 			recentRequest,
+	// 		)
+	// 	) {
+	// 		onClose();
+	// 		reset();
+	// 	}
+	// }, [status, recentRequest]);
 
-	const onSubmit = (formData) => {
-		const data = {
-			...formData,
-			branchId,
-		};
+	// const onSubmit = (formData) => {
+	// 	const data = {
+	// 		...formData,
+	// 		branchId,
+	// 	};
 
-		if (branchMachine) {
-			editBranchMachine(data);
-		} else {
-			createBranchMachine(data);
-		}
-	};
+	// 	if (branchMachine) {
+	// 		editBranchMachine(data);
+	// 	} else {
+	// 		createBranchMachine(data);
+	// 	}
+	// };
 
 	return (
 		<Modal
@@ -64,14 +59,14 @@ export const CreateEditBranchMachineModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
+			{/* <RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
 			<CreateEditBranchMachineForm
 				branchMachine={branchMachine}
 				onSubmit={onSubmit}
 				onClose={onClose}
 				loading={status === request.REQUESTING}
-			/>
+			/> */}
 		</Modal>
 	);
 };

@@ -119,6 +119,9 @@ export const ViewBranchSiteSettings = ({
 				resetCounterNotificationThresholdInvoiceNumber:
 					siteSettings?.reset_counter_notification_threshold_invoice_number ||
 					'',
+
+				storeName: siteSettings?.store_name || '',
+				addressOfTaxPayer: siteSettings?.address_of_tax_payer || '',
 			},
 			Schema: Yup.object().shape({
 				closeSessionDeadline: getValidTimeTest('Close Session Deadline'),
@@ -163,6 +166,11 @@ export const ViewBranchSiteSettings = ({
 					.min(0)
 					.max(999_999)
 					.label('Reset Counter Notification Threshold Invoice Number'),
+
+				storeName: Yup.string().required().label('Store Name'),
+				addressOfTaxPayer: Yup.string()
+					.required()
+					.label('Address of Tax Payer'),
 			}),
 		}),
 		[siteSettings],
@@ -381,6 +389,13 @@ export const ViewBranchSiteSettings = ({
 									'Reset Counter Notification Threshold Invoice Number',
 									'number',
 								)}
+							</Col>
+
+							<Divider>Store Details</Divider>
+
+							<Col span={24}>{renderInputField('storeName', 'Store Name')}</Col>
+							<Col span={24}>
+								{renderInputField('addressOfTaxPayer', 'Address of Tax Payer')}
 							</Col>
 						</Row>
 

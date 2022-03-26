@@ -205,19 +205,9 @@ const retrieveSalesAllWatcherSaga = function* retrieveSalesAllWatcherSaga() {
 	yield takeEvery(types.RETRIEVE_BRANCH_MACHINE_SALES_ALL, retrieveSalesAll);
 };
 
-const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_BRANCH_MACHINE, create);
-};
-
-const editWatcherSaga = function* editWatcherSaga() {
-	yield takeLatest(types.EDIT_BRANCH_MACHINE, edit);
-};
-
 export default [
 	listWatcherSaga(),
 	getWatcherSaga(),
 	retrieveSalesWatcherSaga(),
 	retrieveSalesAllWatcherSaga(),
-	createWatcherSaga(),
-	editWatcherSaga(),
 ];
