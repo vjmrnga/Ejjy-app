@@ -179,3 +179,8 @@ export const orderOfPaymentPurposes = {
 	FULL_PAYMENT: 'full_payment',
 	OTHERS: 'others',
 };
+
+export const discountTypes = {
+	AMOUNT: 'amount',
+	PERCENTAGE: 'percentage',
+};

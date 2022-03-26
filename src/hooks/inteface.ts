@@ -1,4 +1,4 @@
-import { MutateOptions, UseQueryOptions } from 'react-query';
+import { UseMutationOptions, UseQueryOptions } from 'react-query';
 
 export interface Query {
 	id?: number;
@@ -7,5 +7,5 @@ export interface Query {
 }
 
 export interface Mutate {
-	options?: MutateOptions;
+	options?: UseMutationOptions;
 }

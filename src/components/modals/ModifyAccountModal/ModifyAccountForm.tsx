@@ -25,7 +25,6 @@ export const ModifyAccountForm = ({
 	onSubmit,
 	onClose,
 }: Props) => {
-	console.log('account', account);
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({

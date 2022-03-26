@@ -13,6 +13,7 @@ export { default as BranchMachinesService } from './BranchMachinesService';
 export { default as CollectionReceiptsService } from './CollectionReceiptsService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
+export { default as DiscountOptionsService } from './DiscountOptionsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as SalesTrackerService } from './SalesTrackerService';
 export { default as SiteSettingsService } from './SiteSettingsService';

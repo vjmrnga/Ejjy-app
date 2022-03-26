@@ -7,6 +7,8 @@ export * from './useBranchMachines';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
+export * from './useDiscountOptions';
+export { default as useDiscountOptions } from './useDiscountOptions';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useQueryParams } from './useQueryParams';

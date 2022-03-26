@@ -146,48 +146,6 @@ function* retrieveSalesAll({ payload }: any) {
 	}
 }
 
-function* create({ payload }: any) {
-	const { callback, branchId, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	const baseURL = getBaseUrl(branchId, callback);
-
-	try {
-		const response = yield call(service.create, data, baseURL);
-
-		yield put(
-			actions.save({
-				type: types.CREATE_BRANCH_MACHINE,
-				branchMachine: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS, response: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* edit({ payload }: any) {
-	const { callback, id, branchId, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	const baseURL = getBaseUrl(branchId, callback);
-
-	try {
-		const response = yield call(service.edit, id, data, baseURL);
-
-		yield put(
-			actions.save({
-				type: types.EDIT_BRANCH_MACHINE,
-				branchMachine: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS, response: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 /* WATCHERS */
 const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_MACHINES, list);

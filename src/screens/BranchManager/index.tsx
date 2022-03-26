@@ -1,15 +1,11 @@
 import { Spin } from 'antd';
+import { Container } from 'components';
+import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
+import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
+import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Container } from '../../components';
-import {
-	IS_APP_LIVE,
-	MAX_PAGE_SIZE,
-	SALES_TRACKER_NOTIFICATION_THRESHOLD,
-} from '../../global/constants';
-import { request } from '../../global/types';
-import { useSalesTracker, useSiteSettingsRetrieve } from '../../hooks';
-import { useBranches } from '../../hooks/useBranches';
+import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
 import { Accounts } from './Accounts';
@@ -19,7 +15,7 @@ import { BranchMachines } from './BranchMachines/BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';
-import { Notifications } from './Notifications/Notifications';
+import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
@@ -115,6 +111,13 @@ const BranchManager = () => {
 				link: '/branch-manager/product-categories',
 			},
 			{
+				key: 'discount-options',
+				name: 'Discount Options',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/branch-manager/discount-options',
+			},
+			{
 				key: 'users',
 				name: 'Users',
 				activeIcon: require('../../assets/images/icon-users-active.svg'),
@@ -205,6 +208,11 @@ const BranchManager = () => {
 						component={ProductCategories}
 					/>
 					<Route path="/branch-manager/products" component={Products} />
+
+					<Route
+						path="/branch-manager/discount-options"
+						component={DiscountOptions}
+					/>
 
 					<Route path="/branch-manager/users" exact component={Users} />
 					<Route
