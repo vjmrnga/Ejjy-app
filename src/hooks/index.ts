@@ -14,6 +14,7 @@ export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useQueryParams } from './useQueryParams';
 export { default as useSalesTracker } from './useSalesTracker';
 export * from './useSiteSettings';
+export { default as useTimeRange } from './useTimeRange';
 export * from './useTransactionProducts';
 export { default as useTransactionProducts } from './useTransactionProducts';
 export * from './useTransactions';

@@ -33,12 +33,6 @@ configurePrinter();
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			placeholderData: {
-				data: {
-					results: [],
-					count: 0,
-				},
-			},
 			refetchOnWindowFocus: false,
 			retry: false,
 		},

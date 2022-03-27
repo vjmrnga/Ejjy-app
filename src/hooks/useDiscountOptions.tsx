@@ -1,11 +1,6 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
-import { Mutate, Query } from 'hooks/inteface';
-import {
-	useMutation,
-	UseMutationOptions,
-	useQuery,
-	useQueryClient,
-} from 'react-query';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { DiscountOptionsService, ONLINE_API_URL } from 'services';
 import { getLocalIpAddress } from 'utils/function';
 
@@ -21,10 +16,10 @@ const useDiscountOptions = ({ params }: Query) =>
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			placeholderData: { data: { results: [], count: 0 } },
+			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
-				discountOptions: query?.data?.results || [],
-				total: query?.data?.count || 0,
+				discountOptions: query.data.results,
+				total: query.data.count,
 			}),
 		},
 	);

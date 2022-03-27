@@ -25,3 +25,5 @@ export const useTimeRange = ({ params }) => {
 		setTimeRangeType,
 	};
 };
+
+export default useTimeRange;

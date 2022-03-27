@@ -1,5 +1,5 @@
 import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
-import { IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { ONLINE_API_URL, TransactionProductsService } from 'services';
@@ -33,8 +33,8 @@ const useTransactionProducts = ({ params }: Query) => {
 				is_vat_exempted: params?.isVatExempted,
 				or_number: params?.orNumber,
 				time_range: params?.timeRange,
-				page: params?.page || 1,
-				page_size: params?.pageSize || 10,
+				page: params?.page || DEFAULT_PAGE,
+				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 			};
 
 			try {
@@ -51,7 +51,7 @@ const useTransactionProducts = ({ params }: Query) => {
 			}
 		},
 		{
-			placeholderData: { data: { results: [], count: 0 } },
+			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				transactionProducts: query.data.results,
 				total: query.data.count,

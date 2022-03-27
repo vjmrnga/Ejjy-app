@@ -1,18 +1,25 @@
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { IS_APP_LIVE } from '../global/constants';
-import { AccountsService, ONLINE_API_URL } from '../services';
-import { getLocalIpAddress } from '../utils/function';
+import { AccountsService, ONLINE_API_URL } from 'services';
+import { getLocalIpAddress } from 'utils/function';
 
-const useAccounts = ({ params }) =>
+const useAccounts = ({ params }: Query) =>
 	useQuery<any>(
-		['useAccounts', params.page, params.pageSize, params.search, params.type],
+		[
+			'useAccounts',
+			params?.page,
+			params?.pageSize,
+			params?.search,
+			params?.type,
+		],
 		async () =>
 			AccountsService.list(
 				{
-					page: params.page || 1,
-					page_size: params.pageSize || 10,
-					search: params.search,
-					type: params.type,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					search: params?.search,
+					type: params?.type,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),

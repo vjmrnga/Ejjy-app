@@ -55,7 +55,7 @@ export const CashieringCard = ({
 	const {
 		mutate: createBranchDayAuthorization,
 		isLoading: isCreatingBranchDayAuthorization,
-	} = useBranchesDayAuthorizationsCreate(branchId);
+	} = useBranchesDayAuthorizationsCreate({ branchId });
 
 	// METHODS
 	useEffect(() => {

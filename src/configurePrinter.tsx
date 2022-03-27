@@ -106,7 +106,7 @@ const configurePrinter = (callback = null) => {
 		message.loading({
 			content: 'Connecting to printer...',
 			key: QZ_MESSAGE_KEY,
-			duration: 0,
+			duration: 30_000,
 		});
 
 		qz.websocket

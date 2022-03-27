@@ -1,22 +1,23 @@
+import { actions, selectors, types } from 'ducks/OfficeManager/users';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
+import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../ducks/OfficeManager/users';
-import { request } from '../global/types';
-import { UsersService } from '../services';
+import { UsersService } from 'services';
 import {
 	getLocalIpAddress,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
-} from '../utils/function';
+} from 'utils/function';
 import {
 	addInCachedData,
 	executePaginatedRequest,
 	getDataForCurrentPage,
 	removeInCachedData,
 	updateInCachedData,
-} from '../utils/pagination';
+} from 'utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching users';
@@ -260,22 +261,22 @@ export const useUsers = () => {
 	};
 };
 
-const useUsersNew = ({ params }) =>
+const useUsersNew = ({ params }: Query) =>
 	useQuery<any>(
-		['useUsers', params.page, params.pageSize],
+		['useUsers', params?.page, params?.pageSize],
 		async () =>
 			UsersService.list(
 				{
-					page: params.page,
-					page_size: params.pageSize,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
 				getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			placeholderData: { data: { results: [], count: 0 } },
+			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
-				users: query?.data?.results || [],
-				total: query?.data?.count || 0,
+				users: query.data.results,
+				total: query.data.count,
 			}),
 		},
 	);

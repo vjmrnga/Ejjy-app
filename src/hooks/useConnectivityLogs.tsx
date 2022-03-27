@@ -1,26 +1,27 @@
-import { promises } from 'dns';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
-import { ConnectivityLogsService } from '../services';
+import { ConnectivityLogsService } from 'services';
 
-const useConnectivityLogs = ({ params }) =>
+const useConnectivityLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useConnectivityLogs',
-			params.baseUrl,
-			params.page,
-			params.pageSize,
-			params.timeRange,
-			params.type,
+			params?.baseUrl,
+			params?.page,
+			params?.pageSize,
+			params?.timeRange,
+			params?.type,
 		],
 		() =>
 			ConnectivityLogsService.list(
 				{
-					page: params.page,
-					page_size: params.pageSize,
-					time_range: params.timeRange,
-					type: params.type,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					time_range: params?.timeRange,
+					type: params?.type,
 				},
-				params.baseUrl,
+				params?.baseUrl,
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },

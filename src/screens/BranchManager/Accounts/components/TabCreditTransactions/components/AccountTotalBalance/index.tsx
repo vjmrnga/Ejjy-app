@@ -17,7 +17,7 @@ export const AccountTotalBalance = ({
 	<div className="AccountTotalBalance mb-4">
 		<Row gutter={[16, 16]}>
 			<Col span={12}>
-				<Statistic title="Creditor" value={getFullName(account)} />
+				<Statistic title="Client" value={getFullName(account)} />
 			</Col>
 			<Col span={12}>
 				<Statistic title="Total Balance" value={formatInPeso(totalBalance)} />

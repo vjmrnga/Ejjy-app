@@ -1,4 +1,4 @@
-import { IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { CreditRegistrationsService, ONLINE_API_URL } from 'services';
@@ -6,13 +6,13 @@ import { getLocalIpAddress } from 'utils/function';
 
 const useCreditRegistrations = ({ params }: Query = {}) =>
 	useQuery<any>(
-		['useCreditRegistrations', params.page, params.pageSize, params.search],
+		['useCreditRegistrations', params?.page, params?.pageSize, params?.search],
 		() =>
 			CreditRegistrationsService.list(
 				{
-					page: params.page,
-					page_size: params.pageSize,
-					search: params.search,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					search: params?.search,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
