@@ -89,7 +89,7 @@ export const TabDailyProductSalesReport = ({
 		},
 	});
 	const {
-		data: { summary },
+		data: { summary = null } = {},
 		isFetching: isTransactionProductsSummaryFetching,
 		error: transactionProductsSummaryError,
 	} = useTransactionProductsSummary({

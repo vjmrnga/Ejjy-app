@@ -43,7 +43,7 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="[Create] Account"
+			title={`${account ? '[Edit]' : '[Create]'} Account`}
 			footer={null}
 			onCancel={onClose}
 			visible

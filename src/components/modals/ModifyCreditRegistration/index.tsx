@@ -55,7 +55,7 @@ export const ModifyCreditRegistrationModal = ({
 
 	return (
 		<Modal
-			title="[Create] Credit Account"
+			title={`${creditRegistration ? '[Edit]' : '[Create]'} Credit Account`}
 			footer={null}
 			onCancel={onClose}
 			visible

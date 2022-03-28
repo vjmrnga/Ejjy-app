@@ -110,6 +110,7 @@ export const useTransactionProductsSummary = ({ params, options }: Query) => {
 			}
 		},
 		{
+			initialData: { data: null },
 			select: (query) => ({
 				summary: query.data,
 				warning: query.data.warning,

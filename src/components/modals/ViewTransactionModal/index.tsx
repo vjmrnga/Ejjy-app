@@ -49,7 +49,7 @@ export const ViewTransactionModal = ({
 	// METHODS
 	useEffect(() => {
 		const products =
-			transaction.products || transactionRetrieved.products || [];
+			transaction?.products || transactionRetrieved?.products || [];
 
 		const formattedProducts = products.map(
 			({ branch_product, quantity, price_per_piece }) => ({
