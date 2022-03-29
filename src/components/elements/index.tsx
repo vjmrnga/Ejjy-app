@@ -8,6 +8,7 @@ export { default as FieldError } from './FieldError/FieldError';
 export { default as FieldInfo } from './FieldInfo/FieldInfo';
 export { default as FieldSuccess } from './FieldSuccess/FieldSuccess';
 export { default as FieldWarning } from './FieldWarning/FieldWarning';
+export { default as FormattedInputNumber } from './FormattedInputNumber';
 export { default as FormCheckbox } from './FormCheckbox/FormCheckbox';
 export { default as FormInput } from './FormInput/FormInput';
 export { default as FormInputLabel } from './FormInputLabel/FormInputLabel';

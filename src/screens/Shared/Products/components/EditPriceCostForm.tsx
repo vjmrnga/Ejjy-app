@@ -1,17 +1,20 @@
 import { Col, Divider, Row, Spin, Typography } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import * as Yup from 'yup';
-import { FetchButtonIcon } from '../../../../components';
+import { FetchButtonIcon } from 'components';
 import {
 	Button,
 	FieldError,
 	FieldSuccess,
+	FieldWarning,
+	FormattedInputNumber,
 	FormInputLabel,
-} from '../../../../components/elements';
-import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
-import { request } from '../../../../global/types';
-import { sleep } from '../../../../utils/function';
+	Label,
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
+import { request } from 'global';
+import _ from 'lodash';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { sleep } from 'utils/function';
+import * as Yup from 'yup';
 
 const { Title } = Typography;
 
@@ -71,6 +74,25 @@ export const EditPriceCostForm = ({
 		[branches],
 	);
 
+	const renderInputField = ({ name, label, values, setFieldValue }) => (
+		<>
+			<Label id={name} label={label} spacing />
+			<FormattedInputNumber
+				size="large"
+				value={_.get(values, name)}
+				controls={false}
+				style={{ width: '100%' }}
+				onChange={(value) => {
+					setFieldValue(name, value);
+				}}
+			/>
+			<ErrorMessage
+				name={name}
+				render={(error) => <FieldError error={error} />}
+			/>
+		</>
+	);
+
 	return (
 		<Formik
 			innerRef={formRef}
@@ -85,7 +107,7 @@ export const EditPriceCostForm = ({
 			}}
 			enableReinitialize
 		>
-			{({ errors: formErrors }) => (
+			{({ errors: formErrors, values, setFieldValue }) => (
 				<Form className="form">
 					{branches.map(({ id, name }, index) => {
 						const errors: any = formErrors[index];
@@ -128,63 +150,39 @@ export const EditPriceCostForm = ({
 										))}
 									</Col>
 									<Col sm={12} xs={24}>
-										<FormInputLabel
-											min={0}
-											type="number"
-											id={`${index}.cost_per_piece`}
-											label="Cost (Piece)"
-											step=".01"
-											isMoney
-										/>
-										<ErrorMessage
-											name={`${index}.cost_per_piece`}
-											render={(error) => <FieldError error={error} />}
-										/>
+										{renderInputField({
+											name: `${index}.cost_per_piece`,
+											label: 'Cost (Piece)',
+											setFieldValue,
+											values,
+										})}
 									</Col>
 
 									<Col sm={12} xs={24}>
-										<FormInputLabel
-											min={0}
-											type="number"
-											id={`${index}.cost_per_bulk`}
-											label="Cost (Bulk)"
-											step=".01"
-											isMoney
-										/>
-										<ErrorMessage
-											name={`${index}.cost_per_bulk`}
-											render={(error) => <FieldError error={error} />}
-										/>
+										{renderInputField({
+											name: `${index}.cost_per_bulk`,
+											label: 'Cost (Bulk)',
+											setFieldValue,
+											values,
+										})}
 									</Col>
 
 									<Col sm={12} xs={24}>
-										<FormInputLabel
-											min={0}
-											type="number"
-											id={`${index}.price_per_piece`}
-											label="Price (Piece)"
-											step=".01"
-											isMoney
-										/>
-										<ErrorMessage
-											name={`${index}.price_per_piece`}
-											render={(error) => <FieldError error={error} />}
-										/>
+										{renderInputField({
+											name: `${index}.price_per_piece`,
+											label: 'Price (Piece)',
+											setFieldValue,
+											values,
+										})}
 									</Col>
 
 									<Col sm={12} xs={24}>
-										<FormInputLabel
-											min={0}
-											type="number"
-											id={`${index}.price_per_bulk`}
-											label="Price (Bulk)"
-											step=".01"
-											isMoney
-										/>
-										<ErrorMessage
-											name={`${index}.price_per_bulk`}
-											render={(error) => <FieldError error={error} />}
-										/>
+										{renderInputField({
+											name: `${index}.price_per_bulk`,
+											label: 'Price (Bulk)',
+											setFieldValue,
+											values,
+										})}
 									</Col>
 
 									{index !== branches.length - 1 && <Divider />}

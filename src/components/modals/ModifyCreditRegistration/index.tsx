@@ -1,6 +1,12 @@
 import { Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
-import { Button, FieldError, FormInputLabel, Label } from 'components/elements';
+import {
+	Button,
+	FieldError,
+	FormattedInputNumber,
+	FormInputLabel,
+	Label,
+} from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { SEARCH_DEBOUNCE_TIME } from 'global';
 import {
@@ -165,10 +171,15 @@ export const CreateCreditRegistrationForm = ({
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel
-								type="number"
-								id="creditLimit"
-								label="Credit Limit"
+							<Label label="Credit Limit" spacing />
+							<FormattedInputNumber
+								size="large"
+								value={values['creditLimit']}
+								controls={false}
+								style={{ width: '100%' }}
+								onChange={(value) => {
+									setFieldValue('creditLimit', value);
+								}}
 							/>
 							<ErrorMessage
 								name="creditLimit"
@@ -186,7 +197,7 @@ export const CreateCreditRegistrationForm = ({
 						/>
 						<Button
 							type="submit"
-							text="Create"
+							text={creditRegistration ? 'Edit' : 'Create'}
 							variant="primary"
 							loading={loading}
 						/>

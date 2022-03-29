@@ -1,39 +1,34 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable newline-per-chained-call */
-import { Checkbox, Col, Divider, Row, Typography } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isInteger } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
+import { Col, Divider, Input, Row, Typography } from 'antd';
 import {
 	Button,
 	FieldError,
-	FieldInfo,
+	FieldWarning,
+	FormattedInputNumber,
 	FormInput,
 	FormInputLabel,
 	FormRadioButton,
 	FormSelect,
 	FormTextareaLabel,
 	Label,
-} from '../../../../components/elements';
-import FieldWarning from '../../../../components/elements/FieldWarning/FieldWarning';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	booleanOptions,
 	checkingTypesOptions,
-} from '../../../../global/options';
-import {
+	inputTypes,
 	productCheckingTypes,
 	productTypes,
 	unitOfMeasurementTypes,
-} from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { IProductCategory } from '../../../../models';
-import {
-	formatQuantity,
-	removeCommas,
-	sleep,
-} from '../../../../utils/function';
+} from 'global';
+import { useAuth } from 'hooks/useAuth';
+import { isInteger } from 'lodash';
+import { IProductCategory } from 'models';
+import React, { useCallback, useState } from 'react';
+import { formatQuantity, removeCommas, sleep } from 'utils/function';
+import * as Yup from 'yup';
 import '../style.scss';
 
 const { Text } = Typography;
@@ -270,6 +265,46 @@ export const CreateEditProductForm = ({
 		[productCategories],
 	);
 
+	const renderInputField = ({
+		name,
+		label,
+		type = inputTypes.TEXT,
+		values,
+		setFieldValue,
+		options = {},
+	}) => (
+		<>
+			<Label id={name} label={label} spacing />
+			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
+				<Input
+					value={values[name]}
+					type={type}
+					onChange={(e) => {
+						setFieldValue(name, e.target.value);
+					}}
+					size="large"
+					{...options}
+				/>
+			)}
+			{type === inputTypes.MONEY && (
+				<FormattedInputNumber
+					size="large"
+					value={values[name]}
+					controls={false}
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setFieldValue(name, value);
+					}}
+					{...options}
+				/>
+			)}
+			<ErrorMessage
+				name={name}
+				render={(error) => <FieldError error={error} />}
+			/>
+		</>
+	);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -363,43 +398,48 @@ export const CreateEditProductForm = ({
 				<Form>
 					<Row gutter={[15, 15]}>
 						<Col sm={6} xs={24}>
-							<FormInputLabel id="barcode" label="Barcode" />
-							<ErrorMessage
-								name="barcode"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'barcode',
+								label: 'Barcode',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 
 						<Col sm={6} xs={24}>
-							<FormInputLabel id="textcode" label="Textcode" />
-							<ErrorMessage
-								name="textcode"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'textcode',
+								label: 'Textcode',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel id="name" label="Name" />
-							<ErrorMessage
-								name="name"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'name',
+								label: 'Name',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 
 						<Col span={24}>
-							<FormTextareaLabel id="print_details" label="Print Details" />
-							<ErrorMessage
-								name="print_details"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'print_details',
+								label: 'Print Details',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 
 						<Col span={24}>
-							<FormTextareaLabel id="description" label="Description" />
-							<ErrorMessage
-								name="description"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'description',
+								label: 'Description',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -516,11 +556,14 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<FormInputLabel
-								type="number"
-								id="pieces_in_bulk"
-								label="Pieces in Bulk"
-							/>
+							{renderInputField({
+								name: 'pieces_in_bulk',
+								label: 'Pieces in Bulk',
+								setFieldValue,
+								values,
+								type: inputTypes.NUMBER,
+							})}
+
 							<ErrorMessage
 								name="pieces_in_bulk"
 								render={(error) => <FieldError error={error} />}
@@ -528,19 +571,20 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Allowable Spoilage (%)" spacing />
-							<FormInput
-								type="number"
-								id="allowable_spoilage"
-								disabled={
-									values?.unit_of_measurement !==
-									unitOfMeasurementTypes.WEIGHING
-								}
-							/>
-							<ErrorMessage
-								name="allowable_spoilage"
-								render={(error) => <FieldError error={error} />}
-							/>
+							<Label label="" spacing />
+							{renderInputField({
+								name: 'allowable_spoilage',
+								label: 'Allowable Spoilage (%)',
+								setFieldValue,
+								values,
+								type: inputTypes.NUMBER,
+								options: {
+									disabled:
+										values?.unit_of_measurement !==
+										unitOfMeasurementTypes.WEIGHING,
+								},
+							})}
+
 							{values?.unit_of_measurement !==
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited." />
@@ -554,40 +598,43 @@ export const CreateEditProductForm = ({
 						</Divider>
 
 						<Col sm={12} xs={24}>
-							<Label label="Cost (Piece)" spacing />
-
-							<FormInput type="number" id="cost_per_piece" isMoney />
-							<ErrorMessage
-								name="cost_per_piece"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'cost_per_piece',
+								label: 'Cost (Piece)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Cost (Bulk)" spacing />
-							<FormInput type="number" id="cost_per_bulk" isMoney />
-							<ErrorMessage
-								name="cost_per_bulk"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'cost_per_bulk',
+								label: 'Cost (Bulk)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Price (Piece)" spacing />
-							<FormInput type="number" id="price_per_piece" isMoney />
-							<ErrorMessage
-								name="price_per_piece"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'price_per_piece',
+								label: 'Price (Piece)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Price (Bulk)" spacing />
-							<FormInput type="number" id="price_per_bulk" isMoney />
-							<ErrorMessage
-								name="price_per_bulk"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'price_per_bulk',
+								label: 'Price (Bulk)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
@@ -611,59 +658,43 @@ export const CreateEditProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Wholesale Price (piece)" spacing />
-							<FormInput
-								type="number"
-								id="discounted_price_per_piece1"
-								step=".01"
-								isMoney
-							/>
-							<ErrorMessage
-								name="discounted_price_per_piece1"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'discounted_price_per_piece1',
+								label: 'Wholesale Price (Piece)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Special Price (piece)" spacing />
-							<FormInput
-								type="number"
-								id="discounted_price_per_piece2"
-								step=".01"
-								isMoney
-							/>
-							<ErrorMessage
-								name="discounted_price_per_piece2"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'discounted_price_per_piece2',
+								label: 'Special Price (Piece)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Wholesale Price (bulk)" spacing />
-							<FormInput
-								type="number"
-								id="discounted_price_per_bulk1"
-								step=".01"
-								isMoney
-							/>
-							<ErrorMessage
-								name="discounted_price_per_bulk1"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'discounted_price_per_bulk1',
+								label: 'Wholesale Price (Bulk)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="Special Price (bulk)" spacing />
-							<FormInput
-								type="number"
-								id="discounted_price_per_bulk2"
-								step=".01"
-								isMoney
-							/>
-							<ErrorMessage
-								name="discounted_price_per_bulk2"
-								render={(error) => <FieldError error={error} />}
-							/>
+							{renderInputField({
+								name: 'discounted_price_per_bulk2',
+								label: 'Special Price (Bulk)',
+								setFieldValue,
+								values,
+								type: inputTypes.MONEY,
+							})}
 						</Col>
 					</Row>
 

@@ -3,20 +3,22 @@ import {
 	Col,
 	DatePicker,
 	Divider,
+	Input,
 	message,
 	Radio,
 	Row,
 	Spin,
 	TimePicker,
+	Button,
 } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
-import { Button, FieldError, FormInputLabel, Label } from 'components/elements';
+import { FieldError, FormattedInputNumber, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { taxTypes } from 'global';
+import { inputTypes, taxTypes } from 'global';
 import { useSiteSettingsEdit, useSiteSettingsRetrieve } from 'hooks';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, sleep } from 'utils/function';
+import { convertIntoArray } from 'utils/function';
 import * as Yup from 'yup';
 
 const getValidTimeTest = (label) =>
@@ -46,9 +48,6 @@ export const ViewBranchSiteSettings = ({
 	branchId,
 	withHeader = true,
 }: Props) => {
-	// STATES
-	const [isSubmitting, setSubmitting] = useState(false);
-
 	// CUSTOM HOOKS
 	const {
 		data: siteSettings,
@@ -176,7 +175,7 @@ export const ViewBranchSiteSettings = ({
 		[siteSettings],
 	);
 
-	const renderDatePicker = (name, label, values, setFieldValue) => (
+	const renderDatePicker = ({ name, label, values, setFieldValue }) => (
 		<>
 			<Label id={name} label={label} spacing />
 			<DatePicker
@@ -194,7 +193,7 @@ export const ViewBranchSiteSettings = ({
 		</>
 	);
 
-	const renderTimePicker = (name, label, values, setFieldValue) => (
+	const renderTimePicker = ({ name, label, values, setFieldValue }) => (
 		<>
 			<Label id={name} label={label} spacing />
 			<TimePicker
@@ -215,9 +214,36 @@ export const ViewBranchSiteSettings = ({
 		</>
 	);
 
-	const renderInputField = (name, label, type = 'text') => (
+	const renderInputField = ({
+		name,
+		label,
+		type = inputTypes.TEXT,
+		values,
+		setFieldValue,
+	}) => (
 		<>
-			<FormInputLabel id={name} label={label} type={type} />
+			<Label id={name} label={label} spacing />
+			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
+				<Input
+					value={values[name]}
+					type={type}
+					onChange={(e) => {
+						setFieldValue(name, e.target.value);
+					}}
+					size="large"
+				/>
+			)}
+			{type === inputTypes.MONEY && (
+				<FormattedInputNumber
+					size="large"
+					value={values[name]}
+					controls={false}
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setFieldValue(name, value);
+					}}
+				/>
+			)}
 			<ErrorMessage
 				name={name}
 				render={(error) => <FieldError error={error} />}
@@ -241,7 +267,7 @@ export const ViewBranchSiteSettings = ({
 	};
 
 	return (
-		<Spin size="large" spinning={isFetching || isLoading || isSubmitting}>
+		<Spin size="large" spinning={isFetching}>
 			{withHeader && <TableHeader title="Site Settings" />}
 
 			<RequestErrors
@@ -255,11 +281,7 @@ export const ViewBranchSiteSettings = ({
 			<Formik
 				initialValues={getFormDetails().DefaultValues}
 				validationSchema={getFormDetails().Schema}
-				onSubmit={async (formData) => {
-					setSubmitting(true);
-					await sleep(500);
-					setSubmitting(false);
-
+				onSubmit={(formData) => {
 					onSubmit(formData);
 				}}
 				enableReinitialize
@@ -267,26 +289,36 @@ export const ViewBranchSiteSettings = ({
 				{({ values, setFieldValue }) => (
 					<Form>
 						<Row gutter={[15, 15]}>
-							<Col xs={24} sm={12}>
-								{renderTimePicker(
-									'closeSessionDeadline',
-									'Close Session Deadline',
-									values,
+							<Divider>Store Details</Divider>
+
+							<Col span={24} md={12}>
+								{renderInputField({
+									name: 'storeName',
+									label: 'Store Name',
 									setFieldValue,
-								)}
+									values,
+								})}
 							</Col>
-							<Col xs={24} sm={12}>
-								{renderTimePicker(
-									'closeDayDeadline',
-									'Close Day Deadline',
-									values,
+							<Col span={24} md={12}>
+								{renderInputField({
+									name: 'addressOfTaxPayer',
+									label: 'Address of Tax Payer',
 									setFieldValue,
-								)}
+									values,
+								})}
 							</Col>
 
+							<Divider>Receipt Header</Divider>
+
 							<Col xs={24} sm={12}>
-								{renderInputField('proprietor', 'Proprietor')}
+								{renderInputField({
+									name: 'proprietor',
+									label: 'Proprietor',
+									setFieldValue,
+									values,
+								})}
 							</Col>
+
 							<Col xs={24} sm={6}>
 								<Label label="VAT Type" spacing />
 								<Radio.Group
@@ -301,113 +333,179 @@ export const ViewBranchSiteSettings = ({
 									optionType="button"
 								/>
 							</Col>
-							<Col xs={24} sm={6}>
-								{renderInputField(
-									'reportingPeriodDayOfMonth',
-									'Reporting Day of the Month',
-									'number',
-								)}
-							</Col>
+
 							<Col xs={24} sm={12}>
-								{renderInputField('tin', 'TIN')}
+								{renderInputField({
+									name: 'tin',
+									label: 'TIN',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 
 							<Col xs={24} sm={12}>
-								{renderInputField('permitNumber', 'Permit Number')}
+								{renderInputField({
+									name: 'permitNumber',
+									label: 'Permit Number',
+									setFieldValue,
+									values,
+								})}
+							</Col>
+
+							<Divider>Receipt Footer</Divider>
+
+							<Col xs={24} sm={12}>
+								{renderInputField({
+									name: 'softwareDeveloper',
+									label: 'Software Developer',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 							<Col xs={24} sm={12}>
-								{renderInputField('softwareDeveloper', 'Software Developer')}
-							</Col>
-							<Col xs={24} sm={12}>
-								{renderInputField(
-									'softwareDeveloperTin',
-									'Software Developer TIN',
-								)}
+								{renderInputField({
+									name: 'softwareDeveloperTin',
+									label: 'Software Developer TIN',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 
 							<Col xs={24} sm={8}>
-								{renderInputField(
-									'posAccreditationNumber',
-									'POS Accreditation Number',
-								)}
+								{renderInputField({
+									name: 'posAccreditationNumber',
+									label: 'POS Accreditation Number',
+									setFieldValue,
+									values,
+								})}
 							</Col>
+
 							<Col xs={24} sm={8}>
-								{renderDatePicker(
-									'posAccreditationDate',
-									'POS Accreditation Date',
+								{renderDatePicker({
+									name: 'posAccreditationDate',
+									label: 'POS Accreditation Date',
 									values,
 									setFieldValue,
-								)}
+								})}
 							</Col>
 
 							<Col xs={24} sm={8}>
-								{renderDatePicker(
-									'posAccreditationValidUntilDate',
-									'POS Accreditation Valid Until Date',
+								{renderDatePicker({
+									name: 'posAccreditationValidUntilDate',
+									label: 'POS Accreditation Valid Until Date',
 									values,
 									setFieldValue,
-								)}
+								})}
 							</Col>
 
 							<Col xs={24} sm={8}>
-								{renderInputField('ptuNumber', 'PTU Number')}
+								{renderInputField({
+									name: 'ptuNumber',
+									label: 'PTU Number',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 							<Col xs={24} sm={8}>
-								{renderDatePicker('ptuDate', 'PTU Date', values, setFieldValue)}
-							</Col>
-
-							<Col xs={24} sm={8}>
-								{renderDatePicker(
-									'ptuValidUntilDate',
-									'PTU Valid Until Date',
+								{renderDatePicker({
+									name: 'ptuDate',
+									label: 'PTU Date',
 									values,
 									setFieldValue,
-								)}
+								})}
+							</Col>
+
+							<Col xs={24} sm={8}>
+								{renderDatePicker({
+									name: 'ptuValidUntilDate',
+									label: 'PTU Valid Until Date',
+									values,
+									setFieldValue,
+								})}
+							</Col>
+
+							<Divider>Cashiering Details</Divider>
+
+							<Col xs={24} sm={12}>
+								{renderTimePicker({
+									name: 'closeSessionDeadline',
+									label: 'Close Session Deadline',
+									values,
+									setFieldValue,
+								})}
+							</Col>
+
+							<Col xs={24} sm={12}>
+								{renderTimePicker({
+									name: 'closeDayDeadline',
+									label: 'Close Day Deadline',
+									values,
+									setFieldValue,
+								})}
+							</Col>
+
+							<Col xs={24} sm={12}>
+								{renderInputField({
+									name: 'reportingPeriodDayOfMonth',
+									label: 'Reporting Day of the Month',
+									type: inputTypes.NUMBER,
+									setFieldValue,
+									values,
+								})}
+							</Col>
+
+							<Col xs={24} sm={12}>
+								{renderInputField({
+									name: 'productVersion',
+									label: 'Product Version',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 
 							<Col span={24}>
-								{renderInputField('productVersion', 'Product Version')}
-							</Col>
-
-							<Col span={24}>
-								{renderInputField('thankYouMessage', 'Thank You Message')}
+								{renderInputField({
+									name: 'thankYouMessage',
+									label: 'Thank You Message',
+									setFieldValue,
+									values,
+								})}
 							</Col>
 
 							<Divider>Notification</Divider>
 
 							<Col xs={24} sm={12}>
-								{renderInputField(
-									'resetCounterNotificationThresholdAmount',
-									'Reset Counter Notification Threshold Amount',
-									'number',
-								)}
+								{renderInputField({
+									name: 'resetCounterNotificationThresholdAmount',
+									label: 'Reset Counter Notification Threshold Amount',
+									type: inputTypes.MONEY,
+									setFieldValue,
+									values,
+								})}
 							</Col>
 
 							<Col xs={24} sm={12}>
-								{renderInputField(
-									'resetCounterNotificationThresholdInvoiceNumber',
-									'Reset Counter Notification Threshold Invoice Number',
-									'number',
-								)}
-							</Col>
-
-							<Divider>Store Details</Divider>
-
-							<Col span={24}>{renderInputField('storeName', 'Store Name')}</Col>
-							<Col span={24}>
-								{renderInputField('addressOfTaxPayer', 'Address of Tax Payer')}
+								{renderInputField({
+									name: 'resetCounterNotificationThresholdInvoiceNumber',
+									label: 'Reset Counter Notification Threshold Invoice Number',
+									type: inputTypes.MONEY,
+									setFieldValue,
+									values,
+								})}
 							</Col>
 						</Row>
 
 						<Divider />
 
 						<Button
-							type="submit"
-							classNames="btn-submit-site-settings"
-							text="Save Settings"
-							variant="primary"
+							htmlType="submit"
+							type="primary"
+							size="large"
+							loading={isLoading}
 							block
-						/>
+						>
+							Save
+						</Button>
 					</Form>
 				)}
 			</Formik>

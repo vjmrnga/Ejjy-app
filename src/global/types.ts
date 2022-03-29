@@ -184,3 +184,9 @@ export const discountTypes = {
 	AMOUNT: 'amount',
 	PERCENTAGE: 'percentage',
 };
+
+export const inputTypes = {
+	TEXT: 'text',
+	NUMBER: 'number',
+	MONEY: 'money',
+};

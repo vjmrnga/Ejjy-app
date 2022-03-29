@@ -114,6 +114,7 @@ export const ModifyAccountForm = ({
 										.toLowerCase()
 										.indexOf(input.toLowerCase()) >= 0
 								}
+								disabled={account !== null}
 								showSearch
 							>
 								<Select.Option
@@ -282,7 +283,7 @@ export const ModifyAccountForm = ({
 						/>
 						<Button
 							type="submit"
-							text="Create"
+							text={account ? 'Edit' : 'Create'}
 							variant="primary"
 							loading={loading}
 						/>

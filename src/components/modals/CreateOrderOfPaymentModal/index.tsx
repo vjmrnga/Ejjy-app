@@ -1,6 +1,12 @@
 import { Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
-import { Button, FieldError, FormInputLabel, Label } from 'components/elements';
+import {
+	Button,
+	FieldError,
+	FormattedInputNumber,
+	FormInputLabel,
+	Label,
+} from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
 import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
@@ -190,10 +196,18 @@ export const CreateOrderOfPaymentForm = ({
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel
-								type="number"
-								id="amount"
+							<Label
 								label={`Amount (Total: ${formatInPeso(maxAmount)})`}
+								spacing
+							/>
+							<FormattedInputNumber
+								size="large"
+								value={values['amount']}
+								controls={false}
+								style={{ width: '100%' }}
+								onChange={(value) => {
+									setFieldValue('amount', value);
+								}}
 							/>
 							<ErrorMessage
 								name="amount"

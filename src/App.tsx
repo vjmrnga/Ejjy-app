@@ -1,19 +1,19 @@
+import { CommonRoute, NoAuthRoute } from 'components';
+import { APP_TITLE, userTypes } from 'global';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Switch } from 'react-router-dom';
-import { CommonRoute, NoAuthRoute } from './components';
-import { APP_TITLE } from './global/constants';
-import { userTypes } from './global/types';
-import Admin from './screens/Admin';
-import BranchManager from './screens/BranchManager';
-import BranchPersonnel from './screens/BranchPersonnel';
-import Login from './screens/Common/Login/Login';
-import OfficeManager from './screens/OfficeManager';
+import Admin from 'screens/Admin';
+import BranchManager from 'screens/BranchManager';
+import BranchPersonnel from 'screens/BranchPersonnel';
+import Login from 'screens/Common/Login/Login';
+import OfficeManager from 'screens/OfficeManager';
+import npmPackage from '../package.json';
 
 const App = () => (
 	<>
 		<Helmet>
-			<title>{APP_TITLE}</title>
+			<title>{`${APP_TITLE} (v${npmPackage.version})`}</title>
 		</Helmet>
 		<Switch>
 			<NoAuthRoute path="/login" exact component={Login} />

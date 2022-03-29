@@ -286,7 +286,7 @@ const BranchManager = () => {
 						component={SiteSettings}
 					/>
 
-					<Redirect to="/branch-manager/dashboard" />
+					<Redirect to="/branch-manager/branch-machines" />
 				</Switch>
 			</React.Suspense>
 		</Container>
