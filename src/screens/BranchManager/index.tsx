@@ -90,6 +90,13 @@ const BranchManager = () => {
 	const getSidebarItems = useCallback(
 		() => [
 			{
+				key: 'branch-machines',
+				name: 'Branch Machines',
+				activeIcon: require('../../assets/images/icon-branches-active.svg'),
+				defaultIcon: require('../../assets/images/icon-branches.svg'),
+				link: '/branch-manager/branch-machines',
+			},
+			{
 				key: 'dashboard',
 				name: 'Dashboard',
 				activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
@@ -130,13 +137,6 @@ const BranchManager = () => {
 				activeIcon: require('../../assets/images/icon-users-active.svg'),
 				defaultIcon: require('../../assets/images/icon-users.svg'),
 				link: '/branch-manager/accounts',
-			},
-			{
-				key: 'branch-machines',
-				name: 'Branch Machines',
-				activeIcon: require('../../assets/images/icon-branches-active.svg'),
-				defaultIcon: require('../../assets/images/icon-branches.svg'),
-				link: '/branch-manager/branch-machines',
 			},
 			{
 				key: 'requisition-slips',
