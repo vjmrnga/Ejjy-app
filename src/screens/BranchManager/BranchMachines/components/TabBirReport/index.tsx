@@ -77,6 +77,7 @@ interface Props {
 export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 	// STATES
 	const [isPrinting, setIsPrinting] = useState(false);
+	const [html, setHtml] = useState('');
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
@@ -159,6 +160,8 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 			putOnlyUsedFonts: true,
 		});
 
+		setHtml(dataHtml);
+
 		setTimeout(() => {
 			pdf.html(dataHtml, {
 				margin: 10,
@@ -166,6 +169,7 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 				callback: (instance) => {
 					window.open(instance.output('bloburl').toString());
 					setIsPrinting(false);
+					setHtml('');
 				},
 			});
 		}, 500);
@@ -185,7 +189,7 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
-				isLoading={isBirReportsFetching || isSiteSettingsFetching}
+				isLoading={isBirReportsFetching || isSiteSettingsFetching || isPrinting}
 			/>
 
 			<RequestErrors
@@ -214,8 +218,15 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 					pageSizeOptions,
 				}}
 				size="middle"
-				loading={isBirReportsFetching || isSiteSettingsFetching}
+				loading={isBirReportsFetching || isSiteSettingsFetching || isPrinting}
 				bordered
+			/>
+
+			<div
+				dangerouslySetInnerHTML={{
+					__html: html,
+				}}
+				style={{ display: 'none' }}
 			/>
 		</>
 	);

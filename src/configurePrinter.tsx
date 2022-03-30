@@ -626,6 +626,7 @@ export const printCollectionReceipt = (collectionReceipt) => {
 };
 
 export const printBirReport = ({ birReports, siteSettings }) => {
+	const PESO_SIGN = 'P';
 	const birReportsRow = birReports
 		.map(
 			(report) => `
@@ -633,32 +634,38 @@ export const printBirReport = ({ birReports, siteSettings }) => {
       <td>${formatDate(report.date)}</td>
       <td>${report?.beginning_or?.or_number || EMPTY_CELL}</td>
       <td>${report?.ending_or?.or_number || EMPTY_CELL}</td>
-      <td>${formatInPeso(report.grand_accumulated_sales_ending_balance)}</td>
-      <td>${formatInPeso(report.grand_accumulated_sales_beginning_balance)}</td>
-      <td>${formatInPeso(report.gross_sales_for_the_day)}</td>
-      <td>${formatInPeso(report.sales_issue_with_manual)}</td>
-      <td>${formatInPeso(report.gross_sales_from_pos)}</td>
-      <td>${formatInPeso(report.vatable_sales)}</td>
-      <td>${formatInPeso(report.vat_amount)}</td>
-      <td>${formatInPeso(report.vat_exempt_sales)}</td>
-      <td>${formatInPeso(report.zero_rated_sales)}</td>
+      <td>${formatInPeso(
+				report.grand_accumulated_sales_ending_balance,
+				PESO_SIGN,
+			)}</td>
+      <td>${formatInPeso(
+				report.grand_accumulated_sales_beginning_balance,
+				PESO_SIGN,
+			)}</td>
+      <td>${formatInPeso(report.gross_sales_for_the_day, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.sales_issue_with_manual, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.gross_sales_from_pos, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.vatable_sales, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.vat_amount, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.vat_exempt_sales, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.zero_rated_sales, PESO_SIGN)}</td>
 
-      <td>${formatInPeso(report.regular_discount)}</td>
-      <td>${formatInPeso(report.special_discount)}</td>
-      <td>${formatInPeso(report.returns)}</td>
-      <td>${formatInPeso(report.void)}</td>
-      <td>${formatInPeso(report.total_deductions)}</td>
+      <td>${formatInPeso(report.regular_discount, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.special_discount, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.returns, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.void, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.total_deductions, PESO_SIGN)}</td>
 
-      <td>${formatInPeso(report.vat_on_special_discounts)}</td>
-      <td>${formatInPeso(report.vat_on_returns)}</td>
-      <td>${formatInPeso(report.others)}</td>
-      <td>${formatInPeso(report.total_vat_adjusted)}</td>
+      <td>${formatInPeso(report.vat_on_special_discounts, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.vat_on_returns, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.others, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.total_vat_adjusted, PESO_SIGN)}</td>
 
-      <td>${formatInPeso(report.vat_payable)}</td>
-      <td>${formatInPeso(report.net_sales)}</td>
-      <td>${formatInPeso(report.other_income)}</td>
-      <td>${formatInPeso(report.sales_overrun_or_overflow)}</td>
-      <td>${formatInPeso(report.total_net_sales)}</td>
+      <td>${formatInPeso(report.vat_payable, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.net_sales, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.other_income, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.sales_overrun_or_overflow, PESO_SIGN)}</td>
+      <td>${formatInPeso(report.total_net_sales, PESO_SIGN)}</td>
       <td>${report.reset_counter}</td>
       <td>${report.remarks}</td>
     </tr>
@@ -671,7 +678,6 @@ export const printBirReport = ({ birReports, siteSettings }) => {
   <head>
     <style>
       body .bir-reports-pdf {
-        font-family: 'Calibri', monospace;
         font-size: 12px;
       }
 
