@@ -3,6 +3,7 @@ import { useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
 import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
 import { Breadcrumb, Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
@@ -28,6 +29,7 @@ const tabs = {
 	DAILY_INVOICE_REPORT: 'Daily Invoice Report',
 	DAILY_PRODUCT_SALES_REPORT: 'Daily Product Sales Report',
 	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
+	BIR_REPORT: 'BIR Report',
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
 	CONNECTIVITY_LOGS: 'Connectivity Logs',
@@ -142,6 +144,13 @@ export const ViewBranchMachine = ({ match }: Props) => {
 								tab={tabs.TRANSACTION_ADJUSTMENTS_REPORT}
 							>
 								<TabTransactionAdjustmentReport
+									branchMachineId={branchMachine.id}
+									serverUrl={branchMachine.server_url}
+								/>
+							</Tabs.TabPane>
+
+							<Tabs.TabPane key={tabs.BIR_REPORT} tab={tabs.BIR_REPORT}>
+								<TabBirReport
 									branchMachineId={branchMachine.id}
 									serverUrl={branchMachine.server_url}
 								/>
