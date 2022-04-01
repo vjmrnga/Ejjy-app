@@ -1,15 +1,20 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Modal, Spin, Table } from 'antd';
+import {
+	Descriptions,
+	Divider,
+	Modal,
+	Space,
+	Spin,
+	Table,
+	Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Button } from 'components/elements';
+import { EMPTY_CELL, saleTypes } from 'global';
+import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle } from '../..';
-import { EMPTY_CELL } from '../../../global/constants';
-import { useTransactionRetrieve } from '../../../hooks';
-import { formatInPeso, formatQuantity } from '../../../utils/function';
-import { Button } from '../../elements';
-import './style.scss';
+import { formatDateTime, formatInPeso, formatQuantity } from 'utils/function';
 
 interface Props {
 	transaction: any | number;
@@ -17,6 +22,8 @@ interface Props {
 	serverUrl?: string;
 	onClose: any;
 }
+
+const { Text, Title } = Typography;
 
 const columns: ColumnsType = [
 	{ title: 'Item', dataIndex: 'item' },
@@ -33,18 +40,28 @@ export const ViewTransactionModal = ({
 }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [transactionData, setTransactionData] = useState(null);
+	const [defaultClientName, setDefaultClientName] = useState('');
+	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
-	const { data: transactionRetrieved, isFetching } = useTransactionRetrieve({
-		id: transaction,
-		params: {
-			branchMachineId,
-			serverUrl,
-		},
-		options: {
-			enabled: _.isNumber(transaction),
-		},
-	});
+	const { data: siteSettings, isFetching: isSiteSettingsFetching } =
+		useSiteSettingsRetrieve({
+			options: {
+				refetchOnMount: 'always',
+			},
+		});
+	const { data: transactionRetrieved, isFetching: isTransactionFetching } =
+		useTransactionRetrieve({
+			id: transaction,
+			params: {
+				branchMachineId,
+				serverUrl,
+			},
+			options: {
+				enabled: _.isNumber(transaction),
+			},
+		});
 
 	// METHODS
 	useEffect(() => {
@@ -52,7 +69,8 @@ export const ViewTransactionModal = ({
 			transaction?.products || transactionRetrieved?.products || [];
 
 		const formattedProducts = products.map(
-			({ branch_product, quantity, price_per_piece }) => ({
+			({ id, branch_product, quantity, price_per_piece }) => ({
+				key: id,
 				item: branch_product.product.name,
 				quantity: formatQuantity(
 					branch_product.product.unit_of_measurement,
@@ -66,232 +84,236 @@ export const ViewTransactionModal = ({
 		setDataSource(formattedProducts);
 	}, [transaction, transactionRetrieved]);
 
-	const transactionData = _.isNumber(transaction)
-		? transactionRetrieved
-		: transaction;
+	useEffect(() => {
+		setTransactionData(
+			_.isNumber(transaction) ? transactionRetrieved : transaction,
+		);
+	}, [transactionRetrieved, transaction]);
+
+	useEffect(() => {
+		if (transactionData?.id) {
+			if (transactionData.payment.mode === saleTypes.CASH) {
+				setDefaultClientName('walk-in cash');
+				setTitle('CASH SALES INVOICE');
+			} else if (transactionData.payment.mode === saleTypes.CREDIT) {
+				setDefaultClientName('walk-in credit');
+				setTitle('CHARGE SALES INVOICE');
+			}
+		}
+	}, [transactionData]);
 
 	return (
 		<Modal
-			title="View Transaction"
-			className="ViewTransactionModal Modal__large Modal__hasFooter"
+			title={`View Transaction - ${title}`}
+			className="Modal__hasFooter"
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
 			visible
 			centered
 			closable
+			width={400}
 		>
-			<Spin spinning={isFetching}>
-				{transactionData && (
+			<Spin spinning={isTransactionFetching || isSiteSettingsFetching}>
+				{transactionData?.id && (
 					<>
-						<DetailsRow>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Location"
-								value={transactionData?.invoice?.location || EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Proprietor"
-								value={transactionData?.invoice?.proprietor || EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="TIN"
-								value={transactionData?.invoice?.tin || EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Permit No."
-								value={transactionData?.invoice?.permit_number || EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Machine ID"
-								value={
-									transactionData?.branch_machine?.machine_id || EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Serial No (of printer)"
-								value={
-									transactionData?.branch_machine
-										?.machine_printer_serial_number || EMPTY_CELL
-								}
-							/>
-						</DetailsRow>
-
-						<Divider />
-
-						<h4 className="ViewTransaction_label">OFFICIAL RECEIPT</h4>
-
-						<Divider />
+						<Space
+							align="center"
+							className="w-100 text-center"
+							direction="vertical"
+							size={0}
+						>
+							<Title level={3}>EJY AND JY</Title>
+							<Text>WET MARKET AND ENTERPRISES</Text>
+							<Text>POB., CARMEN, AGUSAN DEL NORTE</Text>
+							<Text>Tel#: 080-8866</Text>
+							<Text>{transactionData.invoice.proprietor}</Text>
+							<Text>{transactionData.invoice.location}</Text>
+							<Text>
+								{siteSettings.tax_type} | {transactionData.invoice.tin}
+							</Text>
+							<Text>Machine ID Number</Text>
+							<Text>Software License Number</Text>
+							<Text>[{title}]</Text>
+						</Space>
 
 						<Table
+							className="mt-6"
 							columns={columns}
 							dataSource={dataSource}
-							scroll={{ y: 300 }}
 							pagination={false}
+							size="small"
+							bordered
 						/>
 
-						<Divider />
+						<Descriptions
+							className="mt-6 w-100"
+							colon={false}
+							column={1}
+							contentStyle={{
+								textAlign: 'right',
+								display: 'block',
+							}}
+							labelStyle={{
+								width: 200,
+							}}
+							size="small"
+						>
+							{transactionData.discount_option && (
+								<>
+									<Descriptions.Item label="GROSS AMOUNT">
+										{formatInPeso(transactionData.gross_amount)}
+									</Descriptions.Item>
+									<Descriptions.Item
+										label={`DISCOUNT | ${transactionData.discount_option.name}`}
+									>
+										({formatInPeso(transactionData.overall_discount)})
+									</Descriptions.Item>
+								</>
+							)}
+							<Descriptions.Item
+								contentStyle={{ fontWeight: 'bold' }}
+								label="TOTAL AMOUNT"
+							>
+								{formatInPeso(transactionData.total_amount)}
+							</Descriptions.Item>
+						</Descriptions>
 
-						<DetailsRow>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Subtotal"
-								value={formatInPeso(transactionData?.total_amount)}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Amount Received"
-								value={formatInPeso(transactionData?.total_paid_amount)}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Amount Due"
-								value={formatInPeso(transactionData?.total_amount)}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="VAT Exempt"
-								value={
-									transactionData?.invoice
-										? formatInPeso(transactionData?.invoice?.vat_exempt)
-										: EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="VAT Sales"
-								value={
-									transactionData?.invoice
-										? formatInPeso(transactionData?.invoice?.vat_sales)
-										: EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="12% VAT"
-								value={
-									transactionData?.invoice
-										? formatInPeso(transactionData?.invoice?.vat_12_percent)
-										: EMPTY_CELL
-								}
-							/>
-						</DetailsRow>
+						<Descriptions
+							className="mt-6 w-100"
+							colon={false}
+							column={1}
+							contentStyle={{
+								textAlign: 'right',
+								display: 'block',
+							}}
+							labelStyle={{
+								width: 200,
+								paddingLeft: 30,
+							}}
+							size="small"
+						>
+							<Descriptions.Item label="AMOUNT RECEIVED">
+								{formatInPeso(transactionData.payment.amount_tendered)}
+							</Descriptions.Item>
+							<Descriptions.Item label="AMOUNT DUE">
+								{formatInPeso(transactionData.total_amount)}
+							</Descriptions.Item>
+							<Descriptions.Item
+								contentStyle={{ fontWeight: 'bold' }}
+								label="CHANGE"
+							>
+								{formatInPeso(
+									Number(transactionData.payment.amount_tendered) -
+										Number(transactionData.total_amount),
+								)}
+							</Descriptions.Item>
+						</Descriptions>
 
-						<Divider />
+						<Descriptions
+							className="mt-6 w-100"
+							colon={false}
+							column={1}
+							contentStyle={{
+								textAlign: 'right',
+								display: 'block',
+							}}
+							labelStyle={{
+								width: 200,
+							}}
+							size="small"
+						>
+							<Descriptions.Item label="VAT Exempt">
+								{formatInPeso(
+									transactionData.overall_discount > 0
+										? transactionData.invoice.vat_exempt_discount
+										: transactionData.invoice.vat_exempt,
+								)}
+							</Descriptions.Item>
+							<Descriptions.Item label="VAT Sales">
+								{formatInPeso(
+									transactionData.overall_discount > 0
+										? transactionData.invoice.vat_sales_discount
+										: transactionData.invoice.vat_sales,
+								)}
+							</Descriptions.Item>
+							<Descriptions.Item label="VAT Amount">
+								{formatInPeso(transactionData.invoice.vat_12_percent)}
+							</Descriptions.Item>
+							<Descriptions.Item label="ZERO Rated">
+								{EMPTY_CELL}
+							</Descriptions.Item>
+						</Descriptions>
 
-						<DetailsRow>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Generated"
-								value={
-									transactionData?.invoice?.datetime_created
-										? moment(transactionData?.invoice?.datetime_created).format(
-												'YYYY-MM-DD',
-										  )
-										: EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Cashier"
-								value={
-									transactionData?.teller
-										? `${transactionData?.teller?.first_name} ${transactionData?.teller?.last_name}`
-										: EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Total Transactions"
-								value={
-									transactionData?.invoice?.total_transactions || EMPTY_CELL
-								}
-							/>
-						</DetailsRow>
+						<Space className="mt-6 w-100 justify-space-between">
+							<Text>
+								{formatDateTime(transactionData.invoice.datetime_created)}
+							</Text>
+							<Text>{transactionData.teller.employee_id}</Text>
+						</Space>
+						<Space className="w-100 justify-space-between">
+							<Text>{transactionData.invoice.or_number}</Text>
+							<Text>N2M1</Text>
+							<Text>{dataSource.length} item(s)</Text>
+						</Space>
 
-						<br />
+						{['PWD', 'SC'].includes(transactionData?.discount_option?.name) ? (
+							<Descriptions
+								colon={false}
+								column={1}
+								labelStyle={{
+									width: 200,
+									paddingLeft: 15,
+								}}
+								size="small"
+							>
+								<Descriptions.Item label="TIN">{EMPTY_CELL}</Descriptions.Item>
+								<Descriptions.Item label="ID#">{EMPTY_CELL}</Descriptions.Item>
+								<Descriptions.Item label="Signature">
+									{EMPTY_CELL}
+								</Descriptions.Item>
+							</Descriptions>
+						) : (
+							<Descriptions
+								colon={false}
+								column={1}
+								labelStyle={{
+									width: 200,
+								}}
+								size="small"
+							>
+								<Descriptions.Item label="Name">
+									{transactionData.client?.name || defaultClientName}
+								</Descriptions.Item>
+								<Descriptions.Item label="TIN">
+									{transactionData.client?.tin || EMPTY_CELL}
+								</Descriptions.Item>
+								<Descriptions.Item label="Address">
+									{transactionData.client?.address || EMPTY_CELL}
+								</Descriptions.Item>
+							</Descriptions>
+						)}
 
-						<DetailsRow>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Name"
-								value={EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="TIN"
-								value={EMPTY_CELL}
-							/>
-							<DetailsSingle
-								labelSpan={8}
-								valueSpan={16}
-								label="Address"
-								value={EMPTY_CELL}
-							/>
-						</DetailsRow>
+						<Space
+							align="center"
+							className="mt-8 w-100 text-center"
+							direction="vertical"
+							size={0}
+						>
+							<Text>{siteSettings.software_developer}</Text>
+							<Text>Burgos St., Poblacion, Carmen,</Text>
+							<Text>Agusan del Norte</Text>
+							<Text>{siteSettings.software_developer_tin}</Text>
+							<Text>{siteSettings.pos_accreditation_number}</Text>
+							<Text>{siteSettings.pos_accreditation_date}</Text>
+							<Text>{siteSettings.pos_accreditation_valid_until_date}</Text>
 
-						<Divider />
-
-						<DetailsRow>
-							<DetailsSingle
-								classNamesValue="ViewTransaction_value___center"
-								labelSpan={0}
-								valueSpan={24}
-								label=""
-								value={
-									transactionData?.invoice?.software_developer || EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								classNamesValue="ViewTransaction_value___center"
-								labelSpan={0}
-								valueSpan={24}
-								label=""
-								value={
-									transactionData?.invoice?.software_developer_tin || EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								classNamesValue="ViewTransaction_value___center"
-								labelSpan={0}
-								valueSpan={24}
-								label=""
-								value={
-									transactionData?.invoice?.pos_accreditation_number ||
-									EMPTY_CELL
-								}
-							/>
-							<DetailsSingle
-								classNamesValue="ViewTransaction_value___center"
-								labelSpan={0}
-								valueSpan={24}
-								label=""
-								value={
-									transactionData?.invoice?.pos_accreditation_date || EMPTY_CELL
-								}
-							/>
-						</DetailsRow>
+							<Text className="mt-4 d-block">
+								THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF
+								PERMIT TO USE.
+							</Text>
+							<Text>THIS SERVES AS YOUR SALES INVOICE</Text>
+							<Text>&quot;{siteSettings.thank_you_message}&quot;</Text>
+						</Space>
 					</>
 				)}
 			</Spin>

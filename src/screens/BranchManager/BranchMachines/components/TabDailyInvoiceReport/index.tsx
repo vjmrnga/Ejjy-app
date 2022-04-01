@@ -1,27 +1,30 @@
-import { Col, DatePicker, Row, Table } from 'antd';
+import { Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { useQueryParams } from 'hooks';
-import _ from 'lodash';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
 import {
 	ModeOfPayment,
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
+	ViewBackOrderModal,
 	ViewTransactionModal,
-} from '../../../../../components';
-import { ButtonLink, Label } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { timeRangeTypes, transactionStatus } from '../../../../../global/types';
-import { useTransactions } from '../../../../../hooks';
+} from 'components';
+import { ButtonLink, Label } from 'components/elements';
+import {
+	EMPTY_CELL,
+	pageSizeOptions,
+	timeRangeTypes,
+	transactionStatus,
+} from 'global';
+import { useQueryParams, useTransactions } from 'hooks';
+import _ from 'lodash';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDate,
 	formatInPeso,
 	getFullName,
-} from '../../../../../utils/function';
+} from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },
@@ -29,6 +32,7 @@ const columns: ColumnsType = [
 	{ title: 'Invoice Type', dataIndex: 'invoiceType' },
 	{ title: 'Total Amount', dataIndex: 'totalAmount' },
 	{ title: 'Cashier', dataIndex: 'cashier' },
+	{ title: 'Remarks', dataIndex: 'remarks' },
 ];
 
 interface Props {
@@ -43,6 +47,7 @@ export const TabDailyInvoiceReport = ({
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
+	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
@@ -63,21 +68,70 @@ export const TabDailyInvoiceReport = ({
 
 	// METHODS
 	useEffect(() => {
-		const data = transactions.map((transaction) => ({
-			key: transaction.id,
-			dateTime: formatDate(transaction.invoice.datetime_created),
-			invoiceNumber: transaction.invoice ? (
-				<ButtonLink
-					text={transaction.invoice.or_number}
-					onClick={() => setSelectedTransaction(transaction)}
-				/>
-			) : (
-				EMPTY_CELL
-			),
-			invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
-			totalAmount: formatInPeso(transaction.total_amount),
-			cashier: getFullName(transaction.teller),
-		}));
+		const data = transactions.map((transaction) => {
+			const backOrder = transaction?.adjustment_remarks?.back_order;
+			const previousTransaction =
+				transaction?.adjustment_remarks?.previous_voided_transaction;
+			const newTransaction =
+				transaction?.adjustment_remarks?.new_updated_transaction;
+			const discountOption = transaction?.adjustment_remarks?.discount_option;
+
+			const remarks = (
+				<Space direction="vertical">
+					{backOrder && (
+						<ButtonLink
+							text={`Back Order - ${backOrder.id}`}
+							onClick={() => setSelectedBackOrder(backOrder.id)}
+						/>
+					)}
+					{previousTransaction && (
+						<ButtonLink
+							text={`Prev. Invoice - ${previousTransaction.invoice.or_number}`}
+							onClick={() => setSelectedTransaction(previousTransaction.id)}
+						/>
+					)}
+					{newTransaction && (
+						<ButtonLink
+							text={`New Invoice - ${newTransaction.invoice.or_number}`}
+							onClick={() => setSelectedTransaction(newTransaction.id)}
+						/>
+					)}
+					{discountOption && (
+						<Descriptions column={1} size="small" bordered>
+							<Descriptions.Item label="Name">
+								{discountOption.name}
+							</Descriptions.Item>
+							<Descriptions.Item label="Type">
+								{_.upperFirst(discountOption.type)}{' '}
+								{discountOption.percentage > 0
+									? `${discountOption.percentage}%`
+									: ''}
+							</Descriptions.Item>
+							<Descriptions.Item label="Amount">
+								{formatInPeso(transaction.overall_discount)}
+							</Descriptions.Item>
+						</Descriptions>
+					)}
+				</Space>
+			);
+
+			return {
+				key: transaction.id,
+				dateTime: formatDate(transaction.invoice.datetime_created),
+				invoiceNumber: transaction.invoice ? (
+					<ButtonLink
+						text={transaction.invoice.or_number}
+						onClick={() => setSelectedTransaction(transaction)}
+					/>
+				) : (
+					EMPTY_CELL
+				),
+				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
+				totalAmount: formatInPeso(transaction.total_amount),
+				cashier: getFullName(transaction.teller),
+				remarks,
+			};
+		});
 
 		setDataSource(data);
 	}, [transactions]);
@@ -122,6 +176,13 @@ export const TabDailyInvoiceReport = ({
 				<ViewTransactionModal
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(false)}
+				/>
+			)}
+
+			{selectedBackOrder && (
+				<ViewBackOrderModal
+					backOrder={selectedBackOrder}
+					onClose={() => setSelectedBackOrder(null)}
 				/>
 			)}
 		</>

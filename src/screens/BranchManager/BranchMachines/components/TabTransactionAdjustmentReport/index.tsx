@@ -1,4 +1,4 @@
-import { Col, DatePicker, Row, Space, Table } from 'antd';
+import { Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -66,8 +66,11 @@ export const TabTransactionAdjustmentReport = ({
 	useEffect(() => {
 		const data = transactions.map((transaction) => {
 			const backOrder = transaction?.adjustment_remarks?.back_order;
-			const voidedTransaction =
+			const previousTransaction =
 				transaction?.adjustment_remarks?.previous_voided_transaction;
+			const newTransaction =
+				transaction?.adjustment_remarks?.new_updated_transaction;
+			const discountOption = transaction?.adjustment_remarks?.discount_option;
 
 			const remarks = (
 				<Space direction="vertical">
@@ -77,11 +80,33 @@ export const TabTransactionAdjustmentReport = ({
 							onClick={() => setSelectedBackOrder(backOrder.id)}
 						/>
 					)}
-					{voidedTransaction && (
+					{previousTransaction && (
 						<ButtonLink
-							text={`Invoice - ${voidedTransaction.invoice.or_number}`}
-							onClick={() => setSelectedTransaction(voidedTransaction.id)}
+							text={`Prev. Invoice - ${previousTransaction.invoice.or_number}`}
+							onClick={() => setSelectedTransaction(previousTransaction.id)}
 						/>
+					)}
+					{newTransaction && (
+						<ButtonLink
+							text={`New Invoice - ${newTransaction.invoice.or_number}`}
+							onClick={() => setSelectedTransaction(newTransaction.id)}
+						/>
+					)}
+					{discountOption && (
+						<Descriptions column={1} size="small" bordered>
+							<Descriptions.Item label="Name">
+								{discountOption.name}
+							</Descriptions.Item>
+							<Descriptions.Item label="Type">
+								{_.upperFirst(discountOption.type)}{' '}
+								{discountOption.percentage > 0
+									? `${discountOption.percentage}%`
+									: ''}
+							</Descriptions.Item>
+							<Descriptions.Item label="Amount">
+								{formatInPeso(transaction.overall_discount)}
+							</Descriptions.Item>
+						</Descriptions>
 					)}
 				</Space>
 			);

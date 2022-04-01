@@ -100,15 +100,15 @@ export const numberWithCommas = (x) =>
 export const removeCommas = (x) => x?.toString()?.replace(/,/g, '') || '';
 
 export const formatDateTime = memoize((datetime) =>
-	dayjs.tz(datetime).format('MM/DD/YYYY h:mma'),
+	dayjs.tz(datetime).format('MM/DD/YYYY h:mmA'),
 );
 
 export const formatDateTimeExtended = memoize((datetime) =>
-	dayjs.tz(datetime).format('MMMM D, YYYY h:mma'),
+	dayjs.tz(datetime).format('MMMM D, YYYY h:mmA'),
 );
 
 export const formatDateTimeShortMonth = memoize((datetime) =>
-	dayjs.tz(datetime).format('MMM D, YYYY h:mma'),
+	dayjs.tz(datetime).format('MMM D, YYYY h:mmA'),
 );
 
 export const formatDateTime24Hour = memoize((datetime) =>
