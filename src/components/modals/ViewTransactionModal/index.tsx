@@ -104,7 +104,7 @@ export const ViewTransactionModal = ({
 
 	return (
 		<Modal
-			title={`View Transaction - ${title}`}
+			title="View Transaction"
 			className="Modal__hasFooter"
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}

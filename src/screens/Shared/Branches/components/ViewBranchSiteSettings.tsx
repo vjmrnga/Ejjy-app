@@ -488,7 +488,7 @@ export const ViewBranchSiteSettings = ({
 								{renderInputField({
 									name: 'resetCounterNotificationThresholdInvoiceNumber',
 									label: 'Reset Counter Notification Threshold Invoice Number',
-									type: inputTypes.MONEY,
+									type: inputTypes.NUMBER,
 									setFieldValue,
 									values,
 								})}
