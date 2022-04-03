@@ -26,6 +26,7 @@ const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Percentage', dataIndex: 'percentage' },
+	{ title: 'Is VAT Inclusive?', dataIndex: 'isVatInclusive' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -58,6 +59,7 @@ export const DiscountOptions = () => {
 			name: discountOption.name,
 			type: _.upperFirst(discountOption.type),
 			percentage: discountOption.percentage || EMPTY_CELL,
+			isVatInclusive: discountOption.is_vat_inclusive ? 'Yes' : 'No',
 			actions: (
 				<TableActions
 					onEdit={() => {
@@ -92,6 +94,7 @@ export const DiscountOptions = () => {
 					dataSource={dataSource}
 					scroll={{ x: 800 }}
 					loading={isFetching || isLoading}
+					bordered
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,

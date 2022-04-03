@@ -90,6 +90,7 @@ export const ModifyDiscountOptionForm = ({
 				name: discountOption?.name || '',
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
+				isVatInclusive: discountOption?.is_vat_inclusive || false,
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(75).label('Name'),
@@ -116,6 +117,7 @@ export const ModifyDiscountOptionForm = ({
 							)
 							.label('Percentage'),
 					}),
+				isVatInclusive: Yup.boolean().required().label('Is VAT Inclusive?'),
 			}),
 		}),
 		[discountOption],
@@ -142,6 +144,22 @@ export const ModifyDiscountOptionForm = ({
 						</Col>
 
 						<Col xs={24} sm={12}>
+							<Label id="isVatInclusive" label="Is VAT Inclusive?" spacing />
+							<Radio.Group
+								value={values.isVatInclusive}
+								options={[
+									{ label: 'Yes', value: true },
+									{ label: 'No', value: false },
+								]}
+								onChange={(e) => {
+									const { value } = e.target;
+									setFieldValue('isVatInclusive', value);
+								}}
+								optionType="button"
+							/>
+						</Col>
+
+						<Col xs={24} sm={12}>
 							<Label id="type" label="Type" spacing />
 							<Radio.Group
 								value={values.type}
@@ -159,7 +177,7 @@ export const ModifyDiscountOptionForm = ({
 						</Col>
 
 						{values.type === discountTypes.PERCENTAGE && (
-							<Col span={24}>
+							<Col xs={24} sm={12}>
 								<FormInputLabel
 									type="number"
 									id="percentage"

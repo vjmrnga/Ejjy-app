@@ -28,12 +28,13 @@ export const useDiscountOptionsCreate = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation(
-		({ name, type, percentage }: any) =>
+		({ name, type, percentage, isVatInclusive }: any) =>
 			DiscountOptionsService.create(
 				{
 					name,
 					type,
 					percentage,
+					is_vat_inclusive: isVatInclusive,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),
@@ -49,13 +50,14 @@ export const useDiscountOptionsEdit = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation(
-		({ id, name, type, percentage }: any) =>
+		({ id, name, type, percentage, isVatInclusive }: any) =>
 			DiscountOptionsService.edit(
 				id,
 				{
 					name,
 					type,
 					percentage,
+					is_vat_inclusive: isVatInclusive,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),

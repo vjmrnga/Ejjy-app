@@ -5,6 +5,7 @@ interface Modify {
 	name: string;
 	type: string;
 	percentage: number;
+	is_vat_inclusive: boolean;
 }
 
 const service = {
