@@ -190,3 +190,13 @@ export const inputTypes = {
 	NUMBER: 'number',
 	MONEY: 'money',
 };
+
+export const backOrderTypes = {
+	DAMAGED: 'damaged',
+	FOR_RETURN: 'for_return',
+};
+
+export const vatTypes = {
+	VATABLE: 'V',
+	VAT_EMPTY: 'VE',
+};

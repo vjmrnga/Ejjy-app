@@ -1,6 +1,7 @@
 export * from './useAccounts';
 export { default as useAccounts } from './useAccounts';
 export * from './useBackOrders';
+export { default as useBackOrders } from './useBackOrders';
 export { default as useBirReports } from './useBirReports';
 export * from './useBranchesDayAuthorizations';
 export * from './useBranchMachines';
@@ -12,6 +13,8 @@ export { default as useDiscountOptions } from './useDiscountOptions';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as useQueryParams } from './useQueryParams';
+export * from './useReceivingVouchers';
+export { default as useReceivingVouchers } from './useReceivingVouchers';
 export { default as useSalesTracker } from './useSalesTracker';
 export * from './useSiteSettings';
 export { default as useTimeRange } from './useTimeRange';

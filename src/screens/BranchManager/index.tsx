@@ -6,6 +6,9 @@ import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
+import { Stocks } from 'screens/BranchManager/Stock';
+import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
+import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
 import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
 import { Products } from '../Shared/Products/Products';
 import { Accounts } from './Accounts';
@@ -118,6 +121,13 @@ const BranchManager = () => {
 				link: '/branch-manager/product-categories',
 			},
 			{
+				key: 'stocks',
+				name: 'Stocks',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/branch-manager/stocks',
+			},
+			{
 				key: 'discount-options',
 				name: 'Discount Options',
 				activeIcon: require('../../assets/images/icon-product-active.svg'),
@@ -208,6 +218,18 @@ const BranchManager = () => {
 						component={ProductCategories}
 					/>
 					<Route path="/branch-manager/products" component={Products} />
+
+					<Route path="/branch-manager/stocks" component={Stocks} exact />
+					<Route
+						path="/branch-manager/stocks/stock-in/create"
+						component={CreateStockIn}
+						exact
+					/>
+					<Route
+						path="/branch-manager/stocks/stock-out/create"
+						component={CreateStockOut}
+						exact
+					/>
 
 					<Route
 						path="/branch-manager/discount-options"

@@ -4,12 +4,15 @@ import { IListRequest } from './interfaces';
 interface List extends IListRequest {
 	sender_branch_id?: number;
 	receiver_id?: number;
+	type?: string;
 }
 
 interface Create {
 	sender_id: number;
 	is_online: boolean;
+	overall_remarks: string;
 	products: Product[];
+	type: string;
 }
 
 interface Edit {
@@ -24,6 +27,7 @@ interface Receive {
 type Product = {
 	product_id: number;
 	quantity_returned: number | string;
+	remarks: string;
 };
 
 const service = {

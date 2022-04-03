@@ -19,7 +19,6 @@ export const Accounts = () => {
 		params: { tab: currentTab },
 		setQueryParams,
 	} = useQueryParams();
-	const { user } = useAuth();
 
 	// METHODS
 	useEffect(() => {

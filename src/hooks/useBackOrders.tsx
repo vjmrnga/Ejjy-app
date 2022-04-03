@@ -1,22 +1,21 @@
+import { actions } from 'ducks/back-orders';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { actions } from '../ducks/back-orders';
-import { IS_APP_LIVE } from '../global/constants';
-import { request } from '../global/types';
-import { BackOrdersService, ONLINE_API_URL } from '../services';
+import { BackOrdersService, ONLINE_API_URL } from 'services';
 import {
 	getLocalIpAddress,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
-} from '../utils/function';
+} from 'utils/function';
 import {
 	addInCachedData,
 	executePaginatedRequest,
 	getDataForCurrentPage,
 	removeInCachedData,
 	updateInCachedData,
-} from '../utils/pagination';
+} from 'utils/pagination';
 import { Query } from './inteface';
 import { useActionDispatch } from './useActionDispatch';
 
@@ -161,7 +160,6 @@ export const useBackOrders = () => {
 		updateItemInPagination,
 		removeItemInPagination,
 
-		listBackOrders,
 		retrieveBackOrder,
 		createBackOrder,
 		editBackOrder,
@@ -170,6 +168,27 @@ export const useBackOrders = () => {
 		errors,
 	};
 };
+
+const useBackOrdersNew = ({ params }: Query) =>
+	useQuery<any>(
+		['useBackOrders', params?.page, params?.pageSize, params?.type],
+		async () =>
+			BackOrdersService.list(
+				{
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					type: params?.type,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				backOrders: query.data.results,
+				total: query.data.count,
+			}),
+		},
+	);
 
 export const useBackOrderRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
@@ -184,3 +203,5 @@ export const useBackOrderRetrieve = ({ id, options }: Query) =>
 			...options,
 		},
 	);
+
+export default useBackOrdersNew;

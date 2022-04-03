@@ -9,7 +9,13 @@ import {
 	ViewAccountModal,
 } from 'components';
 import { Label } from 'components/elements';
-import { accountTypes, pageSizeOptions, SEARCH_DEBOUNCE_TIME } from 'global';
+import {
+	accountTypes,
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	pageSizeOptions,
+	SEARCH_DEBOUNCE_TIME,
+} from 'global';
 import { useAccounts, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -36,10 +42,10 @@ export const TabAccounts = () => {
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
-		isFetching,
 		data: { accounts, total },
-		refetch: refetchAccounts,
+		isFetching,
 		error,
+		refetch: refetchAccounts,
 	} = useAccounts({ params: queryParams });
 
 	// METHODS
@@ -90,9 +96,9 @@ export const TabAccounts = () => {
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

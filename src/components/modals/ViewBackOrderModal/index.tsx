@@ -1,23 +1,28 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Divider, Modal, Spin, Table } from 'antd';
+import { Descriptions, Divider, Modal, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Button } from 'components/elements';
+import { backOrderTypes, EMPTY_CELL, vatTypes } from 'global';
+import { useBackOrderRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { DetailsHalf, DetailsRow } from '../..';
-import { EMPTY_CELL } from '../../../global/constants';
-import { useBackOrderRetrieve } from '../../../hooks';
 import {
 	formatDateTime,
 	formatQuantity,
 	getBackOrderStatus,
-} from '../../../utils/function';
-import { Button, Label } from '../../elements';
+} from 'utils/function';
 
-const columns: ColumnsType = [
+const columnsDamage: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Qty Returned', dataIndex: 'qty_returned' },
-	{ title: 'Qty Received', dataIndex: 'qty_received' },
+	{ title: 'Qty Returned', dataIndex: 'quantityReturned' },
+	{ title: 'Qty Received', dataIndex: 'quantityReceived' },
 	{ title: 'Status', dataIndex: 'status' },
+];
+
+const columnsForReturn: ColumnsType = [
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Type', dataIndex: 'type', align: 'center', width: 50 },
+	{ title: 'Quantity', dataIndex: 'quantity' },
+	{ title: 'Remarks', dataIndex: 'remarks' },
 ];
 
 interface Props {
@@ -28,6 +33,9 @@ interface Props {
 export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [backOrderData, setBackOrderData] = useState(null);
+	const [title, setTitle] = useState('');
+	const [columns, setColumns] = useState([]);
 
 	// CUSTOM HOOKS
 	const { data: backOrderRetrieved, isFetching } = useBackOrderRetrieve({
@@ -39,34 +47,53 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		let products = backOrder.products || [];
-		if (backOrderRetrieved?.products) {
-			products = backOrderRetrieved.products || [];
-		}
+		const data = _.isNumber(backOrder) ? backOrderRetrieved : backOrder;
+
+		setBackOrderData(data);
+		setColumns(
+			data?.type === backOrderTypes.DAMAGED ? columnsDamage : columnsForReturn,
+		);
+		setTitle(
+			`[View] ${
+				data?.type === backOrderTypes.DAMAGED ? 'Back Order' : 'Stock Out'
+			}`,
+		);
+	}, [backOrderRetrieved, backOrder]);
+
+	useEffect(() => {
+		const products = backOrderData?.products || [];
 
 		const formattedProducts = products.map((item) => ({
+			key: item.id,
 			name: item.product.name,
-			qty_returned: formatQuantity(
+			quantityReturned: formatQuantity(
 				item.product.unit_of_measurement,
 				item.quantity_returned,
 			),
-			qty_received: item?.quantity_received
+			quantityReceived: item?.quantity_received
 				? formatQuantity(
 						item.product.unit_of_measurement,
 						item.quantity_received,
 				  )
 				: EMPTY_CELL,
 			status: getBackOrderStatus(item.status),
+
+			type: item.product.is_vat_exempted
+				? vatTypes.VAT_EMPTY
+				: vatTypes.VATABLE,
+			quantity: formatQuantity(
+				item.product.unit_of_measurement,
+				item.quantity_returned,
+			),
+			remarks: item.remarks,
 		}));
 
 		setDataSource(formattedProducts);
-	}, [backOrder, backOrderRetrieved]);
-
-	const backOrderData = _.isNumber(backOrder) ? backOrderRetrieved : backOrder;
+	}, [backOrderData]);
 
 	return (
 		<Modal
-			title="[View] Back Order"
+			title={title}
 			className="Modal__large Modal__hasFooter"
 			footer={[<Button text="Close" onClick={onClose} />]}
 			onCancel={onClose}
@@ -75,48 +102,68 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 			closable
 		>
 			<Spin spinning={isFetching}>
-				{backOrderData && (
-					<DetailsRow>
-						<Col span={24}>
-							<DetailsHalf label="ID" value={backOrderData.id} />
-						</Col>
+				{backOrderData?.type === backOrderTypes.DAMAGED && (
+					<Descriptions
+						labelStyle={{
+							width: 200,
+						}}
+						bordered
+						className="w-100"
+						column={2}
+						size="small"
+					>
+						<Descriptions.Item span={2} label="ID">
+							{backOrderData.id}
+						</Descriptions.Item>
 
-						<DetailsHalf
-							label="Datetime Returned"
-							value={
-								backOrderData.datetime_sent
-									? formatDateTime(backOrderData.datetime_sent)
-									: EMPTY_CELL
-							}
-						/>
-						<DetailsHalf
-							label="Datetime Received"
-							value={
-								backOrderData.datetime_received
-									? formatDateTime(backOrderData.datetime_received)
-									: EMPTY_CELL
-							}
-						/>
+						<Descriptions.Item label="Datetime Returned">
+							{backOrderData.datetime_sent
+								? formatDateTime(backOrderData.datetime_sent)
+								: EMPTY_CELL}
+						</Descriptions.Item>
+						<Descriptions.Item label="Datetime Received">
+							{backOrderData.datetime_received
+								? formatDateTime(backOrderData.datetime_received)
+								: EMPTY_CELL}
+						</Descriptions.Item>
 
-						<DetailsHalf
-							label="Returned By (branch)"
-							value={backOrderData?.sender?.branch?.name}
-						/>
-						<DetailsHalf
-							label="Status"
-							value={getBackOrderStatus(backOrderData.status)}
-						/>
-					</DetailsRow>
+						<Descriptions.Item label="Returned By (Branch)">
+							{backOrderData?.sender?.branch?.name || EMPTY_CELL}
+						</Descriptions.Item>
+						<Descriptions.Item label="Status">
+							{getBackOrderStatus(backOrderData.status)}
+						</Descriptions.Item>
+					</Descriptions>
+				)}
+
+				{backOrderData?.type === backOrderTypes.FOR_RETURN && (
+					<Descriptions
+						labelStyle={{
+							width: 200,
+						}}
+						bordered
+						className="w-100"
+						column={1}
+						size="small"
+					>
+						<Descriptions.Item label="ID">{backOrderData.id}</Descriptions.Item>
+						<Descriptions.Item label="Date & Time Created">
+							{formatDateTime(backOrderData.datetime_created)}
+						</Descriptions.Item>
+						<Descriptions.Item label="Overall Remarks">
+							{backOrderData.overall_remarks}
+						</Descriptions.Item>
+					</Descriptions>
 				)}
 
 				<Divider dashed />
 
-				<Label label="Products" spacing />
 				<Table
 					columns={columns}
 					dataSource={dataSource}
 					scroll={{ x: 800 }}
 					pagination={false}
+					bordered
 				/>
 			</Spin>
 		</Modal>

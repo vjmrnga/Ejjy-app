@@ -51,7 +51,7 @@ function* retrieve({ payload }: any) {
 }
 
 function* create({ payload }: any) {
-	const { senderId, products, callback } = payload;
+	const { senderId, overallRemarks, products, type, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -60,7 +60,9 @@ function* create({ payload }: any) {
 			{
 				sender_id: senderId,
 				is_online: IS_APP_LIVE,
+				overall_remarks: overallRemarks,
 				products,
+				type,
 			},
 			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 		);
