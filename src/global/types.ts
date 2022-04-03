@@ -200,3 +200,9 @@ export const vatTypes = {
 	VATABLE: 'V',
 	VAT_EMPTY: 'VE',
 };
+
+export const markdownTypes = {
+	REGULAR: 'regular',
+	WHOLESALE: 'discount_1',
+	SPECIAL: 'discount_2',
+};

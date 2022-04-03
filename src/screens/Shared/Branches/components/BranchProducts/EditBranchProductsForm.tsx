@@ -52,15 +52,15 @@ export const EditBranchProductsForm = ({
 				reorder_point: branchProduct?.reorder_point,
 				max_balance: branchProduct?.max_balance,
 				price_per_piece: branchProduct?.price_per_piece?.toFixed(2) || '',
-				discounted_price_per_piece1:
-					branchProduct?.discounted_price_per_piece1?.toFixed(2) || '',
-				discounted_price_per_piece2:
-					branchProduct?.discounted_price_per_piece2?.toFixed(2) || '',
+				markdown_price_per_piece1:
+					branchProduct?.markdown_price_per_piece1?.toFixed(2) || '',
+				markdown_price_per_piece2:
+					branchProduct?.markdown_price_per_piece2?.toFixed(2) || '',
 				price_per_bulk: branchProduct?.price_per_bulk?.toFixed(2) || '',
-				discounted_price_per_bulk1:
-					branchProduct?.discounted_price_per_bulk1?.toFixed(2) || '',
-				discounted_price_per_bulk2:
-					branchProduct?.discounted_price_per_bulk2?.toFixed(2) || '',
+				markdown_price_per_bulk1:
+					branchProduct?.markdown_price_per_bulk1?.toFixed(2) || '',
+				markdown_price_per_bulk2:
+					branchProduct?.markdown_price_per_bulk2?.toFixed(2) || '',
 				current_balance: branchProduct?.current_balance,
 				is_sold_in_branch: branchProduct.is_sold_in_branch,
 			},
@@ -80,20 +80,20 @@ export const EditBranchProductsForm = ({
 					.required()
 					.min(0)
 					.label('Price per Piece'),
-				discounted_price_per_piece1: Yup.number()
+				markdown_price_per_piece1: Yup.number()
 					.required()
 					.min(0)
 					.label('Wholesale Price (piece)'),
-				discounted_price_per_piece2: Yup.number()
+				markdown_price_per_piece2: Yup.number()
 					.required()
 					.min(0)
 					.label('Special Price (piece)'),
 				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
-				discounted_price_per_bulk1: Yup.number()
+				markdown_price_per_bulk1: Yup.number()
 					.required()
 					.min(0)
 					.label('Wholesale Price (bulk)'),
-				discounted_price_per_bulk2: Yup.number()
+				markdown_price_per_bulk2: Yup.number()
 					.required()
 					.min(0)
 					.label('Special Price (bulk)'),
@@ -239,27 +239,27 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								id="discounted_price_per_piece1"
+								id="markdown_price_per_piece1"
 								label="Wholesale Price (piece)"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
-								name="discounted_price_per_piece1"
+								name="markdown_price_per_piece1"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
 								type="number"
-								id="discounted_price_per_piece2"
+								id="markdown_price_per_piece2"
 								label="Special Price (piece)"
 								step=".01"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
-								name="discounted_price_per_piece2"
+								name="markdown_price_per_piece2"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
@@ -280,27 +280,27 @@ export const EditBranchProductsForm = ({
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
 								type="number"
-								id="discounted_price_per_bulk1"
+								id="markdown_price_per_bulk1"
 								label="Wholesale Price (bulk)"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
-								name="discounted_price_per_bulk1"
+								name="markdown_price_per_bulk1"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
 								type="number"
-								id="discounted_price_per_bulk2"
+								id="markdown_price_per_bulk2"
 								label="Special Price (bulk)"
 								step=".01"
 								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
-								name="discounted_price_per_bulk2"
+								name="markdown_price_per_bulk2"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

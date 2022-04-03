@@ -85,12 +85,12 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 				value={formatInPeso(product.price_per_piece)}
 			/>
 			<DetailsSingle
-				label="Wholesale Price (piece)"
-				value={formatInPeso(product.discounted_price_per_piece1)}
+				label="Wholesale Price (Piece)"
+				value={formatInPeso(product.markdown_price_per_piece1)}
 			/>
 			<DetailsSingle
-				label="Special Price (piece)"
-				value={formatInPeso(product.discounted_price_per_piece2)}
+				label="Special Price (Piece)"
+				value={formatInPeso(product.markdown_price_per_piece2)}
 			/>
 
 			<DetailsSingle
@@ -98,12 +98,12 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 				value={formatInPeso(product.price_per_bulk)}
 			/>
 			<DetailsSingle
-				label="Wholesale Price (bulk)"
-				value={formatInPeso(product.discounted_price_per_bulk1)}
+				label="Wholesale Price (Bulk)"
+				value={formatInPeso(product.markdown_price_per_bulk1)}
 			/>
 			<DetailsSingle
 				label="Special Price (Bulk)"
-				value={formatInPeso(product.discounted_price_per_bulk2)}
+				value={formatInPeso(product.markdown_price_per_bulk2)}
 			/>
 		</DetailsRow>
 	</Modal>

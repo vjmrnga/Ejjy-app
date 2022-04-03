@@ -23,7 +23,7 @@ import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../models';
 import { convertIntoArray, isUserFromBranch } from '../../../utils/function';
 import { CreateEditProductModal } from './components/CreateEditProductModal';
-import { EditPriceCostModal } from './components/EditPriceCostModal';
+import { PriceMarkdownModal } from './components/PriceMarkdownModal';
 import { ViewProductModal } from './components/ViewProductModal';
 
 const columns: ColumnsType = [
@@ -95,9 +95,10 @@ export const Products = () => {
 	useEffect(() => {
 		const formattedProducts =
 			products?.map((product) => {
-				const { barcode, name, textcode } = product;
+				const { id, barcode, name, textcode } = product;
 
 				return {
+					key: id,
 					barcode: (
 						<ButtonLink
 							text={barcode || textcode}
@@ -107,8 +108,8 @@ export const Products = () => {
 					name,
 					actions: hasPendingTransactions ? null : (
 						<TableActions
-							onAddName="Edit Price and Cost"
-							onAddIcon={require('../../../assets/images/icon-money.svg')}
+							onAddName="Set Markdown"
+							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
 							onEdit={() => onOpenModal(product, modals.CREATE_EDIT)}
 							onRemove={() => onRemoveProduct(product)}
@@ -213,7 +214,7 @@ export const Products = () => {
 				)}
 
 				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
-					<EditPriceCostModal
+					<PriceMarkdownModal
 						product={selectedProduct}
 						onClose={() => onOpenModal(null, null)}
 					/>
@@ -257,7 +258,7 @@ const Filter = ({
 	);
 
 	return (
-		<Row className="PaddingHorizontal PaddingVertical" gutter={[15, 15]}>
+		<Row className="PaddingHorizontal PaddingVertical pt-0" gutter={[15, 15]}>
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input

@@ -12,6 +12,7 @@ export * from './useDiscountOptions';
 export { default as useDiscountOptions } from './useDiscountOptions';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
+export * from './usePriceMarkdowns';
 export { default as useQueryParams } from './useQueryParams';
 export * from './useReceivingVouchers';
 export { default as useReceivingVouchers } from './useReceivingVouchers';

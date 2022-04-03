@@ -134,11 +134,11 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 					/>
 					<DetailsSingle
 						label="Wholesale Price (piece)"
-						value={formatInPeso(branchProduct.discounted_price_per_piece1)}
+						value={formatInPeso(branchProduct.markdown_price_per_piece1)}
 					/>
 					<DetailsSingle
 						label="Special Price (piece)"
-						value={formatInPeso(branchProduct.discounted_price_per_piece2)}
+						value={formatInPeso(branchProduct.markdown_price_per_piece2)}
 					/>
 
 					<DetailsSingle
@@ -147,11 +147,11 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 					/>
 					<DetailsSingle
 						label="Wholesale Price (bulk)"
-						value={formatInPeso(branchProduct.discounted_price_per_bulk1)}
+						value={formatInPeso(branchProduct.markdown_price_per_bulk1)}
 					/>
 					<DetailsSingle
 						label="Special Price (Bulk)"
-						value={formatInPeso(branchProduct.discounted_price_per_bulk2)}
+						value={formatInPeso(branchProduct.markdown_price_per_bulk2)}
 					/>
 				</DetailsRow>
 			)}

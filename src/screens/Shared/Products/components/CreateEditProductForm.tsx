@@ -136,21 +136,17 @@ export const CreateEditProductForm = ({
 				is_daily_checked: undefined,
 				is_randomly_checked: undefined,
 				is_sold_in_branch: undefined,
-				discounted_price_per_piece1: undefined,
-				discounted_price_per_piece2: undefined,
-				discounted_price_per_bulk1: undefined,
-				discounted_price_per_bulk2: undefined,
+				markdown_price_per_piece1: undefined,
+				markdown_price_per_piece2: undefined,
+				markdown_price_per_bulk1: undefined,
+				markdown_price_per_bulk2: undefined,
 
 				will_carry_over_checking: product ? false : undefined,
 				will_carry_over_is_sold_in_branch: product ? false : undefined,
-				will_carry_over_discounted_price_per_piece1: product
-					? false
-					: undefined,
-				will_carry_over_discounted_price_per_bulk1: product ? false : undefined,
-				will_carry_over_discounted_price_per_piece2: product
-					? false
-					: undefined,
-				will_carry_over_discounted_price_per_bulk2: product ? false : undefined,
+				will_carry_over_markdown_price_per_piece1: product ? false : undefined,
+				will_carry_over_markdown_price_per_bulk1: product ? false : undefined,
+				will_carry_over_markdown_price_per_piece2: product ? false : undefined,
+				will_carry_over_markdown_price_per_bulk2: product ? false : undefined,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -237,16 +233,16 @@ export const CreateEditProductForm = ({
 					checking: Yup.string().label('Checking'),
 					is_daily_checked: Yup.boolean(),
 					is_randomly_checked: Yup.boolean(),
-					discounted_price_per_piece1: Yup.number()
+					markdown_price_per_piece1: Yup.number()
 						.min(0)
 						.label('Wholesale Price (piece)'),
-					discounted_price_per_piece2: Yup.number()
+					markdown_price_per_piece2: Yup.number()
 						.min(0)
 						.label('Special Price (piece)'),
-					discounted_price_per_bulk1: Yup.number()
+					markdown_price_per_bulk1: Yup.number()
 						.min(0)
 						.label('Wholesale Price (bulk)'),
-					discounted_price_per_bulk2: Yup.number()
+					markdown_price_per_bulk2: Yup.number()
 						.min(0)
 						.label('Special Price (bulk)'),
 				},
@@ -336,16 +332,16 @@ export const CreateEditProductForm = ({
 					is_daily_checked: undefined,
 					is_randomly_checked: undefined,
 					is_sold_in_branch: undefined,
-					discounted_price_per_piece1: undefined,
-					discounted_price_per_piece2: undefined,
-					discounted_price_per_bulk1: undefined,
-					discounted_price_per_bulk2: undefined,
+					markdown_price_per_piece1: undefined,
+					markdown_price_per_piece2: undefined,
+					markdown_price_per_bulk1: undefined,
+					markdown_price_per_bulk2: undefined,
 					will_carry_over_checking: undefined,
 					will_carry_over_is_sold_in_branch: undefined,
-					will_carry_over_discounted_price_per_piece1: undefined,
-					will_carry_over_discounted_price_per_bulk1: undefined,
-					will_carry_over_discounted_price_per_piece2: undefined,
-					will_carry_over_discounted_price_per_bulk2: undefined,
+					will_carry_over_markdown_price_per_piece1: undefined,
+					will_carry_over_markdown_price_per_bulk1: undefined,
+					will_carry_over_markdown_price_per_piece2: undefined,
+					will_carry_over_markdown_price_per_bulk2: undefined,
 
 					will_carry_over_max_balance: undefined,
 					will_carry_over_reorder_point: undefined,
@@ -361,21 +357,21 @@ export const CreateEditProductForm = ({
 						is_sold_in_branch: formData.will_carry_over_is_sold_in_branch
 							? formData.is_sold_in_branch
 							: undefined,
-						discounted_price_per_piece1:
-							formData.will_carry_over_discounted_price_per_piece1
-								? formData.discounted_price_per_piece1
+						markdown_price_per_piece1:
+							formData.will_carry_over_markdown_price_per_piece1
+								? formData.markdown_price_per_piece1
 								: undefined,
-						discounted_price_per_piece2:
-							formData.will_carry_over_discounted_price_per_piece2
-								? formData.discounted_price_per_piece2
+						markdown_price_per_piece2:
+							formData.will_carry_over_markdown_price_per_piece2
+								? formData.markdown_price_per_piece2
 								: undefined,
-						discounted_price_per_bulk1:
-							formData.will_carry_over_discounted_price_per_bulk1
-								? formData.discounted_price_per_bulk1
+						markdown_price_per_bulk1:
+							formData.will_carry_over_markdown_price_per_bulk1
+								? formData.markdown_price_per_bulk1
 								: undefined,
-						discounted_price_per_bulk2:
-							formData.will_carry_over_discounted_price_per_bulk2
-								? formData.discounted_price_per_bulk2
+						markdown_price_per_bulk2:
+							formData.will_carry_over_markdown_price_per_bulk2
+								? formData.markdown_price_per_bulk2
 								: undefined,
 					};
 
@@ -659,7 +655,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'discounted_price_per_piece1',
+								name: 'markdown_price_per_piece1',
 								label: 'Wholesale Price (Piece)',
 								setFieldValue,
 								values,
@@ -669,7 +665,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'discounted_price_per_piece2',
+								name: 'markdown_price_per_piece2',
 								label: 'Special Price (Piece)',
 								setFieldValue,
 								values,
@@ -679,7 +675,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'discounted_price_per_bulk1',
+								name: 'markdown_price_per_bulk1',
 								label: 'Wholesale Price (Bulk)',
 								setFieldValue,
 								values,
@@ -689,7 +685,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'discounted_price_per_bulk2',
+								name: 'markdown_price_per_bulk2',
 								label: 'Special Price (Bulk)',
 								setFieldValue,
 								values,
