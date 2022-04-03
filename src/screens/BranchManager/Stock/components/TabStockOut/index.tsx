@@ -1,7 +1,8 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewBackOrderModal } from 'components';
 import { ButtonLink } from 'components/elements';
+import { printStockOutForm } from 'configurePrinter';
 import {
 	backOrderTypes,
 	DEFAULT_PAGE,
@@ -9,7 +10,8 @@ import {
 	EMPTY_CELL,
 	pageSizeOptions,
 } from 'global';
-import { useBackOrders, useQueryParams } from 'hooks';
+import { useBackOrders, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
+import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime } from 'utils/function';
 
@@ -24,13 +26,25 @@ export const TabStockOut = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
+	const [html, setHtml] = useState('');
+	// NOTE: Will store the ID of the collection of receipt that is about to be printed.
+	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
+		data: siteSettings,
+		isFetching: isSiteSettingsFetching,
+		error: siteSettingsError,
+	} = useSiteSettingsRetrieve({
+		options: {
+			refetchOnMount: 'always',
+		},
+	});
+	const {
 		data: { backOrders, total },
-		isFetching,
-		error,
+		isFetching: isBackOrdersFetching,
+		error: backOrdersError,
 	} = useBackOrders({
 		params: {
 			type: backOrderTypes.FOR_RETURN,
@@ -40,7 +54,7 @@ export const TabStockOut = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedBackOrders = backOrders.map((backOrder) => ({
+		const data = backOrders.map((backOrder) => ({
 			key: backOrder.id,
 			id: (
 				<ButtonLink
@@ -52,14 +66,59 @@ export const TabStockOut = () => {
 				? formatDateTime(backOrder.datetime_created)
 				: EMPTY_CELL,
 			remarks: backOrder.overall_remarks,
+			actions: (
+				<Button
+					type="link"
+					loading={isPrinting === backOrder.id}
+					onClick={() => {
+						onPrintPDF(backOrder);
+					}}
+				>
+					Print PDF
+				</Button>
+			),
 		}));
 
-		setDataSource(formattedBackOrders);
-	}, [backOrders]);
+		setDataSource(data);
+	}, [backOrders, isPrinting]);
+
+	const onPrintPDF = (backOrder) => {
+		setIsPrinting(backOrder.id);
+
+		const dataHtml = printStockOutForm({
+			backOrder,
+			siteSettings,
+		});
+		const pdf = new jsPDF({
+			orientation: 'p',
+			unit: 'px',
+			format: [400, 841.89],
+			hotfixes: ['px_scaling'],
+		});
+
+		setHtml(dataHtml);
+
+		setTimeout(() => {
+			pdf.html(dataHtml, {
+				margin: 10,
+				callback: (instance) => {
+					window.open(instance.output('bloburl').toString());
+					setIsPrinting(null);
+					setHtml('');
+				},
+			});
+		}, 500);
+	};
 
 	return (
 		<>
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={[
+					...convertIntoArray(siteSettingsError, 'Site Settings'),
+					...convertIntoArray(backOrdersError, 'Receiving Vouchers'),
+				]}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
@@ -78,7 +137,7 @@ export const TabStockOut = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isBackOrdersFetching || isSiteSettingsFetching}
 				bordered
 			/>
 
@@ -88,6 +147,13 @@ export const TabStockOut = () => {
 					onClose={() => setSelectedBackOrder(null)}
 				/>
 			)}
+
+			<div
+				dangerouslySetInnerHTML={{
+					__html: html,
+				}}
+				style={{ display: 'none' }}
+			/>
 		</>
 	);
 };

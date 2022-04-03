@@ -1,14 +1,20 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewReceivingVoucherModal } from 'components';
 import { ButtonLink } from 'components/elements';
+import { printReceivingVoucherForm } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
 } from 'global';
-import { useQueryParams, useReceivingVouchers } from 'hooks';
+import {
+	useQueryParams,
+	useReceivingVouchers,
+	useSiteSettingsRetrieve,
+} from 'hooks';
+import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils/function';
 
@@ -25,13 +31,25 @@ export const TabStockIn = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedReceivingVoucher, setSelectedReceivingVoucher] =
 		useState(null);
+	const [html, setHtml] = useState('');
+	// NOTE: Will store the ID of the collection of receipt that is about to be printed.
+	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
+		data: siteSettings,
+		isFetching: isSiteSettingsFetching,
+		error: siteSettingsError,
+	} = useSiteSettingsRetrieve({
+		options: {
+			refetchOnMount: 'always',
+		},
+	});
+	const {
 		data: { receivingVouchers, total },
-		isFetching,
-		error,
+		isFetching: isReceivingVouchersFetching,
+		error: receivingVouchersError,
 	} = useReceivingVouchers({
 		params: queryParams,
 	});
@@ -51,14 +69,59 @@ export const TabStockIn = () => {
 				: EMPTY_CELL,
 			supplierName: receivingVoucher.supplier_name,
 			amountPaid: formatInPeso(receivingVoucher.amount_paid),
+			actions: (
+				<Button
+					type="link"
+					loading={isPrinting === receivingVoucher.id}
+					onClick={() => {
+						onPrintPDF(receivingVoucher);
+					}}
+				>
+					Print PDF
+				</Button>
+			),
 		}));
 
 		setDataSource(data);
-	}, [receivingVouchers]);
+	}, [receivingVouchers, isPrinting]);
+
+	const onPrintPDF = (receivingVoucher) => {
+		setIsPrinting(receivingVoucher.id);
+
+		const dataHtml = printReceivingVoucherForm({
+			receivingVoucher,
+			siteSettings,
+		});
+		const pdf = new jsPDF({
+			orientation: 'p',
+			unit: 'px',
+			format: [400, 841.89],
+			hotfixes: ['px_scaling'],
+		});
+
+		setHtml(dataHtml);
+
+		setTimeout(() => {
+			pdf.html(dataHtml, {
+				margin: 10,
+				callback: (instance) => {
+					window.open(instance.output('bloburl').toString());
+					setIsPrinting(null);
+					setHtml('');
+				},
+			});
+		}, 500);
+	};
 
 	return (
 		<>
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={[
+					...convertIntoArray(siteSettingsError, 'Site Settings'),
+					...convertIntoArray(receivingVouchersError, 'Receiving Vouchers'),
+				]}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
@@ -77,7 +140,7 @@ export const TabStockIn = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isReceivingVouchersFetching || isSiteSettingsFetching}
 				bordered
 			/>
 
@@ -87,6 +150,13 @@ export const TabStockIn = () => {
 					onClose={() => setSelectedReceivingVoucher(null)}
 				/>
 			)}
+
+			<div
+				dangerouslySetInnerHTML={{
+					__html: html,
+				}}
+				style={{ display: 'none' }}
+			/>
 		</>
 	);
 };

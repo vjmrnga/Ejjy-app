@@ -2,17 +2,23 @@
 import { message } from 'antd';
 import dayjs from 'dayjs';
 import qz from 'qz-tray';
-import { orderOfPaymentPurposes, quantityTypes } from './global/types';
+import {
+	orderOfPaymentPurposes,
+	quantityTypes,
+	vatTypes,
+} from './global/types';
 import {
 	formatDate,
 	formatDateTime,
 	formatDateTime24Hour,
 	formatInPeso,
+	formatQuantity,
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getTransactionStatusDescription,
 } from './utils/function';
 
+const PESO_SIGN = 'P';
 const EMPTY_CELL = '';
 const PAPER_MARGIN = 0.2; // inches
 const PAPER_WIDTH = 3; // inches
@@ -771,6 +777,173 @@ export const printBirReport = ({ birReports, siteSettings }) => {
   </body>
   </html>
 	`;
+};
+
+export const printReceivingVoucherForm = ({
+	receivingVoucher,
+	siteSettings,
+}) => {
+	const products = receivingVoucher.products;
+
+	const data = `
+	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+		${getHeader({
+			title: '[RECEIVING VOUCHER]',
+			proprietor: siteSettings.proprietor,
+			location: siteSettings.location,
+			tin: siteSettings.tin,
+			taxType: siteSettings.taxType,
+			permitNumber: siteSettings.permit_number,
+		})}
+	
+		<br />
+
+		<table style="width: 100%;">
+			${products
+				.map(
+					(item) => `<tr>
+						<td colspan="2">${item.product.name}</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 30px">${formatQuantity(
+							item.product.unit_of_measurement,
+							item.quantity,
+						)} @ ${formatInPeso(item.cost_per_piece, PESO_SIGN)}</td>
+						<td style="text-align: right">
+							${formatInPeso(
+								Number(item.quantity) * Number(item.cost_per_piece),
+								PESO_SIGN,
+							)} ${
+						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
+					}
+						</td>
+					</tr>`,
+				)
+				.join('')}
+		</table>
+
+		<div style="width: 100%; text-align: right">----------------</div>
+
+		<table style="width: 100%;">
+			<tr>
+				<td>TOTAL AMOUNT PAID</td>
+				<td style="text-align: right; font-weight: bold;">
+					${formatInPeso(receivingVoucher.amount_paid, PESO_SIGN)}
+				</td>
+			</tr>
+		</table>
+		
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${formatDateTime(receivingVoucher.datetime_created)}</span>
+			<span style="text-align: right;">[ref # / trans#]</span>
+		</div>
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>C: ${receivingVoucher.checked_by.employee_id}</span>
+			<span style="text-align: right;">E: ${
+				receivingVoucher.encoded_by.employee_id
+			}</span>
+		</div>
+		<div>Supplier: ${receivingVoucher.supplier_name}</div>
+	
+		<br />
+
+		${getFooter({
+			softwareDeveloper: siteSettings.software_developer,
+			softwareDeveloperTin: siteSettings.software_developer_tin,
+			posAccreditationNumber: siteSettings.pos_accreditation_number,
+			posAccreditationDate: siteSettings.pos_accreditation_date,
+			posAccreditationValidUntilDate:
+				siteSettings.pos_accreditation_valid_until_date,
+			ptuNumber: siteSettings.ptu_number,
+		})}
+	</div>
+	`;
+
+	return data;
+};
+
+export const printStockOutForm = ({ backOrder, siteSettings }) => {
+	const products = backOrder.products;
+	let totalAmount = 0;
+
+	const data = `
+	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+		${getHeader({
+			title: '[BO SLIP]',
+			proprietor: siteSettings.proprietor,
+			location: siteSettings.location,
+			tin: siteSettings.tin,
+			taxType: siteSettings.taxType,
+			permitNumber: siteSettings.permit_number,
+		})}
+	
+		<br />
+
+		<table style="width: 100%;">
+			${products
+				.map((item) => {
+					const subtotal =
+						Number(item.quantity_returned) *
+						Number(item.current_price_per_piece);
+					totalAmount += subtotal;
+
+					return `<tr>
+						<td colspan="2">${item.product.name}</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 30px">${formatQuantity(
+							item.product.unit_of_measurement,
+							item.quantity_returned,
+						)} @ ${formatInPeso(item.current_price_per_piece, PESO_SIGN)}</td>
+						<td style="text-align: right">
+							${formatInPeso(subtotal, PESO_SIGN)} ${
+						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
+					}
+						</td>
+					</tr>`;
+				})
+				.join('')}
+		</table>
+
+		<div style="width: 100%; text-align: right">----------------</div>
+
+		<table style="width: 100%;">
+			<tr>
+				<td>TOTAL AMOUNT PAID</td>
+				<td style="text-align: right; font-weight: bold;">
+					${formatInPeso(totalAmount, PESO_SIGN)}
+				</td>
+			</tr>
+		</table>
+		
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${formatDateTime(backOrder.datetime_created)}</span>
+			<span style="text-align: right;">[ref # / trans#]</span>
+		</div>
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>C: ${EMPTY_CELL}</span>
+			<span style="text-align: right;">E: ${EMPTY_CELL}</span>
+		</div>
+	
+		<br />
+
+		${getFooter({
+			softwareDeveloper: siteSettings.software_developer,
+			softwareDeveloperTin: siteSettings.software_developer_tin,
+			posAccreditationNumber: siteSettings.pos_accreditation_number,
+			posAccreditationDate: siteSettings.pos_accreditation_date,
+			posAccreditationValidUntilDate:
+				siteSettings.pos_accreditation_valid_until_date,
+			ptuNumber: siteSettings.ptu_number,
+		})}
+	</div>
+	`;
+
+	return data;
 };
 
 export default configurePrinter;
