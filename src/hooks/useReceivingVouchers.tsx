@@ -25,7 +25,7 @@ const useReceivingVouchers = ({ params }: Query) =>
 	);
 
 export const useReceivingVouchersCreate = () =>
-	useMutation(
+	useMutation<any, any, any>(
 		({
 			products,
 			supplierName,

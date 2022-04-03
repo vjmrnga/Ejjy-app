@@ -76,7 +76,7 @@ export const CreateStockIn = () => {
 	const {
 		mutateAsync: createReceivingVoucher,
 		isLoading: isReceivingVouchersLoading,
-		error: backOrdersErrors,
+		error: receivingVouchersError,
 	} = useReceivingVouchersCreate();
 
 	// VARIABLES
@@ -352,7 +352,7 @@ export const CreateStockIn = () => {
 					className="PaddingHorizontal"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(backOrdersErrors, 'Stock In'),
+						...convertIntoArray(receivingVouchersError?.errors, 'Stock In'),
 					]}
 					withSpaceBottom
 				/>

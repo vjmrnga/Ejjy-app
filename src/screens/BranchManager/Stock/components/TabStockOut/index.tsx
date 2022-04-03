@@ -1,6 +1,6 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ViewBackOrderModal } from 'components';
+import { RequestErrors, ViewBackOrderModal } from 'components';
 import { ButtonLink } from 'components/elements';
 import {
 	backOrderTypes,
@@ -11,7 +11,7 @@ import {
 } from 'global';
 import { useBackOrders, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -30,6 +30,7 @@ export const TabStockOut = () => {
 	const {
 		data: { backOrders, total },
 		isFetching,
+		error,
 	} = useBackOrders({
 		params: {
 			type: backOrderTypes.FOR_RETURN,
@@ -58,6 +59,8 @@ export const TabStockOut = () => {
 
 	return (
 		<>
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+
 			<Table
 				columns={columns}
 				dataSource={dataSource}

@@ -159,7 +159,13 @@ export const CreateStockOut = () => {
 								otherwise: Yup.number().notRequired(),
 							})
 							.label('Qty'),
-						remarks: Yup.string().required().label('Remarks'),
+						remarks: Yup.string()
+							.when('selected', {
+								is: true,
+								then: Yup.string().required(),
+								otherwise: Yup.string().notRequired(),
+							})
+							.label('Remarks'),
 					}),
 				),
 			}),

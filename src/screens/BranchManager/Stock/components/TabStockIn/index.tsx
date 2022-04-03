@@ -1,6 +1,6 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ViewReceivingVoucherModal } from 'components';
+import { RequestErrors, ViewReceivingVoucherModal } from 'components';
 import { ButtonLink } from 'components/elements';
 import {
 	DEFAULT_PAGE,
@@ -10,7 +10,7 @@ import {
 } from 'global';
 import { useQueryParams, useReceivingVouchers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -31,6 +31,7 @@ export const TabStockIn = () => {
 	const {
 		data: { receivingVouchers, total },
 		isFetching,
+		error,
 	} = useReceivingVouchers({
 		params: queryParams,
 	});
@@ -57,6 +58,8 @@ export const TabStockIn = () => {
 
 	return (
 		<>
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+
 			<Table
 				columns={columns}
 				dataSource={dataSource}
