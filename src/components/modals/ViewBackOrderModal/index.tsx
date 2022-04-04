@@ -9,6 +9,7 @@ import {
 	formatDateTime,
 	formatQuantity,
 	getBackOrderStatus,
+	getFullName,
 } from 'utils/function';
 
 const columnsDamage: ColumnsType = [
@@ -143,14 +144,26 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 						}}
 						bordered
 						className="w-100"
-						column={1}
+						column={2}
 						size="small"
 					>
 						<Descriptions.Item label="ID">{backOrderData.id}</Descriptions.Item>
 						<Descriptions.Item label="Date & Time Created">
 							{formatDateTime(backOrderData.datetime_created)}
 						</Descriptions.Item>
-						<Descriptions.Item label="Overall Remarks">
+						<Descriptions.Item label="Supplier Name">
+							{backOrderData.supplier_name}
+						</Descriptions.Item>
+						<Descriptions.Item label="Supplier TIN">
+							{backOrderData.supplier_tin}
+						</Descriptions.Item>
+						<Descriptions.Item label="Supplier Address">
+							{backOrderData.supplier_address}
+						</Descriptions.Item>
+						<Descriptions.Item label="Encoded By">
+							{getFullName(backOrderData.encoded_by)}
+						</Descriptions.Item>
+						<Descriptions.Item span={2} label="Overall Remarks">
 							{backOrderData.overall_remarks}
 						</Descriptions.Item>
 					</Descriptions>

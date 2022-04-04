@@ -8,10 +8,14 @@ interface List extends IListRequest {
 }
 
 interface Create {
-	sender_id: number;
+	encoded_by_id: string;
 	is_online: boolean;
 	overall_remarks: string;
 	products: Product[];
+	sender_id: number;
+	supplier_name: string;
+	supplier_address: string;
+	supplier_tin: string;
 	type: string;
 }
 

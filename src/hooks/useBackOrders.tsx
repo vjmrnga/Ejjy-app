@@ -1,7 +1,7 @@
 import { actions } from 'ducks/back-orders';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { BackOrdersService, ONLINE_API_URL } from 'services';
 import {
 	getLocalIpAddress,
@@ -20,9 +20,6 @@ import { Query } from './inteface';
 import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching back orders';
-
-const CREATE_SUCCESS_MESSAGE = 'Back order was created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the back order';
 
 const EDIT_SUCCESS_MESSAGE = 'Back order was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while updating the back order';
@@ -46,7 +43,6 @@ export const useBackOrders = () => {
 	// ACTIONS
 	const listAction = useActionDispatch(actions.list);
 	const retrieveAction = useActionDispatch(actions.retrieve);
-	const createAction = useActionDispatch(actions.create);
 	const editAction = useActionDispatch(actions.edit);
 	const receiveAction = useActionDispatch(actions.receive);
 
@@ -113,20 +109,6 @@ export const useBackOrders = () => {
 		});
 	};
 
-	const createBackOrder = (data, extraCallback = null) => {
-		createAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
 	const editBackOrder = (data, extraCallback = null) => {
 		editAction({
 			...data,
@@ -161,7 +143,6 @@ export const useBackOrders = () => {
 		removeItemInPagination,
 
 		retrieveBackOrder,
-		createBackOrder,
 		editBackOrder,
 		receiveBackOrder,
 		status,
@@ -202,6 +183,34 @@ export const useBackOrderRetrieve = ({ id, options }: Query) =>
 			select: (query) => query.data,
 			...options,
 		},
+	);
+
+export const useBackOrderCreate = () =>
+	useMutation<any, any, any>(
+		({
+			encodedById,
+			overallRemarks,
+			products,
+			senderId,
+			supplierName,
+			supplierAddress,
+			supplierTin,
+			type,
+		}: any) =>
+			BackOrdersService.create(
+				{
+					is_online: IS_APP_LIVE,
+					overall_remarks: overallRemarks,
+					products,
+					sender_id: senderId,
+					supplier_name: supplierName,
+					supplier_address: supplierAddress,
+					supplier_tin: supplierTin,
+					encoded_by_id: encodedById,
+					type,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
 	);
 
 export default useBackOrdersNew;

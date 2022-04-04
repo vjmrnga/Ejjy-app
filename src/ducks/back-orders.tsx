@@ -5,7 +5,6 @@ export const key = 'BACK_ORDERS';
 export const types = {
 	LIST: `${key}/LIST`,
 	RETRIEVE: `${key}/RETRIEVE`,
-	CREATE: `${key}/CREATE`,
 	EDIT: `${key}/EDIT`,
 	RECEIVE: `${key}/RECEIVE`,
 };
@@ -13,7 +12,6 @@ export const types = {
 export const actions = {
 	list: createAction(types.LIST),
 	retrieve: createAction(types.RETRIEVE),
-	create: createAction(types.CREATE),
 	edit: createAction(types.EDIT),
 	receive: createAction(types.RECEIVE),
 };

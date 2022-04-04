@@ -24,7 +24,7 @@ const useReceivingVouchers = ({ params }: Query) =>
 		},
 	);
 
-export const useReceivingVouchersCreate = () =>
+export const useReceivingVoucherCreate = () =>
 	useMutation<any, any, any>(
 		({
 			products,

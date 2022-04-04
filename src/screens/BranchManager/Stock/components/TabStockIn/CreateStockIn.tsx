@@ -27,7 +27,7 @@ import {
 	unitOfMeasurementTypes,
 	vatTypes,
 } from 'global';
-import { useReceivingVouchersCreate } from 'hooks';
+import { useReceivingVoucherCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { useBackOrders } from 'hooks/useBackOrders';
 import { useBranchProducts } from 'hooks/useBranchProducts';
@@ -77,7 +77,7 @@ export const CreateStockIn = () => {
 		mutateAsync: createReceivingVoucher,
 		isLoading: isReceivingVouchersLoading,
 		error: receivingVouchersError,
-	} = useReceivingVouchersCreate();
+	} = useReceivingVoucherCreate();
 
 	// VARIABLES
 	const branchId = user?.branch?.id;

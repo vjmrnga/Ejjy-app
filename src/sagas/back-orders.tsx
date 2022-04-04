@@ -50,29 +50,6 @@ function* retrieve({ payload }: any) {
 	}
 }
 
-function* create({ payload }: any) {
-	const { senderId, overallRemarks, products, type, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		yield call(
-			BackOrdersService.create,
-			{
-				sender_id: senderId,
-				is_online: IS_APP_LIVE,
-				overall_remarks: overallRemarks,
-				products,
-				type,
-			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
-		);
-
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 function* edit({ payload }: any) {
 	const { id, receiverId, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -123,10 +100,6 @@ const retrieveWatcherSaga = function* retrieveWatcherSaga() {
 	yield takeLatest(types.RETRIEVE, retrieve);
 };
 
-const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE, create);
-};
-
 const editWatcherSaga = function* editWatcherSaga() {
 	yield takeLatest(types.EDIT, edit);
 };
@@ -138,7 +111,6 @@ const receiveWatcherSaga = function* receiveWatcherSaga() {
 export default [
 	listWatcherSaga(),
 	retrieveWatcherSaga(),
-	createWatcherSaga(),
 	editWatcherSaga(),
 	receiveWatcherSaga(),
 ];

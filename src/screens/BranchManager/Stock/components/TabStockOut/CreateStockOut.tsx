@@ -1,9 +1,11 @@
-/* eslint-disable react/no-this-in-sfc */
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, message, Modal, Table, Tabs } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Content, RequestErrors, TableHeader } from 'components';
+import {
+	Content,
+	CreateStockOutModal,
+	RequestErrors,
+	TableHeader,
+} from 'components';
 import {
 	Box,
 	Button,
@@ -22,13 +24,13 @@ import {
 	unitOfMeasurementTypes,
 	vatTypes,
 } from 'global';
+import { useBackOrderCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { useBackOrders } from 'hooks/useBackOrders';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, convertToPieces, sleep } from 'utils/function';
+import { convertIntoArray, convertToPieces } from 'utils/function';
 import * as Yup from 'yup';
 
 const tabs = {
@@ -48,11 +50,12 @@ export const CreateStockOut = () => {
 	const [searchedKeyword, setSeachedKeyword] = useState('');
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
+	const [createStockOutModalVisible, setCreateStockOutModalVisible] =
+		useState(false);
 
 	// REFS
 	const formRef = useRef(null);
 	const productsRef = useRef({});
-	const overallRemarksRef = useRef('');
 
 	// CUSTOM HOOKS
 	const history = useHistory();
@@ -67,10 +70,10 @@ export const CreateStockOut = () => {
 		errors: branchProductsErrors,
 	} = useBranchProducts();
 	const {
-		createBackOrder,
-		status: backOrdersStatus,
-		errors: backOrdersErrors,
-	} = useBackOrders();
+		mutateAsync: createBackOrder,
+		isLoading: isCreateBackOrderLoading,
+		error: createBackOrderError,
+	} = useBackOrderCreate();
 
 	// VARIABLES
 	const branchId = user?.branch?.id;
@@ -294,7 +297,7 @@ export const CreateStockOut = () => {
 		setSeachedKeyword(lowerCaseKeyword);
 	};
 
-	const onCreate = () => {
+	const onCreate = async (formData) => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -312,26 +315,23 @@ export const CreateStockOut = () => {
 				};
 			});
 
-			createBackOrder(
-				{
-					senderId: user?.id,
-					products,
-					type: backOrderTypes.FOR_RETURN,
-					overallRemarks: overallRemarksRef.current,
-				},
-				({ status }) => {
-					if (status === request.SUCCESS) {
-						Modal.destroyAll();
-						history.push('/branch-manager/stocks?tab=Stock Out');
-					}
-				},
-			);
+			await createBackOrder({
+				senderId: user?.id,
+				products,
+				type: backOrderTypes.FOR_RETURN,
+				overallRemarks: formData.overallRemarks,
+				supplierName: formData.supplierName,
+				supplierAddress: formData.supplierAddress,
+				supplierTin: formData.supplierTin,
+				encodedById: formData.encodedById,
+			});
+
+			history.push('/branch-manager/stocks?tab=Stock Out');
 		}
 	};
 
-	const loading = [backOrdersStatus, branchProductsStatus].includes(
-		request.REQUESTING,
-	);
+	const loading =
+		branchProductsStatus === request.REQUESTING || isCreateBackOrderLoading;
 
 	return (
 		<Content className="CreateBackOrder" title="Stocks">
@@ -346,7 +346,7 @@ export const CreateStockOut = () => {
 					className="PaddingHorizontal"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(backOrdersErrors, 'Back Orders'),
+						...convertIntoArray(createBackOrderError?.errors, 'Back Orders'),
 					]}
 					withSpaceBottom
 				/>
@@ -356,32 +356,7 @@ export const CreateStockOut = () => {
 					initialValues={getFormDetails().DefaultValues}
 					validationSchema={getFormDetails().Schema}
 					onSubmit={() => {
-						Modal.confirm({
-							title: 'Input Overall Remarks',
-							centered: true,
-							okText: 'Submit',
-							className: 'Modal__hasFooter',
-							content: (
-								<TextArea
-									rows={4}
-									defaultValue={overallRemarksRef.current || ''}
-									onChange={(e) => {
-										overallRemarksRef.current = e.target.value;
-									}}
-								/>
-							),
-							onCancel: () => {
-								overallRemarksRef.current = '';
-							},
-							onOk: (close) => {
-								if (overallRemarksRef.current.length > 0) {
-									onCreate();
-									close();
-								} else {
-									message.error('An overall remarks is required.');
-								}
-							},
-						});
+						setCreateStockOutModalVisible(true);
 					}}
 					enableReinitialize
 				>
@@ -434,6 +409,18 @@ export const CreateStockOut = () => {
 						</Form>
 					)}
 				</Formik>
+
+				{createStockOutModalVisible && (
+					<CreateStockOutModal
+						onSubmit={(formData) => {
+							onCreate(formData);
+							setCreateStockOutModalVisible(false);
+						}}
+						onClose={() => {
+							setCreateStockOutModalVisible(false);
+						}}
+					/>
+				)}
 			</Box>
 		</Content>
 	);

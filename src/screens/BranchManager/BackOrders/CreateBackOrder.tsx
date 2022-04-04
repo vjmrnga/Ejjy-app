@@ -72,7 +72,7 @@ export const CreateBackOrder = () => {
 		errors: branchProductsErrors,
 	} = useBranchProducts();
 	const {
-		createBackOrder,
+		// createBackOrder,
 		status: backOrdersStatus,
 		errors: backOrdersErrors,
 	} = useBackOrders();
@@ -282,11 +282,11 @@ export const CreateBackOrder = () => {
 				};
 			});
 
-			createBackOrder({ senderId: user?.id, products }, ({ status }) => {
-				if (status === request.SUCCESS) {
-					history.push('/branch-manager/back-orders');
-				}
-			});
+			// createBackOrder({ senderId: user?.id, products }, ({ status }) => {
+			// 	if (status === request.SUCCESS) {
+			// 		history.push('/branch-manager/back-orders');
+			// 	}
+			// });
 		}
 	};
 
