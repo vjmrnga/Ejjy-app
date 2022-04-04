@@ -354,7 +354,7 @@ export const printCancelledTransactions = ({
 	onComplete,
 }) => {
 	const data = `
-	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Calibri', monospace">
+	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
 		<style>
 			td {
 				padding-top: 0;
@@ -460,7 +460,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 		'display: inline-block; min-width: 225px; padding: 0 8px; border-bottom: 2px solid black; text-align:center; font-weight: bold';
 
 	const data = `
-		<div style="padding: 24px; width: 795px; font-size: 24px; line-height: 140%; font-family: 'Calibri', monospace;">
+		<div style="padding: 24px; width: 795px; font-size: 24px; line-height: 140%; font-family: 'Courier', monospace;">
 			<div><b>Entity Name: EJ & JY WET MARKET AND ENTERPRISES</b></div>
 			<div style="display:flex; justify-content: space-between">
 				<div>
@@ -524,7 +524,7 @@ export const printCollectionReceipt = (collectionReceipt) => {
 	}
 
 	const data = `
-	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Calibri', monospace;">
+	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
 			title: '[COLLECTION RECEIPT]',
 			proprietor: invoice?.proprietor,
