@@ -122,7 +122,7 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 								/>
 							</Col>
 							<Col span={24}>
-								<Label id="overallRemarks" label="Overall Remarks" />
+								<Label id="overallRemarks" label="Overall Remarks" spacing />
 								<TextArea
 									rows={2}
 									onChange={(e) => {
