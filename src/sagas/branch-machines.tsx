@@ -1,3 +1,11 @@
+import { actions, types } from 'ducks/branch-machines';
+import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	request,
+} from 'global';
 import {
 	all,
 	call,
@@ -6,15 +14,9 @@ import {
 	takeEvery,
 	takeLatest,
 } from 'redux-saga/effects';
-import { actions, types } from '../ducks/branch-machines';
-import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
-import { IS_APP_LIVE, MAX_PAGE_SIZE } from '../global/constants';
-import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services';
-import { service } from '../services/branch-machines';
+import { ONLINE_API_URL } from 'services';
+import { service } from 'services/branch-machines';
 import { getBaseUrl } from './helper';
-
-const SALES_PAGE_SIZE = 2;
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -91,8 +93,8 @@ function* retrieveSales({ payload }: any) {
 	const baseURL = getBaseUrl(branchId, callback);
 
 	const data = {
-		page: 1,
-		page_size: SALES_PAGE_SIZE,
+		page: DEFAULT_PAGE,
+		page_size: DEFAULT_PAGE_SIZE,
 		time_range: timeRange,
 	};
 
@@ -126,8 +128,8 @@ function* retrieveSalesAll({ payload }: any) {
 				call(
 					service.retrieveSales,
 					{
-						page: 1,
-						page_size: SALES_PAGE_SIZE,
+						page: DEFAULT_PAGE,
+						page_size: DEFAULT_PAGE_SIZE,
 						time_range: timeRange,
 					},
 					url,

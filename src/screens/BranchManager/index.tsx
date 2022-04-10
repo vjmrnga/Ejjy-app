@@ -6,6 +6,8 @@ import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
+import { Reports } from 'screens/BranchManager/Reports';
+import { Sales } from 'screens/BranchManager/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
@@ -98,6 +100,20 @@ const BranchManager = () => {
 				activeIcon: require('../../assets/images/icon-branches-active.svg'),
 				defaultIcon: require('../../assets/images/icon-branches.svg'),
 				link: '/branch-manager/branch-machines',
+			},
+			{
+				key: 'reports',
+				name: 'Reports',
+				activeIcon: require('../../assets/images/icon-report-active.svg'),
+				defaultIcon: require('../../assets/images/icon-report.svg'),
+				link: '/branch-manager/reports',
+			},
+			{
+				key: 'sales',
+				name: 'Sales',
+				activeIcon: require('../../assets/images/icon-sales-active.svg'),
+				defaultIcon: require('../../assets/images/icon-sales.svg'),
+				link: '/branch-manager/sales',
 			},
 			{
 				key: 'dashboard',
@@ -213,6 +229,11 @@ const BranchManager = () => {
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/branch-manager/dashboard" component={Dashboard} />
+
+					<Route path="/branch-manager/reports" component={Reports} />
+
+					<Route path="/branch-manager/sales" component={Sales} />
+
 					<Route
 						path="/branch-manager/product-categories"
 						component={ProductCategories}

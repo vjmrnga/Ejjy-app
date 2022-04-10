@@ -1,0 +1,9 @@
+@import '../../../assets/styles/main';
+
+.Reports {
+	.ReportsBranch {
+		&_table {
+			margin-top: 25px;
+		}
+	}
+}

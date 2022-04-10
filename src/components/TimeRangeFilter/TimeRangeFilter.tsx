@@ -10,7 +10,7 @@ import { Label } from '../elements';
 interface Props {
 	timeRange: string;
 	timeRangeType: string;
-	disabled: boolean;
+	disabled?: boolean;
 	setTimeRangeType: any;
 	setQueryParams: any;
 	isRangeOnly?: boolean;
