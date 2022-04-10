@@ -43,7 +43,7 @@ export const PriceMarkdownModal = ({ product, onClose }: Props) => {
 			type: formData.type,
 		});
 
-		message.success(`Successfully created a markdown for ${product.name}`);
+		message.success(`Markdown for ${product.name} was set successfully`);
 		onClose();
 	};
 

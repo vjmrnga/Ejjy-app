@@ -151,15 +151,6 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 						<Descriptions.Item label="Date & Time Created">
 							{formatDateTime(backOrderData.datetime_created)}
 						</Descriptions.Item>
-						<Descriptions.Item label="Supplier Name">
-							{backOrderData.supplier_name}
-						</Descriptions.Item>
-						<Descriptions.Item label="Supplier TIN">
-							{backOrderData.supplier_tin}
-						</Descriptions.Item>
-						<Descriptions.Item label="Supplier Address">
-							{backOrderData.supplier_address}
-						</Descriptions.Item>
 						<Descriptions.Item label="Encoded By">
 							{getFullName(backOrderData.encoded_by)}
 						</Descriptions.Item>

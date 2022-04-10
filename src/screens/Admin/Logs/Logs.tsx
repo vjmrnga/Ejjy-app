@@ -128,7 +128,7 @@ const Filter = ({
 	const params = queryString.parse(history.location.search);
 
 	return (
-		<Row className="PaddingHorizontal PaddingVertical" gutter={[15, 15]}>
+		<Row className="PaddingHorizontal PaddingVertical" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<Label label="Branch" spacing />
 				<Select

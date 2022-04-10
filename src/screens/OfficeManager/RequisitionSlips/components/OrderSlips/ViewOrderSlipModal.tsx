@@ -148,7 +148,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 
 			<Divider dashed />
 
-			<Row gutter={[15, 15]}>
+			<Row gutter={[16, 16]}>
 				<Col sm={12} span={24}>
 					<Label label="Quantity Type" spacing />
 					<Radio.Group

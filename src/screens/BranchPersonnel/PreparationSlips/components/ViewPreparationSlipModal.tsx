@@ -74,7 +74,7 @@ export const ViewPreparationSlipModal = ({
 		>
 			<PreparationSlipDetails preparationSlip={preparationSlip} />
 
-			<Row gutter={[15, 15]} justify="space-between" align="middle">
+			<Row gutter={[16, 16]} justify="space-between" align="middle">
 				<Col sm={12} span={24}>
 					<Label label="Products" spacing />
 				</Col>

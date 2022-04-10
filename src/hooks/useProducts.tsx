@@ -1,188 +1,177 @@
-import { useEffect, useState } from 'react';
-import { actions, types } from '../ducks/OfficeManager/products';
-import { request } from '../global/types';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-	onCallback,
-} from '../utils/function';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from '../utils/pagination';
-import { useActionDispatch } from './useActionDispatch';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { ONLINE_API_URL, ProductsService } from 'services';
+import { getLocalIpAddress } from '../utils/function';
 
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching products';
-
-const CREATE_SUCCESS_MESSAGE = 'Product was created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the product';
-
-const EDIT_SUCCESS_MESSAGE = 'Product was edited successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while editing the product';
-
-const REMOVE_SUCCESS_MESSAGE = 'Product was removed successfully';
-const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the product';
-
-export const useProducts = () => {
-	// STATES
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
-
-	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(10);
-
-	// ACTIONS
-	const getProductsAction = useActionDispatch(actions.getProducts);
-	const createProductAction = useActionDispatch(actions.createProduct);
-	const editProductAction = useActionDispatch(actions.editProduct);
-	const removeProductAction = useActionDispatch(actions.removeProduct);
-
-	// GENERAL METHODS
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const executeRequest = (data, requestCallback, action, type) => {
-		setRecentRequest(type);
-		action({
-			...data,
-			callback: onCallback(
-				callback,
-				requestCallback?.onSuccess,
-				requestCallback?.onError,
-			),
-		});
-	};
-
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-	};
-
-	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
+const useProducts = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useProducts',
+			params?.page,
+			params?.pageSize,
+			params?.search,
+			params?.productCategory,
+			params?.ids,
+		],
+		async () =>
+			ProductsService.list(
+				{
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					ids: params?.ids,
+					search: params?.search,
+					product_category: params?.productCategory,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				products: query.data.results,
+				total: query.data.count,
 			}),
-		);
-	}, [allData, currentPage, pageSize]);
+		},
+	);
 
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
+export const useProductCreate = () => {
+	const queryClient = useQueryClient();
 
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
-
-	// REQUEST METHODS
-	const getProducts = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: getProductsAction,
-			requestType: types.GET_PRODUCTS,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
-	const createProduct = (data, extraCallback = null) => {
-		setRecentRequest(types.CREATE_PRODUCT);
-		const clonedProduct = {
-			...data,
-			allowable_spoilage: (data.allowable_spoilage || 0) / 100,
-		};
-
-		createProductAction({
-			...clonedProduct,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
+	return useMutation<any, any, any>(
+		({
+			actingUserId,
+			allowableSpoilage,
+			barcode,
+			costPerBulk,
+			costPerPiece,
+			description,
+			hasQuantityAllowance,
+			isShownInScaleList,
+			isVatExempted,
+			maxBalance,
+			name,
+			piecesInBulk,
+			pricePerBulk,
+			pricePerPiece,
+			printDetails,
+			productCategory,
+			reorderPoint,
+			textcode,
+			type,
+			unitOfMeasurement,
+		}: any) =>
+			ProductsService.create(
+				{
+					acting_user_id: actingUserId,
+					allowable_spoilage: allowableSpoilage,
+					barcode: barcode,
+					cost_per_bulk: costPerBulk,
+					cost_per_piece: costPerPiece,
+					description: description,
+					has_quantity_allowance: hasQuantityAllowance,
+					is_shown_in_scale_list: isShownInScaleList,
+					is_vat_exempted: isVatExempted,
+					max_balance: maxBalance,
+					name: name,
+					pieces_in_bulk: piecesInBulk,
+					price_per_bulk: pricePerBulk,
+					price_per_piece: pricePerPiece,
+					print_details: printDetails,
+					product_category: productCategory,
+					reorder_point: reorderPoint,
+					textcode: textcode,
+					type: type,
+					unit_of_measurement: unitOfMeasurement,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),
-		});
-	};
-
-	const editProduct = (data, extraCallback = null) => {
-		setRecentRequest(types.EDIT_PRODUCT);
-		const clonedProduct = {
-			...data,
-			allowable_spoilage: (data.allowable_spoilage || 0) / 100,
-		};
-
-		editProductAction({
-			...clonedProduct,
-			callback: modifiedExtraCallback(
-				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
-				extraCallback,
-			),
-		});
-	};
-
-	const removeProduct = (data, extraCallback = null) => {
-		setRecentRequest(types.REMOVE_PRODUCT);
-		removeProductAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					REMOVE_SUCCESS_MESSAGE,
-					REMOVE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
-	return {
-		products: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
-		getProducts,
-		createProduct,
-		editProduct,
-		removeProduct,
-		status,
-		errors,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-	};
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProducts');
+			},
+		},
+	);
 };
+
+export const useProductEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			id,
+			actingUserId,
+			allowableSpoilage,
+			barcode,
+			costPerBulk,
+			costPerPiece,
+			description,
+			hasQuantityAllowance,
+			isShownInScaleList,
+			isVatExempted,
+			maxBalance,
+			name,
+			piecesInBulk,
+			pricePerBulk,
+			pricePerPiece,
+			printDetails,
+			productCategory,
+			reorderPoint,
+			textcode,
+			type,
+			unitOfMeasurement,
+		}: any) =>
+			ProductsService.edit(
+				id,
+				{
+					acting_user_id: actingUserId,
+					allowable_spoilage: allowableSpoilage,
+					barcode: barcode,
+					cost_per_bulk: costPerBulk,
+					cost_per_piece: costPerPiece,
+					description: description,
+					has_quantity_allowance: hasQuantityAllowance,
+					is_shown_in_scale_list: isShownInScaleList,
+					is_vat_exempted: isVatExempted,
+					max_balance: maxBalance,
+					name: name,
+					pieces_in_bulk: piecesInBulk,
+					price_per_bulk: pricePerBulk,
+					price_per_piece: pricePerPiece,
+					print_details: printDetails,
+					product_category: productCategory,
+					reorder_point: reorderPoint,
+					textcode: textcode,
+					type: type,
+					unit_of_measurement: unitOfMeasurement,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProducts');
+			},
+		},
+	);
+};
+
+export const useProductDelete = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, actingUserId }) =>
+			ProductsService.delete(
+				id,
+				{
+					acting_user_id: actingUserId,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProducts');
+			},
+		},
+	);
+};
+
+export default useProducts;

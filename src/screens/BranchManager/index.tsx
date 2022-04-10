@@ -14,7 +14,7 @@ import { Products } from '../Shared/Products/Products';
 import { Accounts } from './Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
-import { BranchMachines } from './BranchMachines/BranchMachines';
+import { BranchMachines } from './BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Checking } from './Checking/Checking';
 import { Dashboard } from './Dashboard/Dashboard';

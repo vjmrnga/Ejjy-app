@@ -1,6 +1,6 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Input, message, Modal, Space, Table, Tabs } from 'antd';
+import { Divider, message, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -19,7 +19,6 @@ import {
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
-	backOrderTypes,
 	pageSizeOptions,
 	quantityTypeOptions,
 	quantityTypes,
@@ -29,12 +28,11 @@ import {
 } from 'global';
 import { useReceivingVoucherCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { useBackOrders } from 'hooks/useBackOrders';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, convertToPieces, sleep } from 'utils/function';
+import { convertIntoArray, convertToPieces } from 'utils/function';
 import * as Yup from 'yup';
 
 const tabs = {
@@ -333,6 +331,7 @@ export const CreateStockIn = () => {
 				checkedById: formData.checkedById,
 			});
 
+			message.success('Stock in was created successfully');
 			history.push('/branch-manager/stocks?tab=Stock In');
 		}
 	};

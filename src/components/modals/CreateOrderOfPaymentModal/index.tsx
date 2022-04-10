@@ -58,7 +58,7 @@ export const CreateOrderOfPaymentModal = ({
 		onSuccess();
 		onClose();
 
-		message.success('Order of Payment successfully created.');
+		message.success('Order of Payment was created successfully');
 	};
 
 	return (
@@ -167,7 +167,7 @@ export const CreateOrderOfPaymentForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					<Row gutter={[15, 15]}>
+					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label label="Payor" spacing />
 							<Select

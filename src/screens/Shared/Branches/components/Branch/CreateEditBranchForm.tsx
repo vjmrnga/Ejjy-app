@@ -55,7 +55,7 @@ export const CreateEditBranchForm = ({
 		>
 			{({ errors, touched }) => (
 				<Form className="form">
-					<Row gutter={[15, 15]}>
+					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<FormInputLabel id="name" label="Name" />
 							{errors.name && touched.name ? (

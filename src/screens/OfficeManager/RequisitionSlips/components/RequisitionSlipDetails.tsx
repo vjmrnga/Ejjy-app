@@ -50,7 +50,7 @@ export const RequisitionSlipDetails = ({
 			})}
 		>
 			<Col span={24} lg={12}>
-				<Row gutter={[15, 15]} align="middle">
+				<Row gutter={[16, 16]} align="middle">
 					<Col span={12}>
 						<Label label="Date &amp; Time Created" />
 					</Col>
@@ -58,7 +58,7 @@ export const RequisitionSlipDetails = ({
 						<span>{formatDateTime(requisitionSlip?.datetime_created)}</span>
 					</Col>
 				</Row>
-				<Row gutter={[15, 15]} align="middle">
+				<Row gutter={[16, 16]} align="middle">
 					<Col span={12}>
 						<Label label="Requestor" />
 					</Col>
@@ -67,7 +67,7 @@ export const RequisitionSlipDetails = ({
 					</Col>
 				</Row>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
-					<Row gutter={[15, 15]} align="middle">
+					<Row gutter={[16, 16]} align="middle">
 						<Col span={12}>
 							<Label label="Request Type" />
 						</Col>
@@ -80,7 +80,7 @@ export const RequisitionSlipDetails = ({
 
 			<Col span={24} lg={12}>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
-					<Row gutter={[15, 15]}>
+					<Row gutter={[16, 16]}>
 						<Col span={12}>
 							<Label label="Status" />
 						</Col>
@@ -98,7 +98,7 @@ export const RequisitionSlipDetails = ({
 				)}
 
 				{type === requisitionSlipDetailsType.CREATE_EDIT && (
-					<Row gutter={[15, 15]} align="middle">
+					<Row gutter={[16, 16]} align="middle">
 						<Col span={12}>
 							<Label label="F-RS1" />
 						</Col>

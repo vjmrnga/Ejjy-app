@@ -154,7 +154,7 @@ interface FilterProps {
 }
 
 const Filter = ({ params, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[15, 15]}>
+	<Row className="mb-4" gutter={[16, 16]}>
 		<Col lg={12} span={24}>
 			<Label label="Type" spacing />
 			<Radio.Group

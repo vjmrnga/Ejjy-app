@@ -13,7 +13,7 @@ interface Props {
 export const SettingUrlModal = ({ visible, onClose }: Props) => {
 	const onSubmit = (data) => {
 		localStorage.setItem(LOCAL_IP_ADDRESS_KEY, data.localIpAddress);
-		message.success('Successfully updated the API URL.');
+		message.success('API URL was updated successfully');
 		onClose();
 	};
 

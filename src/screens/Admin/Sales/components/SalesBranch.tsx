@@ -108,7 +108,7 @@ export const SalesBranch = ({ branchId }: Props) => {
 				withSpaceBottom
 			/>
 
-			<Row gutter={[15, 15]}>
+			<Row gutter={[16, 16]}>
 				<Col span={24}>
 					<SalesTotalCard
 						title="Total Sales"

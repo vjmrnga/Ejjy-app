@@ -186,7 +186,7 @@ export const CreateEditOrderSlipModal = ({
 
 			<Divider dashed />
 
-			<Row gutter={[15, 15]} align="middle">
+			<Row gutter={[16, 16]} align="middle">
 				<Col span={12}>
 					<Label label="Requested Products" spacing />
 				</Col>

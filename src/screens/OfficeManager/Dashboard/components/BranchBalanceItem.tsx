@@ -300,7 +300,7 @@ const Filter = ({
 	);
 
 	return (
-		<Row gutter={[15, 15]}>
+		<Row gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input

@@ -86,7 +86,7 @@ export const CreateUserForm = ({
 			enableReinitialize
 		>
 			<Form className="form">
-				<Row gutter={[15, 15]}>
+				<Row gutter={[16, 16]}>
 					<Col sm={12} xs={24}>
 						<FormInputLabel id="first_name" label="First Name" />
 						<ErrorMessage

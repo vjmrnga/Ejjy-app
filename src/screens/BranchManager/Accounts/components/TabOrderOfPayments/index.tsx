@@ -221,7 +221,7 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 	);
 
 	return (
-		<Row className="mb-4" gutter={[15, 15]}>
+		<Row className="mb-4" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<Label label="Payor" spacing />
 				<Select

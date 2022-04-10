@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -15,7 +16,7 @@ import {
 } from 'global';
 import {
 	useDiscountOptions,
-	useDiscountOptionsDelete,
+	useDiscountOptionDelete,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
@@ -50,7 +51,7 @@ export const DiscountOptions = () => {
 		mutate: deleteDiscountOption,
 		isLoading,
 		error: deleteError,
-	} = useDiscountOptionsDelete();
+	} = useDiscountOptionDelete();
 
 	// METHODS
 	useEffect(() => {
@@ -66,7 +67,10 @@ export const DiscountOptions = () => {
 						setSelectedDiscountOption(discountOption);
 						setModifyDiscountOptionModalVisible(true);
 					}}
-					onRemove={() => deleteDiscountOption(discountOption.id)}
+					onRemove={() => {
+						message.success('Discount option was deleted successfully');
+						deleteDiscountOption(discountOption.id);
+					}}
 				/>
 			),
 		}));
@@ -85,7 +89,7 @@ export const DiscountOptions = () => {
 				<RequestErrors
 					errors={[
 						...convertIntoArray(listError),
-						...convertIntoArray(deleteError),
+						...convertIntoArray(deleteError?.errors),
 					]}
 				/>
 

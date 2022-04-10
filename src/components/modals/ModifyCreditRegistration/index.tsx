@@ -142,7 +142,7 @@ export const CreateCreditRegistrationForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					<Row gutter={[15, 15]}>
+					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label label="Account" spacing />
 							<Select

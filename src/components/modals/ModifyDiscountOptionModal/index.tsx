@@ -1,7 +1,7 @@
 import { Col, message, Modal, Radio, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { discountTypes } from 'global';
-import { useDiscountOptionsCreate, useDiscountOptionsEdit } from 'hooks';
+import { useDiscountOptionCreate, useDiscountOptionEdit } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils/function';
@@ -23,21 +23,21 @@ export const ModifyDiscountOptionModal = ({
 		mutateAsync: createDiscountOption,
 		isLoading: isCreateLoading,
 		error: createError,
-	} = useDiscountOptionsCreate();
+	} = useDiscountOptionCreate();
 	const {
 		mutateAsync: editDiscountOption,
 		isLoading: isEditLoading,
 		error: editError,
-	} = useDiscountOptionsEdit();
+	} = useDiscountOptionEdit();
 
 	// METHODS
 	const onSubmit = async (formData) => {
 		if (discountOption) {
 			await editDiscountOption(formData);
-			message.success('Discount option was edited successfully.');
+			message.success('Discount option was edited successfully');
 		} else {
 			await createDiscountOption(formData);
-			message.success('Discount option was created successfully.');
+			message.success('Discount option was created successfully');
 		}
 
 		onClose();
@@ -54,8 +54,8 @@ export const ModifyDiscountOptionModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError),
-					...convertIntoArray(editError),
+					...convertIntoArray(createError?.errors),
+					...convertIntoArray(editError?.errors),
 				]}
 				withSpaceBottom
 			/>

@@ -7,7 +7,7 @@ import { useUsers } from 'hooks';
 import React, { useCallback } from 'react';
 import { convertIntoArray, getFullName } from 'utils/function';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel, Label } from '../../elements';
+import { Button, FieldError, Label } from '../../elements';
 
 interface Props {
 	onSubmit: any;
@@ -31,16 +31,10 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 	const getFormDetails = useCallback(
 		() => ({
 			defaultValues: {
-				supplierName: '',
-				supplierAddress: '',
-				supplierTin: '',
 				encodedById: null,
 				overallRemarks: '',
 			},
 			schema: Yup.object().shape({
-				supplierName: Yup.string().required().label('Supplier Name'),
-				supplierAddress: Yup.string().required().label('Supplier Address'),
-				supplierTin: Yup.string().required().label('Supplier TIN'),
 				encodedById: Yup.number().nullable().required().label('Encoded By Id'),
 				overallRemarks: Yup.string().required().label('Overall Remarks'),
 			}),
@@ -70,27 +64,6 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 				{({ values, setFieldValue }) => (
 					<Form>
 						<Row gutter={[16, 16]}>
-							<Col span={24}>
-								<FormInputLabel id="supplierName" label="Supplier Name" />
-								<ErrorMessage
-									name="supplierName"
-									render={(error) => <FieldError error={error} />}
-								/>
-							</Col>
-							<Col span={24}>
-								<FormInputLabel id="supplierAddress" label="Supplier Address" />
-								<ErrorMessage
-									name="supplierAddress"
-									render={(error) => <FieldError error={error} />}
-								/>
-							</Col>
-							<Col span={24}>
-								<FormInputLabel id="supplierTin" label="Supplier TIN" />
-								<ErrorMessage
-									name="supplierTin"
-									render={(error) => <FieldError error={error} />}
-								/>
-							</Col>
 							<Col span={24}>
 								<Label id="encodedById" label="Encoded By" spacing />
 								<Select
@@ -130,7 +103,7 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 									}}
 								/>
 								<ErrorMessage
-									name="supplierTin"
+									name="overallRemarks"
 									render={(error) => <FieldError error={error} />}
 								/>
 							</Col>

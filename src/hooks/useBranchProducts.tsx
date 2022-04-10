@@ -1,7 +1,12 @@
+import { IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { BranchProductsService, ONLINE_API_URL } from 'services';
 import { actions, types } from '../ducks/branch-products';
 import { request } from '../global/types';
 import {
+	getLocalIpAddress,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -207,4 +212,74 @@ export const useBranchProducts = () => {
 		resetError,
 		resetAll,
 	};
+};
+
+export const useBranchProductRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useBranchProductRetrieve', id],
+		async () =>
+			BranchProductsService.list(
+				{
+					product_ids: id,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => query.data.results?.[0],
+			...options,
+		},
+	);
+
+export const useBranchProductEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			id,
+			allowableSpoilage,
+			assignedPersonnelId,
+			costPerBulk,
+			costPerPiece,
+			currentBalance,
+			isDailyChecked,
+			isRandomlyChecked,
+			isSoldInBranch,
+			markdownPricePerBulk1,
+			markdownPricePerBulk2,
+			markdownPricePerPiece1,
+			markdownPricePerPiece2,
+			maxBalance,
+			pricePerBulk,
+			pricePerPiece,
+			reorderPoint,
+		}: any) =>
+			BranchProductsService.edit(
+				id,
+				{
+					allowable_spoilage: allowableSpoilage,
+					assigned_personnel_id: assignedPersonnelId,
+					cost_per_bulk: costPerBulk,
+					cost_per_piece: costPerPiece,
+					current_balance: currentBalance,
+					is_daily_checked: isDailyChecked,
+					is_randomly_checked: isRandomlyChecked,
+					is_sold_in_branch: isSoldInBranch,
+					markdown_price_per_bulk1: markdownPricePerBulk1,
+					markdown_price_per_bulk2: markdownPricePerBulk2,
+					markdown_price_per_piece1: markdownPricePerPiece1,
+					markdown_price_per_piece2: markdownPricePerPiece2,
+					max_balance: maxBalance,
+					price_per_bulk: pricePerBulk,
+					price_per_piece: pricePerPiece,
+					reorder_point: reorderPoint,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchProductRetrieve');
+			},
+		},
+	);
 };

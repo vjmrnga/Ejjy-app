@@ -24,10 +24,9 @@ import {
 import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import { IProductCategory } from 'models';
-import React, { useCallback, useState } from 'react';
-import { formatQuantity, removeCommas, sleep } from 'utils/function';
+import React, { useCallback } from 'react';
+import { formatQuantity } from 'utils/function';
 import * as Yup from 'yup';
-import '../style.scss';
 
 const { Text } = Typography;
 
@@ -71,23 +70,24 @@ const isVatExemptedOptions = [
 ];
 
 interface Props {
+	branchProduct: any;
+	isCurrentBalanceVisible: boolean;
+	loading: boolean;
+	onClose: any;
+	onSubmit: any;
 	product: any;
 	productCategories: IProductCategory[];
-	onSubmit: any;
-	onClose: any;
-	loading: boolean;
 }
 
-export const CreateEditProductForm = ({
+export const ModifyProductForm = ({
+	branchProduct,
+	isCurrentBalanceVisible,
+	loading,
+	onClose,
+	onSubmit,
 	product,
 	productCategories,
-	onSubmit,
-	onClose,
-	loading,
 }: Props) => {
-	// STATES
-	const [isSubmitting, setSubmitting] = useState(false);
-
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 
@@ -95,56 +95,44 @@ export const CreateEditProductForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				acting_user_id: user.id,
+				actingUserId: user.id,
+				allowableSpoilage: product?.allowable_spoilage * 100 || '',
 				barcode: product?.barcode || '',
-				textcode: product?.textcode || '',
-				name: product?.name || '',
-				type: product?.type || productTypes.WET,
-				unit_of_measurement:
-					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
-				print_details: product?.print_details || '',
+				costPerBulk: product?.cost_per_bulk || '',
+				costPerPiece: product?.cost_per_piece || '',
 				description: product?.description || '',
-				allowable_spoilage: product?.allowable_spoilage * 100 || '',
-				pieces_in_bulk: product?.pieces_in_bulk,
-				cost_per_piece: product?.cost_per_piece || '',
-				cost_per_bulk: product?.cost_per_bulk || '',
-				reorder_point: product?.reorder_point
-					? formatQuantity(product?.unit_of_measurement, product.reorder_point)
-					: '',
-				max_balance: product?.max_balance
+				hasQuantityAllowance: product?.has_quantity_allowance || false,
+				isShownInScaleList: product?.is_shown_in_scale_list || false,
+				isVatExempted: product?.is_vat_exempted?.toString() || 'false',
+				maxBalance: product?.max_balance
 					? formatQuantity(product?.unit_of_measurement, product.max_balance)
 					: '',
-				price_per_piece: product?.price_per_piece || '',
-				price_per_bulk: product?.price_per_bulk || '',
-				product_category: product?.product_category,
-				is_vat_exempted: product?.is_vat_exempted?.toString() || 'false',
-				is_shown_in_scale_list: product?.is_shown_in_scale_list || false,
-				has_quantity_allowance: product?.has_quantity_allowance || false,
-
-				will_carry_over_max_balance: product ? false : undefined,
-				will_carry_over_reorder_point: product ? false : undefined,
-				will_carry_over_price_per_piece: product ? false : undefined,
-				will_carry_over_price_per_bulk: product ? false : undefined,
-				will_carry_over_cost_per_piece: product ? false : undefined,
-				will_carry_over_cost_per_bulk: product ? false : undefined,
-				will_carry_over_allowable_spoilage: product ? false : undefined,
+				name: product?.name || '',
+				piecesInBulk: product?.pieces_in_bulk,
+				pricePerBulk: product?.price_per_bulk || '',
+				pricePerPiece: product?.price_per_piece || '',
+				printDetails: product?.print_details || '',
+				productCategory: product?.product_category,
+				reorderPoint: product?.reorder_point
+					? formatQuantity(product?.unit_of_measurement, product.reorder_point)
+					: '',
+				textcode: product?.textcode || '',
+				type: product?.type || productTypes.WET,
+				unitOfMeasurement:
+					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
 
 				// NOTE: Branch product settings
-				checking: undefined,
-				is_daily_checked: undefined,
-				is_randomly_checked: undefined,
-				is_sold_in_branch: undefined,
-				markdown_price_per_piece1: undefined,
-				markdown_price_per_piece2: undefined,
-				markdown_price_per_bulk1: undefined,
-				markdown_price_per_bulk2: undefined,
-
-				will_carry_over_checking: product ? false : undefined,
-				will_carry_over_is_sold_in_branch: product ? false : undefined,
-				will_carry_over_markdown_price_per_piece1: product ? false : undefined,
-				will_carry_over_markdown_price_per_bulk1: product ? false : undefined,
-				will_carry_over_markdown_price_per_piece2: product ? false : undefined,
-				will_carry_over_markdown_price_per_bulk2: product ? false : undefined,
+				checking: branchProduct?.is_daily_checked
+					? productCheckingTypes.DAILY
+					: productCheckingTypes.RANDOM,
+				currentBalance: branchProduct?.current_balance,
+				isDailyChecked: branchProduct?.is_daily_checked,
+				isRandomlyChecked: branchProduct?.is_randomly_checked,
+				isSoldInBranch: branchProduct?.is_sold_in_branch,
+				markdownPricePerPiece1: branchProduct?.markdown_price_per_piece1 || '',
+				markdownPricePerPiece2: branchProduct?.markdown_price_per_piece2 || '',
+				markdownPricePerBulk1: branchProduct?.markdown_price_per_bulk1 || '',
+				markdownPricePerBulk2: branchProduct?.markdown_price_per_bulk2 || '',
 			},
 			Schema: Yup.object().shape(
 				{
@@ -158,31 +146,28 @@ export const CreateEditProductForm = ({
 					),
 					name: Yup.string().required().max(70).label('Name'),
 					type: Yup.string().label('TT-001'),
-					unit_of_measurement: Yup.string().label('TT-002'),
-					product_category: Yup.string().label('Product Category'),
-					print_details: Yup.string().required().label('Print Details'),
+					unitOfMeasurement: Yup.string().label('TT-002'),
+					productCategory: Yup.string().label('Product Category'),
+					printDetails: Yup.string().required().label('Print Details'),
 					description: Yup.string().required().label('Description'),
-					pieces_in_bulk: Yup.number()
-						.required()
-						.min(0)
-						.label('Pieces in Bulk'),
-					allowable_spoilage: Yup.number()
-						.when(['unit_of_measurement'], {
+					piecesInBulk: Yup.number().required().min(0).label('Pieces in Bulk'),
+					allowableSpoilage: Yup.number()
+						.when(['unitOfMeasurement'], {
 							is: (unitOfMeasurementValue) =>
 								unitOfMeasurementValue === unitOfMeasurementTypes.WEIGHING,
 							then: Yup.number().integer().min(0).max(100).required(),
 							otherwise: Yup.number().notRequired().nullable(),
 						})
 						.label('Allowable Spoilage'),
-					has_quantity_allowance: Yup.boolean()
-						.when(['unit_of_measurement'], {
+					hasQuantityAllowance: Yup.boolean()
+						.when(['unitOfMeasurement'], {
 							is: (unitOfMeasurementValue) =>
 								unitOfMeasurementValue === unitOfMeasurementTypes.WEIGHING,
 							then: Yup.boolean().required(),
 							otherwise: Yup.boolean().notRequired().nullable(),
 						})
 						.label('Qty Allowance'),
-					reorder_point: Yup.number()
+					reorderPoint: Yup.number()
 						.required()
 						.moreThan(0)
 						.test(
@@ -191,14 +176,14 @@ export const CreateEditProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const unitOfMeasurement = this.parent.unit_of_measurement;
+								const unitOfMeasurement = this.parent.unitOfMeasurement;
 								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
 									? isInteger(Number(value))
 									: true;
 							},
 						)
 						.label('Reorder Point'),
-					max_balance: Yup.number()
+					maxBalance: Yup.number()
 						.required()
 						.moreThan(0)
 						.test(
@@ -207,47 +192,60 @@ export const CreateEditProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const unitOfMeasurement = this.parent.unit_of_measurement;
+								const unitOfMeasurement = this.parent.unitOfMeasurement;
 								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
 									? isInteger(Number(value))
 									: true;
 							},
 						)
 						.label('Max Balance'),
-					cost_per_piece: Yup.string()
-						.required()
-						.min(0)
-						.label('Cost per Piece'),
-					cost_per_bulk: Yup.string().required().min(0).label('Cost Per Bulk'),
-					price_per_piece: Yup.string()
+					costPerPiece: Yup.string().required().min(0).label('Cost per Piece'),
+					costPerBulk: Yup.string().required().min(0).label('Cost Per Bulk'),
+					pricePerPiece: Yup.string()
 						.required()
 						.min(0)
 						.label('Price per Piece'),
-					price_per_bulk: Yup.string()
-						.required()
-						.min(0)
-						.label('Price per Bulk'),
+					pricePerBulk: Yup.string().required().min(0).label('Price per Bulk'),
 
 					checking: Yup.string().label('Checking'),
-					is_daily_checked: Yup.boolean(),
-					is_randomly_checked: Yup.boolean(),
-					markdown_price_per_piece1: Yup.number()
+					currentBalance: isCurrentBalanceVisible
+						? Yup.number()
+								.required()
+								.min(0)
+								.test(
+									'is-whole-number',
+									'Non-weighing items require whole number quantity.',
+									function test(value) {
+										// NOTE: We need to use a no-named function so
+										// we can use 'this' and access the other form field value.
+										const unitOfMeasurement = this.parent.unitOfMeasurement;
+										return unitOfMeasurement ===
+											unitOfMeasurementTypes.NON_WEIGHING
+											? isInteger(Number(value))
+											: true;
+									},
+								)
+								.label('Current Balance')
+						: undefined,
+					isDailyChecked: Yup.boolean(),
+					isRandomlyChecked: Yup.boolean(),
+					markdownPricePerPiece1: Yup.number()
 						.min(0)
 						.label('Wholesale Price (piece)'),
-					markdown_price_per_piece2: Yup.number()
+					markdownPricePerPiece2: Yup.number()
 						.min(0)
 						.label('Special Price (piece)'),
-					markdown_price_per_bulk1: Yup.number()
+					markdownPricePerBulk1: Yup.number()
 						.min(0)
 						.label('Wholesale Price (bulk)'),
-					markdown_price_per_bulk2: Yup.number()
+					markdownPricePerBulk2: Yup.number()
 						.min(0)
 						.label('Special Price (bulk)'),
 				},
 				[['barcode', 'textcode']],
 			),
 		}),
-		[product, user],
+		[isCurrentBalanceVisible, product, user],
 	);
 
 	const getProductCategoriesOptions = useCallback(
@@ -303,88 +301,23 @@ export const CreateEditProductForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			onSubmit={async (formData, { resetForm }) => {
-				setSubmitting(true);
-				await sleep(500);
-				setSubmitting(false);
-
+			onSubmit={async (formData) => {
 				const isWeighing =
-					formData.unit_of_measurement === unitOfMeasurementTypes.WEIGHING;
+					formData.unitOfMeasurement === unitOfMeasurementTypes.WEIGHING;
 
 				let data = {
 					...formData,
-					id: product?.id,
-					cost_per_piece: removeCommas(formData.cost_per_piece || 0),
-					cost_per_bulk: removeCommas(formData.cost_per_bulk || 0),
-					price_per_piece: removeCommas(formData.price_per_piece || 0),
-					price_per_bulk: removeCommas(formData.price_per_bulk || 0),
-					product_category: formData.product_category,
-					has_quantity_allowance: isWeighing
-						? formData.has_quantity_allowance
+					hasQuantityAllowance: isWeighing
+						? formData.hasQuantityAllowance
 						: product?.has_quantity_allowance,
-					allowable_spoilage: isWeighing ? formData.allowable_spoilage : null,
-					will_carry_over_allowable_spoilage: undefined,
-
-					// NOTE: Branch product values
-					checking: undefined,
-					is_daily_checked: undefined,
-					is_randomly_checked: undefined,
-					is_sold_in_branch: undefined,
-					markdown_price_per_piece1: undefined,
-					markdown_price_per_piece2: undefined,
-					markdown_price_per_bulk1: undefined,
-					markdown_price_per_bulk2: undefined,
-					will_carry_over_checking: undefined,
-					will_carry_over_is_sold_in_branch: undefined,
-					will_carry_over_markdown_price_per_piece1: undefined,
-					will_carry_over_markdown_price_per_bulk1: undefined,
-					will_carry_over_markdown_price_per_piece2: undefined,
-					will_carry_over_markdown_price_per_bulk2: undefined,
-
-					will_carry_over_max_balance: undefined,
-					will_carry_over_reorder_point: undefined,
-					will_carry_over_price_per_piece: undefined,
-					will_carry_over_price_per_bulk: undefined,
-					will_carry_over_cost_per_piece: undefined,
-					will_carry_over_cost_per_bulk: undefined,
+					allowableSpoilage: isWeighing
+						? Number(formData.allowableSpoilage) / 100
+						: null,
+					isDailyChecked: formData.checking === productCheckingTypes.DAILY,
+					isRandomlyChecked: formData.checking === productCheckingTypes.RANDOM,
 				};
 
-				if (product) {
-					data = {
-						...data,
-						is_sold_in_branch: formData.will_carry_over_is_sold_in_branch
-							? formData.is_sold_in_branch
-							: undefined,
-						markdown_price_per_piece1:
-							formData.will_carry_over_markdown_price_per_piece1
-								? formData.markdown_price_per_piece1
-								: undefined,
-						markdown_price_per_piece2:
-							formData.will_carry_over_markdown_price_per_piece2
-								? formData.markdown_price_per_piece2
-								: undefined,
-						markdown_price_per_bulk1:
-							formData.will_carry_over_markdown_price_per_bulk1
-								? formData.markdown_price_per_bulk1
-								: undefined,
-						markdown_price_per_bulk2:
-							formData.will_carry_over_markdown_price_per_bulk2
-								? formData.markdown_price_per_bulk2
-								: undefined,
-					};
-
-					if (formData.will_carry_over_checking && formData.checking) {
-						data = {
-							...data,
-							is_daily_checked:
-								formData.checking === productCheckingTypes.DAILY,
-							is_randomly_checked:
-								formData.checking === productCheckingTypes.RANDOM,
-						};
-					}
-				}
-
-				onSubmit(data, resetForm);
+				onSubmit(data);
 			}}
 			enableReinitialize
 		>
@@ -420,7 +353,7 @@ export const CreateEditProductForm = ({
 
 						<Col span={24}>
 							{renderInputField({
-								name: 'print_details',
+								name: 'printDetails',
 								label: 'Print Details',
 								setFieldValue,
 								values,
@@ -439,23 +372,20 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Product Category" spacing />
 							<FormSelect
-								id="product_category"
+								id="productCategory"
 								options={getProductCategoriesOptions()}
 							/>
 							<ErrorMessage
-								name="product_category"
+								name="productCategory"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							<Label label="Include In Scale" spacing />
-							<FormRadioButton
-								id="is_shown_in_scale_list"
-								items={booleanOptions}
-							/>
+							<FormRadioButton id="isShownInScaleList" items={booleanOptions} />
 							<ErrorMessage
-								name="is_shown_in_scale_list"
+								name="isShownInScaleList"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
@@ -474,11 +404,11 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-002" spacing />
 							<FormRadioButton
-								id="unit_of_measurement"
+								id="unitOfMeasurement"
 								items={unitOfMeasurementOptions}
 							/>
 							<ErrorMessage
-								name="unit_of_measurement"
+								name="unitOfMeasurement"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
@@ -486,11 +416,11 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
-								id="is_vat_exempted"
+								id="isVatExempted"
 								items={isVatExemptedOptions}
 							/>
 							<ErrorMessage
-								name="is_vat_exempted"
+								name="isVatExempted"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
@@ -498,18 +428,17 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Qty Allowance" spacing />
 							<FormRadioButton
-								id="has_quantity_allowance"
+								id="hasQuantityAllowance"
 								items={booleanOptions}
 								disabled={
-									values?.unit_of_measurement !==
-									unitOfMeasurementTypes.WEIGHING
+									values?.unitOfMeasurement !== unitOfMeasurementTypes.WEIGHING
 								}
 							/>
 							<ErrorMessage
-								name="has_quantity_allowance"
+								name="hasQuantityAllowance"
 								render={(error) => <FieldError error={error} />}
 							/>
-							{values?.unit_of_measurement !==
+							{values?.unitOfMeasurement !==
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Qty Allowance won't be included when submited" />
 							)}
@@ -521,14 +450,14 @@ export const CreateEditProductForm = ({
 							<Label label="Reorder Point" spacing />
 							<FormInput
 								type="number"
-								id="reorder_point"
+								id="reorderPoint"
 								isWholeNumber={
-									values.unit_of_measurement ===
+									values.unitOfMeasurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
 							/>
 							<ErrorMessage
-								name="reorder_point"
+								name="reorderPoint"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
@@ -537,21 +466,21 @@ export const CreateEditProductForm = ({
 							<Label label="Max Balance" spacing />
 							<FormInput
 								type="number"
-								id="max_balance"
+								id="maxBalance"
 								isWholeNumber={
-									values.unit_of_measurement ===
+									values.unitOfMeasurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
 							/>
 							<ErrorMessage
-								name="max_balance"
+								name="maxBalance"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'pieces_in_bulk',
+								name: 'piecesInBulk',
 								label: 'Pieces in Bulk',
 								setFieldValue,
 								values,
@@ -562,19 +491,19 @@ export const CreateEditProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="" spacing />
 							{renderInputField({
-								name: 'allowable_spoilage',
+								name: 'allowableSpoilage',
 								label: 'Allowable Spoilage (%)',
 								setFieldValue,
 								values,
 								type: inputTypes.NUMBER,
 								options: {
 									disabled:
-										values?.unit_of_measurement !==
+										values?.unitOfMeasurement !==
 										unitOfMeasurementTypes.WEIGHING,
 								},
 							})}
 
-							{values?.unit_of_measurement !==
+							{values?.unitOfMeasurement !==
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Allowable Spoilage won't be included when submited." />
 							)}
@@ -588,7 +517,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'cost_per_piece',
+								name: 'costPerPiece',
 								label: 'Cost (Piece)',
 								setFieldValue,
 								values,
@@ -598,7 +527,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'cost_per_bulk',
+								name: 'costPerBulk',
 								label: 'Cost (Bulk)',
 								setFieldValue,
 								values,
@@ -608,7 +537,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'price_per_piece',
+								name: 'pricePerPiece',
 								label: 'Price (Piece)',
 								setFieldValue,
 								values,
@@ -618,7 +547,7 @@ export const CreateEditProductForm = ({
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
-								name: 'price_per_bulk',
+								name: 'pricePerBulk',
 								label: 'Price (Bulk)',
 								setFieldValue,
 								values,
@@ -626,65 +555,69 @@ export const CreateEditProductForm = ({
 							})}
 						</Col>
 
-						<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
+						{product && (
+							<>
+								<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
 
-						<Col sm={12} xs={24}>
-							<Label label="In Stock" spacing />
-							<FormRadioButton id="is_sold_in_branch" items={booleanOptions} />
-							<ErrorMessage
-								name="is_sold_in_branch"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
+								<Col sm={12} xs={24}>
+									<Label label="In Stock" spacing />
+									<FormRadioButton id="isSoldInBranch" items={booleanOptions} />
+									<ErrorMessage
+										name="isSoldInBranch"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
 
-						<Col sm={12} xs={24}>
-							<Label label="Checking" spacing />
-							<FormRadioButton id="checking" items={checkingTypesOptions} />
-							<ErrorMessage
-								name="checking"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
+								<Col sm={12} xs={24}>
+									<Label label="Checking" spacing />
+									<FormRadioButton id="checking" items={checkingTypesOptions} />
+									<ErrorMessage
+										name="checking"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
 
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'markdown_price_per_piece1',
-								label: 'Wholesale Price (Piece)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col>
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'markdownPricePerPiece1',
+										label: 'Wholesale Price (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
 
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'markdown_price_per_piece2',
-								label: 'Special Price (Piece)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col>
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'markdownPricePerPiece2',
+										label: 'Special Price (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
 
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'markdown_price_per_bulk1',
-								label: 'Wholesale Price (Bulk)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col>
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'markdownPricePerBulk1',
+										label: 'Wholesale Price (Bulk)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
 
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'markdown_price_per_bulk2',
-								label: 'Special Price (Bulk)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col>
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'markdownPricePerBulk2',
+										label: 'Special Price (Bulk)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+							</>
+						)}
 					</Row>
 
 					<div className="ModalCustomFooter">
@@ -692,13 +625,13 @@ export const CreateEditProductForm = ({
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							disabled={loading || isSubmitting}
+							disabled={loading}
 						/>
 						<Button
 							type="submit"
 							text={product ? 'Edit' : 'Create'}
 							variant="primary"
-							loading={loading || isSubmitting}
+							loading={loading}
 						/>
 					</div>
 				</Form>

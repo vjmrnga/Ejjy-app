@@ -187,25 +187,13 @@ export const useBackOrderRetrieve = ({ id, options }: Query) =>
 
 export const useBackOrderCreate = () =>
 	useMutation<any, any, any>(
-		({
-			encodedById,
-			overallRemarks,
-			products,
-			senderId,
-			supplierName,
-			supplierAddress,
-			supplierTin,
-			type,
-		}: any) =>
+		({ encodedById, overallRemarks, products, senderId, type }: any) =>
 			BackOrdersService.create(
 				{
 					is_online: IS_APP_LIVE,
 					overall_remarks: overallRemarks,
 					products,
 					sender_id: senderId,
-					supplier_name: supplierName,
-					supplier_address: supplierAddress,
-					supplier_tin: supplierTin,
 					encoded_by_id: encodedById,
 					type,
 				},

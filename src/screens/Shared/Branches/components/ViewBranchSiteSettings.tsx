@@ -263,7 +263,7 @@ export const ViewBranchSiteSettings = ({
 			ptuValidUntilDate: formData.ptuValidUntilDate.format('YYYY-MM-DD'),
 		});
 
-		message.success('Successfully updated site settings.');
+		message.success('Site settings updated successfully');
 	};
 
 	return (
@@ -288,7 +288,7 @@ export const ViewBranchSiteSettings = ({
 			>
 				{({ values, setFieldValue }) => (
 					<Form>
-						<Row gutter={[15, 15]}>
+						<Row gutter={[16, 16]}>
 							<Divider>Store Details</Divider>
 
 							<Col span={24} md={12}>

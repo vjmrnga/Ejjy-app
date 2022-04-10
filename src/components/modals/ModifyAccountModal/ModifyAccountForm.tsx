@@ -89,7 +89,7 @@ export const ModifyAccountForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					<Row gutter={[15, 15]}>
+					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label id="type" label="Type" spacing />
 							<Select

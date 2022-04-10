@@ -1,10 +1,6 @@
 import { message, Modal } from 'antd';
 import React from 'react';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { request } from '../../../../global/types';
-import { useProducts } from '../../../../hooks/useProducts';
 import { IProductCategory } from '../../../../models';
-import { convertIntoArray } from '../../../../utils/function';
 import '../style.scss';
 import { CreateEditProductForm } from './CreateEditProductForm';
 
@@ -32,46 +28,46 @@ export const CreateEditProductModal = ({
 	);
 
 	// CUSTOM HOOKS
-	const {
-		createProduct,
-		editProduct,
-		status: productsStatus,
-		errors: productsErrors,
-		reset,
-	} = useProducts();
+	// const {
+	// 	createProduct,
+	// 	editProduct,
+	// 	status: productsStatus,
+	// 	errors: productsErrors,
+	// 	reset,
+	// } = useProducts();
 
 	// METHODS
-	const onCreateProduct = (data, resetForm) => {
-		createProduct(data, ({ status: requestStatus, response }) => {
-			if (requestStatus === request.SUCCESS) {
-				if (response?.pending_database_transactions?.length) {
-					onPendingTransactions();
-				}
+	// const onCreateProduct = (data, resetForm) => {
+	// 	createProduct(data, ({ status: requestStatus, response }) => {
+	// 		if (requestStatus === request.SUCCESS) {
+	// 			if (response?.pending_database_transactions?.length) {
+	// 				onPendingTransactions();
+	// 			}
 
-				onSuccess();
-				resetForm();
+	// 			onSuccess();
+	// 			resetForm();
 
-				reset();
-				onClose();
-			}
-		});
-	};
+	// 			reset();
+	// 			onClose();
+	// 		}
+	// 	});
+	// };
 
-	const onEditProduct = (data, resetForm) => {
-		editProduct(data, ({ status: requestStatus, response }) => {
-			if (requestStatus === request.SUCCESS) {
-				if (response?.pending_database_transactions?.length) {
-					onPendingTransactions();
-				}
+	// const onEditProduct = (data, resetForm) => {
+	// 	editProduct(data, ({ status: requestStatus, response }) => {
+	// 		if (requestStatus === request.SUCCESS) {
+	// 			if (response?.pending_database_transactions?.length) {
+	// 				onPendingTransactions();
+	// 			}
 
-				onSuccess();
-				resetForm();
+	// 			onSuccess();
+	// 			resetForm();
 
-				reset();
-				onClose();
-			}
-		});
-	};
+	// 			reset();
+	// 			onClose();
+	// 		}
+	// 	});
+	// };
 
 	const onPendingTransactions = () => {
 		message.warning(
@@ -90,17 +86,17 @@ export const CreateEditProductModal = ({
 			centered
 			closable
 		>
-			<RequestErrors
+			{/* <RequestErrors
 				errors={convertIntoArray(productsErrors)}
 				withSpaceBottom
-			/>
+			/> */}
 
 			<CreateEditProductForm
 				product={product}
 				productCategories={productCategories}
-				onSubmit={product ? onEditProduct : onCreateProduct}
+				onSubmit={null}
 				onClose={onClose}
-				loading={productsStatus === request.REQUESTING}
+				loading={false}
 			/>
 		</Modal>
 	);

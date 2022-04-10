@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const DetailsRow = ({ children, className }: Props) => (
-	<Row className={className} gutter={[15, 15]}>
+	<Row className={className} gutter={[16, 16]}>
 		{children}
 	</Row>
 );

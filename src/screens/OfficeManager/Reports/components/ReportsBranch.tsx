@@ -2,28 +2,28 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
+import { RequestErrors, RequestWarnings, TableActions } from 'components';
+import { Label } from 'components/elements';
+import {
+	ALL_OPTION_KEY,
+	pageSizeOptions,
+	request,
+	timeRangeTypes,
+} from 'global';
+import { useProducts, useQueryParams } from 'hooks';
+import { useBranchProducts } from 'hooks/useBranchProducts';
 import { toString } from 'lodash';
 import debounce from 'lodash/debounce';
+import { IProductCategory } from 'models';
 import moment from 'moment';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { TableActions } from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import { ALL_OPTION_KEY } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { request, timeRangeTypes } from '../../../../global/types';
-import { useBranchProducts } from '../../../../hooks/useBranchProducts';
-import { useProducts } from '../../../../hooks/useProducts';
-import { useQueryParams } from 'hooks';
-import { IProductCategory } from '../../../../models';
 import {
 	convertIntoArray,
 	formatQuantity,
 	getBranchProductStatus,
-} from '../../../../utils/function';
+} from 'utils/function';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 
 const columns: ColumnsType = [
@@ -382,23 +382,23 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
+	const [searchKeyword, setSearchKeyword] = useState('');
 
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const params = queryString.parse(history.location.search);
-	const { products, getProducts, status: productsStatus } = useProducts();
+	const {
+		data: { products },
+		isFetching: isFetchingProducts,
+	} = useProducts({
+		params: {
+			ids: params?.productIds,
+			search: searchKeyword,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
-		getProducts(
-			{
-				ids: params?.productIds,
-				page: 1,
-				pageSize: 10,
-			},
-			true,
-		);
-
 		// Set default time range type
 		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
 		if (
@@ -442,17 +442,13 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
 			setProductOptions([]);
-
-			getProducts(
-				{ search: keyword.toLowerCase(), page: 1, pageSize: 25 },
-				true,
-			);
+			setSearchKeyword(keyword.toLowerCase());
 		}, SEARCH_DEBOUNCE_TIME),
 		[params],
 	);
 
 	return (
-		<Row gutter={[15, 15]}>
+		<Row gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<Label label="Product Name" spacing />
 				<Select
@@ -460,9 +456,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					style={{ width: '100%' }}
 					filterOption={false}
 					onSearch={onSearchDebounced}
-					notFoundContent={
-						productsStatus === request.REQUESTING ? <Spin size="small" /> : null
-					}
+					notFoundContent={isFetchingProducts ? <Spin size="small" /> : null}
 					options={productOptions}
 					value={selectedProducts}
 					onChange={(values) => {

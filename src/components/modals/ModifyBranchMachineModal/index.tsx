@@ -33,10 +33,10 @@ export const ModifyBranchMachineModal = ({
 	const onSubmit = async (formData) => {
 		if (branchMachine) {
 			await editBranchMachine(formData);
-			message.success('Branch machine was edited successfully.');
+			message.success('Branch machine was edited successfully');
 		} else {
 			await createBranchMachine(formData);
-			message.success('Branch machine was created successfully.');
+			message.success('Branch machine was created successfully');
 		}
 
 		onClose();

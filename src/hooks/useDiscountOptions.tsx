@@ -24,10 +24,10 @@ const useDiscountOptions = ({ params }: Query) =>
 		},
 	);
 
-export const useDiscountOptionsCreate = () => {
+export const useDiscountOptionCreate = () => {
 	const queryClient = useQueryClient();
 
-	return useMutation(
+	return useMutation<any, any, any>(
 		({ name, type, percentage, isVatInclusive }: any) =>
 			DiscountOptionsService.create(
 				{
@@ -46,10 +46,10 @@ export const useDiscountOptionsCreate = () => {
 	);
 };
 
-export const useDiscountOptionsEdit = () => {
+export const useDiscountOptionEdit = () => {
 	const queryClient = useQueryClient();
 
-	return useMutation(
+	return useMutation<any, any, any>(
 		({ id, name, type, percentage, isVatInclusive }: any) =>
 			DiscountOptionsService.edit(
 				id,
@@ -69,7 +69,7 @@ export const useDiscountOptionsEdit = () => {
 	);
 };
 
-export const useDiscountOptionsDelete = () => {
+export const useDiscountOptionDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(

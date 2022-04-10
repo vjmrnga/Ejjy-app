@@ -66,7 +66,7 @@ export const AddBranchProductBalanceForm = ({
 			enableReinitialize
 		>
 			<Form>
-				<Row gutter={[15, 15]}>
+				<Row gutter={[16, 16]}>
 					<Col span={24}>
 						<FormInputLabel
 							type="number"

@@ -13,9 +13,6 @@ interface Create {
 	overall_remarks: string;
 	products: Product[];
 	sender_id: number;
-	supplier_name: string;
-	supplier_address: string;
-	supplier_tin: string;
 	type: string;
 }
 

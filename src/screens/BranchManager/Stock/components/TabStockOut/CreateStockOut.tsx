@@ -1,4 +1,4 @@
-import { Divider, Table, Tabs } from 'antd';
+import { Divider, message, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -320,12 +320,10 @@ export const CreateStockOut = () => {
 				products,
 				type: backOrderTypes.FOR_RETURN,
 				overallRemarks: formData.overallRemarks,
-				supplierName: formData.supplierName,
-				supplierAddress: formData.supplierAddress,
-				supplierTin: formData.supplierTin,
 				encodedById: formData.encodedById,
 			});
 
+			message.success('Stock out was created successfully');
 			history.push('/branch-manager/stocks?tab=Stock Out');
 		}
 	};

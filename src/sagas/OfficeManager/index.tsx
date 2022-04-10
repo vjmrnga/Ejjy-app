@@ -6,7 +6,6 @@ import deliveryReceiptsSagas from './delivery-receipts';
 import orderSlipAdjustmentSlipsSagas from './order-slip-adjustment-slips';
 import pendingTransactionsSagas from './pending-transactions';
 import preparationSlipsSagas from './preparation-slips';
-import productsSagas from './products';
 import returnItemSlipAdjustmentSlipsSagas from './return-item-slip-adjustment-slips';
 
 export const officeManagerSagas = [
@@ -18,6 +17,5 @@ export const officeManagerSagas = [
 	...orderSlipAdjustmentSlipsSagas,
 	...pendingTransactionsSagas,
 	...preparationSlipsSagas,
-	...productsSagas,
 	...returnItemSlipAdjustmentSlipsSagas,
 ];

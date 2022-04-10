@@ -59,7 +59,7 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 
 			<Divider dashed />
 
-			<Row gutter={[15, 15]} align="middle" justify="space-between">
+			<Row gutter={[16, 16]} align="middle" justify="space-between">
 				<Col xs={24} sm={12} lg={18}>
 					<Label label="Requested Products" />
 				</Col>
