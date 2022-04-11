@@ -1,12 +1,11 @@
 import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors } from 'components';
-import { MAX_PAGE_SIZE, request } from 'global';
+import { MAX_PAGE_SIZE } from 'global';
 import { useBranchMachines, useQueryParams } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso } from 'utils/function';
-import { INTERVAL_MS } from './constants';
 import { SalesTotalCard } from './SalesTotalCard';
 
 const columns: ColumnsType = [
@@ -17,12 +16,10 @@ const columns: ColumnsType = [
 export const SalesBranch = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [sales, setSales] = useState([]);
 	const [totalSales, setTotalSales] = useState(0);
-	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
 
 	// CUSTOM HOOKS
-	const { params: queryParams } = useQueryParams();
+	const { params } = useQueryParams();
 	const {
 		data: { branchMachines },
 		isLoading,
@@ -32,65 +29,33 @@ export const SalesBranch = () => {
 	} = useBranchMachines({
 		params: {
 			pageSize: MAX_PAGE_SIZE,
+			salesTimeRange: params.timeRange,
+		},
+		options: {
+			refetchInterval: 1000,
+			refetchOnMount: 'always',
 		},
 	});
 
-	// useQueryParams({
-	// 	onQueryParamChange: (params) => {
-	// 		const { timeRange } = params;
-
-	// 		if (timeRange) {
-	// 			setIsCompletedInitialFetch(false);
-	// 			const onCallback = ({ status, data: branchSales }) => {
-	// 				if (status === request.SUCCESS) {
-	// 					setSales(branchSales);
-	// 				}
-	// 			};
-
-	// 			retrieveBranchMachineSales({ timeRange }, onCallback);
-
-	// 			clearInterval(intervalRef.current);
-	// 			intervalRef.current = setInterval(() => {
-	// 				retrieveBranchMachineSales({ timeRange }, onCallback);
-	// 			}, INTERVAL_MS);
-	// 		}
-	// 	},
-	// });
-
-	// REFS
-	const intervalRef = useRef(null);
-
 	// METHODS
-	useEffect(
-		() => () => {
-			// Cleanup in case logged out due to single sign on
-			clearInterval(intervalRef.current);
-		},
-		[],
-	);
-
 	useEffect(() => {
-		if (!isCompletedInitialFetch && sales.length) {
-			setIsCompletedInitialFetch(true);
-		}
+		let newTotalSales = 0;
+		const newSales = branchMachines.map((branchMachine) => {
+			newTotalSales += Number(branchMachine.sales);
 
-		const newSales = sales?.map(({ id, folder_name, sales: branchSales }) => ({
-			key: id,
-			machineName: folder_name,
-			sales: formatInPeso(branchSales),
-		}));
-
-		const newTotalSales = sales.reduce(
-			(prev, { sales: branchSales }) => prev + branchSales,
-			0,
-		);
+			return {
+				key: branchMachine.id,
+				machineName: branchMachine.name,
+				sales: formatInPeso(branchMachine.sales),
+			};
+		});
 
 		setDataSource(newSales);
 		setTotalSales(newTotalSales);
-	}, [sales]);
+	}, [branchMachines]);
 
 	return (
-		<div>
+		<div className="mt-4">
 			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<Row gutter={[16, 16]}>
@@ -98,7 +63,7 @@ export const SalesBranch = () => {
 					<SalesTotalCard
 						title="Total Sales"
 						totalSales={totalSales}
-						timeRange={_.toString(queryParams.timeRange)}
+						timeRange={_.toString(params.timeRange)}
 						loading={isLoading}
 						firstTimeLoading={!isFetched}
 					/>

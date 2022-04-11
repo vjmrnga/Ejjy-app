@@ -4,14 +4,20 @@ import { useMutation, useQuery } from 'react-query';
 import { BranchMachinesService, ONLINE_API_URL } from 'services';
 import { getLocalIpAddress } from 'utils/function';
 
-const useBranchMachines = ({ params }: Query = {}) =>
+const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
-		['useBranchMachines', params?.page, params?.pageSize],
+		[
+			'useBranchMachines',
+			params?.page,
+			params?.pageSize,
+			params?.salesTimeRange,
+		],
 		async () =>
 			BranchMachinesService.list(
 				{
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					sales_time_range: params?.salesTimeRange,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
@@ -21,6 +27,7 @@ const useBranchMachines = ({ params }: Query = {}) =>
 				branchMachines: query.data.results,
 				total: query.data.count,
 			}),
+			...options,
 		},
 	);
 

@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { IListRequest } from 'services/interfaces';
 
+interface List extends IListRequest {
+	sales_time_range?: string;
+}
+
 interface Modify {
 	name: string;
 	server_url?: string;
@@ -8,7 +12,7 @@ interface Modify {
 }
 
 const service = {
-	list: async (params: IListRequest, baseURL) =>
+	list: async (params: List, baseURL) =>
 		axios.get('/branch-machines/', { baseURL, params }),
 
 	retrieve: async (id, baseURL) =>
