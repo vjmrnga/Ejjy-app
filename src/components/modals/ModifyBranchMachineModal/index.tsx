@@ -1,6 +1,6 @@
 import { Col, message, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { useBranchMachinesCreate, useBranchMachinesEdit } from 'hooks';
+import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback, useState } from 'react';
 import { convertIntoArray, sleep } from 'utils/function';
 import * as Yup from 'yup';
@@ -21,12 +21,12 @@ export const ModifyBranchMachineModal = ({
 		mutateAsync: createBranchMachine,
 		isLoading: isCreateLoading,
 		error: createError,
-	} = useBranchMachinesCreate();
+	} = useBranchMachineCreate();
 	const {
 		mutateAsync: editBranchMachine,
 		isLoading: isEditLoading,
 		error: editError,
-	} = useBranchMachinesEdit();
+	} = useBranchMachineEdit();
 
 	// METHODS
 

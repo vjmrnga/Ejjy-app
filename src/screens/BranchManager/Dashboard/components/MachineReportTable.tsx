@@ -1,12 +1,12 @@
 import Table, { ColumnsType } from 'antd/lib/table';
+import { TableHeader, ViewButtonIcon } from 'components';
+import { Box } from 'components/elements';
+import { request } from 'global';
+import { useBranchMachines } from 'hooks';
+import { useAuth } from 'hooks/useAuth';
+import { useXreadReports } from 'hooks/useXreadReports';
 import React, { useEffect, useState } from 'react';
-import { TableHeader, ViewButtonIcon } from '../../../../components';
-import { Box } from '../../../../components/elements';
-import { request } from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useBranchMachines } from '../../../../hooks/useBranchMachines';
-import { useXreadReports } from '../../../../hooks/useXreadReports';
-import { showErrorMessages } from '../../../../utils/function';
+import { showErrorMessages } from 'utils/function';
 import { ViewReportModal } from './ViewReportModal';
 
 const columns: ColumnsType = [
@@ -22,9 +22,8 @@ export const MachineReportTable = () => {
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
-		branchMachines,
-		getBranchMachines,
-		status: branchMachinesStatus,
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
 	} = useBranchMachines();
 	const {
 		xreadReport,
@@ -33,9 +32,6 @@ export const MachineReportTable = () => {
 	} = useXreadReports();
 
 	// METHODS
-	useEffect(() => {
-		getBranchMachines(user?.branch?.id);
-	}, []);
 
 	useEffect(() => {
 		setData(
@@ -69,7 +65,7 @@ export const MachineReportTable = () => {
 	};
 
 	return (
-		<Box className="MachineReportTable">
+		<Box>
 			<TableHeader title="Reports per Machine" />
 
 			<Table
@@ -77,9 +73,9 @@ export const MachineReportTable = () => {
 				dataSource={data}
 				scroll={{ x: 650 }}
 				pagination={false}
-				loading={[branchMachinesStatus, xReadReportStatus].includes(
-					request.REQUESTING,
-				)}
+				loading={
+					xReadReportStatus === request.REQUESTING || isFetchingBranchMachines
+				}
 			/>
 
 			<ViewReportModal

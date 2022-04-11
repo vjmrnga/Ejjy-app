@@ -1,16 +1,18 @@
 import { message, Spin, Tabs } from 'antd';
-import { useQueryParams } from 'hooks';
+import { Breadcrumb, Content, RequestErrors } from 'components';
+import { Box } from 'components/elements';
+import { GENERIC_ERROR_MESSAGE, request } from 'global';
+import {
+	useBranchMachineRetrieve,
+	useBranchMachines,
+	useQueryParams,
+} from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
 import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
-import { Breadcrumb, Content, RequestErrors } from '../../../components';
-import { Box } from '../../../components/elements';
-import { GENERIC_ERROR_MESSAGE } from '../../../global/constants';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useBranchMachines } from '../../../hooks/useBranchMachines';
 import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
@@ -39,9 +41,6 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	// VARIABLES
 	const branchMachineId = match?.params?.id;
 
-	// STATES
-	const [branchMachine, setBranchMachine] = useState(null);
-
 	// CUSTOM HOOKS
 	const {
 		params: { tab: currentTab },
@@ -50,10 +49,11 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	const { user } = useAuth();
 	const history = useHistory();
 	const {
-		getBranchMachine,
-		status: branchMachineStatus,
-		errors: branchMachineErrors,
-	} = useBranchMachines();
+		data: branchMachine,
+		isFetching,
+		isFetched,
+		error,
+	} = useBranchMachineRetrieve({ id: branchMachineId });
 
 	// METHODS
 
@@ -61,16 +61,14 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		if (!currentTab) {
 			onTabClick(tabs.TRANSACTIONS);
 		}
-
-		getBranchMachine(branchMachineId, ({ status, data }) => {
-			if (status === request.SUCCESS) {
-				setBranchMachine(data);
-			} else if (status === request.ERROR) {
-				history.replace(`/branch-manager/branch-machines`);
-				message.error(GENERIC_ERROR_MESSAGE);
-			}
-		});
 	}, []);
+
+	useEffect(() => {
+		if (isFetched && !branchMachine) {
+			history.replace(`/branch-manager/branch-machines`);
+			message.error(GENERIC_ERROR_MESSAGE);
+		}
+	}, [branchMachine, isFetched]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -96,11 +94,11 @@ export const ViewBranchMachine = ({ match }: Props) => {
 			rightTitle={branchMachine?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<Spin spinning={branchMachineStatus === request.REQUESTING}>
+			<Spin spinning={isFetching}>
 				<Box className="ViewBranchMachine">
-					{branchMachineErrors.length > 0 && (
+					{error && (
 						<div className="PaddingVertical PaddingHorizontal">
-							<RequestErrors errors={convertIntoArray(branchMachineErrors)} />
+							<RequestErrors errors={convertIntoArray(error)} />
 						</div>
 					)}
 

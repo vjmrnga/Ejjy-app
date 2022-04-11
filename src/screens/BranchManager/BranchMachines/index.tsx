@@ -1,17 +1,16 @@
 import Table, { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
 	Content,
+	ModifyBranchMachineModal,
 	RequestErrors,
 	TableActions,
 	TableHeader,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import { ModifyBranchMachineModal } from '../../../components/modals';
-import { request } from '../../../global/types';
-import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { convertIntoArray } from '../../../utils/function';
+} from 'components';
+import { Box } from 'components/elements';
+import { useBranchMachines } from 'hooks';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { convertIntoArray } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', key: 'name', width: 150, fixed: 'left' },
@@ -27,15 +26,13 @@ export const BranchMachines = () => {
 		useState(false);
 
 	// CUSTOM HOOKS
-	const { branchMachines, getBranchMachines, status, errors } =
-		useBranchMachines();
+	const {
+		data: { branchMachines },
+		isFetching,
+		error,
+	} = useBranchMachines();
 
 	// METHODS
-	useEffect(() => {
-		getBranchMachines();
-	}, []);
-
-	// Effect: Format branch machines to be rendered in Table
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
 			key: branchMachine.id,
@@ -62,17 +59,17 @@ export const BranchMachines = () => {
 	};
 
 	return (
-		<Content className="BranchMachines" title="Branch Machines">
+		<Content title="Branch Machines">
 			<Box>
 				<TableHeader buttonName="Create Branch Machine" onCreate={onCreate} />
 
-				<RequestErrors errors={convertIntoArray(errors)} />
+				<RequestErrors errors={convertIntoArray(error)} />
 
 				<Table
 					columns={columns}
 					dataSource={data}
 					scroll={{ x: 800 }}
-					loading={status === request.REQUESTING}
+					loading={isFetching}
 					pagination={false}
 				/>
 

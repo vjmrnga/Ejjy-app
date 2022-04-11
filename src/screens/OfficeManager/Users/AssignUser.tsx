@@ -1,8 +1,5 @@
-import { Spin, Table, message } from 'antd';
+import { message, Spin, Table } from 'antd';
 import cn from 'classnames';
-import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import {
 	AddButtonIcon,
 	CancelButtonIcon,
@@ -10,15 +7,18 @@ import {
 	DetailsRow,
 	DetailsSingle,
 	RequestErrors,
-} from '../../../components';
-import { Box, Select } from '../../../components/elements';
-import { RequestWarnings } from '../../../components/RequestWarnings/RequestWarnings';
-import { types } from '../../../ducks/cashiering-assignments';
-import { request, userTypes } from '../../../global/types';
-import { useBranchMachines } from '../../../hooks/useBranchMachines';
-import { useUsers } from '../../../hooks/useUsers';
-import { convertIntoArray } from '../../../utils/function';
-import { useCashieringAssignments } from '../../../hooks/useCashieringAssignments';
+} from 'components';
+import { Box, Select } from 'components/elements';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
+import dayjs from 'dayjs';
+import { types } from 'ducks/cashiering-assignments';
+import { request, userTypes } from 'global';
+import { useBranchMachines } from 'hooks';
+import { useCashieringAssignments } from 'hooks/useCashieringAssignments';
+import { useUsers } from 'hooks/useUsers';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { convertIntoArray } from 'utils/function';
 import './style.scss';
 
 const columns = [
@@ -45,10 +45,9 @@ export const AssignUser = ({ match }: Props) => {
 	const history = useHistory();
 	const { user, getOnlineUserById, status: userStatus } = useUsers();
 	const {
-		branchMachines,
-		getBranchMachines,
-		status: branchesMachinesStatus,
-		errors: branchesMachinesErrors,
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchesMachinesErrors,
 	} = useBranchMachines();
 	const {
 		cashieringAssignments,
@@ -72,7 +71,6 @@ export const AssignUser = ({ match }: Props) => {
 				BRANCH_USER_TYPES.includes(userData?.user_type)
 			) {
 				const branchId = userData?.branch?.id;
-				getBranchMachines(branchId);
 				getCashieringAssignmentsByUserId({
 					userId,
 					branchId,
@@ -197,12 +195,12 @@ export const AssignUser = ({ match }: Props) => {
 				cashieringAssignmentsRecentRequest ===
 					types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID) ||
 			userStatus === request.REQUESTING ||
-			branchesMachinesStatus === request.REQUESTING,
+			isFetchingBranchMachines,
 		[
 			cashieringAssignmentsStatus,
 			cashieringAssignmentsRecentRequest,
 			userStatus,
-			branchesMachinesStatus,
+			isFetchingBranchMachines,
 		],
 	);
 

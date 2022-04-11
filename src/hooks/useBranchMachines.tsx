@@ -1,98 +1,44 @@
-import { actions, selectors, types } from 'ducks/branch-machines';
-import { IS_APP_LIVE, request } from 'global';
-import { useState } from 'react';
-import { useMutation } from 'react-query';
-import { useSelector } from 'react-redux';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery } from 'react-query';
 import { BranchMachinesService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress, modifiedExtraCallback } from 'utils/function';
-import { useActionDispatch } from './useActionDispatch';
+import { getLocalIpAddress } from 'utils/function';
 
-export const useBranchMachines = () => {
-	// STATES
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-	const [warnings, setWarnings] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
-
-	// SELECTORS
-	const branchMachines = useSelector(selectors.selectBranchMachines());
-
-	// ACTIONS
-	const getBranchMachinesAction = useActionDispatch(actions.getBranchMachines);
-	const getBranchMachineAction = useActionDispatch(actions.getBranchMachine);
-	const retrieveBranchMachineSalesAction = useActionDispatch(
-		actions.retrieveBranchMachineSales,
+const useBranchMachines = ({ params }: Query = {}) =>
+	useQuery<any>(
+		['useBranchMachines', params?.page, params?.pageSize],
+		async () =>
+			BranchMachinesService.list(
+				{
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				branchMachines: query.data.results,
+				total: query.data.count,
+			}),
+		},
 	);
-	const retrieveBranchMachineSalesAllAction = useActionDispatch(
-		actions.retrieveBranchMachineSalesAll,
+
+export const useBranchMachineRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useBranchMachineRetrieve', id],
+		async () =>
+			BranchMachinesService.retrieve(
+				id,
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			select: (query) => query.data,
+			...options,
+		},
 	);
 
-	// METHODS
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-		warnings: callbackWarnings = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-		setWarnings(callbackWarnings);
-	};
-
-	const getBranchMachines = (branchId = null) => {
-		setRecentRequest(types.GET_BRANCH_MACHINES);
-		getBranchMachinesAction({ branchId, callback });
-	};
-
-	const getBranchMachine = (id, extraCallback = null) => {
-		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES);
-		getBranchMachineAction({
-			id,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	const retrieveBranchMachineSales = (data, extraCallback = null) => {
-		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES);
-		retrieveBranchMachineSalesAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	const retrieveBranchMachineSalesAll = (data, extraCallback = null) => {
-		setRecentRequest(types.RETRIEVE_BRANCH_MACHINE_SALES_ALL);
-		retrieveBranchMachineSalesAllAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	return {
-		branchMachines,
-		getBranchMachines,
-		getBranchMachine,
-		retrieveBranchMachineSales,
-		retrieveBranchMachineSalesAll,
-		status,
-		errors,
-		warnings,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-	};
-};
-
-export const useBranchMachinesCreate = () =>
+export const useBranchMachineCreate = () =>
 	useMutation(({ name, serverUrl, posTerminal }: any) =>
 		BranchMachinesService.create(
 			{
@@ -104,7 +50,7 @@ export const useBranchMachinesCreate = () =>
 		),
 	);
 
-export const useBranchMachinesEdit = () =>
+export const useBranchMachineEdit = () =>
 	useMutation(({ id, name, serverUrl, posTerminal }: any) =>
 		BranchMachinesService.edit(
 			id,
@@ -116,3 +62,5 @@ export const useBranchMachinesEdit = () =>
 			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 		),
 	);
+
+export default useBranchMachines;

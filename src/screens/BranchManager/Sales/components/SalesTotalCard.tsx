@@ -1,9 +1,9 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import { Box } from 'components/elements';
+import { timeRangeTypes } from 'global';
 import React, { useCallback } from 'react';
-import { Box } from '../../../../components/elements';
-import { timeRangeTypes } from '../../../../global/types';
-import { formatInPeso } from '../../../../utils/function';
+import { formatInPeso } from 'utils/function';
 import '../style.scss';
 
 interface Props {

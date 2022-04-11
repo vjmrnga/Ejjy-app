@@ -5,6 +5,7 @@ export { default as useBackOrders } from './useBackOrders';
 export { default as useBirReports } from './useBirReports';
 export * from './useBranchesDayAuthorizations';
 export * from './useBranchMachines';
+export { default as useBranchMachines } from './useBranchMachines';
 export * from './useBranchProducts';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
