@@ -29,12 +29,23 @@ interface Edit {
 	reorder_point: number;
 }
 
+interface EditPriceCost {
+	product_id: number;
+	cost_per_piece: string;
+	cost_per_bulk: string;
+	price_per_piece: string;
+	price_per_bulk: string;
+}
+
 const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/branches-products/', { baseURL, params }),
 
 	edit: async (id: Number, body: Edit, baseURL) =>
 		axios.patch(`/branches-products/${id}/`, body, { baseURL }),
+
+	editPriceCost: async (body: EditPriceCost, baseURL) =>
+		axios.patch('/branches-products/update-price-and-cost/', body, { baseURL }),
 };
 
 export default service;

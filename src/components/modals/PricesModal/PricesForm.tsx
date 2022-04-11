@@ -1,5 +1,10 @@
 import { Col, Row, Select, Typography } from 'antd';
-import { Button, FieldError, Label } from 'components/elements';
+import {
+	Button,
+	FieldError,
+	FormattedInputNumber,
+	Label,
+} from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import React, { useCallback } from 'react';
@@ -12,22 +17,50 @@ interface Props {
 	loading: boolean;
 }
 
-export const PriceMarkdownForm = ({
+export const PricesForm = ({
 	branchProduct,
 	onSubmit,
 	onClose,
 	loading,
 }: Props) => {
+	console.log('branchProduct', branchProduct);
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
 				type: branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
+				costPerPiece: branchProduct?.cost_per_piece || '',
+				costPerBulk: branchProduct?.cost_per_bulk || '',
+				pricePerPiece: branchProduct?.price_per_piece || '',
+				pricePerBulk: branchProduct?.price_per_bulk || '',
 			},
 			Schema: Yup.object().shape({
 				type: Yup.string().label('Type'),
+				costPerPiece: Yup.number().min(0).label('Cost per Piece'),
+				costPerBulk: Yup.number().min(0).label('Cost Per Bulk'),
+				pricePerPiece: Yup.number().min(0).label('Price per Piece'),
+				pricePerBulk: Yup.number().min(0).label('Price per Bulk'),
 			}),
 		}),
 		[branchProduct],
+	);
+
+	const renderInputField = ({ name, label, values, setFieldValue }) => (
+		<>
+			<Label id={name} label={label} spacing />
+			<FormattedInputNumber
+				size="large"
+				value={values[name]}
+				controls={false}
+				style={{ width: '100%' }}
+				onChange={(value) => {
+					setFieldValue(name, value);
+				}}
+			/>
+			<ErrorMessage
+				name={name}
+				render={(error) => <FieldError error={error} />}
+			/>
+		</>
 	);
 
 	return (
@@ -41,7 +74,7 @@ export const PriceMarkdownForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					<Row>
+					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label id="type" label="Type" spacing />
 							<Select
@@ -83,6 +116,42 @@ export const PriceMarkdownForm = ({
 								name="type"
 								render={(error) => <FieldError error={error} />}
 							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'costPerPiece',
+								label: 'Cost (Piece)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'costPerBulk',
+								label: 'Cost (Bulk)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'pricePerPiece',
+								label: 'Price (Piece)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'pricePerBulk',
+								label: 'Price (Bulk)',
+								setFieldValue,
+								values,
+							})}
 						</Col>
 					</Row>
 

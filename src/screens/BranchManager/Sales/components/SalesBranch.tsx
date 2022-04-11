@@ -23,7 +23,6 @@ export const SalesBranch = () => {
 	const {
 		data: { branchMachines },
 		isLoading,
-		isFetching,
 		isFetched,
 		error,
 	} = useBranchMachines({

@@ -7,6 +7,7 @@ export * from './ModifyBranchMachineModal';
 export * from './ModifyCreditRegistration';
 export * from './ModifyDiscountOptionModal';
 export * from './ModifyProductModal';
+export * from './PricesModal';
 export * from './ViewAccountModal';
 export * from './ViewBackOrderModal';
 export * from './ViewProductModal';

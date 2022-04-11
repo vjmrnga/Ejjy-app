@@ -28,7 +28,7 @@ import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { convertIntoArray, isUserFromBranch } from 'utils/function';
-import { PriceMarkdownModal } from './components/PriceMarkdownModal';
+import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
 	{
@@ -99,7 +99,7 @@ export const Products = () => {
 					name,
 					actions: hasPendingTransactions ? null : (
 						<TableActions
-							onAddName="Set Markdown"
+							onAddName="Set Prices"
 							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
 							onEdit={() => onOpenModal(product, modals.MODIFY)}
@@ -204,7 +204,7 @@ export const Products = () => {
 				)}
 
 				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
-					<PriceMarkdownModal
+					<PricesModal
 						product={selectedProduct}
 						onClose={() => onOpenModal(null, null)}
 					/>

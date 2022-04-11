@@ -32,14 +32,6 @@ interface EditBalance {
 	updating_user_id: number;
 }
 
-interface EditPriceCost {
-	product_id: number;
-	cost_per_piece: string;
-	cost_per_bulk: string;
-	price_per_piece: string;
-	price_per_bulk: string;
-}
-
 // Service
 export const service = {
 	list: async (params: List, baseURL) =>
@@ -55,7 +47,4 @@ export const service = {
 		axios.patch('/branches-products/update-balance-and-retrieve/', body, {
 			baseURL,
 		}),
-
-	editPriceCost: async (body: EditPriceCost, baseURL) =>
-		axios.patch('/branches-products/update-price-and-cost/', body, { baseURL }),
 };
