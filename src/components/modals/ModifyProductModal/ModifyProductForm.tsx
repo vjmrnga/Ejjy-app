@@ -245,15 +245,47 @@ export const ModifyProductForm = ({
 						.label('Special Price (bulk)'),
 					creditPricePerPiece: Yup.string()
 						.min(0)
+						.test(
+							'greater-than-regular-price',
+							'Credit price must not be less than to the regular price (piece).',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								if (product) {
+									const regularPrice = Number(this.parent.pricePerPiece);
+									const creditPrice = value ? Number(value) : 0;
+
+									return creditPrice >= regularPrice;
+								}
+
+								return true;
+							},
+						)
 						.label('Credit Price per Piece'),
 					creditPricePerBulk: Yup.string()
 						.min(0)
+						.test(
+							'greater-than-regular-price',
+							'Credit price must not be less than to the regular price (bulk).',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								if (product) {
+									const regularPrice = Number(this.parent.pricePerBulk);
+									const creditPrice = value ? Number(value) : 0;
+
+									return creditPrice >= regularPrice;
+								}
+
+								return true;
+							},
+						)
 						.label('Credit Price Per Bulk'),
 				},
 				[['barcode', 'textcode']],
 			),
 		}),
-		[isCurrentBalanceVisible, product, user],
+		[isCurrentBalanceVisible, branchProduct, product, user],
 	);
 
 	const getProductCategoriesOptions = useCallback(
