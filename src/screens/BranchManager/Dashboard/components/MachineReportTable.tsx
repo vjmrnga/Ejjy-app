@@ -2,7 +2,7 @@ import Table, { ColumnsType } from 'antd/lib/table';
 import { TableHeader, ViewButtonIcon } from 'components';
 import { Box } from 'components/elements';
 import { request } from 'global';
-import { useBranchMachines } from 'hooks';
+import { useBranchMachinePing, useBranchMachines } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { useXreadReports } from 'hooks/useXreadReports';
 import React, { useEffect, useState } from 'react';
@@ -10,14 +10,15 @@ import { showErrorMessages } from 'utils/function';
 import { ViewReportModal } from './ViewReportModal';
 
 const columns: ColumnsType = [
-	{ title: 'Machines', dataIndex: 'machines', key: 'machines' },
-	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
+	{ title: 'Machines', dataIndex: 'machines' },
+	{ title: 'Connectivity Status', dataIndex: 'connectivityStatus' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const MachineReportTable = () => {
 	// STATES
 	const [viewReportModalVisible, setViewReportModalVisible] = useState(false);
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
@@ -25,6 +26,7 @@ export const MachineReportTable = () => {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,
 	} = useBranchMachines();
+	const { mutate: pingBranchMachine } = useBranchMachinePing();
 	const {
 		xreadReport,
 		createXreadReport,
@@ -32,18 +34,21 @@ export const MachineReportTable = () => {
 	} = useXreadReports();
 
 	// METHODS
-
 	useEffect(() => {
-		setData(
-			branchMachines.map(({ name, id }) => ({
-				machines: name,
-				actions: (
-					<ViewButtonIcon
-						onClick={() => viewReport(id)}
-						tooltip="View Report"
-					/>
-				),
-			})),
+		setDataSource(
+			branchMachines.map(({ name, id }) => {
+				pingBranchMachine({ id });
+
+				return {
+					machines: name,
+					actions: (
+						<ViewButtonIcon
+							onClick={() => viewReport(id)}
+							tooltip="View Report"
+						/>
+					),
+				};
+			}),
 		);
 	}, [branchMachines]);
 
@@ -70,7 +75,7 @@ export const MachineReportTable = () => {
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 650 }}
 				pagination={false}
 				loading={

@@ -15,6 +15,8 @@ interface Edit {
 	assigned_personnel_id: number;
 	cost_per_bulk: string;
 	cost_per_piece: string;
+	credit_price_per_bulk: number;
+	credit_price_per_piece: number;
 	current_balance: string;
 	is_daily_checked: boolean;
 	is_randomly_checked: boolean;

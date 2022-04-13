@@ -11,6 +11,10 @@ interface Modify {
 	pos_terminal?: string;
 }
 
+interface Ping {
+	online_branch_machine_id: number;
+}
+
 const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/branch-machines/', { baseURL, params }),
@@ -23,6 +27,9 @@ const service = {
 
 	edit: async (id: number, body: Modify, baseURL) =>
 		axios.patch(`/branch-machines/${id}/`, body, { baseURL }),
+
+	ping: async (body: Ping, baseURL) =>
+		axios.post('/branch-machines/receive-ping/', body, { baseURL }),
 };
 
 export default service;

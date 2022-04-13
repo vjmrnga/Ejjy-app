@@ -46,7 +46,7 @@ export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 	);
 
 export const useBranchMachineCreate = () =>
-	useMutation(({ name, serverUrl, posTerminal }: any) =>
+	useMutation<any, any, any>(({ name, serverUrl, posTerminal }: any) =>
 		BranchMachinesService.create(
 			{
 				name,
@@ -58,13 +58,23 @@ export const useBranchMachineCreate = () =>
 	);
 
 export const useBranchMachineEdit = () =>
-	useMutation(({ id, name, serverUrl, posTerminal }: any) =>
+	useMutation<any, any, any>(({ id, name, serverUrl, posTerminal }: any) =>
 		BranchMachinesService.edit(
 			id,
 			{
 				name,
 				server_url: serverUrl,
 				pos_terminal: posTerminal,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
+	);
+
+export const useBranchMachinePing = () =>
+	useMutation<any, any, any>(({ id }: any) =>
+		BranchMachinesService.ping(
+			{
+				online_branch_machine_id: id,
 			},
 			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 		),

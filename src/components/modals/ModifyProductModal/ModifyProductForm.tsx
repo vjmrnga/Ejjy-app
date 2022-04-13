@@ -122,6 +122,8 @@ export const ModifyProductForm = ({
 					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
 
 				// NOTE: Branch product settings
+				creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
+				creditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
 				checking: branchProduct?.is_daily_checked
 					? productCheckingTypes.DAILY
 					: productCheckingTypes.RANDOM,
@@ -241,6 +243,12 @@ export const ModifyProductForm = ({
 					markdownPricePerBulk2: Yup.number()
 						.min(0)
 						.label('Special Price (bulk)'),
+					creditPricePerPiece: Yup.string()
+						.min(0)
+						.label('Credit Price per Piece'),
+					creditPricePerBulk: Yup.string()
+						.min(0)
+						.label('Credit Price Per Bulk'),
 				},
 				[['barcode', 'textcode']],
 			),
@@ -538,7 +546,7 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerPiece',
-								label: 'Price (Piece)',
+								label: 'Regular (Piece)',
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,
@@ -548,7 +556,7 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerBulk',
-								label: 'Price (Bulk)',
+								label: 'Regular (Bulk)',
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,
@@ -558,6 +566,26 @@ export const ModifyProductForm = ({
 						{product && (
 							<>
 								<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
+
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'creditPricePerPiece',
+										label: 'Credit (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+
+								<Col sm={12} xs={24}>
+									{renderInputField({
+										name: 'creditPricePerBulk',
+										label: 'Credit (Bulk)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
 
 								<Col sm={12} xs={24}>
 									<Label label="In Stock" spacing />
