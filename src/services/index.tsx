@@ -25,3 +25,5 @@ export { default as SiteSettingsService } from './SiteSettingsService';
 export { default as TransactionProductsService } from './TransactionProductsService';
 export { default as TransactionsService } from './TransactionsService';
 export { default as UsersService } from './UsersService';
+export { default as XReadReportsService } from './XReadReportsService';
+export { default as ZReadReportsService } from './ZReadReportsService';

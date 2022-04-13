@@ -17,7 +17,6 @@ import requisitionSlipsReducer, {
 	key as REQUISITION_SLIP_KEY,
 } from './requisition-slips';
 import uiReducer, { key as UI_KEY } from './ui';
-import xreadReportsReducer, { key as XREAD_REPORTS_KEY } from './xread-reports';
 
 const appReducer = combineReducers({
 	router: connectRouter(history),
@@ -25,7 +24,6 @@ const appReducer = combineReducers({
 	[CASHIERING_ASSIGNMENTS_KEY]: cashieringAssignmentsReducer,
 	[REQUEST_KEY]: requestReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
-	[XREAD_REPORTS_KEY]: xreadReportsReducer,
 	[UI_KEY]: uiReducer,
 	[NETWORK_KEY]: networkReducer,
 	...adminReducers,

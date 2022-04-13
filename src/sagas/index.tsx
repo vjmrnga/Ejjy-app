@@ -17,7 +17,6 @@ import requisitionSlipsSagas from './requisition-slips';
 import returnItemSlipsSagas from './return-item-slips';
 import sessionsSagas from './sessions';
 import usersSagas from './users';
-import xreadReportsSagas from './xread-reports';
 
 export default function* rootSaga() {
 	yield all([
@@ -36,7 +35,6 @@ export default function* rootSaga() {
 		...returnItemSlipsSagas,
 		...sessionsSagas,
 		...usersSagas,
-		...xreadReportsSagas,
 		...adminSagas,
 
 		...officeManagerSagas,

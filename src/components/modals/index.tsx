@@ -14,3 +14,5 @@ export * from './ViewProductModal';
 export * from './ViewReceivingVoucherModal';
 export * from './ViewReturnItemSlipModal';
 export * from './ViewTransactionModal';
+export * from './ViewXReadReportModal';
+export * from './ViewZReadReportModal';
