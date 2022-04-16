@@ -1,4 +1,4 @@
-import { Calendar, Modal, Space } from 'antd';
+import { Button, Calendar, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	TableHeader,
@@ -8,18 +8,20 @@ import {
 } from 'components';
 import { Box, FieldError } from 'components/elements';
 import {
-	useBranchMachinePing,
 	useBranchMachines,
 	useXReadReportCreate,
 	useZReadReportCreate,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 
 const columns: ColumnsType = [
 	{ title: 'Machines', dataIndex: 'machines' },
-	{ title: 'Connectivity Status', dataIndex: 'connectivityStatus' },
+	{
+		title: 'Connectivity Status',
+		dataIndex: 'connectivityStatus',
+		align: 'center',
+	},
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -35,12 +37,14 @@ export const MachineReportTable = () => {
 	const [dateError, setDateError] = useState(null);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
 	const {
 		data: { branchMachines },
-		isFetching: isFetchingBranchMachines,
-	} = useBranchMachines();
-	const { mutate: pingBranchMachine } = useBranchMachinePing();
+		isLoading: isLoadingBranchMachines,
+	} = useBranchMachines({
+		options: {
+			refetchInterval: 5000,
+		},
+	});
 	const { mutateAsync: createXReadReport, isLoading: isCreatingXReadReport } =
 		useXReadReportCreate();
 	const { mutateAsync: createZReadReport, isLoading: isCreatingZReadReport } =
@@ -49,31 +53,38 @@ export const MachineReportTable = () => {
 	// METHODS
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => {
-			pingBranchMachine({ id: branchMachine.id });
-
 			return {
 				key: branchMachine.id,
 				machines: branchMachine.name,
+				connectivityStatus: branchMachine.is_online ? (
+					<Tag color="green">Online</Tag>
+				) : (
+					<Tag color="red">Offline</Tag>
+				),
 				actions: (
 					<Space>
-						<ViewButtonIcon
+						<Button
+							type="primary"
 							onClick={() => viewXReadReport(branchMachine)}
-							tooltip="View XRead"
-						/>
-
-						<ViewButtonIcon
+						>
+							View XRead
+						</Button>
+						<Button
+							type="primary"
 							onClick={() => {
 								setSelectedBranchMachine(branchMachine);
 								setDatePickerModalVisible(true);
 								setSelectedDate(null);
 							}}
-							tooltip="View XRead (Date)"
-						/>
-
-						<ViewButtonIcon
+						>
+							View XRead by Date
+						</Button>
+						<Button
+							type="primary"
 							onClick={() => viewZReadReport(branchMachine)}
-							tooltip="View ZRead"
-						/>
+						>
+							View ZRead
+						</Button>
 					</Space>
 				),
 			};
@@ -117,7 +128,7 @@ export const MachineReportTable = () => {
 				loading={
 					isCreatingXReadReport ||
 					isCreatingZReadReport ||
-					isFetchingBranchMachines
+					isLoadingBranchMachines
 				}
 			/>
 
