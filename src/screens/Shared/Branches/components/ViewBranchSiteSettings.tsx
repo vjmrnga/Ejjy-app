@@ -273,7 +273,7 @@ export const ViewBranchSiteSettings = ({
 			<RequestErrors
 				errors={[
 					...convertIntoArray(retrieveError),
-					...convertIntoArray(editError),
+					...convertIntoArray(editError?.errors),
 				]}
 				withSpaceBottom
 			/>

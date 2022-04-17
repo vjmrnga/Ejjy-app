@@ -1,7 +1,11 @@
 import { Spin } from 'antd';
 import { Container } from 'components';
 import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
-import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
+import {
+	useBranchProducts,
+	useSalesTracker,
+	useSiteSettingsRetrieve,
+} from 'hooks';
 import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -45,6 +49,19 @@ const BranchManager = () => {
 		},
 	});
 	const {
+		data: { total: branchProductsTotal },
+	} = useBranchProducts({
+		params: {
+			hasNegativeBalance: true,
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			refetchInterval: 60000,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: ['data'],
+		},
+	});
+	const {
 		data: { salesTrackers },
 	} = useSalesTracker({
 		params: {
@@ -72,7 +89,7 @@ const BranchManager = () => {
 			const resetCounterNotificationThresholdInvoiceNumber =
 				siteSettings?.reset_counter_notification_threshold_invoice_number;
 
-			// Reset counter
+			// Reset count
 			const resetCount = salesTrackers.filter(
 				({ total_sales }) =>
 					Number(total_sales) >= resetCounterNotificationThresholdAmount,
@@ -85,12 +102,17 @@ const BranchManager = () => {
 					resetCounterNotificationThresholdInvoiceNumber,
 			).length;
 
-			const newNotificationsCount = resetCount + transactionCount;
+			// Branch products with lacking balance count
+			const branchProductCount = branchProductsTotal;
+
+			// Set new notification count
+			const newNotificationsCount =
+				branchProductCount + resetCount + transactionCount;
 			if (newNotificationsCount != notificationsCount) {
 				setNotificationsCount(newNotificationsCount);
 			}
 		}
-	}, [salesTrackers, siteSettings]);
+	}, [branchProductsTotal, salesTrackers, siteSettings]);
 
 	const getSidebarItems = useCallback(
 		() => [

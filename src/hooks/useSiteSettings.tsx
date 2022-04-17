@@ -32,7 +32,7 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query) => {
 };
 
 export const useSiteSettingsEdit = () =>
-	useMutation(
+	useMutation<any, any, any>(
 		({
 			id,
 			closeSessionDeadline,

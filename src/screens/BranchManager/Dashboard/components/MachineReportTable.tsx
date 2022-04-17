@@ -13,7 +13,7 @@ import {
 	useZReadReportCreate,
 } from 'hooks';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const columns: ColumnsType = [
 	{ title: 'Machines', dataIndex: 'machines' },
@@ -33,7 +33,7 @@ export const MachineReportTable = () => {
 
 	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [selectedDate, setSelectedDate] = useState(null);
+	const [selectedDate, setSelectedDate] = useState(moment());
 	const [dateError, setDateError] = useState(null);
 
 	// CUSTOM HOOKS
@@ -41,9 +41,7 @@ export const MachineReportTable = () => {
 		data: { branchMachines },
 		isLoading: isLoadingBranchMachines,
 	} = useBranchMachines({
-		options: {
-			refetchInterval: 5000,
-		},
+		options: { refetchInterval: 5000 },
 	});
 	const { mutateAsync: createXReadReport, isLoading: isCreatingXReadReport } =
 		useXReadReportCreate();
@@ -74,7 +72,7 @@ export const MachineReportTable = () => {
 							onClick={() => {
 								setSelectedBranchMachine(branchMachine);
 								setDatePickerModalVisible(true);
-								setSelectedDate(null);
+								setSelectedDate(moment());
 							}}
 						>
 							View XRead by Date
@@ -116,6 +114,18 @@ export const MachineReportTable = () => {
 		setZReadReport(data);
 	};
 
+	const onSubmitDateSelection = useCallback(() => {
+		if (!selectedDate) {
+			setDateError('No selected date yet.');
+			return;
+		} else if (selectedDate.isAfter(moment(), 'day')) {
+			setDateError("Date must not be after today's date.");
+			return;
+		}
+
+		viewXReadReport(selectedBranchMachine, selectedDate.format('YYYY-MM-DD'));
+	}, [selectedDate]);
+
 	return (
 		<Box>
 			<TableHeader title="Reports per Machine" />
@@ -150,17 +160,7 @@ export const MachineReportTable = () => {
 				className="Modal__hasFooter"
 				title="Select Date"
 				visible={datePickerModalVisible}
-				onOk={() => {
-					if (selectedDate.isAfter(moment(), 'day')) {
-						setDateError("Date must not be after today's date.");
-						return;
-					}
-
-					viewXReadReport(
-						selectedBranchMachine,
-						selectedDate.format('YYYY-MM-DD'),
-					);
-				}}
+				onOk={onSubmitDateSelection}
 				onCancel={() => {
 					setSelectedBranchMachine(null);
 					setDatePickerModalVisible(false);
@@ -170,8 +170,8 @@ export const MachineReportTable = () => {
 				<Calendar
 					disabledDate={(current) => current.isAfter(moment(), 'date')}
 					fullscreen={false}
+					defaultValue={moment()}
 					onSelect={(value) => {
-						console.log('value', value);
 						setSelectedDate(value);
 						setDateError(null);
 					}}

@@ -39,7 +39,7 @@ export const CreateOrderOfPaymentModal = ({
 	const {
 		mutateAsync: createOrderOfPayment,
 		isLoading,
-		error,
+		error: createError,
 	} = useOrderOfPaymentsCreate();
 
 	// METHODS
@@ -71,7 +71,10 @@ export const CreateOrderOfPaymentModal = ({
 			centered
 			closable
 		>
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(createError?.errors)}
+				withSpaceBottom
+			/>
 
 			<CreateOrderOfPaymentForm
 				payor={payor}

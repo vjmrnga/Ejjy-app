@@ -70,8 +70,8 @@ export const ModifyCreditRegistrationModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError),
-					...convertIntoArray(editError),
+					...convertIntoArray(createError?.errors),
+					...convertIntoArray(editError?.errors),
 				]}
 				withSpaceBottom
 			/>

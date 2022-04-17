@@ -33,7 +33,7 @@ const useAccounts = ({ params }: Query) =>
 	);
 
 export const useAccountsCreate = () =>
-	useMutation(
+	useMutation<any, any, any>(
 		({
 			firstName,
 			middleName,
@@ -66,7 +66,7 @@ export const useAccountsCreate = () =>
 	);
 
 export const useAccountsEdit = () =>
-	useMutation(
+	useMutation<any, any, any>(
 		({
 			id,
 			firstName,

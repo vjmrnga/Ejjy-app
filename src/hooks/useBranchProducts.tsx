@@ -1,7 +1,8 @@
-import { IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
 import { BranchProductsService, ONLINE_API_URL } from 'services';
 import { actions, types } from '../ducks/branch-products';
 import { request } from '../global/types';
@@ -214,6 +215,63 @@ export const useBranchProducts = () => {
 	};
 };
 
+const useBranchProductsNew = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useBranchProducts',
+			params?.hasBoBalance,
+			params?.hasNegativeBalance,
+			params?.isSoldInBranch,
+			params?.page,
+			params?.pageSize,
+			params?.productCategory,
+			params?.productIds,
+			params?.productStatus,
+			params?.search,
+			params?.serverUrl,
+		],
+		async () => {
+			let baseURL = params?.serverUrl;
+			if (!baseURL) {
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+			}
+
+			const data = {
+				has_bo_balance: params?.hasBoBalance,
+				has_negative_balance: params?.hasNegativeBalance,
+				is_sold_in_branch: params?.isSoldInBranch,
+				ordering: '-product__textcode',
+				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+				page: params?.page || DEFAULT_PAGE,
+				product_category: params?.productCategory,
+				product_ids: params?.productIds,
+				product_status: params?.productStatus,
+				search: params?.search,
+			};
+
+			try {
+				// NOTE: Fetch in branch url
+				return await BranchProductsService.list(data, baseURL);
+			} catch (e) {
+				// NOTE: Retry to fetch in local url
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				const response = await BranchProductsService.list(data, baseURL);
+				response.data.warning =
+					'Data Source: Backup Server, data might be outdated.';
+
+				return response;
+			}
+		},
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				branchProducts: query.data.results,
+				total: query.data.count,
+				warning: query.data.warning,
+			}),
+		},
+	);
+
 export const useBranchProductRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useBranchProductRetrieve', id],
@@ -316,3 +374,5 @@ export const useBranchProductEditPriceCost = () => {
 		},
 	);
 };
+
+export default useBranchProductsNew;

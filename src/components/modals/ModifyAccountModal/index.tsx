@@ -53,8 +53,8 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError),
-					...convertIntoArray(editError),
+					...convertIntoArray(createError?.errors),
+					...convertIntoArray(editError?.errors),
 				]}
 				withSpaceBottom
 			/>

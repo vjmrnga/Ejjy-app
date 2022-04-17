@@ -66,7 +66,13 @@ const FormInput = ({
 		const { key } = event;
 
 		const isNumber = type === 'number' || isMoney;
-		const allowedInNumberKeys = ['Backspace', 'Tab', 'ArrowRight', 'ArrowLeft'];
+		const allowedInNumberKeys = [
+			'Backspace',
+			'Tab',
+			'ArrowRight',
+			'ArrowLeft',
+			'Enter',
+		];
 
 		if (isNumber) {
 			// Disregard other keys

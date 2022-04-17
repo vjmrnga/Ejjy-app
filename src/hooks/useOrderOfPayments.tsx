@@ -35,7 +35,7 @@ const useOrderOfPayments = ({ params }: Query) =>
 	);
 
 export const useOrderOfPaymentsCreate = (options = {}) =>
-	useMutation(
+	useMutation<any, any, any>(
 		({
 			createdById,
 			payorId,

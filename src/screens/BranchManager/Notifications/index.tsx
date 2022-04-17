@@ -1,124 +1,129 @@
-import { Alert, Spin } from 'antd';
-import { Content, RequestErrors } from 'components';
+import { Badge, Space, Tabs } from 'antd';
+import { Content } from 'components';
+import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
-import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
+import {
+	useBranchProducts,
+	useQueryParams,
+	useSalesTracker,
+	useSiteSettingsRetrieve,
+} from 'hooks';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { TabBranchProducts } from './components/TabBranchProducts';
+import { TabSalesTracker } from './components/TabSalesTracker';
+import './style.scss';
+
+const tabs = {
+	BRANCH_PRODUCTS: 'Branch Products',
+	SALES_TRACKER: 'Sales Tracker',
+};
 
 export const Notifications = () => {
 	// STATES
-	const [salesTrackerNotifications, setSalesTrackerNotifications] = useState(
-		[],
-	);
+	const [salesTrackerCount, setSalesTrackerCount] = useState(0);
 
 	// CUSTOM HOOKS
 	const {
-		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
-		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
-		options: {
-			refetchOnMount: 'always',
-			notifyOnChangeProps: ['data'],
+		params: { tab: currentTab },
+		setQueryParams,
+	} = useQueryParams();
+	const {
+		data: { total: branchProductsCount },
+	} = useBranchProducts({
+		params: {
+			hasNegativeBalance: true,
+			pageSize: MAX_PAGE_SIZE,
 		},
+		options: { notifyOnChangeProps: ['data'] },
+	});
+	const { data: siteSettings } = useSiteSettingsRetrieve({
+		options: { notifyOnChangeProps: ['data'] },
 	});
 	const {
 		data: { salesTrackers },
-		isFetching: isSalesTrackerFetching,
-		error: salesTrackerError,
 	} = useSalesTracker({
-		params: {
-			page: 1,
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { notifyOnChangeProps: ['data'] },
 	});
 
 	// METHODS
 	useEffect(() => {
+		if (!currentTab) {
+			onTabClick(tabs.BRANCH_PRODUCTS);
+		}
+	}, []);
+
+	useEffect(() => {
 		if (siteSettings) {
-			const thresholdAmount =
+			const resetCounterNotificationThresholdAmount =
 				siteSettings?.reset_counter_notification_threshold_amount;
-			const thresholdInvoiceNumber =
+			const resetCounterNotificationThresholdInvoiceNumber =
 				siteSettings?.reset_counter_notification_threshold_invoice_number;
 
-			const notifications = [];
-			salesTrackers.forEach((salesTracker) => {
-				const { total_sales, transaction_count } = salesTracker;
-				const totalSales = Number(total_sales);
-				const transactionCount = Number(transaction_count);
-				const machineName = salesTracker.branch_machine.name;
+			// Reset count
+			const resetCount = salesTrackers.filter(
+				({ total_sales }) =>
+					Number(total_sales) >= resetCounterNotificationThresholdAmount,
+			).length;
 
-				if (totalSales >= thresholdAmount) {
-					notifications.push(
-						<SalesTrackerTotalSalesNotification
-							branchMachineName={machineName}
-							totalSales={totalSales}
-						/>,
-					);
-				}
+			// Transaction count
+			const transactionCount = salesTrackers.filter(
+				({ transaction_count }) =>
+					Number(transaction_count) >=
+					resetCounterNotificationThresholdInvoiceNumber,
+			).length;
 
-				if (transactionCount >= thresholdInvoiceNumber) {
-					notifications.push(
-						<SalesTrackerInvoiceNotification
-							branchMachineName={machineName}
-							transactionCount={transactionCount}
-						/>,
-					);
-				}
-			});
-
-			setSalesTrackerNotifications(notifications);
+			// Set new notification count
+			const newNotificationsCount = resetCount + transactionCount;
+			if (newNotificationsCount != salesTrackerCount) {
+				setSalesTrackerCount(newNotificationsCount);
+			}
 		}
 	}, [salesTrackers, siteSettings]);
 
-	return (
-		<Content className="Notifications" title="Notifications">
-			<Spin spinning={isSalesTrackerFetching || isSiteSettingsFetching}>
-				<RequestErrors
-					errors={[
-						...convertIntoArray(salesTrackerError, 'Sales Tracker'),
-						...convertIntoArray(siteSettingsError, 'Site Settings'),
-					]}
-				/>
+	const onTabClick = (tab) => {
+		setQueryParams(
+			{ tab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
 
-				{salesTrackerNotifications}
-			</Spin>
+	return (
+		<Content title="Notifications" className="Notifications">
+			<Box>
+				<Tabs
+					type="card"
+					className="PaddingHorizontal PaddingVertical"
+					activeKey={_.toString(currentTab)}
+					onTabClick={onTabClick}
+					destroyInactiveTabPane
+				>
+					<Tabs.TabPane
+						key={tabs.BRANCH_PRODUCTS}
+						tab={
+							<Space align="center">
+								<span>{tabs.BRANCH_PRODUCTS}</span>
+								<Badge overflowCount={999} count={branchProductsCount} />
+							</Space>
+						}
+					>
+						<TabBranchProducts />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.SALES_TRACKER}
+						tab={
+							<Space align="center">
+								<span>{tabs.SALES_TRACKER}</span>
+								<Badge overflowCount={999} count={salesTrackerCount} />
+							</Space>
+						}
+					>
+						<TabSalesTracker />
+					</Tabs.TabPane>
+				</Tabs>
+			</Box>
 		</Content>
 	);
 };
-
-const SalesTrackerTotalSalesNotification = ({
-	branchMachineName,
-	totalSales,
-}) => (
-	<Alert
-		className="mb-3"
-		message="Sales Tracker - Total Sales"
-		description={
-			<>
-				Current total sales in <b>{branchMachineName}</b> is{' '}
-				<b>{formatInPeso(totalSales)}</b>. Please reset as soon as possible.
-			</>
-		}
-		type="warning"
-		showIcon
-	/>
-);
-
-const SalesTrackerInvoiceNotification = ({
-	branchMachineName,
-	transactionCount,
-}) => (
-	<Alert
-		className="mb-3"
-		message="Sales Tracker - Invoice"
-		description={
-			<>
-				Current invoice count value in <b>{branchMachineName}</b> is{' '}
-				<b>{transactionCount}</b>. Please reset as soon as possible.
-			</>
-		}
-		type="warning"
-		showIcon
-	/>
-);

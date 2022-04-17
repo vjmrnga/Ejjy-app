@@ -1,15 +1,11 @@
 import { message, Spin, Tabs } from 'antd';
 import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { GENERIC_ERROR_MESSAGE, request } from 'global';
-import {
-	useBranchMachineRetrieve,
-	useBranchMachines,
-	useQueryParams,
-} from 'hooks';
+import { GENERIC_ERROR_MESSAGE } from 'global';
+import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
 import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
@@ -56,7 +52,6 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	} = useBranchMachineRetrieve({ id: branchMachineId });
 
 	// METHODS
-
 	useEffect(() => {
 		if (!currentTab) {
 			onTabClick(tabs.TRANSACTIONS);

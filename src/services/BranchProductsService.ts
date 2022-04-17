@@ -2,12 +2,12 @@ import axios from 'axios';
 import { IListRequest } from './interfaces';
 
 interface List extends IListRequest {
-	search?: string;
-	product_ids?: number[] | number | string;
-	product_status?: string;
+	has_bo_balance?: boolean;
+	has_negative_balance?: boolean;
 	is_sold_in_branch?: boolean;
 	product_category?: string;
-	has_bo_balance?: boolean;
+	product_ids?: number[] | number | string;
+	product_status?: string;
 }
 
 interface Edit {
@@ -32,11 +32,11 @@ interface Edit {
 }
 
 interface EditPriceCost {
-	product_id: number;
-	cost_per_piece: string;
 	cost_per_bulk: string;
-	price_per_piece: string;
+	cost_per_piece: string;
 	price_per_bulk: string;
+	price_per_piece: string;
+	product_id: number;
 }
 
 const service = {

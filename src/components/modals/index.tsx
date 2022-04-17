@@ -1,3 +1,4 @@
+export * from './CreateBalanceAdjustmentLogModal';
 export * from './CreateOrderOfPaymentModal';
 export * from './CreateStockInModal';
 export * from './CreateStockOutModal';

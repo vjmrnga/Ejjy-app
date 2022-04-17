@@ -26,7 +26,7 @@ const useCreditRegistrations = ({ params }: Query = {}) =>
 	);
 
 export const useCreditRegistrationsCreate = () =>
-	useMutation(({ accountId, creditLimit }: any) =>
+	useMutation<any, any, any>(({ accountId, creditLimit }: any) =>
 		CreditRegistrationsService.create(
 			{
 				account_id: accountId,
@@ -37,7 +37,7 @@ export const useCreditRegistrationsCreate = () =>
 	);
 
 export const useCreditRegistrationsEdit = () =>
-	useMutation(({ id, creditLimit }: any) =>
+	useMutation<any, any, any>(({ id, creditLimit }: any) =>
 		CreditRegistrationsService.edit(
 			id,
 			{
