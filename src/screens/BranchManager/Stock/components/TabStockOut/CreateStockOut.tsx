@@ -105,6 +105,7 @@ export const CreateStockOut = () => {
 										branchProduct.product.unit_of_measurement,
 									isVatExempted: branchProduct.product.is_vat_exempted,
 									remarks: product?.remarks || '',
+									pricePerPiece: branchProduct.price_per_piece,
 								};
 						  })
 						: Object.keys(productsRef.current).map((key) => {
@@ -120,6 +121,7 @@ export const CreateStockOut = () => {
 									unit_of_measurement: product.unitOfMeasurement,
 									isVatExempted: product.isVatExempted,
 									remarks: product.remarks || '',
+									pricePerPiece: product.pricePerPiece,
 								};
 						  }),
 			},
@@ -302,15 +304,15 @@ export const CreateStockOut = () => {
 
 		if (productIds.length > 0) {
 			const products = productIds.map((id) => {
-				const { piecesInBulk, quantityType, quantity, remarks } =
+				const { piecesInBulk, pricePerPiece, quantityType, quantity, remarks } =
 					productsRef.current[id];
-
 				return {
 					product_id: id,
 					quantity_returned:
 						quantityType === quantityTypes.PIECE
 							? quantity
 							: convertToPieces(quantity, piecesInBulk),
+					price_per_piece: pricePerPiece,
 					remarks,
 				};
 			});
@@ -475,6 +477,7 @@ const ProductsTable = ({
 									piecesInBulk: product.pieces_in_bulk,
 									unitOfMeasurement: product.unit_of_measurement,
 									isVatExempted: product.isVatExempted,
+									pricePerPiece: product.pricePerPiece,
 								});
 							}}
 						/>

@@ -28,6 +28,7 @@ interface Receive {
 type Product = {
 	product_id: number;
 	quantity_returned: number | string;
+	price_per_piece: number | string;
 	remarks: string;
 };
 

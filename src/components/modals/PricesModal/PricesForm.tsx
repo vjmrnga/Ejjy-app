@@ -1,4 +1,4 @@
-import { Col, Row, Select, Typography } from 'antd';
+import { Col, Divider, Row, Select, Typography } from 'antd';
 import {
 	Button,
 	FieldError,
@@ -23,7 +23,6 @@ export const PricesForm = ({
 	onClose,
 	loading,
 }: Props) => {
-	console.log('branchProduct', branchProduct);
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
@@ -34,11 +33,11 @@ export const PricesForm = ({
 				pricePerBulk: branchProduct?.price_per_bulk || '',
 			},
 			Schema: Yup.object().shape({
-				type: Yup.string().label('Type'),
-				costPerPiece: Yup.number().min(0).label('Cost per Piece'),
-				costPerBulk: Yup.number().min(0).label('Cost Per Bulk'),
-				pricePerPiece: Yup.number().min(0).label('Price per Piece'),
-				pricePerBulk: Yup.number().min(0).label('Price per Bulk'),
+				type: Yup.string().label('Current Sales Price Type'),
+				costPerPiece: Yup.number().min(0).label('Cost (piece)'),
+				costPerBulk: Yup.number().min(0).label('Cost (bulk)'),
+				pricePerPiece: Yup.number().min(0).label('Regular Price (piece)'),
+				pricePerBulk: Yup.number().min(0).label('Regular Price (bulk)'),
 			}),
 		}),
 		[branchProduct],
@@ -75,8 +74,46 @@ export const PricesForm = ({
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'costPerPiece',
+								label: 'Cost (piece)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'costPerBulk',
+								label: 'Cost (bulk)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'pricePerPiece',
+								label: 'Regular Price (piece)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'pricePerBulk',
+								label: 'Regular Price (bulk)',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Divider />
+
 						<Col span={24}>
-							<Label id="type" label="Type" spacing />
+							<Label id="type" label="Current Sales Price Type" spacing />
 							<Select
 								style={{ width: '100%' }}
 								value={values.type}
@@ -116,42 +153,6 @@ export const PricesForm = ({
 								name="type"
 								render={(error) => <FieldError error={error} />}
 							/>
-						</Col>
-
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'costPerPiece',
-								label: 'Cost (Piece)',
-								setFieldValue,
-								values,
-							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'costPerBulk',
-								label: 'Cost (Bulk)',
-								setFieldValue,
-								values,
-							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'pricePerPiece',
-								label: 'Price (Piece)',
-								setFieldValue,
-								values,
-							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							{renderInputField({
-								name: 'pricePerBulk',
-								label: 'Price (Bulk)',
-								setFieldValue,
-								values,
-							})}
 						</Col>
 					</Row>
 

@@ -3,7 +3,6 @@ import { RequestErrors } from 'components';
 import {
 	useBranchProductEditPriceCost,
 	useBranchProductRetrieve,
-	useBranchProducts,
 	usePriceMarkdownsCreate,
 } from 'hooks';
 import _, { memoize } from 'lodash';
@@ -52,7 +51,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 				pricePerBulk: getValue(formData.pricePerBulk),
 			});
 		}
-		console.log('formData', formData);
+
 		message.success(`Prices for ${product.name} was set successfully`);
 		onClose();
 	};

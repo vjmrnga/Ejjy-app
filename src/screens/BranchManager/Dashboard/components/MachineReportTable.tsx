@@ -93,7 +93,6 @@ export const MachineReportTable = () => {
 
 	const viewXReadReport = async (branchMachine, date = undefined) => {
 		const { data } = await createXReadReport({
-			userId: 12, // TODO: Once user id (online and offline) is synced, used the `user.id` for this.
 			serverUrl: branchMachine.server_url,
 			date,
 		});
@@ -108,7 +107,6 @@ export const MachineReportTable = () => {
 
 	const viewZReadReport = async (branchMachine) => {
 		const { data } = await createZReadReport({
-			userId: 12, // TODO: Once user id (online and offline) is synced, used the `user.id` for this.
 			serverUrl: branchMachine.server_url,
 		});
 		setZReadReport(data);
