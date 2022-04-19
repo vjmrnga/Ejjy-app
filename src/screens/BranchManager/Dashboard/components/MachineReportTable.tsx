@@ -2,7 +2,6 @@ import { Button, Calendar, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	TableHeader,
-	ViewButtonIcon,
 	ViewXReadReportModal,
 	ViewZReadReportModal,
 } from 'components';
@@ -12,6 +11,7 @@ import {
 	useXReadReportCreate,
 	useZReadReportCreate,
 } from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -47,6 +47,7 @@ export const MachineReportTable = () => {
 		useXReadReportCreate();
 	const { mutateAsync: createZReadReport, isLoading: isCreatingZReadReport } =
 		useZReadReportCreate();
+	const { user } = useAuth();
 
 	// METHODS
 	useEffect(() => {
@@ -93,8 +94,10 @@ export const MachineReportTable = () => {
 
 	const viewXReadReport = async (branchMachine, date = undefined) => {
 		const { data } = await createXReadReport({
+			branch_machine_id: branchMachine.id,
 			serverUrl: branchMachine.server_url,
 			date,
+			userId: user.id,
 		});
 		setXReadReport(data);
 
@@ -108,6 +111,7 @@ export const MachineReportTable = () => {
 	const viewZReadReport = async (branchMachine) => {
 		const { data } = await createZReadReport({
 			serverUrl: branchMachine.server_url,
+			userId: user.id,
 		});
 		setZReadReport(data);
 	};

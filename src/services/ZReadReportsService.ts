@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 interface Create {
+	branch_machine_id: number;
 	user_id: number;
 }
 

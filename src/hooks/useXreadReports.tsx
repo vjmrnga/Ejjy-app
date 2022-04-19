@@ -4,7 +4,7 @@ import { ONLINE_API_URL, XReadReportsService } from 'services';
 import { getLocalIpAddress } from 'utils/function';
 
 export const useXReadReportCreate = () =>
-	useMutation(({ date, serverUrl, userId }: any) => {
+	useMutation(({ branchMachineId, date, serverUrl, userId }: any) => {
 		let baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
 		if (serverUrl) {
 			baseURL = serverUrl;
@@ -12,6 +12,7 @@ export const useXReadReportCreate = () =>
 
 		return XReadReportsService.create(
 			{
+				branch_machine_id: branchMachineId,
 				date,
 				user_id: userId,
 			},
