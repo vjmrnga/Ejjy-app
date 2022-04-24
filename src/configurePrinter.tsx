@@ -334,7 +334,7 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 				</tr>
 				<tr>
 					<td>Printed By:</td>
-					<td style="text-align: right">${user.first_name} ${user.last_name}</td>
+					<td style="text-align: right">${getFullName(user)}</td>
 				</tr>
 			</table>
 		</div>

@@ -20,7 +20,7 @@ export const CreateBalanceAdjustmentLogModal = ({
 	// VARIABLES
 	const title = (
 		<>
-			<span>Bal. Adj. Log</span>
+			<span>Bal Adjustment</span>
 			<span className="ModalTitleMainInfo">{branchProduct?.product?.name}</span>
 		</>
 	);

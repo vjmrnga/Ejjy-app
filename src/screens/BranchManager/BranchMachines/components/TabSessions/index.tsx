@@ -1,26 +1,27 @@
-import { Col, Radio, Row, Table } from 'antd';
+import { Col, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
 import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { request } from '../../../../../global/types';
-import { useQueryParams } from 'hooks';
-import { useSessions } from '../../../../../hooks/useSessions';
+	TimeRangeFilter,
+} from 'components';
+import { Label } from 'components/elements';
+import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
+import { useQueryParams, useUsers } from 'hooks';
+import { useSessions } from 'hooks/useSessions';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
-} from '../../../../../utils/function';
+	getFullName,
+} from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
 	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorized_time_range' },
+	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
 const sessionTypes = {
@@ -42,14 +43,12 @@ export const TabSessions = ({ serverUrl }: Props) => {
 		pageCount,
 		currentPage,
 		pageSize,
-
 		listSessions,
 		status,
 		errors,
 		warnings,
 	} = useSessions();
-
-	const { params: queryParams, setQueryParams } = useQueryParams({
+	const { setQueryParams } = useQueryParams({
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
@@ -73,16 +72,18 @@ export const TabSessions = ({ serverUrl }: Props) => {
 				user,
 				datetime_started,
 				datetime_ended,
+				is_unauthorized,
 				is_unauthorized_datetime_ended,
 			} = session;
 
 			return {
 				key: id,
-				user: `${user.first_name} ${user.last_name}`,
+				user: getFullName(user),
 				datetime: renderDateTime(datetime_started, datetime_ended),
-				unauthorized_time_range: is_unauthorized_datetime_ended
+				unauthorizedTimeRange: is_unauthorized_datetime_ended
 					? renderDateTime(datetime_started, is_unauthorized_datetime_ended)
 					: EMPTY_CELL,
+				status: <Status isAuthorized={!is_unauthorized} />,
 			};
 		});
 
@@ -114,12 +115,7 @@ export const TabSessions = ({ serverUrl }: Props) => {
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-			/>
+			<Filter serverUrl={serverUrl} isLoading={status === request.REQUESTING} />
 
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
@@ -133,10 +129,13 @@ export const TabSessions = ({ serverUrl }: Props) => {
 					total: pageCount,
 					pageSize,
 					onChange: (page, newPageSize) => {
-						setQueryParams({
-							page,
-							pageSize: newPageSize,
-						});
+						setQueryParams(
+							{
+								page,
+								pageSize: newPageSize,
+							},
+							{ shouldResetPage: true },
+						);
 					},
 					disabled: !data,
 					position: ['bottomCenter'],
@@ -149,25 +148,86 @@ export const TabSessions = ({ serverUrl }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
-	setQueryParams: any;
+	serverUrl: string;
+	isLoading: boolean;
 }
 
-const Filter = ({ params, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<Label label="Type" spacing />
-			<Radio.Group
-				optionType="button"
-				options={[
-					{ label: 'All', value: sessionTypes.ALL },
-					{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
-				]}
-				onChange={(e) => {
-					setQueryParams({ type: e.target.value });
-				}}
-				defaultValue={params.type || sessionTypes.ALL}
-			/>
-		</Col>
-	</Row>
-);
+const Filter = ({ serverUrl, isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	const {
+		data: { users },
+		isFetching,
+	} = useUsers({
+		params: {
+			serverUrl,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
+
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="User" spacing />
+				<Select
+					className="w-100"
+					defaultValue={params.userId}
+					onChange={(value) => {
+						setQueryParams({ userId: value }, { shouldResetPage: true });
+					}}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					disabled={isFetching}
+					showSearch
+				>
+					{users.map((user) => (
+						<Select.Option key={user.id} value={user.id}>
+							{getFullName(user)}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Type" spacing />
+				<Radio.Group
+					optionType="button"
+					options={[
+						{ label: 'All', value: sessionTypes.ALL },
+						{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
+					]}
+					onChange={(e) => {
+						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
+					}}
+					disabled={isLoading}
+					defaultValue={params.type || sessionTypes.ALL}
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<TimeRangeFilter disabled={isLoading} />
+			</Col>
+		</Row>
+	);
+};
+
+interface StatusProps {
+	isAuthorized: boolean;
+}
+
+const Status = ({ isAuthorized }: StatusProps) => {
+	const render = useCallback(() => {
+		return isAuthorized ? (
+			<Tag color="green">Authorized</Tag>
+		) : (
+			<Tag color="red">Unauthorized</Tag>
+		);
+	}, [isAuthorized]);
+
+	return render();
+};

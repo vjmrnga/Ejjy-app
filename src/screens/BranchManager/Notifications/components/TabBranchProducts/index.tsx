@@ -60,7 +60,7 @@ export const TabBranchProducts = () => {
 					type="primary"
 					onClick={() => setSelectedBranchProduct(branchProduct)}
 				>
-					Create Balance Adjustment Log
+					Create Balance Adjustment
 				</Button>
 			),
 		}));

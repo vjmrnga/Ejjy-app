@@ -1,10 +1,10 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { UsersService } from 'services';
+import { ONLINE_API_URL, UsersService } from 'services';
 import {
 	getLocalIpAddress,
 	modifiedCallback,
@@ -263,15 +263,21 @@ export const useUsers = () => {
 
 const useUsersNew = ({ params }: Query) =>
 	useQuery<any>(
-		['useUsers', params?.page, params?.pageSize],
-		async () =>
-			UsersService.list(
+		['useUsers', params?.page, params?.pageSize, params?.serverUrl],
+		async () => {
+			let baseURL = params?.serverUrl;
+			if (!baseURL) {
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+			}
+
+			return UsersService.list(
 				{
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				getLocalIpAddress(),
-			).catch((e) => Promise.reject(e.errors)),
+				baseURL,
+			).catch((e) => Promise.reject(e.errors));
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
