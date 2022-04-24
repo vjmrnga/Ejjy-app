@@ -62,18 +62,7 @@ export const TabDailyProductSalesReport = ({
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
-			const newParams = {};
-
-			if (!_.toString(timeRange)) {
-				// eslint-disable-next-line dot-notation
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			return newParams;
-		},
-	});
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { transactionProducts, total, warning: transactionProductsWarning },
 		isFetching: isTransactionProductsFetching,
@@ -230,7 +219,6 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 	const [invoiceSearch, setInvoiceSearch] = useState('');
 
 	// CUSTOM HOOKS
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
 	const {
 		data: { transactions },
 		isFetching,
@@ -256,13 +244,7 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
+				<TimeRangeFilter disabled={isLoading} />
 			</Col>
 
 			<Col lg={12} span={24}>

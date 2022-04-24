@@ -1,5 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import {
+	Button,
 	Col,
 	DatePicker,
 	Divider,
@@ -9,7 +10,6 @@ import {
 	Row,
 	Spin,
 	TimePicker,
-	Button,
 } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
 import { FieldError, FormattedInputNumber, Label } from 'components/elements';
@@ -17,7 +17,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
 import { useSiteSettingsEdit, useSiteSettingsRetrieve } from 'hooks';
 import moment from 'moment';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils/function';
 import * as Yup from 'yup';
 
@@ -57,9 +57,7 @@ export const ViewBranchSiteSettings = ({
 		params: {
 			branchId,
 		},
-		options: {
-			refetchOnMount: 'always',
-		},
+		options: { refetchOnMount: 'always' },
 	});
 	const {
 		mutateAsync: editSiteSettings,
@@ -79,6 +77,8 @@ export const ViewBranchSiteSettings = ({
 				closeDayDeadline: siteSettings?.close_day_deadline
 					? moment(siteSettings.close_day_deadline, 'hh:mm:ss')
 					: null,
+				isMarkdownAllowedIfCredit:
+					siteSettings?.is_markdown_allowed_if_credit || false,
 
 				proprietor: siteSettings?.proprietor || '',
 				taxType: siteSettings?.tax_type || null,
@@ -125,6 +125,9 @@ export const ViewBranchSiteSettings = ({
 			Schema: Yup.object().shape({
 				closeSessionDeadline: getValidTimeTest('Close Session Deadline'),
 				closeDayDeadline: getValidTimeTest('Close Day Deadline'),
+				isMarkdownAllowedIfCredit: Yup.boolean()
+					.required()
+					.label('Is Markdown Allowed If Credit'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
 				taxType: Yup.string().required().label('Tax Type'),
@@ -306,6 +309,21 @@ export const ViewBranchSiteSettings = ({
 									setFieldValue,
 									values,
 								})}
+							</Col>
+
+							<Col span={24} md={12}>
+								<Label label="Is Markdown Allowed If Credit?" spacing />
+								<Radio.Group
+									value={values.isMarkdownAllowedIfCredit}
+									options={[
+										{ label: 'Yes', value: true },
+										{ label: 'No', value: false },
+									]}
+									onChange={(e) => {
+										setFieldValue('isMarkdownAllowedIfCredit', e.target.value);
+									}}
+									optionType="button"
+								/>
 							</Col>
 
 							<Divider>Receipt Header</Divider>

@@ -20,7 +20,6 @@ import { useAccounts, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDate, getFullName } from 'utils/function';
-import '../../style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },

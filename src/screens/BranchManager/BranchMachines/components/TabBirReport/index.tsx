@@ -185,10 +185,6 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 			/>
 
 			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
 				isLoading={isBirReportsFetching || isSiteSettingsFetching || isPrinting}
 			/>
 
@@ -208,10 +204,13 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 					total,
 					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
-						setQueryParams({
-							page,
-							pageSize: newPageSize,
-						});
+						setQueryParams(
+							{
+								page,
+								pageSize: newPageSize,
+							},
+							{ shouldResetPage: true },
+						);
 					},
 					disabled: !dataSource,
 					position: ['bottomCenter'],
@@ -233,25 +232,13 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
-			</Col>
-		</Row>
-	);
-};
+const Filter = ({ isLoading }: FilterProps) => (
+	<Row className="mb-4" gutter={[16, 16]}>
+		<Col lg={12} span={24}>
+			<TimeRangeFilter disabled={isLoading} />
+		</Col>
+	</Row>
+);

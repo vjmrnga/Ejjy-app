@@ -1,7 +1,6 @@
 import { Button, Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
-	CreateOrderOfPaymentModal,
 	RequestErrors,
 	TableHeader,
 	TimeRangeFilter,
@@ -14,10 +13,8 @@ import {
 	orderOfPaymentPurposes,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
-	timeRangeTypes,
 } from 'global';
 import { useAccounts, useOrderOfPayments, useQueryParams } from 'hooks';
-import { useTimeRange } from 'hooks/useTimeRange';
 import { jsPDF } from 'jspdf';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -48,18 +45,7 @@ export const TabOrderOfPayments = () => {
 	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
-			const newParams = {};
-
-			if (!_.toString(timeRange)) {
-				// eslint-disable-next-line dot-notation
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			return newParams;
-		},
-	});
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { orderOfPayments, total },
 		isFetching,
@@ -206,7 +192,6 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 	const [accountSearch, setAccountSearch] = useState('');
 
 	// CUSTOM HOOKS
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
 	const {
 		isFetching,
 		data: { accounts },
@@ -245,13 +230,7 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 				</Select>
 			</Col>
 			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
+				<TimeRangeFilter disabled={isLoading} />
 			</Col>
 		</Row>
 	);

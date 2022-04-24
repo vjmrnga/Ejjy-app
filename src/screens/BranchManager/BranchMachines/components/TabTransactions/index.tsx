@@ -1,26 +1,27 @@
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
 import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
 	ViewTransactionModal,
-} from '../../../../../components';
-import { ButtonLink, Label } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { timeRangeTypes, transactionStatus } from '../../../../../global/types';
-import { useTransactions } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
-import { useTimeRange } from '../../../../../hooks/useTimeRange';
+} from 'components';
+import { ButtonLink, Label } from 'components/elements';
+import {
+	EMPTY_CELL,
+	pageSizeOptions,
+	timeRangeTypes,
+	transactionStatus,
+} from 'global';
+import { useQueryParams, useTransactions } from 'hooks';
+import { toString } from 'lodash';
+import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatInPeso,
 	getTransactionStatus,
-} from '../../../../../utils/function';
+} from 'utils/function';
 import { TransactionsCancelled } from '../../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
 
 const columns: ColumnsType = [
@@ -69,18 +70,7 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
-			const newParams = {};
-
-			if (!toString(timeRange)) {
-				// eslint-disable-next-line dot-notation
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			return newParams;
-		},
-	});
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total, warning },
 		isFetching,
@@ -178,46 +168,36 @@ interface FilterProps {
 	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Status" spacing />
-				<Select
-					style={{ width: '100%' }}
-					value={params.statuses}
-					onChange={(value) => {
-						setQueryParams({ statuses: value });
-					}}
-					disabled={isLoading}
-					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
-					allowClear
-				>
-					{transactionStatusOptions.map((option) => (
-						<Select.Option key={option.value} value={option.value}>
-							{option.title}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-		</Row>
-	);
-};
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
+	<Row className="mb-4" gutter={[16, 16]}>
+		<Col lg={12} span={24}>
+			<TimeRangeFilter disabled={isLoading} />
+		</Col>
+		<Col lg={12} span={24}>
+			<Label label="Status" spacing />
+			<Select
+				style={{ width: '100%' }}
+				value={params.statuses}
+				onChange={(value) => {
+					setQueryParams({ statuses: value });
+				}}
+				disabled={isLoading}
+				optionFilterProp="children"
+				filterOption={(input, option) =>
+					option.children
+						.toString()
+						.toLowerCase()
+						.indexOf(input.toLowerCase()) >= 0
+				}
+				showSearch
+				allowClear
+			>
+				{transactionStatusOptions.map((option) => (
+					<Select.Option key={option.value} value={option.value}>
+						{option.title}
+					</Select.Option>
+				))}
+			</Select>
+		</Col>
+	</Row>
+);

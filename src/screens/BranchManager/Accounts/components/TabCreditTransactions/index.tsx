@@ -9,15 +9,9 @@ import {
 	ViewAccountModal,
 	ViewTransactionModal,
 } from 'components';
-import {
-	EMPTY_CELL,
-	pageSizeOptions,
-	paymentTypes,
-	timeRangeTypes,
-} from 'global';
+import { EMPTY_CELL, pageSizeOptions, paymentTypes } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
-import { useTimeRange } from 'hooks/useTimeRange';
-import _, { toString } from 'lodash';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { AccountTotalBalance } from 'screens/BranchManager/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
 import { accountTabs } from 'screens/BranchManager/Accounts/data';
@@ -43,18 +37,7 @@ export const TabCreditTransactions = () => {
 	const [payor, setPayor] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
-			const newParams = {};
-
-			if (!toString(timeRange)) {
-				// eslint-disable-next-line dot-notation
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			return newParams;
-		},
-	});
+	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total },
 		isFetching,
@@ -147,13 +130,7 @@ export const TabCreditTransactions = () => {
 				/>
 			)}
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isFetching}
-			/>
+			<Filter isLoading={isFetching} />
 
 			<RequestErrors errors={convertIntoArray(error)} />
 
@@ -208,25 +185,13 @@ export const TabCreditTransactions = () => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-				/>
-			</Col>
-		</Row>
-	);
-};
+const Filter = ({ isLoading }: FilterProps) => (
+	<Row className="mb-4" gutter={[16, 16]}>
+		<Col lg={12} span={24}>
+			<TimeRangeFilter disabled={isLoading} />
+		</Col>
+	</Row>
+);

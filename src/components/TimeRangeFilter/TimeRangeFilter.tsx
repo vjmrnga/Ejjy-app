@@ -1,56 +1,113 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-confusing-arrow */
 import { DatePicker, Radio, Space } from 'antd';
-import { toString } from 'lodash';
+import { DATE_FORMAT, timeRangeTypes } from 'global';
+import { useQueryParams } from 'hooks';
+import _ from 'lodash';
 import moment from 'moment';
-import React from 'react';
-import { timeRangeTypes } from '../../global/types';
+import React, { useCallback, useState } from 'react';
 import { Label } from '../elements';
 
 interface Props {
-	timeRange: string;
-	timeRangeType: string;
 	disabled?: boolean;
-	setTimeRangeType: any;
-	setQueryParams: any;
 	isRangeOnly?: boolean;
 }
 
-export const TimeRangeFilter = ({
-	timeRange,
-	timeRangeType,
-	disabled,
-	setTimeRangeType,
-	setQueryParams,
-	isRangeOnly = false,
-}: Props) => {
-	const renderRangePicker = () => (
-		<DatePicker.RangePicker
-			format="MM/DD/YY"
-			onCalendarChange={(dates, dateStrings) => {
-				if (dates?.[0] && dates?.[1]) {
-					setQueryParams({ timeRange: dateStrings.join(',') });
-				}
-			}}
-			defaultValue={
-				toString(timeRange).split(',')?.length === 2
-					? [
-							moment(toString(timeRange).split(',')[0]),
-							moment(toString(timeRange).split(',')[1]),
-					  ]
-					: undefined
+export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
+	// STATES
+	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
+
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams({
+		onParamsCheck: ({ timeRange }) => {
+			const newParams = {};
+
+			if (!_.toString(timeRange)) {
+				newParams['timeRange'] = timeRangeTypes.DAILY;
 			}
-			defaultPickerValue={
-				toString(timeRange).split(',')?.length === 2
-					? [
-							moment(toString(timeRange).split(',')[0]),
-							moment(toString(timeRange).split(',')[1]),
-					  ]
-					: undefined
+
+			return newParams;
+		},
+	});
+
+	// METHODS
+	const renderMonthPicker = useCallback(() => {
+		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
+
+		let defaultValue = undefined;
+		if (timeRangeValues.length === 2) {
+			// Get dates
+			const startDate = moment(timeRangeValues[0]);
+			const endDate = moment(timeRangeValues[1]);
+
+			// Validate time ranges
+			const areValid = startDate.isValid() && endDate.isValid();
+			const areSameMonth =
+				startDate.isSame(endDate, 'month') && startDate.isSame(endDate, 'year');
+			const isStartOfTheMonth = startDate.isSame(
+				startDate.clone().startOf('month').format(DATE_FORMAT),
+			);
+			const isEndOfTheMonth = endDate.isSame(
+				endDate.clone().endOf('month').format(DATE_FORMAT),
+			);
+
+			if (areValid && areSameMonth && isStartOfTheMonth && isEndOfTheMonth) {
+				defaultValue = startDate;
 			}
-			disabled={disabled}
-		/>
-	);
+		}
+
+		return (
+			<DatePicker
+				className="w-100"
+				format="MMMM YYYY"
+				defaultValue={defaultValue}
+				defaultPickerValue={defaultValue}
+				onChange={(date) => {
+					const firstDate = date.clone().startOf('month');
+					const lastDate = date.clone().endOf('month');
+
+					setQueryParams(
+						{
+							timeRange: [
+								firstDate.format(DATE_FORMAT),
+								lastDate.format(DATE_FORMAT),
+							].join(','),
+						},
+						{ shouldResetPage: true },
+					);
+				}}
+				picker="month"
+			/>
+		);
+	}, [params.timeRange]);
+
+	const renderRangePicker = useCallback(() => {
+		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
+		const startDate = moment(timeRangeValues[0]);
+		const endDate = moment(timeRangeValues[1]);
+		const defaultValue: any =
+			startDate.isValid() && endDate.isValid()
+				? [startDate, endDate]
+				: undefined;
+
+		return (
+			<DatePicker.RangePicker
+				className="w-100"
+				format={DATE_FORMAT}
+				onCalendarChange={(dates, dateStrings) => {
+					if (dates?.[0] && dates?.[1]) {
+						setQueryParams(
+							{ timeRange: dateStrings.join(',') },
+							{ shouldResetPage: true },
+						);
+					}
+				}}
+				defaultValue={defaultValue}
+				defaultPickerValue={defaultValue}
+				disabled={disabled}
+			/>
+		);
+	}, [params.timeRange, disabled]);
 
 	return (
 		<>
@@ -74,13 +131,14 @@ export const TimeRangeFilter = ({
 							const { value } = e.target;
 							setTimeRangeType(value);
 
-							if (value !== timeRangeTypes.DATE_RANGE) {
-								setQueryParams({ timeRange: value });
+							if (value === timeRangeTypes.DAILY) {
+								setQueryParams({ timeRange: value }, { shouldResetPage: true });
 							}
 						}}
 						optionType="button"
 						disabled={disabled}
 					/>
+					{timeRangeType === timeRangeTypes.MONTHLY && renderMonthPicker()}
 					{timeRangeType === timeRangeTypes.DATE_RANGE && renderRangePicker()}
 				</Space>
 			)}

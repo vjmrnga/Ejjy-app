@@ -100,54 +100,43 @@ interface FilterProps {
 	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	const { timeRangeType, setTimeRangeType } = useTimeRange({ params });
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter
-					timeRange={params.timeRange}
-					timeRangeType={timeRangeType}
-					setTimeRangeType={setTimeRangeType}
-					setQueryParams={setQueryParams}
-					disabled={isLoading}
-					isRangeOnly
-				/>
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Type" spacing />
-				<Select
-					style={{ width: '100%' }}
-					value={params.type}
-					onChange={(value) => {
-						setQueryParams({ type: value });
-					}}
-					disabled={isLoading}
-					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
-					allowClear
+const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
+	<Row className="mb-4" gutter={[16, 16]}>
+		<Col lg={12} span={24}>
+			<TimeRangeFilter disabled={isLoading} isRangeOnly />
+		</Col>
+		<Col lg={12} span={24}>
+			<Label label="Type" spacing />
+			<Select
+				style={{ width: '100%' }}
+				value={params.type}
+				onChange={(value) => {
+					setQueryParams({ type: value });
+				}}
+				disabled={isLoading}
+				optionFilterProp="children"
+				filterOption={(input, option) =>
+					option.children
+						.toString()
+						.toLowerCase()
+						.indexOf(input.toLowerCase()) >= 0
+				}
+				showSearch
+				allowClear
+			>
+				<Select.Option
+					key={connectivityTypes.OFFLINE_TO_ONLINE}
+					value={connectivityTypes.OFFLINE_TO_ONLINE}
 				>
-					<Select.Option
-						key={connectivityTypes.OFFLINE_TO_ONLINE}
-						value={connectivityTypes.OFFLINE_TO_ONLINE}
-					>
-						Offline to Online
-					</Select.Option>
-					<Select.Option
-						key={connectivityTypes.ONLINE_TO_OFFLINE}
-						value={connectivityTypes.ONLINE_TO_OFFLINE}
-					>
-						Online to Offline
-					</Select.Option>
-				</Select>
-			</Col>
-		</Row>
-	);
-};
+					Offline to Online
+				</Select.Option>
+				<Select.Option
+					key={connectivityTypes.ONLINE_TO_OFFLINE}
+					value={connectivityTypes.ONLINE_TO_OFFLINE}
+				>
+					Online to Offline
+				</Select.Option>
+			</Select>
+		</Col>
+	</Row>
+);
