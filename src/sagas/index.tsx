@@ -12,7 +12,6 @@ import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
 import preparationSlipsSagas from './preparation-slips';
 import productCategoriesSagas from './product-categories';
-import productChecksSagas from './product-checks';
 import requisitionSlipsSagas from './requisition-slips';
 import returnItemSlipsSagas from './return-item-slips';
 import sessionsSagas from './sessions';
@@ -30,13 +29,11 @@ export default function* rootSaga() {
 		...orderSlipsSagas,
 		...preparationSlipsSagas,
 		...productCategoriesSagas,
-		...productChecksSagas,
 		...requisitionSlipsSagas,
 		...returnItemSlipsSagas,
 		...sessionsSagas,
 		...usersSagas,
 		...adminSagas,
-
 		...officeManagerSagas,
 		...branchManagerSagas,
 	]);

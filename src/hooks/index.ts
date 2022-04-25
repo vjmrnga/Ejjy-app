@@ -19,6 +19,8 @@ export { default as useOrderOfPayments } from './useOrderOfPayments';
 export * from './usePointSystemTags';
 export { default as usePointSystemTags } from './usePointSystemTags';
 export * from './usePriceMarkdowns';
+export * from './useProductChecks';
+export { default as useProductChecks } from './useProductChecks';
 export * from './useProducts';
 export { default as useProducts } from './useProducts';
 export { default as useQueryParams } from './useQueryParams';

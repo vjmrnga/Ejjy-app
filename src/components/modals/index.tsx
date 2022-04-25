@@ -3,6 +3,7 @@ export * from './CreateOrderOfPaymentModal';
 export * from './CreateStockInModal';
 export * from './CreateStockOutModal';
 export * from './CreateUserModal';
+export * from './FulfillCheckModal';
 export * from './ModifyAccountModal';
 export * from './ModifyBranchMachineModal';
 export * from './ModifyCreditRegistration';

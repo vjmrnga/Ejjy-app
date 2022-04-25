@@ -1,28 +1,4 @@
-import { message, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { upperFirst } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import {
-	Breadcrumb,
-	Content,
-	DetailsHalf,
-	DetailsRow,
-	RequestErrors,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import BadgePill from '../../../components/elements/BadgePill/BadgePill';
-import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
-import { EMPTY_CELL } from '../../../global/constants';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getUrlPrefix,
-} from '../../../utils/function';
-import { useProductChecks } from '../../BranchManager/hooks/useProductChecks';
 import './style.scss';
 
 const columns: ColumnsType = [
@@ -72,133 +48,136 @@ interface Props {
 	match: any;
 }
 
+// TODO: Implement once office manager is ready to dev
 export const ViewBranchCheck = ({ match }: Props) => {
-	// VARIABLES
-	const { id: branchId, productCheckId } = match?.params || {};
-	const branch = useSelector(
-		branchesSelectors.selectBranchById(Number(branchId)),
-	);
+	return null;
 
-	// STATES
-	const [productCheck, setProductCheck] = useState(null);
-	const [data, setData] = useState([]);
+	// // VARIABLES
+	// const { id: branchId, productCheckId } = match?.params || {};
+	// const branch = useSelector(
+	// 	branchesSelectors.selectBranchById(Number(branchId)),
+	// );
 
-	// CUSTOM HOOKS
-	const history = useHistory();
-	const { user } = useAuth();
-	const {
-		getProductCheck,
-		status: productChecksStatus,
-		errors: productChecksErrors,
-	} = useProductChecks();
+	// // STATES
+	// const [productCheck, setProductCheck] = useState(null);
+	// const [data, setData] = useState([]);
 
-	// METHODS
-	useEffect(() => {
-		if (branch && !branch?.online_url) {
-			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
-			message.error('Branch has no online url.');
-		}
-	}, [branchId, branch]);
+	// // CUSTOM HOOKS
+	// const history = useHistory();
+	// const { user } = useAuth();
+	// const {
+	// 	getProductCheck,
+	// 	status: productChecksStatus,
+	// 	errors: productChecksErrors,
+	// } = useProductChecks();
 
-	useEffect(() => {
-		getProductCheck(
-			{
-				id: productCheckId,
-				branchId,
-			},
-			({ status, response }) => {
-				if (status === request.SUCCESS) {
-					setProductCheck(response);
-				}
-			},
-		);
-	}, [branchId, productCheckId]);
+	// // METHODS
+	// useEffect(() => {
+	// 	if (branch && !branch?.online_url) {
+	// 		history.replace(`${getUrlPrefix(user.user_type)}/branches`);
+	// 		message.error('Branch has no online url.');
+	// 	}
+	// }, [branchId, branch]);
 
-	useEffect(() => {
-		if (productCheck) {
-			setData(
-				productCheck.products.map((item) => {
-					const {
-						id,
-						product,
-						current_quantity_piece,
-						fulfilled_quantity_piece,
-						is_match,
-					} = item;
-					const { barcode, textcode, name } = product;
+	// useEffect(() => {
+	// 	getProductCheck(
+	// 		{
+	// 			id: productCheckId,
+	// 			branchId,
+	// 		},
+	// 		({ status, response }) => {
+	// 			if (status === request.SUCCESS) {
+	// 				setProductCheck(response);
+	// 			}
+	// 		},
+	// 	);
+	// }, [branchId, productCheckId]);
 
-					return {
-						key: id,
-						name,
-						barcode: barcode || textcode,
-						current: current_quantity_piece,
-						fulfilled: fulfilled_quantity_piece,
-						match_status: is_match ? (
-							<BadgePill label="Matched" variant="primary" />
-						) : (
-							<BadgePill label="Not Matched" variant="error" />
-						),
-						adjustment: EMPTY_CELL,
-						actions: EMPTY_CELL,
-					};
-				}),
-			);
-		}
-	}, [productCheck]);
+	// useEffect(() => {
+	// 	if (productCheck) {
+	// 		setData(
+	// 			productCheck.products.map((item) => {
+	// 				const {
+	// 					id,
+	// 					product,
+	// 					current_quantity_piece,
+	// 					fulfilled_quantity_piece,
+	// 					is_match,
+	// 				} = item;
+	// 				const { barcode, textcode, name } = product;
 
-	const getBreadcrumbItems = useCallback(
-		() => [
-			{ name: 'Branches', link: `${getUrlPrefix(user.user_type)}/branches` },
-			{
-				name: branch?.name,
-				link: `${getUrlPrefix(user.user_type)}/branches/${branch?.id}`,
-			},
-			{ name: productCheckId },
-		],
-		[branch, user],
-	);
+	// 				return {
+	// 					key: id,
+	// 					name,
+	// 					barcode: barcode || textcode,
+	// 					current: current_quantity_piece,
+	// 					fulfilled: fulfilled_quantity_piece,
+	// 					match_status: is_match ? (
+	// 						<BadgePill label="Matched" variant="primary" />
+	// 					) : (
+	// 						<BadgePill label="Not Matched" variant="error" />
+	// 					),
+	// 					adjustment: EMPTY_CELL,
+	// 					actions: EMPTY_CELL,
+	// 				};
+	// 			}),
+	// 		);
+	// 	}
+	// }, [productCheck]);
 
-	return (
-		<Content
-			title="[VIEW] Branch Check"
-			rightTitle={branch?.name}
-			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
-		>
-			<Box className="ViewBranchCheck">
-				<Spin spinning={productChecksStatus === request.REQUESTING}>
-					<RequestErrors
-						errors={convertIntoArray(productChecksErrors)}
-						withSpaceBottom
-					/>
+	// const getBreadcrumbItems = useCallback(
+	// 	() => [
+	// 		{ name: 'Branches', link: `${getUrlPrefix(user.user_type)}/branches` },
+	// 		{
+	// 			name: branch?.name,
+	// 			link: `${getUrlPrefix(user.user_type)}/branches/${branch?.id}`,
+	// 		},
+	// 		{ name: productCheckId },
+	// 	],
+	// 	[branch, user],
+	// );
 
-					{productCheck && (
-						<DetailsRow className="PaddingHorizontal PaddingVertical">
-							<DetailsHalf label="ID" value={productCheck.id} />
-							<DetailsHalf label="Type" value={upperFirst(productCheck.type)} />
-							<DetailsHalf
-								label="Date & Time Requested"
-								value={formatDateTime(productCheck.datetime_created)}
-							/>
-							<DetailsHalf
-								label="Date & Time Fulfilled"
-								value={
-									productCheck.datetime_fulfilled
-										? formatDateTime(productCheck.datetime_fulfilled)
-										: EMPTY_CELL
-								}
-							/>
-						</DetailsRow>
-					)}
+	// return (
+	// 	<Content
+	// 		title="[VIEW] Branch Check"
+	// 		rightTitle={branch?.name}
+	// 		breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+	// 	>
+	// 		<Box className="ViewBranchCheck">
+	// 			<Spin spinning={productChecksStatus === request.REQUESTING}>
+	// 				<RequestErrors
+	// 					errors={convertIntoArray(productChecksErrors)}
+	// 					withSpaceBottom
+	// 				/>
 
-					<Table
-						columns={columns}
-						dataSource={data}
-						scroll={{ x: 800 }}
-						pagination={false}
-						bordered
-					/>
-				</Spin>
-			</Box>
-		</Content>
-	);
+	// 				{productCheck && (
+	// 					<DetailsRow className="PaddingHorizontal PaddingVertical">
+	// 						<DetailsHalf label="ID" value={productCheck.id} />
+	// 						<DetailsHalf label="Type" value={upperFirst(productCheck.type)} />
+	// 						<DetailsHalf
+	// 							label="Date & Time Requested"
+	// 							value={formatDateTime(productCheck.datetime_created)}
+	// 						/>
+	// 						<DetailsHalf
+	// 							label="Date & Time Fulfilled"
+	// 							value={
+	// 								productCheck.datetime_fulfilled
+	// 									? formatDateTime(productCheck.datetime_fulfilled)
+	// 									: EMPTY_CELL
+	// 							}
+	// 						/>
+	// 					</DetailsRow>
+	// 				)}
+
+	// 				<Table
+	// 					columns={columns}
+	// 					dataSource={data}
+	// 					scroll={{ x: 800 }}
+	// 					pagination={false}
+	// 					bordered
+	// 				/>
+	// 			</Spin>
+	// 		</Box>
+	// 	</Content>
+	// );
 };

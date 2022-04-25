@@ -3,6 +3,8 @@ import { Container } from 'components';
 import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
 import {
 	useBranchProducts,
+	useProductCheckCreateDaily,
+	useProductCheckCreateRandom,
 	useSalesTracker,
 	useSiteSettingsRetrieve,
 } from 'hooks';
@@ -23,7 +25,7 @@ import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
-import { Checking } from './Checking/Checking';
+import { Checking } from './Checking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
@@ -75,12 +77,17 @@ const BranchManager = () => {
 			notifyOnChangeProps: ['data'],
 		},
 	});
+	const { mutate: createCheckDaily } = useProductCheckCreateDaily();
+	const { mutate: createCheckRandom } = useProductCheckCreateRandom();
 
 	// METHODS
 	useEffect(() => {
 		if (IS_APP_LIVE) {
 			getBranches();
 		}
+
+		createCheckDaily(null);
+		createCheckRandom(null);
 	}, []);
 
 	useEffect(() => {

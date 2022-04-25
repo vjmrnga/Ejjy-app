@@ -20,6 +20,7 @@ export { default as DiscountOptionsService } from './DiscountOptionsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as PointSystemTagsService } from './PointSystemTagsService';
 export { default as PriceMarkdownsService } from './PriceMarkdownsService';
+export { default as ProductChecksService } from './ProductChecksService';
 export { default as ProductsService } from './ProductsService';
 export { default as ReceivingVouchersService } from './ReceivingVouchersService';
 export { default as SalesTrackerService } from './SalesTrackerService';
