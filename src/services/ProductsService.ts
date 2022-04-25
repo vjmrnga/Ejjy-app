@@ -19,6 +19,7 @@ interface Modify {
 	max_balance: number;
 	name: string;
 	pieces_in_bulk: number;
+	point_system_tag_id: number;
 	price_per_bulk: number;
 	price_per_piece: number;
 	print_details: string;

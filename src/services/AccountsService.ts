@@ -6,16 +6,17 @@ interface List extends IListRequest {
 }
 
 interface Modify {
-	first_name: string;
-	middle_name?: string;
-	last_name: string;
-	business_name?: string;
-	tin: string;
 	birthday: string;
 	business_address?: string;
-	home_address: string;
+	business_name?: string;
 	contact_number: string;
+	first_name: string;
 	gender: string;
+	home_address: string;
+	is_point_system_eligible: boolean;
+	last_name: string;
+	middle_name?: string;
+	tin: string;
 	type: string;
 }
 

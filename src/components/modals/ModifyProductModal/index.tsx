@@ -1,8 +1,10 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchProductEdit,
 	useBranchProductRetrieve,
+	usePointSystemTags,
 	useProductCreate,
 	useProductEdit,
 } from 'hooks';
@@ -33,6 +35,12 @@ export const ModifyProductModal = ({
 				enabled: product !== null,
 			},
 		});
+	const {
+		data: { pointSystemTags },
+		isFetching: isFetchingPointSystemTags,
+	} = usePointSystemTags({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 	const {
 		mutateAsync: editBranchProduct,
 		isLoading: isEditingBranchProduct,
@@ -100,12 +108,14 @@ export const ModifyProductModal = ({
 					isCreating ||
 					isEditing ||
 					isEditingBranchProduct ||
-					isFetchingBranchProduct
+					isFetchingBranchProduct ||
+					isFetchingPointSystemTags
 				}
 				onClose={onClose}
 				onSubmit={onSubmit}
 				product={product}
 				productCategories={productCategories}
+				pointSystemTags={pointSystemTags}
 			/>
 		</Modal>
 	);

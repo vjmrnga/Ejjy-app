@@ -1,7 +1,7 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable newline-per-chained-call */
-import { Col, Divider, Input, Row, Typography } from 'antd';
+import { Col, Divider, Input, Row, Select, Typography } from 'antd';
 import {
 	Button,
 	FieldError,
@@ -75,6 +75,7 @@ interface Props {
 	loading: boolean;
 	onClose: any;
 	onSubmit: any;
+	pointSystemTags: any;
 	product: any;
 	productCategories: IProductCategory[];
 }
@@ -85,6 +86,7 @@ export const ModifyProductForm = ({
 	loading,
 	onClose,
 	onSubmit,
+	pointSystemTags,
 	product,
 	productCategories,
 }: Props) => {
@@ -109,6 +111,7 @@ export const ModifyProductForm = ({
 					: '',
 				name: product?.name || '',
 				piecesInBulk: product?.pieces_in_bulk,
+				pointSystemTagId: product?.point_system_tag?.id || '',
 				pricePerBulk: product?.price_per_bulk || '',
 				pricePerPiece: product?.price_per_piece || '',
 				printDetails: product?.print_details || '',
@@ -208,6 +211,7 @@ export const ModifyProductForm = ({
 						.min(0)
 						.label('Price per Piece'),
 					pricePerBulk: Yup.string().required().min(0).label('Price per Bulk'),
+					pointSystemTagId: Yup.string().nullable().label('Point System Tag'),
 
 					checking: Yup.string().label('Checking'),
 					currentBalance: isCurrentBalanceVisible
@@ -482,6 +486,40 @@ export const ModifyProductForm = ({
 								unitOfMeasurementTypes.WEIGHING && (
 								<FieldWarning message="Qty Allowance won't be included when submited" />
 							)}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label id="pointSystemTagId" label="Point System Tag" spacing />
+							<Select
+								size="large"
+								className="w-100"
+								value={values.pointSystemTagId}
+								onChange={(value) => {
+									setFieldValue('pointSystemTagId', value);
+								}}
+								optionFilterProp="children"
+								filterOption={(input, option) =>
+									option.children
+										.toString()
+										.toLowerCase()
+										.indexOf(input.toLowerCase()) >= 0
+								}
+								showSearch
+								allowClear
+							>
+								{pointSystemTags.map((pointSystemTags) => (
+									<Select.Option
+										key={pointSystemTags.id}
+										value={pointSystemTags.id}
+									>
+										{pointSystemTags.name}
+									</Select.Option>
+								))}
+							</Select>
+							<ErrorMessage
+								name="pointSystemTagId"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Divider dashed>QUANTITY</Divider>

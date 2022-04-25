@@ -1,4 +1,4 @@
-import { Col, DatePicker, Divider, Row, Select } from 'antd';
+import { Col, DatePicker, Divider, Radio, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import moment from 'moment';
 import React, { useCallback } from 'react';
@@ -40,6 +40,7 @@ export const ModifyAccountForm = ({
 				businessAddress: account?.business_address || undefined,
 				contactNumber: account?.contact_number || '',
 				gender: account?.gender || '',
+				isPointSystemEligible: account?.is_point_system_eligible || false,
 			},
 			schema: Yup.object().shape({
 				type: Yup.string().required().label('Type'),
@@ -65,6 +66,9 @@ export const ModifyAccountForm = ({
 					}),
 				contactNumber: Yup.string().required().label('Contact Number'),
 				gender: Yup.string().required().label('Gender'),
+				isPointSystemEligible: Yup.boolean()
+					.required()
+					.label('Is Point System Eligible?'),
 			}),
 		}),
 		[account],
@@ -270,6 +274,21 @@ export const ModifyAccountForm = ({
 							<ErrorMessage
 								name="contactNumber"
 								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24}>
+							<Label label="Is Point System Eligible?" spacing />
+							<Radio.Group
+								value={values.isPointSystemEligible}
+								options={[
+									{ label: 'Yes', value: true },
+									{ label: 'No', value: false },
+								]}
+								onChange={(e) => {
+									setFieldValue('isPointSystemEligible', e.target.value);
+								}}
+								optionType="button"
 							/>
 						</Col>
 					</Row>

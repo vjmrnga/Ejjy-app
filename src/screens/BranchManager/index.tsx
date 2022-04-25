@@ -10,6 +10,7 @@ import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
+import { PointSystemTags } from 'screens/BranchManager/PointSystemTags';
 import { Reports } from 'screens/BranchManager/Reports';
 import { Sales } from 'screens/BranchManager/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
@@ -152,6 +153,13 @@ const BranchManager = () => {
 				link: '/branch-manager/products',
 			},
 			{
+				key: 'point-system-tags',
+				name: 'Point System Tags',
+				activeIcon: require('../../assets/images/icon-product-active.svg'),
+				defaultIcon: require('../../assets/images/icon-product.svg'),
+				link: '/branch-manager/point-system-tags',
+			},
+			{
 				key: 'product-categories',
 				name: 'Product Categories',
 				activeIcon: require('../../assets/images/icon-product-active.svg'),
@@ -261,6 +269,11 @@ const BranchManager = () => {
 						component={ProductCategories}
 					/>
 					<Route path="/branch-manager/products" component={Products} />
+
+					<Route
+						path="/branch-manager/point-system-tags"
+						component={PointSystemTags}
+					/>
 
 					<Route path="/branch-manager/stocks" component={Stocks} exact />
 					<Route

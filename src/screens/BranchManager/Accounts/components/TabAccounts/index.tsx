@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Select, Table } from 'antd';
+import { Button, Col, Input, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyAccountModal,
@@ -28,6 +28,11 @@ const columns: ColumnsType = [
 	{ title: 'Address (Business)', dataIndex: 'businessAddress' },
 	{ title: 'Contact #', dataIndex: 'contactNumber' },
 	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
+	{
+		title: 'Is Point System Eligible?',
+		dataIndex: 'isPointSystemEligible',
+		align: 'center',
+	},
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -61,6 +66,11 @@ export const TabAccounts = () => {
 			businessAddress: account.business_address,
 			contactNumber: account.contact_number,
 			datetimeCreated: formatDate(account.datetime_created),
+			isPointSystemEligible: account.is_point_system_eligible ? (
+				<Tag color="green">Yes</Tag>
+			) : (
+				<Tag color="red">No</Tag>
+			),
 			actions: (
 				<TableActions
 					onEdit={() => {
@@ -93,7 +103,7 @@ export const TabAccounts = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				scroll={{ x: 1000 }}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,

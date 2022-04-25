@@ -16,6 +16,8 @@ export * from './useDiscountOptions';
 export { default as useDiscountOptions } from './useDiscountOptions';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
+export * from './usePointSystemTags';
+export { default as usePointSystemTags } from './usePointSystemTags';
 export * from './usePriceMarkdowns';
 export * from './useProducts';
 export { default as useProducts } from './useProducts';

@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Tag } from 'antd';
 import { upperFirst } from 'lodash';
 import React from 'react';
 import { accountTypes } from '../../../global/types';
@@ -82,6 +82,16 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 				<DetailsSingle
 					label="Date of Registration"
 					value={formatDate(account.datetime_created)}
+				/>
+				<DetailsSingle
+					label="Is Point System Eligible?"
+					value={
+						account.is_point_system_eligible ? (
+							<Tag color="green">Yes</Tag>
+						) : (
+							<Tag color="red">No</Tag>
+						)
+					}
 				/>
 			</DetailsRow>
 		</Modal>
