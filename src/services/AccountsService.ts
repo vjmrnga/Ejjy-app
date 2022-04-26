@@ -40,7 +40,7 @@ const service = {
 		axios.patch(`/accounts/${id}/`, body, { baseURL }),
 
 	redeemPoints: async (id: number, body: RedeemPoints, baseURL: string) =>
-		axios.post(`/accounts/${id}/`, body, { baseURL }),
+		axios.post(`/accounts/${id}/redeem-points/`, body, { baseURL }),
 };
 
 export default service;

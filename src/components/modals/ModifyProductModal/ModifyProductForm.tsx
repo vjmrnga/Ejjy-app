@@ -356,7 +356,7 @@ export const ModifyProductForm = ({
 						: product?.has_quantity_allowance,
 					allowableSpoilage: isWeighing
 						? Number(formData.allowableSpoilage) / 100
-						: null,
+						: undefined,
 					isDailyChecked: formData.checking === productCheckingTypes.DAILY,
 					isRandomlyChecked: formData.checking === productCheckingTypes.RANDOM,
 				};

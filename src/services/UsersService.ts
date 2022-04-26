@@ -33,7 +33,7 @@ const service = {
 		}),
 
 	authenticate: async (body, baseURL) =>
-		axios.post('/users/authenticate', body, { baseURL }),
+		axios.post('/users/authenticate/', body, { baseURL }),
 };
 
 export default service;

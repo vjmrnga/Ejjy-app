@@ -16,7 +16,6 @@ import './style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Invoice #', dataIndex: 'invoiceNumber' },
 	{
 		title: 'Invoice',
 		children: [
@@ -98,19 +97,19 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 							<Col span={8}>
 								<Statistic
 									title="Total Points Earned"
-									value={account.total_points_balance}
-								/>
-							</Col>
-							<Col span={8}>
-								<Statistic
-									title="Total Points Redeemed"
 									value={account.total_points_earned}
 								/>
 							</Col>
 							<Col span={8}>
 								<Statistic
-									title="Total Points Balance"
+									title="Total Points Redeemed"
 									value={account.total_points_redeemed}
+								/>
+							</Col>
+							<Col span={8}>
+								<Statistic
+									title="Total Points Balance"
+									value={account.total_points_balance}
 								/>
 							</Col>
 						</Row>
