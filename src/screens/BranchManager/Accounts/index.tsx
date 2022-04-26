@@ -2,7 +2,6 @@ import { Tabs } from 'antd';
 import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
 import React, { useEffect } from 'react';
 import { TabAccounts } from 'screens/BranchManager/Accounts/components/TabAccounts';

@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
-import { useAccountsCreate, useAccountsEdit } from 'hooks';
+import { useAccountCreate, useAccountEdit } from 'hooks';
 import React from 'react';
 import { convertIntoArray } from 'utils/function';
 import { ModifyAccountForm } from './ModifyAccountForm';
@@ -17,12 +17,12 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 		mutateAsync: createAccount,
 		isLoading: isCreateLoading,
 		error: createError,
-	} = useAccountsCreate();
+	} = useAccountCreate();
 	const {
 		mutateAsync: editAccount,
 		isLoading: isEditLoading,
 		error: editError,
-	} = useAccountsEdit();
+	} = useAccountEdit();
 
 	// METHODS
 	const onSubmit = async (formData) => {

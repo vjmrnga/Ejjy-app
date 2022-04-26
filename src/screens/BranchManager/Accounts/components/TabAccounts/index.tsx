@@ -19,6 +19,7 @@ import {
 import { useAccounts, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { convertIntoArray, formatDate, getFullName } from 'utils/function';
 
 const columns: ColumnsType = [
@@ -56,11 +57,7 @@ export const TabAccounts = () => {
 	useEffect(() => {
 		const data = accounts.map((account) => ({
 			key: account.id,
-			clientCode: (
-				<Button type="link" onClick={() => setSelectedAccount(account)}>
-					{account.id}
-				</Button>
-			),
+			clientCode: <Link to={`accounts/${account.id}`}>{account.id}</Link>,
 			name: getFullName(account),
 			homeAddress: account.home_address,
 			businessAddress: account.business_address,

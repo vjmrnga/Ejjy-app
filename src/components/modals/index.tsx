@@ -11,6 +11,7 @@ export * from './ModifyDiscountOptionModal';
 export * from './ModifyPointSystemTagModal';
 export * from './ModifyProductModal';
 export * from './PricesModal';
+export * from './RedeemPointsModal';
 export * from './ViewAccountModal';
 export * from './ViewBackOrderModal';
 export * from './ViewProductModal';

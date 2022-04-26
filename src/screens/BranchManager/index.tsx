@@ -11,6 +11,7 @@ import {
 import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { ViewAccount } from 'screens/BranchManager/Accounts/ViewAccount';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
 import { PointSystemTags } from 'screens/BranchManager/PointSystemTags';
 import { Reports } from 'screens/BranchManager/Reports';
@@ -307,6 +308,11 @@ const BranchManager = () => {
 					/>
 
 					<Route path="/branch-manager/accounts" exact component={Accounts} />
+					<Route
+						path="/branch-manager/accounts/:id"
+						component={ViewAccount}
+						exact
+					/>
 
 					<Route
 						path="/branch-manager/branch-machines"

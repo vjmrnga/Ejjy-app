@@ -2,7 +2,7 @@ import { actions, selectors, types } from 'ducks/OfficeManager/users';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { ONLINE_API_URL, UsersService } from 'services';
 import {
@@ -285,6 +285,17 @@ const useUsersNew = ({ params }: Query) =>
 				total: query.data.count,
 			}),
 		},
+	);
+
+export const useUserAuthenticate = () =>
+	useMutation<any, any, any>(({ login, password }: any) =>
+		UsersService.authenticate(
+			{
+				login,
+				password,
+			},
+			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+		),
 	);
 
 export default useUsersNew;

@@ -32,7 +32,21 @@ const useAccounts = ({ params }: Query) =>
 		},
 	);
 
-export const useAccountsCreate = () =>
+export const useAccountRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useAccountRetrieve', id],
+		async () =>
+			AccountsService.retrieve(
+				id,
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			select: (query) => query.data,
+			...options,
+		},
+	);
+
+export const useAccountCreate = () =>
 	useMutation<any, any, any>(
 		({
 			birthday,
@@ -67,7 +81,7 @@ export const useAccountsCreate = () =>
 			),
 	);
 
-export const useAccountsEdit = () =>
+export const useAccountEdit = () =>
 	useMutation<any, any, any>(
 		({
 			id,
@@ -99,6 +113,20 @@ export const useAccountsEdit = () =>
 					middle_name: middleName,
 					tin,
 					type,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+	);
+
+export const useAccountRedeemPoints = () =>
+	useMutation<any, any, any>(
+		({ id, redeemedPoints, redeemAuthorizerId, redeemRemarks }: any) =>
+			AccountsService.redeemPoints(
+				id,
+				{
+					redeem_authorizer_id: redeemAuthorizerId,
+					redeem_remarks: redeemRemarks,
+					redeemed_points: redeemedPoints,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),

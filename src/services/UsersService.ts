@@ -31,6 +31,9 @@ const service = {
 		axios.post(`/online-users/${id}/request-user-type-change/`, body, {
 			baseURL,
 		}),
+
+	authenticate: async (body, baseURL) =>
+		axios.post('/users/authenticate', body, { baseURL }),
 };
 
 export default service;

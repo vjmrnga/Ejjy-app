@@ -19,6 +19,7 @@ export { default as CreditRegistrationsService } from './CreditRegistrationsServ
 export { default as DiscountOptionsService } from './DiscountOptionsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as PointSystemTagsService } from './PointSystemTagsService';
+export { default as PointTransactionsService } from './PointTransactionsService';
 export { default as PriceMarkdownsService } from './PriceMarkdownsService';
 export { default as ProductChecksService } from './ProductChecksService';
 export { default as ProductsService } from './ProductsService';

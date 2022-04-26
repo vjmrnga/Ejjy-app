@@ -1,0 +1,155 @@
+import { Col, Row, Spin, Statistic, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table/interface';
+import { RedeemPointsModal, TableHeader } from 'components';
+import { Box } from 'components/elements';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	pageSizeOptions,
+} from 'global';
+import { usePointTransactions, useQueryParams } from 'hooks';
+import React, { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
+import { formatDateTime, formatInPeso, getFullName } from 'utils/function';
+import './style.scss';
+
+const columns: ColumnsType = [
+	{ title: 'Date & Time', dataIndex: 'datetime' },
+	{ title: 'Invoice #', dataIndex: 'invoiceNumber' },
+	{
+		title: 'Invoice',
+		children: [
+			{ title: 'Invoice #', dataIndex: 'invoiceNumber' },
+			{ title: 'Amount', dataIndex: 'amount' },
+			{ title: 'Cashier', dataIndex: 'cashier' },
+		],
+	},
+	{
+		title: 'Points',
+		children: [
+			{ title: 'Earned', dataIndex: 'pointsEarned' },
+			{ title: 'Redeemed', dataIndex: 'pointsRedeemed' },
+			{ title: 'Balance', dataIndex: 'pointsBalance' },
+		],
+	},
+	{ title: 'Authorizer', dataIndex: 'authorizer' },
+];
+interface PointTransactionsProps {
+	account: any;
+}
+export const PointTransactions = ({ account }: PointTransactionsProps) => {
+	// STATES
+	const [dataSource, setDataSource] = useState([]);
+	const [isRedeemModalVisible, setIsRedeemModalVisible] = useState(false);
+
+	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
+	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { pointTransactions, total },
+		isFetching,
+	} = usePointTransactions({
+		params: {
+			accountId: account.id,
+		},
+	});
+
+	// METHODS
+	useEffect(() => {
+		const data = pointTransactions.map((pointTransaction) => ({
+			datetime: formatDateTime(pointTransaction.datetime_created),
+			invoiceNumber: pointTransaction.transaction
+				? pointTransaction.transaction.invoice.or_number
+				: EMPTY_CELL,
+			amount: pointTransaction.transaction
+				? formatInPeso(pointTransaction.amount)
+				: EMPTY_CELL,
+			cashier: EMPTY_CELL,
+
+			pointsEarned: pointTransaction.earned_points
+				? pointTransaction.earned_points
+				: EMPTY_CELL,
+			pointsRedeemed: pointTransaction.redeemed_points
+				? pointTransaction.redeemed_points
+				: EMPTY_CELL,
+			pointsBalance: pointTransaction.current_points_balance,
+
+			authorizer: pointTransaction.redeem_authorizer
+				? getFullName(pointTransaction.redeem_authorizer)
+				: EMPTY_CELL,
+		}));
+		setDataSource(data);
+	}, [pointTransactions]);
+
+	return (
+		<Box>
+			<Spin spinning={isFetching}>
+				<TableHeader
+					title="Points Transactions"
+					buttonName="Redeem Points"
+					onCreate={() => setIsRedeemModalVisible(true)}
+					onCreateDisabled={!account}
+				/>
+
+				{account && (
+					<div className="AccountTotalPoints mb-4 mx-6">
+						<Row gutter={[16, 16]}>
+							<Col span={8}>
+								<Statistic
+									title="Total Points Earned"
+									value={account.total_points_balance}
+								/>
+							</Col>
+							<Col span={8}>
+								<Statistic
+									title="Total Points Redeemed"
+									value={account.total_points_earned}
+								/>
+							</Col>
+							<Col span={8}>
+								<Statistic
+									title="Total Points Balance"
+									value={account.total_points_redeemed}
+								/>
+							</Col>
+						</Row>
+					</div>
+				)}
+
+				<Table
+					columns={columns}
+					dataSource={dataSource}
+					scroll={{ x: 1000 }}
+					pagination={{
+						current: Number(params.page) || DEFAULT_PAGE,
+						total,
+						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+						onChange: (page, newPageSize) => {
+							setQueryParams({
+								page,
+								pageSize: newPageSize,
+							});
+						},
+						disabled: !dataSource,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					size="small"
+					bordered
+				/>
+
+				{isRedeemModalVisible && (
+					<RedeemPointsModal
+						account={account}
+						onSuccess={() => {
+							queryClient.invalidateQueries('usePointTransactions');
+							queryClient.invalidateQueries('useAccountRetrieve');
+						}}
+						onClose={() => setIsRedeemModalVisible(false)}
+					/>
+				)}
+			</Spin>
+		</Box>
+	);
+};
