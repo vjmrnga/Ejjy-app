@@ -1,6 +1,11 @@
 import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
-import { RequestErrors, RequestWarnings, TableActions } from 'components';
+import {
+	RequestErrors,
+	RequestWarnings,
+	TableActions,
+	TimeRangeFilter,
+} from 'components';
 import { Label } from 'components/elements';
 import {
 	ALL_OPTION_KEY,
@@ -472,54 +477,9 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					))}
 				</Select>
 			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Quantity Sold Date" spacing />
-				<Radio.Group
-					value={timeRangeType}
-					options={[
-						{ label: 'Daily', value: timeRangeTypes.DAILY },
-						{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-						{
-							label: 'Select Date Range',
-							value: timeRangeTypes.DATE_RANGE,
-						},
-					]}
-					onChange={(e) => {
-						const { value } = e.target;
-						setTimeRangeType(value);
 
-						if (value !== timeRangeTypes.DATE_RANGE) {
-							setQueryParams({ timeRange: value });
-						}
-					}}
-					optionType="button"
-				/>
-				{timeRangeType === timeRangeTypes.DATE_RANGE && (
-					<DatePicker.RangePicker
-						format="MM/DD/YY"
-						onCalendarChange={(dates, dateStrings) => {
-							if (dates?.[0] && dates?.[1]) {
-								setQueryParams({ timeRange: dateStrings.join(',') });
-							}
-						}}
-						defaultValue={
-							toString(params.timeRange).split(',')?.length === 2
-								? [
-										moment(toString(params.timeRange).split(',')[0]),
-										moment(toString(params.timeRange).split(',')[1]),
-								  ]
-								: undefined
-						}
-						defaultPickerValue={
-							toString(params.timeRange).split(',')?.length === 2
-								? [
-										moment(toString(params.timeRange).split(',')[0]),
-										moment(toString(params.timeRange).split(',')[1]),
-								  ]
-								: undefined
-						}
-					/>
-				)}
+			<Col lg={12} span={24}>
+				<TimeRangeFilter />
 			</Col>
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
