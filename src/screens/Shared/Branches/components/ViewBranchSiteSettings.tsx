@@ -127,7 +127,7 @@ export const ViewBranchSiteSettings = ({
 				closeDayDeadline: getValidTimeTest('Close Day Deadline'),
 				isMarkdownAllowedIfCredit: Yup.boolean()
 					.required()
-					.label('Is Markdown Allowed If Credit'),
+					.label('Markdown on Credit Transactions'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
 				taxType: Yup.string().required().label('Tax Type'),
@@ -312,12 +312,12 @@ export const ViewBranchSiteSettings = ({
 							</Col>
 
 							<Col span={24} md={12}>
-								<Label label="Is Markdown Allowed If Credit?" spacing />
+								<Label label="Markdown on Credit Transactions" spacing />
 								<Radio.Group
 									value={values.isMarkdownAllowedIfCredit}
 									options={[
-										{ label: 'Yes', value: true },
-										{ label: 'No', value: false },
+										{ label: 'Allowed', value: true },
+										{ label: 'Not Allowed', value: false },
 									]}
 									onChange={(e) => {
 										setFieldValue('isMarkdownAllowedIfCredit', e.target.value);

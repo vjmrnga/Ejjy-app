@@ -1,6 +1,10 @@
-import { Col, Row, Spin, Statistic, Table } from 'antd';
+import { Button, Col, Row, Spin, Statistic, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { RedeemPointsModal, TableHeader } from 'components';
+import {
+	RedeemPointsModal,
+	TableHeader,
+	ViewTransactionModal,
+} from 'components';
 import { Box } from 'components/elements';
 import {
 	DEFAULT_PAGE,
@@ -40,6 +44,7 @@ interface PointTransactionsProps {
 export const PointTransactions = ({ account }: PointTransactionsProps) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 	const [isRedeemModalVisible, setIsRedeemModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
@@ -58,13 +63,24 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 	useEffect(() => {
 		const data = pointTransactions.map((pointTransaction) => ({
 			datetime: formatDateTime(pointTransaction.datetime_created),
-			invoiceNumber: pointTransaction.transaction
-				? pointTransaction.transaction.invoice.or_number
-				: EMPTY_CELL,
-			amount: pointTransaction.transaction
+			invoiceNumber: pointTransaction.transaction ? (
+				<Button
+					type="link"
+					onClick={() =>
+						setSelectedTransactionId(pointTransaction.transaction.id)
+					}
+				>
+					{pointTransaction.transaction.invoice.or_number}
+				</Button>
+			) : (
+				EMPTY_CELL
+			),
+			amount: pointTransaction.amount
 				? formatInPeso(pointTransaction.amount)
 				: EMPTY_CELL,
-			cashier: EMPTY_CELL,
+			cashier: pointTransaction.teller
+				? getFullName(pointTransaction.teller)
+				: EMPTY_CELL,
 
 			pointsEarned: pointTransaction.earned_points
 				? pointTransaction.earned_points
@@ -137,6 +153,13 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 					size="small"
 					bordered
 				/>
+
+				{selectedTransactionId && (
+					<ViewTransactionModal
+						transaction={selectedTransactionId}
+						onClose={() => setSelectedTransactionId(null)}
+					/>
+				)}
 
 				{isRedeemModalVisible && (
 					<RedeemPointsModal

@@ -183,6 +183,7 @@ const Filter = ({ serverUrl, isLoading }: FilterProps) => {
 							.indexOf(input.toLowerCase()) >= 0
 					}
 					disabled={isFetching}
+					allowClear
 					showSearch
 				>
 					{users.map((user) => (

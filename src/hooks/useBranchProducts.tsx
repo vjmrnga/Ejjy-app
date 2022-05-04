@@ -2,7 +2,6 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
 import { BranchProductsService, ONLINE_API_URL } from 'services';
 import { actions, types } from '../ducks/branch-products';
 import { request } from '../global/types';
@@ -277,9 +276,7 @@ export const useBranchProductRetrieve = ({ id, options }: Query) =>
 		['useBranchProductRetrieve', id],
 		async () =>
 			BranchProductsService.list(
-				{
-					product_ids: id,
-				},
+				{ product_ids: id },
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
