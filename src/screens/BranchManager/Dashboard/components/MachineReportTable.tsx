@@ -1,4 +1,4 @@
-import { Button, Calendar, Modal, Space, Tag } from 'antd';
+import { Button, Calendar, message, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	TableHeader,
@@ -66,7 +66,7 @@ export const MachineReportTable = () => {
 							type="primary"
 							onClick={() => viewXReadReport(branchMachine)}
 						>
-							View XRead
+							View XRead (Active Session)
 						</Button>
 						<Button
 							type="primary"
@@ -76,7 +76,7 @@ export const MachineReportTable = () => {
 								setSelectedDate(moment());
 							}}
 						>
-							View XRead by Date
+							View XRead (Date)
 						</Button>
 						<Button
 							type="primary"
@@ -93,12 +93,17 @@ export const MachineReportTable = () => {
 	}, [branchMachines]);
 
 	const viewXReadReport = async (branchMachine, date = undefined) => {
-		const { data } = await createXReadReport({
+		const { data, status } = await createXReadReport({
 			branch_machine_id: branchMachine.id,
 			serverUrl: branchMachine.server_url,
 			date,
 			userId: user.id,
 		});
+
+		if (status === 204) {
+			message.warn('There is no active session');
+		}
+
 		setXReadReport(data);
 
 		// NOTE: Reset the states used for datepicker
