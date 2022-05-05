@@ -84,7 +84,7 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 					value={formatDate(account.datetime_created)}
 				/>
 				<DetailsSingle
-					label="Is Point System Eligible?"
+					label="Loyalty Membership"
 					value={
 						account.is_point_system_eligible ? (
 							<Tag color="green">Yes</Tag>

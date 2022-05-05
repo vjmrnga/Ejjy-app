@@ -55,7 +55,7 @@ const useTransactionProducts = ({ params }: Query) => {
 			select: (query) => ({
 				transactionProducts: query.data.results,
 				total: query.data.count,
-				warning: query.data.warning,
+				warning: query.data?.warning,
 			}),
 		},
 	);
@@ -113,7 +113,7 @@ export const useTransactionProductsSummary = ({ params, options }: Query) => {
 			initialData: { data: null },
 			select: (query) => ({
 				summary: query.data,
-				warning: query.data.warning,
+				warning: query.data?.warning,
 			}),
 			...options,
 		},

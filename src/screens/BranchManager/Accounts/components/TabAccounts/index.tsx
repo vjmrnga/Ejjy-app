@@ -30,7 +30,7 @@ const columns: ColumnsType = [
 	{ title: 'Contact #', dataIndex: 'contactNumber' },
 	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
 	{
-		title: 'Is Point System Eligible?',
+		title: 'Loyalty Membership',
 		dataIndex: 'isPointSystemEligible',
 		align: 'center',
 	},

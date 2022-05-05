@@ -508,29 +508,6 @@ export const getProductType = memoize((type) => {
 	}
 });
 
-export const getTransactionStatus = memoize((status) => {
-	switch (status) {
-		case transactionStatus.NEW: {
-			return <BadgePill label="New" variant="secondary" />;
-		}
-		case transactionStatus.FULLY_PAID: {
-			return <BadgePill label="Fully Paid" variant="primary" />;
-		}
-		case transactionStatus.HOLD: {
-			return <BadgePill label="Hold" variant="secondary" />;
-		}
-		case transactionStatus.VOID_CANCELLED: {
-			return <BadgePill label="Cancelled" />;
-		}
-		case transactionStatus.VOID_EDITED: {
-			return <BadgePill label="Edited" />;
-		}
-		default: {
-			return EMPTY_CELL;
-		}
-	}
-});
-
 export const getTransactionStatusDescription = memoize((status) => {
 	switch (status) {
 		case transactionStatus.NEW: {

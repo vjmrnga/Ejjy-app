@@ -139,7 +139,10 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 			salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
 			totalNetSales: formatInPeso(report.total_net_sales),
 			resetCounter: report.reset_counter,
-			remarks: report.remarks,
+			remarks:
+				Number(report.gross_sales_for_the_day) === 0
+					? 'No transaction'
+					: report.remarks,
 		}));
 
 		setDataSource(formattedReports);

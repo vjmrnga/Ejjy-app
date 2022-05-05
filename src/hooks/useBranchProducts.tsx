@@ -266,7 +266,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 			select: (query) => ({
 				branchProducts: query.data.results,
 				total: query.data.count,
-				warning: query.data.warning,
+				warning: query.data?.warning,
 			}),
 		},
 	);

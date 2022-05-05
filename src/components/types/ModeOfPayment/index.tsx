@@ -1,4 +1,4 @@
-import { saleTypes } from '../../global/types';
+import { saleTypes } from 'global';
 
 export const ModeOfPayment = ({ modeOfPayment }) => {
 	let component = null;

@@ -27,6 +27,7 @@ import { IProductCategory } from 'models';
 import React, { useCallback } from 'react';
 import { formatQuantity } from 'utils/function';
 import * as Yup from 'yup';
+import { ConnectedFocusError } from 'focus-formik-error';
 
 const { Text } = Typography;
 
@@ -367,6 +368,8 @@ export const ModifyProductForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
+					<ConnectedFocusError />
+
 					<Row gutter={[16, 16]}>
 						<Col sm={6} xs={24}>
 							{renderInputField({

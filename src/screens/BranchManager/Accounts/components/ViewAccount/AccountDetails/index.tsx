@@ -88,7 +88,7 @@ export const AccountDetails = ({ account }: Props) => {
 				{account.home_address}
 			</Descriptions.Item>
 
-			<Descriptions.Item label="Is Point System Eligible?">
+			<Descriptions.Item label="Loyalty Membership">
 				{account.is_point_system_eligible ? (
 					<Tag color="green">Yes</Tag>
 				) : (

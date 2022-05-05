@@ -5,23 +5,20 @@ import {
 	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
+	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { BadgePill, ButtonLink, Label } from 'components/elements';
 import {
 	EMPTY_CELL,
 	pageSizeOptions,
-	timeRangeTypes,
+	paymentTypes,
 	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatInPeso,
-	getTransactionStatus,
-} from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils/function';
 import { TransactionsCancelled } from '../../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
 
 const columns: ColumnsType = [
@@ -81,6 +78,7 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 
 	// METHODS
 	useEffect(() => {
+		console.log('transactions', transactions);
 		const formattedBranchTransactions = transactions.map(
 			(branchTransaction) => {
 				const {
@@ -88,6 +86,7 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 					invoice,
 					total_amount,
 					status: branchTransactionStatus,
+					payment,
 				} = branchTransaction;
 
 				return {
@@ -100,7 +99,12 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 					),
 					invoice: invoice?.or_number || EMPTY_CELL,
 					amount: formatInPeso(total_amount),
-					status: getTransactionStatus(branchTransactionStatus),
+					status:
+						payment.mode === paymentTypes.CREDIT ? (
+							<BadgePill label="Pending" variant="secondary" />
+						) : (
+							<TransactionStatus status={branchTransactionStatus} />
+						),
 				};
 			},
 		);

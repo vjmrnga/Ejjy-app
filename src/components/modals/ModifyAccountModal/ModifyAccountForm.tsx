@@ -68,7 +68,7 @@ export const ModifyAccountForm = ({
 				gender: Yup.string().required().label('Gender'),
 				isPointSystemEligible: Yup.boolean()
 					.required()
-					.label('Is Point System Eligible?'),
+					.label('Loyalty Membership'),
 			}),
 		}),
 		[account],
@@ -278,7 +278,7 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col span={24}>
-							<Label label="Is Point System Eligible?" spacing />
+							<Label label="Loyalty Membership" spacing />
 							<Radio.Group
 								value={values.isPointSystemEligible}
 								options={[

@@ -35,14 +35,14 @@ const useTransactions = ({ params }: Query) => {
 			baseURL = params.serverUrl || baseURL;
 
 			const data = {
-				is_adjusted: params?.isAdjusted || false,
+				is_adjusted: params?.isAdjusted,
 				mode_of_payment: params?.modeOfPayment,
 				or_number: params?.orNumber,
+				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+				page: params?.page || DEFAULT_PAGE,
 				payor_creditor_account_id: params?.payorCreditorAccountId,
 				statuses: params?.statuses,
 				time_range: params?.timeRange,
-				page: params?.page || DEFAULT_PAGE,
-				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 			};
 
 			try {
@@ -69,7 +69,7 @@ const useTransactions = ({ params }: Query) => {
 			select: (query) => ({
 				transactions: query.data.results,
 				total: query.data.count,
-				warning: query.data.warning,
+				warning: query.data?.warning,
 			}),
 		},
 	);
