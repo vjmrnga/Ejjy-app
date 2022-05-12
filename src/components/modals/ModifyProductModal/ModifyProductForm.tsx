@@ -2,6 +2,7 @@
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable newline-per-chained-call */
 import { Col, Divider, Input, Row, Select, Typography } from 'antd';
+import { ScrollToFieldError } from 'components';
 import {
 	Button,
 	FieldError,
@@ -27,7 +28,6 @@ import { IProductCategory } from 'models';
 import React, { useCallback } from 'react';
 import { formatQuantity } from 'utils/function';
 import * as Yup from 'yup';
-import { ConnectedFocusError } from 'focus-formik-error';
 
 const { Text } = Typography;
 
@@ -317,6 +317,7 @@ export const ModifyProductForm = ({
 			<Label id={name} label={label} spacing />
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
+					name={name}
 					value={values[name]}
 					type={type}
 					onChange={(e) => {
@@ -350,6 +351,7 @@ export const ModifyProductForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			onSubmit={async (formData) => {
+				console.log('submit');
 				const isWeighing =
 					formData.unitOfMeasurement === unitOfMeasurementTypes.WEIGHING;
 
@@ -371,7 +373,7 @@ export const ModifyProductForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					<ConnectedFocusError />
+					<ScrollToFieldError />
 
 					<Row gutter={[16, 16]}>
 						<Col sm={6} xs={24}>

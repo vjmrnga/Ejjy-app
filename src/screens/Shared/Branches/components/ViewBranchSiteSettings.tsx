@@ -11,7 +11,7 @@ import {
 	Spin,
 	TimePicker,
 } from 'antd';
-import { RequestErrors, TableHeader } from 'components';
+import { RequestErrors, ScrollToFieldError, TableHeader } from 'components';
 import { FieldError, FormattedInputNumber, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
@@ -200,6 +200,7 @@ export const ViewBranchSiteSettings = ({
 		<>
 			<Label id={name} label={label} spacing />
 			<TimePicker
+				name={name}
 				format="h:mm A"
 				size="large"
 				minuteStep={5}
@@ -228,6 +229,7 @@ export const ViewBranchSiteSettings = ({
 			<Label id={name} label={label} spacing />
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
+					name={name}
 					value={values[name]}
 					type={type}
 					onChange={(e) => {
@@ -238,6 +240,7 @@ export const ViewBranchSiteSettings = ({
 			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
+					name={name}
 					size="large"
 					value={values[name]}
 					controls={false}
@@ -291,6 +294,8 @@ export const ViewBranchSiteSettings = ({
 			>
 				{({ values, setFieldValue }) => (
 					<Form>
+						<ScrollToFieldError />
+
 						<Row gutter={[16, 16]}>
 							<Divider>Store Details</Divider>
 

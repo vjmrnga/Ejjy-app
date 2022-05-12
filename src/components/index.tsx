@@ -22,6 +22,7 @@ export * from './RequestWarnings/RequestWarnings';
 export * from './RestrictedAccessState';
 export * from './Route/CommonRoute';
 export * from './Route/NoAuthRoute';
+export * from './ScrollToFieldError';
 export * from './Table/TableActions/TableActions';
 export * from './Table/TableHeaders/TableHeader';
 export * from './Table/TableHeaders/TableHeaderOrderSlip';
