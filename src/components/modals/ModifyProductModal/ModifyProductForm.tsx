@@ -210,8 +210,11 @@ export const ModifyProductForm = ({
 					pricePerPiece: Yup.string()
 						.required()
 						.min(0)
-						.label('Price per Piece'),
-					pricePerBulk: Yup.string().required().min(0).label('Price per Bulk'),
+						.label('Regular Price (Piece)'),
+					pricePerBulk: Yup.string()
+						.required()
+						.min(0)
+						.label('Regular Price (Bulk)'),
 					pointSystemTagId: Yup.string().nullable().label('Point System Tag'),
 
 					checking: Yup.string().label('Checking'),
@@ -238,16 +241,16 @@ export const ModifyProductForm = ({
 					isRandomlyChecked: Yup.boolean(),
 					markdownPricePerPiece1: Yup.number()
 						.min(0)
-						.label('Wholesale Price (piece)'),
+						.label('Wholesale Price (Piece)'),
 					markdownPricePerPiece2: Yup.number()
 						.min(0)
-						.label('Special Price (piece)'),
+						.label('Special Price (Piece)'),
 					markdownPricePerBulk1: Yup.number()
 						.min(0)
-						.label('Wholesale Price (bulk)'),
+						.label('Wholesale Price (Bulk)'),
 					markdownPricePerBulk2: Yup.number()
 						.min(0)
-						.label('Special Price (bulk)'),
+						.label('Special Price (Bulk)'),
 					creditPricePerPiece: Yup.string()
 						.min(0)
 						.test(
@@ -619,7 +622,7 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerPiece',
-								label: 'Regular (Piece)',
+								label: 'Regular Price (Piece)',
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,
@@ -629,7 +632,7 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerBulk',
-								label: 'Regular (Bulk)',
+								label: 'Regular Price (Bulk)',
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,

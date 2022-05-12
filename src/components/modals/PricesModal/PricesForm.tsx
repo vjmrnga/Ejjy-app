@@ -34,10 +34,10 @@ export const PricesForm = ({
 			},
 			Schema: Yup.object().shape({
 				type: Yup.string().label('Current Sales Price Type'),
-				costPerPiece: Yup.number().min(0).label('Cost (piece)'),
-				costPerBulk: Yup.number().min(0).label('Cost (bulk)'),
-				pricePerPiece: Yup.number().min(0).label('Regular Price (piece)'),
-				pricePerBulk: Yup.number().min(0).label('Regular Price (bulk)'),
+				costPerPiece: Yup.number().min(0).label('Cost (Piece)'),
+				costPerBulk: Yup.number().min(0).label('Cost (Bulk)'),
+				pricePerPiece: Yup.number().min(0).label('Regular Price (Piece)'),
+				pricePerBulk: Yup.number().min(0).label('Regular Price (Bulk)'),
 			}),
 		}),
 		[branchProduct],
@@ -77,7 +77,7 @@ export const PricesForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'costPerPiece',
-								label: 'Cost (piece)',
+								label: 'Cost (Piece)',
 								setFieldValue,
 								values,
 							})}
@@ -86,7 +86,7 @@ export const PricesForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'costPerBulk',
-								label: 'Cost (bulk)',
+								label: 'Cost (Bulk)',
 								setFieldValue,
 								values,
 							})}
@@ -95,7 +95,7 @@ export const PricesForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerPiece',
-								label: 'Regular Price (piece)',
+								label: 'Regular Price (Piece)',
 								setFieldValue,
 								values,
 							})}
@@ -104,7 +104,7 @@ export const PricesForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'pricePerBulk',
-								label: 'Regular Price (bulk)',
+								label: 'Regular Price (Bulk)',
 								setFieldValue,
 								values,
 							})}

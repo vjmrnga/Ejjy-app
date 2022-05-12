@@ -75,7 +75,7 @@ export const useProductCreate = () => {
 					max_balance: maxBalance,
 					name: name,
 					pieces_in_bulk: piecesInBulk,
-					point_system_tag_id: pointSystemTagId || null,
+					point_system_tag_id: pointSystemTagId || undefined,
 					price_per_bulk: pricePerBulk,
 					price_per_piece: pricePerPiece,
 					print_details: printDetails,
