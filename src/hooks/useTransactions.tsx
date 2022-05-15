@@ -15,15 +15,16 @@ const useTransactions = ({ params }: Query) => {
 		[
 			'useTransactions',
 			params?.branchId,
+			params?.branchMachineId,
 			params?.isAdjusted,
 			params?.modeOfPayment,
 			params?.orNumber,
+			params?.page,
+			params?.pageSize,
 			params?.payorCreditorAccountId,
 			params?.serverUrl,
 			params?.statuses,
 			params?.timeRange,
-			params?.page,
-			params?.pageSize,
 		],
 		async () => {
 			if (!baseURL && params.branchId) {
@@ -35,6 +36,7 @@ const useTransactions = ({ params }: Query) => {
 			baseURL = params.serverUrl || baseURL;
 
 			const data = {
+				branch_machine_id: params?.branchMachineId,
 				is_adjusted: params?.isAdjusted,
 				mode_of_payment: params?.modeOfPayment,
 				or_number: params?.orNumber,

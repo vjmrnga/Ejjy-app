@@ -1,22 +1,16 @@
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
 import {
 	ConnectivityType,
 	RequestErrors,
 	TableHeader,
 	TimeRangeFilter,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
-import { pageSizeOptions } from '../../../../../global/options';
-import { connectivityTypes } from '../../../../../global/types';
-import { useConnectivityLogs } from '../../../../../hooks';
-import { useQueryParams } from 'hooks';
-import { useTimeRange } from '../../../../../hooks/useTimeRange';
-import {
-	convertIntoArray,
-	formatDateTime,
-} from '../../../../../utils/function';
+} from 'components';
+import { Label } from 'components/elements';
+import { connectivityTypes, pageSizeOptions } from 'global';
+import { useConnectivityLogs, useQueryParams } from 'hooks';
+import React, { useEffect, useState } from 'react';
+import { convertIntoArray, formatDateTime } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type' },

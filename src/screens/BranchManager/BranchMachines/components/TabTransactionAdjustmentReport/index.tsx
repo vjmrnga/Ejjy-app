@@ -56,7 +56,6 @@ export const TabTransactionAdjustmentReport = ({
 		params: {
 			isAdjusted: true,
 			branchMachineId,
-			serverUrl,
 			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},
@@ -132,7 +131,7 @@ export const TabTransactionAdjustmentReport = ({
 				remarks: remarks,
 				totalAmount: formatInPeso(transaction.total_amount),
 				cashier: getFullName(transaction.teller),
-				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
+				authorizer: getFullName(transaction.void_authorizer),
 			};
 		});
 

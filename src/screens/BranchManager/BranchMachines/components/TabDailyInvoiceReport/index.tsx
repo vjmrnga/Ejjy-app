@@ -60,7 +60,6 @@ export const TabDailyInvoiceReport = ({
 			isAdjusted: false,
 			statuses: transactionStatus.FULLY_PAID,
 			branchMachineId,
-			serverUrl,
 			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},

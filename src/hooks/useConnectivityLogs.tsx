@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { ConnectivityLogsService } from 'services';
@@ -18,7 +18,10 @@ const useConnectivityLogs = ({ params }: Query) =>
 				{
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					time_range: params?.timeRange,
+					time_range:
+						params?.timeRange === timeRangeTypes.DAILY
+							? null
+							: params?.timeRange,
 					type: params?.type,
 				},
 				params?.baseUrl,

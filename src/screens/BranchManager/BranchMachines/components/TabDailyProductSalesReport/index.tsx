@@ -129,7 +129,7 @@ export const TabDailyProductSalesReport = ({
 				),
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
 				quantity: formatQuantity(product.unit_of_measurement, quantity),
-				code: `${product.textcode} / ${product.barcode}`,
+				code: `${product.textcode || ''} / ${product.barcode || ''}`,
 				name: `${product.name} / ${product.description}`,
 				sellingPrice: formatInPeso(price_per_piece),
 				vatable: product.is_vat_exempted ? 'VAT Exempt' : 'Vatable',

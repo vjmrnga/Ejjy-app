@@ -98,7 +98,6 @@ export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
 	} = useBirReports({
 		params: {
 			branchMachineId,
-			serverUrl,
 			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},
