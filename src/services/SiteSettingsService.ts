@@ -5,6 +5,7 @@ interface Edit {
 	close_day_deadline: string;
 	close_session_deadline: string;
 	is_markdown_allowed_if_credit: boolean;
+	is_discount_allowed_if_credit: boolean;
 	permit_number: string;
 	pos_accreditation_date: string;
 	pos_accreditation_number: string;

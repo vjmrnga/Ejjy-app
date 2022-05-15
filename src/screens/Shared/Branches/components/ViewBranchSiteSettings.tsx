@@ -79,6 +79,8 @@ export const ViewBranchSiteSettings = ({
 					: null,
 				isMarkdownAllowedIfCredit:
 					siteSettings?.is_markdown_allowed_if_credit || false,
+				isDiscountAllowedIfCredit:
+					siteSettings?.is_discount_allowed_if_credit || false,
 
 				proprietor: siteSettings?.proprietor || '',
 				taxType: siteSettings?.tax_type || null,
@@ -128,6 +130,9 @@ export const ViewBranchSiteSettings = ({
 				isMarkdownAllowedIfCredit: Yup.boolean()
 					.required()
 					.label('Markdown on Credit Transactions'),
+				isDiscountAllowedIfCredit: Yup.boolean()
+					.required()
+					.label('Discount on Credit Transactions'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
 				taxType: Yup.string().required().label('Tax Type'),
@@ -326,6 +331,21 @@ export const ViewBranchSiteSettings = ({
 									]}
 									onChange={(e) => {
 										setFieldValue('isMarkdownAllowedIfCredit', e.target.value);
+									}}
+									optionType="button"
+								/>
+							</Col>
+
+							<Col span={24} md={12}>
+								<Label label="Discount on Credit Transactions" spacing />
+								<Radio.Group
+									value={values.isDiscountAllowedIfCredit}
+									options={[
+										{ label: 'Allowed', value: true },
+										{ label: 'Not Allowed', value: false },
+									]}
+									onChange={(e) => {
+										setFieldValue('isDiscountAllowedIfCredit', e.target.value);
 									}}
 									optionType="button"
 								/>
