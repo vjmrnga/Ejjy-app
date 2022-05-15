@@ -34,13 +34,19 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		isLoading: isEditingBranchProductPriceCost,
 		error: editBranchProductPricCostError,
 	} = useBranchProductEditPriceCost();
-
+	console.log('branchProduct', branchProduct);
 	// METHODS
 	const onSubmit = async (formData) => {
-		await createPriceMarkdown({
-			branchProductId: branchProduct.id,
-			type: formData.type,
-		});
+		console.log('branchProduct', branchProduct);
+		if (
+			branchProduct.price_markdown !== null &&
+			branchProduct.price_markdown?.type !== formData.type
+		) {
+			await createPriceMarkdown({
+				branchProductId: branchProduct.id,
+				type: formData.type,
+			});
+		}
 
 		if (isValid(formData)) {
 			await editBranchProductPriceCost({
