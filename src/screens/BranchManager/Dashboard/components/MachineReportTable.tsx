@@ -101,7 +101,7 @@ export const MachineReportTable = () => {
 		});
 
 		if (status === 204) {
-			message.warn('There is no active session');
+			message.warn('There is no active session.');
 		}
 
 		setXReadReport(data);

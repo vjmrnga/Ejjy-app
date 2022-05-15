@@ -1,8 +1,16 @@
-import { Descriptions, Modal, Space, Typography } from 'antd';
+import {
+	FilePdfOutlined,
+	FileTextOutlined,
+	PrinterOutlined,
+} from '@ant-design/icons';
+import { Button, Descriptions, Modal, Space, Typography } from 'antd';
+import { printZReadReport } from 'configurePrinter';
+import { createZReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import { useSiteSettingsRetrieve } from 'hooks';
-import React from 'react';
+import jsPDF from 'jspdf';
+import React, { useState } from 'react';
 import { formatDate, formatInPeso } from 'utils/function';
 
 const { Text, Title } = Typography;
@@ -13,14 +21,92 @@ interface Props {
 }
 
 export const ViewZReadReportModal = ({ report, onClose }: Props) => {
+	// STATES
+	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
+	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
+	const [html, setHtml] = useState('');
+
 	// CUSTOM HOOKS
 	const { data: siteSettings } = useSiteSettingsRetrieve({
 		options: { refetchOnMount: 'always' },
 	});
 
+	// METHODS
+	const onPrint = () => {
+		printZReadReport({ report, siteSettings });
+	};
+
+	const onCreatePdf = () => {
+		setIsCreatingPdf(true);
+
+		// eslint-disable-next-line new-cap
+		const pdf = new jsPDF({
+			orientation: 'p',
+			unit: 'px',
+			format: 'legal',
+			hotfixes: ['px_scaling'],
+		});
+
+		const dataHtml = printZReadReport({ report, siteSettings, isPdf: true });
+
+		setHtml(dataHtml);
+
+		setTimeout(() => {
+			pdf.html(dataHtml, {
+				margin: 10,
+				filename: `ZReadReport_${report.id}`,
+				callback: (instance) => {
+					window.open(instance.output('bloburl').toString());
+					setIsCreatingPdf(false);
+					setHtml('');
+				},
+			});
+		}, 2000);
+	};
+
+	const onCreateTxt = () => {
+		setIsCreatingTxt(true);
+		createZReadTxt({ report, siteSettings });
+		setIsCreatingTxt(false);
+	};
+
 	return (
 		<Modal
 			title="Z-Read Report"
+			footer={[
+				<Button
+					key="print"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<PrinterOutlined />}
+					size="large"
+					type="primary"
+					onClick={onPrint}
+				>
+					Print
+				</Button>,
+				<Button
+					key="pdf"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<FilePdfOutlined />}
+					loading={isCreatingPdf}
+					size="large"
+					type="primary"
+					onClick={onCreatePdf}
+				>
+					Create PDF
+				</Button>,
+				<Button
+					key="txt"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<FileTextOutlined />}
+					loading={isCreatingTxt}
+					size="large"
+					type="primary"
+					onClick={onCreateTxt}
+				>
+					Create TXT
+				</Button>,
+			]}
 			width={425}
 			centered
 			closable
@@ -144,6 +230,11 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				<Text>{siteSettings.pos_accreditation_date}</Text>
 				<Text>{siteSettings.pos_accreditation_valid_until_date}</Text>
 			</Space>
+
+			<div
+				dangerouslySetInnerHTML={{ __html: html }}
+				style={{ display: 'none' }}
+			/>
 		</Modal>
 	);
 };

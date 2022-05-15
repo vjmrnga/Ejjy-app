@@ -135,13 +135,13 @@ const configurePrinter = (callback = null) => {
 	}
 };
 
-const print = (
-	printData,
+const print = ({
+	data: printData,
 	loadingMessage,
 	successMessage,
 	errorMessage,
-	onComplete,
-) => {
+	onComplete = null,
+}) => {
 	message.loading({
 		content: loadingMessage,
 		key: PRINT_MESSAGE_KEY,
@@ -189,7 +189,9 @@ const print = (
 			console.error(err);
 		})
 		.finally(() => {
-			onComplete();
+			if (onComplete) {
+				onComplete();
+			}
 		});
 };
 
@@ -426,13 +428,13 @@ export const printCancelledTransactions = ({
 	</div>
 	`;
 
-	print(
+	print({
 		data,
-		'Printing transactions...',
-		'Successfully printed transactions.',
-		'Error occurred while trying to print transactions.',
+		loadingMessage: 'Printing transactions...',
+		successMessage: 'Successfully printed transactions.',
+		errorMessage: 'Error occurred while trying to print transactions.',
 		onComplete,
-	);
+	});
 };
 
 export const printOrderOfPayment = (orderOfPayment) => {
@@ -944,6 +946,324 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	`;
 
 	return data;
+};
+
+export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
+	const data = `
+	<div class="container" style="width: 100%; position: relative; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+		${getHeader({
+			proprietor: report?.proprietor,
+			location: report?.location,
+			tin: report?.tin,
+			taxType: siteSettings.tax_type,
+			permitNumber: siteSettings.permit_number,
+		})}
+
+    ${
+			report?.gross_sales === 0
+				? '<div style="text-align: center">NO TRANSACTION</div>'
+				: ''
+		}
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>X-READ</span>
+			<span style="text-align: right;">AS OF ${dayjs().format('MM/DD/YYYY')}</span>
+		</div>
+
+		<br />
+
+    <table style="width: 100%;">
+      <tr>
+        <td>CASH SALES</td>
+        <td style="text-align: right">${formatInPeso(
+					report.cash_sales,
+					PESO_SIGN,
+				)}</td>
+      </tr>
+      <tr>
+        <td>CREDIT SALES</td>
+        <td style="text-align: right">${formatInPeso(
+					report.credit_pay,
+					PESO_SIGN,
+				)}</td>
+      </tr>
+      <tr>
+        <td>GROSS SALES</td>
+        <td style="text-align: right">${formatInPeso(
+					Number(report.cash_sales) + Number(report.credit_pay),
+					PESO_SIGN,
+				)}</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 30px">DISCOUNTS</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.discount,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 30px">VOIDED SALES</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.sales_return,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td><b>NET SALES</b></td>
+        <td style="text-align: right;"><b>${formatInPeso(
+					report.net_sales,
+					PESO_SIGN,
+				)}</b></td>
+      </tr>
+    </table>
+
+		<br />
+
+		<table style="width: 100%;">
+			<tr>
+				<td>VAT Exempt</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.vat_exempt,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+			<tr>
+				<td>VAT Sales</td>
+				<td style="text-align: right">${formatInPeso(report?.vat_sales, PESO_SIGN)}</td>
+			</tr>
+			<tr>
+				<td>VAT Amount</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.vat_12_percent,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+      <tr>
+				<td>ZERO Rated</td>
+				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}</td>
+			</tr>
+		</table>
+
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${report?.branch_machine?.name || 'MN'} </span>
+			<span style="text-align: center;">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
+			<span style="text-align: right;">${report?.total_transactions} tran(s)</span>
+		</div>
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>C: ${
+				report?.cashiering_session
+					? report.cashiering_session.user.employee_id
+					: ''
+			}</span>
+			<span>PB: ${report?.generated_by?.employee_id}</span>
+		</div>
+
+		<br />
+
+		<div style="text-align: center;">Beg Invoice #: ${
+			report?.beginning_or?.or_number || EMPTY_CELL
+		}</div>
+		<div style="text-align: center;">End Invoice #: ${
+			report?.ending_or?.or_number || EMPTY_CELL
+		}</div>
+
+		<div style="display: flex">
+			<div style="flex: 1; padding-right: 20px;">
+				<div>Beg Sales</div>
+				<div>Cur Sales</div>
+				<div>End Sales</div>
+			</div>
+			<div>
+				<div style="display: flex; align-items: center; justify-content: space-between">
+					<span>P </span>
+					<span>${formatInPeso(report?.beginning_sales, '')}</span>
+				</div>
+				<div style="display: flex; align-items: center; justify-content: space-between">
+					<span>P </span>
+					<span>${formatInPeso(report?.total_sales, '')}</span>
+				</div>
+				<div style="display: flex; align-items: center; justify-content: space-between">
+					<span>P </span>
+					<span>${formatInPeso(report?.ending_sales, '')}</span>
+				</div>
+			</div>
+			<div style="flex: 1;"></div>
+		</div>
+
+		<br />
+
+		${getFooter(siteSettings)}
+	</div>
+	`;
+
+	if (isPdf) {
+		return `
+		<html lang="en">
+    <head>
+      <style>
+        .container, .container > div, .container > table {
+          width: 795px !important;
+        }
+      </style>
+    </head>
+		<body>
+				${data}
+    </body>
+  </html>`;
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing xread report...',
+		successMessage: 'Successfully printed xread report.',
+		errorMessage: 'Error occurred while trying to print xread report.',
+	});
+};
+
+export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
+	const data = `
+	<div
+	 class="container"
+		style="
+			width: 100%;
+			font-size: 16px;
+			line-height: 100%;
+			font-family: 'Courier', monospace;
+		"
+	>
+
+		${getHeader({
+			proprietor: report?.proprietor,
+			location: report?.location,
+			tin: report?.tin,
+			taxType: siteSettings.tax_type,
+			permitNumber: siteSettings.permit_number,
+		})}
+
+		<div
+			style="display: flex; align-items: center; justify-content: space-between"
+		>
+			<span>Z-READ</span>
+			<span style="text-align: right">AS OF ${dayjs().format('MM/DD/YYYY')}</span>
+		</div>
+
+		<br />
+
+		<table style="width: 100%">
+			<tr>
+				<td>CASH SALES</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.cash_sales,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+			<tr>
+				<td>CREDIT SALES</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.credit_pay,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+			<tr>
+				<td>GROSS SALES</td>
+				<td style="text-align: right">${formatInPeso(
+					Number(report?.cash_sales) + Number(report?.credit_pay),
+					PESO_SIGN,
+				)}</td>
+			</tr>
+			<tr>
+				<td style="padding-left: 30px">DISCOUNTS</td>
+				<td style="text-align: right">(${formatInPeso(
+					report?.discount,
+					PESO_SIGN,
+				)})</td>
+			</tr>
+			<tr>
+				<td style="padding-left: 30px">VOIDED SALES</td>
+				<td style="text-align: right">(${formatInPeso(
+					report?.sales_return,
+					PESO_SIGN,
+				)})</td>
+			</tr>
+			<tr>
+				<td><b>NET SALES</b></td>
+				<td style="text-align: right"><b>${formatInPeso(
+					report?.net_sales,
+					PESO_SIGN,
+				)}</b></td>
+			</tr>
+		</table>
+
+		<br />
+
+		<table style="width: 100%;">
+			<tr>
+				<td>VAT Exempt</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.vat_exempt,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+			<tr>
+				<td>VAT Sales</td>
+				<td style="text-align: right">${formatInPeso(report?.vat_sales, PESO_SIGN)}</td>
+			</tr>
+			<tr>
+				<td>VAT Amount</td>
+				<td style="text-align: right">${formatInPeso(
+					report?.vat_12_percent,
+					PESO_SIGN,
+				)}</td>
+			</tr>
+      <tr>
+				<td>ZERO Rated</td>
+				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}</td>
+			</tr>
+		</table>
+
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${report?.branch_machine?.name}</span>
+			<span style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
+			<span>${report?.generated_by?.employee_id || EMPTY_CELL}</span>
+		</div>
+
+		<div style="text-align: center">
+			End OR#: ${report?.ending_or?.or_number || EMPTY_CELL}
+		</div>
+
+		<br />
+
+		${getFooter(siteSettings)}
+	</div>
+	`;
+
+	if (isPdf) {
+		return `
+		<html lang="en">
+    <head>
+      <style>
+        .container, .container > div, .container > table {
+          width: 795px !important;
+        }
+      </style>
+    </head>
+		<body>
+				${data}
+    </body>
+  </html>`;
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing zread report...',
+		successMessage: 'Successfully printed zread report.',
+		errorMessage: 'Error occurred while trying to print zread report.',
+	});
 };
 
 export default configurePrinter;
