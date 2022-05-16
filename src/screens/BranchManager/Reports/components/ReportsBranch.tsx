@@ -328,7 +328,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 
 						setIsCompletedInitialFetch(false);
 						setQueryParams({
-							ordering: getSortOrder(sorter.columnKey, sorter.order),
+							ordering: getSortOrder(sorter.field, sorter.order),
 						});
 					}
 				}}
