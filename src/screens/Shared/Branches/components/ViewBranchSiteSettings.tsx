@@ -86,9 +86,12 @@ export const ViewBranchSiteSettings = ({
 				taxType: siteSettings?.tax_type || null,
 				tin: siteSettings?.tin || '',
 				permitNumber: siteSettings?.permit_number || '',
+				contactNumber: siteSettings?.contact_number || '',
 
 				softwareDeveloper: siteSettings?.software_developer || '',
 				softwareDeveloperTin: siteSettings?.software_developer_tin || '',
+				softwareDeveloperAddress:
+					siteSettings?.software_developer_address || '',
 
 				posAccreditationNumber: siteSettings?.pos_accreditation_number || '',
 				posAccreditationDate: siteSettings?.pos_accreditation_date
@@ -138,10 +141,15 @@ export const ViewBranchSiteSettings = ({
 				taxType: Yup.string().required().label('Tax Type'),
 				tin: Yup.string().required().label('TIN'),
 				permitNumber: Yup.string().required().label('Permit Number'),
+				contactNumber: Yup.string().required().label('Contact Number'),
+
 				softwareDeveloper: Yup.string().required().label('Software Developer'),
 				softwareDeveloperTin: Yup.string()
 					.required()
 					.label('Software Developer TIN'),
+				softwareDeveloperAddress: Yup.string()
+					.required()
+					.label('Software Developer Address'),
 
 				posAccreditationNumber: Yup.string()
 					.required()
@@ -305,23 +313,6 @@ export const ViewBranchSiteSettings = ({
 							<Divider>Store Details</Divider>
 
 							<Col span={24} md={12}>
-								{renderInputField({
-									name: 'storeName',
-									label: 'Store Name',
-									setFieldValue,
-									values,
-								})}
-							</Col>
-							<Col span={24} md={12}>
-								{renderInputField({
-									name: 'addressOfTaxPayer',
-									label: 'Address of Tax Payer',
-									setFieldValue,
-									values,
-								})}
-							</Col>
-
-							<Col span={24} md={12}>
 								<Label label="Markdown on Credit Transactions" spacing />
 								<Radio.Group
 									value={values.isMarkdownAllowedIfCredit}
@@ -353,6 +344,23 @@ export const ViewBranchSiteSettings = ({
 
 							<Divider>Receipt Header</Divider>
 
+							<Col span={24} md={12}>
+								{renderInputField({
+									name: 'storeName',
+									label: 'Store Name',
+									setFieldValue,
+									values,
+								})}
+							</Col>
+							<Col span={24} md={12}>
+								{renderInputField({
+									name: 'addressOfTaxPayer',
+									label: 'Address of Tax Payer',
+									setFieldValue,
+									values,
+								})}
+							</Col>
+
 							<Col xs={24} sm={12}>
 								{renderInputField({
 									name: 'proprietor',
@@ -362,7 +370,16 @@ export const ViewBranchSiteSettings = ({
 								})}
 							</Col>
 
-							<Col xs={24} sm={6}>
+							<Col span={24} md={12}>
+								{renderInputField({
+									name: 'contactNumber',
+									label: 'Contact Number',
+									setFieldValue,
+									values,
+								})}
+							</Col>
+
+							<Col xs={24} sm={12}>
 								<Label label="VAT Type" spacing />
 								<Radio.Group
 									value={values.taxType}
@@ -409,6 +426,15 @@ export const ViewBranchSiteSettings = ({
 								{renderInputField({
 									name: 'softwareDeveloperTin',
 									label: 'Software Developer TIN',
+									setFieldValue,
+									values,
+								})}
+							</Col>
+
+							<Col xs={24}>
+								{renderInputField({
+									name: 'softwareDeveloperAddress',
+									label: 'Software Developer Address',
 									setFieldValue,
 									values,
 								})}

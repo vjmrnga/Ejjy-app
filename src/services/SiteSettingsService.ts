@@ -4,8 +4,9 @@ interface Edit {
 	address_of_tax_payer: string;
 	close_day_deadline: string;
 	close_session_deadline: string;
-	is_markdown_allowed_if_credit: boolean;
+	contact_number: string;
 	is_discount_allowed_if_credit: boolean;
+	is_markdown_allowed_if_credit: boolean;
 	permit_number: string;
 	pos_accreditation_date: string;
 	pos_accreditation_number: string;
@@ -18,6 +19,7 @@ interface Edit {
 	reporting_period_day_of_month: string;
 	reset_counter_notification_threshold_amount: number;
 	reset_counter_notification_threshold_invoice_number: number;
+	software_developer_address: string;
 	software_developer_tin: string;
 	software_developer: string;
 	store_name: string;

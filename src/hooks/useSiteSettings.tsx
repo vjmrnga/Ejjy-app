@@ -34,12 +34,13 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query) => {
 export const useSiteSettingsEdit = () =>
 	useMutation<any, any, any>(
 		({
-			id,
 			addressOfTaxPayer,
 			closeDayDeadline,
 			closeSessionDeadline,
-			isMarkdownAllowedIfCredit,
+			contactNumber,
+			id,
 			isDiscountAllowedIfCredit,
+			isMarkdownAllowedIfCredit,
 			permitNumber,
 			posAccreditationDate,
 			posAccreditationNumber,
@@ -53,6 +54,7 @@ export const useSiteSettingsEdit = () =>
 			resetCounterNotificationThresholdAmount,
 			resetCounterNotificationThresholdInvoiceNumber,
 			softwareDeveloper,
+			softwareDeveloperAddress,
 			softwareDeveloperTin,
 			storeName,
 			taxType,
@@ -65,8 +67,9 @@ export const useSiteSettingsEdit = () =>
 					address_of_tax_payer: addressOfTaxPayer,
 					close_day_deadline: closeDayDeadline,
 					close_session_deadline: closeSessionDeadline,
-					is_markdown_allowed_if_credit: isMarkdownAllowedIfCredit,
+					contact_number: contactNumber,
 					is_discount_allowed_if_credit: isDiscountAllowedIfCredit,
+					is_markdown_allowed_if_credit: isMarkdownAllowedIfCredit,
 					permit_number: permitNumber,
 					pos_accreditation_date: posAccreditationDate,
 					pos_accreditation_number: posAccreditationNumber,
@@ -81,6 +84,7 @@ export const useSiteSettingsEdit = () =>
 						resetCounterNotificationThresholdAmount,
 					reset_counter_notification_threshold_invoice_number:
 						resetCounterNotificationThresholdInvoiceNumber,
+					software_developer_address: softwareDeveloperAddress,
 					software_developer_tin: softwareDeveloperTin,
 					software_developer: softwareDeveloper,
 					store_name: storeName,
