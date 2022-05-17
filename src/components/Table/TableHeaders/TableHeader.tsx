@@ -7,50 +7,46 @@ import { Option } from '../../elements/Select/Select';
 import { PendingCount } from '../../PendingCount/PendingCount';
 import './style.scss';
 
-const SEARCH_DEBOUNCE_TIME = 250; // 250ms
+const SEARCH_DEBOUNCE_TIME_MS = 250;
 
 interface Props {
-	title?: string;
 	buttonName?: string;
+	onCreate?: any;
 	onCreateDisabled?: boolean;
 	onCreateTooltip?: string;
-	onCreate?: any;
-	pending?: number;
-
-	searchPlaceholder?: string;
 	onSearch?: any;
-	searchDisabled?: boolean;
-
-	statuses?: Option[];
 	onStatusSelect?: any;
+	pending?: number;
+	searchDisabled?: boolean;
+	searchPlaceholder?: string;
 	statusDisabled?: boolean;
+	statuses?: Option[];
+	title?: string;
+	wrapperClassName?: string;
 }
 
 export const TableHeader = ({
-	title,
-
 	buttonName,
+	onCreate,
 	onCreateDisabled,
 	onCreateTooltip,
-
-	onCreate,
-	pending,
-
-	searchPlaceholder,
 	onSearch,
-	searchDisabled,
-
-	statuses,
 	onStatusSelect,
+	pending,
+	searchDisabled,
+	searchPlaceholder,
 	statusDisabled,
+	statuses,
+	title,
+	wrapperClassName,
 }: Props) => {
 	const debounceSearchedChange = useCallback(
-		debounce((keyword) => onSearch(keyword), SEARCH_DEBOUNCE_TIME),
+		debounce((keyword) => onSearch(keyword), SEARCH_DEBOUNCE_TIME_MS),
 		[onSearch],
 	);
 
 	return (
-		<div className="TableHeader">
+		<div className={cn('TableHeader', wrapperClassName)}>
 			{title && <p className="title">{title}</p>}
 			<div
 				className={cn('controls', {

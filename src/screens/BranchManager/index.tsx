@@ -12,6 +12,9 @@ import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ViewAccount } from 'screens/BranchManager/Accounts/ViewAccount';
+import { Checkings } from 'screens/BranchManager/Checkings';
+import { FulfillChecking } from 'screens/BranchManager/Checkings/Fulfill';
+import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
 import { PointSystemTags } from 'screens/BranchManager/PointSystemTags';
 import { Reports } from 'screens/BranchManager/Reports';
@@ -26,7 +29,6 @@ import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
-import { Checking } from './Checking';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
@@ -231,11 +233,11 @@ const BranchManager = () => {
 				link: '/branch-manager/order-slips',
 			},
 			{
-				key: 'checking',
-				name: 'Checking',
+				key: 'checkings',
+				name: 'Checkings',
 				activeIcon: require('../../assets/images/icon-checking-active.svg'),
 				defaultIcon: require('../../assets/images/icon-checking.svg'),
-				link: '/branch-manager/checking',
+				link: '/branch-manager/checkings',
 			},
 			{
 				key: 'site-settings',
@@ -365,7 +367,17 @@ const BranchManager = () => {
 
 					<Route path="/branch-manager/order-slips" component={OrderSlips} />
 
-					<Route path="/branch-manager/checking" component={Checking} />
+					<Route path="/branch-manager/checkings" component={Checkings} exact />
+					<Route
+						path="/branch-manager/checkings/fulfill"
+						component={FulfillChecking}
+						exact
+					/>
+					<Route
+						path="/branch-manager/checkings/:id"
+						component={ViewChecking}
+						exact
+					/>
 
 					<Route
 						path="/branch-manager/notifications"

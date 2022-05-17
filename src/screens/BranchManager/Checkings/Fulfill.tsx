@@ -1,6 +1,7 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	AddButtonIcon,
+	Breadcrumb,
 	Content,
 	FulfillCheckModal,
 	RequestErrors,
@@ -24,7 +25,7 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'action' },
 ];
 
-export const Checking = () => {
+export const FulfillChecking = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [dailyCheck, setDailyCheck] = useState(null);
@@ -75,7 +76,18 @@ export const Checking = () => {
 	}, [dailyProductChecks]);
 
 	return (
-		<Content className="Checking" title="Checking">
+		<Content
+			className="Checking"
+			title="[FULFILL] Check"
+			breadcrumb={
+				<Breadcrumb
+					items={[
+						{ name: 'Checkings', link: '/branch-manager/checkings' },
+						{ name: 'Fulfill' },
+					]}
+				/>
+			}
+		>
 			{dailyCheck && (
 				<DailyCheckCard
 					dateTimeRequested={dailyCheck?.datetime_created}
