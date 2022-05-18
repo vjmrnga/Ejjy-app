@@ -648,7 +648,7 @@ export const ModifyProductForm = ({
 								<Col sm={12} xs={24}>
 									{renderInputField({
 										name: 'creditPricePerPiece',
-										label: 'Credit (Piece)',
+										label: 'Credit Price (Piece)',
 										setFieldValue,
 										values,
 										type: inputTypes.MONEY,
@@ -658,7 +658,7 @@ export const ModifyProductForm = ({
 								<Col sm={12} xs={24}>
 									{renderInputField({
 										name: 'creditPricePerBulk',
-										label: 'Credit (Bulk)',
+										label: 'Credit Price (Bulk)',
 										setFieldValue,
 										values,
 										type: inputTypes.MONEY,
