@@ -596,7 +596,7 @@ export const ModifyProductForm = ({
 						</Col>
 
 						<Divider dashed>
-							MONEY
+							PRICES
 							<br />
 							<Text mark>(must be in 2 decimal places)</Text>
 						</Divider>
@@ -643,8 +643,6 @@ export const ModifyProductForm = ({
 
 						{product && (
 							<>
-								<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
-
 								<Col sm={12} xs={24}>
 									{renderInputField({
 										name: 'creditPricePerPiece',
@@ -666,37 +664,9 @@ export const ModifyProductForm = ({
 								</Col>
 
 								<Col sm={12} xs={24}>
-									<Label label="In Stock" spacing />
-									<FormRadioButton id="isSoldInBranch" items={booleanOptions} />
-									<ErrorMessage
-										name="isSoldInBranch"
-										render={(error) => <FieldError error={error} />}
-									/>
-								</Col>
-
-								<Col sm={12} xs={24}>
-									<Label label="Checking" spacing />
-									<FormRadioButton id="checking" items={checkingTypesOptions} />
-									<ErrorMessage
-										name="checking"
-										render={(error) => <FieldError error={error} />}
-									/>
-								</Col>
-
-								<Col sm={12} xs={24}>
 									{renderInputField({
 										name: 'markdownPricePerPiece1',
 										label: 'Wholesale Price (Piece)',
-										setFieldValue,
-										values,
-										type: inputTypes.MONEY,
-									})}
-								</Col>
-
-								<Col sm={12} xs={24}>
-									{renderInputField({
-										name: 'markdownPricePerPiece2',
-										label: 'Special Price (Piece)',
 										setFieldValue,
 										values,
 										type: inputTypes.MONEY,
@@ -715,12 +685,46 @@ export const ModifyProductForm = ({
 
 								<Col sm={12} xs={24}>
 									{renderInputField({
+										name: 'markdownPricePerPiece2',
+										label: 'Special Price (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+
+								<Col sm={12} xs={24}>
+									{renderInputField({
 										name: 'markdownPricePerBulk2',
 										label: 'Special Price (Bulk)',
 										setFieldValue,
 										values,
 										type: inputTypes.MONEY,
 									})}
+								</Col>
+							</>
+						)}
+
+						{product && (
+							<>
+								<Divider dashed>BRANCH PRODUCT SETTINGS</Divider>
+
+								<Col sm={12} xs={24}>
+									<Label label="In Stock" spacing />
+									<FormRadioButton id="isSoldInBranch" items={booleanOptions} />
+									<ErrorMessage
+										name="isSoldInBranch"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+
+								<Col sm={12} xs={24}>
+									<Label label="Checking" spacing />
+									<FormRadioButton id="checking" items={checkingTypesOptions} />
+									<ErrorMessage
+										name="checking"
+										render={(error) => <FieldError error={error} />}
+									/>
 								</Col>
 							</>
 						)}
