@@ -1,21 +1,14 @@
 import { Col, Radio, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import {
-	RequestErrors,
-	RequestWarnings,
-	TableHeader,
-} from '../../../../../components';
-import { Label } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
-import { pageSizeOptions } from '../../../../../global/options';
-import { request } from '../../../../../global/types';
-import { useBranchesDays } from '../../../../../hooks/useBranchesDays';
+import { RequestErrors, RequestWarnings, TableHeader } from 'components';
+import { Label } from 'components/elements';
+import { EMPTY_CELL } from 'global';
+import { pageSizeOptions } from 'global';
+import { request } from 'global';
+import { useBranchesDays } from 'hooks/useBranchesDays';
 import { useQueryParams } from 'hooks';
-import {
-	convertIntoArray,
-	formatDateTimeShortMonth,
-} from '../../../../../utils/function';
+import { convertIntoArray, formatDateTimeShortMonth } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -25,6 +18,12 @@ const columns: ColumnsType = [
 const branchDayTypes = {
 	ALL: 'all',
 	UNAUTHORIZED: 'unauthorized',
+};
+
+const closingTypes = {
+	ALL: 'all',
+	AUTOMATIC: 'automatic',
+	MANUAL: 'manual',
 };
 
 interface Props {
@@ -48,16 +47,22 @@ export const TabDays = ({ serverUrl }: Props) => {
 		warnings,
 	} = useBranchesDays();
 
-	const { params: queryParams, setQueryParams } = useQueryParams({
+	const { setQueryParams } = useQueryParams({
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
+			let isAutomaticallyClosed = undefined;
+			if (params.closingType) {
+				isAutomaticallyClosed = params.closingType === closingTypes.AUTOMATIC;
+			}
+
 			listBranchDays(
 				{
 					...params,
 					serverUrl,
 					isUnauthorized:
 						params.type === branchDayTypes.UNAUTHORIZED ? true : undefined,
+					isAutomaticallyClosed,
 				},
 				true,
 			);
@@ -67,13 +72,23 @@ export const TabDays = ({ serverUrl }: Props) => {
 	// METHODS
 	useEffect(() => {
 		const formattedBranchDays = branchDays.map((branchDay) => {
-			const { id, started_by, ended_by, datetime_created, datetime_ended } =
-				branchDay;
+			const {
+				id,
+				started_by,
+				ended_by,
+				datetime_created,
+				datetime_ended,
+				is_automatically_closed,
+			} = branchDay;
 
 			return {
 				key: id,
 				user: renderUser(started_by, ended_by),
-				datetime: renderDateTime(datetime_created, datetime_ended),
+				datetime: renderDateTime({
+					datetimeStarted: datetime_created,
+					datetimeEnded: datetime_ended,
+					isAutomaticallyClosed: is_automatically_closed,
+				}),
 			};
 		});
 
@@ -104,21 +119,26 @@ export const TabDays = ({ serverUrl }: Props) => {
 		);
 	};
 
-	const renderDateTime = (datetime_created, datetime_ended) => (
+	const renderDateTime = ({
+		datetimeStarted,
+		datetimeEnded,
+		isAutomaticallyClosed,
+	}) => (
 		<div className="branch-day-column">
 			<div className="first-row">
 				<span className="label">Open: </span>
 				<span className="value">
-					{datetime_created
-						? formatDateTimeShortMonth(datetime_created)
+					{datetimeStarted
+						? formatDateTimeShortMonth(datetimeStarted)
 						: EMPTY_CELL}
 				</span>
 			</div>
 			<div>
 				<span className="label">Close: </span>
 				<span className="value">
-					{datetime_ended
-						? formatDateTimeShortMonth(datetime_ended)
+					{datetimeEnded
+						? formatDateTimeShortMonth(datetimeEnded) +
+						  `${isAutomaticallyClosed ? '(A)' : ''}`
 						: EMPTY_CELL}
 				</span>
 			</div>
@@ -129,12 +149,7 @@ export const TabDays = ({ serverUrl }: Props) => {
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-			/>
+			<Filter />
 
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
@@ -163,27 +178,45 @@ export const TabDays = ({ serverUrl }: Props) => {
 	);
 };
 
-interface FilterProps {
-	params: any;
-	setQueryParams: any;
-}
+const Filter = () => {
+	const { params, setQueryParams } = useQueryParams();
 
-const Filter = ({ params, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<Label label="Type" spacing />
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Closing Type" spacing />
+				<Radio.Group
+					optionType="button"
+					options={[
+						{ label: 'All', value: closingTypes.ALL },
+						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
+						{ label: 'Manual', value: closingTypes.MANUAL },
+					]}
+					onChange={(e) => {
+						setQueryParams(
+							{ closingType: e.target.value },
+							{ shouldResetPage: true },
+						);
+					}}
+					defaultValue={params.closingType || closingTypes.ALL}
+				/>
+			</Col>
 
-			<Radio.Group
-				optionType="button"
-				options={[
-					{ label: 'All', value: branchDayTypes.ALL },
-					{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
-				]}
-				onChange={(e) => {
-					setQueryParams({ type: e.target.value });
-				}}
-				defaultValue={params.type || branchDayTypes.ALL}
-			/>
-		</Col>
-	</Row>
-);
+			<Col lg={12} span={24}>
+				<Label label="Authorization" spacing />
+
+				<Radio.Group
+					optionType="button"
+					options={[
+						{ label: 'All', value: branchDayTypes.ALL },
+						{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
+					]}
+					onChange={(e) => {
+						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
+					}}
+					defaultValue={params.type || branchDayTypes.ALL}
+				/>
+			</Col>
+		</Row>
+	);
+};

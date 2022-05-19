@@ -29,13 +29,23 @@ const sessionTypes = {
 	UNAUTHORIZED: 'unauthorized',
 };
 
+const closingTypes = {
+	ALL: 'all',
+	AUTOMATIC: 'automatic',
+	MANUAL: 'manual',
+};
+
 interface Props {
 	serverUrl: any;
 }
+/* TODO
+Call nalang ka sa imong self para sa List Users API (for filtering)
+Call nalang ka sa imong self para sa List Cashiering Sessions API but pass ka ug branch_machine_id  nya (TBD pa akong API ani)
 
+*/
 export const TabSessions = ({ serverUrl }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const {
@@ -52,12 +62,18 @@ export const TabSessions = ({ serverUrl }: Props) => {
 		page: currentPage,
 		pageSize,
 		onQueryParamChange: (params) => {
+			let isAutomaticallyClosed = undefined;
+			if (params.closingType) {
+				isAutomaticallyClosed = params.closingType === closingTypes.AUTOMATIC;
+			}
+
 			listSessions(
 				{
 					...params,
 					serverUrl,
 					isUnauthorized:
 						params.type === sessionTypes.UNAUTHORIZED ? true : undefined,
+					isAutomaticallyClosed: isAutomaticallyClosed,
 				},
 				true,
 			);
@@ -70,8 +86,9 @@ export const TabSessions = ({ serverUrl }: Props) => {
 			const {
 				id,
 				user,
-				datetime_started,
-				datetime_ended,
+				datetime_started: datetimeStarted,
+				datetime_ended: datetimeEnded,
+				is_automatically_closed: isAutomaticallyClosed,
 				is_unauthorized,
 				is_unauthorized_datetime_ended,
 			} = session;
@@ -79,32 +96,45 @@ export const TabSessions = ({ serverUrl }: Props) => {
 			return {
 				key: id,
 				user: getFullName(user),
-				datetime: renderDateTime(datetime_started, datetime_ended),
+				datetime: renderDateTime({
+					datetimeStarted,
+					datetimeEnded,
+					isAutomaticallyClosed,
+				}),
 				unauthorizedTimeRange: is_unauthorized_datetime_ended
-					? renderDateTime(datetime_started, is_unauthorized_datetime_ended)
+					? renderDateTime({
+							datetimeStarted,
+							datetimeEnded: is_unauthorized_datetime_ended,
+							isAutomaticallyClosed,
+					  })
 					: EMPTY_CELL,
 				status: <Status isAuthorized={!is_unauthorized} />,
 			};
 		});
 
-		setData(formattedBranchSession);
+		setDataSource(formattedBranchSession);
 	}, [sessions]);
 
-	const renderDateTime = (datetime_started, datetime_ended) => (
+	const renderDateTime = ({
+		datetimeStarted,
+		datetimeEnded,
+		isAutomaticallyClosed,
+	}) => (
 		<div className="branch-session-column">
 			<div className="first-row">
 				<span className="label">Start: </span>
 				<span className="value">
-					{datetime_started
-						? formatDateTimeShortMonth(datetime_started)
+					{datetimeStarted
+						? formatDateTimeShortMonth(datetimeStarted)
 						: EMPTY_CELL}
 				</span>
 			</div>
 			<div>
 				<span className="label">End: </span>
 				<span className="value">
-					{datetime_ended
-						? formatDateTimeShortMonth(datetime_ended)
+					{datetimeEnded
+						? formatDateTimeShortMonth(datetimeEnded) +
+						  `${isAutomaticallyClosed ? '(A)' : ''}`
 						: EMPTY_CELL}
 				</span>
 			</div>
@@ -115,14 +145,14 @@ export const TabSessions = ({ serverUrl }: Props) => {
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" />
 
-			<Filter serverUrl={serverUrl} isLoading={status === request.REQUESTING} />
+			<Filter isLoading={status === request.REQUESTING} />
 
 			<RequestErrors errors={convertIntoArray(errors)} />
 			<RequestWarnings warnings={convertIntoArray(warnings)} />
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 650 }}
 				pagination={{
 					current: currentPage,
@@ -137,7 +167,7 @@ export const TabSessions = ({ serverUrl }: Props) => {
 							{ shouldResetPage: true },
 						);
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
@@ -148,21 +178,17 @@ export const TabSessions = ({ serverUrl }: Props) => {
 };
 
 interface FilterProps {
-	serverUrl: string;
 	isLoading: boolean;
 }
 
-const Filter = ({ serverUrl, isLoading }: FilterProps) => {
+const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 
 	const {
 		data: { users },
 		isFetching,
 	} = useUsers({
-		params: {
-			serverUrl,
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	return (
@@ -195,7 +221,31 @@ const Filter = ({ serverUrl, isLoading }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<Label label="Type" spacing />
+				<TimeRangeFilter disabled={isLoading} />
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Closing Type" spacing />
+				<Radio.Group
+					optionType="button"
+					options={[
+						{ label: 'All', value: closingTypes.ALL },
+						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
+						{ label: 'Manual', value: closingTypes.MANUAL },
+					]}
+					onChange={(e) => {
+						setQueryParams(
+							{ closingType: e.target.value },
+							{ shouldResetPage: true },
+						);
+					}}
+					disabled={isLoading}
+					defaultValue={params.closingType || closingTypes.ALL}
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Authorization" spacing />
 				<Radio.Group
 					optionType="button"
 					options={[
@@ -208,10 +258,6 @@ const Filter = ({ serverUrl, isLoading }: FilterProps) => {
 					disabled={isLoading}
 					defaultValue={params.type || sessionTypes.ALL}
 				/>
-			</Col>
-
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isLoading} />
 			</Col>
 		</Row>
 	);

@@ -9,19 +9,21 @@ import { getBaseUrl } from './helper';
 function* list({ payload }: any) {
 	const {
 		branchId,
+		callback,
+		isAutomaticallyClosed,
 		isUnauthorized,
 		page,
 		pageSize,
 		serverUrl,
 		timeRange,
 		userId,
-		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
+		is_automatically_closed: isAutomaticallyClosed,
 		is_unauthorized: isUnauthorized,
 		page_size: pageSize,
 		page,

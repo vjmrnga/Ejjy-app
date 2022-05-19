@@ -7,16 +7,24 @@ import { getBaseUrl } from './helper';
 
 /* WORKERS */
 function* list({ payload }: any) {
-	const { page, pageSize, branchId, serverUrl, isUnauthorized, callback } =
-		payload;
+	const {
+		branchId,
+		callback,
+		isAutomaticallyClosed,
+		isUnauthorized,
+		page,
+		pageSize,
+		serverUrl,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
-		page,
-		page_size: pageSize,
+		is_automatically_closed: isAutomaticallyClosed,
 		is_unauthorized: isUnauthorized,
+		page_size: pageSize,
+		page,
 	};
 
 	let isFetchedFromBackupURL = false;
