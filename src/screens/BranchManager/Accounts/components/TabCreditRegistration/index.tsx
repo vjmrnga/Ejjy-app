@@ -55,8 +55,12 @@ export const TabCreditRegistrations = () => {
 			return {
 				key: id,
 				clientCode: (
-					<Button type="link" onClick={() => setSelectedAccount(account)}>
-						{account.id}
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => setSelectedAccount(account)}
+					>
+						{account.account_code}
 					</Button>
 				),
 				clientName: getFullName(account),

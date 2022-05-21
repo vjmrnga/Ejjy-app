@@ -51,15 +51,22 @@ export const TabCreditTransactions = () => {
 	});
 
 	// METHODS
+
 	useEffect(() => {
 		const formattedTransactions = transactions.map((transaction) => {
-			const { id, invoice, total_amount, employee_id, datetime_created } =
-				transaction;
+			const {
+				id,
+				invoice,
+				total_amount,
+				employee_id,
+				datetime_created,
+				payment,
+			} = transaction;
 
 			return {
 				key: id,
 				datetime: formatDateTime(datetime_created),
-				clientCode: EMPTY_CELL, // TODO: set correct value
+				clientCode: payment?.creditor_account?.account_code,
 				invoiceNumber: (
 					<Button
 						type="link"

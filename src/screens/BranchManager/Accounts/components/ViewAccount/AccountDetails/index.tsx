@@ -35,12 +35,17 @@ export const AccountDetails = ({ account }: Props) => {
 			<Descriptions.Item label="First Name">
 				{account.first_name}
 			</Descriptions.Item>
+
 			<Descriptions.Item label="Last Name">
 				{account.last_name}
 			</Descriptions.Item>
+
 			<Descriptions.Item label="Middle Name">
 				{account.middle_name}
 			</Descriptions.Item>
+
+			<Descriptions.Item label="Code">{account.account_code}</Descriptions.Item>
+
 			<Descriptions.Item label="Gender">
 				{account.gender === 'm' ? 'Male' : 'Female'}
 			</Descriptions.Item>

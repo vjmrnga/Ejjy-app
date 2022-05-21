@@ -1,17 +1,16 @@
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { RequestErrors, TableHeader } from 'components';
+import { printCollectionReceipt } from 'configurePrinter';
+import { pageSizeOptions } from 'global';
+import {
+	useCollectionReceipts,
+	useQueryParams,
+	useSiteSettingsRetrieve,
+} from 'hooks';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { RequestErrors, TableHeader } from '../../../../../components';
-import { printCollectionReceipt } from '../../../../../configurePrinter';
-import { pageSizeOptions } from '../../../../../global/options';
-import useCollectionReceipts from '../../../../../hooks/useCollectionReceipts';
-import { useQueryParams } from 'hooks';
-import {
-	convertIntoArray,
-	formatInPeso,
-	getFullName,
-} from '../../../../../utils/function';
+import { convertIntoArray, formatInPeso, getFullName } from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'CR#', dataIndex: 'id' },
@@ -31,9 +30,18 @@ export const TabCollectionReceipts = () => {
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
+		data: siteSettings,
+		isFetching: isSiteSettingsFetching,
+		error: siteSettingsError,
+	} = useSiteSettingsRetrieve({
+		options: {
+			refetchOnMount: 'always',
+		},
+	});
+	const {
 		data: { collectionReceipts, total },
-		isFetching,
-		error,
+		isFetching: isCollectionReceiptsFetching,
+		error: collectionReceiptsError,
 	} = useCollectionReceipts({ params: {} });
 
 	// METHODS
@@ -68,7 +76,7 @@ export const TabCollectionReceipts = () => {
 	const onPrintPDF = (collectionReceipt) => {
 		setIsPrinting(collectionReceipt.id);
 
-		const html = printCollectionReceipt(collectionReceipt);
+		const html = printCollectionReceipt({ collectionReceipt, siteSettings });
 		const pdf = new jsPDF({
 			orientation: 'p',
 			unit: 'px',
@@ -91,7 +99,12 @@ export const TabCollectionReceipts = () => {
 		<div>
 			<TableHeader title="Collection Receipts" />
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors
+				errors={[
+					...convertIntoArray(collectionReceiptsError, 'Collection Receipts'),
+					...convertIntoArray(siteSettingsError, 'Site Settings'),
+				]}
+			/>
 
 			<Table
 				columns={columns}
@@ -111,7 +124,7 @@ export const TabCollectionReceipts = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isCollectionReceiptsFetching || isSiteSettingsFetching}
 			/>
 		</div>
 	);

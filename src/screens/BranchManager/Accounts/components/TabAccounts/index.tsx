@@ -57,7 +57,9 @@ export const TabAccounts = () => {
 	useEffect(() => {
 		const data = accounts.map((account) => ({
 			key: account.id,
-			clientCode: <Link to={`accounts/${account.id}`}>{account.id}</Link>,
+			clientCode: (
+				<Link to={`accounts/${account.id}`}>{account.account_code}</Link>
+			),
 			name: getFullName(account),
 			homeAddress: account.home_address,
 			businessAddress: account.business_address,
