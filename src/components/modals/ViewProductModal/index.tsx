@@ -37,6 +37,14 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 		>
 			<DetailsRow>
 				<DetailsSingle label="Barcode" value={product.barcode} />
+				<DetailsSingle
+					label="Selling Barcode"
+					value={product.selling_barcode}
+				/>
+				<DetailsSingle
+					label="Packing Barcode"
+					value={product.packing_barcode}
+				/>
 				<DetailsSingle label="Textcode" value={product.textcode} />
 				<DetailsSingle label="Name" value={product.name} />
 				<DetailsSingle
@@ -54,6 +62,19 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 					label="TT-002"
 					value={getUnitOfMeasurement(product.unit_of_measurement)}
 				/>
+				<DetailsSingle
+					label="TT-002 (Selling Barcode)"
+					value={getUnitOfMeasurement(
+						product.selling_barcode_unit_of_measurement,
+					)}
+				/>
+				<DetailsSingle
+					label="TT-002 (Packing Barcode)"
+					value={getUnitOfMeasurement(
+						product.packing_barcode_unit_of_measurement,
+					)}
+				/>
+
 				<DetailsSingle
 					label="TT-003"
 					value={product.is_vat_exempted ? 'VAT-EXEMPTED' : 'VAT'}

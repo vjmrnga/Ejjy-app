@@ -18,6 +18,8 @@ interface Modify {
 	is_vat_exempted: boolean;
 	max_balance: number;
 	name: string;
+	packing_barcode_unit_of_measurement?: 'Weighing' | 'Non-Weighing';
+	packing_barcode?: string;
 	pieces_in_bulk: number;
 	point_system_tag_id: number;
 	price_per_bulk: number;
@@ -25,6 +27,8 @@ interface Modify {
 	print_details: string;
 	product_category: string;
 	reorder_point: number;
+	selling_barcode_unit_of_measurement?: 'Weighing' | 'Non-Weighing';
+	selling_barcode?: string;
 	textcode: number;
 	type: 'Wet' | 'Dry';
 	unit_of_measurement: 'Weighing' | 'Non-Weighing';

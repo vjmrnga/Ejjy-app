@@ -101,6 +101,8 @@ export const ModifyProductForm = ({
 				actingUserId: user.id,
 				allowableSpoilage: product?.allowable_spoilage * 100 || '',
 				barcode: product?.barcode || '',
+				sellingBarcode: product?.selling_barcode || '',
+				packingBarcode: product?.packing_barcode || '',
 				costPerBulk: product?.cost_per_bulk || '',
 				costPerPiece: product?.cost_per_piece || '',
 				description: product?.description || '',
@@ -124,6 +126,12 @@ export const ModifyProductForm = ({
 				type: product?.type || productTypes.WET,
 				unitOfMeasurement:
 					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
+				sellingBarcodeUnitOfMeasurement:
+					product?.selling_barcode_unit_of_measurement ||
+					unitOfMeasurementTypes.WEIGHING,
+				packingBarcodeUnitOfMeasurement:
+					product?.packing_barcode_unit_of_measurement ||
+					unitOfMeasurementTypes.WEIGHING,
 
 				// NOTE: Branch product settings
 				creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
@@ -150,6 +158,9 @@ export const ModifyProductForm = ({
 						50,
 						'Barcode/Textcode must be at most 50 characters',
 					),
+					sellingBarcode: Yup.string().max(50).label('Selling Barcode'),
+					packingBarcode: Yup.string().max(50).label('Packing Barcode'),
+
 					name: Yup.string().required().max(70).label('Name'),
 					type: Yup.string().label('TT-001'),
 					unitOfMeasurement: Yup.string().label('TT-002'),
@@ -376,7 +387,7 @@ export const ModifyProductForm = ({
 					<ScrollToFieldError />
 
 					<Row gutter={[16, 16]}>
-						<Col sm={6} xs={24}>
+						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'barcode',
 								label: 'Barcode',
@@ -385,7 +396,63 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={6} xs={24}>
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="unitOfMeasurement"
+								items={unitOfMeasurementOptions}
+							/>
+							<ErrorMessage
+								name="unitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'sellingBarcode',
+								label: 'Selling Barcode',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="sellingBarcodeUnitOfMeasurement"
+								items={unitOfMeasurementOptions}
+								disabled={!values.sellingBarcode}
+							/>
+							<ErrorMessage
+								name="sellingBarcodeUnitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							{renderInputField({
+								name: 'packingBarcode',
+								label: 'Packing Barcode',
+								setFieldValue,
+								values,
+							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="packingBarcodeUnitOfMeasurement"
+								items={unitOfMeasurementOptions}
+								disabled={!values.packingBarcode}
+							/>
+							<ErrorMessage
+								name="packingBarcodeUnitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'textcode',
 								label: 'Textcode',
@@ -449,18 +516,6 @@ export const ModifyProductForm = ({
 							<FormRadioButton id="type" items={type} />
 							<ErrorMessage
 								name="type"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
-							<FormRadioButton
-								id="unitOfMeasurement"
-								items={unitOfMeasurementOptions}
-							/>
-							<ErrorMessage
-								name="unitOfMeasurement"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
