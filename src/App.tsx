@@ -12,9 +12,8 @@ import npmPackage from '../package.json';
 
 const App = () => (
 	<>
-		<Helmet>
-			<title>{`${APP_TITLE} (v${npmPackage.version})`}</title>
-		</Helmet>
+		<Helmet title={`${APP_TITLE} (v${npmPackage.version})`} />
+
 		<Switch>
 			<NoAuthRoute path="/login" exact component={Login} />
 

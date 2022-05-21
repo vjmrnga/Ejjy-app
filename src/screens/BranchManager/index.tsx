@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import { Container } from 'components';
+import { Container, TimeMismatchBoundary } from 'components';
 import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
 import {
 	useBranchProducts,
@@ -266,6 +266,8 @@ const BranchManager = () => {
 
 	return (
 		<Container sidebarItems={getSidebarItems()}>
+			{!IS_APP_LIVE && <TimeMismatchBoundary />}
+
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route path="/branch-manager/dashboard" component={Dashboard} />
