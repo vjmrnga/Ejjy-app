@@ -9,12 +9,7 @@ import {
 	pageSizeOptions,
 	timeRangeTypes,
 } from 'global';
-import {
-	useBirReports,
-	useQueryParams,
-	useSiteSettingsRetrieve,
-	useTimeRange,
-} from 'hooks';
+import { useBirReports, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils/function';
@@ -74,7 +69,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const TabBirReport = ({ branchMachineId, serverUrl }: Props) => {
+export const TabBirReport = ({ branchMachineId }: Props) => {
 	// STATES
 	const [isPrinting, setIsPrinting] = useState(false);
 	const [html, setHtml] = useState('');

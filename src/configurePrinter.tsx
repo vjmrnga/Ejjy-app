@@ -196,44 +196,51 @@ const print = ({
 };
 
 const getHeader = (headerData) => {
-	const { title, proprietor, location, tin, taxType, permitNumber } =
-		headerData;
+	const { siteSettings, title } = headerData;
+	const {
+		contact_number: contactNumber,
+		address_of_tax_payer: location,
+		proprietor,
+		ptu_number: ptuNumber,
+		store_name: storeName,
+		tax_type: taxType,
+		tin,
+	} = siteSettings;
 
 	return `
 		<div style="text-align: center; display: flex; flex-direction: column">
-			<div style="font-size: 20px">EJ AND JY</div>
-			<span>WET MARKET AND ENTERPRISES</span>
-			<span>POB., CARMEN, AGUSAN DEL NORTE</span>
-			<span>${proprietor || EMPTY_CELL}</span>
-			<span>Tel# 808-8866</span>
-			<span>${location || EMPTY_CELL}</span>
-			<span>${taxType || EMPTY_CELL} ${tin || EMPTY_CELL}</span>
-			<span>${permitNumber || EMPTY_CELL}</span>
-			<span>${title}</span>
+			<span style="white-space: pre-line">${storeName}</span>
+			<span style="white-space: pre-line">${location}</span>
+      <span>${contactNumber}</span>
+			<span>${proprietor}</span>
+			<span>${taxType} | ${tin}</span>
+			<span>Back Office</span>
+      <span>${ptuNumber}</span>
+			${title ? `<span>[${title}]</span>` : ''}
 		</div>`;
 };
 
-const getFooter = ({
-	softwareDeveloper,
-	softwareDeveloperTin,
-	posAccreditationNumber,
-	posAccreditationDate,
-	posAccreditationValidUntilDate,
-	ptuNumber,
-}) => `
+const getFooter = (footerData) => {
+	const {
+		software_developer: softwareDeveloper,
+		software_developer_address: softwareDeveloperAddress,
+		software_developer_tin: softwareDeveloperTin,
+		pos_accreditation_number: posAccreditationNumber,
+		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
+		ptu_number: ptuNumber,
+	} = footerData;
+
+	return `
 		<div style="text-align: center; display: flex; flex-direction: column">
 			<span>${softwareDeveloper}</span>
-			<span>Burgos St., Poblacion, Carmen,</span>
-			<span>Agusan del Norte</span>
+			<span>${softwareDeveloperAddress}</span>
 			<span>${softwareDeveloperTin}</span>
-			<span>${posAccreditationNumber || EMPTY_CELL}</span>
-			<span>${posAccreditationDate || EMPTY_CELL}</span>
-			<span>${posAccreditationValidUntilDate || EMPTY_CELL}</span>
-
+			<span>${posAccreditationNumber}</span>
+			<span>${posAccreditationValidUntilDate}</span>
+			<span>${ptuNumber}</span>
 			<br />
-
-			<span>${ptuNumber || EMPTY_CELL}</span>
 		</div>`;
+};
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 	const data = `
@@ -365,13 +372,7 @@ export const printCancelledTransactions = ({
 			}
 		</style>
 
-		${getHeader({
-			proprietor: siteSettings.proprietor,
-			location: siteSettings.location,
-			tin: siteSettings.tin,
-			taxType: siteSettings.taxType,
-			permitNumber: siteSettings.permit_number,
-		})}
+		${getHeader({ siteSettings })}
 
 		<br />
 
@@ -510,7 +511,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 	return data;
 };
 
-export const printCollectionReceipt = (collectionReceipt) => {
+export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 	const invoice =
 		collectionReceipt.order_of_payment?.charge_sales_transaction?.invoice;
 	const orderOfPayment = collectionReceipt.order_of_payment;
@@ -527,12 +528,10 @@ export const printCollectionReceipt = (collectionReceipt) => {
 
 	const data = `
 	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
-		${getHeader({
-			title: '[COLLECTION RECEIPT]',
-			proprietor: invoice?.proprietor,
-			location: invoice?.location,
-			tin: invoice?.tin,
-		})}
+	${getHeader({
+		siteSettings,
+		title: 'COLLECTION RECEIPT',
+	})}
 	
 		<br />
 
@@ -729,7 +728,7 @@ export const printBirReport = ({ birReports, siteSettings }) => {
 
   <body>
     <div class="bir-reports-pdf">
-      <div class="details">Registered Name of Taxpayer</div>
+			<div class="details">${siteSettings.proprietor}</div>
       <div class="details">${siteSettings.store_name}</div>
       <div class="details">${siteSettings.address_of_tax_payer}</div>
       <div class="details">${siteSettings.tin} - Branch Code</div>
@@ -791,11 +790,7 @@ export const printReceivingVoucherForm = ({
 	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
 			title: '[RECEIVING VOUCHER]',
-			proprietor: siteSettings.proprietor,
-			location: siteSettings.location,
-			tin: siteSettings.tin,
-			taxType: siteSettings.taxType,
-			permitNumber: siteSettings.permit_number,
+			siteSettings,
 		})}
 	
 		<br />
@@ -851,15 +846,7 @@ export const printReceivingVoucherForm = ({
 	
 		<br />
 
-		${getFooter({
-			softwareDeveloper: siteSettings.software_developer,
-			softwareDeveloperTin: siteSettings.software_developer_tin,
-			posAccreditationNumber: siteSettings.pos_accreditation_number,
-			posAccreditationDate: siteSettings.pos_accreditation_date,
-			posAccreditationValidUntilDate:
-				siteSettings.pos_accreditation_valid_until_date,
-			ptuNumber: siteSettings.ptu_number,
-		})}
+		${getFooter(siteSettings)}
 	</div>
 	`;
 
@@ -874,11 +861,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
 			title: '[BO SLIP]',
-			proprietor: siteSettings.proprietor,
-			location: siteSettings.location,
-			tin: siteSettings.tin,
-			taxType: siteSettings.taxType,
-			permitNumber: siteSettings.permit_number,
+			siteSettings,
 		})}
 	
 		<br />
@@ -933,15 +916,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	
 		<br />
 
-		${getFooter({
-			softwareDeveloper: siteSettings.software_developer,
-			softwareDeveloperTin: siteSettings.software_developer_tin,
-			posAccreditationNumber: siteSettings.pos_accreditation_number,
-			posAccreditationDate: siteSettings.pos_accreditation_date,
-			posAccreditationValidUntilDate:
-				siteSettings.pos_accreditation_valid_until_date,
-			ptuNumber: siteSettings.ptu_number,
-		})}
+		${getFooter(siteSettings)}
 	</div>
 	`;
 
@@ -1135,13 +1110,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 		"
 	>
 
-		${getHeader({
-			proprietor: report?.proprietor,
-			location: report?.location,
-			tin: report?.tin,
-			taxType: siteSettings.tax_type,
-			permitNumber: siteSettings.permit_number,
-		})}
+		${getHeader({ siteSettings })}
 
 		<div
 			style="display: flex; align-items: center; justify-content: space-between"

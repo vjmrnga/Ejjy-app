@@ -187,6 +187,7 @@ export const discountTypes = {
 
 export const inputTypes = {
 	TEXT: 'text',
+	TEXTAREA: 'textarea',
 	NUMBER: 'number',
 	MONEY: 'money',
 };

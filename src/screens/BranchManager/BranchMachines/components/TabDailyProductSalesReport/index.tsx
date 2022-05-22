@@ -19,15 +19,9 @@ import {
 	SEARCH_DEBOUNCE_TIME,
 	transactionStatus,
 } from 'global';
-import {
-	useQueryParams,
-	useTransactionProducts,
-	useTransactionProductsSummary,
-	useTransactions,
-} from 'hooks';
+import { useQueryParams, useTransactionProducts, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { DailyProductSalesReportTotal } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport/components/DailyProductSalesReportTotal';
 import {
 	convertIntoArray,
 	formatDate,
@@ -54,10 +48,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const TabDailyProductSalesReport = ({
-	branchMachineId,
-	serverUrl,
-}: Props) => {
+export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -71,25 +62,11 @@ export const TabDailyProductSalesReport = ({
 	} = useTransactionProducts({
 		params: {
 			branchMachineId,
-			serverUrl,
 			...queryParams,
 			isVatExempted: queryParams.isVatExempted
 				? queryParams.isVatExempted === 'true'
 				: undefined,
-		},
-	});
-	const {
-		data: { summary = null } = {},
-		isFetching: isTransactionProductsSummaryFetching,
-		error: transactionProductsSummaryError,
-	} = useTransactionProductsSummary({
-		params: {
-			branchMachineId,
-			serverUrl,
-			...queryParams,
-			isVatExempted: queryParams.isVatExempted
-				? queryParams.isVatExempted === 'true'
-				: undefined,
+			statuses: queryParams.statuses || undefined,
 		},
 	});
 
@@ -158,19 +135,14 @@ export const TabDailyProductSalesReport = ({
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
-				isLoading={
-					isTransactionProductsFetching || isTransactionProductsSummaryFetching
-				}
+				isLoading={isTransactionProductsFetching}
 			/>
 
 			<RequestErrors
-				errors={[
-					...convertIntoArray(transactionProductsError, 'Transaction Products'),
-					...convertIntoArray(
-						transactionProductsSummaryError,
-						'Transaction Products Summary',
-					),
-				]}
+				errors={convertIntoArray(
+					transactionProductsError,
+					'Transaction Products',
+				)}
 			/>
 			<RequestWarnings
 				warnings={convertIntoArray(transactionProductsWarning)}
@@ -194,9 +166,7 @@ export const TabDailyProductSalesReport = ({
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={
-					isTransactionProductsFetching || isTransactionProductsSummaryFetching
-				}
+				loading={isTransactionProductsFetching}
 			/>
 
 			{selectedTransaction && (
@@ -255,7 +225,7 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 					defaultValue=""
 					options={[
 						{
-							label: 'ALL',
+							label: 'All',
 							value: '',
 						},
 						{
@@ -263,13 +233,39 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 							value: 'false',
 						},
 						{
-							label: 'VAT-EXEMPT',
+							label: 'VAT-Exempt',
 							value: 'true',
 						},
 					]}
 					onChange={(e) => {
 						const { value } = e.target;
 						setQueryParams({ isVatExempted: value });
+					}}
+					optionType="button"
+				/>
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Radio.Group
+					value={params.statuses}
+					defaultValue=""
+					options={[
+						{
+							label: 'All',
+							value: '',
+						},
+						{
+							label: 'Success',
+							value: 'fully_paid',
+						},
+						{
+							label: 'Voided',
+							value: 'void_edited,void_cancelled',
+						},
+					]}
+					onChange={(e) => {
+						const { value } = e.target;
+						setQueryParams({ statuses: value });
 					}}
 					optionType="button"
 				/>

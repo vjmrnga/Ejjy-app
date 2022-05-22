@@ -40,10 +40,7 @@ interface Props {
 	serverUrl: any;
 }
 
-export const TabDailyInvoiceReport = ({
-	branchMachineId,
-	serverUrl,
-}: Props) => {
+export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);

@@ -10,16 +10,19 @@ import {
 } from 'components';
 import { BadgePill, ButtonLink, Label } from 'components/elements';
 import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
 	paymentTypes,
 	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
-import { toString } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { TransactionsCancelled } from 'screens/Shared/Branches/components/BranchTransactions/TransactionsCancelled';
 import { convertIntoArray, formatInPeso } from 'utils/function';
-import { TransactionsCancelled } from '../../../../Shared/Branches/components/BranchTransactions/TransactionsCancelled';
+import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -61,24 +64,23 @@ interface Props {
 	serverUrl: any;
 }
 
-export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
+export const TabTransactions = ({ branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total, warning },
-		isFetching,
-		error,
+		isFetching: isFetchingTransactions,
+		error: transactionsError,
 	} = useTransactions({
-		params: { serverUrl, branchMachineId, ...queryParams },
+		params: { branchMachineId, ...params },
 	});
 
 	// METHODS
 	useEffect(() => {
-		console.log('transactions', transactions);
 		const formattedBranchTransactions = transactions.map(
 			(branchTransaction) => {
 				const {
@@ -116,33 +118,28 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 		<>
 			<TableHeader title="Transactions" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isFetching}
-			/>
+			<Filter isLoading={isFetchingTransactions} />
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors errors={convertIntoArray(transactionsError)} />
 			<RequestWarnings warnings={convertIntoArray(warning)} />
 
-			{voidedStatuses.includes(toString(queryParams?.statuses)) && (
+			{voidedStatuses.includes(_.toString(params?.statuses)) && (
 				<TransactionsCancelled
-					serverUrl={serverUrl}
-					timeRange={toString(queryParams?.timeRange)}
-					statuses={toString(queryParams?.statuses)}
+					timeRange={_.toString(params?.timeRange)}
+					statuses={_.toString(params?.statuses)}
 				/>
 			)}
+
+			<Summary branchMachineId={branchMachineId} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -153,7 +150,7 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isFetchingTransactions}
 			/>
 
 			{selectedTransaction && (
@@ -167,41 +164,43 @@ export const TabTransactions = ({ branchMachineId, serverUrl }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<TimeRangeFilter disabled={isLoading} />
-		</Col>
-		<Col lg={12} span={24}>
-			<Label label="Status" spacing />
-			<Select
-				style={{ width: '100%' }}
-				value={params.statuses}
-				onChange={(value) => {
-					setQueryParams({ statuses: value });
-				}}
-				disabled={isLoading}
-				optionFilterProp="children"
-				filterOption={(input, option) =>
-					option.children
-						.toString()
-						.toLowerCase()
-						.indexOf(input.toLowerCase()) >= 0
-				}
-				showSearch
-				allowClear
-			>
-				{transactionStatusOptions.map((option) => (
-					<Select.Option key={option.value} value={option.value}>
-						{option.title}
-					</Select.Option>
-				))}
-			</Select>
-		</Col>
-	</Row>
-);
+const Filter = ({ isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<TimeRangeFilter disabled={isLoading} />
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					className="w-100"
+					value={params.statuses}
+					onChange={(value) => {
+						setQueryParams({ statuses: value }, { shouldResetPage: true });
+					}}
+					disabled={isLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
+					{transactionStatusOptions.map((option) => (
+						<Select.Option key={option.value} value={option.value}>
+							{option.title}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
+	);
+};

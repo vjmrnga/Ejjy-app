@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-interface IList extends IListRequest {
+interface List extends IListRequest {
 	branch_machine_id?: number;
-	is_adjusted: boolean;
+	is_adjusted?: boolean;
 	mode_of_payment?: string;
 	payor_creditor_account_id?: number;
 	statuses?: string;
@@ -11,11 +11,14 @@ interface IList extends IListRequest {
 }
 
 const service = {
-	list: async (params: IList, baseURL) =>
+	list: async (params: List, baseURL) =>
 		axios.get('/transactions/', { baseURL, params }),
 
 	retrieve: async (id: number, baseURL) =>
 		axios.get(`/transactions/${id}/`, { baseURL }),
+
+	summary: async (params: List, baseURL) =>
+		axios.get('/transactions/summary/', { baseURL, params }),
 };
 
 export default service;

@@ -114,4 +114,56 @@ export const useTransactionRetrieve = ({ id, params, options }: Query) => {
 	);
 };
 
+export const useTransactionsSummary = ({ params, options }: Query) => {
+	let baseURL = useSelector(
+		branchesSelectors.selectURLByBranchId(params.branchId),
+	);
+
+	return useQuery<any>(
+		[
+			'useTransactionsSummary',
+			params?.branchMachineId,
+			params?.statuses,
+			params?.timeRange,
+		],
+
+		async () => {
+			if (!baseURL && params.branchId) {
+				throw ['Branch has no online url.'];
+			} else {
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+			}
+
+			baseURL = params.serverUrl || baseURL;
+
+			const data = {
+				branch_machine_id: params?.branchMachineId,
+				statuses: params?.statuses,
+				time_range: params?.timeRange,
+			};
+
+			try {
+				// NOTE: Fetch in branch url
+				return await TransactionsService.summary(data, baseURL);
+			} catch (e) {
+				// NOTE: Retry to fetch in local url
+				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				const response = await TransactionsService.summary(data, baseURL);
+				response.data.warning =
+					'Data Source: Backup Server, data might be outdated.';
+
+				return response;
+			}
+		},
+		{
+			initialData: { data: null },
+			select: (query) => ({
+				summary: query.data,
+				warning: query.data?.warning,
+			}),
+			...options,
+		},
+	);
+};
+
 export default useTransactions;

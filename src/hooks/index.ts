@@ -9,6 +9,7 @@ export * from './useBranchMachines';
 export { default as useBranchMachines } from './useBranchMachines';
 export * from './useBranchProducts';
 export { default as useBranchProducts } from './useBranchProducts';
+export { default as useCollectionReceipts } from './useCollectionReceipts';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
