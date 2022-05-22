@@ -1,4 +1,4 @@
-import { Col, Row, Table } from 'antd';
+import { Col, Row, Statistic, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
@@ -6,7 +6,7 @@ import { useBranchMachines, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso } from 'utils/function';
-import { SalesTotalCard } from './SalesTotalCard';
+import '../style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Machine Name', dataIndex: 'machineName' },
@@ -20,17 +20,22 @@ const columns: ColumnsType = [
 	{ title: 'Net Sales', dataIndex: 'netSales', fixed: 'right' },
 ];
 
+const BRANCH_MACHINES_INTERVAL_MS = 5000;
+
 export const SalesBranch = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [totalSales, setTotalSales] = useState(0);
+	const [summary, setSummary] = useState({
+		cashSales: 0,
+		creditSales: 0,
+		creditPayment: 0,
+	});
 
 	// CUSTOM HOOKS
 	const { params } = useQueryParams();
 	const {
 		data: { branchMachines },
 		isLoading,
-		isFetched,
 		error,
 	} = useBranchMachines({
 		params: {
@@ -38,16 +43,23 @@ export const SalesBranch = () => {
 			salesTimeRange: params.timeRange,
 		},
 		options: {
-			refetchInterval: 1000,
+			refetchInterval: BRANCH_MACHINES_INTERVAL_MS,
 			refetchOnMount: 'always',
 		},
 	});
 
 	// METHODS
 	useEffect(() => {
-		let newTotalSales = 0;
+		const newSummary = {
+			cashSales: 0,
+			creditSales: 0,
+			creditPayment: 0,
+		};
+
 		const newSales = branchMachines.map((branchMachine) => {
-			newTotalSales += Number(branchMachine.sales);
+			newSummary.cashSales += Number(branchMachine.sales.cash_sales);
+			newSummary.creditSales += Number(branchMachine.sales.credit_sales);
+			newSummary.creditPayment += Number(branchMachine.sales.credit_payments);
 
 			return {
 				key: branchMachine.id,
@@ -63,8 +75,8 @@ export const SalesBranch = () => {
 			};
 		});
 
+		setSummary(newSummary);
 		setDataSource(newSales);
-		setTotalSales(newTotalSales);
 	}, [branchMachines]);
 
 	return (
@@ -73,13 +85,55 @@ export const SalesBranch = () => {
 
 			<Row gutter={[16, 16]}>
 				<Col span={24}>
-					<SalesTotalCard
-						title="Total Sales"
-						totalSales={totalSales}
-						timeRange={_.toString(params.timeRange)}
-						loading={isLoading}
-						firstTimeLoading={!isFetched}
-					/>
+					<div className="Summary">
+						<Row gutter={[16, 16]}>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="TOTAL SALES"
+									value={formatInPeso(summary.cashSales + summary.creditSales)}
+								/>
+							</Col>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="Cash Sales"
+									value={formatInPeso(summary.cashSales)}
+								/>
+							</Col>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="Credit Sales"
+									value={formatInPeso(summary.creditSales)}
+								/>
+							</Col>
+						</Row>
+					</div>
+				</Col>
+
+				<Col span={24}>
+					<div className="Summary">
+						<Row gutter={[16, 16]}>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="TOTAL CASH ON HAND"
+									value={formatInPeso(
+										summary.cashSales + summary.creditPayment,
+									)}
+								/>
+							</Col>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="Cash Sales"
+									value={formatInPeso(summary.cashSales)}
+								/>
+							</Col>
+							<Col xs={24} sm={8} md={8}>
+								<Statistic
+									title="Credit Payment"
+									value={formatInPeso(summary.creditPayment)}
+								/>
+							</Col>
+						</Row>
+					</div>
 				</Col>
 
 				<Col span={24}>

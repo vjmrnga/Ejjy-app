@@ -1,34 +1,7 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles/' as *;
 
-.SalesTotalCard {
-	margin: 0;
+.Summary {
+	padding: 1.5em;
 	border: 1px solid $color-gray;
-	box-shadow: none;
-
-	&_container {
-		@include flex(space-between, center);
-		padding: 20px 25px;
-	}
-
-	&_title {
-		@include font(1.25rem, bold);
-		margin: 0;
-		color: $color-dark;
-		flex: 1;
-	}
-
-	&_description {
-		@include font(1rem, 400);
-		color: $color-dark-gray;
-	}
-
-	&_total {
-		@include font(1.5rem, bold);
-		color: $color-primary;
-	}
-
-	&_spinner {
-		margin-left: 5px;
-		color: $color-primary !important;
-	}
+	border-radius: $border-radius-lg;
 }
