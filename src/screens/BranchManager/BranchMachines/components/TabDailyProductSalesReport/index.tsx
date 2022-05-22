@@ -7,6 +7,7 @@ import {
 	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
+	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
 import { ButtonLink, Label } from 'components/elements';
@@ -16,7 +17,7 @@ import {
 	EMPTY_CELL,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
-	timeRangeTypes,
+	transactionStatus,
 } from 'global';
 import {
 	useQueryParams,
@@ -24,7 +25,6 @@ import {
 	useTransactionProductsSummary,
 	useTransactions,
 } from 'hooks';
-import { useTimeRange } from 'hooks/useTimeRange';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { DailyProductSalesReportTotal } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport/components/DailyProductSalesReportTotal';
@@ -46,6 +46,7 @@ const columns: ColumnsType = [
 	{ title: 'Selling Price', dataIndex: 'sellingPrice', width: 150 },
 	{ title: 'V/VE', dataIndex: 'vatable' },
 	{ title: 'Total Amount', dataIndex: 'totalAmount', width: 150 },
+	{ title: 'Remarks', dataIndex: 'remarks' },
 ];
 
 interface Props {
@@ -109,6 +110,13 @@ export const TabDailyProductSalesReport = ({
 				<ModeOfPayment modeOfPayment={transaction.payment.mode} />
 			);
 
+			const remarks = [
+				transactionStatus.VOID_CANCELLED,
+				transactionStatus.VOID_EDITED,
+			].includes(transaction.status) && (
+				<TransactionStatus status={transaction.status} />
+			);
+
 			return {
 				key: id,
 				dateTime: formatDate(datetime_created),
@@ -134,6 +142,7 @@ export const TabDailyProductSalesReport = ({
 				sellingPrice: formatInPeso(price_per_piece),
 				vatable: product.is_vat_exempted ? 'VAT Exempt' : 'Vatable',
 				totalAmount: formatInPeso(amount),
+				remarks,
 			};
 		});
 
@@ -153,14 +162,6 @@ export const TabDailyProductSalesReport = ({
 					isTransactionProductsFetching || isTransactionProductsSummaryFetching
 				}
 			/>
-
-			{summary && (
-				<DailyProductSalesReportTotal
-					totalSales={summary.total_sales}
-					totalVatSales={summary.total_vat_sales}
-					totalVatExemptSales={summary.total_vat_exempt_sales}
-				/>
-			)}
 
 			<RequestErrors
 				errors={[

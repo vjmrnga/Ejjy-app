@@ -6,29 +6,37 @@ import './style.scss';
 interface Props {
 	totalSales: any;
 	totalVatSales: number;
-	totalVatExemptSales;
+	totalVatExemptSales: number;
+	totalAmountVoidedTransactions: number;
 }
 
 export const DailyProductSalesReportTotal = ({
 	totalSales,
 	totalVatSales,
 	totalVatExemptSales,
+	totalAmountVoidedTransactions,
 }: Props) => (
 	<div className="DailyProductSalesReportTotal mb-4">
 		<Row gutter={[16, 16]}>
-			<Col span={24} md={8}>
-				<Statistic title="Total Amount" value={formatInPeso(totalSales)} />
+			<Col xs={24} sm={12} md={6}>
+				<Statistic title="Net Sales" value={formatInPeso(totalSales)} />
 			</Col>
-			<Col span={24} md={8}>
+			<Col xs={24} sm={12} md={6}>
 				<Statistic
 					title="Total Vat Sales"
 					value={formatInPeso(totalVatSales)}
 				/>
 			</Col>
-			<Col span={24} md={8}>
+			<Col xs={24} sm={12} md={6}>
 				<Statistic
 					title="Total Vat Exempt Sales"
 					value={formatInPeso(totalVatExemptSales)}
+				/>
+			</Col>
+			<Col xs={24} sm={12} md={6}>
+				<Statistic
+					title="Total Amount of Voided Transactions"
+					value={formatInPeso(totalAmountVoidedTransactions)}
 				/>
 			</Col>
 		</Row>
