@@ -6,7 +6,6 @@ import branchProductPendingPriceUpdatesSagas from './branch-product-pending-pric
 import branchProductsSagas from './branch-products';
 import branchesDaysSagas from './branches-days';
 import { branchManagerSagas } from './BranchManager';
-import cashieringAssignmentsSagas from './cashiering-assignments';
 import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
@@ -24,7 +23,6 @@ export default function* rootSaga() {
 		...branchesDaysSagas,
 		...branchProductsSagas,
 		...branchProductPendingPriceUpdatesSagas,
-		...cashieringAssignmentsSagas,
 		...networkSagas,
 		...orderSlipsSagas,
 		...preparationSlipsSagas,

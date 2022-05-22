@@ -1,26 +1,42 @@
-import { Spin, Table } from 'antd';
-import cn from 'classnames';
-import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+	Button,
+	Col,
+	message,
+	Popconfirm,
+	Row,
+	Space,
+	Table,
+	Tooltip,
+} from 'antd';
 import {
 	AddButtonIcon,
-	CancelButtonIcon,
+	Breadcrumb,
 	Content,
-	DetailsRow,
-	DetailsSingle,
+	ModifyCashieringAssignmentModal,
 	RequestErrors,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
-import { useCashieringAssignments } from '../../../hooks/useCashieringAssignments';
-import { useUsers } from '../../../hooks/useUsers';
-import { convertIntoArray, isUserFromBranch } from '../../../utils/function';
-import './style.scss';
+} from 'components';
+import { Box } from 'components/elements';
+import dayjs from 'dayjs';
+import { GENERIC_ERROR_MESSAGE, MAX_PAGE_SIZE } from 'global';
+import {
+	useAuth,
+	useCashieringAssignmentDelete,
+	useCashieringAssignments,
+	useUserRetrieve,
+} from 'hooks';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+	confirmPassword,
+	convertIntoArray,
+	getFullName,
+	isUserFromBranch,
+} from 'utils/function';
 
 const columns = [
-	{ title: 'Date', dataIndex: 'date' },
-	{ title: 'Day', dataIndex: 'day' },
+	{ title: 'Date', dataIndex: 'date', width: 175 },
+	{ title: 'Day', dataIndex: 'day', width: 100 },
+	{ title: 'Assignments', dataIndex: 'assignments' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -29,39 +45,55 @@ interface Props {
 }
 
 export const AssignUser = ({ match }: Props) => {
+	// VARIABLES
+	const userId = match?.params?.id;
+
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
+	const [selectedDate, setSelectededDate] = useState(null);
+	const [selectedCashieringAssignment, setSelectedCashieringAssignment] =
+		useState(null);
 
 	// CUSTOM HOOKS
-	const userId = match?.params?.id;
-	const history = useHistory();
-	const { user, getUserById, status: userStatus } = useUsers();
+	const { user: actingUser } = useAuth();
 	const {
-		cashieringAssignments,
-		getCashieringAssignmentsByUserId,
-		status: getCashieringAssignmentsStatus,
-		errors: getCashieringAssignmentsErrors,
-	} = useCashieringAssignments();
-
+		data: user,
+		isFetching: isFetchingUser,
+		isSuccess: isSuccessUser,
+		error: userErrors,
+	} = useUserRetrieve({
+		id: userId,
+		options: {
+			enabled: !!userId,
+			onError: (error: any) => {
+				if (error.response.status === 404) {
+					message.error('User does not exist');
+				} else {
+					message.error(GENERIC_ERROR_MESSAGE);
+				}
+			},
+		},
+	});
 	const {
-		createCashieringAssignment,
-		removeCashieringAssignment,
-		status: modifyCashieringAssignmentsStatus,
-		errors: modifyCashieringAssignmentsErrors,
-	} = useCashieringAssignments();
+		data: { cashieringAssignments },
+		isFetching: isFetchingCashieringAssignments,
+		error: cashieringAssignmentsError,
+	} = useCashieringAssignments({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+			userId,
+		},
+		options: {
+			enabled: isSuccessUser,
+		},
+	});
+	const {
+		mutateAsync: deleteCashieringAssignment,
+		isLoading: isDeleting,
+		error: deleteError,
+	} = useCashieringAssignmentDelete();
 
 	// METHODS
-	useEffect(() => {
-		getUserById(userId, ({ status, data: userData }) => {
-			if (status === request.SUCCESS && isUserFromBranch(userData?.user_type)) {
-				getCashieringAssignmentsByUserId({ userId });
-			} else if (status === request.ERROR) {
-				history.replace('/404');
-			}
-		});
-	}, []);
-
-	// Effect: Format cashiering assignments
 	useEffect(() => {
 		if (user && cashieringAssignments) {
 			const today = dayjs();
@@ -69,48 +101,77 @@ export const AssignUser = ({ match }: Props) => {
 
 			const formattedAssignments = days.map((item) => {
 				const isDateAfter = today.isAfter(item.date);
-				const assignment = cashieringAssignments.find((ca) =>
-					dayjs(ca.date, 'YYYY-MM-DD').isSame(item.date, 'date'),
+				const assignments = cashieringAssignments.filter((ca) =>
+					dayjs.tz(ca.datetime_start).isSame(item.date, 'date'),
 				);
 
 				return {
+					key: item.display,
 					date: item.display,
 					day: item.day,
-					actions: assignment ? (
-						<>
-							{!isDateAfter && (
-								<CancelButtonIcon
-									tooltip="Remove"
-									onClick={() => onRemoveAssignment(assignment.id)}
-								/>
-							)}
-						</>
-					) : (
+					assignments: (
+						<Row gutter={[16, 16]}>
+							{assignments.map((assignment) => (
+								<Col key={assignment.id} span={24}>
+									<Space align="center" className="w-100">
+										<div>
+											{`${assignment.branch_machine.name}: ${dayjs
+												.tz(assignment.datetime_start)
+												.format('HH:mm')} – ${dayjs
+												.tz(assignment.datetime_end)
+												.format('HH:mm')}`}
+										</div>
+
+										<Tooltip title="Edit">
+											<Button
+												type="primary"
+												shape="circle"
+												size="small"
+												icon={<EditOutlined />}
+												onClick={() => {
+													confirmPassword({
+														onSuccess: () =>
+															setSelectedCashieringAssignment(assignment),
+													});
+												}}
+											/>
+										</Tooltip>
+
+										<Tooltip title="Delete">
+											<Button
+												danger
+												shape="circle"
+												size="small"
+												ghost
+												icon={<DeleteOutlined />}
+												onClick={() => {
+													confirmPassword({
+														onSuccess: () =>
+															deleteCashieringAssignment({
+																id: assignment.id,
+																actingUserId: actingUser.id,
+															}),
+													});
+												}}
+											/>
+										</Tooltip>
+									</Space>
+								</Col>
+							))}
+						</Row>
+					),
+					actions: !isDateAfter && (
 						<AddButtonIcon
-							classNames={cn({ AssignUsers_btnAssign__disabled: isDateAfter })}
 							tooltip="Assign"
-							onClick={() => onAssign(item.date)}
+							onClick={() => setSelectededDate(item.date)}
 						/>
 					),
 				};
 			});
 
-			setData(formattedAssignments);
+			setDataSource(formattedAssignments);
 		}
-	}, [user, cashieringAssignments]);
-
-	const onAssign = (date) => {
-		createCashieringAssignment({
-			user_id: userId,
-			date: date.format('YYYY-MM-DD'),
-		});
-	};
-
-	const onRemoveAssignment = (assignmentId) => {
-		removeCashieringAssignment({
-			id: assignmentId,
-		});
-	};
+	}, [user, actingUser, cashieringAssignments]);
 
 	const getDays = useCallback(() => {
 		const numberOfDays = dayjs().daysInMonth();
@@ -138,52 +199,57 @@ export const AssignUser = ({ match }: Props) => {
 		return days;
 	}, []);
 
-	const isFetching = useCallback(
-		() =>
-			[getCashieringAssignmentsStatus, userStatus].includes(request.REQUESTING),
-		[getCashieringAssignmentsStatus, userStatus],
+	const getBreadcrumbItems = useCallback(
+		() => [
+			{ name: 'Users', link: '/branch-manager/users' },
+			{ name: getFullName(user) },
+		],
+		[user],
 	);
 
 	return (
-		<Content className="AssignUsers" title="Assign User">
-			<Spin size="large" spinning={isFetching()} tip="Fetching user details...">
-				<Box>
-					<div className="PaddingHorizontal PaddingVertical">
-						<DetailsRow>
-							<DetailsSingle
-								label="Name"
-								value={`${user?.first_name} ${user?.last_name}`}
-							/>
-						</DetailsRow>
-					</div>
+		<Content
+			className="AssignUsers"
+			title="Assign User"
+			rightTitle={getFullName(user)}
+			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+		>
+			<Box>
+				{isUserFromBranch(user?.user_type) && (
+					<>
+						<RequestErrors
+							errors={[
+								...convertIntoArray(
+									cashieringAssignmentsError,
+									'Cashiering Assignments',
+								),
+								...convertIntoArray(userErrors, 'User'),
+							]}
+							withSpaceBottom
+						/>
 
-					{isUserFromBranch(user?.user_type) && (
-						<>
-							<RequestErrors
-								errors={[
-									...convertIntoArray(
-										[
-											...getCashieringAssignmentsErrors,
-											...modifyCashieringAssignmentsErrors,
-										],
-										'Cashiering Assignments',
-									),
-								]}
-								withSpaceBottom
-							/>
+						<Table
+							columns={columns}
+							dataSource={dataSource}
+							scroll={{ x: 1000 }}
+							loading={isFetchingUser || isFetchingCashieringAssignments}
+							pagination={false}
+						/>
 
-							<Table
-								columns={columns}
-								dataSource={data}
-								loading={
-									modifyCashieringAssignmentsStatus === request.REQUESTING
-								}
-								pagination={false}
+						{(selectedDate || selectedCashieringAssignment) && (
+							<ModifyCashieringAssignmentModal
+								assignment={selectedCashieringAssignment}
+								date={selectedDate}
+								userId={userId}
+								onClose={() => {
+									setSelectededDate(null);
+									setSelectedCashieringAssignment(null);
+								}}
 							/>
-						</>
-					)}
-				</Box>
-			</Spin>
+						)}
+					</>
+				)}
+			</Box>
 		</Content>
 	);
 };

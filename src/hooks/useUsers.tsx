@@ -287,6 +287,21 @@ const useUsersNew = ({ params }: Query) =>
 		},
 	);
 
+export const useUserRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useUserRetrieve', id],
+		async () =>
+			// NOTE: We didn't catch the this request so we can check the status code of the error
+			UsersService.retrieve(
+				id,
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			select: (query) => query.data,
+			...options,
+		},
+	);
+
 export const useUserAuthenticate = () =>
 	useMutation<any, any, any>(({ login, password }: any) =>
 		UsersService.authenticate(

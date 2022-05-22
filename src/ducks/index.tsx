@@ -7,9 +7,6 @@ import history from '../utils/history';
 import { adminReducers } from './Admin';
 import authReducer, { key as AUTH_KEY, types } from './auth';
 import { branchManagerReducers } from './BranchManager';
-import cashieringAssignmentsReducer, {
-	key as CASHIERING_ASSIGNMENTS_KEY,
-} from './cashiering-assignments';
 import networkReducer, { key as NETWORK_KEY } from './network';
 import { officeManagerReducers } from './OfficeManager';
 import requestReducer, { REQUEST_KEY } from './request';
@@ -21,7 +18,6 @@ import uiReducer, { key as UI_KEY } from './ui';
 const appReducer = combineReducers({
 	router: connectRouter(history),
 	[AUTH_KEY]: authReducer,
-	[CASHIERING_ASSIGNMENTS_KEY]: cashieringAssignmentsReducer,
 	[REQUEST_KEY]: requestReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
 	[UI_KEY]: uiReducer,

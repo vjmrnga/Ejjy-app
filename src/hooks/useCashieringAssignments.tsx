@@ -1,113 +1,104 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { actions, selectors, types } from '../ducks/cashiering-assignments';
-import { request } from '../global/types';
-import { useActionDispatch } from './useActionDispatch';
-import { modifiedCallback } from '../utils/function';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { CashieringAssignmentsService, ONLINE_API_URL } from 'services';
+import { getLocalIpAddress } from '../utils/function';
 
-const CREATE_SUCCESS_MESSAGE = 'Assignment was created successfully';
-const CREATE_ERROR_MESSAGE = 'An error occurred while creating the assignment';
-
-const EDIT_SUCCESS_MESSAGE = 'Assignment was edited successfully';
-const EDIT_ERROR_MESSAGE = 'An error occurred while editing the assignment';
-
-const REMOVE_SUCCESS_MESSAGE = 'Assignment was removed successfully';
-const REMOVE_ERROR_MESSAGE = 'An error occurred while removing the assignment';
-
-export const useCashieringAssignments = () => {
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-	const [warnings, setWarnings] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
-
-	const cashieringAssignments = useSelector(
-		selectors.selectCashieringAssignments(),
-	);
-	const getCashieringAssignmentsByUserId = useActionDispatch(
-		actions.getCashieringAssignmentsByUserId,
-	);
-	const createCashieringAssignment = useActionDispatch(
-		actions.createCashieringAssignment,
-	);
-	const editCashieringAssignment = useActionDispatch(
-		actions.editCashieringAssignment,
-	);
-	const removeCashieringAssignment = useActionDispatch(
-		actions.removeCashieringAssignment,
+const useCashieringAssignments = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useCashieringAssignments',
+			params?.page,
+			params?.pageSize,
+			params?.serverUrl,
+		],
+		async () =>
+			CashieringAssignmentsService.list(
+				{
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					user_id: params?.userId,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				cashieringAssignments: query.data.results,
+				total: query.data.count,
+			}),
+		},
 	);
 
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
+export const useCashieringAssignmentCreate = () => {
+	const queryClient = useQueryClient();
 
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const getCashieringAssignmentsByUserIdRequest = (data) => {
-		setRecentRequest(types.GET_CASHIERING_ASSIGNMENTS_BY_USER_ID);
-		getCashieringAssignmentsByUserId({ ...data, callback });
-	};
-
-	const createCashieringAssignmentRequest = (data) => {
-		setRecentRequest(types.CREATE_CASHIERING_ASSIGNMENT);
-		createCashieringAssignment({
-			...data,
-			callback: modifiedCallback(
-				callback,
-				CREATE_SUCCESS_MESSAGE,
-				CREATE_ERROR_MESSAGE,
+	return useMutation<any, any, any>(
+		({
+			actingUserId,
+			branchMachineId,
+			datetimeEnd,
+			datetimeStart,
+			userId,
+		}: any) =>
+			CashieringAssignmentsService.create(
+				{
+					acting_user_id: actingUserId,
+					branch_machine_id: branchMachineId,
+					datetime_end: datetimeEnd,
+					datetime_start: datetimeStart,
+					user_id: userId,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
 			),
-		});
-	};
-
-	const editCashieringAssignmentRequest = (data) => {
-		setRecentRequest(types.EDIT_CASHIERING_ASSIGNMENT);
-		editCashieringAssignment({
-			...data,
-			callback: modifiedCallback(
-				callback,
-				EDIT_SUCCESS_MESSAGE,
-				EDIT_ERROR_MESSAGE,
-			),
-		});
-	};
-
-	const removeCashieringAssignmentRequest = (data) => {
-		setRecentRequest(types.REMOVE_CASHIERING_ASSIGNMENT);
-		removeCashieringAssignment({
-			...data,
-			callback: modifiedCallback(
-				callback,
-				REMOVE_SUCCESS_MESSAGE,
-				REMOVE_ERROR_MESSAGE,
-			),
-		});
-	};
-
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-		warnings: callbackWarnings = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-		setWarnings(callbackWarnings);
-	};
-
-	return {
-		cashieringAssignments,
-		getCashieringAssignmentsByUserId: getCashieringAssignmentsByUserIdRequest,
-		createCashieringAssignment: createCashieringAssignmentRequest,
-		editCashieringAssignment: editCashieringAssignmentRequest,
-		removeCashieringAssignment: removeCashieringAssignmentRequest,
-		status,
-		errors,
-		warnings,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-	};
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useCashieringAssignments');
+			},
+		},
+	);
 };
+
+export const useCashieringAssignmentEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, actingUserId, datetimeStart, datetimeEnd }: any) =>
+			CashieringAssignmentsService.edit(
+				id,
+				{
+					acting_user_id: actingUserId,
+					datetime_end: datetimeEnd,
+					datetime_start: datetimeStart,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useCashieringAssignments');
+			},
+		},
+	);
+};
+
+export const useCashieringAssignmentDelete = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, actingUserId }) =>
+			CashieringAssignmentsService.delete(
+				id,
+				{
+					acting_user_id: actingUserId,
+				},
+				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useCashieringAssignments');
+			},
+		},
+	);
+};
+
+export default useCashieringAssignments;

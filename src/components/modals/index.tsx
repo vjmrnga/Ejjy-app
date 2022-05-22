@@ -6,6 +6,7 @@ export * from './CreateUserModal';
 export * from './FulfillCheckModal';
 export * from './ModifyAccountModal';
 export * from './ModifyBranchMachineModal';
+export * from './ModifyCashieringAssignmentModal';
 export * from './ModifyCreditRegistration';
 export * from './ModifyDiscountOptionModal';
 export * from './ModifyPointSystemTagModal';
