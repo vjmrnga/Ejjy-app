@@ -10,7 +10,14 @@ import { SalesTotalCard } from './SalesTotalCard';
 
 const columns: ColumnsType = [
 	{ title: 'Machine Name', dataIndex: 'machineName' },
-	{ title: 'Sales', dataIndex: 'sales' },
+	{ title: 'Cash Sales', dataIndex: 'cashSales' },
+	{ title: 'Credit Payments', dataIndex: 'creditPayments' },
+	{ title: 'Cash On Hand', dataIndex: 'cashOnHand' },
+	{ title: 'Credit Sales', dataIndex: 'creditSales' },
+	{ title: 'Gross Sales', dataIndex: 'grossSales' },
+	{ title: 'Voided Transactions', dataIndex: 'voidedTransactions' },
+	{ title: 'Discount', dataIndex: 'discount' },
+	{ title: 'Net Sales', dataIndex: 'netSales', fixed: 'right' },
 ];
 
 export const SalesBranch = () => {
@@ -45,7 +52,14 @@ export const SalesBranch = () => {
 			return {
 				key: branchMachine.id,
 				machineName: branchMachine.name,
-				sales: formatInPeso(branchMachine.sales),
+				cashSales: formatInPeso(branchMachine.sales.cash_sales),
+				creditPayments: formatInPeso(branchMachine.sales.credit_payments),
+				cashOnHand: formatInPeso(branchMachine.sales.cash_on_hand),
+				creditSales: formatInPeso(branchMachine.sales.credit_sales),
+				grossSales: formatInPeso(branchMachine.sales.gross_sales),
+				voidedTransactions: formatInPeso(branchMachine.sales.voided_total),
+				discount: formatInPeso(branchMachine.sales.discount),
+				netSales: formatInPeso(branchMachine.sales.net_sales),
 			};
 		});
 
@@ -72,7 +86,7 @@ export const SalesBranch = () => {
 					<Table
 						columns={columns}
 						dataSource={dataSource}
-						scroll={{ x: 500 }}
+						scroll={{ x: 1200 }}
 						pagination={false}
 						loading={isLoading}
 					/>
