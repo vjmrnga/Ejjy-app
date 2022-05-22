@@ -1,26 +1,25 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
-import { LogsService, ONLINE_API_URL } from 'services';
+import { ONLINE_API_URL, UserLogsService } from 'services';
 import { getLocalIpAddress } from '../utils/function';
 
-const useLogs = ({ params }: Query) =>
+const useUserLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
-			'useLogs',
-			params?.timeRange,
+			'useUserLogs',
 			params?.page,
 			params?.pageSize,
 			params?.timeRange,
 			params?.type,
 		],
 		async () =>
-			LogsService.list(
+			UserLogsService.list(
 				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					branch_machine_id: params?.branchMachineId,
 					acting_user_id: params?.actingUserId,
+					branch_machine_id: params?.branchMachineId,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
 					time_range: params?.timeRange,
 				},
 				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
@@ -34,4 +33,4 @@ const useLogs = ({ params }: Query) =>
 		},
 	);
 
-export default useLogs;
+export default useUserLogs;

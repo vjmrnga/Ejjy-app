@@ -9,6 +9,8 @@ import {
 import { Label } from 'components/elements';
 import { printOrderOfPayment } from 'configurePrinter';
 import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	orderOfPaymentPurposes,
 	pageSizeOptions,
@@ -155,9 +157,9 @@ export const TabOrderOfPayments = () => {
 				dataSource={dataSource}
 				scroll={{ x: 1200 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

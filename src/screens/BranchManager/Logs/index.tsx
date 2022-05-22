@@ -1,0 +1,172 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
+import { Col, Row, Select, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import { Content, RequestErrors, TimeRangeFilter } from 'components';
+import { Box, Label } from 'components/elements';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	pageSizeOptions,
+} from 'global';
+import { useBranchMachines, useQueryParams } from 'hooks';
+import useUserLogs from 'hooks/useUserLogs';
+import React, { useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatDateTimeExtended,
+	getFullName,
+} from 'utils/function';
+
+const columns: ColumnsType = [
+	{
+		title: 'Branch Machine',
+		dataIndex: 'branchMachine',
+	},
+	{ title: 'User', dataIndex: 'user' },
+	{ title: 'Description', dataIndex: 'description' },
+	{ title: 'Date & Time', dataIndex: 'datetimeCreated' },
+];
+
+export const Logs = () => {
+	// STATES
+	const [dataSource, setDataSource] = useState([]);
+
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
+	} = useBranchMachines();
+	const {
+		data: { logs, total },
+		isFetching: isFetchingLogs,
+		error: logsError,
+	} = useUserLogs({ params });
+
+	// METHODS
+	useEffect(() => {
+		const formattedLogs = logs.map((log) => ({
+			key: log.id,
+			branchMachine: log?.branch_machine?.name || EMPTY_CELL,
+			user: getFullName(log.acting_user),
+			description: log.description,
+			datetimeCreated: formatDateTimeExtended(log.datetime_created),
+		}));
+
+		setDataSource(formattedLogs);
+	}, [logs]);
+
+	return (
+		<Content title="Logs">
+			<section className="Logs">
+				<Box>
+					<Filter
+						isLoading={isFetchingLogs || isFetchingBranchMachines}
+						branchMachines={branchMachines}
+					/>
+
+					<RequestErrors
+						className="mx-6"
+						errors={[
+							...convertIntoArray(logsError, 'Logs'),
+							...convertIntoArray(branchMachinesError, 'Branch Machines'),
+						]}
+						withSpaceBottom
+					/>
+
+					<Table
+						columns={columns}
+						dataSource={dataSource}
+						scroll={{ x: 1000 }}
+						pagination={{
+							current: Number(params.page) || DEFAULT_PAGE,
+							total,
+							pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+							onChange: (page, newPageSize) => {
+								setQueryParams({
+									page,
+									pageSize: newPageSize,
+								});
+							},
+							disabled: !dataSource,
+							position: ['bottomCenter'],
+							pageSizeOptions,
+						}}
+						loading={isFetchingLogs}
+					/>
+				</Box>
+			</section>
+		</Content>
+	);
+};
+
+interface FilterProps {
+	branchMachines;
+	isLoading;
+}
+
+const Filter = ({ branchMachines, isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	return (
+		<Row className="PaddingHorizontal PaddingVertical" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Branch Machine" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ branchMachine: value }, { shouldResetPage: true });
+					}}
+					defaultValue={params.branchMachine}
+					loading={isLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
+					{branchMachines.map(({ id, name }) => (
+						<Select.Option value={id}>{name}</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="User" spacing />
+				<Select
+					style={{ width: '100%' }}
+					onChange={(value) => {
+						setQueryParams({ actingUserId: value }, { shouldResetPage: true });
+					}}
+					defaultValue={params.actingUserId}
+					loading={isLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
+					{/* {users.map(({ id, first_name, last_name }) => (
+						<Select.Option value={id}>
+							{`${first_name} ${last_name}`}
+						</Select.Option>
+					))} */}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<TimeRangeFilter disabled={isLoading} />
+			</Col>
+		</Row>
+	);
+};

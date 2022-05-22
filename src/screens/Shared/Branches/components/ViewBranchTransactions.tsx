@@ -9,7 +9,13 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { ButtonLink, Label } from 'components/elements';
-import { EMPTY_CELL, pageSizeOptions, transactionStatus } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	pageSizeOptions,
+	transactionStatus,
+} from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -124,9 +130,9 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

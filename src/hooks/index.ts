@@ -15,6 +15,7 @@ export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
 export * from './useDiscountOptions';
 export { default as useDiscountOptions } from './useDiscountOptions';
+export { default as useLogs } from './useLogs';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export * from './usePointSystemTags';

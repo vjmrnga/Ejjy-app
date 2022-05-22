@@ -17,6 +17,7 @@ export { default as CollectionReceiptsService } from './CollectionReceiptsServic
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
 export { default as DiscountOptionsService } from './DiscountOptionsService';
+export { default as LogsService } from './LogsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as PointSystemTagsService } from './PointSystemTagsService';
 export { default as PointTransactionsService } from './PointTransactionsService';
@@ -28,6 +29,7 @@ export { default as SalesTrackerService } from './SalesTrackerService';
 export { default as SiteSettingsService } from './SiteSettingsService';
 export { default as TransactionProductsService } from './TransactionProductsService';
 export { default as TransactionsService } from './TransactionsService';
+export { default as UserLogsService } from './UserLogsService';
 export { default as UsersService } from './UsersService';
 export { default as XReadReportsService } from './XReadReportsService';
 export { default as ZReadReportsService } from './ZReadReportsService';

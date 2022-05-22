@@ -123,12 +123,7 @@ export const ViewChecking = ({ match }: Props) => {
 					/>
 
 					{productCheck && (
-						<Descriptions
-							bordered
-							className="mx-6 my-6"
-							column={2}
-							size="small"
-						>
+						<Descriptions bordered className="ma-6" column={2} size="small">
 							<Descriptions.Item label="ID">
 								{productCheck.id}
 							</Descriptions.Item>

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { ONLINE_API_URL, SiteSettingsService } from 'services';
 import { getLocalIpAddress } from 'utils/function';
 
-export const useSiteSettingsRetrieve = ({ params, options }: Query) => {
+export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
 	let baseURL = useSelector(
 		branchesSelectors.selectURLByBranchId(params?.branchId),
 	);

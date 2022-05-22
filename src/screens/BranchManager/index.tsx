@@ -16,6 +16,7 @@ import { Checkings } from 'screens/BranchManager/Checkings';
 import { FulfillChecking } from 'screens/BranchManager/Checkings/Fulfill';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
+import { Logs } from 'screens/BranchManager/Logs';
 import { PointSystemTags } from 'screens/BranchManager/PointSystemTags';
 import { Reports } from 'screens/BranchManager/Reports';
 import { Sales } from 'screens/BranchManager/Sales';
@@ -247,6 +248,13 @@ const BranchManager = () => {
 				link: '/branch-manager/site-settings',
 			},
 			{
+				key: 'logs',
+				name: 'Logs',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/branch-manager/logs',
+			},
+			{
 				key: 'notifications',
 				name: 'Notifications',
 				activeIcon: require('../../assets/images/icon-notifications-active.svg'),
@@ -385,6 +393,8 @@ const BranchManager = () => {
 						path="/branch-manager/notifications"
 						component={Notifications}
 					/>
+
+					<Route path="/branch-manager/logs" component={Logs} />
 
 					<Route
 						path="/branch-manager/site-settings"

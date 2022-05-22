@@ -7,7 +7,12 @@ import {
 	TimeRangeFilter,
 } from 'components';
 import { Label } from 'components/elements';
-import { connectivityTypes, pageSizeOptions } from 'global';
+import {
+	connectivityTypes,
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	pageSizeOptions,
+} from 'global';
 import { useConnectivityLogs, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime } from 'utils/function';
@@ -69,9 +74,9 @@ export const TabConnectivityLogs = ({ serverUrl }: Props) => {
 				columns={columns}
 				dataSource={dataSource}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

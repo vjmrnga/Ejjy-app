@@ -9,7 +9,12 @@ import {
 } from 'components';
 import { ModifyCreditRegistrationModal } from 'components/';
 import { Label } from 'components/elements';
-import { pageSizeOptions, SEARCH_DEBOUNCE_TIME } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	pageSizeOptions,
+	SEARCH_DEBOUNCE_TIME,
+} from 'global';
 import { useCreditRegistrations, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -112,9 +117,9 @@ export const TabCreditRegistrations = () => {
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

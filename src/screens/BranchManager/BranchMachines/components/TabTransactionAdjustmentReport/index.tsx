@@ -9,7 +9,12 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { ButtonLink, Label } from 'components/elements';
-import { pageSizeOptions, timeRangeTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	pageSizeOptions,
+	timeRangeTypes,
+} from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
@@ -155,9 +160,9 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 				dataSource={dataSource}
 				scroll={{ x: 1200 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

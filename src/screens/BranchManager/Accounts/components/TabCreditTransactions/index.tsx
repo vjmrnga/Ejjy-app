@@ -9,7 +9,13 @@ import {
 	ViewAccountModal,
 	ViewTransactionModal,
 } from 'components';
-import { EMPTY_CELL, pageSizeOptions, paymentTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	pageSizeOptions,
+	paymentTypes,
+} from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -146,9 +152,9 @@ export const TabCreditTransactions = () => {
 				dataSource={dataSource}
 				scroll={{ x: 1000 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,

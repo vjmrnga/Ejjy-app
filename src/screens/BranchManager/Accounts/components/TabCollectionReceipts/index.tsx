@@ -2,7 +2,7 @@ import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
 import { printCollectionReceipt } from 'configurePrinter';
-import { pageSizeOptions } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, pageSizeOptions } from 'global';
 import {
 	useCollectionReceipts,
 	useQueryParams,
@@ -111,9 +111,9 @@ export const TabCollectionReceipts = () => {
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || 1,
+					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || 10,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
