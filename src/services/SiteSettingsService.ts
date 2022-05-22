@@ -7,6 +7,7 @@ interface Edit {
 	contact_number: string;
 	is_discount_allowed_if_credit: boolean;
 	is_markdown_allowed_if_credit: boolean;
+	is_time_checker_feature_enabled: boolean;
 	permit_number: string;
 	pos_accreditation_date: string;
 	pos_accreditation_number: string;

@@ -81,6 +81,8 @@ export const ViewBranchSiteSettings = ({
 					siteSettings?.is_markdown_allowed_if_credit || false,
 				isDiscountAllowedIfCredit:
 					siteSettings?.is_discount_allowed_if_credit || false,
+				isTimeCheckerFeatureEnabled:
+					siteSettings?.is_time_checker_feature_enabled || false,
 
 				proprietor: siteSettings?.proprietor || '',
 				taxType: siteSettings?.tax_type || null,
@@ -136,6 +138,9 @@ export const ViewBranchSiteSettings = ({
 				isDiscountAllowedIfCredit: Yup.boolean()
 					.required()
 					.label('Discount on Credit Transactions'),
+				isTimeCheckerFeatureEnabled: Yup.boolean()
+					.required()
+					.label('Time Checker Feature'),
 
 				proprietor: Yup.string().required().label('Proprietor'),
 				taxType: Yup.string().required().label('Tax Type'),
@@ -251,6 +256,17 @@ export const ViewBranchSiteSettings = ({
 					size="large"
 				/>
 			)}
+			{type === inputTypes.TEXTAREA && (
+				<Input.TextArea
+					name={name}
+					value={values[name]}
+					rows={3}
+					onChange={(e) => {
+						setFieldValue(name, e.target.value);
+					}}
+					size="large"
+				/>
+			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
 					name={name}
@@ -342,12 +358,31 @@ export const ViewBranchSiteSettings = ({
 								/>
 							</Col>
 
+							<Col span={24} md={12}>
+								<Label label="Time Checker Feature" spacing />
+								<Radio.Group
+									value={values.isTimeCheckerFeatureEnabled}
+									options={[
+										{ label: 'Enabled', value: true },
+										{ label: 'Disabled', value: false },
+									]}
+									onChange={(e) => {
+										setFieldValue(
+											'isTimeCheckerFeatureEnabled',
+											e.target.value,
+										);
+									}}
+									optionType="button"
+								/>
+							</Col>
+
 							<Divider>Receipt Header</Divider>
 
 							<Col span={24} md={12}>
 								{renderInputField({
 									name: 'storeName',
 									label: 'Store Name',
+									type: inputTypes.TEXTAREA,
 									setFieldValue,
 									values,
 								})}
@@ -356,6 +391,7 @@ export const ViewBranchSiteSettings = ({
 								{renderInputField({
 									name: 'addressOfTaxPayer',
 									label: 'Address of Tax Payer',
+									type: inputTypes.TEXTAREA,
 									setFieldValue,
 									values,
 								})}

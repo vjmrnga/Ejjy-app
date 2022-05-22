@@ -1,7 +1,7 @@
 import { Button, Result } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { useBranchMachines } from 'hooks';
+import { useBranchMachines, useSiteSettingsRetrieve } from 'hooks';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import './style.scss';
@@ -19,7 +19,12 @@ export const TimeMismatchBoundary = () => {
 	// CUSTOM HOOKS
 	const {
 		data: { branchMachines },
+		isFetched: isBranchMachinesFetched,
 	} = useBranchMachines();
+	const { data: siteSettings, isFetched: isSiteSettingsFetched } =
+		useSiteSettingsRetrieve({
+			options: { notifyOnChangeProps: ['data'] },
+		});
 
 	// METHODS
 	const serviceFn = async () => {
@@ -60,13 +65,21 @@ export const TimeMismatchBoundary = () => {
 		);
 	};
 
-	useQuery<any>(['time', hasMismatch], serviceFn, {
-		enabled: !hasMismatch, // NOTE: Stop the polling if there is a mismatch
-		refetchInterval: REFETCH_INTERVAL_MS,
-		refetchIntervalInBackground: true,
-		notifyOnChangeProps: ['data'],
-		onSuccess: onSuccessCheck,
-	});
+	useQuery<any>(
+		['time', hasMismatch, siteSettings?.is_time_checker_feature_enabled],
+		serviceFn,
+		{
+			enabled:
+				siteSettings?.is_time_checker_feature_enabled === true &&
+				!hasMismatch &&
+				isSiteSettingsFetched &&
+				isBranchMachinesFetched,
+			refetchInterval: REFETCH_INTERVAL_MS,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: ['data'],
+			onSuccess: onSuccessCheck,
+		},
+	);
 
 	return hasMismatch ? (
 		<div className="TimeMismatchBoundary">
