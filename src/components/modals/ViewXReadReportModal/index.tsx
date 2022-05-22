@@ -4,6 +4,7 @@ import {
 	PrinterOutlined,
 } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Space, Typography } from 'antd';
+import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
 import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
@@ -79,7 +80,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 
 	return (
 		<Modal
-			className="ViewXReadReportModal"
+			className="ViewXReadReportModal Modal__hasFooter"
 			title="X-Read Report"
 			footer={[
 				<Button
@@ -128,24 +129,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					src={require('../../../assets/images/no-transaction.png')}
 				/>
 			)}
-			<Space
-				align="center"
-				className="w-100 text-center"
-				direction="vertical"
-				size={0}
-			>
-				<Title level={3}>EJY AND JY</Title>
-				<Text>WET MARKET AND ENTERPRISES</Text>
-				<Text>POB., CARMEN, AGUSAN DEL NORTE</Text>
-				<Text>Tel#: 080-8866</Text>
-				<Text>{report.proprietor}</Text>
-				<Text>{report.location}</Text>
-				<Text>
-					{siteSettings.tax_type} | {report.tin}
-				</Text>
-				<Text>Machine ID Number</Text>
-				<Text>Software License Number</Text>
-			</Space>
+			<ReceiptHeader />
 
 			<Space align="center" className="mt-6 w-100 justify-space-between">
 				<Text>X-READ</Text>
@@ -268,20 +252,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
-			<Space
-				align="center"
-				className="mt-8 w-100 text-center"
-				direction="vertical"
-				size={0}
-			>
-				<Text>{siteSettings.software_developer}</Text>
-				<Text>Burgos St., Poblacion, Carmen,</Text>
-				<Text>Agusan del Norte</Text>
-				<Text>{siteSettings.software_developer_tin}</Text>
-				<Text>{siteSettings.pos_accreditation_number}</Text>
-				<Text>{siteSettings.pos_accreditation_date}</Text>
-				<Text>{siteSettings.pos_accreditation_valid_until_date}</Text>
-			</Space>
+			<ReceiptFooter />
 
 			<div
 				dangerouslySetInnerHTML={{ __html: html }}

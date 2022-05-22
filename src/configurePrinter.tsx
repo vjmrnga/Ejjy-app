@@ -233,11 +233,11 @@ const getFooter = (footerData) => {
 	return `
 		<div style="text-align: center; display: flex; flex-direction: column">
 			<span>${softwareDeveloper}</span>
-			<span>${softwareDeveloperAddress}</span>
+			<span style="white-space: pre-line">${softwareDeveloperAddress}</span>
 			<span>${softwareDeveloperTin}</span>
 			<span>${posAccreditationNumber}</span>
 			<span>${posAccreditationValidUntilDate}</span>
-			<span>${ptuNumber}</span>
+			
 			<br />
 		</div>`;
 };

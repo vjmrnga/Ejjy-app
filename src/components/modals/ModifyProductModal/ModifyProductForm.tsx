@@ -362,7 +362,6 @@ export const ModifyProductForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			onSubmit={async (formData) => {
-				console.log('submit');
 				const isWeighing =
 					formData.unitOfMeasurement === unitOfMeasurementTypes.WEIGHING;
 

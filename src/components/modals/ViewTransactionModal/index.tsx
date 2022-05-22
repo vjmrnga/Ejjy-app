@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
+import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
 import { EMPTY_CELL, saleTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
@@ -116,25 +117,7 @@ export const ViewTransactionModal = ({
 			<Spin spinning={isTransactionFetching || isSiteSettingsFetching}>
 				{transactionData?.id && (
 					<>
-						<Space
-							align="center"
-							className="w-100 text-center"
-							direction="vertical"
-							size={0}
-						>
-							<Title level={3}>EJY AND JY</Title>
-							<Text>WET MARKET AND ENTERPRISES</Text>
-							<Text>POB., CARMEN, AGUSAN DEL NORTE</Text>
-							<Text>Tel#: 080-8866</Text>
-							<Text>{transactionData.invoice.proprietor}</Text>
-							<Text>{transactionData.invoice.location}</Text>
-							<Text>
-								{siteSettings.tax_type} | {transactionData.invoice.tin}
-							</Text>
-							<Text>Machine ID Number</Text>
-							<Text>Software License Number</Text>
-							<Text>[{title}]</Text>
-						</Space>
+						<ReceiptHeader title={title} />
 
 						<Table
 							className="mt-6"
@@ -293,27 +276,17 @@ export const ViewTransactionModal = ({
 							</Descriptions>
 						)}
 
-						<Space
-							align="center"
-							className="mt-8 w-100 text-center"
-							direction="vertical"
-							size={0}
-						>
-							<Text>{siteSettings.software_developer}</Text>
-							<Text>Burgos St., Poblacion, Carmen,</Text>
-							<Text>Agusan del Norte</Text>
-							<Text>{siteSettings.software_developer_tin}</Text>
-							<Text>{siteSettings.pos_accreditation_number}</Text>
-							<Text>{siteSettings.pos_accreditation_date}</Text>
-							<Text>{siteSettings.pos_accreditation_valid_until_date}</Text>
-
-							<Text className="mt-4 d-block">
-								THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF
-								PERMIT TO USE.
-							</Text>
-							<Text>THIS SERVES AS YOUR SALES INVOICE</Text>
-							<Text>&quot;{siteSettings.thank_you_message}&quot;</Text>
-						</Space>
+						<ReceiptFooter />
+						<Text className="mt-4 d-block text-center">
+							THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF
+							PERMIT TO USE.
+						</Text>
+						<Text className="d-block text-center">
+							THIS SERVES AS YOUR SALES INVOICE
+						</Text>
+						<Text className="d-block text-center">
+							&quot;{siteSettings.thank_you_message}&quot;
+						</Text>
 					</>
 				)}
 			</Spin>

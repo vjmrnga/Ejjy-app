@@ -472,6 +472,7 @@ export const ViewBranchSiteSettings = ({
 									name: 'softwareDeveloperAddress',
 									label: 'Software Developer Address',
 									setFieldValue,
+									type: inputTypes.TEXTAREA,
 									values,
 								})}
 							</Col>
