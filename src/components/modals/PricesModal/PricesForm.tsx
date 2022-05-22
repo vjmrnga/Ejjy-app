@@ -120,6 +120,7 @@ export const PricesForm = ({
 								onChange={(value) => {
 									setFieldValue('type', value);
 								}}
+								size="large"
 								optionFilterProp="children"
 								filterOption={(input, option) =>
 									option.children
