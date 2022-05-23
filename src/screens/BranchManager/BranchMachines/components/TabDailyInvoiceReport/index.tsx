@@ -203,11 +203,12 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
 				value={
 					_.toString(params.timeRange).split(',')?.length === 2
 						? moment(_.toString(params.timeRange).split(',')[0])
-						: null
+						: moment()
 				}
 				onChange={(date, dateString) => {
 					setQueryParams({ timeRange: [dateString, dateString].join(',') });
 				}}
+				allowClear={false}
 			/>
 		</Col>
 	</Row>

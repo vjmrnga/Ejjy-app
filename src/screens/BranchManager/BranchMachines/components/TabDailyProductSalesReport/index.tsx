@@ -78,10 +78,11 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 				datetime_created,
 				transaction,
 				quantity,
-				branch_product: { product },
+				branch_product,
 				price_per_piece,
 				amount,
 			} = transactionProduct;
+			const product = branch_product?.product || {};
 
 			const modeOfPayment = (
 				<ModeOfPayment modeOfPayment={transaction.payment.mode} />
@@ -113,11 +114,11 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					EMPTY_CELL
 				),
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
-				quantity: formatQuantity(product.unit_of_measurement, quantity),
-				code: `${product.textcode || ''} / ${product.barcode || ''}`,
-				name: `${product.name} / ${product.description}`,
+				quantity: formatQuantity(product?.unit_of_measurement, quantity),
+				code: `${product?.textcode || ''} / ${product?.barcode || ''}`,
+				name: `${product?.name} / ${product?.description}`,
 				sellingPrice: formatInPeso(price_per_piece),
-				vatable: product.is_vat_exempted ? 'VAT Exempt' : 'Vatable',
+				vatable: product?.is_vat_exempted ? 'VAT Exempt' : 'Vatable',
 				totalAmount: formatInPeso(amount),
 				remarks,
 			};
@@ -186,34 +187,8 @@ interface FilterProps {
 }
 
 const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
-	// STATES
-	const [invoiceSearch, setInvoiceSearch] = useState('');
-
-	// CUSTOM HOOKS
-	const {
-		data: { transactions },
-		isFetching,
-	} = useTransactions({ params: { orNumber: invoiceSearch } });
-
-	const onSearchDebounced = useCallback(
-		_.debounce((search) => {
-			setQueryParams({ orNumber: search });
-		}, SEARCH_DEBOUNCE_TIME),
-		[],
-	);
-
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="Invoice #" spacing />
-				<Input
-					prefix={<SearchOutlined />}
-					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
-					allowClear
-				/>
-			</Col>
-
 			<Col lg={12} span={24}>
 				<TimeRangeFilter disabled={isLoading} />
 			</Col>

@@ -150,7 +150,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
-								<TabSessions serverUrl={branchMachine.server_url} />
+								<TabSessions branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>

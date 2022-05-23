@@ -5,6 +5,7 @@ import {
 	RequestErrors,
 	RequestWarnings,
 	TableHeader,
+	TransactionStatus,
 	ViewBackOrderModal,
 	ViewTransactionModal,
 } from 'components';
@@ -14,6 +15,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	timeRangeTypes,
+	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
@@ -81,11 +83,8 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 							onClick={() => setSelectedBackOrder(backOrder.id)}
 						/>
 					)}
-					{previousTransaction && (
-						<ButtonLink
-							text={`Prev. Invoice - ${previousTransaction.invoice.or_number}`}
-							onClick={() => setSelectedTransaction(previousTransaction.id)}
-						/>
+					{transaction.status === transactionStatus.VOID_CANCELLED && (
+						<TransactionStatus status={transaction.status} />
 					)}
 					{newTransaction && (
 						<ButtonLink
@@ -209,11 +208,12 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
 				value={
 					_.toString(params.timeRange).split(',')?.length === 2
 						? moment(_.toString(params.timeRange).split(',')[0])
-						: null
+						: moment()
 				}
 				onChange={(date, dateString) => {
 					setQueryParams({ timeRange: [dateString, dateString].join(',') });
 				}}
+				allowClear={false}
 			/>
 		</Col>
 	</Row>

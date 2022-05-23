@@ -36,14 +36,10 @@ const closingTypes = {
 };
 
 interface Props {
-	serverUrl: any;
+	branchMachineId: any;
 }
-/* TODO
-Call nalang ka sa imong self para sa List Users API (for filtering)
-Call nalang ka sa imong self para sa List Cashiering Sessions API but pass ka ug branch_machine_id  nya (TBD pa akong API ani)
 
-*/
-export const TabSessions = ({ serverUrl }: Props) => {
+export const TabSessions = ({ branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -70,7 +66,7 @@ export const TabSessions = ({ serverUrl }: Props) => {
 			listSessions(
 				{
 					...params,
-					serverUrl,
+					branchMachineId: branchMachineId,
 					isUnauthorized:
 						params.type === sessionTypes.UNAUTHORIZED ? true : undefined,
 					isAutomaticallyClosed: isAutomaticallyClosed,
