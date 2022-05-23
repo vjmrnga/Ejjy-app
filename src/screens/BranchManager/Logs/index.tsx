@@ -7,9 +7,10 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
+	MAX_PAGE_SIZE,
 	pageSizeOptions,
 } from 'global';
-import { useBranchMachines, useQueryParams } from 'hooks';
+import { useBranchMachines, useQueryParams, useUsers } from 'hooks';
 import useUserLogs from 'hooks/useUserLogs';
 import React, { useEffect, useState } from 'react';
 import {
@@ -38,7 +39,17 @@ export const Logs = () => {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,
 		error: branchMachinesError,
-	} = useBranchMachines();
+	} = useBranchMachines({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+	const {
+		data: { users },
+		isFetching: isFetchingUsers,
+		error: usersError,
+	} = useUsers({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
@@ -63,8 +74,11 @@ export const Logs = () => {
 			<section className="Logs">
 				<Box>
 					<Filter
-						isLoading={isFetchingLogs || isFetchingBranchMachines}
+						isLoading={
+							isFetchingLogs || isFetchingBranchMachines || isFetchingUsers
+						}
 						branchMachines={branchMachines}
+						users={users}
 					/>
 
 					<RequestErrors
@@ -72,6 +86,7 @@ export const Logs = () => {
 						errors={[
 							...convertIntoArray(logsError, 'Logs'),
 							...convertIntoArray(branchMachinesError, 'Branch Machines'),
+							...convertIntoArray(usersError, 'Users'),
 						]}
 						withSpaceBottom
 					/>
@@ -103,11 +118,12 @@ export const Logs = () => {
 };
 
 interface FilterProps {
-	branchMachines;
-	isLoading;
+	branchMachines: any;
+	isLoading: boolean;
+	users: any;
 }
 
-const Filter = ({ branchMachines, isLoading }: FilterProps) => {
+const Filter = ({ branchMachines, isLoading, users }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 
 	return (
@@ -117,9 +133,14 @@ const Filter = ({ branchMachines, isLoading }: FilterProps) => {
 				<Select
 					style={{ width: '100%' }}
 					onChange={(value) => {
-						setQueryParams({ branchMachine: value }, { shouldResetPage: true });
+						setQueryParams(
+							{ branchMachineId: value },
+							{ shouldResetPage: true },
+						);
 					}}
-					defaultValue={params.branchMachine}
+					defaultValue={
+						params.branchMachineId ? Number(params.branchMachineId) : null
+					}
 					loading={isLoading}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
@@ -132,7 +153,9 @@ const Filter = ({ branchMachines, isLoading }: FilterProps) => {
 					allowClear
 				>
 					{branchMachines.map(({ id, name }) => (
-						<Select.Option value={id}>{name}</Select.Option>
+						<Select.Option key={id} value={id}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -144,7 +167,9 @@ const Filter = ({ branchMachines, isLoading }: FilterProps) => {
 					onChange={(value) => {
 						setQueryParams({ actingUserId: value }, { shouldResetPage: true });
 					}}
-					defaultValue={params.actingUserId}
+					defaultValue={
+						params.actingUserId ? Number(params.actingUserId) : null
+					}
 					loading={isLoading}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
@@ -156,11 +181,11 @@ const Filter = ({ branchMachines, isLoading }: FilterProps) => {
 					showSearch
 					allowClear
 				>
-					{/* {users.map(({ id, first_name, last_name }) => (
-						<Select.Option value={id}>
-							{`${first_name} ${last_name}`}
+					{users.map((user) => (
+						<Select.Option key={user.id} value={user.id}>
+							{getFullName(user)}
 						</Select.Option>
-					))} */}
+					))}
 				</Select>
 			</Col>
 

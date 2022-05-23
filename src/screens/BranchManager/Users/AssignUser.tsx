@@ -1,14 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import {
-	Button,
-	Col,
-	message,
-	Popconfirm,
-	Row,
-	Space,
-	Table,
-	Tooltip,
-} from 'antd';
+import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	AddButtonIcon,
 	Breadcrumb,

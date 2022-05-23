@@ -8,10 +8,11 @@ const useUserLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useUserLogs',
-			params?.page,
+			params?.actingUserId,
+			params?.branchMachineId,
 			params?.pageSize,
+			params?.page,
 			params?.timeRange,
-			params?.type,
 		],
 		async () =>
 			UserLogsService.list(

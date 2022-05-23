@@ -9,6 +9,7 @@ import { getBaseUrl } from './helper';
 function* list({ payload }: any) {
 	const {
 		branchId,
+		branchMachineId,
 		callback,
 		isAutomaticallyClosed,
 		isUnauthorized,
@@ -23,6 +24,7 @@ function* list({ payload }: any) {
 	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
+		branch_machine_id: branchMachineId,
 		is_automatically_closed: isAutomaticallyClosed,
 		is_unauthorized: isUnauthorized,
 		page_size: pageSize,
