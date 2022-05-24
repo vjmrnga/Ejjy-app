@@ -92,9 +92,14 @@ export const AssignUser = ({ match }: Props) => {
 
 			const formattedAssignments = days.map((item) => {
 				const isDateAfter = today.isAfter(item.date);
-				const assignments = cashieringAssignments.filter((ca) =>
-					dayjs.tz(ca.datetime_start).isSame(item.date, 'date'),
-				);
+				const assignments = cashieringAssignments
+					.filter((ca) => dayjs.tz(ca.datetime_start).isSame(item.date, 'date'))
+					.sort((assignmentA, assignmentB) => {
+						const startTimeA = dayjs.tz(assignmentA.datetime_start);
+						const startTimeB = dayjs.tz(assignmentB.datetime_start);
+
+						return startTimeA.isAfter(startTimeB) ? 1 : -1;
+					});
 
 				return {
 					key: item.display,

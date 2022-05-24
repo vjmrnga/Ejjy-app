@@ -216,6 +216,7 @@ const getHeader = (headerData) => {
 			<span>${taxType} | ${tin}</span>
 			<span>Back Office</span>
       <span>${ptuNumber}</span>
+			${title ? '</br>' : ''}
 			${title ? `<span>[${title}]</span>` : ''}
 		</div>`;
 };

@@ -56,9 +56,9 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 		error,
 	} = useTransactions({
 		params: {
+			branchMachineId,
 			isAdjusted: false,
 			statuses: transactionStatus.FULLY_PAID,
-			branchMachineId,
 			timeRange: timeRangeTypes.DAILY,
 			...queryParams,
 		},

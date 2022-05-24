@@ -172,6 +172,7 @@ export const ModifyCashieringAssignmentForm = ({
 							<Col span={24}>
 								<Label label="Branch Machine" spacing />
 								<Select
+									size="large"
 									className="w-100"
 									onChange={(value) => {
 										setFieldValue('branchMachineId', value);
@@ -203,12 +204,15 @@ export const ModifyCashieringAssignmentForm = ({
 						<Col span={24}>
 							<Label label="Schedule" spacing />
 							<TimePicker.RangePicker
+								size="large"
 								className="w-100"
 								onChange={(times: any) => {
 									setFieldValue('times', times);
 								}}
 								value={values.times}
-								format="HH:mm"
+								format="h:mm A"
+								hideDisabledOptions
+								use12Hours
 							/>
 							<ErrorMessage
 								name="times"

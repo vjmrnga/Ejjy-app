@@ -38,7 +38,12 @@ export const ReceiptHeader = ({ title }: Props) => {
 			</Text>
 			<Text>Back Office</Text>
 			<Text>{ptuNumber}</Text>
-			{title && <Text>[{title}]</Text>}
+			{title && (
+				<>
+					<br />
+					<Text>[{title}]</Text>
+				</>
+			)}
 		</Space>
 	);
 };

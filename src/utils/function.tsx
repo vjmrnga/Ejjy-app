@@ -1,5 +1,5 @@
 /* eslint-disable no-confusing-arrow */
-import { message, Modal } from 'antd';
+import { Input, message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { floor, isArray, isNaN, isString, memoize, round } from 'lodash';
 import React from 'react';
@@ -70,28 +70,36 @@ export const confirmPassword = ({
 }: ConfirmPassword) => {
 	let password = '';
 
-	Modal.confirm({
+	const modal = Modal.confirm({
 		title,
 		centered: true,
 		className: 'Modal__hasFooter',
 		okText: 'Submit',
 		content: (
-			<UncontrolledInput
-				type="password"
-				onChange={(value) => {
-					password = value;
+			<Input.Password
+				size="large"
+				placeholder="Input Password"
+				onPressEnter={() => {
+					onSubmit();
+				}}
+				onChange={(e) => {
+					password = e.target.value;
 				}}
 			/>
 		),
-		onOk: (close) => {
-			if (password === 'generic123') {
-				onSuccess();
-				close();
-			} else {
-				message.error('Incorrect password');
-			}
+		onOk: () => {
+			onSubmit();
 		},
 	});
+
+	const onSubmit = () => {
+		if (password === 'generic123') {
+			onSuccess();
+			modal.destroy();
+		} else {
+			message.error('Incorrect password');
+		}
+	};
 };
 
 export const numberWithCommas = (x) =>
