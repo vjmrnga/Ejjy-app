@@ -8,7 +8,7 @@ import './style.scss';
 
 export const TimeMismatchBoundary = () => {
 	// VARIABLES
-	const MINUTES_DIFFERENCE = 5;
+	const MINUTES_DIFFERENCE = 2;
 	const REFETCH_INTERVAL_MS = 5000;
 	const TIME_API_BASE_URL = 'http://worldtimeapi.org/';
 
