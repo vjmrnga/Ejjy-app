@@ -106,55 +106,16 @@ export const AssignUser = ({ match }: Props) => {
 					date: item.display,
 					day: item.day,
 					assignments: (
-						<Row gutter={[16, 16]}>
-							{assignments.map((assignment) => (
-								<Col key={assignment.id} span={24}>
-									<Space align="center" className="w-100">
-										<div>
-											{`${assignment.branch_machine.name}: ${dayjs
-												.tz(assignment.datetime_start)
-												.format('HH:mm')} – ${dayjs
-												.tz(assignment.datetime_end)
-												.format('HH:mm')}`}
-										</div>
-
-										<Tooltip title="Edit">
-											<Button
-												type="primary"
-												shape="circle"
-												size="small"
-												icon={<EditOutlined />}
-												onClick={() => {
-													confirmPassword({
-														onSuccess: () =>
-															setSelectedCashieringAssignment(assignment),
-													});
-												}}
-											/>
-										</Tooltip>
-
-										<Tooltip title="Delete">
-											<Button
-												danger
-												shape="circle"
-												size="small"
-												ghost
-												icon={<DeleteOutlined />}
-												onClick={() => {
-													confirmPassword({
-														onSuccess: () =>
-															deleteCashieringAssignment({
-																id: assignment.id,
-																actingUserId: actingUser.id,
-															}),
-													});
-												}}
-											/>
-										</Tooltip>
-									</Space>
-								</Col>
-							))}
-						</Row>
+						<Assignments
+							assignments={assignments}
+							onEdit={setSelectedCashieringAssignment}
+							onDelete={(assignment) =>
+								deleteCashieringAssignment({
+									id: assignment.id,
+									actingUserId: actingUser.id,
+								})
+							}
+						/>
 					),
 					actions: !isDateAfter && (
 						<AddButtonIcon
@@ -234,6 +195,7 @@ export const AssignUser = ({ match }: Props) => {
 
 						{(selectedDate || selectedCashieringAssignment) && (
 							<ModifyCashieringAssignmentModal
+								assignments={cashieringAssignments}
 								assignment={selectedCashieringAssignment}
 								date={selectedDate}
 								userId={userId}
@@ -249,3 +211,52 @@ export const AssignUser = ({ match }: Props) => {
 		</Content>
 	);
 };
+
+interface AssignmentsProps {
+	assignments: any;
+	onEdit: any;
+	onDelete: any;
+}
+
+const Assignments = ({ assignments, onDelete, onEdit }: AssignmentsProps) => (
+	<Row gutter={[16, 16]}>
+		{assignments.map((assignment) => (
+			<Col key={assignment.id} span={24}>
+				<Space align="center" className="w-100">
+					<div>
+						{`${assignment.branch_machine.name}: ${dayjs
+							.tz(assignment.datetime_start)
+							.format('h:mmA')} – ${dayjs
+							.tz(assignment.datetime_end)
+							.format('h:mmA')}`}
+					</div>
+
+					<Tooltip title="Edit">
+						<Button
+							type="primary"
+							shape="circle"
+							size="small"
+							icon={<EditOutlined />}
+							onClick={() =>
+								confirmPassword({ onSuccess: () => onEdit(assignment) })
+							}
+						/>
+					</Tooltip>
+
+					<Tooltip title="Delete">
+						<Button
+							danger
+							shape="circle"
+							size="small"
+							ghost
+							icon={<DeleteOutlined />}
+							onClick={() =>
+								confirmPassword({ onSuccess: onDelete(assignment) })
+							}
+						/>
+					</Tooltip>
+				</Space>
+			</Col>
+		))}
+	</Row>
+);

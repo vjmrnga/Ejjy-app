@@ -8,14 +8,35 @@ import {
 	useCashieringAssignmentEdit,
 } from 'hooks';
 import moment, { Moment } from 'moment';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray } from 'utils/function';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { Button, FieldError, Label } from '../../elements';
 
+const setDateToTime = ({ assignment, date, times }) => {
+	const selectedDate = assignment ? dayjs.tz(assignment.datetime_start) : date;
+	const datetimeStart = times[0];
+	const datetimeEnd = times[1];
+
+	datetimeStart
+		.date(selectedDate.date())
+		.month(selectedDate.month())
+		.year(selectedDate.year());
+	datetimeEnd
+		.date(selectedDate.date())
+		.month(selectedDate.month())
+		.year(selectedDate.year());
+
+	return {
+		datetimeStart,
+		datetimeEnd,
+	};
+};
+
 interface ModalProps {
 	assignment?: any;
+	assignments?: any;
 	date?: any;
 	userId: number;
 	onClose: any;
@@ -23,6 +44,7 @@ interface ModalProps {
 
 export const ModifyCashieringAssignmentModal = ({
 	assignment,
+	assignments,
 	date,
 	userId,
 	onClose,
@@ -45,20 +67,12 @@ export const ModifyCashieringAssignmentModal = ({
 	} = useCashieringAssignmentEdit();
 
 	// METHODS
-
-	const onSubmit = async (formData) => {
-		const selectedDate = assignment
-			? dayjs.tz(assignment.datetime_start)
-			: date;
-		const datetimeStart = formData.times[0];
-		const datetimeEnd = formData.times[1];
-
-		datetimeStart.set('date', selectedDate.get('date'));
-		datetimeStart.set('month', selectedDate.get('month'));
-		datetimeStart.set('year', selectedDate.get('year'));
-		datetimeEnd.set('date', selectedDate.get('date'));
-		datetimeEnd.set('month', selectedDate.get('month'));
-		datetimeEnd.set('year', selectedDate.get('year'));
+	const handleSubmit = async (formData) => {
+		const { datetimeStart, datetimeEnd } = setDateToTime({
+			assignment,
+			date,
+			times: formData.times,
+		});
 
 		const data = {
 			...formData,
@@ -103,9 +117,11 @@ export const ModifyCashieringAssignmentModal = ({
 
 			<ModifyCashieringAssignmentForm
 				assignment={assignment}
+				assignments={assignments}
 				branchMachines={branchMachines}
+				date={date}
 				loading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 				onClose={onClose}
 			/>
 		</Modal>
@@ -114,7 +130,9 @@ export const ModifyCashieringAssignmentModal = ({
 
 interface FormProps {
 	assignment?: any;
+	assignments?: any;
 	branchMachines: any;
+	date?: any;
 	loading: boolean;
 	onClose: any;
 	onSubmit: any;
@@ -122,11 +140,29 @@ interface FormProps {
 
 export const ModifyCashieringAssignmentForm = ({
 	assignment,
+	assignments,
 	branchMachines,
+	date,
 	loading,
 	onClose,
 	onSubmit,
 }: FormProps) => {
+	// STATES
+	const [filteredAssignments, setFilteredAssignments] = useState([]);
+
+	// METHODS
+	useEffect(() => {
+		const selectedDate = assignment
+			? dayjs.tz(assignment.datetime_start)
+			: date;
+
+		setFilteredAssignments(
+			assignments.filter((ca) =>
+				dayjs.tz(ca.datetime_start).isSame(selectedDate, 'date'),
+			),
+		);
+	}, [assignment, assignments, date]);
+
 	const getFormDetails = useCallback(() => {
 		interface DefaultValues {
 			id?: number;
@@ -149,12 +185,41 @@ export const ModifyCashieringAssignmentForm = ({
 			defaultValues,
 			schema: Yup.object().shape({
 				branchMachineId: !assignment
-					? Yup.number().required().label('Branch Machine')
+					? Yup.number().nullable().required().label('Branch Machine')
 					: null,
-				times: Yup.array().required().label('Schedule'),
+				times: Yup.array()
+					.required()
+					.label('Schedule')
+					.test(
+						'overlap',
+						'Selected time overlaps existing assignments.',
+						(times) => {
+							if (filteredAssignments?.length > 0) {
+								const { datetimeStart, datetimeEnd } = setDateToTime({
+									assignment,
+									date,
+									times,
+								});
+
+								const hasOverlap = filteredAssignments.some((ca) => {
+									const datetimeStartB = dayjs.tz(ca.datetime_start);
+									const datetimeEndB = dayjs.tz(ca.datetime_end);
+
+									return (
+										datetimeStart <= datetimeEndB &&
+										datetimeStartB <= datetimeEnd
+									);
+								});
+
+								return !hasOverlap;
+							}
+
+							return true;
+						},
+					),
 			}),
 		};
-	}, [assignment]);
+	}, [assignment, filteredAssignments, date]);
 
 	return (
 		<Formik
