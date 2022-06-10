@@ -10,8 +10,10 @@ import '../style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Machine Name', dataIndex: 'machineName' },
-	{ title: 'Cash Sales', dataIndex: 'cashSales' },
 	{ title: 'Credit Payments', dataIndex: 'creditPayments' },
+	{ title: 'Cash In', dataIndex: 'cashIn' },
+	{ title: 'Cash Out', dataIndex: 'cashOut' },
+	{ title: 'Cash Sales', dataIndex: 'cashSales' },
 	{ title: 'Cash On Hand', dataIndex: 'cashOnHand' },
 	{ title: 'Credit Sales', dataIndex: 'creditSales' },
 	{ title: 'Gross Sales', dataIndex: 'grossSales' },
@@ -64,8 +66,10 @@ export const SalesBranch = () => {
 			return {
 				key: branchMachine.id,
 				machineName: branchMachine.name,
-				cashSales: formatInPeso(branchMachine.sales.cash_sales),
 				creditPayments: formatInPeso(branchMachine.sales.credit_payments),
+				cashIn: formatInPeso(branchMachine.sales.cash_in),
+				cashOut: formatInPeso(branchMachine.sales.cash_out),
+				cashSales: formatInPeso(branchMachine.sales.cash_sales),
 				cashOnHand: formatInPeso(branchMachine.sales.cash_on_hand),
 				creditSales: formatInPeso(branchMachine.sales.credit_sales),
 				grossSales: formatInPeso(branchMachine.sales.gross_sales),

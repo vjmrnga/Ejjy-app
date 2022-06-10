@@ -134,6 +134,11 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 				{getFullName(cashBreakdown.cashiering_session.user)}
 			</Descriptions.Item>
 			<Descriptions.Item label="Type">{type}</Descriptions.Item>
+			{cashBreakdown.category === cashBreakdownCategories.CASH_IN && (
+				<Descriptions.Item label="Remarks">
+					{cashBreakdown.remarks}
+				</Descriptions.Item>
+			)}
 		</Descriptions>
 
 		<Table
