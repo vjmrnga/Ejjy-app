@@ -46,6 +46,7 @@ function* list({ payload }: any) {
 			const baseBackupURL = yield select(
 				branchesSelectors.selectBackUpURLByBranchId(branchId),
 			);
+
 			if (baseURL && baseBackupURL) {
 				// Fetch branch url
 				response = yield call(service.list, data, baseBackupURL);

@@ -1,4 +1,4 @@
-import { message, Spin, Tabs } from 'antd';
+import { Alert, message, Spin, Tabs } from 'antd';
 import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { GENERIC_ERROR_MESSAGE } from 'global';
@@ -46,10 +46,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	const history = useHistory();
 	const {
 		data: branchMachine,
-		isFetching,
+		isLoading,
 		isFetched,
 		error,
-	} = useBranchMachineRetrieve({ id: branchMachineId });
+	} = useBranchMachineRetrieve({
+		id: branchMachineId,
+		options: {
+			refetchInterval: 5000,
+			refetchIntervalInBackground: true,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -89,7 +95,17 @@ export const ViewBranchMachine = ({ match }: Props) => {
 			rightTitle={branchMachine?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			<Spin spinning={isFetching}>
+			<Spin spinning={isLoading}>
+				{branchMachine?.is_online === false && (
+					<Alert
+						className="mb-4"
+						message="Branch Machine Connectivity"
+						description="The branch machine is offline."
+						type="error"
+						showIcon
+					/>
+				)}
+
 				<Box className="ViewBranchMachine">
 					{error && (
 						<div className="PaddingVertical PaddingHorizontal">
@@ -154,7 +170,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
-								<TabDays serverUrl={branchMachine.server_url} />
+								<TabDays branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane

@@ -207,3 +207,15 @@ export const markdownTypes = {
 	WHOLESALE: 'discount_1',
 	SPECIAL: 'discount_2',
 };
+
+export const cashBreakdownTypes = {
+	START_SESSION: 'start_session',
+	MID_SESSION: 'mid_session',
+	END_SESSION: 'end_session',
+};
+
+export const cashBreakdownCategories = {
+	CASH_BREAKDOWN: 'cash_breakdown',
+	CASH_IN: 'cash_in',
+	CASH_OUT: 'cash_out',
+};

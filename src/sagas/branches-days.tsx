@@ -9,22 +9,30 @@ import { getBaseUrl } from './helper';
 function* list({ payload }: any) {
 	const {
 		branchId,
+		branchMachineId,
 		callback,
+		closedByUserId,
 		isAutomaticallyClosed,
 		isUnauthorized,
+		openedByUserId,
 		page,
 		pageSize,
 		serverUrl,
+		timeRange,
 	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const baseURL = serverUrl || getBaseUrl(branchId, callback);
 
 	const data = {
+		branch_machine_id: branchMachineId,
+		closed_by_user_id: closedByUserId,
 		is_automatically_closed: isAutomaticallyClosed,
 		is_unauthorized: isUnauthorized,
+		opened_by_user_id: openedByUserId,
 		page_size: pageSize,
 		page,
+		time_range: timeRange,
 	};
 
 	let isFetchedFromBackupURL = false;

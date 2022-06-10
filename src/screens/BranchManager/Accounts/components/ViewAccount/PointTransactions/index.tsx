@@ -108,7 +108,7 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 				/>
 
 				{account && (
-					<div className="AccountTotalPoints mb-4 mx-6">
+					<div className="AccountTotalPoints mb-4 px-6">
 						<Row gutter={[16, 16]}>
 							<Col span={8}>
 								<Statistic

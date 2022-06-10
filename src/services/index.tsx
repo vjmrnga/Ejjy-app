@@ -13,6 +13,7 @@ export { default as BirReportsService } from './BirReportsService';
 export { default as BranchesDayService } from './BranchesDayService';
 export { default as BranchMachinesService } from './BranchMachinesService';
 export { default as BranchProductsService } from './BranchProductsService';
+export { default as CashBreakdownsService } from './CashBreakdownsService';
 export { default as CashieringAssignmentsService } from './CashieringAssignmentsService';
 export { default as CollectionReceiptsService } from './CollectionReceiptsService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';

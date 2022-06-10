@@ -82,7 +82,7 @@ export const Logs = () => {
 					/>
 
 					<RequestErrors
-						className="mx-6"
+						className="px-6"
 						errors={[
 							...convertIntoArray(logsError, 'Logs'),
 							...convertIntoArray(branchMachinesError, 'Branch Machines'),

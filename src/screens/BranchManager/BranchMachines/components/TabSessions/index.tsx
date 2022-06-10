@@ -7,10 +7,11 @@ import {
 	TimeRangeFilter,
 } from 'components';
 import { Label } from 'components/elements';
+import dayjs from 'dayjs';
 import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
-import { useQueryParams, useUsers } from 'hooks';
+import { useQueryParams, useSiteSettingsRetrieve, useUsers } from 'hooks';
 import { useSessions } from 'hooks/useSessions';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
@@ -26,6 +27,7 @@ const columns: ColumnsType = [
 
 const sessionTypes = {
 	ALL: 'all',
+	AUTHORIZED: 'authorized',
 	UNAUTHORIZED: 'unauthorized',
 };
 
@@ -63,12 +65,18 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 				isAutomaticallyClosed = params.closingType === closingTypes.AUTOMATIC;
 			}
 
+			let isUnauthorized = undefined;
+			if (params.type === sessionTypes.UNAUTHORIZED) {
+				isUnauthorized = true;
+			} else if (params.type === sessionTypes.AUTHORIZED) {
+				isUnauthorized = false;
+			}
+
 			listSessions(
 				{
 					...params,
-					branchMachineId: branchMachineId,
-					isUnauthorized:
-						params.type === sessionTypes.UNAUTHORIZED ? true : undefined,
+					branchMachineId,
+					isUnauthorized,
 					isAutomaticallyClosed: isAutomaticallyClosed,
 				},
 				true,
@@ -104,7 +112,11 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 							isAutomaticallyClosed,
 					  })
 					: EMPTY_CELL,
-				status: <Status isAuthorized={!is_unauthorized} />,
+				status: is_unauthorized ? (
+					<Tag color="red">Unauthorized</Tag>
+				) : (
+					<Tag color="green">Authorized</Tag>
+				),
 			};
 		});
 
@@ -128,10 +140,14 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 			<div>
 				<span className="label">End: </span>
 				<span className="value">
-					{datetimeEnded
-						? formatDateTimeShortMonth(datetimeEnded) +
-						  `${isAutomaticallyClosed ? '(A)' : ''}`
-						: EMPTY_CELL}
+					{datetimeEnded ? (
+						<>
+							{formatDateTimeShortMonth(datetimeEnded)}{' '}
+							{isAutomaticallyClosed && <Tag color="blue">Auto</Tag>}
+						</>
+					) : (
+						EMPTY_CELL
+					)}
 				</span>
 			</div>
 		</div>
@@ -246,6 +262,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					optionType="button"
 					options={[
 						{ label: 'All', value: sessionTypes.ALL },
+						{ label: 'Authorized', value: sessionTypes.AUTHORIZED },
 						{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
 					]}
 					onChange={(e) => {
@@ -257,20 +274,4 @@ const Filter = ({ isLoading }: FilterProps) => {
 			</Col>
 		</Row>
 	);
-};
-
-interface StatusProps {
-	isAuthorized: boolean;
-}
-
-const Status = ({ isAuthorized }: StatusProps) => {
-	const render = useCallback(() => {
-		return isAuthorized ? (
-			<Tag color="green">Authorized</Tag>
-		) : (
-			<Tag color="red">Unauthorized</Tag>
-		);
-	}, [isAuthorized]);
-
-	return render();
 };

@@ -1,22 +1,32 @@
-import { Col, Radio, Row, Table } from 'antd';
+import { Col, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
-import { RequestErrors, RequestWarnings, TableHeader } from 'components';
+import {
+	RequestErrors,
+	RequestWarnings,
+	TableHeader,
+	TimeRangeFilter,
+} from 'components';
 import { Label } from 'components/elements';
-import { EMPTY_CELL } from 'global';
-import { pageSizeOptions } from 'global';
-import { request } from 'global';
+import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
+import { useQueryParams, useUsers } from 'hooks';
 import { useBranchesDays } from 'hooks/useBranchesDays';
-import { useQueryParams } from 'hooks';
-import { convertIntoArray, formatDateTimeShortMonth } from 'utils/function';
+import React, { useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatDateTimeShortMonth,
+	getFullName,
+} from 'utils/function';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
 	{ title: 'Date & Time', dataIndex: 'datetime' },
+	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
 const branchDayTypes = {
 	ALL: 'all',
+	AUTHORIZED: 'authorized',
 	UNAUTHORIZED: 'unauthorized',
 };
 
@@ -27,10 +37,10 @@ const closingTypes = {
 };
 
 interface Props {
-	serverUrl: any;
+	branchMachineId: any;
 }
 
-export const TabDays = ({ serverUrl }: Props) => {
+export const TabDays = ({ branchMachineId }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 
@@ -46,7 +56,6 @@ export const TabDays = ({ serverUrl }: Props) => {
 		errors,
 		warnings,
 	} = useBranchesDays();
-
 	const { setQueryParams } = useQueryParams({
 		page: currentPage,
 		pageSize,
@@ -56,12 +65,18 @@ export const TabDays = ({ serverUrl }: Props) => {
 				isAutomaticallyClosed = params.closingType === closingTypes.AUTOMATIC;
 			}
 
+			let isUnauthorized = undefined;
+			if (params.type === branchDayTypes.UNAUTHORIZED) {
+				isUnauthorized = true;
+			} else if (params.type === branchDayTypes.AUTHORIZED) {
+				isUnauthorized = false;
+			}
+
 			listBranchDays(
 				{
 					...params,
-					serverUrl,
-					isUnauthorized:
-						params.type === branchDayTypes.UNAUTHORIZED ? true : undefined,
+					branchMachineId,
+					isUnauthorized,
 					isAutomaticallyClosed,
 				},
 				true,
@@ -78,30 +93,50 @@ export const TabDays = ({ serverUrl }: Props) => {
 				ended_by,
 				datetime_created,
 				datetime_ended,
-				is_automatically_closed,
+				is_automatically_closed: isAutomaticallyClosed,
+				is_unauthorized,
+				is_unauthorized_datetime_ended,
 			} = branchDay;
 
 			return {
 				key: id,
-				user: renderUser(started_by, ended_by),
+				user: renderUser({
+					startedBy: started_by,
+					endedBy: ended_by,
+					isAutomaticallyClosed,
+				}),
 				datetime: renderDateTime({
 					datetimeStarted: datetime_created,
 					datetimeEnded: datetime_ended,
-					isAutomaticallyClosed: is_automatically_closed,
+					isAutomaticallyClosed,
 				}),
+				unauthorizedTimeRange: is_unauthorized_datetime_ended
+					? renderDateTime({
+							datetimeStarted: datetime_created,
+							datetimeEnded: is_unauthorized_datetime_ended,
+							isAutomaticallyClosed,
+					  })
+					: EMPTY_CELL,
+				status: is_unauthorized ? (
+					<Tag color="red">Unauthorized</Tag>
+				) : (
+					<Tag color="green">Authorized</Tag>
+				),
 			};
 		});
 
 		setData(formattedBranchDays);
 	}, [branchDays]);
 
-	const renderUser = (startedBy, endedBy) => {
-		const startedByUser = startedBy
-			? `${startedBy.first_name} ${startedBy.last_name}`
-			: EMPTY_CELL;
-		const endedByUser = endedBy
-			? `${endedBy.first_name} ${endedBy.last_name}`
-			: EMPTY_CELL;
+	const renderUser = ({ startedBy, endedBy, isAutomaticallyClosed }) => {
+		const startedByUser = startedBy ? getFullName(startedBy) : EMPTY_CELL;
+
+		let endedByUser: any = EMPTY_CELL;
+		if (isAutomaticallyClosed) {
+			endedByUser = <Tag color="blue">Auto</Tag>;
+		} else if (endedBy) {
+			endedByUser = getFullName(endedBy);
+		}
 
 		return (
 			<div className="branch-day-column">
@@ -113,7 +148,7 @@ export const TabDays = ({ serverUrl }: Props) => {
 				</div>
 				<div>
 					<span className="label">Close: </span>
-					<span className="value">{endedBy ? endedByUser : EMPTY_CELL}</span>
+					<span className="value">{endedByUser}</span>
 				</div>
 			</div>
 		);
@@ -136,10 +171,14 @@ export const TabDays = ({ serverUrl }: Props) => {
 			<div>
 				<span className="label">Close: </span>
 				<span className="value">
-					{datetimeEnded
-						? formatDateTimeShortMonth(datetimeEnded) +
-						  `${isAutomaticallyClosed ? '(A)' : ''}`
-						: EMPTY_CELL}
+					{datetimeEnded ? (
+						<>
+							{formatDateTimeShortMonth(datetimeEnded)}{' '}
+							{isAutomaticallyClosed && <Tag color="blue">Auto</Tag>}
+						</>
+					) : (
+						EMPTY_CELL
+					)}
 				</span>
 			</div>
 		</div>
@@ -179,10 +218,79 @@ export const TabDays = ({ serverUrl }: Props) => {
 };
 
 const Filter = () => {
+	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { users },
+		isFetching,
+	} = useUsers({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Opened By" spacing />
+				<Select
+					className="w-100"
+					onChange={(value) => {
+						setQueryParams(
+							{ openedByUserId: value },
+							{ shouldResetPage: true },
+						);
+					}}
+					defaultValue={params.openedByUserId}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					disabled={isFetching}
+					showSearch
+				>
+					{users.map((user) => (
+						<Select.Option key={user.id} value={user.id}>
+							{getFullName(user)}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Closed By" spacing />
+				<Select
+					className="w-100"
+					onChange={(value) => {
+						setQueryParams(
+							{ closedByUserId: value },
+							{ shouldResetPage: true },
+						);
+					}}
+					defaultValue={params.closedByUserId}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					disabled={isFetching}
+					showSearch
+				>
+					{users.map((user) => (
+						<Select.Option key={user.id} value={user.id}>
+							{getFullName(user)}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<TimeRangeFilter />
+			</Col>
+
 			<Col lg={12} span={24}>
 				<Label label="Closing Type" spacing />
 				<Radio.Group
@@ -209,6 +317,7 @@ const Filter = () => {
 					optionType="button"
 					options={[
 						{ label: 'All', value: branchDayTypes.ALL },
+						{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
 						{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
 					]}
 					onChange={(e) => {
