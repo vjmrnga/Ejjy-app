@@ -249,6 +249,7 @@ const Filter = () => {
 					}
 					disabled={isFetching}
 					showSearch
+					allowClear
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
@@ -278,6 +279,7 @@ const Filter = () => {
 					}
 					disabled={isFetching}
 					showSearch
+					allowClear
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
