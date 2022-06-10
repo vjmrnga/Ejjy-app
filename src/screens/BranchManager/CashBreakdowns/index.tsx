@@ -6,6 +6,7 @@ import {
 	TableActions,
 	TableHeader,
 	TimeRangeFilter,
+	ViewCashBreakdownModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
 import {
@@ -28,16 +29,24 @@ import { convertIntoArray, formatDateTime, getFullName } from 'utils/function';
 
 export const cashBreakdownOptions = [
 	{
-		label: 'Cash Breakdown',
-		value: cashBreakdownCategories.CASH_BREAKDOWN,
-	},
-	{
 		label: 'Cash In',
 		value: cashBreakdownCategories.CASH_IN,
 	},
 	{
 		label: 'Cash Out',
 		value: cashBreakdownCategories.CASH_OUT,
+	},
+	{
+		label: 'Cash Collection',
+		value: cashBreakdownTypes.MID_SESSION,
+	},
+	{
+		label: 'Beginning Session',
+		value: cashBreakdownTypes.START_SESSION,
+	},
+	{
+		label: 'End Session',
+		value: cashBreakdownTypes.END_SESSION,
 	},
 ];
 
@@ -60,12 +69,7 @@ export const CashBreakdowns = () => {
 		data: { cashBreakdowns, total },
 		isFetching,
 		error: listError,
-	} = useCashBreakdowns({
-		params: {
-			...params,
-			type: cashBreakdownTypes.MID_SESSION,
-		},
-	});
+	} = useCashBreakdowns({ params });
 
 	// METHODS
 	useEffect(() => {
@@ -117,6 +121,15 @@ export const CashBreakdowns = () => {
 						pageSizeOptions,
 					}}
 				/>
+
+				{selectedCashBreakdown && (
+					<ViewCashBreakdownModal
+						cashBreakdown={selectedCashBreakdown}
+						onClose={() => {
+							setSelectedCashBreakdown(null);
+						}}
+					/>
+				)}
 			</Box>
 		</Content>
 	);
@@ -146,12 +159,42 @@ const Filter = ({ isLoading }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<Label label="Category" spacing />
+				<Label label="Type" spacing />
 				<Select
 					className="w-100"
-					value={params.category}
+					value={params.cbType}
 					onChange={(value) => {
-						setQueryParams({ category: value }, { shouldResetPage: true });
+						let selectedType = _.toString(value);
+						let type = '';
+						let category = '';
+						if (
+							[
+								cashBreakdownCategories.CASH_IN,
+								cashBreakdownCategories.CASH_OUT,
+								cashBreakdownTypes.MID_SESSION,
+							].includes(selectedType)
+						) {
+							type = cashBreakdownTypes.MID_SESSION;
+							category =
+								selectedType === cashBreakdownTypes.MID_SESSION
+									? cashBreakdownCategories.CASH_BREAKDOWN
+									: selectedType;
+						}
+
+						if (
+							[
+								cashBreakdownTypes.START_SESSION,
+								cashBreakdownTypes.END_SESSION,
+							].includes(selectedType)
+						) {
+							type = selectedType;
+							category = cashBreakdownCategories.CASH_BREAKDOWN;
+						}
+
+						setQueryParams(
+							{ cbType: selectedType, type, category },
+							{ shouldResetPage: true },
+						);
 					}}
 					disabled={isLoading}
 					optionFilterProp="children"

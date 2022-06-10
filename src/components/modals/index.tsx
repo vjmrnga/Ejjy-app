@@ -15,6 +15,7 @@ export * from './PricesModal';
 export * from './RedeemPointsModal';
 export * from './ViewAccountModal';
 export * from './ViewBackOrderModal';
+export * from './ViewCashBreakdownModal';
 export * from './ViewProductModal';
 export * from './ViewReceivingVoucherModal';
 export * from './ViewReturnItemSlipModal';
