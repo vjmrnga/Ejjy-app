@@ -1,7 +1,7 @@
 import { AddIcon } from 'components';
 import { Box, Button } from 'components/elements';
 import React from 'react';
-import { formatDateTimeExtended } from 'utils/function';
+import { formatDateTimeExtended } from 'utils';
 
 interface Props {
 	dateTimeRequested?: any;

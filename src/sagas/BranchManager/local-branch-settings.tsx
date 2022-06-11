@@ -7,14 +7,14 @@ import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branch
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/local-branch-settings';
-import { getLocalIpAddress } from '../../utils/function';
+import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* get({ payload }: any) {
 	const { branchId, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
+	const localURL = getLocalApiUrl();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));
@@ -46,7 +46,7 @@ function* edit({ payload }: any) {
 	const { callback, branchId, id, ...data } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
+	const localURL = getLocalApiUrl();
 
 	// Required: Branch must have an online URL (Requested by Office)
 	const baseURL = yield select(branchesSelectors.selectURLByBranchId(branchId));

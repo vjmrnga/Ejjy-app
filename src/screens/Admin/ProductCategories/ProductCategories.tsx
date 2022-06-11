@@ -8,6 +8,7 @@ import {
 	SortableElement,
 	SortableHandle,
 } from 'react-sortable-hoc';
+import { convertIntoArray, getOnlineApiUrl } from 'utils';
 import {
 	Content,
 	RequestErrors,
@@ -17,10 +18,8 @@ import {
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { useProductCategories } from '../../../hooks/useProductCategories';
-import { convertIntoArray } from '../../../utils/function';
-import { CreateEditProductCategoryModal } from './components/CreateEditProductCategoryModal';
 import { service as ProductCategoryService } from '../../../services/product-categories';
-import { ONLINE_API_URL } from '../../../services';
+import { CreateEditProductCategoryModal } from './components/CreateEditProductCategoryModal';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -107,7 +106,7 @@ export const ProductCategories = () => {
 						name: pc.name,
 						priority_level: index,
 					},
-					ONLINE_API_URL,
+					getOnlineApiUrl(),
 				).catch(() => {
 					// Do nothing
 				});

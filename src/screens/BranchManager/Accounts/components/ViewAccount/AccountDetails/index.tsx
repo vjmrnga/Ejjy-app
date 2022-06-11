@@ -1,7 +1,7 @@
 import { Descriptions, Tag } from 'antd';
 import { accountTypes } from 'global';
 import React from 'react';
-import { formatDate } from 'utils/function';
+import { formatDate } from 'utils';
 
 interface Props {
 	account: any;

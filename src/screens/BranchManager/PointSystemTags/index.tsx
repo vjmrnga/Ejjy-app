@@ -15,7 +15,7 @@ import {
 	useQueryParams,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

@@ -10,7 +10,7 @@ import {
 	formatQuantity,
 	getBackOrderStatus,
 	getFullName,
-} from 'utils/function';
+} from 'utils';
 
 const columnsDamage: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

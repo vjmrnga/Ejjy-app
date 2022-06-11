@@ -9,7 +9,7 @@ import {
 } from 'hooks';
 import moment, { Moment } from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { Button, FieldError, Label } from '../../elements';

@@ -1,6 +1,6 @@
 import { message } from 'antd';
+import { NOT_FOUND_INDEX } from 'global';
 import { cloneDeep } from 'lodash';
-import { NOT_FOUND_INDEX } from '../global/constants';
 
 /**
  * generates a new cached data

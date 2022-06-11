@@ -5,7 +5,7 @@ import { FieldError } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/OfficeManager/branches';
 import { request } from '../../../../../global/types';
 import { useBranches } from '../../../../../hooks/useBranches';
-import { convertIntoArray } from '../../../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { CreateEditBranchForm } from './CreateEditBranchForm';
 
 interface Props {

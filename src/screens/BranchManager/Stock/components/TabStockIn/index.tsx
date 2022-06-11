@@ -16,7 +16,7 @@ import {
 } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

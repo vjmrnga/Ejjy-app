@@ -2,7 +2,7 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { actions, types } from '../../ducks/Admin/failed-transfers';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/Admin/failed-transfers';
 
 /* WORKERS */
@@ -18,7 +18,7 @@ function* getCount({ payload }: any) {
 	}
 
 	try {
-		const response = yield call(service.getCount, baseURL || ONLINE_API_URL);
+		const response = yield call(service.getCount, baseURL || getOnlineApiUrl());
 		yield put(
 			actions.save({
 				type: types.GET_FAILED_TRANSFER_COUNT,

@@ -2,8 +2,8 @@ import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global/';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { BirReportsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { BirReportsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useBirReports = ({ params }: Query) => {
@@ -23,7 +23,7 @@ const useBirReports = ({ params }: Query) => {
 			if (!baseURL && params.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			baseURL = params.serverUrl || baseURL;

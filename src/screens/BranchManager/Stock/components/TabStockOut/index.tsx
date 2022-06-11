@@ -13,7 +13,7 @@ import {
 import { useBackOrders, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

@@ -1,5 +1,3 @@
-export const ONLINE_API_URL = process.env.REACT_APP_ONLINE_API_URL;
-
 export const API_TIMEOUT = 0;
 
 export const NO_VERIFICATION_NEEDED = 'NO_VERIFICATION_NEEDED';
@@ -11,6 +9,7 @@ export { default as BackOrdersService } from './BackOrdersService';
 export { default as BalanceAdjustmentLogService } from './BalanceAdjustmentLogService';
 export { default as BirReportsService } from './BirReportsService';
 export { default as BranchesDayService } from './BranchesDayService';
+export { default as BranchesService } from './BranchesService';
 export { default as BranchMachinesService } from './BranchMachinesService';
 export { default as BranchProductsService } from './BranchProductsService';
 export { default as CashBreakdownsService } from './CashBreakdownsService';

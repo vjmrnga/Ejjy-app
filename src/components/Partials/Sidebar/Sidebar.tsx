@@ -10,7 +10,7 @@ import { userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNetwork } from '../../../hooks/useNetwork';
 import { useUI } from '../../../hooks/useUI';
-import { getUserTypeName } from '../../../utils/function';
+import { getUserTypeName } from 'utils';
 import './style.scss';
 
 interface Props {

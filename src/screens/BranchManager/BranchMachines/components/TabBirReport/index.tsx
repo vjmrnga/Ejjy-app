@@ -12,7 +12,7 @@ import {
 import { useBirReports, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDate, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatDate, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date', dataIndex: 'date' },

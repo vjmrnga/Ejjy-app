@@ -7,7 +7,7 @@ import { RequestErrors } from '../../../../components/RequestErrors/RequestError
 import { MAIN_BRANCH_ID, MAX_PAGE_SIZE } from '../../../../global/constants';
 import { request, userTypes } from '../../../../global/types';
 import { useUsers } from '../../../../hooks/useUsers';
-import { convertIntoArray, sleep } from '../../../../utils/function';
+import { convertIntoArray, sleep } from 'utils';
 
 interface Props {
 	backOrder: any;

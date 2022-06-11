@@ -15,7 +15,7 @@ import { EMPTY_CELL, saleTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime, formatInPeso, formatQuantity } from 'utils/function';
+import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
 
 interface Props {
 	transaction: any | number;

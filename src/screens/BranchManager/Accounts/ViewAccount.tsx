@@ -3,7 +3,7 @@ import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { useAccountRetrieve } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray, getFullName } from 'utils/function';
+import { convertIntoArray, getFullName } from 'utils';
 import { AccountDetails } from './components/ViewAccount/AccountDetails';
 import { PointTransactions } from './components/ViewAccount/PointTransactions';
 

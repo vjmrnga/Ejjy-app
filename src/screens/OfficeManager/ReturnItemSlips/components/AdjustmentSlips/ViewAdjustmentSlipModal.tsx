@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
-import { formatDateTime, formatQuantity } from '../../../../../utils/function';
+import { formatDateTime, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

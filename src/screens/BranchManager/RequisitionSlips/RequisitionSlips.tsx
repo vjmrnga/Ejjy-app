@@ -12,10 +12,7 @@ import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
-import {
-	formatDateTime,
-	getRequisitionSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import './style.scss';
 
 const columns = [

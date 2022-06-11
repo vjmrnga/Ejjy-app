@@ -11,7 +11,7 @@ import {
 	convertIntoArray,
 	formatInPeso,
 	isUserFromBranch,
-} from 'utils/function';
+} from 'utils';
 
 interface Props {
 	branchId?: string;

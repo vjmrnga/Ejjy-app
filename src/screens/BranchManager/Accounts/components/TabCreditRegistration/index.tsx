@@ -19,12 +19,7 @@ import { useCreditRegistrations, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { accountTabs } from 'screens/BranchManager/Accounts/data';
-import {
-	convertIntoArray,
-	formatDate,
-	formatInPeso,
-	getFullName,
-} from 'utils/function';
+import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },

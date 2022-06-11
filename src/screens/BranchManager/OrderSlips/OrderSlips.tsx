@@ -5,11 +5,7 @@ import { Box, ButtonLink } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import {
-	formatDateTime,
-	getOrderSlipStatusBranchManager,
-	sleep,
-} from '../../../utils/function';
+import { formatDateTime, getOrderSlipStatusBranchManager, sleep } from 'utils';
 import { useOrderSlips } from '../hooks/useOrderSlips';
 import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 

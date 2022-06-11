@@ -10,10 +10,7 @@ import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchesDays } from '../../../../hooks/useBranchesDays';
-import {
-	convertIntoArray,
-	formatDateTimeShortMonth,
-} from '../../../../utils/function';
+import { convertIntoArray, formatDateTimeShortMonth } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user', key: 'user' },

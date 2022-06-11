@@ -21,7 +21,7 @@ import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TransactionsCancelled } from 'screens/Shared/Branches/components/BranchTransactions/TransactionsCancelled';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [

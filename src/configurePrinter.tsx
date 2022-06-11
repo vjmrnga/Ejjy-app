@@ -16,7 +16,7 @@ import {
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getTransactionStatusDescription,
-} from './utils/function';
+} from 'utils';
 
 const PESO_SIGN = 'P';
 const EMPTY_CELL = '';

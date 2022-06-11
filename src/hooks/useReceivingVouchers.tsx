@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { ONLINE_API_URL, ReceivingVouchersService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { ReceivingVouchersService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useReceivingVouchers = ({ params }: Query) =>
 	useQuery<any>(
@@ -13,7 +13,7 @@ const useReceivingVouchers = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -43,7 +43,7 @@ export const useReceivingVoucherCreate = () =>
 					encoded_by_id: encodedById,
 					checked_by_id: checkedById,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);
 

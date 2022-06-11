@@ -6,7 +6,7 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/pending-transactions';
 
 /* WORKERS */
@@ -25,7 +25,7 @@ function* list({ payload }: any) {
 				is_pending_approval: isPendingApproval,
 				request_model: requestModel,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -46,7 +46,7 @@ function* count({ payload }: any) {
 			{
 				is_pending_approval: isPendingApproval,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -64,7 +64,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.edit, id, data, ONLINE_API_URL);
+		yield call(service.edit, id, data, getOnlineApiUrl());
 		callback({ status: request.SUCCESS });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -76,7 +76,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.remove, id, ONLINE_API_URL);
+		yield call(service.remove, id, getOnlineApiUrl());
 
 		callback({ status: request.SUCCESS });
 	} catch (e) {

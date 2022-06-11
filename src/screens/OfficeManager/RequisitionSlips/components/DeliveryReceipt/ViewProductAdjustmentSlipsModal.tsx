@@ -7,7 +7,7 @@ import {
 } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { request } from '../../../../../global/types';
-import { formatDate } from '../../../../../utils/function';
+import { formatDate } from 'utils';
 import { useDeliveryReceiptProducts } from '../../../hooks/useDeliveryReceiptProducts';
 
 interface Props {

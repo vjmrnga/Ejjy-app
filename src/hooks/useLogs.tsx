@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
-import { LogsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from '../utils/function';
+import { LogsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useLogs = ({ params }: Query) =>
 	useQuery<any>(
@@ -23,7 +23,7 @@ const useLogs = ({ params }: Query) =>
 					acting_user_id: params?.actingUserId,
 					time_range: params?.timeRange,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },

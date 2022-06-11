@@ -4,7 +4,7 @@ import { RequestErrors } from '../../../../components';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useProductCategories } from '../../../../hooks/useProductCategories';
-import { convertIntoArray } from '../../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { CreateEditProductCategoryForm } from './CreateEditProductCategoryForm';
 
 interface Props {

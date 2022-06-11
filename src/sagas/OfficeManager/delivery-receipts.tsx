@@ -4,7 +4,7 @@ import { actions as orderSlipActions } from '../../ducks/order-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/OfficeManager/delivery-receipts';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 
 /* WORKERS */
 function* getById({ payload }: any) {
@@ -17,7 +17,7 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -40,7 +40,7 @@ function* create({ payload }: any) {
 		const response = yield call(
 			service.create,
 			{ order_slip_id },
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(

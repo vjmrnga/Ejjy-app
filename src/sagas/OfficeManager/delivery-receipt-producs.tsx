@@ -5,7 +5,7 @@ import {
 } from '../../ducks/OfficeManager/delivery-receipt-products';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/delivery-receipt-producs';
 
 /* WORKERS */
@@ -19,7 +19,7 @@ function* getDeliveryReceiptById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(

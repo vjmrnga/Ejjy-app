@@ -6,7 +6,7 @@ import { EMPTY_CELL } from 'global';
 import { useProductCheckRetrieve } from 'hooks';
 import { upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const columns: ColumnsType = [
 	{

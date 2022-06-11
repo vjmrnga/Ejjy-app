@@ -7,7 +7,7 @@ import {
 	FormInputLabel,
 } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { convertIntoArray, sleep } from '../../../../utils/function';
+import { convertIntoArray, sleep } from 'utils';
 import '../style.scss';
 
 const FormDetails = {

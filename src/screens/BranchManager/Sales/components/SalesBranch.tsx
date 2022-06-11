@@ -5,7 +5,7 @@ import { MAX_PAGE_SIZE } from 'global';
 import { useBranchMachines, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 import '../style.scss';
 
 const columns: ColumnsType = [

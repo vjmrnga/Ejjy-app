@@ -15,11 +15,7 @@ import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { request, returnItemSlipsStatuses } from '../../../global/types';
 import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
-import {
-	formatDateTime,
-	formatQuantity,
-	getReturnItemSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import { useReturnItemSlipAdjustmentSlips } from '../hooks/useReturnItemSlipAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';

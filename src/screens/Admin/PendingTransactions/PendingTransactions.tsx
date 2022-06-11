@@ -6,7 +6,7 @@ import { PendingTransactionsSection } from '../../../components/PendingTransacti
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { pendingTransactionTypes, request } from '../../../global/types';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
-import { formatDateTime, showErrorMessages } from '../../../utils/function';
+import { formatDateTime, showErrorMessages } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Description', dataIndex: 'description', key: 'description' },

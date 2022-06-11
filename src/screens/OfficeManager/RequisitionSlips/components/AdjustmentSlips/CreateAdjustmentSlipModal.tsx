@@ -14,10 +14,7 @@ import {
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/OfficeManager/adjustment-slips';
 import { deliveryReceiptStatus, request } from '../../../../../global/types';
-import {
-	confirmPassword,
-	convertIntoArray,
-} from '../../../../../utils/function';
+import { confirmPassword, convertIntoArray } from 'utils';
 import { useAdjustmentSlips } from '../../../hooks/useAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 

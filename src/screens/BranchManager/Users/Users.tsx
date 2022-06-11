@@ -12,7 +12,7 @@ import { useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, getFullName, getUserTypeName } from 'utils/function';
+import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
 import { BranchUsers } from '../../OfficeManager/Users/components/BranchUsers';
 
 export const Users = () => {

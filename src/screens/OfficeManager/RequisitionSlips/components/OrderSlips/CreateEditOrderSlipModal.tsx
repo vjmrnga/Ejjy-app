@@ -9,10 +9,7 @@ import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManag
 import { types } from '../../../../../ducks/order-slips';
 import { IS_APP_LIVE } from '../../../../../global/constants';
 import { quantityTypes, request } from '../../../../../global/types';
-import {
-	convertIntoArray,
-	convertToPieces,
-} from '../../../../../utils/function';
+import { convertIntoArray, convertToPieces } from 'utils';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import {
 	RequisitionSlipDetails,

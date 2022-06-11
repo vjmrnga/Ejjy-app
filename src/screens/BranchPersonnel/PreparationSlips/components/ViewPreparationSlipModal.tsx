@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { PreparationSlipDetails } from '../../../../components';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, formatQuantity } from '../../../../utils/function';
+import { convertToBulk, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
 	{

@@ -5,7 +5,7 @@ import { Content, TableActions, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
-import { sleep } from '../../../utils/function';
+import { sleep } from 'utils';
 import { CreateEditBranchModal } from './components/Branch/CreateEditBranchModal';
 import './style.scss';
 

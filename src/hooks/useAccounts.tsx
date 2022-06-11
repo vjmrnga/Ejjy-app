@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { AccountsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { AccountsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useAccounts = ({ params }: Query) =>
 	useQuery<any>(
@@ -21,7 +21,7 @@ const useAccounts = ({ params }: Query) =>
 					search: params?.search,
 					type: params?.type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -38,7 +38,7 @@ export const useAccountRetrieve = ({ id, options }: Query) =>
 		async () =>
 			AccountsService.retrieve(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			select: (query) => query.data,
@@ -77,7 +77,7 @@ export const useAccountCreate = () =>
 					tin,
 					type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);
 
@@ -114,7 +114,7 @@ export const useAccountEdit = () =>
 					tin,
 					type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);
 
@@ -128,7 +128,7 @@ export const useAccountRedeemPoints = () =>
 					redeem_remarks: redeemRemarks,
 					redeemed_points: redeemedPoints,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);
 

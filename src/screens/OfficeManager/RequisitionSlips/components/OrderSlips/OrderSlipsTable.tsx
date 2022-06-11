@@ -3,10 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ButtonLink } from '../../../../../components/elements';
 import { orderSlipStatus as osStatus } from '../../../../../global/types';
-import {
-	formatDateTime,
-	getOrderSlipStatus,
-} from '../../../../../utils/function';
+import { formatDateTime, getOrderSlipStatus } from 'utils';
 import { OrderSlipActions } from './OrderSlipActions';
 
 const columns: ColumnsType = [

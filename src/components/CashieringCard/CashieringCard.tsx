@@ -12,7 +12,7 @@ import {
 } from '../../hooks';
 import { useAuth } from '../../hooks/useAuth';
 import { useBranchesDays } from '../../hooks/useBranchesDays';
-import { convertIntoArray, formatDateTimeExtended } from '../../utils/function';
+import { convertIntoArray, formatDateTimeExtended } from 'utils';
 import { Box, Button } from '../elements';
 import './style.scss';
 

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { saleTypes, vatTypes } from 'global';
 import React from 'react';
-import { formatDateTime, formatInPeso, formatQuantity } from 'utils/function';
+import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
 import { ReportTextFile } from 'utils/ReportTextFile';
 
 const PESO_SIGN = 'P';

@@ -27,7 +27,7 @@ import {
 	formatDate,
 	formatInPeso,
 	formatQuantity,
-} from 'utils/function';
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime', width: 125 },

@@ -16,7 +16,7 @@ import { Label } from '../../../components/elements';
 // import { useQueryParams } from 'hooks';
 // import { useUsers } from '../../../hooks/useUsers';
 import { IBranch, IUser } from '../../../models';
-// import { formatDateTimeExtended } from '../../../utils/function';
+// import { formatDateTimeExtended } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Branch', dataIndex: 'branch', width: 150, fixed: 'left' },

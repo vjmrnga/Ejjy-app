@@ -1,20 +1,16 @@
 import { Divider } from 'antd';
+import { AppSettingsModal } from 'components';
+import { Box, Button } from 'components/elements';
+import { IS_APP_LIVE, request } from 'global';
+import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
-import { Box, Button } from '../../../components/elements';
-import { IS_APP_LIVE } from '../../../global/constants';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import {
-	getKeyDownCombination,
-	getLocalIpAddress,
-} from '../../../utils/function';
+import { getKeyDownCombination, getLocalApiUrl } from 'utils';
 import { LoginForm } from './components/LoginForm';
-import { SettingUrlModal } from './components/SettingUrlModal';
 import './style.scss';
 
 const Login = () => {
 	// STATES
-	const [urlModalVisible, setUrlModalVisible] = useState(false);
+	const [appSettingsModalVisible, setAppSettingsModalVisible] = useState(false);
 	const [isSetupButtonsVisible, setSetupButtonsVisible] = useState(false);
 
 	// CUSTOM HOOKS
@@ -31,7 +27,7 @@ const Login = () => {
 
 	useEffect(() => {
 		if (!IS_APP_LIVE) {
-			setSetupButtonsVisible(!getLocalIpAddress());
+			setSetupButtonsVisible(!getLocalApiUrl());
 		}
 	}, []);
 
@@ -54,9 +50,7 @@ const Login = () => {
 				/>
 
 				<LoginForm
-					onSubmit={(formData) => {
-						login(formData);
-					}}
+					onSubmit={login}
 					errors={errors}
 					loading={status === request.REQUESTING}
 				/>
@@ -67,16 +61,17 @@ const Login = () => {
 
 						<Button
 							type="button"
-							text="Set API URL"
+							text="Set App Settings"
 							variant="default"
-							onClick={() => setUrlModalVisible(true)}
+							onClick={() => setAppSettingsModalVisible(true)}
 							block
 						/>
 
-						<SettingUrlModal
-							visible={urlModalVisible}
-							onClose={() => setUrlModalVisible(false)}
-						/>
+						{appSettingsModalVisible && (
+							<AppSettingsModal
+								onClose={() => setAppSettingsModalVisible(false)}
+							/>
+						)}
 					</>
 				)}
 			</Box>

@@ -10,7 +10,7 @@ import {
 } from 'hooks';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getFullName } from 'utils/function';
+import { convertIntoArray, formatInPeso, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'CR#', dataIndex: 'id' },

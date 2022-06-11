@@ -1,7 +1,7 @@
 import { IS_APP_LIVE } from 'global';
 import { useMutation } from 'react-query';
-import { BalanceAdjustmentLogService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { BalanceAdjustmentLogService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 export const useBalanceAdjustmentLogCreate = () =>
 	useMutation<any, any, any>(
@@ -12,6 +12,6 @@ export const useBalanceAdjustmentLogCreate = () =>
 					creating_user_id: creatingUserId,
 					new_balance: newBalance,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);

@@ -11,7 +11,7 @@ import {
 	FormInput,
 } from '../../../../../components/elements';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Select', dataIndex: 'selected', width: 50, align: 'center' },

@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { actions, selectors, types } from '../ducks/requisition-slips';
 import { request } from '../global/types';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-	onCallback,
-} from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

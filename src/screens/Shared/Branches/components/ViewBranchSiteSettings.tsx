@@ -18,7 +18,7 @@ import { inputTypes, taxTypes } from 'global';
 import { useSiteSettingsEdit, useSiteSettingsRetrieve } from 'hooks';
 import moment from 'moment';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 
 const getValidTimeTest = (label) =>

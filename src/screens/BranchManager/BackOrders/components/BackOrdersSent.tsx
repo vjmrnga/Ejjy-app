@@ -7,7 +7,7 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useBackOrders } from '../../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from '../../../../utils/function';
+import { formatDateTime, getBackOrderStatus } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

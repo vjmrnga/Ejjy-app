@@ -19,7 +19,7 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 import { TransactionsCancelled } from './BranchTransactions/TransactionsCancelled';
 
 const columns: ColumnsType = [

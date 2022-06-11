@@ -30,7 +30,7 @@ import { useBranchProducts } from 'hooks/useBranchProducts';
 import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, convertToPieces } from 'utils/function';
+import { convertIntoArray, convertToPieces } from 'utils';
 import * as Yup from 'yup';
 
 const tabs = {

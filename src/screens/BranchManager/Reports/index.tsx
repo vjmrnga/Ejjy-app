@@ -7,7 +7,7 @@ import { request } from '../../../global/types';
 import { useBranches } from '../../../hooks/useBranches';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useQueryParams } from 'hooks';
-import { convertIntoArray } from '../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { ReportsBranch } from './components/ReportsBranch';
 
 export const Reports = () => {

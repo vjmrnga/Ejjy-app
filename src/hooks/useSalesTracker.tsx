@@ -1,7 +1,7 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { useQuery } from 'react-query';
-import { ONLINE_API_URL, SalesTrackerService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { SalesTrackerService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useSalesTracker = ({ params }: Query) =>
@@ -13,7 +13,7 @@ const useSalesTracker = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },

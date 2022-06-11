@@ -16,7 +16,7 @@ import {
 } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getFullName } from 'utils/function';
+import { convertIntoArray, getFullName } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {

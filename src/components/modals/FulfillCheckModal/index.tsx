@@ -4,7 +4,7 @@ import { RequestErrors } from 'components';
 import { productCheckingTypes, quantityTypes, request } from 'global/types';
 import { useProductCheckFulfill } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, convertToBulk } from 'utils/function';
+import { convertIntoArray, convertToBulk } from 'utils';
 import { FulfillCheckForm } from './FulfillCheckForm';
 
 interface Props {

@@ -20,7 +20,7 @@ import { useAccounts, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, formatDate, getFullName } from 'utils/function';
+import { convertIntoArray, formatDate, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },

@@ -10,11 +10,7 @@ import {
 } from 'global';
 import { useBackOrders, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import {
-	formatDateTime,
-	getBackOrderStatus,
-	getFullName,
-} from 'utils/function';
+import { formatDateTime, getBackOrderStatus, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

@@ -9,7 +9,7 @@ import {
 	request,
 	requisitionSlipActions,
 } from '../../../../../global/types';
-import { convertIntoArray } from '../../../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import {
 	RequisitionSlipDetails,

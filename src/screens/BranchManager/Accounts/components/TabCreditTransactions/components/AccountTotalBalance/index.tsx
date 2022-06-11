@@ -1,6 +1,6 @@
 import { Button, Col, Row, Statistic } from 'antd';
 import React from 'react';
-import { formatInPeso, getFullName } from 'utils/function';
+import { formatInPeso, getFullName } from 'utils';
 import './style.scss';
 
 interface Props {

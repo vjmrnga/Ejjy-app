@@ -8,7 +8,7 @@ import {
 	FormCheckbox,
 	FormInput,
 } from '../../../../../components/elements';
-import { getDeliveryReceiptStatus, sleep } from '../../../../../utils/function';
+import { getDeliveryReceiptStatus, sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '80px' },

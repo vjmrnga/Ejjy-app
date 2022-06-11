@@ -2,7 +2,7 @@ import { Modal, Tag } from 'antd';
 import { upperFirst } from 'lodash';
 import React from 'react';
 import { accountTypes } from '../../../global/types';
-import { formatDate } from '../../../utils/function';
+import { formatDate } from 'utils';
 import { DetailsRow } from '../../Details/DetailsRow';
 import { DetailsSingle } from '../../Details/DetailsSingle';
 import { Button } from '../../elements';

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { flatten, values } from 'lodash';
+import _ from 'lodash';
+import { getOnlineApiUrl } from 'utils';
 import {
 	GENERIC_BRANCH_ERROR_MESSAGE,
 	GENERIC_ERROR_MESSAGE,
 } from './global/constants';
-import { API_TIMEOUT, ONLINE_API_URL } from './services';
+import { API_TIMEOUT } from './services';
 
 export default function configureAxios() {
 	axios.defaults.timeout = API_TIMEOUT;
@@ -21,9 +22,9 @@ export default function configureAxios() {
 			if (typeof error?.response?.data === 'string') {
 				modifiedError.errors = [error.response.data];
 			} else if (typeof error?.response?.data === 'object') {
-				modifiedError.errors = flatten(values(error?.response?.data));
+				modifiedError.errors = _.flatten(_.values(error?.response?.data));
 			} else if (
-				error?.config.baseURL !== ONLINE_API_URL &&
+				error?.config.baseURL !== getOnlineApiUrl() &&
 				error?.isAxiosError
 			) {
 				modifiedError.errors = [GENERIC_BRANCH_ERROR_MESSAGE];

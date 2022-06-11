@@ -4,13 +4,14 @@ import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { ONLINE_API_URL, UsersService } from 'services';
+import { UsersService } from 'services';
 import {
-	getLocalIpAddress,
+	getLocalApiUrl,
+	getOnlineApiUrl,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
-} from 'utils/function';
+} from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,
@@ -267,7 +268,7 @@ const useUsersNew = ({ params }: Query) =>
 		async () => {
 			let baseURL = params?.serverUrl;
 			if (!baseURL) {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			return UsersService.list(
@@ -294,7 +295,7 @@ export const useUserRetrieve = ({ id, options }: Query) =>
 			// NOTE: We didn't catch the this request so we can check the status code of the error
 			UsersService.retrieve(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			select: (query) => query.data,
@@ -309,7 +310,7 @@ export const useUserAuthenticate = () =>
 				login,
 				password,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		),
 	);
 

@@ -1,4 +1,4 @@
-import { call, retry, select, takeLatest } from 'redux-saga/effects';
+import { call, retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/product-categories';
 import {
 	IS_APP_LIVE,
@@ -7,17 +7,17 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../global/constants';
 import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services/index';
-import { service } from '../services/product-categories';
+
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
-import { getLocalIpAddress } from '../utils/function';
+import { service } from '../services/product-categories';
 
 function _getBaseUrl(branchId, callback) {
 	let baseURL: any = branchesSelectors.selectURLByBranchId(branchId);
 	if (!baseURL && branchId) {
 		callback({ status: request.ERROR, errors: ['Branch has no online url.'] });
 	} else {
-		baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+		baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 	}
 
 	return baseURL;

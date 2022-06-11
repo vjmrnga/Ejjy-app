@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { DiscountOptionsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { DiscountOptionsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useDiscountOptions = ({ params }: Query) =>
 	useQuery<any>(
@@ -13,7 +13,7 @@ const useDiscountOptions = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -36,7 +36,7 @@ export const useDiscountOptionCreate = () => {
 					percentage,
 					is_vat_inclusive: isVatInclusive,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -59,7 +59,7 @@ export const useDiscountOptionEdit = () => {
 					percentage,
 					is_vat_inclusive: isVatInclusive,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -76,7 +76,7 @@ export const useDiscountOptionDelete = () => {
 		(id: number) =>
 			DiscountOptionsService.delete(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

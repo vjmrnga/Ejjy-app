@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QuantitySelect } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, formatQuantity } from '../../../../utils/function';
+import { convertToBulk, formatQuantity } from 'utils';
 import '../style.scss';
 import {
 	RequisitionSlipDetails,

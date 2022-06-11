@@ -12,11 +12,7 @@ import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
 import { useQueryParams, useSiteSettingsRetrieve, useUsers } from 'hooks';
 import { useSessions } from 'hooks/useSessions';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTimeShortMonth,
-	getFullName,
-} from 'utils/function';
+import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },

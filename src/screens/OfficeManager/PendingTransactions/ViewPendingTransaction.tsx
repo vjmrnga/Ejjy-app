@@ -20,7 +20,7 @@ import {
 	formatDateTime,
 	formatQuantity,
 	getPreparationSlipStatus,
-} from '../../../utils/function';
+} from 'utils';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import './style.scss';

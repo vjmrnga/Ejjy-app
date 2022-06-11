@@ -5,7 +5,7 @@ import { NO_BRANCH_ID } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../../../hooks/useUsers';
-import { convertIntoArray } from '../../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { EditUserForm } from './EditUserForm';
 
 interface Props {

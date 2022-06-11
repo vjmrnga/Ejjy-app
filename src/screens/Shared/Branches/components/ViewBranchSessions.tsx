@@ -9,10 +9,7 @@ import {
 import { EMPTY_CELL } from '../../../../global/constants';
 import { request } from '../../../../global/types';
 import { useSessions } from '../../../../hooks/useSessions';
-import {
-	convertIntoArray,
-	formatDateTimeShortMonth,
-} from '../../../../utils/function';
+import { convertIntoArray, formatDateTimeShortMonth } from 'utils';
 import { pageSizeOptions } from '../../../../global/options';
 
 const columns: ColumnsType = [

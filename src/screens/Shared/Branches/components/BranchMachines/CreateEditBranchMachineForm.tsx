@@ -8,7 +8,7 @@ import {
 	FieldError,
 	FormInputLabel,
 } from '../../../../../components/elements';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 interface ICreateEditBranchMachine {
 	id?: number;

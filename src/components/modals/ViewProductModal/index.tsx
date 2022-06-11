@@ -9,7 +9,7 @@ import {
 	formatQuantity,
 	getProductType,
 	getUnitOfMeasurement,
-} from 'utils/function';
+} from 'utils';
 
 interface Props {
 	product: any;

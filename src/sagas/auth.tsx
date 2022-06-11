@@ -4,18 +4,18 @@ import { actions, types } from '../ducks/auth';
 import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global/constants';
 import { request, userTypes } from '../global/types';
 import { service } from '../services/auth';
-import { ONLINE_API_URL } from '../services/index';
-import { getLocalIpAddress } from '../utils/function';
+import { getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* login({ payload }: any) {
 	const { username, password, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalIpAddress();
+	const localURL = getLocalApiUrl();
 
 	try {
-		const loginBaseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
+		const loginBaseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 		const endpoint = IS_APP_LIVE ? service.loginOnline : service.login;
 		const loginResponse = yield call(
 			endpoint,
@@ -37,7 +37,7 @@ function* login({ payload }: any) {
 		}
 
 		if (loginResponse) {
-			// let tokenBaseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
+			// let tokenBaseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 			// const tokenResponse = yield call(
 			// 	service.acquireToken,
 			// 	{ username, password },
@@ -67,12 +67,12 @@ function* login({ payload }: any) {
 function* retrieve({ payload }: any) {
 	const { id, loginCount } = payload;
 
-	const localURL = getLocalIpAddress();
+	const localURL = getLocalApiUrl();
 
 	try {
 		while (true) {
 			if (id) {
-				const baseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
+				const baseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 				const endpoint = IS_APP_LIVE
 					? service.retrieveOnline
 					: service.retrieve;
@@ -98,11 +98,11 @@ function* retrieve({ payload }: any) {
 function* logout({ payload }: any) {
 	const { id } = payload;
 
-	const localURL = getLocalIpAddress();
+	const localURL = getLocalApiUrl();
 
 	try {
 		if (id) {
-			const baseURL = IS_APP_LIVE ? ONLINE_API_URL : localURL;
+			const baseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 			const endpoint = IS_APP_LIVE ? service.logoutOnline : service.login;
 			yield call(endpoint, id, baseURL);
 		}

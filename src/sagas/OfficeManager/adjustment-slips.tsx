@@ -6,7 +6,7 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/adjustment-slips';
 
 /* WORKERS */
@@ -24,7 +24,7 @@ function* getByDeliveryReceiptId({ payload }: any) {
 				page_size: MAX_PAGE_SIZE,
 				delivery_receipt_id: deliveryReceiptId,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -44,7 +44,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, ONLINE_API_URL);
+		const response = yield call(service.create, data, getOnlineApiUrl());
 
 		yield put(
 			actions.save({

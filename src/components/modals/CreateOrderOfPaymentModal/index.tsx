@@ -13,12 +13,7 @@ import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatInPeso,
-	getFullName,
-	sleep,
-} from 'utils/function';
+import { convertIntoArray, formatInPeso, getFullName, sleep } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {

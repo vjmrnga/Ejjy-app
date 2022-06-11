@@ -21,12 +21,7 @@ import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDate,
-	formatInPeso,
-	getFullName,
-} from 'utils/function';
+import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },

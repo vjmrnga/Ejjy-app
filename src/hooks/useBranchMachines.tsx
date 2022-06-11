@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { BranchMachinesService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { BranchMachinesService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -19,7 +19,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					sales_time_range: params?.salesTimeRange,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -37,7 +37,7 @@ export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 		async () =>
 			BranchMachinesService.retrieve(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			select: (query) => query.data,
@@ -53,7 +53,7 @@ export const useBranchMachineCreate = () =>
 				server_url: serverUrl,
 				pos_terminal: posTerminal,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		),
 	);
 
@@ -66,7 +66,7 @@ export const useBranchMachineEdit = () =>
 				server_url: serverUrl,
 				pos_terminal: posTerminal,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		),
 	);
 

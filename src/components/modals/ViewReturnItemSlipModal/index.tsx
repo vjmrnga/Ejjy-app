@@ -4,11 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { DetailsHalf, DetailsRow } from '../..';
 import { EMPTY_CELL } from '../../../global/constants';
-import {
-	formatDateTime,
-	formatQuantity,
-	getReturnItemSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import { Button, Label } from '../../elements';
 
 const columns: ColumnsType = [

@@ -1,9 +1,13 @@
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
 import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import { BranchesService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl, modifiedCallback } from 'utils';
 import { actions, selectors, types } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
 import { useActionDispatch } from './useActionDispatch';
-import { modifiedCallback } from '../utils/function';
 
 const CREATE_SUCCESS_MESSAGE = 'Branch was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the branch';
@@ -110,3 +114,25 @@ export const useBranches = () => {
 		resetError,
 	};
 };
+
+const useBranchesNew = ({ params }: Query) =>
+	useQuery<any>(
+		['useBranches', params?.baseURL, params?.page, params?.pageSize],
+		async () =>
+			BranchesService.list(
+				{
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
+				},
+				params?.baseURL || (IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl()),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				branches: query.data.results,
+				total: query.data.count,
+			}),
+		},
+	);
+
+export default useBranchesNew;

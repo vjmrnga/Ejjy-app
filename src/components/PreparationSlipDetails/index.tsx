@@ -1,7 +1,7 @@
 import { Divider } from 'antd';
 import React from 'react';
 import { DetailsRow, DetailsSingle } from '..';
-import { formatDateTime } from '../../utils/function';
+import { formatDateTime } from 'utils';
 
 interface Props {
 	preparationSlip: any;

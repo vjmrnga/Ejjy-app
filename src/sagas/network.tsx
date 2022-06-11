@@ -2,13 +2,13 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { actions, types } from '../ducks/network';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/network';
 
 /* WORKERS */
 function* testConnection() {
 	try {
-		yield call(service.test, ONLINE_API_URL);
+		yield call(service.test, getOnlineApiUrl());
 		yield put(actions.updateInternetConnection(true));
 	} catch (e) {
 		yield put(actions.updateInternetConnection(false));

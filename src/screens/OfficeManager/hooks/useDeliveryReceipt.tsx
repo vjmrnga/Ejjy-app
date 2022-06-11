@@ -7,10 +7,7 @@ import {
 } from '../../../ducks/OfficeManager/delivery-receipts';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-} from '../../../utils/function';
+import { modifiedCallback, modifiedExtraCallback } from 'utils';
 
 const CREATE_SUCCESS_MESSAGE = 'Delivery receipt was created successfully';
 const CREATE_ERROR_MESSAGE =

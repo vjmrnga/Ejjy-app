@@ -5,7 +5,7 @@ import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { request, returnItemSlipsStatuses } from '../../../../../global/types';
-import { formatQuantity } from '../../../../../utils/function';
+import { formatQuantity } from 'utils';
 import { useReturnItemSlipAdjustmentSlips } from '../../../hooks/useReturnItemSlipAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/branches-days';
 import { request } from '../global/types';
-import { modifiedExtraCallback, onCallback } from '../utils/function';
+import { modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

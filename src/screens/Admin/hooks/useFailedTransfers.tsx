@@ -7,7 +7,7 @@ import {
 } from '../../../ducks/Admin/failed-transfers';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedExtraCallback } from '../../../utils/function';
+import { modifiedExtraCallback } from 'utils';
 
 export const useFailedTransfers = () => {
 	const [status, setStatus] = useState<any>(request.NONE);

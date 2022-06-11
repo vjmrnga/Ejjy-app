@@ -5,7 +5,7 @@ import { actions as requisitionSlipsActions } from '../../ducks/requisition-slip
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/delivery-receipts';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 
 /* WORKERS */
 function* getById({ payload }: any) {
@@ -18,7 +18,7 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.retrieve,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -38,7 +38,7 @@ function* receive({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.receive, data, ONLINE_API_URL);
+		yield call(service.receive, data, getOnlineApiUrl());
 
 		yield put(
 			orderSlipActions.save({

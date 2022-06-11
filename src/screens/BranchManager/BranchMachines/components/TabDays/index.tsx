@@ -11,11 +11,7 @@ import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
 import { useQueryParams, useUsers } from 'hooks';
 import { useBranchesDays } from 'hooks/useBranchesDays';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTimeShortMonth,
-	getFullName,
-} from 'utils/function';
+import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },

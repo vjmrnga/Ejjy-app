@@ -25,7 +25,7 @@ import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import { IProductCategory } from 'models';
 import React, { useCallback, useState } from 'react';
-import { formatQuantity, formatRemoveCommas, sleep } from 'utils/function';
+import { formatQuantity, formatRemoveCommas, sleep } from 'utils';
 import * as Yup from 'yup';
 import '../style.scss';
 

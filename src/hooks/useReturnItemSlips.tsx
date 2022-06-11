@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/return-item-slips';
 import { request } from '../global/types';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-	onCallback,
-} from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

@@ -10,11 +10,7 @@ import { Box } from '../../../components/elements';
 import { MAX_PAGE_SIZE } from '../../../global/constants';
 import { request, userPendingApprovalTypes } from '../../../global/types';
 import { useUsers } from '../../../hooks/useUsers';
-import {
-	convertIntoArray,
-	getUserTypeName,
-	showErrorMessages,
-} from '../../../utils/function';
+import { convertIntoArray, getUserTypeName, showErrorMessages } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', key: 'name' },

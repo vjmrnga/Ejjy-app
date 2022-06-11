@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/preparation-slips';
 import { request } from '../global/types';
 import { useActionDispatch } from './useActionDispatch';
-import {
-	modifiedCallback,
-	modifiedExtraCallback,
-	onCallback,
-} from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

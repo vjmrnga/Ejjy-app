@@ -29,7 +29,7 @@ import {
 	formatDateTime,
 	formatQuantity,
 	getBranchProductStatus,
-} from '../../../../utils/function';
+} from 'utils';
 
 const currentBalanceColumn: ColumnType<any> = {
 	title: 'Current Balance',

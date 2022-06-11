@@ -6,10 +6,7 @@ import {
 	orderSlipStatus as osStatus,
 	request,
 } from '../../../../../global/types';
-import {
-	formatDateTime,
-	getOrderSlipStatusBranchManager,
-} from '../../../../../utils/function';
+import { formatDateTime, getOrderSlipStatusBranchManager } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },

@@ -8,7 +8,7 @@ import {
 } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/order-slips';
-import { ONLINE_API_URL } from '../services/index';
+import { getOnlineApiUrl } from 'utils';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -30,7 +30,7 @@ function* list({ payload }: any) {
 				requisition_slip_id,
 				assigned_store_id,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -66,7 +66,7 @@ function* listExtended({ payload }: any) {
 				requisition_slip_id,
 				assigned_store_id,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -89,7 +89,7 @@ function* getPendingCount({ payload }: any) {
 		const response = yield call(
 			service.getPendingCount,
 			{ user_id: userId },
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -103,7 +103,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, ONLINE_API_URL);
+		const response = yield call(service.create, data, getOnlineApiUrl());
 
 		yield put(
 			actions.save({ type: types.CREATE_ORDER_SLIP, orderSlip: response.data }),
@@ -120,7 +120,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data, ONLINE_API_URL);
+		const response = yield call(service.edit, data, getOnlineApiUrl());
 
 		yield put(
 			actions.save({ type: types.EDIT_ORDER_SLIP, orderSlip: response.data }),
@@ -137,7 +137,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.remove, id, ONLINE_API_URL);
+		yield call(service.remove, id, getOnlineApiUrl());
 
 		yield put(actions.save({ type: types.REMOVE_ORDER_SLIP, id }));
 		callback({ status: request.SUCCESS });

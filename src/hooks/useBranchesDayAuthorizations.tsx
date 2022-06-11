@@ -2,8 +2,8 @@ import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { IS_APP_LIVE } from 'global';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { BranchesDayService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { BranchesDayService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 export const useBranchesDayAuthorizationsRetrieve = ({ branchId }) => {
 	let baseURL = useSelector(branchesSelectors.selectURLByBranchId(branchId));
@@ -14,7 +14,7 @@ export const useBranchesDayAuthorizationsRetrieve = ({ branchId }) => {
 			if (!baseURL && branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			return BranchesDayService.retrieveLatestAuthorization(baseURL).catch(
@@ -34,7 +34,7 @@ export const useBranchesDayAuthorizationsCreate = ({ branchId }) => {
 		if (!baseURL && branchId) {
 			throw ['Branch has no online url.'];
 		} else {
-			baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+			baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 		}
 
 		return BranchesDayService.createAuthorization(

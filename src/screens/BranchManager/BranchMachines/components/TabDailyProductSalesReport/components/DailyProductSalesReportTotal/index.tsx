@@ -1,6 +1,6 @@
 import { Col, Row, Statistic } from 'antd';
 import React from 'react';
-import { formatInPeso } from 'utils/function';
+import { formatInPeso } from 'utils';
 import './style.scss';
 
 interface Props {

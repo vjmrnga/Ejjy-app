@@ -26,7 +26,7 @@ import {
 	formatDateTime,
 	formatInPeso,
 	getFullName,
-} from 'utils/function';
+} from 'utils';
 import '../../style.scss';
 
 export const TabCreditTransactions = () => {

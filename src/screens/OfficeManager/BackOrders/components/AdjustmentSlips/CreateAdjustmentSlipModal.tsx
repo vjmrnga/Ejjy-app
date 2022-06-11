@@ -5,7 +5,7 @@ import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { backOrdersStatuses, request } from '../../../../../global/types';
-import { formatQuantity } from '../../../../../utils/function';
+import { formatQuantity } from 'utils';
 import { useBackOrderAdjustmentSlips } from '../../../hooks/useBackOrderAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 

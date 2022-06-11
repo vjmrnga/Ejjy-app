@@ -12,10 +12,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { IProductCategory } from '../../../models';
-import {
-	convertIntoArray,
-	getBranchProductStatus,
-} from '../../../utils/function';
+import { convertIntoArray, getBranchProductStatus } from 'utils';
 import { ViewProductModal } from './components/ViewProductModal';
 import './style.scss';
 

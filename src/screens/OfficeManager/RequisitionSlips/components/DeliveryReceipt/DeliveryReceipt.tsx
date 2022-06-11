@@ -12,10 +12,7 @@ import {
 	ViewButtonIcon,
 } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
-import {
-	formatDateTime,
-	getDeliveryReceiptStatus,
-} from '../../../../../utils/function';
+import { formatDateTime, getDeliveryReceiptStatus } from 'utils';
 import { ViewProductAdjustmentSlipsModal } from './ViewProductAdjustmentSlipsModal';
 
 const columns = [

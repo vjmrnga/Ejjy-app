@@ -3,7 +3,7 @@ import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { useBalanceAdjustmentLogCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import { CreateBalanceAdjustmentLogForm } from './CreateBalanceAdjustmentLogForm';
 
 interface Props {

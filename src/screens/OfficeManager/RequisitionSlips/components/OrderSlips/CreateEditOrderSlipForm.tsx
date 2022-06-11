@@ -16,7 +16,7 @@ import {
 	quantityTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '50px' },

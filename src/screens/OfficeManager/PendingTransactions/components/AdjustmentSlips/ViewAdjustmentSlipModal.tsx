@@ -8,7 +8,7 @@ import {
 	DetailsSingle,
 } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
-import { formatDateTime, formatQuantity } from '../../../../../utils/function';
+import { formatDateTime, formatQuantity } from 'utils';
 import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 
 const columns: ColumnsType = [

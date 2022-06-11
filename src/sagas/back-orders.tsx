@@ -1,9 +1,9 @@
 import { call, retry, takeLatest } from 'redux-saga/effects';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { types } from '../ducks/back-orders';
 import { IS_APP_LIVE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { BackOrdersService, ONLINE_API_URL } from '../services';
-import { getLocalIpAddress } from '../utils/function';
+import { BackOrdersService } from '../services';
 import { getBaseUrl } from './helper';
 
 /* WORKERS */
@@ -41,7 +41,7 @@ function* retrieve({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			BackOrdersService.retrieve,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -61,7 +61,7 @@ function* edit({ payload }: any) {
 			{
 				receiver_id: receiverId,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS });
@@ -82,7 +82,7 @@ function* receive({ payload }: any) {
 				is_online: IS_APP_LIVE,
 				products,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS });

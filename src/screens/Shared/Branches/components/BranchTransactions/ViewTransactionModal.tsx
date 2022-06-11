@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
-import { formatInPeso, formatQuantity } from '../../../../../utils/function';
+import { formatInPeso, formatQuantity } from 'utils';
 
 interface Props {
 	transaction: any;

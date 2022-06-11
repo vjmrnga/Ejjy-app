@@ -21,7 +21,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

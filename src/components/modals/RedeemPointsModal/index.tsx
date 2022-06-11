@@ -4,7 +4,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { useAccountRedeemPoints } from 'hooks';
 import { useUserAuthenticate } from 'hooks/useUsers';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import { Button, FieldError, FormInputLabel } from '../../elements';
 

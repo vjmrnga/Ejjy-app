@@ -6,7 +6,7 @@ import { Label, Select } from '../../../../components/elements';
 import { requisitionSlipActionsOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useRequisitionSlips } from '../../../../hooks/useRequisitionSlips';
-import { formatDateTime } from '../../../../utils/function';
+import { formatDateTime } from 'utils';
 import '../style.scss';
 
 export const requisitionSlipDetailsType = {

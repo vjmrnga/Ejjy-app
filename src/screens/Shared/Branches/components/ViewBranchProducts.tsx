@@ -17,7 +17,7 @@ import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useProductCategories } from '../../../../hooks/useProductCategories';
 import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../../models';
-import { convertIntoArray, formatQuantity } from '../../../../utils/function';
+import { convertIntoArray, formatQuantity } from 'utils';
 import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';

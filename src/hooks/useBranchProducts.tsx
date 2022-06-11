@@ -2,15 +2,16 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { BranchProductsService, ONLINE_API_URL } from 'services';
-import { actions, types } from '../ducks/branch-products';
-import { request } from '../global/types';
+import { BranchProductsService } from 'services';
 import {
-	getLocalIpAddress,
+	getLocalApiUrl,
+	getOnlineApiUrl,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
-} from '../utils/function';
+} from 'utils';
+import { actions, types } from '../ducks/branch-products';
+import { request } from '../global/types';
 import {
 	executePaginatedRequest,
 	getDataForCurrentPage,
@@ -232,7 +233,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 		async () => {
 			let baseURL = params?.serverUrl;
 			if (!baseURL) {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			const data = {
@@ -253,7 +254,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 				return await BranchProductsService.list(data, baseURL);
 			} catch (e) {
 				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 				const response = await BranchProductsService.list(data, baseURL);
 				response.data.warning =
 					'Data Source: Backup Server, data might be outdated.';
@@ -277,7 +278,7 @@ export const useBranchProductRetrieve = ({ id, options }: Query) =>
 		async () =>
 			BranchProductsService.list(
 				{ product_ids: id },
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -333,7 +334,7 @@ export const useBranchProductEdit = () => {
 					price_per_piece: pricePerPiece,
 					reorder_point: reorderPoint,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -362,7 +363,7 @@ export const useBranchProductEditPriceCost = () => {
 					price_per_piece: pricePerPiece,
 					price_per_bulk: pricePerBulk,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { actions } from '../../../ducks/OfficeManager/back-order-adjustment-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedExtraCallback, onCallback } from '../../../utils/function';
+import { modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

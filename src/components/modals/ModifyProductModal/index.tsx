@@ -10,7 +10,7 @@ import {
 } from 'hooks';
 import { IProductCategory } from 'models';
 import React, { useState } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
 interface Props {

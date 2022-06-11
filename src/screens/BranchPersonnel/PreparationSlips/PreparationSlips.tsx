@@ -9,10 +9,7 @@ import { pageSizeOptions } from '../../../global/options';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
-import {
-	formatDateTime,
-	getPreparationSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime, getPreparationSlipStatus } from 'utils';
 import { useOrderSlips } from '../../BranchManager/hooks/useOrderSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';

@@ -1,7 +1,11 @@
 import { message, Modal } from 'antd';
-import { LOCAL_IP_ADDRESS_KEY } from 'global';
+import {
+	APP_BRANCH_ID_KEY,
+	APP_LOCAL_API_URL_KEY,
+	APP_ONLINE_API_URL_KEY,
+} from 'global';
 import React from 'react';
-import { getLocalIpAddress } from 'utils/function';
+import { getBranchId, getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { AppSettingsForm } from './AppSettingsForm';
 
 interface Props {
@@ -10,8 +14,11 @@ interface Props {
 
 export const AppSettingsModal = ({ onClose }: Props) => {
 	const handleSubmit = (data) => {
-		localStorage.setItem(LOCAL_IP_ADDRESS_KEY, data.localIpAddress);
-		message.success('API URL was updated successfully');
+		localStorage.setItem(APP_BRANCH_ID_KEY, data.branchId);
+		localStorage.setItem(APP_LOCAL_API_URL_KEY, data.localApiUrl);
+		localStorage.setItem(APP_ONLINE_API_URL_KEY, data.onlineApiUrl);
+
+		message.success('App settings were updated successfully');
 		onClose();
 	};
 
@@ -26,7 +33,9 @@ export const AppSettingsModal = ({ onClose }: Props) => {
 			closable
 		>
 			<AppSettingsForm
-				localIpAddress={getLocalIpAddress()}
+				branchId={getBranchId()}
+				localApiUrl={getLocalApiUrl()}
+				onlineApiUrl={getOnlineApiUrl()}
 				onSubmit={handleSubmit}
 				onClose={onClose}
 			/>

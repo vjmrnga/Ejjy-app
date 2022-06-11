@@ -7,7 +7,7 @@ import {
 } from 'hooks';
 import _, { memoize } from 'lodash';
 import React from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import { PricesForm } from './PricesForm';
 
 interface Props {

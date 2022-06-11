@@ -22,7 +22,7 @@ import {
 	convertIntoArray,
 	getFullName,
 	isUserFromBranch,
-} from 'utils/function';
+} from 'utils';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'date', width: 175 },

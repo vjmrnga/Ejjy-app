@@ -2,13 +2,14 @@ import { actions } from 'ducks/back-orders';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { BackOrdersService, ONLINE_API_URL } from 'services';
+import { BackOrdersService } from 'services';
 import {
-	getLocalIpAddress,
+	getLocalApiUrl,
+	getOnlineApiUrl,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
-} from 'utils/function';
+} from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,
@@ -160,7 +161,7 @@ const useBackOrdersNew = ({ params }: Query) =>
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					type: params?.type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -177,7 +178,7 @@ export const useBackOrderRetrieve = ({ id, options }: Query) =>
 		async () =>
 			BackOrdersService.retrieve(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			select: (query) => query.data,
@@ -197,7 +198,7 @@ export const useBackOrderCreate = () =>
 					encoded_by_id: encodedById,
 					type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);
 

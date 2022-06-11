@@ -15,7 +15,7 @@ import {
 import { usePointTransactions, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { formatDateTime, formatInPeso, getFullName } from 'utils/function';
+import { formatDateTime, formatInPeso, getFullName } from 'utils';
 import './style.scss';
 
 const columns: ColumnsType = [

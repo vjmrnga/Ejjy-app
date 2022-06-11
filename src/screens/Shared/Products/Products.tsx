@@ -27,7 +27,7 @@ import { IProductCategory } from 'models';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, isUserFromBranch } from 'utils/function';
+import { convertIntoArray, isUserFromBranch } from 'utils';
 import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [

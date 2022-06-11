@@ -10,7 +10,7 @@ import React, {
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
-import { formatDateTime, showErrorMessages } from '../../utils/function';
+import { formatDateTime, showErrorMessages } from 'utils';
 import Box from '../elements/Box/Box';
 import { TableHeader } from '../Table/TableHeaders/TableHeader';
 

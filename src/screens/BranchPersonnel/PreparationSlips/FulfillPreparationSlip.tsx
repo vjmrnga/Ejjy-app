@@ -21,11 +21,7 @@ import {
 } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
-import {
-	convertIntoArray,
-	formatQuantity,
-	getKeyDownCombination,
-} from '../../../utils/function';
+import { convertIntoArray, formatQuantity, getKeyDownCombination } from 'utils';
 import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
 import './style.scss';

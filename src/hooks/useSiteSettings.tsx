@@ -3,8 +3,8 @@ import { IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { ONLINE_API_URL, SiteSettingsService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { SiteSettingsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
 	let baseURL = useSelector(
@@ -17,7 +17,7 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
 			if (!baseURL && params?.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			return SiteSettingsService.retrieve(baseURL).catch((e) =>
@@ -94,6 +94,6 @@ export const useSiteSettingsEdit = () =>
 					thank_you_message: thankYouMessage,
 					tin: tin,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 	);

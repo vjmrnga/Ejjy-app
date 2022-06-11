@@ -12,7 +12,7 @@ import {
 import { useProductChecks, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { convertIntoArray, formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils';
 import './style.scss';
 
 const columns: ColumnsType = [

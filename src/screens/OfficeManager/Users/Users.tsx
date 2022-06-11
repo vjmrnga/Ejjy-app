@@ -28,7 +28,7 @@ import {
 import { useBranches } from '../../../hooks/useBranches';
 import { useQueryParams } from 'hooks';
 import { useUsers } from '../../../hooks/useUsers';
-import { getUserTypeName, showErrorMessages } from '../../../utils/function';
+import { getUserTypeName, showErrorMessages } from 'utils';
 import { BranchUsers } from './components/BranchUsers';
 import { EditUserModal } from './components/EditUserModal';
 import './style.scss';

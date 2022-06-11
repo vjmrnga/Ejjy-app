@@ -3,11 +3,7 @@ import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import {
-	convertToBulk,
-	formatQuantity,
-	getColoredText,
-} from '../../../../utils/function';
+import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [

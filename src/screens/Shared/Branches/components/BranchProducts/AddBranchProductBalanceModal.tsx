@@ -11,7 +11,7 @@ import {
 	convertIntoArray,
 	formatQuantity,
 	getKeyDownCombination,
-} from '../../../../../utils/function';
+} from 'utils';
 import '../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 

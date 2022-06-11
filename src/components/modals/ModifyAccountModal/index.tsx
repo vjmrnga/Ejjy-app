@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { useAccountCreate, useAccountEdit } from 'hooks';
 import React from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import { ModifyAccountForm } from './ModifyAccountForm';
 
 interface Props {

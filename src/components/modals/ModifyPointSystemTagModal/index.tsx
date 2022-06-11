@@ -3,7 +3,7 @@ import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { usePointSystemTagCreate, usePointSystemTagEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import {
 	Button,

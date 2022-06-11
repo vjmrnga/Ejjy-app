@@ -7,10 +7,7 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
-import {
-	formatDateTime,
-	getReturnItemSlipStatus,
-} from '../../../../utils/function';
+import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

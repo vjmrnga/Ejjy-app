@@ -6,7 +6,7 @@ import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
-import { formatDateTime } from '../../../utils/function';
+import { formatDateTime } from 'utils';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 
 const columns: ColumnsType = [

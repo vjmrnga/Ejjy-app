@@ -2,8 +2,8 @@ import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { ONLINE_API_URL, TransactionProductsService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { TransactionProductsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useTransactionProducts = ({ params }: Query) => {
@@ -25,7 +25,7 @@ const useTransactionProducts = ({ params }: Query) => {
 			if (!baseURL && params.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			baseURL = params.serverUrl || baseURL;
@@ -44,7 +44,7 @@ const useTransactionProducts = ({ params }: Query) => {
 				return await TransactionProductsService.list(data, baseURL);
 			} catch (e) {
 				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 				const response = await TransactionProductsService.list(data, baseURL);
 				response.data.warning =
 					'Data Source: Backup Server, data might be outdated.';

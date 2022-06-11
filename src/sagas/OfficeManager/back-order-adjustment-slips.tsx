@@ -2,7 +2,7 @@ import { call, retry, takeEvery } from 'redux-saga/effects';
 import { types } from '../../ducks/OfficeManager/back-order-adjustment-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/back-order-adjustment-slips';
 
 /* WORKERS */
@@ -20,7 +20,7 @@ function* list({ payload }: any) {
 				page_size: pageSize,
 				back_order_id: backOrderId,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -42,7 +42,7 @@ function* create({ payload }: any) {
 				remarks,
 				back_order_adjustment_slip_products: products,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {

@@ -35,7 +35,7 @@ import {
 	convertToPieces,
 	getBranchProductStatus,
 	sleep,
-} from '../../../utils/function';
+} from 'utils';
 
 const tabs = {
 	ALL: 'ALL',

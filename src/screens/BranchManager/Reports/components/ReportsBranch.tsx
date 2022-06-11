@@ -20,7 +20,7 @@ import {
 	convertIntoArray,
 	formatQuantity,
 	getBranchProductStatus,
-} from 'utils/function';
+} from 'utils';
 import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 
 const columns: ColumnsType = [

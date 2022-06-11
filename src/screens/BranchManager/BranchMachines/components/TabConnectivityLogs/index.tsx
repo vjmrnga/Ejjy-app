@@ -15,7 +15,7 @@ import {
 } from 'global';
 import { useConnectivityLogs, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type' },

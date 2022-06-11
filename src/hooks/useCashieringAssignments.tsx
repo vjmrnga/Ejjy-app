@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { CashieringAssignmentsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from '../utils/function';
+import { CashieringAssignmentsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useCashieringAssignments = ({ params }: Query) =>
 	useQuery<any>(
@@ -19,7 +19,7 @@ const useCashieringAssignments = ({ params }: Query) =>
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					user_id: params?.userId,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -49,7 +49,7 @@ export const useCashieringAssignmentCreate = () => {
 					datetime_start: datetimeStart,
 					user_id: userId,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -71,7 +71,7 @@ export const useCashieringAssignmentEdit = () => {
 					datetime_end: datetimeEnd,
 					datetime_start: datetimeStart,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -91,7 +91,7 @@ export const useCashieringAssignmentDelete = () => {
 				{
 					acting_user_id: actingUserId,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

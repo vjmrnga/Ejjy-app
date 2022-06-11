@@ -18,7 +18,7 @@ import { useBranchMachines } from 'hooks';
 import { useUsers } from 'hooks/useUsers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import './style.scss';
 
 const columns = [

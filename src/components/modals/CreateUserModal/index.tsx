@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import React from 'react';
 import { request } from '../../../global/types';
 import { useUsers } from '../../../hooks/useUsers';
-import { convertIntoArray } from '../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { RequestErrors } from '../../RequestErrors/RequestErrors';
 import { CreateUserForm } from './CreateUserForm';
 

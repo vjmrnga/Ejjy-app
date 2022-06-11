@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
 import { cashBreakdownCategories, cashBreakdownTypes } from 'global';
 import React from 'react';
-import { formatDateTime, formatInPeso, getFullName } from 'utils/function';
+import { formatDateTime, formatInPeso, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{

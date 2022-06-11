@@ -7,7 +7,7 @@ import {
 	userTypeOptions,
 } from '../../../global/options';
 import { userTypes } from '../../../global/types';
-import { sleep } from '../../../utils/function';
+import { sleep } from 'utils';
 import {
 	Button,
 	FieldError,

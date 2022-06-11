@@ -10,7 +10,7 @@ import {
 	convertToPieces,
 	formatDateTime,
 	getBackOrderStatus,
-} from '../../../../utils/function';
+} from 'utils';
 import { FulfillBackOrderForm } from './FulfillBackOrderForm';
 
 interface Props {

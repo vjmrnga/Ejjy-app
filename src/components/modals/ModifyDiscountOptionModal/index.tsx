@@ -4,7 +4,7 @@ import { discountTypes } from 'global';
 import { useDiscountOptionCreate, useDiscountOptionEdit } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel, Label } from '../../elements';

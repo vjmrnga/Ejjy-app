@@ -25,7 +25,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, getFullName } from 'utils/function';
+import { convertIntoArray, formatDateTime, getFullName } from 'utils';
 
 export const cashBreakdownOptions = [
 	{

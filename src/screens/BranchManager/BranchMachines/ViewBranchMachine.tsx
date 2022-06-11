@@ -9,7 +9,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
 import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
-import { convertIntoArray, getUrlPrefix } from '../../../utils/function';
+import { convertIntoArray, getUrlPrefix } from 'utils';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
 import { TabDays } from './components/TabDays';

@@ -1,7 +1,7 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { ButtonLink } from '../../../../../components/elements';
-import { formatDateTime } from '../../../../../utils/function';
+import { formatDateTime } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },

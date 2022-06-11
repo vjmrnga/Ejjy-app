@@ -10,7 +10,7 @@ import { Box } from 'components/elements';
 import { useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray } from 'utils/function';
+import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', key: 'name', width: 150, fixed: 'left' },

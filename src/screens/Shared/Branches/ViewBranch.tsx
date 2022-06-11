@@ -8,7 +8,7 @@ import { Box } from '../../../components/elements';
 import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { useAuth } from '../../../hooks/useAuth';
 import { useQueryParams } from 'hooks';
-import { getUrlPrefix } from '../../../utils/function';
+import { getUrlPrefix } from 'utils';
 import { ViewBranchCheckings } from './components/ViewBranchCheckings';
 import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';

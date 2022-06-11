@@ -16,7 +16,7 @@ import {
 } from 'global';
 import { useProductChecks, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime } from 'utils/function';
+import { convertIntoArray, formatDateTime } from 'utils';
 import { DailyCheckCard } from './components/DailyCheckCard';
 import './style.scss';
 

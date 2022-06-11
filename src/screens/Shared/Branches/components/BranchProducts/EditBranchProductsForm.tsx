@@ -20,7 +20,7 @@ import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 const { Text } = Typography;
 

@@ -5,7 +5,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray, getFullName } from 'utils/function';
+import { convertIntoArray, getFullName } from 'utils';
 import * as Yup from 'yup';
 import { Button, FieldError, Label } from '../../elements';
 

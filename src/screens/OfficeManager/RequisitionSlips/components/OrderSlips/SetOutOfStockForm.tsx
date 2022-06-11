@@ -2,7 +2,7 @@ import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import { TableNormal } from '../../../../../components';
 import { Button, FormCheckbox } from '../../../../../components/elements';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '80px' },

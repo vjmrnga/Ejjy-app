@@ -12,7 +12,7 @@ import { EMPTY_CELL } from 'global';
 import { useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
-import { formatDate, formatInPeso } from 'utils/function';
+import { formatDate, formatInPeso } from 'utils';
 import './style.scss';
 
 interface Props {

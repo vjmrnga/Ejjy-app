@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { ONLINE_API_URL, ProductsService } from 'services';
-import { getLocalIpAddress } from '../utils/function';
+import { ProductsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useProducts = ({ params }: Query) =>
 	useQuery<any>(
@@ -23,7 +23,7 @@ const useProducts = ({ params }: Query) =>
 					search: params?.search,
 					product_category: params?.productCategory,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -93,7 +93,7 @@ export const useProductCreate = () => {
 					type: type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -164,7 +164,7 @@ export const useProductEdit = () => {
 					type: type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -184,7 +184,7 @@ export const useProductDelete = () => {
 				{
 					acting_user_id: actingUserId,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

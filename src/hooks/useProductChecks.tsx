@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { ONLINE_API_URL, ProductChecksService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { ProductChecksService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useProductChecks = ({ params }: Query) =>
 	useQuery<any>(
@@ -23,7 +23,7 @@ const useProductChecks = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					type: params?.type,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -40,7 +40,7 @@ export const useProductCheckRetrieve = ({ id, options }: Query) =>
 		async () =>
 			ProductChecksService.retrieve(
 				id,
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			select: (query) => query.data,
@@ -52,7 +52,7 @@ export const useProductCheckCreateDaily = (options = {}) =>
 	useMutation<any, any, any>(
 		() =>
 			ProductChecksService.createDailyChecks(
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		options,
 	);
@@ -61,7 +61,7 @@ export const useProductCheckCreateRandom = (options = {}) =>
 	useMutation<any, any, any>(
 		() =>
 			ProductChecksService.createRandomChecks(
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		options,
 	);
@@ -72,7 +72,7 @@ export const useProductCheckFulfill = (options = {}) =>
 			ProductChecksService.fulfill(
 				id,
 				{ products },
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
 		options,
 	);

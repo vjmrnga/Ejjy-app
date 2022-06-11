@@ -6,7 +6,7 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/branches';
 
 /* WORKERS */
@@ -23,7 +23,7 @@ function* list({ payload }: any) {
 				page: 1,
 				page_size: MAX_PAGE_SIZE,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -48,7 +48,7 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.getById,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(actions.save({ type: types.GET_BRANCH, branch: response.data }));
@@ -63,7 +63,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, ONLINE_API_URL);
+		const response = yield call(service.create, data, getOnlineApiUrl());
 
 		yield put(
 			actions.save({ type: types.CREATE_BRANCH, branch: response.data }),
@@ -79,7 +79,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data, ONLINE_API_URL);
+		const response = yield call(service.edit, data, getOnlineApiUrl());
 
 		yield put(actions.save({ type: types.EDIT_BRANCH, branch: response.data }));
 		callback({ status: request.SUCCESS });
@@ -93,7 +93,7 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.remove, id, ONLINE_API_URL);
+		yield call(service.remove, id, getOnlineApiUrl());
 
 		yield put(actions.save({ type: types.REMOVE_BRANCH, id }));
 		callback({ status: request.SUCCESS });

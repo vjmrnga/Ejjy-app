@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { actions, types } from '../ducks/sessions';
 import { request } from '../global/types';
-import { onCallback } from '../utils/function';
+import { onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

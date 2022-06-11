@@ -8,7 +8,7 @@ import {
 	formatInPeso,
 	formatQuantity,
 	getKeyDownCombination,
-} from '../../../../../utils/function';
+} from 'utils';
 
 interface Props {
 	visible: boolean;

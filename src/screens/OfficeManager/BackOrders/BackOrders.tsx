@@ -8,7 +8,7 @@ import { EMPTY_CELL } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { request, backOrdersStatuses } from '../../../global/types';
 import { useBackOrders } from '../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from '../../../utils/function';
+import { formatDateTime, getBackOrderStatus } from 'utils';
 import { AssignBackOrderModal } from './components/AssignBackOrderModal';
 
 const columns: ColumnsType = [

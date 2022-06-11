@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
-import { CollectionReceiptsService, ONLINE_API_URL } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { CollectionReceiptsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useCollectionReceipts = ({ params }: Query) =>
 	useQuery<any>(
@@ -13,7 +13,7 @@ const useCollectionReceipts = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },

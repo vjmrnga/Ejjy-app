@@ -8,10 +8,7 @@ import { EMPTY_CELL } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
-import {
-	formatDateTime,
-	getReturnItemSlipStatus,
-} from '../../../utils/function';
+import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 import { AssignReturnItemSlipModal } from './components/AssignReturnItemSlipModal';
 
 const columns: ColumnsType = [

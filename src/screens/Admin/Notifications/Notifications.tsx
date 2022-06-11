@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Content, NotificationItem } from '../../../components';
 import { useBranches } from '../../../hooks/useBranches';
-import { formatDateTime } from '../../../utils/function';
+import { formatDateTime } from 'utils';
 import { useFailedTransfers } from '../hooks/useFailedTransfers';
 import './style.scss';
 

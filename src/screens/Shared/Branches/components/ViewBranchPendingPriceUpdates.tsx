@@ -9,7 +9,7 @@ import {
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProductPendingPriceUpdates } from '../../../../hooks/useBranchProductPendingPriceUpdates';
-import { convertIntoArray } from '../../../../utils/function';
+import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

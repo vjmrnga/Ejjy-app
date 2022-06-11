@@ -12,7 +12,7 @@ import {
 	UncontrolledInput,
 } from '../../../../../components/elements';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 
 interface Props {
 	products: any;

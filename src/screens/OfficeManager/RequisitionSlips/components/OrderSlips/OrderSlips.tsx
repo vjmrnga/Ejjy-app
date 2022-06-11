@@ -15,11 +15,7 @@ import {
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
-import {
-	convertIntoArray,
-	convertToBulk,
-	formatQuantity,
-} from '../../../../../utils/function';
+import { convertIntoArray, convertToBulk, formatQuantity } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { useUsers } from '../../../../../hooks/useUsers';

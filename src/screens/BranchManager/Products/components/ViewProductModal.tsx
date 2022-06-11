@@ -2,10 +2,7 @@ import { Divider, Modal } from 'antd';
 import React from 'react';
 import { DetailsHalf, DetailsRow, DetailsSingle } from '../../../../components';
 import { Button } from '../../../../components/elements';
-import {
-	getProductType,
-	getUnitOfMeasurement,
-} from '../../../../utils/function';
+import { getProductType, getUnitOfMeasurement } from 'utils';
 
 interface Props {
 	branchProduct: any;

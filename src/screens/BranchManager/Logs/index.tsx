@@ -13,11 +13,7 @@ import {
 import { useBranchMachines, useQueryParams, useUsers } from 'hooks';
 import useUserLogs from 'hooks/useUserLogs';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTimeExtended,
-	getFullName,
-} from 'utils/function';
+import { convertIntoArray, formatDateTimeExtended, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{

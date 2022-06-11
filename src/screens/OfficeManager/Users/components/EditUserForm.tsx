@@ -15,7 +15,7 @@ import {
 import { Option } from '../../../../components/elements/Select/Select';
 import { NO_BRANCH_ID } from '../../../../global/constants';
 import { userTypeOptions } from '../../../../global/options';
-import { sleep } from '../../../../utils/function';
+import { sleep } from 'utils';
 
 const tabs = {
 	BRANCH: 'branch',

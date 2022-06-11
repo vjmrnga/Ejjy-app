@@ -7,7 +7,7 @@ import {
 } from '../../../ducks/BranchManager/delivery-receipts';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback } from '../../../utils/function';
+import { modifiedCallback } from 'utils';
 
 const RECEIVE_SUCCESS_MESSAGE = 'Delivery receipt was received successfully';
 const RECEIVE_ERROR_MESSAGE =

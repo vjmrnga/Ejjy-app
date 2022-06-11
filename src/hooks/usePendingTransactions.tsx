@@ -8,7 +8,7 @@ import {
 } from '../ducks/OfficeManager/pending-transactions';
 import { request } from '../global/types';
 import { useActionDispatch } from './useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback } from 'utils';
 
 const REMOVE_SUCCESS_MESSAGE = 'Pending transaction was removed successfully';
 const REMOVE_ERROR_MESSAGE =

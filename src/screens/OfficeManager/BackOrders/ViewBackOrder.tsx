@@ -15,11 +15,7 @@ import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { backOrdersStatuses, request } from '../../../global/types';
 import { useBackOrders } from '../../../hooks/useBackOrders';
-import {
-	formatDateTime,
-	formatQuantity,
-	getBackOrderStatus,
-} from '../../../utils/function';
+import { formatDateTime, formatQuantity, getBackOrderStatus } from 'utils';
 import { useBackOrderAdjustmentSlips } from '../hooks/useBackOrderAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';

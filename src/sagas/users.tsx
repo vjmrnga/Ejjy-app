@@ -15,7 +15,7 @@ import {
 } from '../global/constants';
 import { request } from '../global/types';
 import { UsersService } from '../services';
-import { ONLINE_API_URL } from '../services/index';
+import { getOnlineApiUrl } from 'utils';
 import { getBaseUrl } from './helper';
 
 /* WORKERS */
@@ -86,7 +86,7 @@ function* listOnlineUsers({ payload }: any) {
 				is_pending_create_approval: isPendingCreateApproval,
 				is_pending_update_user_type_approval: isPendingUpdateUserTypeApproval,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -105,7 +105,7 @@ function* getById({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			UsersService.getByIdOnline,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -127,7 +127,7 @@ function* getByIdOnline({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			UsersService.getByIdOnline,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(
@@ -166,7 +166,7 @@ function* createOnline({ payload }: any) {
 		const response = yield call(
 			UsersService.createOnline,
 			data,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, response: response.data });
@@ -184,7 +184,7 @@ function* editOnline({ payload }: any) {
 			UsersService.editOnline,
 			id,
 			{ branch_id: branchId },
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		yield put(actions.save({ type: types.EDIT_USER, id }));
@@ -199,7 +199,11 @@ function* remove({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(UsersService.removeOnline, id, ONLINE_API_URL);
+		const response = yield call(
+			UsersService.removeOnline,
+			id,
+			getOnlineApiUrl(),
+		);
 
 		yield put(actions.save({ type: types.REMOVE_USER, id }));
 		callback({ status: request.SUCCESS, response: response.data });
@@ -219,7 +223,7 @@ function* approve({ payload }: any) {
 			{
 				pending_approval_type: pendingApprovalType,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, response: response.data });
@@ -237,7 +241,7 @@ function* requestUserTypeChange({ payload }: any) {
 			UsersService.requestUserTypeChange,
 			id,
 			{ new_user_type: newUserType },
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, response: response.data });

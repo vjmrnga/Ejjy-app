@@ -17,7 +17,7 @@ import { useBranchProducts, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { convertIntoArray, formatQuantity } from 'utils/function';
+import { convertIntoArray, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },

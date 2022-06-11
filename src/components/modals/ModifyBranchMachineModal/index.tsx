@@ -2,7 +2,7 @@ import { Col, message, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, sleep } from 'utils/function';
+import { convertIntoArray, sleep } from 'utils';
 import * as Yup from 'yup';
 import { DetailsRow, RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel } from '../../elements';

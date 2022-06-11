@@ -3,7 +3,7 @@ import { retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../../ducks/OfficeManager/preparation-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/order-slips';
 
 /* WORKERS */
@@ -21,7 +21,7 @@ function* list({ payload }: any) {
 				page,
 				page_size: pageSize,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -41,7 +41,7 @@ function* retrieve({ payload }: any) {
 			service.retrieveWithAssignedPersonelDetails,
 			id,
 			{ requesting_user_id: requestingUserId },
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });

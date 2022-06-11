@@ -26,7 +26,7 @@ import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import { IProductCategory } from 'models';
 import React, { useCallback } from 'react';
-import { formatQuantity } from 'utils/function';
+import { formatQuantity } from 'utils';
 import * as Yup from 'yup';
 
 const { Text } = Typography;

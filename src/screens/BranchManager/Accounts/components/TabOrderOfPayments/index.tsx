@@ -25,7 +25,7 @@ import {
 	formatDateTime,
 	formatInPeso,
 	getFullName,
-} from 'utils/function';
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'OP #', dataIndex: 'id' },

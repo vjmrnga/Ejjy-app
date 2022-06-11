@@ -10,7 +10,7 @@ import {
 	convertToPieces,
 	formatDateTime,
 	getReturnItemSlipStatus,
-} from '../../../../utils/function';
+} from 'utils';
 import { FulfillReturnItemSlipForm } from './FulfillReturnItemSlipForm';
 
 interface Props {

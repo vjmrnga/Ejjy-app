@@ -9,7 +9,7 @@ import {
 	confirmPassword,
 	convertIntoArray,
 	getKeyDownCombination,
-} from '../../../../../utils/function';
+} from 'utils';
 import { EditBranchProductsForm } from './EditBranchProductsForm';
 
 interface Props {

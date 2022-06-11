@@ -2,7 +2,7 @@ import { call, retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/preparation-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/preparation-slips';
 
 /* WORKERS */
@@ -29,7 +29,7 @@ function* list({ payload }: any) {
 				page,
 				page_size: pageSize,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -52,7 +52,7 @@ function* getById({ payload }: any) {
 				assigned_personnel_id: assignedPersonnelId,
 				requesting_user_id: requestingUserId,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -66,7 +66,7 @@ function* fulfill({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.fulfill, data, ONLINE_API_URL);
+		const response = yield call(service.fulfill, data, getOnlineApiUrl());
 
 		callback({ status: request.SUCCESS, data: response.data });
 	} catch (e) {
@@ -85,7 +85,7 @@ function* approveOrDisapprove({ payload }: any) {
 			{
 				is_approved: isApproved,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });

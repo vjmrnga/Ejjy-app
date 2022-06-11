@@ -9,7 +9,7 @@ import {
 	FieldError,
 	FormInputLabel,
 } from '../../../../../components/elements';
-import { sleep } from '../../../../../utils/function';
+import { sleep } from 'utils';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
 
 interface Props {

@@ -2,8 +2,8 @@ import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global/';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { ONLINE_API_URL, TransactionsService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { TransactionsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useTransactions = ({ params }: Query) => {
@@ -30,7 +30,7 @@ const useTransactions = ({ params }: Query) => {
 			if (!baseURL && params.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			baseURL = params.serverUrl || baseURL;
@@ -52,7 +52,7 @@ const useTransactions = ({ params }: Query) => {
 				return await TransactionsService.list(data, baseURL);
 			} catch (e) {
 				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 				const response = await TransactionsService.list(
 					{
 						branch_machine_id: params.branchMachineId,
@@ -89,7 +89,7 @@ export const useTransactionRetrieve = ({ id, params, options }: Query) => {
 			if (!baseURL && params.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			baseURL = params.serverUrl || baseURL;
@@ -99,7 +99,7 @@ export const useTransactionRetrieve = ({ id, params, options }: Query) => {
 				return await TransactionsService.retrieve(id, baseURL);
 			} catch (e) {
 				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 				const response = await TransactionsService.retrieve(id, baseURL);
 				response.data.warning =
 					'Data Source: Backup Server, data might be outdated.';
@@ -131,7 +131,7 @@ export const useTransactionsSummary = ({ params, options }: Query) => {
 			if (!baseURL && params.branchId) {
 				throw ['Branch has no online url.'];
 			} else {
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 			}
 
 			baseURL = params.serverUrl || baseURL;
@@ -147,7 +147,7 @@ export const useTransactionsSummary = ({ params, options }: Query) => {
 				return await TransactionsService.summary(data, baseURL);
 			} catch (e) {
 				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress();
+				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
 				const response = await TransactionsService.summary(data, baseURL);
 				response.data.warning =
 					'Data Source: Backup Server, data might be outdated.';

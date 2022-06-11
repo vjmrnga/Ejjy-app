@@ -8,7 +8,7 @@ import {
 	formatInPeso,
 	formatQuantity,
 	getFullName,
-} from 'utils/function';
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

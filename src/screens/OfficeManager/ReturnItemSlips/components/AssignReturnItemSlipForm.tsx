@@ -7,7 +7,7 @@ import { MAX_PAGE_SIZE } from '../../../../global/constants';
 import { request, userTypes } from '../../../../global/types';
 import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../../../hooks/useUsers';
-import { convertIntoArray, sleep } from '../../../../utils/function';
+import { convertIntoArray, sleep } from 'utils';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 
 interface Props {

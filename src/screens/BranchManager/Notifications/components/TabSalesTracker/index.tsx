@@ -3,7 +3,7 @@ import { RequestErrors, TableHeader } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 
 export const TabSalesTracker = () => {
 	// STATES

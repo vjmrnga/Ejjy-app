@@ -1,7 +1,7 @@
 import { IS_APP_LIVE } from 'global';
 import { useMutation } from 'react-query';
-import { ONLINE_API_URL, PriceMarkdownsService } from 'services';
-import { getLocalIpAddress } from 'utils/function';
+import { PriceMarkdownsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 export const usePriceMarkdownsCreate = () =>
 	useMutation<any, any, any>(({ branchProductId, type }: any) =>
@@ -10,6 +10,6 @@ export const usePriceMarkdownsCreate = () =>
 				branch_product_id: branchProductId,
 				type,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		),
 	);

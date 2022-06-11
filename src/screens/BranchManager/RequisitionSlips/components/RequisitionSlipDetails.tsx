@@ -4,10 +4,7 @@ import { upperFirst } from 'lodash';
 import React, { useCallback } from 'react';
 import { Label } from '../../../../components/elements';
 import { userTypes } from '../../../../global/types';
-import {
-	formatDateTime,
-	getRequisitionSlipStatus,
-} from '../../../../utils/function';
+import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import '../style.scss';
 
 export const requisitionSlipDetailsType = {

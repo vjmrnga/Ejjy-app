@@ -1,9 +1,6 @@
 import React from 'react';
 import { DetailsHalf, DetailsRow } from '../../../../components';
-import {
-	formatDateTime,
-	getOrderSlipStatusBranchManager,
-} from '../../../../utils/function';
+import { formatDateTime, getOrderSlipStatusBranchManager } from 'utils';
 
 interface Props {
 	orderSlip: any;

@@ -8,11 +8,7 @@ import { Button, Label } from '../../../../../components/elements';
 import { printOrderSlip } from '../../../../../configurePrinter';
 import { quantityTypes } from '../../../../../global/types';
 import { useAuth } from '../../../../../hooks/useAuth';
-import {
-	convertToBulk,
-	formatQuantity,
-	getColoredText,
-} from '../../../../../utils/function';
+import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [

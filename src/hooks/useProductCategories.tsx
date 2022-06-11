@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { actions } from '../ducks/product-categories';
 import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback } from '../utils/function';
+import { modifiedCallback, modifiedExtraCallback } from 'utils';
 import { useActionDispatch } from './useActionDispatch';
 
 const CREATE_SUCCESS_MESSAGE = 'Product category was created successfully';

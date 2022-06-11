@@ -2,9 +2,9 @@ import { call, retry, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/return-item-slips';
 import { IS_APP_LIVE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { ONLINE_API_URL } from '../services';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/return-item-slips';
-import { getLocalIpAddress } from '../utils/function';
+import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* list({ payload }: any) {
@@ -22,7 +22,7 @@ function* list({ payload }: any) {
 				page,
 				page_size: pageSize,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -41,7 +41,7 @@ function* retrieve({ payload }: any) {
 			RETRY_INTERVAL_MS,
 			service.retrieve,
 			id,
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -62,7 +62,7 @@ function* create({ payload }: any) {
 				is_online: IS_APP_LIVE,
 				products,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS });
@@ -82,7 +82,7 @@ function* edit({ payload }: any) {
 			{
 				receiver_id: receiverId,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS });
@@ -103,7 +103,7 @@ function* receive({ payload }: any) {
 				is_online: IS_APP_LIVE,
 				products,
 			},
-			IS_APP_LIVE ? ONLINE_API_URL : getLocalIpAddress(),
+			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS });

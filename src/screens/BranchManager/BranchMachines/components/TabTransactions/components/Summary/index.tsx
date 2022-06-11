@@ -2,7 +2,7 @@ import { Col, Row, Spin, Statistic } from 'antd';
 import { RequestErrors } from 'components';
 import { useQueryParams, useTransactionsSummary } from 'hooks';
 import React from 'react';
-import { convertIntoArray, formatInPeso } from 'utils/function';
+import { convertIntoArray, formatInPeso } from 'utils';
 import './style.scss';
 
 interface Props {

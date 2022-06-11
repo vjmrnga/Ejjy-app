@@ -7,7 +7,7 @@ import {
 } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
-import { formatDateTime } from '../../../../../utils/function';
+import { formatDateTime } from 'utils';
 
 interface Props {
 	visible: boolean;

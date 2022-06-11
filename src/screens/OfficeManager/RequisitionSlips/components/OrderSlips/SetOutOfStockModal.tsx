@@ -8,7 +8,7 @@ import {
 	requisitionSlipProductStatus,
 } from '../../../../../global/types';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
-import { convertIntoArray } from '../../../../../utils/function';
+import { convertIntoArray } from 'utils';
 import '../../style.scss';
 import { SetOutOfStockForm } from './SetOutOfStockForm';
 

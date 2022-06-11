@@ -2,7 +2,7 @@ import { call, retry, takeEvery } from 'redux-saga/effects';
 import { types } from '../../ducks/OfficeManager/return-item-slip-adjustment-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { ONLINE_API_URL } from '../../services/index';
+import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/return-item-slip-adjustment-slips';
 
 /* WORKERS */
@@ -20,7 +20,7 @@ function* list({ payload }: any) {
 				page_size: pageSize,
 				return_item_slip_id: returnItemSlipId,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -43,7 +43,7 @@ function* create({ payload }: any) {
 				remarks,
 				return_item_slip_adjustment_slip_products: products,
 			},
-			ONLINE_API_URL,
+			getOnlineApiUrl(),
 		);
 		callback({ status: request.SUCCESS });
 	} catch (e) {

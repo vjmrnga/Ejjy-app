@@ -19,7 +19,7 @@ import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { service as ProductCategoryService } from '../../../services/product-categories';
-import { convertIntoArray } from '../../../utils/function';
+import { convertIntoArray } from 'utils';
 import { CreateEditProductCategoryModal } from './components/CreateEditProductCategoryModal';
 
 const DragHandle = SortableHandle(() => (
