@@ -25,7 +25,7 @@ import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import { IProductCategory } from 'models';
 import React, { useCallback, useState } from 'react';
-import { formatQuantity, removeCommas, sleep } from 'utils/function';
+import { formatQuantity, formatRemoveCommas, sleep } from 'utils/function';
 import * as Yup from 'yup';
 import '../style.scss';
 
@@ -314,10 +314,10 @@ export const CreateEditProductForm = ({
 				let data = {
 					...formData,
 					id: product?.id,
-					cost_per_piece: removeCommas(formData.cost_per_piece || 0),
-					cost_per_bulk: removeCommas(formData.cost_per_bulk || 0),
-					price_per_piece: removeCommas(formData.price_per_piece || 0),
-					price_per_bulk: removeCommas(formData.price_per_bulk || 0),
+					cost_per_piece: formatRemoveCommas(formData.cost_per_piece || 0),
+					cost_per_bulk: formatRemoveCommas(formData.cost_per_bulk || 0),
+					price_per_piece: formatRemoveCommas(formData.price_per_piece || 0),
+					price_per_bulk: formatRemoveCommas(formData.price_per_bulk || 0),
 					product_category: formData.product_category,
 					has_quantity_allowance: isWeighing
 						? formData.has_quantity_allowance

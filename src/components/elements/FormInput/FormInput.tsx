@@ -1,12 +1,10 @@
 import cn from 'classnames';
 import { useField } from 'formik';
 import * as React from 'react';
-import {
-	formatMoney,
-	numberWithCommas,
-	removeCommas,
-} from '../../../utils/function';
+import { formatNumberWithCommas, formatRemoveCommas } from 'utils';
 import './style.scss';
+
+const formatMoney = (number) => Number(number).toFixed(2);
 
 export interface IInputProps {
 	id?: string;
@@ -40,9 +38,9 @@ const FormInput = ({
 		let { value } = event.target;
 
 		if (isMoney) {
-			value = removeCommas(value);
+			value = formatRemoveCommas(value);
 			if (inputRe.test(value)) {
-				value = numberWithCommas(value);
+				value = formatNumberWithCommas(value);
 			}
 		}
 
@@ -54,9 +52,9 @@ const FormInput = ({
 		let { value } = event.target;
 
 		if (isMoney) {
-			value = removeCommas(value);
+			value = formatRemoveCommas(value);
 			value = formatMoney(value);
-			value = numberWithCommas(value);
+			value = formatNumberWithCommas(value);
 		}
 
 		helpers.setValue(value);

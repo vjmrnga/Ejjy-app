@@ -1,10 +1,16 @@
 /* eslint-disable no-confusing-arrow */
 import { Spin, Tooltip } from 'antd';
 import cn from 'classnames';
+import { NOT_FOUND_INDEX, ROW_HEIGHT } from 'global/';
 import React, { ReactNode, useEffect, useRef } from 'react';
-import { NOT_FOUND_INDEX, ROW_HEIGHT } from '../../global/constants';
-import { calculateTableHeight } from '../../utils/function';
 import './style.scss';
+
+const calculateTableHeight = (listLength) => {
+	const MAX_ROW_COUNT = 6;
+	return (
+		ROW_HEIGHT * (listLength <= MAX_ROW_COUNT ? listLength : MAX_ROW_COUNT)
+	);
+};
 
 interface Column {
 	name: string | ReactNode;
