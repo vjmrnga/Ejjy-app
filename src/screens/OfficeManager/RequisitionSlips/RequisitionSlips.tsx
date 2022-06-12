@@ -9,7 +9,7 @@ import { ALL_OPTION_KEY, EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { useBranches } from '../../../hooks/useBranches';
+import { useBranches } from 'hooks';
 import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import { formatDateTime, getRequisitionSlipStatus } from 'utils';
@@ -136,7 +136,9 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const params = queryString.parse(history.location.search);
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 
 	return (
 		<Row className="mb-4 PaddingHorizontal" gutter={[16, 16]}>

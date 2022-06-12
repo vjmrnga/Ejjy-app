@@ -1,10 +1,9 @@
 import { Spin } from 'antd';
-import React, { useEffect } from 'react';
+import { Container } from 'components';
+import { IS_APP_LIVE } from 'global';
+import { useBranches } from 'hooks';
+import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Container } from '../../components';
-import { IS_APP_LIVE } from '../../global/constants';
-import { request } from '../../global/types';
-import { useBranches } from '../../hooks/useBranches';
 import { Dashboard } from './Dashboard/Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { FulfillPreparationSlips } from './PreparationSlips/FulfillPreparationSlip';
@@ -37,16 +36,11 @@ const sidebarItems = [
 
 const BranchPersonnel = () => {
 	// CUSTOM HOOKS
-	const { getBranches, status: getBranchesStatus } = useBranches();
+	const { isFetching: isFetchingBranches } = useBranches({
+		options: { enabled: IS_APP_LIVE },
+	});
 
-	// METHODS
-	useEffect(() => {
-		if (IS_APP_LIVE) {
-			getBranches();
-		}
-	}, []);
-
-	if (getBranchesStatus === request.REQUESTING) {
+	if (isFetchingBranches) {
 		return (
 			<Spin className="GlobalSpinner" size="large" tip="Fetching data..." />
 		);

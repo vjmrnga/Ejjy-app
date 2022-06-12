@@ -1,8 +1,5 @@
-/* eslint-disable eqeqeq */
-import { cloneDeep } from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { NOT_FOUND_INDEX } from '../../global/constants';
 
 export const key = 'OM_BRANCHES';
 
@@ -10,9 +7,6 @@ export const types = {
 	SAVE: `${key}/SAVE`,
 	GET_BRANCHES: `${key}/GET_BRANCHES`,
 	GET_BRANCH: `${key}/GET_BRANCH`,
-	CREATE_BRANCH: `${key}/CREATE_BRANCH`,
-	EDIT_BRANCH: `${key}/EDIT_BRANCH`,
-	REMOVE_BRANCH: `${key}/REMOVE_BRANCH`,
 };
 
 const initialState = {
@@ -35,29 +29,6 @@ const reducer = handleActions(
 					newData = { branch: payload.branch };
 					break;
 				}
-				case types.CREATE_BRANCH: {
-					newData = { branches: [payload.branch, ...state.branches] };
-					break;
-				}
-				case types.EDIT_BRANCH: {
-					const { branch: editedBranch } = payload;
-					const index = state.branches.findIndex(
-						({ id }) => id === editedBranch.id,
-					);
-
-					if (index !== NOT_FOUND_INDEX) {
-						const branches = cloneDeep(state.branches);
-						branches[index] = editedBranch;
-						newData = { branches };
-					}
-					break;
-				}
-				case types.REMOVE_BRANCH: {
-					newData = {
-						branches: state.branches.filter(({ id }) => id !== payload.id),
-					};
-					break;
-				}
 				default:
 					break;
 			}
@@ -70,11 +41,6 @@ const reducer = handleActions(
 
 export const actions = {
 	save: createAction(types.SAVE),
-	getBranch: createAction(types.GET_BRANCH),
-	getBranches: createAction(types.GET_BRANCHES),
-	createBranch: createAction(types.CREATE_BRANCH),
-	editBranch: createAction(types.EDIT_BRANCH),
-	removeBranch: createAction(types.REMOVE_BRANCH),
 };
 
 const selectState = (state: any) => state[key] || initialState;

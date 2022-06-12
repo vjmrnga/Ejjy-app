@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Content, RequestErrors } from '../../../components';
 import { Box } from '../../../components/elements';
 import { request } from '../../../global/types';
-import { useBranches } from '../../../hooks/useBranches';
+import { useBranches } from 'hooks';
 import { useProductCategories } from '../../../hooks/useProductCategories';
 import { useQueryParams } from 'hooks';
 import { convertIntoArray } from 'utils';
@@ -16,7 +16,9 @@ export const Reports = () => {
 	const [productCategories, setProductCategories] = useState([]);
 
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 	const {
 		getProductCategories,
 		status: productCategoriesStatus,

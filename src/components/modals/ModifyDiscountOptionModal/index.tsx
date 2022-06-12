@@ -21,17 +21,17 @@ export const ModifyDiscountOptionModal = ({
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createDiscountOption,
-		isLoading: isCreateLoading,
+		isLoading: isCreating,
 		error: createError,
 	} = useDiscountOptionCreate();
 	const {
 		mutateAsync: editDiscountOption,
-		isLoading: isEditLoading,
+		isLoading: isEditing,
 		error: editError,
 	} = useDiscountOptionEdit();
 
 	// METHODS
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		if (discountOption) {
 			await editDiscountOption(formData);
 			message.success('Discount option was edited successfully');
@@ -62,8 +62,8 @@ export const ModifyDiscountOptionModal = ({
 
 			<ModifyDiscountOptionForm
 				discountOption={discountOption}
-				loading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
+				isLoading={isCreating || isEditing}
+				onSubmit={handleSubmit}
 				onClose={onClose}
 			/>
 		</Modal>
@@ -72,14 +72,14 @@ export const ModifyDiscountOptionModal = ({
 
 interface FormProps {
 	discountOption?: any;
-	loading: boolean;
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
 export const ModifyDiscountOptionForm = ({
 	discountOption,
-	loading,
+	isLoading,
 	onSubmit,
 	onClose,
 }: FormProps) => {
@@ -133,7 +133,7 @@ export const ModifyDiscountOptionForm = ({
 			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
-				<Form className="form">
+				<Form>
 					<Row gutter={[16, 16]}>
 						<Col xs={24} sm={12}>
 							<FormInputLabel id="name" label="Name" />
@@ -196,13 +196,13 @@ export const ModifyDiscountOptionForm = ({
 							type="button"
 							text="Cancel"
 							onClick={onClose}
-							disabled={loading}
+							disabled={isLoading}
 						/>
 						<Button
 							type="submit"
 							text={discountOption ? 'Edit' : 'Create'}
 							variant="primary"
-							loading={loading}
+							loading={isLoading}
 						/>
 					</div>
 				</Form>

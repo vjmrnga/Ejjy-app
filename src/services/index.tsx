@@ -5,6 +5,7 @@ export const NO_VERIFICATION_NEEDED = 'NO_VERIFICATION_NEEDED';
 export const NO_VERIFICATION_CONFIG = { params: NO_VERIFICATION_NEEDED };
 
 export { default as AccountsService } from './AccountsService';
+export { default as AuthService } from './AuthService';
 export { default as BackOrdersService } from './BackOrdersService';
 export { default as BalanceAdjustmentLogService } from './BalanceAdjustmentLogService';
 export { default as BirReportsService } from './BirReportsService';

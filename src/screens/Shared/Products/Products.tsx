@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Select, Table } from 'antd';
+import { Alert, Col, Input, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import {
 	Content,
@@ -19,7 +19,12 @@ import {
 	request,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useProductDelete, useProducts, useQueryParams } from 'hooks';
+import {
+	usePingOnlineServer,
+	useProductDelete,
+	useProducts,
+	useQueryParams,
+} from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { useProductCategories } from 'hooks/useProductCategories';
 import { debounce } from 'lodash';
@@ -61,6 +66,7 @@ export const Products = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { isConnected } = usePingOnlineServer();
 	const { user } = useAuth();
 	const {
 		data: { products, total },
@@ -99,6 +105,7 @@ export const Products = () => {
 					name,
 					actions: hasPendingTransactions ? null : (
 						<TableActions
+							areButtonsDisabled={isConnected === false}
 							onAddName="Set Prices"
 							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
@@ -112,7 +119,7 @@ export const Products = () => {
 			}) || [];
 
 		setDataSource(formattedProducts);
-	}, [products, hasPendingTransactions]);
+	}, [products, hasPendingTransactions, isConnected]);
 
 	const onOpenModal = (product, type) => {
 		setModalType(type);
@@ -141,9 +148,20 @@ export const Products = () => {
 
 	return (
 		<Content className="Products" title="Products">
+			{isConnected === false && (
+				<Alert
+					className="mb-4"
+					message="Head Office Server is Offline"
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Head Office server is restored."
+					type="error"
+					showIcon
+				/>
+			)}
+
 			<Box>
 				<TableHeader
 					buttonName="Create Product"
+					onCreateDisabled={isConnected === false}
 					onCreate={() => {
 						onOpenModal(null, modals.MODIFY);
 					}}
@@ -211,7 +229,8 @@ export const Products = () => {
 				)}
 			</Box>
 
-			{!isUserFromBranch(user.user_type) && (
+			{/* TODO: Temporarily hid the Pending Transactions section. Need to be revisited if this is still needed */}
+			{/* {!isUserFromBranch(user.user_type) && (
 				<PendingTransactionsSection
 					ref={pendingTransactionsRef}
 					title="Pending Product Transactions"
@@ -219,7 +238,7 @@ export const Products = () => {
 					setHasPendingTransactions={setHasPendingTransactions}
 					withActionColumn
 				/>
-			)}
+			)} */}
 		</Content>
 	);
 };

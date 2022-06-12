@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Button, FieldError, Label } from '../../../../components/elements';
 import { MAX_PAGE_SIZE } from '../../../../global/constants';
 import { request, userTypes } from '../../../../global/types';
-import { useBranches } from '../../../../hooks/useBranches';
+import { useBranches } from 'hooks';
 import { useUsers } from '../../../../hooks/useUsers';
 import { convertIntoArray, sleep } from 'utils';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
@@ -27,7 +27,9 @@ export const AssignReturnItemSlipForm = ({
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 	const {
 		users,
 		getOnlineUsers,

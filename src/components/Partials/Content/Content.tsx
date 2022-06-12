@@ -25,28 +25,30 @@ export const Content = ({
 	className,
 	children,
 }: Props) => {
+	// TODO: Temporarily disabled checking if has internet connection.
+	// Restore this functionality once it is revisited and if still needed
 	const { isSidebarCollapsed } = useUI();
-	const { hasInternetConnection, testConnection } = useNetwork();
+	// const { hasInternetConnection, testConnection } = useNetwork();
 	const { pathname: pathName } = useLocation();
 
-	useEffect(() => {
-		testConnection();
-	}, []);
+	// useEffect(() => {
+	// 	testConnection();
+	// }, []);
 
-	const isDisabled = useCallback(() => {
-		if (!hasInternetConnection) {
-			const path = pathName.split('/')?.[1];
-			return ONLINE_ROUTES.includes(`/${path}`);
-		}
+	// const isDisabled = useCallback(() => {
+	// 	if (!hasInternetConnection) {
+	// 		const path = pathName.split('/')?.[1];
+	// 		return ONLINE_ROUTES.includes(`/${path}`);
+	// 	}
 
-		return false;
-	}, [hasInternetConnection]);
+	// 	return false;
+	// }, [hasInternetConnection]);
 
 	return (
 		<Layout
 			className={cn('ContentLayout', className, {
 				ContentLayout__sidebarCollapsed: isSidebarCollapsed,
-				ContentLayout__disabled: isDisabled(),
+				// ContentLayout__disabled: isDisabled(),
 			})}
 		>
 			<Layout.Header className="ContentLayout_header">

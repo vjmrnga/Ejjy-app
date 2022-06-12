@@ -52,4 +52,12 @@ const service = {
 		axios.delete(`/products/${id}/`, { data: body, baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: List, baseURL) =>
+		axios.get('/offline-products/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

@@ -1,8 +1,9 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { UsersService } from 'services';
 import {
@@ -264,19 +265,26 @@ export const useUsers = () => {
 
 const useUsersNew = ({ params }: Query) =>
 	useQuery<any>(
-		['useUsers', params?.page, params?.pageSize, params?.serverUrl],
+		[
+			'useUsers',
+			params?.branchId,
+			params?.page,
+			params?.pageSize,
+			params?.serverUrl,
+		],
 		async () => {
-			let baseURL = params?.serverUrl;
-			if (!baseURL) {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
+			let service = UsersService.list;
+			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+				service = UsersService.listOffline;
 			}
 
-			return UsersService.list(
+			return service(
 				{
+					branch_id: params?.branchId,
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				baseURL,
+				params?.serverUrl || getBaseURL(),
 			).catch((e) => Promise.reject(e.errors));
 		},
 		{
@@ -313,5 +321,86 @@ export const useUserAuthenticate = () =>
 			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 		),
 	);
+
+export const useUserCreate = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			contactNumber,
+			displayName,
+			email,
+			firstName,
+			lastName,
+			password,
+			userType,
+			username,
+		}: any) =>
+			UsersService.create(
+				{
+					contact_number: contactNumber,
+					display_name: displayName,
+					email: email,
+					first_name: firstName,
+					last_name: lastName,
+					password: password,
+					user_type: userType,
+					username: username,
+				},
+				getBaseURL(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useUsers');
+			},
+		},
+	);
+};
+
+export const useUserEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			id,
+			contactNumber,
+			displayName,
+			email,
+			firstName,
+			lastName,
+			userType,
+		}: any) =>
+			UsersService.edit(
+				id,
+				{
+					contact_number: contactNumber,
+					display_name: displayName,
+					email: email,
+					first_name: firstName,
+					last_name: lastName,
+					user_type: userType,
+				},
+				getBaseURL(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useUsers');
+			},
+		},
+	);
+};
+
+export const useUserDelete = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		(id: number) => UsersService.delete(id, getBaseURL()),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useUsers');
+			},
+		},
+	);
+};
 
 export default useUsersNew;

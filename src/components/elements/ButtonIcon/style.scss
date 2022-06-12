@@ -21,10 +21,14 @@
 	}
 
 	&.disabled {
-		opacity: 0.5;
 		background-color: $color-dark-gray !important;
 		border: 0 !important;
 		box-shadow: none !important;
+		opacity: 0.5;
 		pointer-events: none;
+
+		img {
+			filter: saturate(0%) brightness(70%) contrast(1000%);
+		}
 	}
 }

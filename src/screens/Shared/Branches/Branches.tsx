@@ -1,12 +1,17 @@
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
+import {
+	Content,
+	ModifyBranchModal,
+	RequestErrors,
+	TableActions,
+	TableHeader,
+} from 'components';
+import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
+import { useBranchDelete, useBranches } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Content, TableActions, TableHeader } from '../../../components';
-import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
-import { useBranches } from '../../../hooks/useBranches';
-import { sleep } from 'utils';
-import { CreateEditBranchModal } from './components/Branch/CreateEditBranchModal';
+import { convertIntoArray } from 'utils';
 import './style.scss';
 
 const columns: ColumnsType = [
@@ -17,67 +22,77 @@ const columns: ColumnsType = [
 
 export const Branches = () => {
 	// STATES
-	const [data, setData] = useState([]);
-	const [createEditBranchModalVisible, setCreateEditBranchModalVisible] =
+	const [dataSource, setDataSource] = useState([]);
+	const [modifyBranchModalVisible, setModifyBranchModalVisible] =
 		useState(false);
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
 	// CUSTOM HOOKS
-	const { branches, getBranches, removeBranch, status } = useBranches();
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: listError,
+	} = useBranches();
+	const {
+		mutate: deleteBranch,
+		isLoading: isDeletingBranch,
+		error: deleteError,
+	} = useBranchDelete();
 
-	// EFFECTS
+	// METHODS
 	useEffect(() => {
-		getBranches();
-	}, []);
+		const formattedBranches = branches.map((branch) => ({
+			name: branch.name,
+			url: branch.online_url,
+			actions: (
+				<TableActions
+					onEdit={() => {
+						setSelectedBranch(branch);
+						setModifyBranchModalVisible(true);
+					}}
+					onRemove={() => {
+						message.success('Branch was deleted successfully');
+						deleteBranch(branch.id);
+					}}
+				/>
+			),
+		}));
 
-	// Effect: Format branches to be rendered in Table
-	useEffect(() => {
-		const formattedBranches = branches.map((branch) => {
-			const { id, name, online_url } = branch;
-
-			return {
-				name: <Link to={`branches/${id}`}>{name}</Link>,
-				url: online_url,
-				actions: (
-					<TableActions
-						onEdit={() => onEdit(branch)}
-						onRemove={() => removeBranch(id)}
-					/>
-				),
-			};
-		});
-
-		sleep(500).then(() => setData(formattedBranches));
+		setDataSource(formattedBranches);
 	}, [branches]);
-
-	const onCreate = () => {
-		setSelectedBranch(null);
-		setCreateEditBranchModalVisible(true);
-	};
-
-	const onEdit = (branch) => {
-		setSelectedBranch(branch);
-		setCreateEditBranchModalVisible(true);
-	};
 
 	return (
 		<Content className="Branches" title="Branches">
 			<Box>
-				<TableHeader buttonName="Create Branch" onCreate={onCreate} />
+				<TableHeader
+					buttonName="Create Branch"
+					onCreate={() => setModifyBranchModalVisible(true)}
+				/>
+
+				<RequestErrors
+					errors={[
+						...convertIntoArray(listError),
+						...convertIntoArray(deleteError?.errors),
+					]}
+				/>
 
 				<Table
 					columns={columns}
-					dataSource={data}
+					dataSource={dataSource}
 					scroll={{ x: 650 }}
 					pagination={false}
-					loading={status === request.REQUESTING}
+					loading={isFetchingBranches || isDeletingBranch}
 				/>
 
-				<CreateEditBranchModal
-					branch={selectedBranch}
-					visible={createEditBranchModalVisible}
-					onClose={() => setCreateEditBranchModalVisible(false)}
-				/>
+				{modifyBranchModalVisible && (
+					<ModifyBranchModal
+						branch={selectedBranch}
+						onClose={() => {
+							setSelectedBranch(null);
+							setModifyBranchModalVisible(false);
+						}}
+					/>
+				)}
 			</Box>
 		</Content>
 	);

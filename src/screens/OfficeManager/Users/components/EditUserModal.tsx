@@ -1,11 +1,11 @@
 import { message, Modal } from 'antd';
+import { useBranches } from 'hooks';
 import React, { useCallback } from 'react';
+import { convertIntoArray } from 'utils';
 import { RequestErrors } from '../../../../components';
 import { NO_BRANCH_ID } from '../../../../global/constants';
 import { request } from '../../../../global/types';
-import { useBranches } from '../../../../hooks/useBranches';
 import { useUsers } from '../../../../hooks/useUsers';
-import { convertIntoArray } from 'utils';
 import { EditUserForm } from './EditUserForm';
 
 interface Props {
@@ -26,7 +26,9 @@ export const EditUserModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 	const {
 		editUser,
 		requestUserTypeChange,

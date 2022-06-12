@@ -1,14 +1,13 @@
 /* eslint-disable dot-notation */
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { DatePicker, Radio, Space } from 'antd';
+import { useBranches, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Content } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { timeRangeTypes } from '../../../global/types';
-import { useBranches } from '../../../hooks/useBranches';
-import { useQueryParams } from 'hooks';
 import { SalesBranchSection } from './components/SalesBranchSection';
 import { SalesGrandTotalSection } from './components/SalesGrandTotalSection';
 
@@ -17,7 +16,9 @@ export const Sales = () => {
 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 	const { params, setQueryParams } = useQueryParams({
 		onParamsCheck: ({ timeRange, branchId }) => {
 			const newParams = {};

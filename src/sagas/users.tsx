@@ -1,3 +1,4 @@
+import { MAX_PAGE_SIZE, MAX_RETRY, request, RETRY_INTERVAL_MS } from 'global';
 import {
 	call,
 	put,
@@ -6,16 +7,10 @@ import {
 	takeEvery,
 	takeLatest,
 } from 'redux-saga/effects';
+import { UsersService } from 'services';
+import { getOnlineApiUrl } from 'utils';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/OfficeManager/users';
-import {
-	MAX_PAGE_SIZE,
-	MAX_RETRY,
-	RETRY_INTERVAL_MS,
-} from '../global/constants';
-import { request } from '../global/types';
-import { UsersService } from '../services';
-import { getOnlineApiUrl } from 'utils';
 import { getBaseUrl } from './helper';
 
 /* WORKERS */

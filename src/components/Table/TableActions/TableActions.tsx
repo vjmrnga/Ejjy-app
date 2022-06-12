@@ -11,6 +11,7 @@ import {
 import './style.scss';
 
 interface Props {
+	areButtonsDisabled?: boolean;
 	onApprove?: any;
 	onExecutePendingTransaction?: any;
 	onView?: any;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export const TableActions = ({
+	areButtonsDisabled,
 	onApprove,
 	onExecutePendingTransaction,
 	onView,
@@ -38,23 +40,56 @@ export const TableActions = ({
 	onRestore,
 }: Props) => (
 	<div className="TableActions">
-		{onApprove && <CheckButtonIcon onClick={onApprove} tooltip="Approve" />}
+		{onApprove && (
+			<CheckButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onApprove}
+				tooltip="Approve"
+			/>
+		)}
 		{onExecutePendingTransaction && (
-			<AddButtonIcon onClick={onExecutePendingTransaction} tooltip="Execute" />
+			<AddButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onExecutePendingTransaction}
+				tooltip="Execute"
+			/>
 		)}
 		{onAdd && (
 			<AddButtonIcon
+				disabled={areButtonsDisabled}
 				onClick={onAdd}
 				tooltip={onAddName || 'Add'}
 				imgSrc={onAddIcon}
 			/>
 		)}
 		{onView && (
-			<ViewButtonIcon onClick={onView} tooltip={onViewName || 'View'} />
+			<ViewButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onView}
+				tooltip={onViewName || 'View'}
+			/>
 		)}
-		{onAssign && <AddButtonIcon onClick={onAssign} tooltip="Assign" />}
-		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
-		{onRestore && <RestoreButtonIcon onClick={onRestore} tooltip="Restore" />}
+		{onAssign && (
+			<AddButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onAssign}
+				tooltip="Assign"
+			/>
+		)}
+		{onEdit && (
+			<EditButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onEdit}
+				tooltip="Edit"
+			/>
+		)}
+		{onRestore && (
+			<RestoreButtonIcon
+				disabled={areButtonsDisabled}
+				onClick={onRestore}
+				tooltip="Restore"
+			/>
+		)}
 		{onRemove && (
 			<Popconfirm
 				placement="left"
@@ -63,7 +98,11 @@ export const TableActions = ({
 				okText="Yes"
 				cancelText="No"
 			>
-				<RemoveButtonIcon onClick={null} tooltip="Remove" />
+				<RemoveButtonIcon
+					disabled={areButtonsDisabled}
+					onClick={null}
+					tooltip="Remove"
+				/>
 			</Popconfirm>
 		)}
 	</div>

@@ -2,21 +2,21 @@ import axios from 'axios';
 import { NO_VERIFICATION_CONFIG } from '.';
 import { IListRequest } from './interfaces';
 
-interface ILogin {
+interface Login {
 	login: string;
 	password: string;
 }
 
-interface IAcquireToken {
+interface AcquireToken {
 	username: string;
 	password: string;
 }
 
-export const service = {
-	login: async (body: ILogin, baseURL) =>
+const service = {
+	login: async (body: Login, baseURL) =>
 		axios.post('users/login/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
 
-	loginOnline: async (body: ILogin, baseURL) =>
+	loginOnline: async (body: Login, baseURL) =>
 		axios.post('users/login_online/', body, {
 			baseURL,
 			...NO_VERIFICATION_CONFIG,
@@ -28,7 +28,7 @@ export const service = {
 	retrieveOnline: async (id: number, params: IListRequest, baseURL) =>
 		axios.get(`online-users/${id}/`, { baseURL, params }),
 
-	acquireToken: async (body: IAcquireToken, baseURL) =>
+	acquireToken: async (body: AcquireToken, baseURL) =>
 		axios.post('tokens/acquire/', body, { baseURL, ...NO_VERIFICATION_CONFIG }),
 
 	logout: async (id: number, baseURL) =>
@@ -37,3 +37,5 @@ export const service = {
 	logoutOnline: async (id: number, baseURL) =>
 		axios.post(`users/${id}/logout_online/`, null, { baseURL }),
 };
+
+export default service;

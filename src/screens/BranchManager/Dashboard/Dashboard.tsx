@@ -1,13 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Content } from 'components';
-import { CashieringCard } from 'components';
+import { CashieringCard, Content } from 'components';
 import { FieldError } from 'components/elements';
-import { IS_APP_LIVE } from 'global';
-import { request } from 'global';
+import { IS_APP_LIVE, request } from 'global';
 import { useAuth } from 'hooks/useAuth';
-import { useBranches } from 'hooks/useBranches';
 import { useNetwork } from 'hooks/useNetwork';
-import { BackupServerUrlForm } from './components/BackupServerUrlForm';
+import React, { useEffect, useRef, useState } from 'react';
 import { MachineReportTable } from './components/MachineReportTable';
 import './style.scss';
 
@@ -20,7 +16,6 @@ export const Dashboard = () => {
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const { branch, getBranch, status: branchStatus } = useBranches();
 	const { testBranchConnection } = useNetwork();
 
 	// REFS
@@ -29,8 +24,6 @@ export const Dashboard = () => {
 	// METHODS
 	useEffect(() => {
 		if (IS_APP_LIVE) {
-			getBranch(user?.branch?.id);
-
 			const fn = () => {
 				testBranchConnection({ branchId: user?.branch?.id }, ({ status }) => {
 					if (status === request.SUCCESS) {
@@ -67,11 +60,6 @@ export const Dashboard = () => {
 				disabled={!hasInternetConnection}
 				loading={isFirstTimeRequest}
 				isAuthorization
-			/>
-
-			<BackupServerUrlForm
-				branch={branch}
-				loading={branchStatus === request.REQUESTING}
 			/>
 
 			<MachineReportTable />

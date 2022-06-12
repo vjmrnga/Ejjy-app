@@ -7,8 +7,6 @@ import {
 	ControlledInput,
 	Label,
 } from '../../../../components/elements';
-import { request } from '../../../../global/types';
-import { useBranches } from '../../../../hooks/useBranches';
 
 interface Props {
 	branch: any;
@@ -20,8 +18,7 @@ export const LocalServerUrlForm = ({ branch, loading }: Props) => {
 	const [localServerUrl, setLocalServerUrl] = useState('');
 
 	// CUSTOM HOOKS
-
-	const { editBranch, status } = useBranches();
+	// const { editBranch, status } = useBranches();
 
 	// EFFECTS
 	useEffect(() => {
@@ -34,15 +31,19 @@ export const LocalServerUrlForm = ({ branch, loading }: Props) => {
 			return;
 		}
 
-		editBranch({
-			...branch,
-			local_ip_address: localServerUrl,
-		});
+		// editBranch({
+		// 	...branch,
+		// 	local_ip_address: localServerUrl,
+		// });
 	};
 
 	return (
 		<Box className="LocalServerUrl">
-			<Spin size="large" spinning={loading || status === request.REQUESTING}>
+			<Spin
+				size="large"
+				spinning={loading}
+				// spinning={loading /* || status === request.REQUESTING*/}
+			>
 				<Row gutter={[15, 0]}>
 					<Col xs={24} sm={20} md={20}>
 						<Label label="Local API URL" spacing />

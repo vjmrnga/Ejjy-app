@@ -7,9 +7,11 @@ interface Props {
 	onClick: any;
 	imgSrc?: any;
 	classNames?: any;
+	disabled?: boolean;
 }
 
 export const AddButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-add.svg'),
@@ -17,6 +19,7 @@ export const AddButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -26,6 +29,7 @@ export const AddButtonIcon = ({
 );
 
 export const EditButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-edit.svg'),
@@ -33,6 +37,7 @@ export const EditButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -42,6 +47,7 @@ export const EditButtonIcon = ({
 );
 
 export const RemoveButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-remove.svg'),
@@ -49,6 +55,7 @@ export const RemoveButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -58,6 +65,7 @@ export const RemoveButtonIcon = ({
 );
 
 export const ViewButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-view.svg'),
@@ -65,6 +73,7 @@ export const ViewButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -74,6 +83,7 @@ export const ViewButtonIcon = ({
 );
 
 export const DeliverButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-deliver.svg'),
@@ -81,6 +91,7 @@ export const DeliverButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -90,6 +101,7 @@ export const DeliverButtonIcon = ({
 );
 
 export const CancelButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-cancel.svg'),
@@ -97,6 +109,7 @@ export const CancelButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -106,6 +119,7 @@ export const CancelButtonIcon = ({
 );
 
 export const FetchButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-download.svg'),
@@ -113,6 +127,7 @@ export const FetchButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -122,6 +137,7 @@ export const FetchButtonIcon = ({
 );
 
 export const RestoreButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-undo.svg'),
@@ -129,6 +145,7 @@ export const RestoreButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}
@@ -138,6 +155,7 @@ export const RestoreButtonIcon = ({
 );
 
 export const CheckButtonIcon = ({
+	disabled,
 	type,
 	tooltip,
 	imgSrc = require('../../assets/images/icon-check-antd.svg'),
@@ -145,6 +163,7 @@ export const CheckButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
+		disabled={disabled}
 		type={type}
 		icon={<img src={imgSrc} alt="icon" />}
 		onClick={onClick}

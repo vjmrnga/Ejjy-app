@@ -1,12 +1,5 @@
 @import '../../../assets/styles/main';
 
-.Branches {
-	.header {
-		@include flex(flex-end, center);
-		padding: 25px;
-	}
-}
-
 .ViewBranch {
 	.ant-tabs-nav {
 		margin: 0 !important;

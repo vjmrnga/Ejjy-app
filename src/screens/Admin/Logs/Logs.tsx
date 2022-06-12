@@ -11,7 +11,7 @@ import { Label } from '../../../components/elements';
 // import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 // import { pageSizeOptions } from '../../../global/options';
 // import { request } from '../../../global/types';
-// import { useBranches } from '../../../hooks/useBranches';
+// import { useBranches } from 'hooks';
 // import { useLogs } from '../../../hooks/useLogs';
 // import { useQueryParams } from 'hooks';
 // import { useUsers } from '../../../hooks/useUsers';

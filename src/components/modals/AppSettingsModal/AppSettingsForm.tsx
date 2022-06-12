@@ -22,17 +22,14 @@ export const AppSettingsForm = ({
 	onClose,
 }: Props) => {
 	// STATES
-	const [baseURL, setBaseURL] = useState(null);
+	const [baseURL, setBaseURL] = useState(onlineApiUrl || localApiUrl);
 
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
 	} = useBranches({
-		params: {
-			baseURL,
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { baseURL },
 	});
 
 	// METHODS

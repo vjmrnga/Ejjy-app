@@ -1,4 +1,5 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductsService } from 'services';
@@ -8,23 +9,29 @@ const useProducts = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useProducts',
+			params?.ids,
 			params?.page,
 			params?.pageSize,
-			params?.search,
 			params?.productCategory,
-			params?.ids,
+			params?.search,
 		],
-		async () =>
-			ProductsService.list(
+		async () => {
+			let service = ProductsService.list;
+			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+				service = ProductsService.listOffline;
+			}
+
+			return service(
 				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					ids: params?.ids,
-					search: params?.search,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
 					product_category: params?.productCategory,
+					search: params?.search,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+				getBaseURL(),
+			).catch((e) => Promise.reject(e.errors));
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -93,7 +100,7 @@ export const useProductCreate = () => {
 					type: type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getBaseURL(),
 			),
 		{
 			onSuccess: () => {
@@ -164,7 +171,7 @@ export const useProductEdit = () => {
 					type: type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getBaseURL(),
 			),
 		{
 			onSuccess: () => {
@@ -181,10 +188,8 @@ export const useProductDelete = () => {
 		({ id, actingUserId }) =>
 			ProductsService.delete(
 				id,
-				{
-					acting_user_id: actingUserId,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				{ acting_user_id: actingUserId },
+				getBaseURL(),
 			),
 		{
 			onSuccess: () => {

@@ -1,14 +1,14 @@
 import { Spin } from 'antd';
 import { Container, TimeMismatchBoundary } from 'components';
-import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
+import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
 import {
+	useBranches,
 	useBranchProducts,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
 	useSiteSettingsRetrieve,
 } from 'hooks';
-import { useBranches } from 'hooks/useBranches';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ViewAccount } from 'screens/BranchManager/Accounts/ViewAccount';
@@ -40,15 +40,17 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { SiteSettings } from './SiteSettings';
+import { Users } from './Users';
 import { AssignUser } from './Users/AssignUser';
-import { Users } from './Users/Users';
 
 const BranchManager = () => {
 	// STATES
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { getBranches, status: getBranchesStatus } = useBranches();
+	const { isFetching: isFetchingBranches } = useBranches({
+		options: { enabled: IS_APP_LIVE },
+	});
 	const { data: siteSettings } = useSiteSettingsRetrieve({
 		options: {
 			refetchInterval: 60000,
@@ -87,10 +89,6 @@ const BranchManager = () => {
 
 	// METHODS
 	useEffect(() => {
-		if (IS_APP_LIVE) {
-			getBranches();
-		}
-
 		createCheckDaily(null);
 		createCheckRandom(null);
 	}, []);
@@ -274,7 +272,7 @@ const BranchManager = () => {
 		[notificationsCount],
 	);
 
-	if (getBranchesStatus === request.REQUESTING) {
+	if (isFetchingBranches) {
 		return (
 			<Spin className="GlobalSpinner" size="large" tip="Fetching data..." />
 		);

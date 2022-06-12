@@ -1,15 +1,17 @@
 import { Tabs } from 'antd';
+import { CashieringCard, Content } from 'components';
+import { Box } from 'components/elements';
+import { useBranches } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { CashieringCard, Content } from '../../../components';
-import { Box } from '../../../components/elements';
-import { useBranches } from '../../../hooks/useBranches';
 
 export const Dashboard = () => {
 	// STATES
 	const [currentActiveKey, setCurrentActiveKey] = useState(null);
 
 	// CUSTOM HOOKS
-	const { branches } = useBranches();
+	const {
+		data: { branches },
+	} = useBranches();
 
 	// METHODS
 	useEffect(() => {

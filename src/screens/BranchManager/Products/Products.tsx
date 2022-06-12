@@ -1,17 +1,17 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Row, Select, Table } from 'antd';
+import { Content, RequestErrors, TableHeader } from 'components';
+import { Box, ButtonLink, Label } from 'components/elements';
+import { EMPTY_CELL, SEARCH_DEBOUNCE_TIME } from 'global/constants';
+import { pageSizeOptions } from 'global/options';
+import { branchProductStatus, request } from 'global/types';
+import { useAuth } from 'hooks/useAuth';
+import { useBranchProducts } from 'hooks/useBranchProducts';
+import { useProductCategories } from 'hooks/useProductCategories';
 import { debounce } from 'lodash';
+import { IProductCategory } from 'models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Content, RequestErrors, TableHeader } from '../../../components';
-import { Box, ButtonLink, Label } from '../../../components/elements';
-import { EMPTY_CELL, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
-import { pageSizeOptions } from '../../../global/options';
-import { branchProductStatus, request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useProductCategories } from '../../../hooks/useProductCategories';
-import { IProductCategory } from '../../../models';
 import { convertIntoArray, getBranchProductStatus } from 'utils';
 import { ViewProductModal } from './components/ViewProductModal';
 import './style.scss';
@@ -33,6 +33,7 @@ export const Products = () => {
 	const [productCategory, setProductCategory] = useState(null);
 
 	// CUSTOM HOOKS
+
 	const { user } = useAuth();
 	const {
 		branchProducts,

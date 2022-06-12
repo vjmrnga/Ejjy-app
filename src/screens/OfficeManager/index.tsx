@@ -1,9 +1,7 @@
-import { Spin } from 'antd';
-import React, { useEffect } from 'react';
+import { useBranches } from 'hooks';
+import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
-import { request } from '../../global/types';
-import { useBranches } from '../../hooks/useBranches';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { Products } from '../Shared/Products/Products';
@@ -25,13 +23,13 @@ import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
 const sidebarItems = [
-	{
-		key: 'dashboard',
-		name: 'Dashboard',
-		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
-		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
-		link: '/office-manager/dashboard',
-	},
+	// {
+	// 	key: 'dashboard',
+	// 	name: 'Dashboard',
+	// 	activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-dashboard.svg'),
+	// 	link: '/office-manager/dashboard',
+	// },
 	{
 		key: 'products',
 		name: 'Products',
@@ -46,34 +44,34 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-branches.svg'),
 		link: '/office-manager/branches',
 	},
-	{
-		key: 'checking',
-		name: 'Checking',
-		activeIcon: require('../../assets/images/icon-checking-active.svg'),
-		defaultIcon: require('../../assets/images/icon-checking.svg'),
-		link: '/office-manager/checkings',
-	},
-	{
-		key: 'requisition-slips',
-		name: 'Requisition Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/office-manager/requisition-slips',
-	},
-	{
-		key: 'return-item-slips',
-		name: 'Return Item Slips',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/office-manager/return-item-slips',
-	},
-	{
-		key: 'back-orders',
-		name: 'Back Orders',
-		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
-		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
-		link: '/office-manager/back-orders',
-	},
+	// {
+	// 	key: 'checking',
+	// 	name: 'Checking',
+	// 	activeIcon: require('../../assets/images/icon-checking-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-checking.svg'),
+	// 	link: '/office-manager/checkings',
+	// },
+	// {
+	// 	key: 'requisition-slips',
+	// 	name: 'Requisition Slips',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/office-manager/requisition-slips',
+	// },
+	// {
+	// 	key: 'return-item-slips',
+	// 	name: 'Return Item Slips',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/office-manager/return-item-slips',
+	// },
+	// {
+	// 	key: 'back-orders',
+	// 	name: 'Back Orders',
+	// 	activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+	// 	link: '/office-manager/back-orders',
+	// },
 	{
 		key: 'users',
 		name: 'Users',
@@ -81,43 +79,38 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-users.svg'),
 		link: '/office-manager/users',
 	},
-	{
-		key: 'reports',
-		name: 'Reports',
-		activeIcon: require('../../assets/images/icon-report-active.svg'),
-		defaultIcon: require('../../assets/images/icon-report.svg'),
-		link: '/office-manager/reports',
-	},
-	{
-		key: 'pending-transactions',
-		name: 'Pending Transactions',
-		activeIcon: require('../../assets/images/icon-failed-transfers-active.svg'),
-		defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
-		link: '/office-manager/pending-transactions',
-	},
-	{
-		key: 'notifications',
-		name: 'Notifications',
-		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
-		defaultIcon: require('../../assets/images/icon-notifications.svg'),
-		link: '/office-manager/notifications',
-	},
+	// {
+	// 	key: 'reports',
+	// 	name: 'Reports',
+	// 	activeIcon: require('../../assets/images/icon-report-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-report.svg'),
+	// 	link: '/office-manager/reports',
+	// },
+	// {
+	// 	key: 'pending-transactions',
+	// 	name: 'Pending Transactions',
+	// 	activeIcon: require('../../assets/images/icon-failed-transfers-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
+	// 	link: '/office-manager/pending-transactions',
+	// },
+	// {
+	// 	key: 'notifications',
+	// 	name: 'Notifications',
+	// 	activeIcon: require('../../assets/images/icon-notifications-active.svg'),
+	// 	defaultIcon: require('../../assets/images/icon-notifications.svg'),
+	// 	link: '/office-manager/notifications',
+	// },
 ];
 
 const OfficeManager = () => {
 	// CUSTOM HOOKS
-	const { getBranches, status: getBranchesStatus } = useBranches();
-
-	// METHODS
-	useEffect(() => {
-		getBranches();
-	}, []);
-
-	if (getBranchesStatus === request.REQUESTING) {
-		return (
-			<Spin className="GlobalSpinner" size="large" tip="Fetching data..." />
-		);
-	}
+	useBranches({
+		options: {
+			staleTime: 0,
+			refetchOnMount: false,
+			notifyOnChangeProps: ['data'],
+		},
+	});
 
 	return (
 		<Container sidebarItems={sidebarItems}>
@@ -201,7 +194,7 @@ const OfficeManager = () => {
 						exact
 					/>
 
-					<Redirect to="/office-manager/dashboard" />
+					<Redirect to="/office-manager/products" />
 				</Switch>
 			</React.Suspense>
 		</Container>

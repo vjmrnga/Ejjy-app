@@ -1,45 +1,42 @@
 /* eslint-disable no-console */
 import { call, delay, put, takeLatest } from 'redux-saga/effects';
+import { AuthService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { actions, types } from '../ducks/auth';
-import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global/constants';
+import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global';
 import { request, userTypes } from '../global/types';
-import { service } from '../services/auth';
-import { getOnlineApiUrl } from 'utils';
-import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* login({ payload }: any) {
 	const { username, password, callback } = payload;
 	callback({ status: request.REQUESTING });
 
-	const localURL = getLocalApiUrl();
-
 	try {
-		const loginBaseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
-		const endpoint = IS_APP_LIVE ? service.loginOnline : service.login;
+		const baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
+		const service = IS_APP_LIVE ? AuthService.loginOnline : AuthService.login;
 		const loginResponse = yield call(
-			endpoint,
+			service,
 			{ login: username, password },
-			loginBaseURL,
+			baseURL,
 		);
 
-		if (
-			[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(
-				loginResponse?.data?.user_type,
-			) &&
-			!IS_APP_LIVE
-		) {
-			callback({
-				status: request.ERROR,
-				errors: ['Only branch manager and personnels can use the local app.'],
-			});
-			return;
-		}
+		// if (
+		// 	[userTypes.ADMIN, userTypes.OFFICE_MANAGER].includes(
+		// 		loginResponse?.data?.user_type,
+		// 	) &&
+		// 	!IS_APP_LIVE
+		// ) {
+		// 	callback({
+		// 		status: request.ERROR,
+		// 		errors: ['Only branch manager and personnels can use the local app.'],
+		// 	});
+		// 	return;
+		// }
 
 		if (loginResponse) {
 			// let tokenBaseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 			// const tokenResponse = yield call(
-			// 	service.acquireToken,
+			// 	AuthService.acquireToken,
 			// 	{ username, password },
 			// 	tokenBaseURL,
 			// );
@@ -74,8 +71,8 @@ function* retrieve({ payload }: any) {
 			if (id) {
 				const baseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 				const endpoint = IS_APP_LIVE
-					? service.retrieveOnline
-					: service.retrieve;
+					? AuthService.retrieveOnline
+					: AuthService.retrieve;
 				const { data } = yield call(endpoint, id, {}, baseURL);
 
 				const newLoginCount = IS_APP_LIVE
@@ -103,7 +100,9 @@ function* logout({ payload }: any) {
 	try {
 		if (id) {
 			const baseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
-			const endpoint = IS_APP_LIVE ? service.logoutOnline : service.login;
+			const endpoint = IS_APP_LIVE
+				? AuthService.logoutOnline
+				: AuthService.login;
 			yield call(endpoint, id, baseURL);
 		}
 	} catch (e) {
