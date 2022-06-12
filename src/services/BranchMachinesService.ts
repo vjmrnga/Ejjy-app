@@ -6,8 +6,9 @@ interface List extends IListRequest {
 }
 
 interface Modify {
+	branch_id: string;
 	name: string;
-	server_url?: string;
+	server_url: string;
 	pos_terminal?: string;
 }
 

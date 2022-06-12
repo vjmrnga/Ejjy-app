@@ -2,7 +2,7 @@ import { Col, message, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, sleep } from 'utils';
+import { convertIntoArray, getBranchId, sleep } from 'utils';
 import * as Yup from 'yup';
 import { DetailsRow, RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel } from '../../elements';
@@ -88,11 +88,13 @@ export const ModifyBranchMachineForm = ({
 		() => ({
 			DefaultValues: {
 				id: branchMachine?.id || null,
+				branchId: getBranchId(),
 				name: branchMachine?.name || '',
 				serverUrl: branchMachine?.server_url || '',
 				posTerminal: branchMachine?.pos_terminal || '',
 			},
 			Schema: Yup.object().shape({
+				branchId: Yup.string().required().label('Branch ID'),
 				name: Yup.string().required().max(30).label('Name'),
 				serverUrl: Yup.string().required().max(75).label('Server URL'),
 				posTerminal: Yup.string().max(75).label('POS Terminal'),

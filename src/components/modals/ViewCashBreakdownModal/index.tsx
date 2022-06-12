@@ -3,7 +3,12 @@ import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
 import { cashBreakdownCategories, cashBreakdownTypes } from 'global';
 import React from 'react';
-import { formatDateTime, formatInPeso, getFullName } from 'utils';
+import {
+	formatDateTime,
+	formatInPeso,
+	getCashBreakdownTypeDescription,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{
@@ -31,32 +36,6 @@ interface Props {
 }
 
 export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
-	const getCashBreakdownTypeDescription = (category, type) => {
-		let description = '';
-
-		if (category === cashBreakdownCategories.CASH_BREAKDOWN) {
-			switch (type) {
-				case cashBreakdownTypes.START_SESSION:
-					description = 'Beginning Session';
-					break;
-				case cashBreakdownTypes.MID_SESSION:
-					description = 'Cash Collection';
-					break;
-				case cashBreakdownTypes.END_SESSION:
-					description = 'End Session';
-					break;
-				default:
-					description = '';
-			}
-		} else if (category === cashBreakdownCategories.CASH_IN) {
-			description = ' Cash In';
-		} else if (category === cashBreakdownCategories.CASH_OUT) {
-			description = ' Cash Out';
-		}
-
-		return description;
-	};
-
 	const type = getCashBreakdownTypeDescription(
 		cashBreakdown.category,
 		cashBreakdown.type,

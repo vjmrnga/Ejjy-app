@@ -46,28 +46,32 @@ export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 	);
 
 export const useBranchMachineCreate = () =>
-	useMutation<any, any, any>(({ name, serverUrl, posTerminal }: any) =>
-		BranchMachinesService.create(
-			{
-				name,
-				server_url: serverUrl,
-				pos_terminal: posTerminal,
-			},
-			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-		),
+	useMutation<any, any, any>(
+		({ branchId, name, serverUrl, posTerminal }: any) =>
+			BranchMachinesService.create(
+				{
+					branch_id: branchId,
+					name,
+					server_url: serverUrl,
+					pos_terminal: posTerminal,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			),
 	);
 
 export const useBranchMachineEdit = () =>
-	useMutation<any, any, any>(({ id, name, serverUrl, posTerminal }: any) =>
-		BranchMachinesService.edit(
-			id,
-			{
-				name,
-				server_url: serverUrl,
-				pos_terminal: posTerminal,
-			},
-			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-		),
+	useMutation<any, any, any>(
+		({ id, branchId, name, serverUrl, posTerminal }: any) =>
+			BranchMachinesService.edit(
+				id,
+				{
+					branch_id: branchId,
+					name,
+					server_url: serverUrl,
+					pos_terminal: posTerminal,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			),
 	);
 
 export default useBranchMachines;

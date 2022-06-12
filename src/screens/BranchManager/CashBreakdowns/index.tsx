@@ -25,7 +25,12 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	getCashBreakdownTypeDescription,
+	getFullName,
+} from 'utils';
 
 export const cashBreakdownOptions = [
 	{
@@ -76,7 +81,10 @@ export const CashBreakdowns = () => {
 		const formattedCashBreakdowns = cashBreakdowns.map((cashBreakdown) => ({
 			key: cashBreakdown.id,
 			datetime: formatDateTime(cashBreakdown.datetime_created),
-			type: cashBreakdown.category.split('_').map(_.upperFirst).join(' '),
+			type: getCashBreakdownTypeDescription(
+				cashBreakdown.category,
+				cashBreakdown.type,
+			),
 			machineName: cashBreakdown.branch_machine?.name,
 			user: getFullName(cashBreakdown.cashiering_session.user),
 			actions: (
