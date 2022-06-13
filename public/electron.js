@@ -53,6 +53,46 @@ function createWindow() {
 	// 	},
 	// ];
 	// Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+	if (!isDev) {
+		// Start API
+		const controller = new AbortController();
+		const { signal } = controller;
+
+		mainWindow.once('ready-to-show', () => {
+			const apiPath = path.join(process.resourcesPath, 'api');
+			exec(
+				`cd "${apiPath}" && python manage.py migrate`,
+				(error, stdout, stderr) => {
+					if (error) {
+						logStatus(`API Migrate Err: ${error}`);
+						return;
+					}
+
+					logStatus(`API Migrate: ${stdout}`);
+					logStatus(`API Migrate: ${stderr}`);
+				},
+			);
+			exec(
+				`cd "${apiPath}" && python manage.py runserver 0.0.0.0:8000`,
+				{ signal },
+				(error, stdout, stderr) => {
+					if (error) {
+						logStatus(`API Err: ${error}`);
+						return;
+					}
+
+					logStatus(`API Out: ${stdout}`);
+					logStatus(`API Err: ${stderr}`);
+				},
+			);
+			logStatus('API: Started');
+		});
+
+		mainWindow.once('closed', () => {
+			controller.abort();
+		});
+	}
 }
 
 //-------------------------------------------------------------------
