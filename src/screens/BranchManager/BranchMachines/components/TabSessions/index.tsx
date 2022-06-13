@@ -57,8 +57,10 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 		pageSize,
 		onQueryParamChange: (params) => {
 			let isAutomaticallyClosed = undefined;
-			if (params.closingType) {
-				isAutomaticallyClosed = params.closingType === closingTypes.AUTOMATIC;
+			if (params.closingType === closingTypes.AUTOMATIC) {
+				isAutomaticallyClosed = true;
+			} else if (params.closingType === closingTypes.MANUAL) {
+				isAutomaticallyClosed = false;
 			}
 
 			let isUnauthorized = undefined;

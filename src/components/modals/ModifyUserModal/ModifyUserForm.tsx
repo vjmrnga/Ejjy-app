@@ -30,7 +30,7 @@ export const ModifyUserForm = ({
 				email: user?.email || '',
 
 				// NOTE: For create user only
-				userType: user.user_type || '',
+				userType: user?.user_type || '',
 				username: '',
 				password: '',
 				confirmPassword: '',
