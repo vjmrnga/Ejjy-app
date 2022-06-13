@@ -3,6 +3,7 @@ const { autoUpdater } = require('electron-updater');
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
 const path = require('path');
+const { exec } = require('child_process');
 
 //-------------------------------------------------------------------
 // Auto Updater

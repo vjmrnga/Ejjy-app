@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.119",
+	"version": "0.1.122",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -96,7 +96,7 @@
 		"@types/yup": "^0.29.6",
 		"concurrently": "^5.3.0",
 		"copy-webpack-plugin": "^6.1.0",
-		"electron": "^11.2.1",
+		"electron": "^17.4.7",
 		"electron-builder": "^22.14.5",
 		"env-cmd": "^10.1.0",
 		"prettier": "^2.3.2",
@@ -106,9 +106,13 @@
 	},
 	"build": {
 		"appId": "com.ejjy.inventory",
-		"mac": {
-			"category": "your.app.category.type"
-		},
+		"extraResources": [
+			"api/**",
+			"gcs-service-key.json",
+			"!api/.venv",
+			"!api/db.sqlite3",
+			"!api/backend/.env"
+		],
 		"publish": [
 			{
 				"provider": "github",
