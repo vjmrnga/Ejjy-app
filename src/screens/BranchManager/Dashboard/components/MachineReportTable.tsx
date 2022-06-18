@@ -94,8 +94,7 @@ export const MachineReportTable = () => {
 
 	const viewXReadReport = async (branchMachine, date = undefined) => {
 		const { data, status } = await createXReadReport({
-			branch_machine_id: branchMachine.id,
-			serverUrl: branchMachine.server_url,
+			branchMachineId: branchMachine.id,
 			date,
 			userId: user.id,
 		});
@@ -115,7 +114,7 @@ export const MachineReportTable = () => {
 
 	const viewZReadReport = async (branchMachine) => {
 		const { data } = await createZReadReport({
-			serverUrl: branchMachine.server_url,
+			branchMachineId: branchMachine.id,
 			userId: user.id,
 		});
 		setZReadReport(data);

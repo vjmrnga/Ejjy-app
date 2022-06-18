@@ -158,14 +158,7 @@ export const ModifyProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const sellingBarcode = this.parent.sellingBarcode;
-								console.log(
-									'barcode-selling-required-1',
-									!value || !sellingBarcode,
-								);
-								console.log('barcode-selling-required-1', !!value);
-								console.log('barcode-selling-required-1', !!sellingBarcode);
-								return value || sellingBarcode;
+								return value || this.parent.sellingBarcode;
 							},
 						),
 					textcode: Yup.string().max(50),
@@ -177,9 +170,7 @@ export const ModifyProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const barcode = this.parent.barcode;
-								console.log('barcode-selling-required-2', !value || !barcode);
-								return value || barcode;
+								return value || this.parent.barcode;
 							},
 						)
 						.label('Selling Barcode'),
