@@ -125,13 +125,13 @@ export const ModifyProductForm = ({
 				textcode: product?.textcode || '',
 				type: product?.type || productTypes.WET,
 				unitOfMeasurement:
-					product?.unit_of_measurement || unitOfMeasurementTypes.WEIGHING,
+					product?.unit_of_measurement || unitOfMeasurementTypes.NON_WEIGHING,
 				sellingBarcodeUnitOfMeasurement:
 					product?.selling_barcode_unit_of_measurement ||
 					unitOfMeasurementTypes.WEIGHING,
 				packingBarcodeUnitOfMeasurement:
 					product?.packing_barcode_unit_of_measurement ||
-					unitOfMeasurementTypes.WEIGHING,
+					unitOfMeasurementTypes.NON_WEIGHING,
 
 				// NOTE: Branch product settings
 				creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
@@ -150,15 +150,39 @@ export const ModifyProductForm = ({
 			},
 			Schema: Yup.object().shape(
 				{
-					barcode: Yup.string().max(
-						50,
-						'Barcode/Textcode must be at most 50 characters',
-					),
-					textcode: Yup.string().max(
-						50,
-						'Barcode/Textcode must be at most 50 characters',
-					),
-					sellingBarcode: Yup.string().max(50).label('Selling Barcode'),
+					barcode: Yup.string()
+						.max(50)
+						.test(
+							'barcode-selling-required-1',
+							'Input either a Product Barcode or Selling Barcode',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								const sellingBarcode = this.parent.sellingBarcode;
+								console.log(
+									'barcode-selling-required-1',
+									!value || !sellingBarcode,
+								);
+								console.log('barcode-selling-required-1', !!value);
+								console.log('barcode-selling-required-1', !!sellingBarcode);
+								return value || sellingBarcode;
+							},
+						),
+					textcode: Yup.string().max(50),
+					sellingBarcode: Yup.string()
+						.max(50)
+						.test(
+							'barcode-selling-required-2',
+							'Input either a Product Barcode or Selling Barcode',
+							function test(value) {
+								// NOTE: We need to use a no-named function so
+								// we can use 'this' and access the other form field value.
+								const barcode = this.parent.barcode;
+								console.log('barcode-selling-required-2', !value || !barcode);
+								return value || barcode;
+							},
+						)
+						.label('Selling Barcode'),
 					packingBarcode: Yup.string().max(50).label('Packing Barcode'),
 
 					name: Yup.string().required().max(70).label('Name'),
@@ -412,6 +436,7 @@ export const ModifyProductForm = ({
 							<FormRadioButton
 								id="unitOfMeasurement"
 								items={unitOfMeasurementOptions}
+								disabled={!!product}
 							/>
 							<ErrorMessage
 								name="unitOfMeasurement"
@@ -433,7 +458,7 @@ export const ModifyProductForm = ({
 							<FormRadioButton
 								id="sellingBarcodeUnitOfMeasurement"
 								items={unitOfMeasurementOptions}
-								disabled={!values.sellingBarcode}
+								disabled={!values.sellingBarcode || !!product}
 							/>
 							<ErrorMessage
 								name="sellingBarcodeUnitOfMeasurement"
@@ -455,7 +480,7 @@ export const ModifyProductForm = ({
 							<FormRadioButton
 								id="packingBarcodeUnitOfMeasurement"
 								items={unitOfMeasurementOptions}
-								disabled={!values.packingBarcode}
+								disabled={!values.packingBarcode || !!product}
 							/>
 							<ErrorMessage
 								name="packingBarcodeUnitOfMeasurement"
