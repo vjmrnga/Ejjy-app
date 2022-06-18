@@ -27,7 +27,7 @@ const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Percentage', dataIndex: 'percentage' },
-	{ title: 'Is VAT Inclusive?', dataIndex: 'isVatInclusive' },
+	{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 

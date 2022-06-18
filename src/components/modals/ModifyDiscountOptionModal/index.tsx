@@ -117,7 +117,7 @@ export const ModifyDiscountOptionForm = ({
 							)
 							.label('Percentage'),
 					}),
-				isVatInclusive: Yup.boolean().required().label('Is VAT Inclusive?'),
+				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
 			}),
 		}),
 		[discountOption],
@@ -144,7 +144,7 @@ export const ModifyDiscountOptionForm = ({
 						</Col>
 
 						<Col xs={24} sm={12}>
-							<Label id="isVatInclusive" label="Is VAT Inclusive?" spacing />
+							<Label id="isVatInclusive" label="VAT Inclusive" spacing />
 							<Radio.Group
 								value={values.isVatInclusive}
 								options={[
