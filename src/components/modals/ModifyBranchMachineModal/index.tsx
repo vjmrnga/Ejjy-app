@@ -89,15 +89,22 @@ export const ModifyBranchMachineForm = ({
 			DefaultValues: {
 				id: branchMachine?.id || null,
 				branchId: getBranchId(),
+				machineIdentificationNumber:
+					branchMachine?.machine_identification_number || '',
 				name: branchMachine?.name || '',
-				serverUrl: branchMachine?.server_url || '',
+				permitToUse: branchMachine?.permit_to_use || '',
 				posTerminal: branchMachine?.pos_terminal || '',
+				serverUrl: branchMachine?.server_url || '',
 			},
 			Schema: Yup.object().shape({
 				branchId: Yup.string().required().label('Branch ID'),
+				machineIdentificationNumber: Yup.string()
+					.max(75)
+					.label('Machine Identification Number'),
 				name: Yup.string().required().max(30).label('Name'),
-				serverUrl: Yup.string().required().max(75).label('Server URL'),
+				permitToUse: Yup.string().max(75).label('Permit To Use'),
 				posTerminal: Yup.string().max(75).label('POS Terminal'),
+				serverUrl: Yup.string().required().max(75).label('Server URL'),
 			}),
 		}),
 		[branchMachine],
@@ -134,7 +141,26 @@ export const ModifyBranchMachineForm = ({
 						/>
 					</Col>
 
-					<Col xs={24}>
+					<Col sm={12} xs={24}>
+						<FormInputLabel
+							id="machineIdentificationNumber"
+							label="Machine Identification Number"
+						/>
+						<ErrorMessage
+							name="machineIdentificationNumber"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
+
+					<Col sm={12} xs={24}>
+						<FormInputLabel id="permitToUse" label="Permit To Use" />
+						<ErrorMessage
+							name="permitToUse"
+							render={(error) => <FieldError error={error} />}
+						/>
+					</Col>
+
+					<Col sm={12} xs={24}>
 						<FormInputLabel id="posTerminal" label="POS Terminal" />
 						<ErrorMessage
 							name="posTerminal"

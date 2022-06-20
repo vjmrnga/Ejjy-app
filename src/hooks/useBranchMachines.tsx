@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
 import { Query } from 'hooks/inteface';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchMachinesService } from 'services';
 import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
@@ -45,33 +45,68 @@ export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 		},
 	);
 
-export const useBranchMachineCreate = () =>
-	useMutation<any, any, any>(
-		({ branchId, name, serverUrl, posTerminal }: any) =>
+export const useBranchMachineCreate = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			branchId,
+			machineIdentificationNumber,
+			name,
+			permitToUse,
+			posTerminal,
+			serverUrl,
+		}: any) =>
 			BranchMachinesService.create(
 				{
 					branch_id: branchId,
+					machine_identification_number: machineIdentificationNumber,
 					name,
-					server_url: serverUrl,
+					permit_to_use: permitToUse,
 					pos_terminal: posTerminal,
+					server_url: serverUrl,
 				},
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchMachines');
+			},
+		},
 	);
+};
 
-export const useBranchMachineEdit = () =>
-	useMutation<any, any, any>(
-		({ id, branchId, name, serverUrl, posTerminal }: any) =>
+export const useBranchMachineEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({
+			branchId,
+			id,
+			machineIdentificationNumber,
+			name,
+			permitToUse,
+			posTerminal,
+			serverUrl,
+		}: any) =>
 			BranchMachinesService.edit(
 				id,
 				{
 					branch_id: branchId,
+					machine_identification_number: machineIdentificationNumber,
 					name,
-					server_url: serverUrl,
+					permit_to_use: permitToUse,
 					pos_terminal: posTerminal,
+					server_url: serverUrl,
 				},
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchMachines');
+			},
+		},
 	);
+};
 
 export default useBranchMachines;

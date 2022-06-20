@@ -13,9 +13,11 @@ import { Link } from 'react-router-dom';
 import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name', key: 'name', width: 150, fixed: 'left' },
-	{ title: 'Server URL', dataIndex: 'server_url', key: 'server_url' },
-	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
+	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
+	{ title: 'Server URL', dataIndex: 'serverUrl' },
+	{ title: 'Machine ID', dataIndex: 'machineID' },
+	{ title: 'PTU', dataIndex: 'ptu' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const BranchMachines = () => {
@@ -41,7 +43,9 @@ export const BranchMachines = () => {
 					{branchMachine.name}
 				</Link>
 			),
-			server_url: branchMachine.server_url,
+			serverUrl: branchMachine.server_url,
+			machineID: branchMachine.machine_identification_number,
+			ptu: branchMachine.permit_to_use,
 			actions: <TableActions onEdit={() => onEdit(branchMachine)} />,
 		}));
 

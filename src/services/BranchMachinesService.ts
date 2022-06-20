@@ -7,9 +7,11 @@ interface List extends IListRequest {
 
 interface Modify {
 	branch_id: string;
+	machine_identification_number: string;
 	name: string;
-	server_url: string;
+	permit_to_use: string;
 	pos_terminal?: string;
+	server_url: string;
 }
 
 const service = {
