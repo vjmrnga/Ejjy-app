@@ -42,7 +42,10 @@ export const CreateAdjustmentSlipModal = ({
 					.filter((item) => item.status !== backOrdersStatuses.DONE)
 					.map((item) => ({
 						id: item.id,
-						code: item.product.barcode || item.product.textcode,
+						code:
+							item.product.barcode ||
+							item.product.selling_barcode ||
+							item.product.textcode,
 						name: item.product.name,
 						returnedQuantity: formatQuantity(
 							item.product.unit_of_measurement,

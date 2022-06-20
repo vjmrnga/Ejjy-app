@@ -34,7 +34,8 @@ export const FulfillCheckModal = ({
 			const formattedProductCheckProducts = productCheck?.products?.map(
 				(product) => ({
 					name: product?.product?.name,
-					barcode: product?.product?.barcode,
+					barcode:
+						product?.product?.barcode || product?.product?.selling_barcode,
 					pieces_in_bulk: product?.product?.pieces_in_bulk,
 					product_check_product_id: product?.id,
 				}),

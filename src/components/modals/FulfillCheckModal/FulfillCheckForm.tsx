@@ -78,7 +78,7 @@ export const FulfillCheckForm = ({
 					columns={columns}
 					data={products.map((product, index) => [
 						// Code
-						product?.barcode || product?.textcode,
+						product?.barcode || product?.selling_barcode || product?.textcode,
 						// Name
 						product?.name,
 						// Quantity / Bulk | Pieces

@@ -49,7 +49,10 @@ export const TabBranchProducts = () => {
 	useEffect(() => {
 		const data = branchProducts.map((branchProduct) => ({
 			key: branchProduct.id,
-			code: branchProduct.product.barcode || branchProduct.product.textcode,
+			code:
+				branchProduct.product.barcode ||
+				branchProduct.product.selling_barcode ||
+				branchProduct.product.textcode,
 			name: branchProduct.product.name,
 			balance: formatQuantity(
 				branchProduct.product.unit_of_measurement,

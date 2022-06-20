@@ -37,7 +37,7 @@ const columns: ColumnsType = [
 	{ title: 'Quantity', dataIndex: 'quantity' },
 	{ title: 'Code / Barcode', dataIndex: 'code', width: 150 },
 	{ title: 'Item Name / Description', dataIndex: 'name', width: 300 },
-	{ title: 'Selling Price', dataIndex: 'sellingPrice', width: 150 },
+	{ title: 'Scale Price', dataIndex: 'sellingPrice', width: 150 },
 	{ title: 'V/VE', dataIndex: 'vatable' },
 	{ title: 'Total Amount', dataIndex: 'totalAmount', width: 150 },
 	{ title: 'Remarks', dataIndex: 'remarks' },
@@ -115,7 +115,9 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 				),
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
 				quantity: formatQuantity(product?.unit_of_measurement, quantity),
-				code: `${product?.textcode || ''} / ${product?.barcode || ''}`,
+				code: `${product?.textcode || ''} / ${
+					product?.barcode || product?.selling_barcode || ''
+				}`,
 				name: `${product?.name} / ${product?.description}`,
 				sellingPrice: formatInPeso(price_per_piece),
 				vatable: product?.is_vat_exempted ? 'VAT Exempt' : 'Vatable',

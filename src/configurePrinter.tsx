@@ -317,7 +317,7 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 							<tr>
 								<td>
 									<span style="display:block">${product.name}</span>
-									<small>${product.barcode}</small>
+									<small>${product.barcode || product.selling_barcode}</small>
 								</td>
 
 								<td style="text-align: center">

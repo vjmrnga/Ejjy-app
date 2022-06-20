@@ -41,7 +41,10 @@ export const CreateAdjustmentSlipModal = ({
 					.filter(({ is_success }) => !is_success)
 					.map((item) => ({
 						id: item.id,
-						code: item.product.barcode || item.product.textcode,
+						code:
+							item.product.barcode ||
+							item.product.selling_barcode ||
+							item.product.textcode,
 						name: item.product.name,
 						fulfilledQuantityPiece: formatQuantity(
 							item.product.unit_of_measurement,

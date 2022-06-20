@@ -154,7 +154,7 @@ export const ModifyProductForm = ({
 						.max(50)
 						.test(
 							'barcode-selling-required-1',
-							'Input either a Product Barcode or Selling Barcode',
+							'Input either a Product Barcode or Scale Barcode',
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
@@ -166,14 +166,14 @@ export const ModifyProductForm = ({
 						.max(50)
 						.test(
 							'barcode-selling-required-2',
-							'Input either a Product Barcode or Selling Barcode',
+							'Input either a Product Barcode or Scale Barcode',
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
 								return value || this.parent.barcode;
 							},
 						)
-						.label('Selling Barcode'),
+						.label('Scale Barcode'),
 					packingBarcode: Yup.string().max(50).label('Packing Barcode'),
 
 					name: Yup.string().required().max(70).label('Name'),
@@ -416,67 +416,28 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'barcode',
-								label: 'Barcode',
+								label: 'Barcode (Non-Weighing)',
 								setFieldValue,
 								values,
 							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
-							<FormRadioButton
-								id="unitOfMeasurement"
-								items={unitOfMeasurementOptions}
-								disabled={!!product}
-							/>
-							<ErrorMessage
-								name="unitOfMeasurement"
-								render={(error) => <FieldError error={error} />}
-							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'sellingBarcode',
-								label: 'Selling Barcode',
+								label: 'Scale Barcode (Weighing)',
 								setFieldValue,
 								values,
 							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
-							<FormRadioButton
-								id="sellingBarcodeUnitOfMeasurement"
-								items={unitOfMeasurementOptions}
-								disabled={!values.sellingBarcode || !!product}
-							/>
-							<ErrorMessage
-								name="sellingBarcodeUnitOfMeasurement"
-								render={(error) => <FieldError error={error} />}
-							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'packingBarcode',
-								label: 'Packing Barcode',
+								label: 'Packing Barcode (Non-Weighing)',
 								setFieldValue,
 								values,
 							})}
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
-							<FormRadioButton
-								id="packingBarcodeUnitOfMeasurement"
-								items={unitOfMeasurementOptions}
-								disabled={!values.packingBarcode || !!product}
-							/>
-							<ErrorMessage
-								name="packingBarcodeUnitOfMeasurement"
-								render={(error) => <FieldError error={error} />}
-							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -488,7 +449,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col span={24}>
 							{renderInputField({
 								name: 'name',
 								label: 'Name',
