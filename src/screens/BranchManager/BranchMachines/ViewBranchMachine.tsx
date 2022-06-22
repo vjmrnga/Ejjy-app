@@ -100,8 +100,8 @@ export const ViewBranchMachine = ({ match }: Props) => {
 					<Alert
 						className="mb-4"
 						message="Branch Machine Connectivity"
-						description="The branch machine is offline."
-						type="error"
+						description="The branch machine is offline. Data might be outdated."
+						type="warning"
 						showIcon
 					/>
 				)}
