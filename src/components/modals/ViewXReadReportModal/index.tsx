@@ -34,11 +34,11 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	});
 
 	// METHODS
-	const onPrint = () => {
+	const handlePrint = () => {
 		printXReadReport({ report, siteSettings });
 	};
 
-	const onCreatePdf = () => {
+	const handleCreatePdf = () => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
@@ -89,7 +89,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					icon={<PrinterOutlined />}
 					size="large"
 					type="primary"
-					onClick={onPrint}
+					onClick={handlePrint}
 				>
 					Print
 				</Button>,
@@ -100,7 +100,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					loading={isCreatingPdf}
 					size="large"
 					type="primary"
-					onClick={onCreatePdf}
+					onClick={handleCreatePdf}
 				>
 					Create PDF
 				</Button>,

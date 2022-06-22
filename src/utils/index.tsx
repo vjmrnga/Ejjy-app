@@ -1,3 +1,4 @@
+export * from './calculate';
 export * from './callbacks';
 export * from './formatters';
 export * from './localStorage';

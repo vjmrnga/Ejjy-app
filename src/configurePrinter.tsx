@@ -8,11 +8,13 @@ import {
 	vatTypes,
 } from './global/types';
 import {
+	calculateCashBreakdownTotal,
 	formatDate,
 	formatDateTime,
 	formatDateTime24Hour,
 	formatInPeso,
 	formatQuantity,
+	getCashBreakdownTypeDescription,
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getTransactionStatusDescription,
@@ -1233,6 +1235,311 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 		loadingMessage: 'Printing zread report...',
 		successMessage: 'Successfully printed zread report.',
 		errorMessage: 'Error occurred while trying to print zread report.',
+	});
+};
+
+export const printCashBreakdown = ({
+	cashBreakdown,
+	siteSettings,
+	isPdf = false,
+}) => {
+	const branchMachine = cashBreakdown.branch_machine;
+	const session = cashBreakdown.cashiering_session;
+
+	const breakdownCoins = [
+		{
+			label: '0.25',
+			quantity: cashBreakdown.coins_25,
+			amount: formatInPeso(0.25 * cashBreakdown.coins_25, ''),
+		},
+		{
+			label: '1.00',
+			quantity: cashBreakdown.coins_1,
+			amount: formatInPeso(cashBreakdown.coins_1, ''),
+		},
+		{
+			label: '5.00',
+			quantity: cashBreakdown.coins_5,
+			amount: formatInPeso(5 * cashBreakdown.coins_5, ''),
+		},
+		{
+			label: '10.00',
+			quantity: cashBreakdown.coins_10,
+			amount: formatInPeso(10 * cashBreakdown.coins_10, ''),
+		},
+		{
+			label: '20.00',
+			quantity: cashBreakdown.coins_20,
+			amount: formatInPeso(20 * cashBreakdown.coins_20, ''),
+		},
+	];
+	const denomCoins = breakdownCoins.map(
+		({ label }) => `
+				<div style="
+						display: flex;
+						align-items: center;
+						justify-content: space-between
+					">
+					<span>P </span>
+					<span>${label}</span>
+				</div>
+				`,
+	);
+	const quantityCoins = breakdownCoins.map(
+		({ quantity }) => `<div>${quantity}</div>`,
+	);
+	const amountCoins = breakdownCoins.map(
+		({ amount }) => `
+				<div style="
+						display: flex;
+						align-items: center;
+						justify-content: space-between
+					">
+					<span>P </span>
+					<span>${amount}</span>
+				</div>
+				`,
+	);
+	const breakdownBills = [
+		{
+			label: '20.00',
+			quantity: cashBreakdown.bills_20,
+			amount: formatInPeso(20 * cashBreakdown.bills_20, ''),
+		},
+		{
+			label: '50.00',
+			quantity: cashBreakdown.bills_50,
+			amount: formatInPeso(50 * cashBreakdown.bills_50, ''),
+		},
+		{
+			label: '100.00',
+			quantity: cashBreakdown.bills_100,
+			amount: formatInPeso(100 * cashBreakdown.bills_100, ''),
+		},
+		{
+			label: '200.00',
+			quantity: cashBreakdown.bills_200,
+			amount: formatInPeso(200 * cashBreakdown.bills_200, ''),
+		},
+		{
+			label: '500.00',
+			quantity: cashBreakdown.bills_500,
+			amount: formatInPeso(500 * cashBreakdown.bills_500, ''),
+		},
+		{
+			label: '1,000.00',
+			quantity: cashBreakdown.bills_1000,
+			amount: formatInPeso(1000 * cashBreakdown.bills_1000, ''),
+		},
+	];
+	const denomBills = breakdownBills.map(
+		({ label }) => `
+				<div style="
+						display: flex;
+						align-items: center;
+						justify-content: space-between
+					">
+					<span>P </span>
+					<span>${label}</span>
+				</div>
+				`,
+	);
+	const quantityBills = breakdownBills.map(
+		({ quantity }) => `<div>${quantity}</div>`,
+	);
+	const amountBills = breakdownBills.map(
+		({ amount }) => `
+				<div style="
+						display: flex;
+						align-items: center;
+						justify-content: space-between
+					">
+					<span>P </span>
+					<span>${amount}</span>
+				</div>
+				`,
+	);
+
+	const data = `
+	<div class="container" style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
+		<style>
+			td {
+				padding-top: 0;
+				padding-bottom: 0;
+				line-height: 100%;
+			}
+		</style>
+
+		<div style="text-align: center; display: flex; flex-direction: column">
+      <span style="white-space: pre-line">${siteSettings.store_name}</span>
+      <span style="white-space: pre-line">${
+				siteSettings.address_of_tax_payer
+			}</span>
+      <span>${branchMachine.branch.name} - ${branchMachine.name}</span>
+
+			<br />
+
+			<span>[CASH BREAKDOWN]</span>
+			<span>${getCashBreakdownTypeDescription(
+				cashBreakdown.category,
+				cashBreakdown.type,
+			)}</span>
+		</div>
+
+		<br />
+
+		<div style="display: flex">
+			<div>
+				<div style="text-align: center">DENOM</div>
+				<br/>
+				<div>COINS</div>
+				${denomCoins.join('')}
+				<br/>
+				<div>BILLS</div>
+				${denomBills.join('')}
+			</div>
+			<div style="flex: 1; padding-left: 10px; display: flex; flex-direction: column; align-items: center">
+				<div>QTY</div>
+				<br/>
+				<br/>
+				${quantityCoins.join('')}
+				<br/>
+				<br/>
+				${quantityBills.join('')}
+			</div>
+			<div>
+				<div style="text-align: center">AMOUNT</div>
+				<br/>
+				<br/>
+				${amountCoins.join('')}
+				<br/>
+				<br/>
+				${amountBills.join('')}
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; justify-content: space-evenly">
+			<span>TOTAL</span>
+			<span>${formatInPeso(
+				calculateCashBreakdownTotal(cashBreakdown),
+				PESO_SIGN,
+			)}</span>
+		</div>
+
+		<br />
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${formatDateTime(dayjs())}</span>
+			<span>${session?.user?.employee_id}</span>
+		</div>
+
+		<br />
+		<br />
+
+    ${getFooter(siteSettings)}
+	</div>
+	`;
+
+	if (isPdf) {
+		return `
+		<html lang="en">
+    <head>
+      <style>
+        .container, .container > div, .container > table {
+          width: 795px !important;
+        }
+      </style>
+    </head>
+		<body>
+				${data}
+    </body>
+  </html>`;
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing cash breakdown...',
+		successMessage: 'Successfully printed cash breakdown.',
+		errorMessage: 'Error occurred while trying to print cash breakdown.',
+	});
+};
+
+export const printCashOut = ({ cashOut, isPdf = false }) => {
+	const metadata = cashOut.cash_out_metadata;
+
+	const cashOutId = metadata.id;
+	const datetime = formatDateTime(cashOut.datetime_created);
+	const payee = metadata.payee;
+	const amount = formatInPeso(metadata.amount, 'P');
+	const authorizer = getFullName(metadata.approved_by_user);
+	const cashier = getFullName(metadata.prepared_by_user);
+
+	const letterStyles =
+		'display: inline-block; min-width: 100px; padding: 0 8px; border-bottom: 2px solid black; text-align:center;';
+
+	const data = `
+		<div class="container" style="width: 100%; font-size: 16px; line-height: 140%; font-family: 'Courier', monospace;">
+			<div>Entity Name: EJ & JY WET MARKET AND ENTERPRISES</div>
+      <div>No.: <span style="width: 100px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${cashOutId}</span></div>
+      <div>Datetime: <span style="width: 200px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${datetime}</span></div>
+
+			<br/>
+			<br/>
+
+			<div style="text-align: center">ORDER OF PAYMENT</div>
+
+			<br/>
+
+			<div>${cashier}</div>
+			<div>Cashiering Unit</div>
+
+			<br/>
+			<br/>
+
+			<div style="text-align: justify">&emsp;&emsp;&emsp;Please issue Cash Out Receipt in favor of
+				<span style="${letterStyles}">${payee}</span> in the amount of
+				<span style="${letterStyles}">${amount}</span>.
+			</div>
+
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+
+      <div style="padding: 0 12px; width: 40%; float:right;">
+        <div style="width: 100%; text-align: center;">
+          ${authorizer}
+        </div>
+        <div style="width: 100%; border-top: 2px solid black; text-align: center;">
+          Head of the General Manager/Authorized Official
+        </div>
+      </div>
+
+		</div>
+	`;
+
+	if (isPdf) {
+		return `
+		<html lang="en">
+    <head>
+      <style>
+        .container {
+          width: 795px !important;
+        }
+      </style>
+    </head>
+		<body>
+				${data}
+    </body>
+  </html>`;
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing cash out receipt...',
+		successMessage: 'Successfully printed cash out receipt.',
+		errorMessage: 'Error occurred while trying to print cash out receipt.',
 	});
 };
 

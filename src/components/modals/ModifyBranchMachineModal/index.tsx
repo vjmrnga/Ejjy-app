@@ -141,7 +141,7 @@ export const ModifyBranchMachineForm = ({
 						/>
 					</Col>
 
-					<Col sm={12} xs={24}>
+					<Col xs={24}>
 						<FormInputLabel
 							id="machineIdentificationNumber"
 							label="Machine Identification Number"
@@ -152,7 +152,7 @@ export const ModifyBranchMachineForm = ({
 						/>
 					</Col>
 
-					<Col sm={12} xs={24}>
+					<Col xs={24}>
 						<FormInputLabel id="permitToUse" label="Permit To Use" />
 						<ErrorMessage
 							name="permitToUse"
@@ -160,7 +160,7 @@ export const ModifyBranchMachineForm = ({
 						/>
 					</Col>
 
-					<Col sm={12} xs={24}>
+					<Col xs={24}>
 						<FormInputLabel id="posTerminal" label="POS Terminal" />
 						<ErrorMessage
 							name="posTerminal"
