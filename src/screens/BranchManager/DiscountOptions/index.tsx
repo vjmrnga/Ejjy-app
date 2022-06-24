@@ -28,6 +28,7 @@ const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Percentage', dataIndex: 'percentage' },
 	{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
+	{ title: 'Fields', dataIndex: 'fields' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -61,6 +62,7 @@ export const DiscountOptions = () => {
 			type: _.upperFirst(discountOption.type),
 			percentage: discountOption.percentage || EMPTY_CELL,
 			isVatInclusive: discountOption.is_vat_inclusive ? 'Yes' : 'No',
+			fields: discountOption.additional_fields,
 			actions: (
 				<TableActions
 					onEdit={() => {

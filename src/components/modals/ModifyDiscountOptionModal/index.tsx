@@ -1,4 +1,14 @@
-import { Col, message, Modal, Radio, Row } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
+import {
+	Button as AntdButton,
+	Col,
+	Divider,
+	Input,
+	message,
+	Modal,
+	Radio,
+	Row,
+} from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { discountTypes } from 'global';
 import { useDiscountOptionCreate, useDiscountOptionEdit } from 'hooks';
@@ -91,6 +101,7 @@ export const ModifyDiscountOptionForm = ({
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
 				isVatInclusive: discountOption?.is_vat_inclusive || true,
+				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(75).label('Name'),
@@ -118,6 +129,9 @@ export const ModifyDiscountOptionForm = ({
 							.label('Percentage'),
 					}),
 				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
+				additionalFields: Yup.array()
+					.of(Yup.string().required().label('Field'))
+					.notRequired(),
 			}),
 		}),
 		[discountOption],
@@ -128,15 +142,28 @@ export const ModifyDiscountOptionForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			onSubmit={(formData) => {
-				onSubmit(formData);
+				onSubmit({
+					...formData,
+					additionalFields:
+						formData.additionalFields.length > 0
+							? formData.additionalFields.join(',')
+							: '',
+				});
 			}}
 			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
-						<Col xs={24} sm={12}>
-							<FormInputLabel id="name" label="Name" />
+						<Col xs={24}>
+							<Label label="Name" spacing />
+							<Input
+								name="name"
+								value={values['name']}
+								onChange={(e) => {
+									setFieldValue('name', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="name"
 								render={(error) => <FieldError error={error} />}
@@ -189,6 +216,64 @@ export const ModifyDiscountOptionForm = ({
 								/>
 							</Col>
 						)}
+
+						<Col xs={24}>
+							<Divider />
+
+							<Row gutter={[16, 16]} justify="center" align="bottom">
+								{values.additionalFields.map((field, index) => (
+									<>
+										<Col xs={21}>
+											<Label label={`Field ${index + 1}`} spacing />
+											<Input
+												name={`additionalFields.${index}`}
+												value={field}
+												onChange={(e) => {
+													setFieldValue(
+														`additionalFields.${index}`,
+														e.target.value,
+													);
+												}}
+											/>
+											<ErrorMessage
+												name={`additionalFields.${index}`}
+												render={(error) => <FieldError error={error} />}
+											/>
+										</Col>
+										<Col
+											xs={3}
+											className="d-flex align-center justify-center pb-1"
+										>
+											<AntdButton
+												size="small"
+												type="primary"
+												shape="circle"
+												icon={<CloseOutlined />}
+												onClick={() => {
+													const { additionalFields } = values;
+													additionalFields.splice(index, 1);
+
+													setFieldValue('additionalFields', additionalFields);
+												}}
+												danger
+											/>
+										</Col>
+									</>
+								))}
+							</Row>
+							<AntdButton
+								className="d-block mt-4 mx-auto"
+								type="link"
+								onClick={() => {
+									const { additionalFields } = values;
+									additionalFields.push('');
+
+									setFieldValue('additionalFields', additionalFields);
+								}}
+							>
+								+ Add Field
+							</AntdButton>
+						</Col>
 					</Row>
 
 					<div className="ModalCustomFooter">

@@ -6,6 +6,7 @@ interface Modify {
 	type: string;
 	percentage: number;
 	is_vat_inclusive: boolean;
+	additional_fields?: string;
 }
 
 const service = {

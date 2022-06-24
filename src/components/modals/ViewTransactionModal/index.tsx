@@ -42,6 +42,7 @@ export const ViewTransactionModal = ({
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [transactionData, setTransactionData] = useState(null);
+	const [discountOptionFields, setDiscountOptionFields] = useState(null);
 	const [defaultClientName, setDefaultClientName] = useState('');
 	const [title, setTitle] = useState('Invoice');
 
@@ -66,9 +67,15 @@ export const ViewTransactionModal = ({
 
 	// METHODS
 	useEffect(() => {
+		// Set transaction
+		const newTransaction = _.isNumber(transaction)
+			? transactionRetrieved
+			: transaction;
+		setTransactionData(newTransaction);
+
+		// Set transaction products
 		const products =
 			transaction?.products || transactionRetrieved?.products || [];
-
 		const formattedProducts = products.map(
 			({ id, branch_product, quantity, price_per_piece }) => ({
 				key: id,
@@ -81,15 +88,18 @@ export const ViewTransactionModal = ({
 				amount: formatInPeso(quantity * Number(price_per_piece)),
 			}),
 		);
-
 		setDataSource(formattedProducts);
+
+		// Set discount option additional fields
+		if (newTransaction?.discount_option_additional_fields_values?.length > 0) {
+			const discountOptionFieldsJSON = JSON.parse(
+				newTransaction.discount_option_additional_fields_values,
+			);
+			setDiscountOptionFields(discountOptionFieldsJSON);
+		}
 	}, [transaction, transactionRetrieved]);
 
-	useEffect(() => {
-		setTransactionData(
-			_.isNumber(transaction) ? transactionRetrieved : transaction,
-		);
-	}, [transactionRetrieved, transaction]);
+	useEffect(() => {}, [transactionRetrieved, transaction]);
 
 	useEffect(() => {
 		if (transactionData?.id) {
@@ -239,7 +249,7 @@ export const ViewTransactionModal = ({
 							<Text>{dataSource.length} item(s)</Text>
 						</Space>
 
-						{['PWD', 'SC'].includes(transactionData?.discount_option?.name) ? (
+						{discountOptionFields ? (
 							<Descriptions
 								colon={false}
 								column={1}
@@ -249,11 +259,11 @@ export const ViewTransactionModal = ({
 								}}
 								size="small"
 							>
-								<Descriptions.Item label="TIN">{EMPTY_CELL}</Descriptions.Item>
-								<Descriptions.Item label="ID#">{EMPTY_CELL}</Descriptions.Item>
-								<Descriptions.Item label="Signature">
-									{EMPTY_CELL}
-								</Descriptions.Item>
+								{Object.keys(discountOptionFields).map((key) => (
+									<Descriptions.Item key={key} label={key}>
+										{discountOptionFields[key]}
+									</Descriptions.Item>
+								))}
 							</Descriptions>
 						) : (
 							<Descriptions
