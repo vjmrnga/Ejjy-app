@@ -1,14 +1,12 @@
 import { message, Tabs } from 'antd';
+import { useBranchRetrieve, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { getUrlPrefix } from 'utils';
 import { Breadcrumb, Content } from '../../../components';
 import { Box } from '../../../components/elements';
-import { selectors as branchesSelectors } from '../../../ducks/OfficeManager/branches';
 import { useAuth } from '../../../hooks/useAuth';
-import { useQueryParams } from 'hooks';
-import { getUrlPrefix } from 'utils';
 import { ViewBranchCheckings } from './components/ViewBranchCheckings';
 import { ViewBranchDays } from './components/ViewBranchDays';
 import { ViewBranchMachines } from './components/ViewBranchMachines';
@@ -37,17 +35,20 @@ const tabs = {
 export const ViewBranch = ({ match }: Props) => {
 	// VARIABLES
 	const branchId = match?.params?.id;
-	const branch = useSelector(
-		branchesSelectors.selectBranchById(Number(branchId)),
-	);
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
 	const {
 		params: { tab: currentTab },
 		setQueryParams,
 	} = useQueryParams();
+	const { user } = useAuth();
+	const { data: branch, isFetched } = useBranchRetrieve({
+		id: branchId,
+		options: {
+			enabled: !!branchId,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -57,11 +58,11 @@ export const ViewBranch = ({ match }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		if (!branch?.online_url) {
+		if (isFetched && !branch?.online_url) {
 			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
 			message.error('Branch has no online url.');
 		}
-	}, [branchId, branch]);
+	}, [branchId, branch, isFetched]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [

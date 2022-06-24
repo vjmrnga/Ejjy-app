@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.128",
+	"version": "0.1.129",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -19,10 +19,10 @@
 		"postinstall": "electron-builder install-app-deps",
 		"publish": "npm version patch --no-git-tag-version && npm run build:local && electron-builder -w -p always",
 		"server": "cd ../ejjy-api; poetry run python manage.py runserver 0.0.0.0:8000",
-		"server:branch": "concurrently \"npm run server\" \"cd ../ejjy-app-cashiering/api && poetry run python manage.py runserver 8001\"",
-		"server:officemanager": "concurrently \"cd ../ejjy-api && poetry run python manage.py runserver 8000\" \"cd ../ejjy-api-officemanager && poetry run python manage.py runserver 8002\"",
-		"start:officemanager": "concurrently \"npm run start:local\" \"cd ../ejjy-api && poetry run python manage.py runserver 8000\" \"cd ../ejjy-api-officemanager && poetry run python manage.py runserver 8002\"",
-		"start": "concurrently \"npm run server:branch\" \"npm run start:local\""
+		"server:branch": "concurrently \"npm run server\" \"cd ../ejjy-app-cashiering/api && poetry run python manage.py runserver 8005\"",
+		"start": "concurrently \"npm run server:branch\" \"npm run start:local\"",
+		"server:om": "concurrently \"cd ../ejjy-api && poetry run python manage.py runserver 8000\" \"cd ../ejjy-api-officemanager && poetry run python manage.py runserver 8001\"",
+		"start:om": "concurrently \"npm run start:local\" \"cd ../ejjy-api && poetry run python manage.py runserver 8000\" \"cd ../ejjy-api-officemanager && poetry run python manage.py runserver 8001\""
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",

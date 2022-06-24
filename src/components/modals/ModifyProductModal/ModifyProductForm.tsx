@@ -382,18 +382,6 @@ export const ModifyProductForm = ({
 
 				let data = {
 					...formData,
-					barcode:
-						formData.barcode === product?.barcode
-							? undefined
-							: formData.barcode,
-					sellingBarcode:
-						formData.sellingBarcode === product?.selling_barcode
-							? undefined
-							: formData.sellingBarcode,
-					packingBarcode:
-						formData.packingBarcode === product?.packing_barcode
-							? undefined
-							: formData.packingBarcode,
 					hasQuantityAllowance: isWeighing
 						? formData.hasQuantityAllowance
 						: product?.has_quantity_allowance,

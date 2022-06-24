@@ -8,9 +8,9 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE } from 'global';
 import { useBranchDelete, useBranches } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { convertIntoArray } from 'utils';
 import './style.scss';
 
@@ -42,7 +42,7 @@ export const Branches = () => {
 	// METHODS
 	useEffect(() => {
 		const formattedBranches = branches.map((branch) => ({
-			name: branch.name,
+			name: <Link to={`branches/${branch.id}`}>{branch.name}</Link>,
 			url: branch.online_url,
 			actions: (
 				<TableActions
