@@ -48,7 +48,10 @@ export const ViewPreparationSlipModal = ({
 
 			const inputted =
 				quantityType === quantityTypes.PIECE
-					? formatQuantity(unit_of_measurement, fulfilledQuantityPiece)
+					? formatQuantity({
+							unitOfMeasurement: unit_of_measurement,
+							quantity: fulfilledQuantityPiece,
+					  })
 					: convertToBulk(fulfilledQuantityPiece, pieces_in_bulk);
 
 			return {

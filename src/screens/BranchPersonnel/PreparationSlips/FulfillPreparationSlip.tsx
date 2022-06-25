@@ -184,8 +184,14 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					{fulfilled > 0 ? <CheckIcon /> : null}
 					<span>{name}</span>
 				</div>,
-				formatQuantity(unitOfMeasurement, ordered),
-				formatQuantity(unitOfMeasurement, fulfilled),
+				formatQuantity({
+					unitOfMeasurement: unitOfMeasurement,
+					quantity: ordered,
+				}),
+				formatQuantity({
+					unitOfMeasurement: unitOfMeasurement,
+					quantity: fulfilled,
+				}),
 			];
 		});
 

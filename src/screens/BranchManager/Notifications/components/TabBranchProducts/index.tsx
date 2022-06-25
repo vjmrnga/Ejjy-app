@@ -54,10 +54,10 @@ export const TabBranchProducts = () => {
 				branchProduct.product.selling_barcode ||
 				branchProduct.product.textcode,
 			name: branchProduct.product.name,
-			balance: formatQuantity(
-				branchProduct.product.unit_of_measurement,
-				branchProduct.current_balance,
-			),
+			balance: formatQuantity({
+				unitOfMeasurement: branchProduct.product.unit_of_measurement,
+				quantity: branchProduct.current_balance,
+			}),
 			actions: (
 				<Button
 					type="primary"

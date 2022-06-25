@@ -36,13 +36,19 @@ export const formatInPeso = (value, pesoSign = '₱') => {
 		  )}`;
 };
 
-export const formatQuantity = (
-	unitOfMeasurement: string,
-	quantity: number,
-): string => {
-	const balance = Number(quantity);
+export const formatQuantity = ({
+	unitOfMeasurement,
+	quantity,
+	isCeiled = false,
+}): string => {
+	let balance = Number(quantity);
 
-	return unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
+	if (isCeiled) {
+		balance = Math.ceil(Number(balance));
+	}
+
+	return;
+	unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
 		? balance.toFixed(3)
 		: balance.toFixed(0);
 };

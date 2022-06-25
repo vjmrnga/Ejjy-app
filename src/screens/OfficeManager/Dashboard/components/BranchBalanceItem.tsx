@@ -173,14 +173,20 @@ export const BranchBalanceItem = ({
 			const { barcode, name, textcode, unit_of_measurement } = product;
 			const { datetime_created, type } = latest_requisition_slip || {};
 
-			const currentBalance = formatQuantity(
-				unit_of_measurement,
-				current_balance,
-			);
+			const currentBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: current_balance,
+			});
 
-			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: max_balance,
+			});
 
-			const boBalance = formatQuantity(unit_of_measurement, bo_balance);
+			const boBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: bo_balance,
+			});
 
 			return {
 				key: branchProduct.id,

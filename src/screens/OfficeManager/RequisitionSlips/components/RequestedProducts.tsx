@@ -31,11 +31,17 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 					} = product;
 
 					return {
-						quantityPiece: formatQuantity(unit_of_measurement, quantity_piece),
+						quantityPiece: formatQuantity({
+							unitOfMeasurement: unit_of_measurement,
+							quantity: quantity_piece,
+						}),
 						quantityBulk: convertToBulk(quantity_piece, pieces_in_bulk),
 						barcode: barcode || textcode,
 						name,
-						quantity: formatQuantity(unit_of_measurement, quantity_piece),
+						quantity: formatQuantity({
+							unitOfMeasurement: unit_of_measurement,
+							quantity: quantity_piece,
+						}),
 					};
 				}),
 			);

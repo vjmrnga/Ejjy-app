@@ -48,11 +48,17 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 			const isFulfilled = fulfilledQuantityPiece > 0;
 			const inputted =
 				quantityType === quantityTypes.PIECE
-					? formatQuantity(unit_of_measurement, fulfilledQuantityPiece)
+					? formatQuantity({
+							unitOfMeasurement: unit_of_measurement,
+							quantity: fulfilledQuantityPiece,
+					  })
 					: convertToBulk(fulfilledQuantityPiece, pieces_in_bulk);
 			const ordered =
 				quantityType === quantityTypes.PIECE
-					? formatQuantity(unit_of_measurement, quantity_piece)
+					? formatQuantity({
+							unitOfMeasurement: unit_of_measurement,
+							quantity: quantity_piece,
+					  })
 					: convertToBulk(quantity_piece, pieces_in_bulk);
 
 			return {

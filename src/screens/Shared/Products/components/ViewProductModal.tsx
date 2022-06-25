@@ -59,7 +59,10 @@ export const ViewProductModal = ({ product, onClose }: Props) => (
 			<DetailsSingle label="Reorder Point" value={product.reorder_point} />
 			<DetailsSingle
 				label="Max Balance"
-				value={formatQuantity(product.unit_of_measurement, product.max_balance)}
+				value={formatQuantity({
+					unitOfMeasurement: product.unit_of_measurement,
+					quantity: product.max_balance,
+				})}
 			/>
 			<DetailsSingle label="Pieces in Bulk" value={product.pieces_in_bulk} />
 			<DetailsSingle

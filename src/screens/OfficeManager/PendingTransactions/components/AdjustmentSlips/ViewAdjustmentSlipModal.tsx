@@ -50,19 +50,21 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 				name:
 					item.order_slip_product.product.barcode ||
 					item.order_slip_product.product.textcode,
-				previous_quantity: formatQuantity(
-					item.order_slip_product.product.unit_of_measurement,
-					item.previous_fulfilled_quantity_piece,
-				),
+				previous_quantity: formatQuantity({
+					unitOfMeasurement:
+						item.order_slip_product.product.unit_of_measurement,
+					quantity: item.previous_fulfilled_quantity_piece,
+				}),
 				new_quantity:
 					Number(item.new_fulfilled_quantity_piece) ===
 					DEFAULT_APPROVED_FULFILLED_QUANTITY ? (
 						<ColoredText variant="primary" text="Approved" />
 					) : (
-						formatQuantity(
-							item.order_slip_product.product.unit_of_measurement,
-							item.new_fulfilled_quantity_piece,
-						)
+						formatQuantity({
+							unitOfMeasurement:
+								item.order_slip_product.product.unit_of_measurement,
+							quantity: item.new_fulfilled_quantity_piece,
+						})
 					),
 			}))}
 			scroll={{ x: 800 }}

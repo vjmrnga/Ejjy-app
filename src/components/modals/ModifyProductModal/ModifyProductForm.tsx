@@ -110,17 +110,24 @@ export const ModifyProductForm = ({
 				isShownInScaleList: product?.is_shown_in_scale_list || false,
 				isVatExempted: product?.is_vat_exempted?.toString() || 'false',
 				maxBalance: product?.max_balance
-					? formatQuantity(product?.unit_of_measurement, product.max_balance)
+					? formatQuantity({
+							unitOfMeasurement: product?.unit_of_measurement,
+							quantity: product.max_balance,
+					  })
 					: '',
 				name: product?.name || '',
 				piecesInBulk: product?.pieces_in_bulk,
+				conversionAmount: product?.conversion_amount || '',
 				pointSystemTagId: product?.point_system_tag?.id || '',
 				pricePerBulk: product?.price_per_bulk || '',
 				pricePerPiece: product?.price_per_piece || '',
 				printDetails: product?.print_details || '',
 				productCategory: product?.product_category,
 				reorderPoint: product?.reorder_point
-					? formatQuantity(product?.unit_of_measurement, product.reorder_point)
+					? formatQuantity({
+							unitOfMeasurement: product?.unit_of_measurement,
+							quantity: product.reorder_point,
+					  })
 					: '',
 				textcode: product?.textcode || '',
 				type: product?.type || productTypes.WET,
@@ -182,7 +189,18 @@ export const ModifyProductForm = ({
 					productCategory: Yup.string().label('Product Category'),
 					printDetails: Yup.string().required().label('Print Details'),
 					description: Yup.string().required().label('Description'),
-					piecesInBulk: Yup.number().required().min(0).label('Pieces in Bulk'),
+					piecesInBulk: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Pieces in Bulk'),
+					conversionAmount: Yup.number()
+						.when(['barcode', 'sellingBarcode'], {
+							is: (barcode, sellingBarcode) => barcode || sellingBarcode,
+							then: Yup.number().required().moreThan(0),
+							otherwise: Yup.number().notRequired().nullable(),
+						})
+						.label('Conversion Amount'),
 					allowableSpoilage: Yup.number()
 						.when(['unitOfMeasurement'], {
 							is: (unitOfMeasurementValue) =>
@@ -202,6 +220,7 @@ export const ModifyProductForm = ({
 					reorderPoint: Yup.number()
 						.required()
 						.moreThan(0)
+						.nullable()
 						.test(
 							'is-whole-number',
 							'Non-weighing items require whole number quantity.',
@@ -218,6 +237,7 @@ export const ModifyProductForm = ({
 					maxBalance: Yup.number()
 						.required()
 						.moreThan(0)
+						.nullable()
 						.test(
 							'is-whole-number',
 							'Non-weighing items require whole number quantity.',
@@ -231,15 +251,25 @@ export const ModifyProductForm = ({
 							},
 						)
 						.label('Max Balance'),
-					costPerPiece: Yup.string().required().min(0).label('Cost per Piece'),
-					costPerBulk: Yup.string().required().min(0).label('Cost Per Bulk'),
-					pricePerPiece: Yup.string()
+					costPerPiece: Yup.number()
 						.required()
-						.min(0)
+						.moreThan(0)
+						.nullable()
+						.label('Cost per Piece'),
+					costPerBulk: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Cost Per Bulk'),
+					pricePerPiece: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
 						.label('Regular Price (Piece)'),
-					pricePerBulk: Yup.string()
+					pricePerBulk: Yup.number()
 						.required()
-						.min(0)
+						.moreThan(0)
+						.nullable()
 						.label('Regular Price (Bulk)'),
 					pointSystemTagId: Yup.string().nullable().label('Point System Tag'),
 
@@ -266,19 +296,29 @@ export const ModifyProductForm = ({
 					isDailyChecked: Yup.boolean(),
 					isRandomlyChecked: Yup.boolean(),
 					markdownPricePerPiece1: Yup.number()
-						.min(0)
+						.required()
+						.moreThan(0)
+						.nullable()
 						.label('Wholesale Price (Piece)'),
 					markdownPricePerPiece2: Yup.number()
-						.min(0)
+						.required()
+						.moreThan(0)
+						.nullable()
 						.label('Special Price (Piece)'),
 					markdownPricePerBulk1: Yup.number()
-						.min(0)
+						.required()
+						.moreThan(0)
+						.nullable()
 						.label('Wholesale Price (Bulk)'),
 					markdownPricePerBulk2: Yup.number()
-						.min(0)
+						.required()
+						.moreThan(0)
+						.nullable()
 						.label('Special Price (Bulk)'),
-					creditPricePerPiece: Yup.string()
-						.min(0)
+					creditPricePerPiece: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
 						.test(
 							'greater-than-regular-price',
 							'Credit price must not be less than to the regular price (piece).',
@@ -296,8 +336,10 @@ export const ModifyProductForm = ({
 							},
 						)
 						.label('Credit Price per Piece'),
-					creditPricePerBulk: Yup.string()
-						.min(0)
+					creditPricePerBulk: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
 						.test(
 							'greater-than-regular-price',
 							'Credit price must not be less than to the regular price (bulk).',
@@ -404,28 +446,66 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'barcode',
-								label: 'Barcode (Non-Weighing)',
+								label: 'Barcode',
 								setFieldValue,
 								values,
 							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="unitOfMeasurement"
+								items={unitOfMeasurementOptions}
+							/>
+							<ErrorMessage
+								name="unitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'sellingBarcode',
-								label: 'Scale Barcode (Weighing)',
+								label: 'Scale Barcode',
 								setFieldValue,
 								values,
 							})}
 						</Col>
 
 						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="sellingBarcodeUnitOfMeasurement"
+								items={unitOfMeasurementOptions}
+								disabled={!values.sellingBarcode}
+							/>
+							<ErrorMessage
+								name="sellingBarcodeUnitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'packingBarcode',
-								label: 'Packing Barcode (Non-Weighing)',
+								label: 'Packing Barcode',
 								setFieldValue,
 								values,
 							})}
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label label="TT-002" spacing />
+							<FormRadioButton
+								id="packingBarcodeUnitOfMeasurement"
+								items={unitOfMeasurementOptions}
+								disabled={!values.packingBarcode}
+							/>
+							<ErrorMessage
+								name="packingBarcodeUnitOfMeasurement"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 
 						<Col sm={12} xs={24}>
@@ -437,7 +517,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col span={24}>
+						<Col sm={12} xs={24}>
 							{renderInputField({
 								name: 'name',
 								label: 'Name',
@@ -604,6 +684,18 @@ export const ModifyProductForm = ({
 								type: inputTypes.NUMBER,
 							})}
 						</Col>
+
+						{(values.barcode || values.sellingBarcode) && (
+							<Col sm={12} xs={24}>
+								{renderInputField({
+									name: 'conversionAmount',
+									label: 'Conversion Amount',
+									setFieldValue,
+									values,
+									type: inputTypes.NUMBER,
+								})}
+							</Col>
+						)}
 
 						<Col sm={12} xs={24}>
 							<Label label="" spacing />

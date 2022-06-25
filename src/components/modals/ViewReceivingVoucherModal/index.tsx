@@ -39,7 +39,10 @@ export const ViewReceivingVoucherModal = ({
 			type: item.product.is_vat_exempted
 				? vatTypes.VAT_EMPTY
 				: vatTypes.VATABLE,
-			quantity: formatQuantity(item.product.unit_of_measurement, item.quantity),
+			quantity: formatQuantity({
+				unitOfMeasurement: item.product.unit_of_measurement,
+				quantity: item.quantity,
+			}),
 			costPerPiece: formatInPeso(item.cost_per_piece),
 		}));
 

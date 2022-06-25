@@ -29,15 +29,15 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 			returnItemSlip.products.map((item) => ({
 				key: item.id,
 				name: item.product.name,
-				qty_returned: formatQuantity(
-					item.product.unit_of_measurement,
-					item.quantity_returned,
-				),
+				qty_returned: formatQuantity({
+					unitOfMeasurement: item.product.unit_of_measurement,
+					quantity: item.quantity_returned,
+				}),
 				qty_received: item?.quantity_received
-					? formatQuantity(
-							item.product.unit_of_measurement,
-							item.quantity_received,
-					  )
+					? formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.quantity_received,
+					  })
 					: EMPTY_CELL,
 				status: getReturnItemSlipStatus(returnItemSlip.status),
 			})),

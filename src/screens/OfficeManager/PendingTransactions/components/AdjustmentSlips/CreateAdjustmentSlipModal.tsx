@@ -46,10 +46,10 @@ export const CreateAdjustmentSlipModal = ({
 							item.product.selling_barcode ||
 							item.product.textcode,
 						name: item.product.name,
-						fulfilledQuantityPiece: formatQuantity(
-							item.product.unit_of_measurement,
-							item.fulfilled_quantity_piece,
-						),
+						fulfilledQuantityPiece: formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.fulfilled_quantity_piece,
+						}),
 						hasQuantityAllowance: item.product.has_quantity_allowance,
 						unitOfMeasurement: item.product.unit_of_measurement,
 					})),

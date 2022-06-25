@@ -238,25 +238,31 @@ export const OrderSlips = ({
 			product_textcode: textcode,
 			product_pieces_in_bulk: pieces_in_bulk,
 			quantity: quantityPiece,
-			ordered_quantity_piece: formatQuantity(
-				unit_of_measurement,
-				orderedQuantityPiece,
-			),
+			ordered_quantity_piece: formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: orderedQuantityPiece,
+			}),
 			ordered_quantity_bulk: convertToBulk(
 				orderedQuantityPiece,
 				pieces_in_bulk,
 			),
 			quantity_type: quantityTypes.PIECE,
-			branch_current: formatQuantity(unit_of_measurement, current),
-			branch_max_balance: formatQuantity(unit_of_measurement, max_balance),
-			branch_current_bulk: formatQuantity(
-				unit_of_measurement,
-				convertToBulk(current, pieces_in_bulk),
-			),
-			branch_max_balance_bulk: formatQuantity(
-				unit_of_measurement,
-				convertToBulk(max_balance, pieces_in_bulk),
-			),
+			branch_current: formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: current,
+			}),
+			branch_max_balance: formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: max_balance,
+			}),
+			branch_current_bulk: formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: convertToBulk(current, pieces_in_bulk),
+			}),
+			branch_max_balance_bulk: formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: convertToBulk(max_balance, pieces_in_bulk),
+			}),
 			assigned_personnel: assignedPersonnel,
 		};
 	};

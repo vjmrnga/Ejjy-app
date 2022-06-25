@@ -103,10 +103,10 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 					/>
 					<DetailsSingle
 						label="Max Balance"
-						value={formatQuantity(
-							branchProduct.product.unit_of_measurement,
-							branchProduct.max_balance,
-						)}
+						value={formatQuantity({
+							unitOfMeasurement: branchProduct.product.unit_of_measurement,
+							quantity: branchProduct.max_balance,
+						})}
 					/>
 
 					<DetailsSingle
@@ -117,10 +117,10 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 					{isCurrentBalanceVisible && (
 						<DetailsSingle
 							label="Current Balance"
-							value={formatQuantity(
-								branchProduct.product.unit_of_measurement,
-								branchProduct.current_balance,
-							)}
+							value={formatQuantity({
+								unitOfMeasurement: branchProduct.product.unit_of_measurement,
+								quantity: branchProduct.current_balance,
+							})}
 						/>
 					)}
 

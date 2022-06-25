@@ -10,6 +10,7 @@ interface Modify {
 	acting_user_id: number;
 	allowable_spoilage?: number;
 	barcode: string;
+	conversion_amount?: number;
 	cost_per_bulk: number;
 	cost_per_piece: number;
 	description: string;

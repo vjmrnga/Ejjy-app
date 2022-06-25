@@ -263,14 +263,20 @@ export const ReportsBranch = ({ branchId, productCategories }: Props) => {
 			const remainingBalance =
 				(Number(current_balance) / Number(max_balance)) * 100;
 
-			const currentBalance = formatQuantity(
-				unit_of_measurement,
-				current_balance,
-			);
+			const currentBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: current_balance,
+			});
 
-			const quantitySold = formatQuantity(unit_of_measurement, quantity_sold);
+			const quantitySold = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: quantity_sold,
+			});
 
-			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: max_balance,
+			});
 
 			return {
 				barcode: barcode || textcode,
@@ -280,10 +286,10 @@ export const ReportsBranch = ({ branchId, productCategories }: Props) => {
 				quantity_sold: quantitySold,
 				daily_average_sold,
 				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
-				average_daily_consumption: formatQuantity(
-					unit_of_measurement,
-					average_daily_consumption,
-				),
+				average_daily_consumption: formatQuantity({
+					unitOfMeasurement: unit_of_measurement,
+					quantity: average_daily_consumption,
+				}),
 				status: getBranchProductStatus(product_status),
 				actions: (
 					<TableActions

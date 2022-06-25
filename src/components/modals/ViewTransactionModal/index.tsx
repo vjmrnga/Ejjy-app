@@ -80,10 +80,10 @@ export const ViewTransactionModal = ({
 			({ id, branch_product, quantity, price_per_piece }) => ({
 				key: id,
 				item: branch_product.product.name,
-				quantity: formatQuantity(
-					branch_product.product.unit_of_measurement,
-					quantity,
-				),
+				quantity: formatQuantity({
+					unitOfMeasurement: branch_product.product.unit_of_measurement,
+					quantity: quantity,
+				}),
 				rate: formatInPeso(price_per_piece),
 				amount: formatInPeso(quantity * Number(price_per_piece)),
 			}),

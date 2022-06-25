@@ -111,18 +111,18 @@ export const AddBranchProductBalanceModal = ({
 				<DetailsSingle label="Name" value={branchProduct.product.name} />
 				<DetailsSingle
 					label="Max Balance"
-					value={formatQuantity(
-						branchProduct.product.unit_of_measurement,
-						branchProduct.max_balance,
-					)}
+					value={formatQuantity({
+						unitOfMeasurement: branchProduct.product.unit_of_measurement,
+						quantity: branchProduct.max_balance,
+					})}
 				/>
 				{isCurrentBalanceVisible && (
 					<DetailsSingle
 						label="Current Balance"
-						value={formatQuantity(
-							branchProduct.product.unit_of_measurement,
-							branchProduct.current_balance,
-						)}
+						value={formatQuantity({
+							unitOfMeasurement: branchProduct.product.unit_of_measurement,
+							quantity: branchProduct.current_balance,
+						})}
 					/>
 				)}
 			</DetailsRow>

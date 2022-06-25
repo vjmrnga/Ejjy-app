@@ -47,14 +47,14 @@ export const CreateAdjustmentSlipModal = ({
 							item.product.selling_barcode ||
 							item.product.textcode,
 						name: item.product.name,
-						returnedQuantity: formatQuantity(
-							item.product.unit_of_measurement,
-							item.quantity_returned,
-						),
-						receivedQuantity: formatQuantity(
-							item.product.unit_of_measurement,
-							item.quantity_received,
-						),
+						returnedQuantity: formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.quantity_returned,
+						}),
+						receivedQuantity: formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.quantity_received,
+						}),
 						unitOfMeasurement: item.product.unit_of_measurement,
 					})),
 			);

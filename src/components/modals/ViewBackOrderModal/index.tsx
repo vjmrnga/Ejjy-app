@@ -67,25 +67,25 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 		const formattedProducts = products.map((item) => ({
 			key: item.id,
 			name: item.product.name,
-			quantityReturned: formatQuantity(
-				item.product.unit_of_measurement,
-				item.quantity_returned,
-			),
+			quantityReturned: formatQuantity({
+				unitOfMeasurement: item.product.unit_of_measurement,
+				quantity: item.quantity_returned,
+			}),
 			quantityReceived: item?.quantity_received
-				? formatQuantity(
-						item.product.unit_of_measurement,
-						item.quantity_received,
-				  )
+				? formatQuantity({
+						unitOfMeasurement: item.product.unit_of_measurement,
+						quantity: item.quantity_received,
+				  })
 				: EMPTY_CELL,
 			status: getBackOrderStatus(item.status),
 
 			type: item.product.is_vat_exempted
 				? vatTypes.VAT_EMPTY
 				: vatTypes.VATABLE,
-			quantity: formatQuantity(
-				item.product.unit_of_measurement,
-				item.quantity_returned,
-			),
+			quantity: formatQuantity({
+				unitOfMeasurement: item.product.unit_of_measurement,
+				quantity: item.quantity_returned,
+			}),
 			remarks: item.remarks,
 		}));
 

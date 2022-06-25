@@ -114,7 +114,10 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					EMPTY_CELL
 				),
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
-				quantity: formatQuantity(product?.unit_of_measurement, quantity),
+				quantity: formatQuantity({
+					unitOfMeasurement: product?.unit_of_measurement,
+					quantity: quantity,
+				}),
 				code: `${product?.textcode || ''} / ${
 					product?.barcode || product?.selling_barcode || ''
 				}`,

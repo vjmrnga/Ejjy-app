@@ -109,10 +109,16 @@ export const CreateEditProductForm = ({
 				cost_per_piece: product?.cost_per_piece || '',
 				cost_per_bulk: product?.cost_per_bulk || '',
 				reorder_point: product?.reorder_point
-					? formatQuantity(product?.unit_of_measurement, product.reorder_point)
+					? formatQuantity({
+							unitOfMeasurement: product?.unit_of_measurement,
+							quantity: product.reorder_point,
+					  })
 					: '',
 				max_balance: product?.max_balance
-					? formatQuantity(product?.unit_of_measurement, product.max_balance)
+					? formatQuantity({
+							unitOfMeasurement: product?.unit_of_measurement,
+							quantity: product.max_balance,
+					  })
 					: '',
 				price_per_piece: product?.price_per_piece || '',
 				price_per_bulk: product?.price_per_bulk || '',

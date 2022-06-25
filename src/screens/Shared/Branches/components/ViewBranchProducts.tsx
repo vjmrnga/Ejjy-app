@@ -137,12 +137,15 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 				max_balance,
 			} = branchProduct;
 
-			const currentBalance = formatQuantity(
-				unit_of_measurement,
-				current_balance,
-			);
+			const currentBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: current_balance,
+			});
 
-			const maxBalance = formatQuantity(unit_of_measurement, max_balance);
+			const maxBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: max_balance,
+			});
 
 			return {
 				key: id,

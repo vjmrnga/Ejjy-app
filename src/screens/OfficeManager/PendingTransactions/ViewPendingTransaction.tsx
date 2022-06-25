@@ -126,19 +126,19 @@ const Details = ({
 					code: item.product.barcode || item.product.textcode,
 					name: item.product.name,
 					qty_fulfilled: item?.fulfilled_quantity_piece
-						? formatQuantity(
-								item.product.unit_of_measurement,
-								item.fulfilled_quantity_piece,
-						  )
+						? formatQuantity({
+								unitOfMeasurement: item.product.unit_of_measurement,
+								quantity: item.fulfilled_quantity_piece,
+						  })
 						: EMPTY_CELL,
-					qty_requested: formatQuantity(
-						item.product.unit_of_measurement,
-						item.quantity_piece,
-					),
-					current_balance: formatQuantity(
-						item.product.unit_of_measurement,
-						item.current_balance,
-					),
+					qty_requested: formatQuantity({
+						unitOfMeasurement: item.product.unit_of_measurement,
+						quantity: item.quantity_piece,
+					}),
+					current_balance: formatQuantity({
+						unitOfMeasurement: item.product.unit_of_measurement,
+						quantity: item.current_balance,
+					}),
 					personnel: `${item.assigned_person.first_name} ${item.assigned_person.last_name}`,
 					has_qty_allowance: item.product.has_quantity_allowance ? (
 						<ColoredText variant="primary" text="Yes" />

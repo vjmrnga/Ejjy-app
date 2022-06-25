@@ -805,10 +805,10 @@ export const printReceivingVoucherForm = ({
 						<td colspan="2">${item.product.name}</td>
 					</tr>
 					<tr>
-						<td style="padding-left: 30px">${formatQuantity(
-							item.product.unit_of_measurement,
-							item.quantity,
-						)} @ ${formatInPeso(item.cost_per_piece, PESO_SIGN)}</td>
+						<td style="padding-left: 30px">${formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.quantity,
+						})} @ ${formatInPeso(item.cost_per_piece, PESO_SIGN)}</td>
 						<td style="text-align: right">
 							${formatInPeso(
 								Number(item.quantity) * Number(item.cost_per_piece),
@@ -881,10 +881,10 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 						<td colspan="2">${item.product.name}</td>
 					</tr>
 					<tr>
-						<td style="padding-left: 30px">${formatQuantity(
-							item.product.unit_of_measurement,
-							item.quantity_returned,
-						)} @ ${formatInPeso(item.current_price_per_piece, PESO_SIGN)}</td>
+						<td style="padding-left: 30px">${formatQuantity({
+							unitOfMeasurement: item.product.unit_of_measurement,
+							quantity: item.quantity_returned,
+						})} @ ${formatInPeso(item.current_price_per_piece, PESO_SIGN)}</td>
 						<td style="text-align: right">
 							${formatInPeso(subtotal, PESO_SIGN)} ${
 						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
