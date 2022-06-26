@@ -8,7 +8,6 @@ import { ModifyUserForm } from './ModifyUserForm';
 interface Props {
 	user?: any;
 	branchUsersOnly?: boolean;
-	onSuccess: any;
 	onClose: any;
 }
 

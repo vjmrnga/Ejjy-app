@@ -5,16 +5,19 @@ import { useBranches, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import { BranchAssignmentUserModal } from './components/BranchAssignmentUserModal';
 import { BranchUsers } from './components/BranchUsers';
-import './style.scss';
+
+const NO_BRANCH_ID = -1;
 
 export const Users = () => {
 	// STATES
 	const [modifyUserModalVisible, setModifyUserModalVisible] = useState(false);
+	const [reassignUserModalVisible, setReassignUserModalVisible] =
+		useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
-
 	const queryClient = useQueryClient();
 	const {
 		params: { branchId: currentBranchId },
@@ -27,7 +30,7 @@ export const Users = () => {
 	// METHODS
 	useEffect(() => {
 		if (branches && !currentBranchId) {
-			handleTabClick(branches?.[0]?.id);
+			handleTabClick(NO_BRANCH_ID);
 		}
 	}, [branches, currentBranchId]);
 
@@ -36,13 +39,6 @@ export const Users = () => {
 			{ branchId },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
-	};
-
-	const handleSuccess = (user) => {
-		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
-			cachedData.data.results = [user, ...cachedData.data.results];
-			return cachedData;
-		});
 	};
 
 	return (
@@ -63,12 +59,30 @@ export const Users = () => {
 					}
 					className="my-4 mx-6"
 				>
+					<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branch">
+						<BranchUsers
+							branchId={NO_BRANCH_ID}
+							onEditUser={(user) => {
+								setModifyUserModalVisible(true);
+								setSelectedUser(user);
+							}}
+							onReassignUser={(user) => {
+								setReassignUserModalVisible(true);
+								setSelectedUser(user);
+							}}
+						/>
+					</Tabs.TabPane>
+
 					{branches.map(({ name, id }) => (
 						<Tabs.TabPane key={id} tab={name}>
 							<BranchUsers
 								branchId={id}
 								onEditUser={(user) => {
 									setModifyUserModalVisible(true);
+									setSelectedUser(user);
+								}}
+								onReassignUser={(user) => {
+									setReassignUserModalVisible(true);
 									setSelectedUser(user);
 								}}
 							/>
@@ -79,22 +93,26 @@ export const Users = () => {
 				{modifyUserModalVisible && (
 					<ModifyUserModal
 						user={selectedUser}
-						onSuccess={handleSuccess}
 						onClose={() => {
-							setSelectedUser(null);
 							setModifyUserModalVisible(false);
+							setSelectedUser(null);
+						}}
+					/>
+				)}
+
+				{reassignUserModalVisible && (
+					<BranchAssignmentUserModal
+						user={selectedUser}
+						onSuccess={() => {
+							queryClient.invalidateQueries('useUsers');
+						}}
+						onClose={() => {
+							setReassignUserModalVisible(false);
+							setSelectedUser(null);
 						}}
 					/>
 				)}
 			</Box>
-			{/* TODO: Temporarily hid the Pending Transactions section. Need to be revisited if this is still needed */}
-			{/* <PendingTransactionsSection
-				ref={pendingTransactionsRef}
-				title="Pending User Transactions"
-				transactionType={pendingTransactionTypes.USERS}
-				setHasPendingTransactions={setHasPendingTransactions}
-				withActionColumn
-			/> */}
 		</Content>
 	);
 };

@@ -29,7 +29,6 @@ export const Users = () => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const queryClient = useQueryClient();
 	const history = useHistory();
 	const { isConnected } = usePingOnlineServer();
 	const {
@@ -67,13 +66,6 @@ export const Users = () => {
 
 		setDataSource(formattedUsers);
 	}, [users]);
-
-	const handleSuccess = (user) => {
-		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
-			cachedData.data.results = [user, ...cachedData.data.results];
-			return cachedData;
-		});
-	};
 
 	return (
 		<Content title="Users">
@@ -115,7 +107,6 @@ export const Users = () => {
 			{modifyUserModalVisible && (
 				<ModifyUserModal
 					user={selectedUser}
-					onSuccess={handleSuccess}
 					onClose={() => {
 						setSelectedUser(null);
 						setModifyUserModalVisible(false);

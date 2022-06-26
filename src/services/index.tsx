@@ -9,6 +9,7 @@ export { default as AuthService } from './AuthService';
 export { default as BackOrdersService } from './BackOrdersService';
 export { default as BalanceAdjustmentLogService } from './BalanceAdjustmentLogService';
 export { default as BirReportsService } from './BirReportsService';
+export { default as BranchAssignmentsService } from './BranchAssignmentsService';
 export { default as BranchesDayService } from './BranchesDayService';
 export { default as BranchesService } from './BranchesService';
 export { default as BranchMachinesService } from './BranchMachinesService';

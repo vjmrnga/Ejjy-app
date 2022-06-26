@@ -1,6 +1,6 @@
-import { Table } from 'antd';
+import { Button, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { RequestErrors, TableActions } from 'components';
+import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -16,9 +16,14 @@ const columns: ColumnsType = [
 interface Props {
 	branchId: any;
 	onEditUser: any;
+	onReassignUser: any;
 }
 
-export const BranchUsers = ({ branchId, onEditUser }: Props) => {
+export const BranchUsers = ({
+	branchId,
+	onEditUser,
+	onReassignUser,
+}: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -29,7 +34,7 @@ export const BranchUsers = ({ branchId, onEditUser }: Props) => {
 		error: listError,
 	} = useUsers({
 		params: {
-			// branchId, NOTE: Temporarily removed the branch ID
+			branchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -47,10 +52,31 @@ export const BranchUsers = ({ branchId, onEditUser }: Props) => {
 			name: getFullName(user),
 			type: getUserTypeName(user.user_type),
 			actions: (
-				<TableActions
-					onEdit={() => onEditUser({ ...user, branchId })}
-					onRemove={() => deleteUser(user.id)}
-				/>
+				<Space>
+					<Button
+						type="primary"
+						onClick={() => onReassignUser({ ...user, branchId })}
+					>
+						Assign Branch
+					</Button>
+					<Button
+						type="primary"
+						onClick={() => onEditUser({ ...user, branchId })}
+					>
+						Edit
+					</Button>
+					<Popconfirm
+						placement="left"
+						title="Are you sure to remove this user?"
+						onConfirm={() => deleteUser(user.id)}
+						okText="Yes"
+						cancelText="No"
+					>
+						<Button type="primary" danger>
+							Delete
+						</Button>
+					</Popconfirm>
+				</Space>
 			),
 		}));
 

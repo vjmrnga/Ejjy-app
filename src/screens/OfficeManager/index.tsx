@@ -19,7 +19,6 @@ import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
-import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users/Users';
 
 const sidebarItems = [
@@ -172,11 +171,6 @@ const OfficeManager = () => {
 					/>
 
 					<Route path="/office-manager/users" exact component={Users} />
-					<Route
-						path="/office-manager/users/assign/:id"
-						component={AssignUser}
-						exact
-					/>
 					<Route
 						path="/office-manager/notifications"
 						component={Notifications}
