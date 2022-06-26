@@ -4,22 +4,22 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
+import { DetailsRow, DetailsSingle } from '../../../../../../components';
 import {
 	Button,
 	FieldError,
 	FormInputLabel,
 	FormRadioButton,
 	Label,
-} from '../../../../../components/elements';
+} from '../../../../../../components/elements';
 import {
 	booleanOptions,
 	checkingTypesOptions,
-} from '../../../../../global/options';
+} from '../../../../../../global/options';
 import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
-} from '../../../../../global/types';
+} from '../../../../../../global/types';
 import { sleep } from 'utils';
 
 const { Text } = Typography;

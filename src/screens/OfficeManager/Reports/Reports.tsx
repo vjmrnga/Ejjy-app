@@ -1,29 +1,28 @@
 import { Spin, Tabs } from 'antd';
+import { Content, RequestErrors } from 'components';
+import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
+import { useBranches, useProductCategories, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { Content, RequestErrors } from '../../../components';
-import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
-import { useBranches } from 'hooks';
-import { useProductCategories } from '../../../hooks/useProductCategories';
-import { useQueryParams } from 'hooks';
+import React, { useEffect } from 'react';
 import { convertIntoArray } from 'utils';
 import { ReportsBranch } from './components/ReportsBranch';
 import './style.scss';
 
 export const Reports = () => {
-	// STATES
-	const [productCategories, setProductCategories] = useState([]);
-
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
 	} = useBranches();
 	const {
-		getProductCategories,
-		status: productCategoriesStatus,
-		errors: productCategoriesErrors,
-	} = useProductCategories();
+		data: { productCategories },
+		isFetching: isFetchingProductCategories,
+		error: productCategoriesErrors,
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// VARIABLES
 	const {
@@ -32,17 +31,6 @@ export const Reports = () => {
 	} = useQueryParams();
 
 	// METHODS
-	useEffect(() => {
-		getProductCategories(
-			{ branchId: currentBranchId },
-			({ status, data: responseData }) => {
-				if (status === request.SUCCESS) {
-					setProductCategories(responseData);
-				}
-			},
-		);
-	}, []);
-
 	useEffect(() => {
 		if (branches && !currentBranchId) {
 			onTabClick(branches?.[0]?.id);
@@ -60,10 +48,7 @@ export const Reports = () => {
 	return (
 		<Content className="Reports" title="Reports">
 			<Box>
-				<Spin
-					size="large"
-					spinning={productCategoriesStatus === request.REQUESTING}
-				>
+				<Spin size="large" spinning={isFetchingProductCategories}>
 					<RequestErrors
 						errors={convertIntoArray(productCategoriesErrors)}
 						withSpaceBottom

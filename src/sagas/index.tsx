@@ -10,10 +10,8 @@ import networkSagas from './network';
 import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
 import preparationSlipsSagas from './preparation-slips';
-import productCategoriesSagas from './product-categories';
 import requisitionSlipsSagas from './requisition-slips';
 import returnItemSlipsSagas from './return-item-slips';
-import sessionsSagas from './sessions';
 import usersSagas from './users';
 
 export default function* rootSaga() {
@@ -26,10 +24,8 @@ export default function* rootSaga() {
 		...networkSagas,
 		...orderSlipsSagas,
 		...preparationSlipsSagas,
-		...productCategoriesSagas,
 		...requisitionSlipsSagas,
 		...returnItemSlipsSagas,
-		...sessionsSagas,
 		...usersSagas,
 		...adminSagas,
 		...officeManagerSagas,

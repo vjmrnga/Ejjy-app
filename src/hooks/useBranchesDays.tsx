@@ -1,14 +1,22 @@
+import { actions, types } from 'ducks/branches-days';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
-import { actions, types } from '../ducks/branches-days';
-import { request } from '../global/types';
-import { modifiedExtraCallback, onCallback } from 'utils';
+import { useQuery } from 'react-query';
+import { BranchesDaysService } from 'services';
+import {
+	getLocalApiUrl,
+	getOnlineApiUrl,
+	modifiedExtraCallback,
+	onCallback,
+} from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,
 	getDataForCurrentPage,
 	removeInCachedData,
 	updateInCachedData,
-} from '../utils/pagination';
+} from 'utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
@@ -150,3 +158,43 @@ export const useBranchesDays = () => {
 		resetError,
 	};
 };
+
+const useBranchDaysNew = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useBranchDays',
+			params?.branchId,
+			params?.branchMachineId,
+			params?.closedByUserId,
+			params?.isAutomaticallyClosed,
+			params?.isUnauthorized,
+			params?.openedByUserId,
+			params?.pageSize,
+			params?.page,
+			params?.timeRange,
+		],
+		async () =>
+			BranchesDaysService.list(
+				{
+					branch_id: params?.branchId,
+					branch_machine_id: params?.branchMachineId,
+					closed_by_user_id: params?.closedByUserId,
+					is_automatically_closed: params?.isAutomaticallyClosed,
+					is_unauthorized: params?.isUnauthorized,
+					opened_by_user_id: params?.openedByUserId,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
+					time_range: params?.timeRange,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				branchDays: query.data.results,
+				total: query.data.count,
+			}),
+		},
+	);
+
+export default useBranchDaysNew;

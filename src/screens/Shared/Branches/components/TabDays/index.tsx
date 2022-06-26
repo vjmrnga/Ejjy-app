@@ -9,7 +9,7 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 } from 'global';
-import { useQueryParams, useSessions, useUsers } from 'hooks';
+import { useBranchDays, useQueryParams, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
 
@@ -20,7 +20,7 @@ const columns: ColumnsType = [
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
-const sessionTypes = {
+const branchDayTypes = {
 	ALL: 'all',
 	AUTHORIZED: 'authorized',
 	UNAUTHORIZED: 'unauthorized',
@@ -33,23 +33,33 @@ const closingTypes = {
 };
 
 interface Props {
-	branchMachineId: any;
+	branchId: any;
 }
 
-export const TabSessions = ({ branchMachineId }: Props) => {
+export const TabDays = ({ branchId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { sessions, total },
+		data: { branchDays, total },
 		isFetching,
 		error: listError,
-	} = useSessions({
+	} = useBranchDays({
 		params: {
 			...params,
-			branchMachineId,
+			branchId,
+			isUnauthorized: (() => {
+				let isUnauthorized = undefined;
+				if (params.type === branchDayTypes.UNAUTHORIZED) {
+					isUnauthorized = true;
+				} else if (params.type === branchDayTypes.AUTHORIZED) {
+					isUnauthorized = false;
+				}
+
+				return isUnauthorized;
+			})(),
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed = undefined;
 				if (params.closingType === closingTypes.AUTOMATIC) {
@@ -60,43 +70,38 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 
 				return isAutomaticallyClosed;
 			})(),
-			isUnauthorized: (() => {
-				let isUnauthorized = undefined;
-				if (params.type === sessionTypes.UNAUTHORIZED) {
-					isUnauthorized = true;
-				} else if (params.type === sessionTypes.AUTHORIZED) {
-					isUnauthorized = false;
-				}
-
-				return isUnauthorized;
-			})(),
 		},
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchSession = sessions.map((session) => {
+		const formattedBranchDays = branchDays.map((branchDay) => {
 			const {
 				id,
-				user,
-				datetime_started: datetimeStarted,
-				datetime_ended: datetimeEnded,
+				started_by,
+				ended_by,
+				datetime_created,
+				datetime_ended,
 				is_automatically_closed: isAutomaticallyClosed,
 				is_unauthorized,
 				is_unauthorized_datetime_ended,
-			} = session;
+			} = branchDay;
 
 			return {
 				key: id,
-				user: getFullName(user),
+				user: renderUser({
+					startedBy: started_by,
+					endedBy: ended_by,
+					isAutomaticallyClosed,
+				}),
 				datetime: renderDateTime({
-					datetimeStarted,
-					datetimeEnded,
+					datetimeStarted: datetime_created,
+					datetimeEnded: datetime_ended,
 					isAutomaticallyClosed,
 				}),
 				unauthorizedTimeRange: is_unauthorized_datetime_ended
 					? renderDateTime({
-							datetimeStarted,
+							datetimeStarted: datetime_created,
 							datetimeEnded: is_unauthorized_datetime_ended,
 							isAutomaticallyClosed,
 					  })
@@ -109,17 +114,43 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 			};
 		});
 
-		setDataSource(formattedBranchSession);
-	}, [sessions]);
+		setDataSource(formattedBranchDays);
+	}, [branchDays]);
+
+	const renderUser = ({ startedBy, endedBy, isAutomaticallyClosed }) => {
+		const startedByUser = startedBy ? getFullName(startedBy) : EMPTY_CELL;
+
+		let endedByUser: any = EMPTY_CELL;
+		if (isAutomaticallyClosed) {
+			endedByUser = <Tag color="blue">Auto</Tag>;
+		} else if (endedBy) {
+			endedByUser = getFullName(endedBy);
+		}
+
+		return (
+			<div className="branch-day-column">
+				<div className="first-row">
+					<span className="label">Open: </span>
+					<span className="value">
+						{startedBy ? startedByUser : EMPTY_CELL}
+					</span>
+				</div>
+				<div>
+					<span className="label">Close: </span>
+					<span className="value">{endedByUser}</span>
+				</div>
+			</div>
+		);
+	};
 
 	const renderDateTime = ({
 		datetimeStarted,
 		datetimeEnded,
 		isAutomaticallyClosed,
 	}) => (
-		<div className="branch-session-column">
+		<div className="branch-day-column">
 			<div className="first-row">
-				<span className="label">Start: </span>
+				<span className="label">Open: </span>
 				<span className="value">
 					{datetimeStarted
 						? formatDateTimeShortMonth(datetimeStarted)
@@ -127,7 +158,7 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 				</span>
 			</div>
 			<div>
-				<span className="label">End: </span>
+				<span className="label">Close: </span>
 				<span className="value">
 					{datetimeEnded ? (
 						<>
@@ -143,8 +174,8 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 	);
 
 	return (
-		<div className="ViewBranchMachineSessions">
-			<TableHeader title="Sessions" />
+		<div className="ViewBranchMachineDays">
+			<TableHeader wrapperClassName="pt-0" title="Days" />
 
 			<Filter isLoading={isFetching} />
 
@@ -153,7 +184,7 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				scroll={{ x: 650 }}
 				loading={isFetching}
 				bordered
 				pagination={{
@@ -180,6 +211,7 @@ interface FilterProps {
 }
 
 const Filter = ({ isLoading }: FilterProps) => {
+	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { users },
@@ -191,13 +223,16 @@ const Filter = ({ isLoading }: FilterProps) => {
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
-				<Label label="User" spacing />
+				<Label label="Opened By" spacing />
 				<Select
 					className="w-100"
-					defaultValue={params.userId}
 					onChange={(value) => {
-						setQueryParams({ userId: value }, { shouldResetPage: true });
+						setQueryParams(
+							{ openedByUserId: value },
+							{ shouldResetPage: true },
+						);
 					}}
+					defaultValue={params.openedByUserId}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
@@ -206,8 +241,38 @@ const Filter = ({ isLoading }: FilterProps) => {
 							.indexOf(input.toLowerCase()) >= 0
 					}
 					disabled={isFetching || isLoading}
-					allowClear
 					showSearch
+					allowClear
+				>
+					{users.map((user) => (
+						<Select.Option key={user.id} value={user.id}>
+							{getFullName(user)}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Closed By" spacing />
+				<Select
+					className="w-100"
+					onChange={(value) => {
+						setQueryParams(
+							{ closedByUserId: value },
+							{ shouldResetPage: true },
+						);
+					}}
+					defaultValue={params.closedByUserId}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					disabled={isFetching || isLoading}
+					showSearch
+					allowClear
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
@@ -243,18 +308,19 @@ const Filter = ({ isLoading }: FilterProps) => {
 
 			<Col lg={12} span={24}>
 				<Label label="Authorization" spacing />
+
 				<Radio.Group
 					optionType="button"
 					options={[
-						{ label: 'All', value: sessionTypes.ALL },
-						{ label: 'Authorized', value: sessionTypes.AUTHORIZED },
-						{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
+						{ label: 'All', value: branchDayTypes.ALL },
+						{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
+						{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
 					]}
 					onChange={(e) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
+					defaultValue={params.type || branchDayTypes.ALL}
 					disabled={isFetching || isLoading}
-					defaultValue={params.type || sessionTypes.ALL}
 				/>
 			</Col>
 		</Row>

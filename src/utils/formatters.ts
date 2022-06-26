@@ -47,8 +47,7 @@ export const formatQuantity = ({
 		balance = Math.ceil(Number(balance));
 	}
 
-	return;
-	unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
+	return unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
 		? balance.toFixed(3)
 		: balance.toFixed(0);
 };

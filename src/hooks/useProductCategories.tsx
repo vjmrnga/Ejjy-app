@@ -1,109 +1,85 @@
-import { useState } from 'react';
-import { actions } from '../ducks/product-categories';
-import { request } from '../global/types';
-import { modifiedCallback, modifiedExtraCallback } from 'utils';
-import { useActionDispatch } from './useActionDispatch';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { ProductCategoriesService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
-const CREATE_SUCCESS_MESSAGE = 'Product category was created successfully';
-const CREATE_ERROR_MESSAGE =
-	'An error occurred while creating the product category';
-
-const EDIT_SUCCESS_MESSAGE = 'Product category was edited successfully';
-const EDIT_ERROR_MESSAGE =
-	'An error occurred while editing the product category';
-
-const REMOVE_SUCCESS_MESSAGE = 'Product category was removed successfully';
-const REMOVE_ERROR_MESSAGE =
-	'An error occurred while removing the product category';
-
-export const useProductCategories = () => {
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-
-	const getProductCategoriesAction = useActionDispatch(
-		actions.getProductCategories,
-	);
-	const createProductCategoryAction = useActionDispatch(
-		actions.createProductCategory,
-	);
-	const editProductCategoryAction = useActionDispatch(
-		actions.editProductCategory,
-	);
-	const removeProductCategoryAction = useActionDispatch(
-		actions.removeProductCategory,
+const useProductCategories = ({ params }: Query) =>
+	useQuery<any>(
+		['useProductCategories', params?.page, params?.pageSize],
+		async () =>
+			ProductCategoriesService.list(
+				{
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				productCategories: query.data.results,
+				total: query.data.count,
+			}),
+		},
 	);
 
-	const resetError = () => setErrors([]);
+export const useProductCategoryCreate = () => {
+	const queryClient = useQueryClient();
 
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-	};
-
-	const getProductCategories = (data, extraCallback = null) => {
-		getProductCategoriesAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	const createProductCategory = (data, extraCallback = null) => {
-		createProductCategoryAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
+	return useMutation<any, any, any>(
+		({ name, priorityLevel }: any) =>
+			ProductCategoriesService.create(
+				{
+					name,
+					priority_level: priorityLevel,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
-		});
-	};
-
-	const editProductCategory = (data, extraCallback = null) => {
-		editProductCategoryAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
-				extraCallback,
-			),
-		});
-	};
-
-	const removeProductCategory = (data, extraCallback = null) => {
-		removeProductCategoryAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					REMOVE_SUCCESS_MESSAGE,
-					REMOVE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
-	return {
-		getProductCategories,
-		createProductCategory,
-		editProductCategory,
-		removeProductCategory,
-		status,
-		errors,
-		reset,
-		resetStatus,
-		resetError,
-	};
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProductCategories');
+			},
+		},
+	);
 };
+
+export const useProductCategoryEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, name, priorityLevel }: any) =>
+			ProductCategoriesService.edit(
+				id,
+				{
+					name,
+					priority_level: priorityLevel,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProductCategories');
+			},
+		},
+	);
+};
+
+export const useProductCategoryDelete = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		(id: number) =>
+			ProductCategoriesService.delete(
+				id,
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProductCategories');
+			},
+		},
+	);
+};
+
+export default useProductCategories;

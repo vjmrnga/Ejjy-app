@@ -1,26 +1,25 @@
 /* eslint-disable dot-notation */
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Radio, Row, Select, Table } from 'antd';
+import { Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
+import { TableActions, TableHeader } from 'components';
+import { ButtonLink, Label } from 'components/elements';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	pageSizeOptions,
+	SEARCH_DEBOUNCE_TIME,
+} from 'global';
+import { useBranchProducts, useProductCategories, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
-import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { TableActions, TableHeader } from '../../../../components';
-import { ButtonLink, Label } from '../../../../components/elements';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import { SEARCH_DEBOUNCE_TIME } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
-import { useBranchProducts } from '../../../../hooks/useBranchProducts';
-import { useProductCategories } from '../../../../hooks/useProductCategories';
-import { useQueryParams } from 'hooks';
-import { IProductCategory } from '../../../../models';
 import { convertIntoArray, formatQuantity } from 'utils';
-import { AddBranchProductBalanceModal } from './BranchProducts/AddBranchProductBalanceModal';
-import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
-import { ViewBranchProductModal } from './BranchProducts/ViewBranchProductModal';
+import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
+import { EditBranchProductsModal } from './components/EditBranchProductsModal';
+import { ViewBranchProductModal } from './components/ViewBranchProductModal';
 
 const modals = {
 	VIEW: 0,
@@ -35,47 +34,27 @@ const isSoldInBranchOptions = {
 };
 
 const columns: ColumnsType = [
-	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
-	{ title: 'Balance', dataIndex: 'balance', key: 'balance' },
-	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
+	{ title: 'Barcode', dataIndex: 'barcode' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Balance', dataIndex: 'balance' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 interface Props {
 	branchId: any;
 }
 
-export const ViewBranchProducts = ({ branchId }: Props) => {
+export const TabBranchProducts = ({ branchId }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
-	const [productCategories, setProductCategories] = useState([]);
-	const [modalType, setModalType] = useState(null);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
+	const [modalType, setModalType] = useState(null);
 
 	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
 	const [isCurrentBalanceVisible] = useState(true);
 
 	// CUSTOM HOOKS
-	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-
-		getBranchProducts,
-		status: branchProductsStatus,
-		errors: branchProductsErrors,
-		warnings,
-	} = useBranchProducts();
-	const {
-		getProductCategories,
-		status: productCategoriesStatus,
-		errors: productCategoriesErrors,
-	} = useProductCategories();
-
-	const { refreshList, setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
+	const { params, setQueryParams } = useQueryParams({
 		onParamsCheck: (params) => {
 			const newParams = {};
 
@@ -83,30 +62,30 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 				newParams['isSoldInBranch'] = isSoldInBranchOptions.SHOW_IN_STOCK;
 			}
 
-			if (!params.page) {
-				newParams['page'] = 1;
-			}
-
 			return newParams;
 		},
-		onQueryParamChange: (params) => {
-			let isSoldInBranch = null;
-			if (params.isSoldInBranch === isSoldInBranchOptions.SHOW_IN_STOCK) {
-				isSoldInBranch = true;
-			} else if (
-				params.isSoldInBranch === isSoldInBranchOptions.SHOW_NOT_SOLD
-			) {
-				isSoldInBranch = false;
-			}
+	});
+	const {
+		data: { branchProducts, total, warning },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsErrors,
+		refetch: refetchBranchProducts,
+	} = useBranchProducts({
+		params: {
+			...params,
+			branchId,
+			isSoldInBranch: (() => {
+				let isSoldInBranch = null;
+				if (params?.isSoldInBranch === isSoldInBranchOptions.SHOW_IN_STOCK) {
+					isSoldInBranch = true;
+				} else if (
+					params?.isSoldInBranch === isSoldInBranchOptions.SHOW_NOT_SOLD
+				) {
+					isSoldInBranch = false;
+				}
 
-			getBranchProducts(
-				{
-					...params,
-					isSoldInBranch,
-					branchId,
-				},
-				true,
-			);
+				return isSoldInBranch;
+			})(),
 		},
 	});
 
@@ -121,26 +100,36 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		getProductCategories(({ status, data: responseData }) => {
-			if (status === request.SUCCESS) {
-				setProductCategories(responseData);
-			}
-		});
-	}, []);
-
-	useEffect(() => {
 		const formattedBranchProducts = branchProducts.map((branchProduct) => {
 			const {
 				id,
-				product: { barcode, name, textcode, unit_of_measurement },
+				product: {
+					barcode,
+					selling_barcode,
+					packing_barcode,
+					name,
+					textcode,
+					unit_of_measurement,
+				},
 				current_balance,
 				max_balance,
 			} = branchProduct;
 
-			const currentBalance = formatQuantity({
-				unitOfMeasurement: unit_of_measurement,
-				quantity: current_balance,
-			});
+			const currentBalance = (
+				<Tooltip
+					title={formatQuantity({
+						unitOfMeasurement: unit_of_measurement,
+						quantity: current_balance,
+					})}
+					overlayClassName="button-tooltip"
+				>
+					{formatQuantity({
+						unitOfMeasurement: unit_of_measurement,
+						quantity: current_balance,
+						isCeiled: true,
+					})}
+				</Tooltip>
+			);
 
 			const maxBalance = formatQuantity({
 				unitOfMeasurement: unit_of_measurement,
@@ -151,7 +140,7 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 				key: id,
 				barcode: (
 					<ButtonLink
-						text={barcode || textcode}
+						text={barcode || selling_barcode || packing_barcode || textcode}
 						onClick={() => {
 							setSelectedBranchProduct(branchProduct);
 							setModalType(modals.VIEW);
@@ -159,9 +148,11 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 					/>
 				),
 				name,
-				balance: `${
-					isCurrentBalanceVisible ? currentBalance : '???'
-				} / ${maxBalance}`,
+				balance: (
+					<>
+						{isCurrentBalanceVisible ? currentBalance : '???'} / {maxBalance}
+					</>
+				),
 				actions: (
 					<TableActions
 						onAddName="Supplier Delivery"
@@ -178,7 +169,7 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 			};
 		});
 
-		setData(formattedBranchProducts);
+		setDataSource(formattedBranchProducts);
 	}, [branchProducts]);
 
 	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
@@ -199,46 +190,46 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 	// };
 
 	return (
-		<div className="ViewBranchProducts">
-			<TableHeader title="Products" buttonName="Create Branch Product" />
+		<div>
+			<TableHeader
+				wrapperClassName="pt-0"
+				title="Products"
+				buttonName="Create Branch Product"
+			/>
 
 			<Filter
-				productCategoriesStatus={productCategoriesStatus}
-				productCategories={productCategories}
 				setQueryParams={(params) => {
 					setQueryParams(params, { shouldResetPage: true });
 				}}
 			/>
 
 			<RequestErrors
-				errors={[
-					...convertIntoArray(branchProductsErrors, 'Branch Product'),
-					...convertIntoArray(productCategoriesErrors, 'Product Category'),
-				]}
+				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
 				withSpaceTop
 				withSpaceBottom
 			/>
-			<RequestWarnings warnings={convertIntoArray(warnings)} withSpaceBottom />
+			<RequestWarnings warnings={convertIntoArray(warning)} withSpaceBottom />
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(params.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={branchProductsStatus === request.REQUESTING}
+				bordered
+				loading={isFetchingBranchProducts}
 			/>
 
 			{selectedBranchProduct && modalType === modals.VIEW && (
@@ -252,7 +243,7 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 				<EditBranchProductsModal
 					branchId={branchId}
 					branchProduct={selectedBranchProduct}
-					onSuccess={refreshList}
+					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}
 				/>
 			)}
@@ -261,7 +252,7 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 				<AddBranchProductBalanceModal
 					branchId={branchId}
 					branchProduct={selectedBranchProduct}
-					onSuccess={refreshList}
+					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}
 				/>
 			)}
@@ -270,25 +261,24 @@ export const ViewBranchProducts = ({ branchId }: Props) => {
 };
 
 interface FilterProps {
-	productCategories: IProductCategory[];
-	productCategoriesStatus: number;
 	setQueryParams: any;
 }
 
-const Filter = ({
-	productCategories,
-	productCategoriesStatus,
-	setQueryParams,
-}: FilterProps) => {
-	const history = useHistory();
-	const searchObj = queryString.parse(history.location.search);
+const Filter = ({ setQueryParams }: FilterProps) => {
+	const { params } = useQueryParams();
+	const {
+		data: { productCategories },
+		isFetching: isFetchingProductCategories,
+	} = useProductCategories({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
 			setQueryParams({ search: keyword });
 		}, SEARCH_DEBOUNCE_TIME),
-		[searchObj],
+		[params],
 	);
 
 	return (
@@ -297,7 +287,7 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
-					defaultValue={searchObj.search}
+					defaultValue={params.search}
 					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
 				/>
@@ -307,11 +297,11 @@ const Filter = ({
 				<Label label="Product Category" spacing />
 				<Select
 					style={{ width: '100%' }}
-					value={searchObj.productCategory}
+					value={params.productCategory}
 					onChange={(value) => {
 						setQueryParams({ productCategory: value });
 					}}
-					loading={productCategoriesStatus === request.REQUESTING}
+					loading={isFetchingProductCategories}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
@@ -333,7 +323,7 @@ const Filter = ({
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
-					value={searchObj.isSoldInBranch}
+					value={params.isSoldInBranch}
 					options={[
 						{ label: 'Show All', value: isSoldInBranchOptions.SHOW_ALL },
 						{

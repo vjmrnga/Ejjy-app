@@ -1,29 +1,28 @@
 import { Spin, Tabs } from 'antd';
+import { Content, RequestErrors } from 'components';
+import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
+import { useBranches, useProductCategories, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { Content, RequestErrors } from '../../../components';
-import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
-import { useBranches } from 'hooks';
-import { useProductCategories } from '../../../hooks/useProductCategories';
-import { useQueryParams } from 'hooks';
+import React, { useEffect } from 'react';
 import { convertIntoArray } from 'utils';
 import { BranchBalanceItem } from './components/BranchBalanceItem';
 import './style.scss';
 
 export const Dashboard = () => {
-	// STATES
-	const [productCategories, setProductCategories] = useState([]);
-
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
 	} = useBranches();
 	const {
-		getProductCategories,
-		status: productCategoriesStatus,
-		errors: productCategoriesErrors,
-	} = useProductCategories();
+		data: { productCategories },
+		isFetching: isFetchingProductCategories,
+		error: productCategoriesErrors,
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// VARIABLES
 	const {
@@ -32,16 +31,6 @@ export const Dashboard = () => {
 	} = useQueryParams();
 
 	// METHODS
-	useEffect(() => {
-		getProductCategories(
-			{ branchId: currentBranchId },
-			({ status, data: responseData }) => {
-				if (status === request.SUCCESS) {
-					setProductCategories(responseData);
-				}
-			},
-		);
-	}, []);
 
 	useEffect(() => {
 		if (branches && !currentBranchId) {
@@ -60,7 +49,7 @@ export const Dashboard = () => {
 	return (
 		<Content className="Dashboard" title="Dashboard">
 			<Box padding>
-				<Spin spinning={productCategoriesStatus === request.REQUESTING}>
+				<Spin spinning={isFetchingProductCategories}>
 					<RequestErrors
 						errors={convertIntoArray(productCategoriesErrors)}
 						withSpaceBottom

@@ -7,10 +7,6 @@ import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useTransactions = ({ params }: Query) => {
-	let baseURL = useSelector(
-		branchesSelectors.selectURLByBranchId(params?.branchId),
-	);
-
 	return useQuery<any>(
 		[
 			'useTransactions',
@@ -27,13 +23,9 @@ const useTransactions = ({ params }: Query) => {
 			params?.timeRange,
 		],
 		async () => {
-			if (!baseURL && params.branchId) {
-				throw ['Branch has no online url.'];
-			} else {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-			}
-
-			baseURL = params.serverUrl || baseURL;
+			let baseURL =
+				params.serverUrl ||
+				(IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl());
 
 			const data = {
 				branch_machine_id: params?.branchMachineId,

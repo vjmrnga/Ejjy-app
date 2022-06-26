@@ -1,15 +1,15 @@
 import { Col, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import {
-	RequestErrors,
-	RequestWarnings,
-	TableHeader,
-	TimeRangeFilter,
-} from 'components';
+import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { EMPTY_CELL, MAX_PAGE_SIZE, pageSizeOptions, request } from 'global';
-import { useQueryParams, useUsers } from 'hooks';
-import { useBranchesDays } from 'hooks/useBranchesDays';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	pageSizeOptions,
+} from 'global';
+import { useBranchDays, useQueryParams, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
 
@@ -38,47 +38,38 @@ interface Props {
 
 export const TabDays = ({ branchMachineId }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		branchDays,
-		pageCount,
-		pageSize,
-		currentPage,
+		data: { branchDays, total },
+		isFetching,
+		error: listError,
+	} = useBranchDays({
+		params: {
+			...params,
+			branchMachineId,
+			isUnauthorized: (() => {
+				let isUnauthorized = undefined;
+				if (params.type === branchDayTypes.UNAUTHORIZED) {
+					isUnauthorized = true;
+				} else if (params.type === branchDayTypes.AUTHORIZED) {
+					isUnauthorized = false;
+				}
 
-		listBranchDays,
-		status,
-		errors,
-		warnings,
-	} = useBranchesDays();
-	const { setQueryParams } = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onQueryParamChange: (params) => {
-			let isAutomaticallyClosed = undefined;
-			if (params.closingType === closingTypes.AUTOMATIC) {
-				isAutomaticallyClosed = true;
-			} else if (params.closingType === closingTypes.MANUAL) {
-				isAutomaticallyClosed = false;
-			}
+				return isUnauthorized;
+			})(),
+			isAutomaticallyClosed: (() => {
+				let isAutomaticallyClosed = undefined;
+				if (params.closingType === closingTypes.AUTOMATIC) {
+					isAutomaticallyClosed = true;
+				} else if (params.closingType === closingTypes.MANUAL) {
+					isAutomaticallyClosed = false;
+				}
 
-			let isUnauthorized = undefined;
-			if (params.type === branchDayTypes.UNAUTHORIZED) {
-				isUnauthorized = true;
-			} else if (params.type === branchDayTypes.AUTHORIZED) {
-				isUnauthorized = false;
-			}
-
-			listBranchDays(
-				{
-					...params,
-					branchMachineId,
-					isUnauthorized,
-					isAutomaticallyClosed,
-				},
-				true,
-			);
+				return isAutomaticallyClosed;
+			})(),
 		},
 	});
 
@@ -123,7 +114,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 			};
 		});
 
-		setData(formattedBranchDays);
+		setDataSource(formattedBranchDays);
 	}, [branchDays]);
 
 	const renderUser = ({ startedBy, endedBy, isAutomaticallyClosed }) => {
@@ -186,36 +177,40 @@ export const TabDays = ({ branchMachineId }: Props) => {
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" />
 
-			<Filter />
+			<Filter isLoading={isFetching} />
 
-			<RequestErrors errors={convertIntoArray(errors)} />
-			<RequestWarnings warnings={convertIntoArray(warnings)} />
+			<RequestErrors errors={convertIntoArray(listError)} withSpaceBottom />
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 650 }}
+				loading={isFetching}
+				bordered
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
+					current: Number(params.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={status === request.REQUESTING}
 			/>
 		</div>
 	);
 };
 
-const Filter = () => {
+interface FilterProps {
+	isLoading: boolean;
+}
+
+const Filter = ({ isLoading }: FilterProps) => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
@@ -245,7 +240,7 @@ const Filter = () => {
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					disabled={isFetching}
+					disabled={isFetching || isLoading}
 					showSearch
 					allowClear
 				>
@@ -275,7 +270,7 @@ const Filter = () => {
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					disabled={isFetching}
+					disabled={isFetching || isLoading}
 					showSearch
 					allowClear
 				>
@@ -306,6 +301,7 @@ const Filter = () => {
 							{ shouldResetPage: true },
 						);
 					}}
+					disabled={isFetching || isLoading}
 					defaultValue={params.closingType || closingTypes.ALL}
 				/>
 			</Col>
@@ -324,6 +320,7 @@ const Filter = () => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
 					defaultValue={params.type || branchDayTypes.ALL}
+					disabled={isFetching || isLoading}
 				/>
 			</Col>
 		</Row>

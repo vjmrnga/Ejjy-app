@@ -20,6 +20,7 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
 import { Users } from './Users/Users';
+import { AssignUser } from './Users/AssignUser';
 
 const sidebarItems = [
 	// {
@@ -171,6 +172,12 @@ const OfficeManager = () => {
 					/>
 
 					<Route path="/office-manager/users" exact component={Users} />
+					<Route
+						path="/office-manager/users/assign/:id"
+						component={AssignUser}
+						exact
+					/>
+
 					<Route
 						path="/office-manager/notifications"
 						component={Notifications}

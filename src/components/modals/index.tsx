@@ -11,6 +11,7 @@ export * from './ModifyCashieringAssignmentModal';
 export * from './ModifyCreditRegistration';
 export * from './ModifyDiscountOptionModal';
 export * from './ModifyPointSystemTagModal';
+export * from './ModifyProductCategoryModal';
 export * from './ModifyProductModal';
 export * from './ModifyUserModal';
 export * from './PricesModal';

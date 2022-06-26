@@ -7,11 +7,17 @@ import { ModifyUserForm } from './ModifyUserForm';
 
 interface Props {
 	user?: any;
+	onSuccess?: any;
 	branchUsersOnly?: boolean;
 	onClose: any;
 }
 
-export const ModifyUserModal = ({ user, branchUsersOnly, onClose }: Props) => {
+export const ModifyUserModal = ({
+	user,
+	branchUsersOnly,
+	onSuccess,
+	onClose,
+}: Props) => {
 	// METHODS
 	const {
 		mutateAsync: createUser,
@@ -33,6 +39,7 @@ export const ModifyUserModal = ({ user, branchUsersOnly, onClose }: Props) => {
 			message.success('User was created successfully');
 		}
 
+		onSuccess?.();
 		onClose();
 	};
 

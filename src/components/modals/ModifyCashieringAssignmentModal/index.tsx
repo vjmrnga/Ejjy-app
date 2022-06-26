@@ -157,8 +157,10 @@ export const ModifyCashieringAssignmentForm = ({
 			: date;
 
 		setFilteredAssignments(
-			assignments.filter((ca) =>
-				dayjs.tz(ca.datetime_start).isSame(selectedDate, 'date'),
+			assignments.filter(
+				(ca) =>
+					dayjs.tz(ca.datetime_start).isSame(selectedDate, 'date') &&
+					ca.id !== assignment?.id,
 			),
 		);
 	}, [assignment, assignments, date]);

@@ -1,122 +1,43 @@
-import { useEffect, useState } from 'react';
-import { actions, types } from '../ducks/sessions';
-import { request } from '../global/types';
-import { onCallback } from 'utils';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from '../utils/pagination';
-import { useActionDispatch } from './useActionDispatch';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { Query } from 'hooks/inteface';
+import { useQuery } from 'react-query';
+import { SessionsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
-
-export const useSessions = () => {
-	// STATES
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-	const [warnings, setWarnings] = useState<any>([]);
-	const [recentRequest, setRecentRequest] = useState<any>();
-
-	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(10);
-
-	// ACTIONS
-	const listSessionsAction = useActionDispatch(actions.listSessions);
-
-	// GENERAL METHODS
-	const resetError = () => setErrors([]);
-
-	const resetStatus = () => setStatus(request.NONE);
-
-	const reset = () => {
-		resetError();
-		resetStatus();
-	};
-
-	const requestCallback = ({
-		status: requestStatus,
-		errors: requestErrors = [],
-		warnings: requestWarnings = [],
-	}) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-		setWarnings(requestWarnings);
-	};
-
-	const executeRequest = (data, callback, action, type) => {
-		setRecentRequest(type);
-		action({
-			...data,
-			callback: onCallback(
-				requestCallback,
-				callback?.onSuccess,
-				callback?.onError,
-			),
-		});
-	};
-
-	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
+const useSessions = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useSessions',
+			params?.branchId,
+			params?.branchMachineId,
+			params?.isAutomaticallyClosed,
+			params?.isUnauthorized,
+			params?.page,
+			params?.pageSize,
+			params?.timeRange,
+			params?.userId,
+		],
+		async () =>
+			SessionsService.list(
+				{
+					branch_id: params?.branchId,
+					branch_machine_id: params?.branchMachineId,
+					is_automatically_closed: params?.isAutomaticallyClosed,
+					is_unauthorized: params?.isUnauthorized,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					time_range: params?.timeRange,
+					user_id: params?.userId,
+				},
+				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				sessions: query.data.results,
+				total: query.data.count,
 			}),
-		);
-	}, [allData, currentPage, pageSize]);
+		},
+	);
 
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
-
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
-
-	// REQUEST METHODS
-	const listSessions = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: listSessionsAction,
-			requestType: types.LIST_SESSIONS,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
-	return {
-		sessions: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
-		listSessions,
-		status,
-		errors,
-		warnings,
-		recentRequest,
-		reset,
-		resetStatus,
-		resetError,
-	};
-};
+export default useSessions;

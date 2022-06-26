@@ -18,13 +18,14 @@ import {
 	booleanOptions,
 	checkingTypesOptions,
 	inputTypes,
+	MAX_PAGE_SIZE,
 	productCheckingTypes,
 	productTypes,
 	unitOfMeasurementTypes,
 } from 'global';
+import { useProductCategories } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
-import { IProductCategory } from 'models';
 import React, { useCallback } from 'react';
 import { formatQuantity } from 'utils';
 import * as Yup from 'yup';
@@ -78,7 +79,6 @@ interface Props {
 	onSubmit: any;
 	pointSystemTags: any;
 	product: any;
-	productCategories: IProductCategory[];
 }
 
 export const ModifyProductForm = ({
@@ -89,10 +89,16 @@ export const ModifyProductForm = ({
 	onSubmit,
 	pointSystemTags,
 	product,
-	productCategories,
 }: Props) => {
 	// CUSTOM HOOKS
 	const { user } = useAuth();
+	const {
+		data: { productCategories },
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// METHODS
 	const getFormDetails = useCallback(

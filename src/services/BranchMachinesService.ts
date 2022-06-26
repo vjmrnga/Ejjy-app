@@ -2,6 +2,7 @@ import axios from 'axios';
 import { IListRequest } from 'services/interfaces';
 
 interface List extends IListRequest {
+	branch_id?: number;
 	sales_time_range?: string;
 }
 

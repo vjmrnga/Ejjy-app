@@ -4,6 +4,7 @@ import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
 
 const columns: ColumnsType = [
@@ -28,6 +29,7 @@ export const BranchUsers = ({
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
+	const history = useHistory();
 	const {
 		isFetching: isFetchingUsers,
 		data: { users },
@@ -53,6 +55,14 @@ export const BranchUsers = ({
 			type: getUserTypeName(user.user_type),
 			actions: (
 				<Space>
+					<Button
+						type="primary"
+						onClick={() =>
+							history.push(`/office-manager/users/assign/${user.id}`)
+						}
+					>
+						Cashiering Assignments
+					</Button>
 					<Button
 						type="primary"
 						onClick={() => onReassignUser({ ...user, branchId })}

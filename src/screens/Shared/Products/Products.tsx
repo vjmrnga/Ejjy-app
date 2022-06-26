@@ -4,7 +4,6 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import {
 	Content,
 	ModifyProductModal,
-	PendingTransactionsSection,
 	RequestErrors,
 	TableActions,
 	TableHeader,
@@ -14,25 +13,23 @@ import { Box, ButtonLink, Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
 	pageSizeOptions,
-	pendingTransactionTypes,
-	request,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
 import {
 	usePingOnlineServer,
+	useProductCategories,
 	useProductDelete,
 	useProducts,
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { useProductCategories } from 'hooks/useProductCategories';
 import { debounce } from 'lodash';
-import { IProductCategory } from 'models';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, isUserFromBranch } from 'utils';
+import { convertIntoArray } from 'utils';
 import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
@@ -57,7 +54,6 @@ export const Products = () => {
 	// STATES
 	const [modalType, setModalType] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
-	const [productCategories, setProductCategories] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
 
@@ -74,21 +70,8 @@ export const Products = () => {
 		error: listError,
 	} = useProducts({ params });
 	const { mutate: deleteProduct, error: deleteError } = useProductDelete();
-	const {
-		getProductCategories,
-		status: productCategoriesStatus,
-		errors: productCategoriesErrors,
-	} = useProductCategories();
 
 	// METHODS
-	useEffect(() => {
-		getProductCategories({}, ({ status, data: responseData }) => {
-			if (status === request.SUCCESS) {
-				setProductCategories(responseData);
-			}
-		});
-	}, []);
-
 	useEffect(() => {
 		const formattedProducts =
 			products?.map((product) => {
@@ -172,14 +155,11 @@ export const Products = () => {
 					errors={[
 						...convertIntoArray(listError, 'Product'),
 						...convertIntoArray(deleteError?.errors, 'Product Delete'),
-						...convertIntoArray(productCategoriesErrors, 'Product Category'),
 					]}
 					withSpaceBottom
 				/>
 
 				<Filter
-					productCategories={productCategories}
-					productCategoriesStatus={productCategoriesStatus}
 					setQueryParams={(params) => {
 						setQueryParams(params, { shouldResetPage: true });
 					}}
@@ -216,7 +196,6 @@ export const Products = () => {
 				{modalType === modals.MODIFY && (
 					<ModifyProductModal
 						product={selectedProduct}
-						productCategories={productCategories}
 						onClose={() => onOpenModal(null, null)}
 					/>
 				)}
@@ -244,19 +223,22 @@ export const Products = () => {
 };
 
 interface FilterProps {
-	productCategories: IProductCategory[];
-	productCategoriesStatus: number;
 	setQueryParams: any;
 }
 
-const Filter = ({
-	productCategories,
-	productCategoriesStatus,
-	setQueryParams,
-}: FilterProps) => {
+const Filter = ({ setQueryParams }: FilterProps) => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const params = queryString.parse(history.location.search);
+	const {
+		data: { productCategories },
+		isFetching: isFetchingProductCategories,
+		error: productCategoriesErrors,
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// METHODS
 	const onSearchDebounced = useCallback(
@@ -268,6 +250,13 @@ const Filter = ({
 
 	return (
 		<Row className="PaddingHorizontal PaddingVertical pt-0" gutter={[16, 16]}>
+			<Col span={24}>
+				<RequestErrors
+					className="PaddingHorizontal"
+					errors={convertIntoArray(productCategoriesErrors, 'Product Category')}
+				/>
+			</Col>
+
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
@@ -286,7 +275,7 @@ const Filter = ({
 					onChange={(value) => {
 						setQueryParams({ productCategory: value });
 					}}
-					loading={productCategoriesStatus === request.REQUESTING}
+					loading={isFetchingProductCategories}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children

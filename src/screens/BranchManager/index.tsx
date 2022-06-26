@@ -24,7 +24,7 @@ import { Sales } from 'screens/BranchManager/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
-import { ProductCategories } from '../Shared/ProductCategories/ProductCategories';
+import { ProductCategories } from '../Shared/ProductCategories';
 import { Products } from '../Shared/Products/Products';
 import { Accounts } from './Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
@@ -41,7 +41,6 @@ import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { SiteSettings } from './SiteSettings';
 import { Users } from './Users';
-import { AssignUser } from './Users/AssignUser';
 
 const BranchManager = () => {
 	// STATES
@@ -319,11 +318,6 @@ const BranchManager = () => {
 					/>
 
 					<Route path="/branch-manager/users" exact component={Users} />
-					<Route
-						path="/branch-manager/users/assign/:id"
-						component={AssignUser}
-						exact
-					/>
 
 					<Route path="/branch-manager/accounts" exact component={Accounts} />
 					<Route

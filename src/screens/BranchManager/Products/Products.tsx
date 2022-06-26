@@ -2,12 +2,17 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Row, Select, Table } from 'antd';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, ButtonLink, Label } from 'components/elements';
-import { EMPTY_CELL, SEARCH_DEBOUNCE_TIME } from 'global/constants';
-import { pageSizeOptions } from 'global/options';
-import { branchProductStatus, request } from 'global/types';
+import {
+	branchProductStatus,
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	pageSizeOptions,
+	request,
+	SEARCH_DEBOUNCE_TIME,
+} from 'global';
+import { useProductCategories } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { useBranchProducts } from 'hooks/useBranchProducts';
-import { useProductCategories } from 'hooks/useProductCategories';
 import { debounce } from 'lodash';
 import { IProductCategory } from 'models';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -25,8 +30,7 @@ const columns = [
 
 export const Products = () => {
 	// STATES
-	const [data, setData] = useState([]);
-	const [productCategories, setProductCategories] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 	const [searchedKeyword, setSearchedKeyword] = useState('');
 	const [status, setStatus] = useState(null);
@@ -45,27 +49,23 @@ export const Products = () => {
 		errors: branchProductsErrors,
 	} = useBranchProducts();
 	const {
-		getProductCategories,
-		status: productCategoriesStatus,
-		errors: productCategoriesErrors,
-	} = useProductCategories();
+		data: { productCategories },
+		isFetching: isFetchingProductCategories,
+		error: productCategoriesErrors,
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
 		getBranchProducts({ branchId: user?.branch?.id, page: 1 });
-		getProductCategories(
-			{ branchId: user?.branch?.id },
-			({ status: requestStatus, data: responseData }) => {
-				if (requestStatus === request.SUCCESS) {
-					setProductCategories(responseData);
-				}
-			},
-		);
 	}, []);
 
 	// Effect: Format branch products to be rendered in Table
 	useEffect(() => {
-		setData(
+		setDataSource(
 			branchProducts.map((branchProduct) => ({
 				barcode: (
 					<ButtonLink
@@ -165,7 +165,7 @@ export const Products = () => {
 
 					<Filter
 						productCategories={productCategories}
-						productCategoriesStatus={productCategoriesStatus}
+						isLoading={isFetchingProductCategories}
 						onSelectProductCategory={onSelectProductCategory}
 						onSelectStatus={onSelectStatus}
 						onSearch={onSearch}
@@ -174,14 +174,14 @@ export const Products = () => {
 
 				<Table
 					columns={columns}
-					dataSource={data}
+					dataSource={dataSource}
 					scroll={{ x: 650 }}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
 						pageSize,
 						onChange: onPageChange,
-						disabled: !data,
+						disabled: !dataSource,
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
@@ -201,7 +201,7 @@ export const Products = () => {
 
 interface FilterProps {
 	productCategories: IProductCategory[];
-	productCategoriesStatus: number;
+	isLoading: boolean;
 	onSelectProductCategory: any;
 	onSelectStatus: any;
 	onSearch: any;
@@ -209,7 +209,7 @@ interface FilterProps {
 
 const Filter = ({
 	productCategories,
-	productCategoriesStatus,
+	isLoading,
 	onSelectProductCategory,
 	onSelectStatus,
 	onSearch,
@@ -237,7 +237,7 @@ const Filter = ({
 				<Select
 					style={{ width: '100%' }}
 					onChange={onSelectProductCategory}
-					loading={productCategoriesStatus === request.REQUESTING}
+					loading={isLoading}
 					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children

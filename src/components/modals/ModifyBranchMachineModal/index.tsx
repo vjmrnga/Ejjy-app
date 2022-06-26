@@ -8,11 +8,13 @@ import { DetailsRow, RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel } from '../../elements';
 
 interface ModalProps {
+	branchId?: any;
 	branchMachine: any;
 	onClose: any;
 }
 
 export const ModifyBranchMachineModal = ({
+	branchId,
 	branchMachine,
 	onClose,
 }: ModalProps) => {
@@ -60,6 +62,7 @@ export const ModifyBranchMachineModal = ({
 			/>
 
 			<ModifyBranchMachineForm
+				branchId={branchId}
 				branchMachine={branchMachine}
 				loading={isCreateLoading || isEditLoading}
 				onSubmit={onSubmit}
@@ -70,6 +73,7 @@ export const ModifyBranchMachineModal = ({
 };
 
 interface FormProps {
+	branchId?: any;
 	branchMachine?: any;
 	loading: boolean;
 	onSubmit: any;
@@ -77,6 +81,7 @@ interface FormProps {
 }
 
 export const ModifyBranchMachineForm = ({
+	branchId,
 	branchMachine,
 	loading,
 	onSubmit,
@@ -88,7 +93,7 @@ export const ModifyBranchMachineForm = ({
 		() => ({
 			DefaultValues: {
 				id: branchMachine?.id || null,
-				branchId: getBranchId(),
+				branchId: branchMachine?.branch?.id || branchId || getBranchId(),
 				machineIdentificationNumber:
 					branchMachine?.machine_identification_number || '',
 				name: branchMachine?.name || '',
@@ -99,11 +104,12 @@ export const ModifyBranchMachineForm = ({
 			Schema: Yup.object().shape({
 				branchId: Yup.string().required().label('Branch ID'),
 				machineIdentificationNumber: Yup.string()
+					.required()
 					.max(75)
 					.label('Machine Identification Number'),
 				name: Yup.string().required().max(30).label('Name'),
-				permitToUse: Yup.string().max(75).label('Permit To Use'),
-				posTerminal: Yup.string().max(75).label('POS Terminal'),
+				permitToUse: Yup.string().required().max(75).label('Permit To Use'),
+				posTerminal: Yup.string().required().max(75).label('POS Terminal'),
 				serverUrl: Yup.string().required().max(75).label('Server URL'),
 			}),
 		}),

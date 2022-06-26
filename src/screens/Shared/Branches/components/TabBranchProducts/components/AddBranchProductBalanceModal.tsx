@@ -1,18 +1,17 @@
 import { Divider, Modal } from 'antd';
+import { DetailsSingle, RequestErrors } from 'components';
+import { DetailsRow } from 'components/Details/DetailsRow';
+import { request, SHOW_HIDE_SHORTCUT } from 'global';
+import { useAuth } from 'hooks/useAuth';
+import { useBranchProducts } from 'hooks/useBranchProducts';
 import React, { useEffect, useState } from 'react';
-import { DetailsSingle, RequestErrors } from '../../../../../components';
-import { DetailsRow } from '../../../../../components/Details/DetailsRow';
-import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
-import { request } from '../../../../../global/types';
-import { useAuth } from '../../../../../hooks/useAuth';
-import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
 	convertIntoArray,
 	formatQuantity,
 	getKeyDownCombination,
 } from 'utils';
-import '../../style.scss';
+import '../../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 
 interface Props {

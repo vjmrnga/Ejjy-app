@@ -20,7 +20,7 @@ import { useQueryParams, useTransactions } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso } from 'utils';
-import { TransactionsCancelled } from './BranchTransactions/TransactionsCancelled';
+import { TransactionsCancelled } from './components/TransactionsCancelled';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -56,19 +56,19 @@ interface Props {
 	branchId: any;
 }
 
-export const ViewBranchTransactions = ({ branchId }: Props) => {
+export const TabTransactions = ({ branchId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total, warning },
 		isFetching,
 		error,
 	} = useTransactions({
-		params: { branchId, ...queryParams },
+		params: { branchId, ...params },
 	});
 
 	// METHODS
@@ -101,15 +101,9 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Transactions" />
+			<TableHeader wrapperClassName="pt-0" title="Transactions" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isFetching}
-			/>
+			<Filter isLoading={isFetching} />
 
 			<RequestErrors errors={convertIntoArray(error)} />
 			<RequestWarnings warnings={convertIntoArray(warning)} />
@@ -117,11 +111,11 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 			{[
 				transactionStatus.VOID_CANCELLED,
 				transactionStatus.VOID_EDITED,
-			].includes(toString(queryParams?.statuses)) && (
+			].includes(toString(params?.statuses)) && (
 				<TransactionsCancelled
 					branchId={branchId}
-					timeRange={toString(queryParams?.timeRange)}
-					statuses={toString(queryParams?.statuses)}
+					timeRange={toString(params?.timeRange)}
+					statuses={toString(params?.statuses)}
 				/>
 			)}
 
@@ -130,9 +124,9 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -157,41 +151,43 @@ export const ViewBranchTransactions = ({ branchId }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<TimeRangeFilter disabled={isLoading} />
-		</Col>
-		<Col lg={12} span={24}>
-			<Label label="Status" spacing />
-			<Select
-				style={{ width: '100%' }}
-				value={params.statuses}
-				onChange={(value) => {
-					setQueryParams({ statuses: value });
-				}}
-				disabled={isLoading}
-				optionFilterProp="children"
-				filterOption={(input, option) =>
-					option.children
-						.toString()
-						.toLowerCase()
-						.indexOf(input.toLowerCase()) >= 0
-				}
-				showSearch
-				allowClear
-			>
-				{transactionStatusOptions.map((option) => (
-					<Select.Option key={option.value} value={option.value}>
-						{option.title}
-					</Select.Option>
-				))}
-			</Select>
-		</Col>
-	</Row>
-);
+const Filter = ({ isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<TimeRangeFilter disabled={isLoading} />
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					style={{ width: '100%' }}
+					value={params.statuses}
+					onChange={(value) => {
+						setQueryParams({ statuses: value }, { shouldResetPage: true });
+					}}
+					disabled={isLoading}
+					optionFilterProp="children"
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					showSearch
+					allowClear
+				>
+					{transactionStatusOptions.map((option) => (
+						<Select.Option key={option.value} value={option.value}>
+							{option.title}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
+	);
+};

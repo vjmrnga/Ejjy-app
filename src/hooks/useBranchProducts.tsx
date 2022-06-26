@@ -237,6 +237,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 			}
 
 			const data = {
+				branch_id: params?.branchId,
 				has_bo_balance: params?.hasBoBalance,
 				has_negative_balance: params?.hasNegativeBalance,
 				is_sold_in_branch: params?.isSoldInBranch,
@@ -272,12 +273,12 @@ const useBranchProductsNew = ({ params }: Query) =>
 		},
 	);
 
-export const useBranchProductRetrieve = ({ id, options }: Query) =>
+export const useBranchProductRetrieve = ({ id, params, options }: Query = {}) =>
 	useQuery<any>(
 		['useBranchProductRetrieve', id],
 		async () =>
 			BranchProductsService.list(
-				{ product_ids: id },
+				{ branch_id: params?.branchId, product_ids: id },
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{

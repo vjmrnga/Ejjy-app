@@ -2,6 +2,7 @@ import axios from 'axios';
 import { IListRequest } from './interfaces';
 
 interface List extends IListRequest {
+	branch_id: number;
 	has_bo_balance?: boolean;
 	has_negative_balance?: boolean;
 	is_sold_in_branch?: boolean;

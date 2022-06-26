@@ -1,18 +1,17 @@
 import { Container } from 'components';
-import { MAX_PAGE_SIZE } from 'global';
 import { useBranches } from 'hooks';
 import { usePendingTransactions } from 'hooks/usePendingTransactions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
+import { ProductCategories } from '../Shared/ProductCategories';
 import { Products } from '../Shared/Products/Products';
 import { Dashboard } from './Dashboard/Dashboard';
 import { useFailedTransfers } from './hooks/useFailedTransfers';
 import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
-import { ProductCategories } from './ProductCategories/ProductCategories';
 import { Sales } from './Sales/Sales';
 import { Users } from './Users/Users';
 

@@ -2,25 +2,29 @@ import { MenuOutlined, SaveOutlined } from '@ant-design/icons';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { arrayMoveImmutable } from 'array-move';
+import {
+	Content,
+	ModifyProductCategoryModal,
+	RequestErrors,
+	TableActions,
+	TableHeader,
+} from 'components';
+import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
+import {
+	useProductCategories,
+	useProductCategoryDelete,
+	useQueryParams,
+} from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	SortableContainer,
 	SortableElement,
 	SortableHandle,
 } from 'react-sortable-hoc';
-import {
-	Content,
-	RequestErrors,
-	TableActions,
-	TableHeader,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useProductCategories } from '../../../hooks/useProductCategories';
-import { service as ProductCategoryService } from '../../../services/product-categories';
+import { ProductCategoriesService } from 'services';
 import { convertIntoArray } from 'utils';
-import { CreateEditProductCategoryModal } from './components/CreateEditProductCategoryModal';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -32,79 +36,58 @@ const SortableBody = SortableContainer((props) => <tbody {...props} />);
 
 export const ProductCategories = () => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 	const [initialProductCategories, setInitialProductCategories] = useState([]);
 	const [selectedProductCategory, setSelectedProductCategory] = useState(null);
 	const [
-		createEditProductCategoryModalVisible,
-		setCreateEditProductCategoryModalVisible,
+		modifyProductCategoryModalVisible,
+		setModifyProductCategoryModalVisible,
 	] = useState(false);
 	const [isSorted, setIsSorted] = useState(false);
 
+	// REFS
 	const sortedProductCategories = useRef([]);
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		getProductCategories,
-		removeProductCategory,
-		status: productCategoriesStatus,
-		errors,
-	} = useProductCategories();
+		data: { productCategories, total },
+		isFetching,
+		error: listError,
+	} = useProductCategories({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
+	const {
+		mutate: deleteProductCategory,
+		isLoading,
+		error: deleteError,
+	} = useProductCategoryDelete();
 
 	// EFFECTS
 	useEffect(() => {
-		fetchProductCategories();
-	}, []);
-
-	const fetchProductCategories = () => {
-		getProductCategories(
-			{ branchId: user?.branch?.id },
-			({ status, data: responseData }) => {
-				if (status === request.SUCCESS) {
-					setInitialProductCategories(responseData);
-					setData(
-						responseData.map((productCategory, index) => ({
-							index,
-							key: productCategory.id,
-							id: productCategory.id,
-							name: productCategory.name,
-							actions: (
-								<TableActions
-									onEdit={() => onEdit(productCategory)}
-									onRemove={() => onRemove(productCategory.id)}
-								/>
-							),
-						})),
-					);
-				}
-			},
+		const formattedProductCategories = productCategories.map(
+			(productCategory) => ({
+				key: productCategory.id,
+				id: productCategory.id,
+				name: productCategory.name,
+				actions: (
+					<TableActions
+						onEdit={() => {
+							setSelectedProductCategory(productCategory);
+							setModifyProductCategoryModalVisible(true);
+						}}
+						onRemove={() => deleteProductCategory(productCategory.id)}
+					/>
+				),
+			}),
 		);
-	};
 
-	const onCreate = () => {
-		setSelectedProductCategory(null);
-		setCreateEditProductCategoryModalVisible(true);
-	};
-
-	const onEdit = (branch) => {
-		setSelectedProductCategory(branch);
-		setCreateEditProductCategoryModalVisible(true);
-	};
-
-	const onRemove = (productCategoryId) => {
-		removeProductCategory(
-			{
-				id: productCategoryId,
-				branchId: user?.branch?.id,
-			},
-			({ status }) => {
-				if (status === request.SUCCESS) {
-					fetchProductCategories();
-				}
-			},
-		);
-	};
+		setInitialProductCategories(productCategories);
+		setDataSource(formattedProductCategories);
+	}, [productCategories]);
 
 	const onEditOrder = useCallback(() => {
 		sortedProductCategories.current.forEach((pc, index) => {
@@ -114,9 +97,9 @@ export const ProductCategories = () => {
 				const onlineUrl = user?.branch?.online_url;
 
 				if (onlineUrl) {
-					ProductCategoryService.edit(
+					ProductCategoriesService.edit(
+						pc.id,
 						{
-							id: pc.id,
 							name: pc.name,
 							priority_level: index,
 						},
@@ -160,12 +143,12 @@ export const ProductCategories = () => {
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		if (oldIndex !== newIndex) {
 			const newData = arrayMoveImmutable(
-				[].concat(data),
+				[].concat(dataSource),
 				oldIndex,
 				newIndex,
 			).filter((el) => !!el);
 
-			setData(newData);
+			setDataSource(newData);
 
 			setIsSorted(true);
 
@@ -185,28 +168,36 @@ export const ProductCategories = () => {
 
 	const renderDraggableBodyRow = ({ className, style, ...restProps }) => {
 		// function findIndex base on Table rowKey props and should always be a right array index
-		const index = data.findIndex((x) => x.index === restProps['data-row-key']);
+		const index = dataSource.findIndex(
+			(x) => x.index === restProps['data-row-key'],
+		);
 		return <SortableItem index={index} {...restProps} />;
 	};
 
 	return (
 		<Content className="ProductCategories" title="Product Categories">
 			<Box>
-				<TableHeader buttonName="Create Product Category" onCreate={onCreate} />
+				<TableHeader
+					buttonName="Create Product Category"
+					onCreate={() => {
+						setSelectedProductCategory(null);
+						setModifyProductCategoryModalVisible(true);
+					}}
+				/>
 
 				<RequestErrors
-					className="PaddingHorizontal"
-					errors={convertIntoArray(errors)}
-					withSpaceBottom
+					errors={[
+						...convertIntoArray(listError),
+						...convertIntoArray(deleteError?.errors),
+					]}
 				/>
 
 				<Table
-					rowKey="index"
 					columns={getColumns()}
-					dataSource={data}
+					dataSource={dataSource}
 					scroll={{ x: 800 }}
 					pagination={false}
-					loading={productCategoriesStatus === request.REQUESTING}
+					loading={isFetching}
 					components={{
 						body: {
 							wrapper: renderDraggableContainer,
@@ -216,12 +207,15 @@ export const ProductCategories = () => {
 				/>
 			</Box>
 
-			<CreateEditProductCategoryModal
-				productCategory={selectedProductCategory}
-				visible={createEditProductCategoryModalVisible}
-				onClose={() => setCreateEditProductCategoryModalVisible(false)}
-				onSuccess={fetchProductCategories}
-			/>
+			{modifyProductCategoryModalVisible && (
+				<ModifyProductCategoryModal
+					productCategory={selectedProductCategory}
+					onClose={() => {
+						setSelectedProductCategory(null);
+						setModifyProductCategoryModalVisible(false);
+					}}
+				/>
+			)}
 		</Content>
 	);
 };

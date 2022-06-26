@@ -8,26 +8,21 @@ import {
 	useProductCreate,
 	useProductEdit,
 } from 'hooks';
-import { IProductCategory } from 'models';
 import React, { useState } from 'react';
 import { convertIntoArray } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
 interface Props {
 	product: any;
-	productCategories: IProductCategory[];
 	onClose: any;
 }
 
-export const ModifyProductModal = ({
-	product,
-	productCategories,
-	onClose,
-}: Props) => {
+export const ModifyProductModal = ({ product, onClose }: Props) => {
 	// STATES
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
+
 	const { data: branchProduct, isFetching: isFetchingBranchProduct } =
 		useBranchProductRetrieve({
 			id: product?.id,
@@ -114,7 +109,6 @@ export const ModifyProductModal = ({
 				onClose={onClose}
 				onSubmit={onSubmit}
 				product={product}
-				productCategories={productCategories}
 				pointSystemTags={pointSystemTags}
 			/>
 		</Modal>

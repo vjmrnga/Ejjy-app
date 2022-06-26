@@ -1,16 +1,12 @@
 /* eslint-disable no-confusing-arrow */
 import { Col, Row } from 'antd';
-import { Form, Formik, ErrorMessage } from 'formik';
+import { Button, FieldError, FormInputLabel } from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
+import { unitOfMeasurementTypes } from 'global';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-} from '../../../../../components/elements';
 import { sleep } from 'utils';
-import { unitOfMeasurementTypes } from '../../../../../global/types';
+import * as Yup from 'yup';
 
 interface Props {
 	branchProduct?: any;

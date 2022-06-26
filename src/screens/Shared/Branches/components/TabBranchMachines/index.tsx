@@ -1,15 +1,12 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
-	Content,
 	ModifyBranchMachineModal,
 	RequestErrors,
 	TableActions,
 	TableHeader,
 } from 'components';
-import { Box } from 'components/elements';
 import { useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
@@ -20,7 +17,11 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const BranchMachines = () => {
+interface Props {
+	branchId: any;
+}
+
+export const TabBranchMachines = ({ branchId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
@@ -32,17 +33,17 @@ export const BranchMachines = () => {
 		data: { branchMachines },
 		isFetching,
 		error,
-	} = useBranchMachines();
+	} = useBranchMachines({
+		params: {
+			branchId,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
 			key: branchMachine.id,
-			name: (
-				<Link to={`/branch-manager/branch-machines/${branchMachine.id}`}>
-					{branchMachine.name}
-				</Link>
-			),
+			name: branchMachine.name,
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
@@ -63,30 +64,31 @@ export const BranchMachines = () => {
 	};
 
 	return (
-		<Content title="Branch Machines">
-			<Box>
-				<TableHeader
-					buttonName="Create Branch Machine"
-					onCreate={handleCreate}
+		<>
+			<TableHeader
+				title="Branch Machines"
+				wrapperClassName="pt-0"
+				buttonName="Create Branch Machine"
+				onCreate={handleCreate}
+			/>
+
+			<RequestErrors errors={convertIntoArray(error)} />
+
+			<Table
+				columns={columns}
+				dataSource={dataSource}
+				scroll={{ x: 800 }}
+				loading={isFetching}
+				pagination={false}
+			/>
+
+			{modifyBranchMachineModalVisible && (
+				<ModifyBranchMachineModal
+					branchId={branchId}
+					branchMachine={selectedBranchMachine}
+					onClose={() => setModifyBranchMachineModalVisible(false)}
 				/>
-
-				<RequestErrors errors={convertIntoArray(error)} />
-
-				<Table
-					columns={columns}
-					dataSource={dataSource}
-					scroll={{ x: 800 }}
-					loading={isFetching}
-					pagination={false}
-				/>
-
-				{modifyBranchMachineModalVisible && (
-					<ModifyBranchMachineModal
-						branchMachine={selectedBranchMachine}
-						onClose={() => setModifyBranchMachineModalVisible(false)}
-					/>
-				)}
-			</Box>
-		</Content>
+			)}
+		</>
 	);
 };

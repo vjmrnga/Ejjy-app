@@ -8,6 +8,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
 		[
 			'useBranchMachines',
+			params?.branchId,
 			params?.page,
 			params?.pageSize,
 			params?.salesTimeRange,
@@ -15,6 +16,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 		async () =>
 			BranchMachinesService.list(
 				{
+					branch_id: params?.branchId,
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					sales_time_range: params?.salesTimeRange,

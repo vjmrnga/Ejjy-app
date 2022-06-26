@@ -12,7 +12,6 @@ import { MAX_PAGE_SIZE } from 'global';
 import { usePingOnlineServer, useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
 import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
 
 const columns: ColumnsType = [
@@ -29,7 +28,7 @@ export const Users = () => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
+	const queryClient = useQueryClient();
 	const { isConnected } = usePingOnlineServer();
 	const {
 		isFetching: isFetchingUsers,
@@ -52,9 +51,6 @@ export const Users = () => {
 			actions: (
 				<TableActions
 					areButtonsDisabled={isConnected === false}
-					onAssign={() =>
-						history.push(`/branch-manager/users/assign/${user.id}`)
-					}
 					onEdit={() => {
 						setSelectedUser(user);
 						setModifyUserModalVisible(true);
@@ -66,6 +62,13 @@ export const Users = () => {
 
 		setDataSource(formattedUsers);
 	}, [users]);
+
+	const handleSuccess = (user) => {
+		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
+			cachedData.data.results = [user, ...cachedData.data.results];
+			return cachedData;
+		});
+	};
 
 	return (
 		<Content title="Users">
@@ -107,6 +110,7 @@ export const Users = () => {
 			{modifyUserModalVisible && (
 				<ModifyUserModal
 					user={selectedUser}
+					onSuccess={handleSuccess}
 					onClose={() => {
 						setSelectedUser(null);
 						setModifyUserModalVisible(false);

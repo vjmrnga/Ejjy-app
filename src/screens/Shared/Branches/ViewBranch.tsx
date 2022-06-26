@@ -1,20 +1,17 @@
 import { message, Tabs } from 'antd';
+import { Breadcrumb, Content } from 'components';
+import { Box } from 'components/elements';
 import { useBranchRetrieve, useQueryParams } from 'hooks';
+import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getUrlPrefix } from 'utils';
-import { Breadcrumb, Content } from '../../../components';
-import { Box } from '../../../components/elements';
-import { useAuth } from '../../../hooks/useAuth';
-import { ViewBranchCheckings } from './components/ViewBranchCheckings';
-import { ViewBranchDays } from './components/ViewBranchDays';
-import { ViewBranchMachines } from './components/ViewBranchMachines';
-import { ViewBranchPendingPriceUpdates } from './components/ViewBranchPendingPriceUpdates';
-import { ViewBranchProducts } from './components/ViewBranchProducts';
-import { ViewBranchSessions } from './components/ViewBranchSessions';
-import { ViewBranchSiteSettings } from './components/ViewBranchSiteSettings';
-import { ViewBranchTransactions } from './components/ViewBranchTransactions';
+import { TabBranchMachines } from './components/TabBranchMachines';
+import { TabBranchProducts } from './components/TabBranchProducts';
+import { TabDays } from './components/TabDays';
+import { TabSessions } from './components/TabSessions';
+import { TabTransactions } from './components/TabTransactions';
 import './style.scss';
 
 interface Props {
@@ -98,23 +95,23 @@ export const ViewBranch = ({ match }: Props) => {
 						tab={tabs.PRODUCTS}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchProducts branchId={branchId} />
+						<TabBranchProducts branchId={branchId} />
 					</Tabs.TabPane>
 
-					<Tabs.TabPane
+					{/* <Tabs.TabPane
 						key={tabs.PENDING_PRICE_UPDATES}
 						tab={tabs.PENDING_PRICE_UPDATES}
 						disabled={!branch?.online_url}
 					>
 						<ViewBranchPendingPriceUpdates branchId={branchId} />
-					</Tabs.TabPane>
+					</Tabs.TabPane> */}
 
 					<Tabs.TabPane
 						key={tabs.MACHINES}
 						tab={tabs.MACHINES}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchMachines branchId={branchId} />
+						<TabBranchMachines branchId={branchId} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
@@ -122,7 +119,7 @@ export const ViewBranch = ({ match }: Props) => {
 						tab={tabs.TRANSACTIONS}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchTransactions branchId={branchId} />
+						<TabTransactions branchId={branchId} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
@@ -130,7 +127,7 @@ export const ViewBranch = ({ match }: Props) => {
 						tab={tabs.SESSIONS}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchSessions branchId={branchId} />
+						<TabSessions branchId={branchId} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
@@ -138,10 +135,10 @@ export const ViewBranch = ({ match }: Props) => {
 						tab={tabs.DAYS}
 						disabled={!branch?.online_url}
 					>
-						<ViewBranchDays branchId={branchId} />
+						<TabDays branchId={branchId} />
 					</Tabs.TabPane>
 
-					<Tabs.TabPane
+					{/* <Tabs.TabPane
 						key={tabs.SITE_SETTINGS}
 						tab={tabs.SITE_SETTINGS}
 						disabled={!branch?.online_url}
@@ -155,7 +152,7 @@ export const ViewBranch = ({ match }: Props) => {
 						disabled={!branch?.online_url}
 					>
 						<ViewBranchCheckings branchId={branchId} />
-					</Tabs.TabPane>
+					</Tabs.TabPane> */}
 				</Tabs>
 			</Box>
 		</Content>
