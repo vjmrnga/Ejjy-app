@@ -20,6 +20,7 @@ export { default as CashieringAssignmentsService } from './CashieringAssignments
 export { default as CollectionReceiptsService } from './CollectionReceiptsService';
 export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
+export { default as DataService } from './DataService';
 export { default as DiscountOptionsService } from './DiscountOptionsService';
 export { default as LogsService } from './LogsService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';

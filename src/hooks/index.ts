@@ -21,6 +21,7 @@ export { default as useCollectionReceipts } from './useCollectionReceipts';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';
+export * from './useData';
 export * from './useDiscountOptions';
 export { default as useDiscountOptions } from './useDiscountOptions';
 export { default as useLogs } from './useLogs';

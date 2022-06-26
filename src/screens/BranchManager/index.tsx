@@ -8,6 +8,7 @@ import {
 	useProductCheckCreateRandom,
 	useSalesTracker,
 	useSiteSettingsRetrieve,
+	useUploadData,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -83,6 +84,8 @@ const BranchManager = () => {
 			notifyOnChangeProps: ['data'],
 		},
 	});
+	useUploadData();
+
 	const { mutate: createCheckDaily } = useProductCheckCreateDaily();
 	const { mutate: createCheckRandom } = useProductCheckCreateRandom();
 
