@@ -10,7 +10,7 @@ import { Box } from 'components/elements';
 import { useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getBranchId } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
@@ -32,7 +32,11 @@ export const BranchMachines = () => {
 		data: { branchMachines },
 		isFetching,
 		error,
-	} = useBranchMachines();
+	} = useBranchMachines({
+		params: {
+			branchId: getBranchId(),
+		},
+	});
 
 	// METHODS
 	useEffect(() => {

@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { Alert, message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -8,7 +8,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { useBranchDelete, useBranches } from 'hooks';
+import { useBranchDelete, useBranches, usePingOnlineServer } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { convertIntoArray } from 'utils';
@@ -28,6 +28,7 @@ export const Branches = () => {
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
 	// CUSTOM HOOKS
+	const { isConnected } = usePingOnlineServer();
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
@@ -46,6 +47,7 @@ export const Branches = () => {
 			url: branch.online_url,
 			actions: (
 				<TableActions
+					areButtonsDisabled={isConnected === false}
 					onEdit={() => {
 						setSelectedBranch(branch);
 						setModifyBranchModalVisible(true);
@@ -59,13 +61,24 @@ export const Branches = () => {
 		}));
 
 		setDataSource(formattedBranches);
-	}, [branches]);
+	}, [branches, isConnected]);
 
 	return (
 		<Content className="Branches" title="Branches">
+			{isConnected === false && (
+				<Alert
+					className="mb-4"
+					message="Online Server cannot be reached."
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
+					type="error"
+					showIcon
+				/>
+			)}
+
 			<Box>
 				<TableHeader
 					buttonName="Create Branch"
+					onCreateDisabled={isConnected === false}
 					onCreate={() => setModifyBranchModalVisible(true)}
 				/>
 

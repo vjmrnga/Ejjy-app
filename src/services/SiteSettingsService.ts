@@ -36,4 +36,12 @@ const service = {
 		axios.patch(`/site-settings/${id}/`, body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	retrieveOffline: async (baseURL) =>
+		axios.get('/offline-site-settings/single/', { baseURL }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

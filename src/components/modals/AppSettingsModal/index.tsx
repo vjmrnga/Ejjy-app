@@ -9,16 +9,18 @@ import { getBranchId, getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { AppSettingsForm } from './AppSettingsForm';
 
 interface Props {
+	onSuccess: any;
 	onClose: any;
 }
 
-export const AppSettingsModal = ({ onClose }: Props) => {
+export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 	const handleSubmit = (data) => {
 		localStorage.setItem(APP_BRANCH_ID_KEY, data.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, data.localApiUrl);
 		localStorage.setItem(APP_ONLINE_API_URL_KEY, data.onlineApiUrl);
 
 		message.success('App settings were updated successfully');
+		onSuccess?.();
 		onClose();
 	};
 

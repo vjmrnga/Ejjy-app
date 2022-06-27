@@ -134,8 +134,8 @@ export const Products = () => {
 			{isConnected === false && (
 				<Alert
 					className="mb-4"
-					message="Head Office Server is Offline"
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Head Office server is restored."
+					message="Online Server cannot be reached."
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
 					type="error"
 					showIcon
 				/>

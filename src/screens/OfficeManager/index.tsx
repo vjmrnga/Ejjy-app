@@ -1,4 +1,4 @@
-import { useBranches } from 'hooks';
+import { useBranches, useInitializeData, useSiteSettingsRetrieve } from 'hooks';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
@@ -19,8 +19,8 @@ import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
-import { Users } from './Users/Users';
 import { AssignUser } from './Users/AssignUser';
+import { Users } from './Users/Users';
 
 const sidebarItems = [
 	// {
@@ -111,6 +111,8 @@ const OfficeManager = () => {
 			notifyOnChangeProps: ['data'],
 		},
 	});
+	// useSiteSettingsRetrieve();
+	useInitializeData();
 
 	return (
 		<Container sidebarItems={sidebarItems}>

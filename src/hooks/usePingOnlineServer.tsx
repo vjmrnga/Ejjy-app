@@ -15,6 +15,7 @@ const usePingOnlineServer = () => {
 			),
 		{
 			enabled: isEnabled,
+			notifyOnChangeProps: ['data'],
 			refetchInterval: 10000,
 			onSettled: (_data, error) => {
 				setIsConnected(!error);

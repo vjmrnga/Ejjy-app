@@ -1,7 +1,7 @@
-import { Tabs } from 'antd';
+import { Alert, Tabs } from 'antd';
 import { AddIcon, Content, ModifyUserModal } from 'components';
 import { Box, Button } from 'components/elements';
-import { useBranches, useQueryParams } from 'hooks';
+import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -19,6 +19,7 @@ export const Users = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
+	const { isConnected } = usePingOnlineServer();
 	const {
 		params: { branchId: currentBranchId },
 		setQueryParams,
@@ -43,6 +44,16 @@ export const Users = () => {
 
 	return (
 		<Content title="Users">
+			{isConnected === false && (
+				<Alert
+					className="mb-4"
+					message="Online Server cannot be reached."
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
+					type="error"
+					showIcon
+				/>
+			)}
+
 			<Box>
 				<Tabs
 					type="card"
@@ -50,6 +61,7 @@ export const Users = () => {
 					onTabClick={handleTabClick}
 					tabBarExtraContent={
 						<Button
+							disabled={isConnected === false}
 							text="Create User"
 							variant="primary"
 							onClick={() => setModifyUserModalVisible(true)}
@@ -62,6 +74,7 @@ export const Users = () => {
 					<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branch">
 						<BranchUsers
 							branchId={NO_BRANCH_ID}
+							disabled={isConnected === false}
 							onEditUser={(user) => {
 								setModifyUserModalVisible(true);
 								setSelectedUser(user);
@@ -77,6 +90,7 @@ export const Users = () => {
 						<Tabs.TabPane key={id} tab={name}>
 							<BranchUsers
 								branchId={id}
+								disabled={isConnected === false}
 								onEditUser={(user) => {
 									setModifyUserModalVisible(true);
 									setSelectedUser(user);

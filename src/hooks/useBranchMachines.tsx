@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchMachinesService } from 'services';
@@ -13,16 +14,22 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 			params?.pageSize,
 			params?.salesTimeRange,
 		],
-		async () =>
-			BranchMachinesService.list(
+		async () => {
+			let service = BranchMachinesService.list;
+			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+				service = BranchMachinesService.listOffline;
+			}
+
+			return service(
 				{
 					branch_id: params?.branchId,
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					sales_time_range: params?.salesTimeRange,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+				params?.serverUrl || getBaseURL(),
+			).catch((e) => Promise.reject(e.errors));
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

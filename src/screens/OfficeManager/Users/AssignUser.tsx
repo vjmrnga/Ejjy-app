@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
+import { Alert, Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	AddButtonIcon,
 	Breadcrumb,
@@ -14,6 +14,7 @@ import {
 	useAuth,
 	useCashieringAssignmentDelete,
 	useCashieringAssignments,
+	usePingOnlineServer,
 	useUserRetrieve,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -46,6 +47,7 @@ export const AssignUser = ({ match }: Props) => {
 		useState(null);
 
 	// CUSTOM HOOKS
+	const { isConnected } = usePingOnlineServer();
 	const { user: actingUser } = useAuth();
 	const {
 		data: user,
@@ -78,11 +80,8 @@ export const AssignUser = ({ match }: Props) => {
 			enabled: isSuccessUser,
 		},
 	});
-	const {
-		mutateAsync: deleteCashieringAssignment,
-		isLoading: isDeleting,
-		error: deleteError,
-	} = useCashieringAssignmentDelete();
+	const { mutateAsync: deleteCashieringAssignment, error: deleteError } =
+		useCashieringAssignmentDelete();
 
 	// METHODS
 	useEffect(() => {
@@ -108,6 +107,7 @@ export const AssignUser = ({ match }: Props) => {
 					assignments: (
 						<Assignments
 							assignments={assignments}
+							disabled={isConnected === false}
 							onEdit={setSelectedCashieringAssignment}
 							onDelete={(assignment) =>
 								deleteCashieringAssignment({
@@ -119,6 +119,7 @@ export const AssignUser = ({ match }: Props) => {
 					),
 					actions: !isDateAfter && (
 						<AddButtonIcon
+							disabled={isConnected === false}
 							tooltip="Assign"
 							onClick={() => setSelectededDate(item.date)}
 						/>
@@ -128,7 +129,7 @@ export const AssignUser = ({ match }: Props) => {
 
 			setDataSource(formattedAssignments);
 		}
-	}, [user, actingUser, cashieringAssignments]);
+	}, [user, actingUser, cashieringAssignments, isConnected]);
 
 	const getDays = useCallback(() => {
 		const numberOfDays = dayjs().daysInMonth();
@@ -171,6 +172,16 @@ export const AssignUser = ({ match }: Props) => {
 			rightTitle={getFullName(user)}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
+			{isConnected === false && (
+				<Alert
+					className="mb-4"
+					message="Online Server cannot be reached."
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
+					type="error"
+					showIcon
+				/>
+			)}
+
 			<Box>
 				{isUserFromBranch(user?.user_type) && (
 					<>
@@ -181,6 +192,10 @@ export const AssignUser = ({ match }: Props) => {
 									'Cashiering Assignments',
 								),
 								...convertIntoArray(userErrors, 'User'),
+								...convertIntoArray(
+									deleteError?.errors,
+									'Delete Cashiering Assignment',
+								),
 							]}
 							withSpaceBottom
 						/>
@@ -214,11 +229,17 @@ export const AssignUser = ({ match }: Props) => {
 
 interface AssignmentsProps {
 	assignments: any;
+	disabled: boolean;
 	onEdit: any;
 	onDelete: any;
 }
 
-const Assignments = ({ assignments, onDelete, onEdit }: AssignmentsProps) => (
+const Assignments = ({
+	assignments,
+	disabled,
+	onDelete,
+	onEdit,
+}: AssignmentsProps) => (
 	<Row gutter={[16, 16]}>
 		{assignments.map((assignment) => (
 			<Col key={assignment.id} span={24}>
@@ -236,6 +257,7 @@ const Assignments = ({ assignments, onDelete, onEdit }: AssignmentsProps) => (
 							type="primary"
 							shape="circle"
 							size="small"
+							disabled={disabled}
 							icon={<EditOutlined />}
 							onClick={() =>
 								confirmPassword({ onSuccess: () => onEdit(assignment) })
@@ -249,6 +271,7 @@ const Assignments = ({ assignments, onDelete, onEdit }: AssignmentsProps) => (
 							shape="circle"
 							size="small"
 							ghost
+							disabled={disabled}
 							icon={<DeleteOutlined />}
 							onClick={() =>
 								confirmPassword({ onSuccess: onDelete(assignment) })

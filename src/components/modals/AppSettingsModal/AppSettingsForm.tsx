@@ -1,6 +1,5 @@
 import { Col, Input, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { MAX_PAGE_SIZE } from 'global';
 import { useBranches } from 'hooks';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -110,7 +109,7 @@ export const AppSettingsForm = ({
 										.indexOf(input.toLowerCase()) >= 0
 								}
 								optionFilterProp="children"
-								value={values.branchId}
+								value={Number(values.branchId)}
 								size="large"
 								allowClear={false}
 								showSearch

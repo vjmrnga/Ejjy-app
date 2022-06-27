@@ -19,6 +19,7 @@
 		"server:om": "cd ../ejjy-api-officemanager && poetry run python manage.py runserver 8001",
 		"server:om:branch": "concurrently \"npm run server:bm\" \"npm run server:om\"",
 		"start:om": "concurrently \"npm run server:om:branch\" \"npm run start:local\"",
+		"server:all": "concurrently \"npm run server:bm:branch\" \"npm run server:om\"",
 		"build:online": "env-cmd -f .env.online react-scripts build",
 		"build:local": "env-cmd -f .env.local react-scripts build",
 		"electron": "wait-on http://localhost:3005 && electron .",

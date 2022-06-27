@@ -16,12 +16,14 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: any;
+	disabled: boolean;
 	onEditUser: any;
 	onReassignUser: any;
 }
 
 export const BranchUsers = ({
 	branchId,
+	disabled,
 	onEditUser,
 	onReassignUser,
 }: Props) => {
@@ -57,6 +59,7 @@ export const BranchUsers = ({
 				<Space>
 					<Button
 						type="primary"
+						disabled={disabled}
 						onClick={() =>
 							history.push(`/office-manager/users/assign/${user.id}`)
 						}
@@ -65,12 +68,14 @@ export const BranchUsers = ({
 					</Button>
 					<Button
 						type="primary"
+						disabled={disabled}
 						onClick={() => onReassignUser({ ...user, branchId })}
 					>
 						Assign Branch
 					</Button>
 					<Button
 						type="primary"
+						disabled={disabled}
 						onClick={() => onEditUser({ ...user, branchId })}
 					>
 						Edit
@@ -82,7 +87,7 @@ export const BranchUsers = ({
 						okText="Yes"
 						cancelText="No"
 					>
-						<Button type="primary" danger>
+						<Button type="primary" disabled={disabled} danger>
 							Delete
 						</Button>
 					</Popconfirm>
@@ -91,12 +96,11 @@ export const BranchUsers = ({
 		}));
 
 		setDataSource(formattedUsers);
-	}, [users]);
+	}, [users, disabled]);
 
 	return (
 		<>
 			<RequestErrors
-				className="px-6"
 				errors={[
 					...convertIntoArray(listError),
 					...convertIntoArray(deleteError?.errors),

@@ -29,4 +29,12 @@ const service = {
 		axios.patch(`/branch-machines/${id}/`, body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: List, baseURL) =>
+		axios.get('/offline-branch-machines/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

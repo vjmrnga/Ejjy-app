@@ -1,7 +1,7 @@
-import { message, Tabs } from 'antd';
+import { Alert, message, Tabs } from 'antd';
 import { Breadcrumb, Content } from 'components';
 import { Box } from 'components/elements';
-import { useBranchRetrieve, useQueryParams } from 'hooks';
+import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
@@ -35,6 +35,7 @@ export const ViewBranch = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
+	const { isConnected } = usePingOnlineServer();
 	const {
 		params: { tab: currentTab },
 		setQueryParams,
@@ -82,6 +83,16 @@ export const ViewBranch = ({ match }: Props) => {
 			rightTitle={branch?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
+			{isConnected === false && (
+				<Alert
+					className="mb-4"
+					message="Online Server cannot be reached."
+					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
+					type="error"
+					showIcon
+				/>
+			)}
+
 			<Box className="ViewBranchMachine">
 				<Tabs
 					type="card"
@@ -111,7 +122,10 @@ export const ViewBranch = ({ match }: Props) => {
 						tab={tabs.MACHINES}
 						disabled={!branch?.online_url}
 					>
-						<TabBranchMachines branchId={branchId} />
+						<TabBranchMachines
+							branchId={branchId}
+							disabled={isConnected === false}
+						/>
 					</Tabs.TabPane>
 
 					<Tabs.TabPane

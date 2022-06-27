@@ -5,7 +5,10 @@ interface Upload {
 }
 
 const service = {
-	upload: async (body: Upload) => axios.post('/offline-upload-data/', body),
+	initialize: async (baseURL) => axios.get('/bulk-initialize/', { baseURL }),
+
+	upload: async (body: Upload, baseURL) =>
+		axios.post('/offline-upload-data/', body, { baseURL }),
 };
 
 export default service;

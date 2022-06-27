@@ -1,5 +1,6 @@
 import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { IS_APP_LIVE } from 'global';
+import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -14,16 +15,14 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
 	return useQuery<any>(
 		['useSiteSettingsRetrieve', params?.branchId],
 		() => {
-			if (!baseURL && params?.branchId) {
-				throw ['Branch has no online url.'];
-			} else {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
+			let service = SiteSettingsService.retrieve;
+			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+				service = SiteSettingsService.retrieveOffline;
 			}
 
-			return SiteSettingsService.retrieve(baseURL).catch((e) =>
-				Promise.reject(e.errors),
-			);
+			return service(getBaseURL()).catch((e) => Promise.reject(e.errors));
 		},
+
 		{
 			select: (query) => query.data,
 			...options,

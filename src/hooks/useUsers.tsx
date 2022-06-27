@@ -263,7 +263,7 @@ export const useUsers = () => {
 	};
 };
 
-const useUsersNew = ({ params }: Query) =>
+const useUsersNew = ({ params, options }: Query = {}) =>
 	useQuery<any>(
 		[
 			'useUsers',
@@ -293,6 +293,7 @@ const useUsersNew = ({ params }: Query) =>
 				users: query.data.results,
 				total: query.data.count,
 			}),
+			...options,
 		},
 	);
 

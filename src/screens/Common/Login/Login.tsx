@@ -1,7 +1,8 @@
 import { Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box, Button } from 'components/elements';
-import { IS_APP_LIVE, request } from 'global';
+import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
+import { useInitializeData, useUsers } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
 import { getKeyDownCombination, getLocalApiUrl } from 'utils';
@@ -12,9 +13,20 @@ const Login = () => {
 	// STATES
 	const [appSettingsModalVisible, setAppSettingsModalVisible] = useState(false);
 	const [isSetupButtonsVisible, setSetupButtonsVisible] = useState(false);
+	const [isUserAPIEnabled, setIsUserAPIersEnabled] = useState(false);
 
 	// CUSTOM HOOKS
+	useInitializeData();
 	const { login, status, errors } = useAuth();
+	useUsers({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			notifyOnChangeProps: [],
+			enabled: isUserAPIEnabled,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -69,6 +81,7 @@ const Login = () => {
 
 						{appSettingsModalVisible && (
 							<AppSettingsModal
+								onSuccess={() => setIsUserAPIersEnabled(true)}
 								onClose={() => setAppSettingsModalVisible(false)}
 							/>
 						)}

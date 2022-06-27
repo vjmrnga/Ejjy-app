@@ -302,28 +302,18 @@ export const ModifyProductForm = ({
 					isDailyChecked: Yup.boolean(),
 					isRandomlyChecked: Yup.boolean(),
 					markdownPricePerPiece1: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.label('Wholesale Price (Piece)'),
 					markdownPricePerPiece2: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.label('Special Price (Piece)'),
 					markdownPricePerBulk1: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.label('Wholesale Price (Bulk)'),
 					markdownPricePerBulk2: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.label('Special Price (Bulk)'),
 					creditPricePerPiece: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.test(
 							'greater-than-regular-price',
@@ -343,8 +333,6 @@ export const ModifyProductForm = ({
 						)
 						.label('Credit Price per Piece'),
 					creditPricePerBulk: Yup.number()
-						.required()
-						.moreThan(0)
 						.nullable()
 						.test(
 							'greater-than-regular-price',

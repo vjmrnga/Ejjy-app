@@ -81,7 +81,7 @@ export const BranchAssignmentUserForm = ({
 		() => ({
 			DefaultValues: {
 				userId: user.id,
-				branchId: user.branchId || null,
+				branchId: user.branchId > 0 ? user.branchId : null, // NOTE: We want to display the valid branch IDs
 			},
 			Schema: Yup.object().shape({
 				branchId: Yup.number().required().label('Branch'),

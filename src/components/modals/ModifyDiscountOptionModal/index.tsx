@@ -147,7 +147,7 @@ export const ModifyDiscountOptionForm = ({
 					additionalFields:
 						formData.additionalFields.length > 0
 							? formData.additionalFields.join(',')
-							: '',
+							: undefined,
 				});
 			}}
 			enableReinitialize

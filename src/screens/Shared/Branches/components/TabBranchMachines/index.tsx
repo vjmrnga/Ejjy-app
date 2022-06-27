@@ -19,9 +19,10 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: any;
+	disabled: boolean;
 }
 
-export const TabBranchMachines = ({ branchId }: Props) => {
+export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
@@ -47,11 +48,16 @@ export const TabBranchMachines = ({ branchId }: Props) => {
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
-			actions: <TableActions onEdit={() => handleEdit(branchMachine)} />,
+			actions: (
+				<TableActions
+					areButtonsDisabled={disabled}
+					onEdit={() => handleEdit(branchMachine)}
+				/>
+			),
 		}));
 
 		setDataSource(formattedBranchMachines);
-	}, [branchMachines]);
+	}, [branchMachines, disabled]);
 
 	const handleCreate = () => {
 		setSelectedBranchMachine(null);
@@ -70,6 +76,7 @@ export const TabBranchMachines = ({ branchId }: Props) => {
 				wrapperClassName="pt-0"
 				buttonName="Create Branch Machine"
 				onCreate={handleCreate}
+				onCreateDisabled={disabled}
 			/>
 
 			<RequestErrors errors={convertIntoArray(error)} />

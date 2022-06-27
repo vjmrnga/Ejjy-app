@@ -12,7 +12,12 @@ import { MAX_PAGE_SIZE } from 'global';
 import { usePingOnlineServer, useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
+import {
+	convertIntoArray,
+	getBranchId,
+	getFullName,
+	getUserTypeName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -34,7 +39,12 @@ export const Users = () => {
 		isFetching: isFetchingUsers,
 		data: { users },
 		error: listError,
-	} = useUsers({ params: { pageSize: MAX_PAGE_SIZE } });
+	} = useUsers({
+		params: {
+			branchId: getBranchId(),
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
