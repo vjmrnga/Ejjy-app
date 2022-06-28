@@ -109,7 +109,7 @@ export const AppSettingsForm = ({
 										.indexOf(input.toLowerCase()) >= 0
 								}
 								optionFilterProp="children"
-								value={Number(values.branchId)}
+								value={values.branchId ? Number(values.branchId) : undefined}
 								size="large"
 								allowClear={false}
 								showSearch

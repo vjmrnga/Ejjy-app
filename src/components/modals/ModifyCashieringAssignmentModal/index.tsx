@@ -190,6 +190,7 @@ export const ModifyCashieringAssignmentForm = ({
 					? Yup.number().nullable().required().label('Branch Machine')
 					: null,
 				times: Yup.array()
+					.nullable()
 					.required()
 					.label('Schedule')
 					.test(
