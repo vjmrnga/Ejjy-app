@@ -37,7 +37,7 @@ const columns: ColumnsType = [
 	{ title: 'Quantity', dataIndex: 'quantity' },
 	{ title: 'Code / Barcode', dataIndex: 'code', width: 150 },
 	{ title: 'Item Name / Description', dataIndex: 'name', width: 300 },
-	{ title: 'Scale Price', dataIndex: 'sellingPrice', width: 150 },
+	{ title: 'Sale Price', dataIndex: 'sellingPrice', width: 150 },
 	{ title: 'V/VE', dataIndex: 'vatable' },
 	{ title: 'Total Amount', dataIndex: 'totalAmount', width: 150 },
 	{ title: 'Remarks', dataIndex: 'remarks' },
