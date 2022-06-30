@@ -348,7 +348,7 @@ export const useUserCreate = () => {
 					user_type: userType,
 					username: username,
 				},
-				getBaseURL(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -369,6 +369,7 @@ export const useUserEdit = () => {
 			email,
 			firstName,
 			lastName,
+			password,
 			userType,
 		}: any) =>
 			UsersService.edit(
@@ -379,9 +380,10 @@ export const useUserEdit = () => {
 					email: email,
 					first_name: firstName,
 					last_name: lastName,
+					password: password,
 					user_type: userType,
 				},
-				getBaseURL(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -395,7 +397,7 @@ export const useUserDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => UsersService.delete(id, getBaseURL()),
+		(id: number) => UsersService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useUsers');

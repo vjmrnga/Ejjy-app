@@ -23,6 +23,7 @@ interface Edit {
 	email?: string;
 	first_name?: string;
 	last_name?: string;
+	password?: string;
 	user_type?: string;
 }
 

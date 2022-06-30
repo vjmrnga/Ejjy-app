@@ -61,7 +61,7 @@ export const useBranchCreate = () => {
 					name,
 					online_url: onlineUrl,
 				},
-				getBaseURL(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -82,7 +82,7 @@ export const useBranchEdit = () => {
 					name,
 					online_url: onlineUrl,
 				},
-				getBaseURL(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -96,7 +96,7 @@ export const useBranchDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => BranchesService.delete(id, getBaseURL()),
+		(id: number) => BranchesService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useBranches');

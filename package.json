@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.129",
+	"version": "0.1.138",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -20,15 +20,16 @@
 		"server:om:branch": "concurrently \"npm run server:bm\" \"npm run server:om\"",
 		"start:om": "concurrently \"npm run server:om:branch\" \"npm run start:local\"",
 		"server:all": "concurrently \"npm run server:bm:branch\" \"npm run server:om\"",
-		"build:online": "env-cmd -f .env.online react-scripts build",
-		"build:local": "env-cmd -f .env.local react-scripts build",
 		"electron": "wait-on http://localhost:3005 && electron .",
 		"postinstall": "electron-builder install-app-deps",
-		"publish": "npm version patch --no-git-tag-version && npm run build:local && electron-builder -w -p always"
+		"build:online": "env-cmd -f .env.online react-scripts build",
+		"build:local": "env-cmd -f .env.local react-scripts build",
+		"build:electron": "electron-builder -w --x64 -p always",
+		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
-		"antd": "^4.16.13",
+		"antd": "4.19.1",
 		"antd-css-utilities": "^1.0.3",
 		"array-move": "^4.0.0",
 		"axios": "^0.21.1",
@@ -119,7 +120,8 @@
 			{
 				"provider": "github",
 				"owner": "EJJY-Devs",
-				"repo": "ejjy-app"
+				"repo": "ejjy-app",
+				"releaseType": "release"
 			}
 		]
 	}

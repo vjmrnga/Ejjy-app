@@ -135,14 +135,12 @@ if (process.platform === 'win32') {
 			.showMessageBox(mainWindow, {
 				type: 'info',
 				title: 'Software Update',
-				message:
-					'Inventory App ' +
-					info.version +
-					' is now available. Please press the button below to download the update.',
-				buttons: ['Update Now'],
+				message: `EJJY Inventory App ${info.version} is available. Please press the button below to download the update.`,
+				buttons: ['Download Update'],
+				cancelId: -1,
 			})
 			.then(({ response }) => {
-				if (response == 0) {
+				if (response === 0) {
 					autoUpdater.downloadUpdate();
 				}
 			});
@@ -173,12 +171,14 @@ if (process.platform === 'win32') {
 			.showMessageBox(mainWindow, {
 				type: 'info',
 				title: 'Software Update',
-				message:
-					'EJJY Cashiering App is successfully updated. Please press the button below to install the update.',
-				buttons: ['Install'],
+				message: 'EJJY Inventory App is successfully updated.',
+				buttons: ['Install Update'],
+				cancelId: -1,
 			})
-			.then(() => {
-				autoUpdater.quitAndInstall();
+			.then(({ response }) => {
+				if (response === 0) {
+					autoUpdater.quitAndInstall();
+				}
 			});
 	});
 

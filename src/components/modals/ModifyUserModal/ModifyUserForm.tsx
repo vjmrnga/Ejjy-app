@@ -1,7 +1,15 @@
-import { Col, Divider, Input, Row, Select } from 'antd';
+import {
+	Alert,
+	Button as AntdButton,
+	Col,
+	Divider,
+	Input,
+	Row,
+	Select,
+} from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { userTypeBranchOptions, userTypeOptions, userTypes } from 'global';
-import React, { useCallback } from 'react';
+import { userTypeBranchOptions, userTypeOptions } from 'global';
+import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import { Button, FieldError, Label } from '../../elements';
 
@@ -20,6 +28,8 @@ export const ModifyUserForm = ({
 	onSubmit,
 	onClose,
 }: Props) => {
+	const [passwordFieldsVisible, setPasswordFieldsVisible] = useState(!user);
+
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({
@@ -39,18 +49,22 @@ export const ModifyUserForm = ({
 				firstName: Yup.string().required().label('First Name'),
 				lastName: Yup.string().required().label('Last Name'),
 				email: Yup.string().email().required().email().label('Email'),
+				userType: Yup.string().required().label('User Type'),
 				username: user ? undefined : Yup.string().required().label('Username'),
-				userType: user ? undefined : Yup.string().required().label('User Type'),
-				password: user ? undefined : Yup.string().required().label('Password'),
-				confirmPassword: user
-					? undefined
-					: Yup.string()
-							.required()
-							.oneOf([Yup.ref('password'), null], 'Passwords must match')
-							.label('Confirm Password'),
+				password:
+					user && !passwordFieldsVisible
+						? undefined
+						: Yup.string().required().label('Password'),
+				confirmPassword:
+					user && !passwordFieldsVisible
+						? undefined
+						: Yup.string()
+								.required()
+								.oneOf([Yup.ref('password'), null], 'Passwords must match')
+								.label('Confirm Password'),
 			}),
 		}),
-		[],
+		[passwordFieldsVisible],
 	);
 
 	return (
@@ -58,7 +72,10 @@ export const ModifyUserForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			onSubmit={(formData) => {
-				onSubmit(formData);
+				onSubmit({
+					...formData,
+					password: passwordFieldsVisible ? formData.password : undefined,
+				});
 			}}
 			enableReinitialize
 		>
@@ -148,10 +165,28 @@ export const ModifyUserForm = ({
 							/>
 						</Col>
 
-						{!user && (
+						{user ? (
+							<Col span={24}>
+								<AntdButton
+									className="d-block mx-auto"
+									type="link"
+									onClick={() => {
+										setPasswordFieldsVisible((value) => !value);
+									}}
+								>
+									{passwordFieldsVisible ? 'Hide' : 'Show'} Password Fields
+								</AntdButton>
+
+								{passwordFieldsVisible && (
+									<Alert
+										message="Password won't be saved if password fields are hidden."
+										type="info"
+									/>
+								)}
+							</Col>
+						) : (
 							<>
 								<Divider />
-
 								<Col span={24}>
 									<Label label="Username" spacing />
 									<Input
@@ -167,7 +202,11 @@ export const ModifyUserForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
+							</>
+						)}
 
+						{passwordFieldsVisible && (
+							<>
 								<Col sm={12} xs={24}>
 									<Label label="Password" spacing />
 									<Input.Password

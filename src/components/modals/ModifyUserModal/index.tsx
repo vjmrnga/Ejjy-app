@@ -31,15 +31,16 @@ export const ModifyUserModal = ({
 	} = useUserEdit();
 
 	const handleSubmit = async (formData) => {
+		let response = null;
 		if (user) {
-			await editUser(formData);
+			response = await editUser(formData);
 			message.success('User was edited successfully');
 		} else {
-			await createUser(formData);
+			response = await createUser(formData);
 			message.success('User was created successfully');
 		}
 
-		onSuccess?.();
+		onSuccess?.(response.data);
 		onClose();
 	};
 
