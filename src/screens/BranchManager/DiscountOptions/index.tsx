@@ -25,6 +25,7 @@ import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Code', dataIndex: 'code' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Percentage', dataIndex: 'percentage' },
 	{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
@@ -59,6 +60,7 @@ export const DiscountOptions = () => {
 		const formattedDiscountOptions = discountOptions.map((discountOption) => ({
 			key: discountOption.id,
 			name: discountOption.name,
+			code: discountOption.code,
 			type: _.upperFirst(discountOption.type),
 			percentage: discountOption.percentage || EMPTY_CELL,
 			isVatInclusive: discountOption.is_vat_inclusive ? 'Yes' : 'No',

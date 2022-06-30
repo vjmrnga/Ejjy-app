@@ -3,6 +3,7 @@ import { IListRequest } from './interfaces';
 
 interface Modify {
 	name: string;
+	code: string;
 	type: string;
 	percentage: number;
 	is_vat_inclusive: boolean;

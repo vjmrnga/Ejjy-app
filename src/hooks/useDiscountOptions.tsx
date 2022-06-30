@@ -28,14 +28,15 @@ export const useDiscountOptionCreate = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ name, type, percentage, isVatInclusive, additionalFields }: any) =>
+		({ additionalFields, code, isVatInclusive, name, percentage, type }: any) =>
 			DiscountOptionsService.create(
 				{
-					name,
-					type,
-					percentage,
-					is_vat_inclusive: isVatInclusive,
 					additional_fields: additionalFields,
+					code,
+					is_vat_inclusive: isVatInclusive,
+					name,
+					percentage,
+					type,
 				},
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			),
@@ -51,15 +52,24 @@ export const useDiscountOptionEdit = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ id, name, type, percentage, isVatInclusive, additionalFields }: any) =>
+		({
+			id,
+			additionalFields,
+			code,
+			isVatInclusive,
+			name,
+			percentage,
+			type,
+		}: any) =>
 			DiscountOptionsService.edit(
 				id,
 				{
-					name,
-					type,
-					percentage,
-					is_vat_inclusive: isVatInclusive,
 					additional_fields: additionalFields,
+					code,
+					is_vat_inclusive: isVatInclusive,
+					name,
+					percentage,
+					type,
 				},
 
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),

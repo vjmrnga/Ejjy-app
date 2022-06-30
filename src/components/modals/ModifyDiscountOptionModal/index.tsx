@@ -98,6 +98,7 @@ export const ModifyDiscountOptionForm = ({
 			DefaultValues: {
 				id: discountOption?.id || undefined,
 				name: discountOption?.name || '',
+				code: discountOption?.code || '',
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
 				isVatInclusive: discountOption?.is_vat_inclusive || true,
@@ -105,6 +106,7 @@ export const ModifyDiscountOptionForm = ({
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(75).label('Name'),
+				code: Yup.string().required().max(4).label('Code'),
 				type: Yup.string().required().label('Type'),
 				percentage: Yup.number()
 					.nullable()
@@ -155,7 +157,7 @@ export const ModifyDiscountOptionForm = ({
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
-						<Col xs={24}>
+						<Col xs={24} sm={12}>
 							<Label label="Name" spacing />
 							<Input
 								name="name"
@@ -166,6 +168,21 @@ export const ModifyDiscountOptionForm = ({
 							/>
 							<ErrorMessage
 								name="name"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col xs={24} sm={12}>
+							<Label label="Code" spacing />
+							<Input
+								name="code"
+								value={values['code']}
+								onChange={(e) => {
+									setFieldValue('code', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="code"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
