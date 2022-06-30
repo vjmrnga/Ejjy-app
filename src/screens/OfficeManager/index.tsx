@@ -1,4 +1,4 @@
-import { useBranches, useInitializeData, useSiteSettingsRetrieve } from 'hooks';
+import { useBranches } from 'hooks';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from '../../components';
@@ -111,8 +111,6 @@ const OfficeManager = () => {
 			notifyOnChangeProps: ['data'],
 		},
 	});
-	// useSiteSettingsRetrieve();
-	useInitializeData();
 
 	return (
 		<Container sidebarItems={sidebarItems}>

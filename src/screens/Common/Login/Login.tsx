@@ -2,10 +2,10 @@ import { Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box, Button } from 'components/elements';
 import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
-import { useInitializeData, useUsers } from 'hooks';
+import { useUsers } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
-import { getKeyDownCombination, getLocalApiUrl } from 'utils';
+import { getKeyDownCombination, getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { LoginForm } from './components/LoginForm';
 import './style.scss';
 
@@ -16,7 +16,6 @@ const Login = () => {
 	const [isUserAPIEnabled, setIsUserAPIersEnabled] = useState(false);
 
 	// CUSTOM HOOKS
-	useInitializeData();
 	const { login, status, errors } = useAuth();
 	useUsers({
 		params: {
@@ -38,8 +37,9 @@ const Login = () => {
 	});
 
 	useEffect(() => {
-		if (!IS_APP_LIVE) {
-			setSetupButtonsVisible(!getLocalApiUrl());
+		if (!getLocalApiUrl() || !getOnlineApiUrl()) {
+			setAppSettingsModalVisible(true);
+			setSetupButtonsVisible(true);
 		}
 	}, []);
 
@@ -81,7 +81,9 @@ const Login = () => {
 
 						{appSettingsModalVisible && (
 							<AppSettingsModal
-								onSuccess={() => setIsUserAPIersEnabled(true)}
+								onSuccess={() => {
+									window.location.reload();
+								}}
 								onClose={() => setAppSettingsModalVisible(false)}
 							/>
 						)}

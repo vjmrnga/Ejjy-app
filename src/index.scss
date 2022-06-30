@@ -18,6 +18,7 @@ body {
 .GlobalSpinner {
 	width: 100vw;
 	height: 100vh;
+	max-height: unset !important;
 	@include flex(center, center, column);
 }
 

@@ -4,7 +4,6 @@ import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranches,
 	useBranchProducts,
-	useInitializeData,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
@@ -86,7 +85,6 @@ const BranchManager = () => {
 		},
 	});
 	useUploadData();
-	useInitializeData();
 
 	const { mutate: createCheckDaily } = useProductCheckCreateDaily();
 	const { mutate: createCheckRandom } = useProductCheckCreateRandom();
