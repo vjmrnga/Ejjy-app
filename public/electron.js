@@ -18,6 +18,13 @@ log.info('App starting...');
 //-------------------------------------------------------------------
 let mainWindow;
 function createWindow() {
+	let resetDB = null;
+	if (isDev) {
+		resetDB = require('./resetDB.js');
+	} else {
+		resetDB = require('../build/resetDB.js');
+	}
+
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -37,23 +44,34 @@ function createWindow() {
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
+	console.log();
 
-	// const template = [
-	// 	{
-	// 		label: 'Development',
-	// 		submenu: [
-	// 			{
-	// 				label: 'Toggle Developer Tools',
-	// 				role: 'toggleDevTools',
-	// 			},
-	// 			{
-	// 				label: 'Reload',
-	// 				role: 'reload',
-	// 			},
-	// 		],
-	// 	},
-	// ];
-	// Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+	const menu = Menu.getApplicationMenu().items;
+	menu.push({
+		label: 'Development',
+		submenu: [
+			{
+				label: 'Reset Database',
+				click: () => {
+					resetDB();
+
+					const choice = dialog.showMessageBoxSync(mainWindow, {
+						type: 'info',
+						title: 'Success',
+						buttons: ['Close'],
+						message:
+							'Database was reset successfully. Click button below to reload the app.',
+						cancelId: -1,
+					});
+
+					if (choice === 0) {
+						mainWindow.reload();
+					}
+				},
+			},
+		],
+	});
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 
 	if (!isDev) {
 		// Start API
