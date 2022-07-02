@@ -1,9 +1,0 @@
-name: Delete Older Releases
-on:
-  release:
-    types: [published]
-jobs:
-  my_first_job:
-    steps:
-      - name: My first step
-        uses: dev-drprasad/delete-older-releases@e3510b26d17114d63269aa02d3ebb592936d0981
