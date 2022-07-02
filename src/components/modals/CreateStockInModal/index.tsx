@@ -21,7 +21,6 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 		error,
 	} = useUsers({
 		params: {
-			page: 1,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});

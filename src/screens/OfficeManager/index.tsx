@@ -1,6 +1,7 @@
 import { useBranches } from 'hooks';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { Assignments } from 'screens/OfficeManager/Assignments';
 import { Container } from '../../components';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
@@ -19,8 +20,8 @@ import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
-import { AssignUser } from './Users/AssignUser';
 import { Users } from './Users';
+import { AssignUser } from './Users/AssignUser';
 
 const sidebarItems = [
 	// {
@@ -79,6 +80,13 @@ const sidebarItems = [
 		defaultIcon: require('../../assets/images/icon-users.svg'),
 		link: '/office-manager/users',
 	},
+	{
+		key: 'assignments',
+		name: 'Assignments',
+		activeIcon: require('../../assets/images/icon-users-active.svg'),
+		defaultIcon: require('../../assets/images/icon-users.svg'),
+		link: '/office-manager/assignments',
+	},
 	// {
 	// 	key: 'reports',
 	// 	name: 'Reports',
@@ -124,6 +132,12 @@ const OfficeManager = () => {
 					<Route
 						path="/office-manager/branches/:id"
 						component={ViewBranch}
+						exact
+					/>
+
+					<Route
+						path="/office-manager/assignments"
+						component={Assignments}
 						exact
 					/>
 

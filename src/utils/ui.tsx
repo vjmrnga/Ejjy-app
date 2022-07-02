@@ -517,6 +517,9 @@ export const getCashBreakdownTypeDescription = (category, type) => {
 	return description;
 };
 
+export const filterOption = (input, option) =>
+	option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
+
 // Messages
 
 interface ConfirmPassword {

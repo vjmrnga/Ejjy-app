@@ -69,7 +69,7 @@ export const Users = () => {
 							icon={<AddIcon />}
 						/>
 					}
-					className="my-4 mx-6"
+					className="pa-6"
 				>
 					<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branch">
 						<BranchUsers
