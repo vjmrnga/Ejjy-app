@@ -1,0 +1,5 @@
+name: Delete Older Releases
+  uses: dev-drprasad/delete-older-releases@v0.2.0
+  with:
+    keep_latest: 2
+    delete_tags: true
