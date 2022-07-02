@@ -3,9 +3,7 @@ on:
   release:
     types: [published]
 jobs:
-    delete_older_releases:
-        steps:
-          - uses: dev-drprasad/delete-older-releases@v0.2.0
-             with:
-              keep_latest: '12'
-              delete_tags: true
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: dev-drprasad/delete-older-releases@e3510b26d17114d63269aa02d3ebb592936d0981
