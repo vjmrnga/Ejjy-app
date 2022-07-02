@@ -6,7 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Branches } from '../Shared/Branches/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { ProductCategories } from '../Shared/ProductCategories';
-import { Products } from '../Shared/Products/Products';
+import { Products } from '../Shared/Products';
 import { Dashboard } from './Dashboard/Dashboard';
 import { useFailedTransfers } from './hooks/useFailedTransfers';
 import { Logs } from './Logs/Logs';

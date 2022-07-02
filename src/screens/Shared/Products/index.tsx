@@ -25,11 +25,12 @@ import {
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
+import { useUsers } from 'hooks/useUsers';
 import { debounce } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, isUserFromBranch } from 'utils';
 import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
@@ -49,7 +50,6 @@ const modals = {
 	EDIT_PRICE_COST: 2,
 };
 
-// TODO: Hide Create Product button once OfficeManager and Admin side is fixed.
 export const Products = () => {
 	// STATES
 	const [modalType, setModalType] = useState(null);
@@ -92,9 +92,16 @@ export const Products = () => {
 							onAddName="Set Prices"
 							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
-							onEdit={() => onOpenModal(product, modals.MODIFY)}
-							onRemove={() =>
-								deleteProduct({ id: product.id, actingUserId: user.id })
+							onEdit={
+								isUserFromBranch(user)
+									? undefined
+									: () => onOpenModal(product, modals.MODIFY)
+							}
+							onRemove={
+								isUserFromBranch(user)
+									? undefined
+									: () =>
+											deleteProduct({ id: product.id, actingUserId: user.id })
 							}
 						/>
 					),
@@ -102,7 +109,7 @@ export const Products = () => {
 			}) || [];
 
 		setDataSource(formattedProducts);
-	}, [products, hasPendingTransactions, isConnected]);
+	}, [products, user, hasPendingTransactions, isConnected]);
 
 	const onOpenModal = (product, type) => {
 		setModalType(type);
@@ -145,9 +152,11 @@ export const Products = () => {
 				<TableHeader
 					buttonName="Create Product"
 					onCreateDisabled={isConnected === false}
-					onCreate={() => {
-						onOpenModal(null, modals.MODIFY);
-					}}
+					onCreate={
+						isUserFromBranch(user)
+							? undefined
+							: () => onOpenModal(null, modals.MODIFY)
+					}
 				/>
 
 				<RequestErrors

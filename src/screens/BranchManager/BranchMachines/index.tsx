@@ -1,11 +1,5 @@
 import Table, { ColumnsType } from 'antd/lib/table';
-import {
-	Content,
-	ModifyBranchMachineModal,
-	RequestErrors,
-	TableActions,
-	TableHeader,
-} from 'components';
+import { Content, RequestErrors, TableHeader } from 'components';
 import { Box } from 'components/elements';
 import { useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -17,15 +11,11 @@ const columns: ColumnsType = [
 	{ title: 'Server URL', dataIndex: 'serverUrl' },
 	{ title: 'Machine ID', dataIndex: 'machineID' },
 	{ title: 'PTU', dataIndex: 'ptu' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const BranchMachines = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [modifyBranchMachineModalVisible, setModifyBranchMachineModalVisible] =
-		useState(false);
 
 	// CUSTOM HOOKS
 	const {
@@ -50,29 +40,15 @@ export const BranchMachines = () => {
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
-			actions: <TableActions onEdit={() => handleEdit(branchMachine)} />,
 		}));
 
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
 
-	const handleCreate = () => {
-		setSelectedBranchMachine(null);
-		setModifyBranchMachineModalVisible(true);
-	};
-
-	const handleEdit = (branchMachine) => {
-		setSelectedBranchMachine(branchMachine);
-		setModifyBranchMachineModalVisible(true);
-	};
-
 	return (
 		<Content title="Branch Machines">
 			<Box>
-				<TableHeader
-					buttonName="Create Branch Machine"
-					onCreate={handleCreate}
-				/>
+				<TableHeader buttonName="Create Branch Machine" />
 
 				<RequestErrors errors={convertIntoArray(error)} />
 
@@ -83,13 +59,6 @@ export const BranchMachines = () => {
 					loading={isFetching}
 					pagination={false}
 				/>
-
-				{modifyBranchMachineModalVisible && (
-					<ModifyBranchMachineModal
-						branchMachine={selectedBranchMachine}
-						onClose={() => setModifyBranchMachineModalVisible(false)}
-					/>
-				)}
 			</Box>
 		</Content>
 	);

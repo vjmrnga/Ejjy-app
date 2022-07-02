@@ -13,7 +13,7 @@ const useProductCategories = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -34,7 +34,7 @@ export const useProductCategoryCreate = () => {
 					name,
 					priority_level: priorityLevel,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -55,7 +55,7 @@ export const useProductCategoryEdit = () => {
 					name,
 					priority_level: priorityLevel,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -69,11 +69,7 @@ export const useProductCategoryDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) =>
-			ProductCategoriesService.delete(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
+		(id: number) => ProductCategoriesService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useProductCategories');

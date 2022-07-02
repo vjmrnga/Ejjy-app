@@ -14,6 +14,7 @@ import {
 import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
+import { getBranchId } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Machines', dataIndex: 'machines' },
@@ -41,6 +42,7 @@ export const MachineReportTable = () => {
 		data: { branchMachines },
 		isLoading: isLoadingBranchMachines,
 	} = useBranchMachines({
+		params: { branchId: getBranchId() },
 		options: { refetchInterval: 5000 },
 	});
 	const { mutateAsync: createXReadReport, isLoading: isCreatingXReadReport } =

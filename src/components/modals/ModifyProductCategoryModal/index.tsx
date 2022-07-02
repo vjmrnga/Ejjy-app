@@ -33,10 +33,10 @@ export const ModifyProductCategoryModal = ({
 	const handleSubmit = async (formData) => {
 		if (productCategory) {
 			await editProductCategory(formData);
-			message.success('Discount option was edited successfully');
+			message.success('Product category was edited successfully');
 		} else {
 			await createProductCategory(formData);
-			message.success('Discount option was created successfully');
+			message.success('Product category was created successfully');
 		}
 
 		onClose();
@@ -90,7 +90,6 @@ export const ModifyProductCategoryForm = ({
 		() => ({
 			DefaultValues: {
 				id: productCategory?.id || null,
-				branchId: user.branch?.id,
 				name: productCategory?.name || '',
 				priorityLevel: productCategory?.priority_level || 1000,
 			},

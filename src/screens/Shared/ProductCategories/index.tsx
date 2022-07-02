@@ -11,11 +11,7 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
-import {
-	useProductCategories,
-	useProductCategoryDelete,
-	useQueryParams,
-} from 'hooks';
+import { useProductCategories, useProductCategoryDelete } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -50,9 +46,8 @@ export const ProductCategories = () => {
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { productCategories, total },
+		data: { productCategories },
 		isFetching,
 		error: listError,
 	} = useProductCategories({

@@ -26,7 +26,7 @@ import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
 import { ProductCategories } from '../Shared/ProductCategories';
-import { Products } from '../Shared/Products/Products';
+import { Products } from '../Shared/Products';
 import { Accounts } from './Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
