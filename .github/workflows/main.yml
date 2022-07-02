@@ -2,8 +2,10 @@ name: Delete Older Releases
 on:
   release:
     types: [published]
-    steps: 
-      uses: dev-drprasad/delete-older-releases@v0.2.0
-      with:
-        keep_latest: 2
-        delete_tags: true
+jobs:
+    delete_older_releases:
+        steps:
+          - uses: dev-drprasad/delete-older-releases@v0.2.0
+             with:
+              keep_latest: '12'
+              delete_tags: true
