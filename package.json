@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.138",
+	"version": "0.1.151",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -42,9 +42,11 @@
 		"focus-formik-error": "^1.1.0",
 		"formik": "^2.2.6",
 		"history": "^4.10.1",
+		"i": "^0.3.7",
 		"jspdf": "^2.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
+		"npm": "^8.13.2",
 		"query-string": "^7.0.1",
 		"qz-tray": "^2.1.2",
 		"rc-resize-observer": "^0.2.3",
@@ -67,6 +69,7 @@
 		"redux-saga": "^1.1.3",
 		"reselect": "^4.0.0",
 		"sweetalert": "^2.1.2",
+		"tree-kill": "^1.2.2",
 		"typescript": "^3.7.5",
 		"use-debounce": "^7.0.1",
 		"yup": "^0.29.3"

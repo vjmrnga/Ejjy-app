@@ -1,9 +1,10 @@
 const { app, BrowserWindow, Menu, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const kill = require('tree-kill');
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
 const path = require('path');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 //-------------------------------------------------------------------
 // Auto Updater
@@ -17,6 +18,7 @@ log.info('App starting...');
 // Initialization
 //-------------------------------------------------------------------
 let mainWindow;
+let splashScreen;
 function createWindow() {
 	let resetDB = null;
 	if (isDev) {
@@ -25,26 +27,41 @@ function createWindow() {
 		resetDB = require('../build/resetDB.js');
 	}
 
+	// Splash screen
+	splash = new BrowserWindow({
+		width: 800,
+		height: 600,
+		transparent: true,
+		frame: false,
+		alwaysOnTop: true,
+	});
+	splash.loadURL(`file://${__dirname}/splash.html`);
+
+	// Main screen
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
 		show: false,
 	});
 
-	mainWindow.loadURL(
-		isDev
-			? 'http://localhost:3005'
-			: `file://${path.join(__dirname, '../build/index.html')}`,
-	);
+	setTimeout(() => {
+		mainWindow.loadURL(
+			isDev
+				? 'http://localhost:3005'
+				: `file://${path.join(__dirname, '../build/index.html')}`,
+		);
+	}, 8000);
+
 	mainWindow.once('ready-to-show', () => {
+		splash.destroy();
 		mainWindow.maximize();
 		mainWindow.show();
 	});
 
 	mainWindow.on('closed', () => {
 		mainWindow = null;
+		splashScreen = null;
 	});
-	console.log();
 
 	const menu = Menu.getApplicationMenu().items;
 	menu.push({
@@ -74,42 +91,24 @@ function createWindow() {
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 
 	if (!isDev) {
-		// Start API
-		const controller = new AbortController();
-		const { signal } = controller;
-
-		mainWindow.once('ready-to-show', () => {
-			const apiPath = path.join(process.resourcesPath, 'api');
-			exec(
-				`cd "${apiPath}" && python manage.py migrate`,
-				(error, stdout, stderr) => {
-					if (error) {
-						logStatus(`API Migrate Err: ${error}`);
-						return;
-					}
-
-					logStatus(`API Migrate: ${stdout}`);
-					logStatus(`API Migrate: ${stderr}`);
-				},
-			);
-			exec(
-				`cd "${apiPath}" && python manage.py runserver 0.0.0.0:8000`,
-				{ signal },
-				(error, stdout, stderr) => {
-					if (error) {
-						logStatus(`API Err: ${error}`);
-						return;
-					}
-
-					logStatus(`API Out: ${stdout}`);
-					logStatus(`API Err: ${stderr}`);
-				},
-			);
-			logStatus('API: Started');
+		const apiPath = path.join(process.resourcesPath, 'api');
+		spawn('python', ['manage.py', 'migrate'], {
+			cwd: apiPath,
+			detached: false,
 		});
+		const spawnRun = spawn(
+			'python',
+			['manage.py', 'runserver', '0.0.0.0:8000'],
+			{
+				cwd: apiPath,
+				detached: false,
+			},
+		);
+
+		logStatus('API: Started');
 
 		mainWindow.once('closed', () => {
-			controller.abort();
+			kill(spawnRun.pid);
 		});
 	}
 }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>EJJY Inventory</title>
+
+		<style>
+			body {
+				overflow: hidden;
+				width: 100vw;
+				height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				row-gap: 2em;
+				background-color: white;
+			}
+
+			img {
+				width: 50vw;
+			}
+
+			.message {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				column-gap: 1em;
+			}
+
+			p {
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				font-size: 1.25rem;
+			}
+
+			.spinner {
+				-webkit-animation: rotate 2s linear infinite;
+				animation: rotate 2s linear infinite;
+				z-index: 2;
+				width: 25px;
+				height: 25px;
+			}
+			.spinner .path {
+				stroke: #f7b731;
+				stroke-linecap: round;
+				-webkit-animation: dash 1.5s ease-in-out infinite;
+				animation: dash 1.5s ease-in-out infinite;
+			}
+
+			@-webkit-keyframes rotate {
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			@keyframes rotate {
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+			@-webkit-keyframes dash {
+				0% {
+					stroke-dasharray: 1, 150;
+					stroke-dashoffset: 0;
+				}
+				50% {
+					stroke-dasharray: 90, 150;
+					stroke-dashoffset: -35;
+				}
+				100% {
+					stroke-dasharray: 90, 150;
+					stroke-dashoffset: -124;
+				}
+			}
+			@keyframes dash {
+				0% {
+					stroke-dasharray: 1, 150;
+					stroke-dashoffset: 0;
+				}
+				50% {
+					stroke-dasharray: 90, 150;
+					stroke-dashoffset: -35;
+				}
+				100% {
+					stroke-dasharray: 90, 150;
+					stroke-dashoffset: -124;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<img src="./logo.jpg" />
+		<div class="message">
+			<svg class="spinner" viewBox="0 0 50 50">
+				<circle
+					class="path"
+					cx="25"
+					cy="25"
+					r="20"
+					fill="none"
+					stroke-width="5"
+				></circle>
+			</svg>
+			<p>Initializing app and server...</p>
+		</div>
+	</body>
+</html>
