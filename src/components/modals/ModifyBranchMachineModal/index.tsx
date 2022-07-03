@@ -109,7 +109,7 @@ export const ModifyBranchMachineForm = ({
 					.label('Machine Identification Number'),
 				name: Yup.string().required().max(30).label('Name'),
 				permitToUse: Yup.string().required().max(75).label('Permit To Use'),
-				posTerminal: Yup.string().required().max(75).label('POS Terminal'),
+				posTerminal: Yup.string().required().max(75).label('Serial #'),
 				serverUrl: Yup.string().required().max(75).label('Server URL'),
 			}),
 		}),
@@ -167,7 +167,7 @@ export const ModifyBranchMachineForm = ({
 					</Col>
 
 					<Col xs={24}>
-						<FormInputLabel id="posTerminal" label="POS Terminal" />
+						<FormInputLabel id="posTerminal" label="Serial #" />
 						<ErrorMessage
 							name="posTerminal"
 							render={(error) => <FieldError error={error} />}

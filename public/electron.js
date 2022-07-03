@@ -64,7 +64,53 @@ function createWindow() {
 	});
 
 	// Migrate and run API
-	let spawnRun = null;
+	startServer();
+
+	// Set Menu
+	const menu = Menu.getApplicationMenu().items;
+	menu.push({
+		label: 'Development',
+		submenu: [
+			{
+				label: 'Reset Database',
+				click: () => {
+					mainWindow.setProgressBar(1);
+					if (spawnRun) {
+						kill(spawnRun.pid);
+					}
+
+					setTimeout(() => {
+						const result = resetDB();
+						mainWindow.setProgressBar(-1);
+
+						if (result) {
+							const choice = dialog.showMessageBoxSync(mainWindow, {
+								type: 'info',
+								title: 'Success',
+								buttons: ['Close'],
+								message:
+									'Database was reset successfully. Click button below to restart the app.',
+								cancelId: -1,
+							});
+
+							if (choice === 0) {
+								app.relaunch();
+								app.exit();
+							}
+						}
+					}, 1000);
+				},
+			},
+		],
+	});
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+}
+
+//-------------------------------------------------------------------
+// Server
+//-------------------------------------------------------------------
+let spawnRun = null;
+function startServer() {
 	if (!isDev) {
 		const apiPath = path.join(process.resourcesPath, 'api');
 		spawn('python', ['manage.py', 'migrate'], {
@@ -82,35 +128,6 @@ function createWindow() {
 			kill(spawnRun.pid);
 		});
 	}
-
-	const menu = Menu.getApplicationMenu().items;
-	menu.push({
-		label: 'Development',
-		submenu: [
-			{
-				label: 'Reset Database',
-				click: () => {
-					kill(spawnRun.pid, 'SIGSTOP');
-					resetDB();
-					kill(spawnRun.pid, 'SIGCONT');
-
-					const choice = dialog.showMessageBoxSync(mainWindow, {
-						type: 'info',
-						title: 'Success',
-						buttons: ['Close'],
-						message:
-							'Database was reset successfully. Click button below to reload the app.',
-						cancelId: -1,
-					});
-
-					if (choice === 0) {
-						mainWindow.reload();
-					}
-				},
-			},
-		],
-	});
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
 //-------------------------------------------------------------------

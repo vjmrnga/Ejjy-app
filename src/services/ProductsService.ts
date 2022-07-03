@@ -2,8 +2,9 @@ import axios from 'axios';
 import { IListRequest } from 'services/interfaces';
 
 interface List extends IListRequest {
-	product_category?: string;
+	branch_id: number;
 	ids?: string;
+	product_category?: string;
 }
 
 interface Modify {

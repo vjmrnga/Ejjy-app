@@ -15,11 +15,17 @@ import {
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, filterOption, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatDateTime,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Branch', dataIndex: 'branch' },
 	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Date & Time', dataIndex: 'datetime' },
 ];
 
 export const TabBranchAssignments = () => {
@@ -40,6 +46,7 @@ export const TabBranchAssignments = () => {
 			key: branchAssignment.id,
 			branch: branchAssignment.branch.name,
 			name: getFullName(branchAssignment.user),
+			datetime: formatDateTime(branchAssignment.datetime_created),
 		}));
 
 		setDataSource(data);

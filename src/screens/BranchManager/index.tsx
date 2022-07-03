@@ -22,6 +22,7 @@ import { Sales } from 'screens/BranchManager/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
+import { AssignUser } from 'screens/BranchManager/Users/AssignUser';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
@@ -321,6 +322,11 @@ const BranchManager = () => {
 					/>
 
 					<Route path="/branch-manager/users" exact component={Users} />
+					<Route
+						path="/branch-manager/users/assign/:id"
+						component={AssignUser}
+						exact
+					/>
 
 					<Route path="/branch-manager/accounts" exact component={Accounts} />
 					<Route

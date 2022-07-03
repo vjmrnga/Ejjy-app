@@ -8,7 +8,7 @@ import {
 } from 'components';
 import { useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
@@ -19,11 +19,11 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	branchId: any;
+	branch: any;
 	disabled: boolean;
 }
 
-export const TabBranchMachines = ({ branchId, disabled }: Props) => {
+export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
@@ -37,9 +37,10 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 		error: listError,
 	} = useBranchMachines({
 		params: {
-			branchId,
+			branchId: branch?.id,
 		},
 	});
+
 	const {
 		mutate: deleteBranchMachine,
 		isLoading,
@@ -60,7 +61,7 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 					onEdit={() => handleEdit(branchMachine)}
 					onRemove={() => {
 						message.success('Branch machine was deleted successfully');
-						deleteBranchMachine(branchMachine.id);
+						deleteBranchMachine(getId(branchMachine));
 					}}
 				/>
 			),
@@ -107,7 +108,7 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 
 			{modifyBranchMachineModalVisible && (
 				<ModifyBranchMachineModal
-					branchId={branchId}
+					branchId={getId(branch)}
 					branchMachine={selectedBranchMachine}
 					onClose={() => setModifyBranchMachineModalVisible(false)}
 				/>

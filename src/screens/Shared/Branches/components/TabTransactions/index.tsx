@@ -19,7 +19,7 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils';
+import { convertIntoArray, formatInPeso, getId } from 'utils';
 import { TransactionsCancelled } from './components/TransactionsCancelled';
 
 const columns: ColumnsType = [
@@ -53,10 +53,10 @@ const transactionStatusOptions = [
 ];
 
 interface Props {
-	branchId: any;
+	branch: any;
 }
 
-export const TabTransactions = ({ branchId }: Props) => {
+export const TabTransactions = ({ branch }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -68,7 +68,10 @@ export const TabTransactions = ({ branchId }: Props) => {
 		isFetching,
 		error,
 	} = useTransactions({
-		params: { branchId, ...params },
+		params: {
+			...params,
+			branchId: branch.id,
+		},
 	});
 
 	// METHODS
@@ -113,7 +116,7 @@ export const TabTransactions = ({ branchId }: Props) => {
 				transactionStatus.VOID_EDITED,
 			].includes(toString(params?.statuses)) && (
 				<TransactionsCancelled
-					branchId={branchId}
+					branchId={getId(branch)}
 					timeRange={toString(params?.timeRange)}
 					statuses={toString(params?.statuses)}
 				/>

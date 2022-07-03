@@ -8,6 +8,7 @@ const useProducts = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useProducts',
+			params?.branchId,
 			params?.ids,
 			params?.page,
 			params?.pageSize,
@@ -15,13 +16,13 @@ const useProducts = ({ params }: Query) =>
 			params?.search,
 		],
 		async () => {
-			let service = ProductsService.list;
-			if (!isStandAlone()) {
-				service = ProductsService.listOffline;
-			}
+			const service = isStandAlone()
+				? ProductsService.list
+				: ProductsService.listOffline;
 
 			return service(
 				{
+					branch_id: params?.branchId,
 					ids: params?.ids,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					page: params?.page || DEFAULT_PAGE,

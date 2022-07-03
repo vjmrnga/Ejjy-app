@@ -1,11 +1,10 @@
-import { Alert, message, Tabs } from 'antd';
+import { Spin, Tabs } from 'antd';
 import { Breadcrumb, ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
 import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
@@ -30,20 +29,19 @@ const tabs = {
 
 export const ViewBranch = ({ match }: Props) => {
 	// VARIABLES
-	const branchId = match?.params?.id;
+	const branchIdParam = match?.params?.id;
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { isConnected } = usePingOnlineServer();
 	const {
 		params: { tab: currentTab },
 		setQueryParams,
 	} = useQueryParams();
 	const { user } = useAuth();
-	const { data: branch, isFetched } = useBranchRetrieve({
-		id: branchId,
+	const { data: branch, isFetching: isFetchingBranch } = useBranchRetrieve({
+		id: branchIdParam,
 		options: {
-			enabled: !!branchId,
+			enabled: !!branchIdParam,
 		},
 	});
 
@@ -53,13 +51,6 @@ export const ViewBranch = ({ match }: Props) => {
 			onTabClick(tabs.PRODUCTS);
 		}
 	}, []);
-
-	useEffect(() => {
-		if (isFetched && !branch?.online_url) {
-			history.replace(`${getUrlPrefix(user.user_type)}/branches`);
-			message.error('Branch has no online url.');
-		}
-	}, [branchId, branch, isFetched]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -84,79 +75,45 @@ export const ViewBranch = ({ match }: Props) => {
 		>
 			<ConnectionAlert />
 
-			<Box className="ViewBranchMachine">
-				<Tabs
-					type="card"
-					className="PaddingHorizontal PaddingVertical"
-					activeKey={toString(currentTab)}
-					onTabClick={onTabClick}
-					destroyInactiveTabPane
-				>
-					<Tabs.TabPane
-						key={tabs.PRODUCTS}
-						tab={tabs.PRODUCTS}
-						disabled={!branch?.online_url}
-					>
-						<TabBranchProducts
-							branchId={branchId}
-							disabled={isConnected === false}
-						/>
-					</Tabs.TabPane>
+			<Spin spinning={isFetchingBranch}>
+				{branch && (
+					<Box className="ViewBranchMachine">
+						<Tabs
+							type="card"
+							className="PaddingHorizontal PaddingVertical"
+							activeKey={toString(currentTab)}
+							onTabClick={onTabClick}
+							destroyInactiveTabPane
+						>
+							<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
+								<TabBranchProducts
+									branch={branch}
+									disabled={isConnected === false}
+								/>
+							</Tabs.TabPane>
 
-					{/* <Tabs.TabPane
-						key={tabs.PENDING_PRICE_UPDATES}
-						tab={tabs.PENDING_PRICE_UPDATES}
-						disabled={!branch?.online_url}
-					>
-						<ViewBranchPendingPriceUpdates branchId={branchId} />
-					</Tabs.TabPane> */}
+							<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES}>
+								<TabBranchMachines
+									branch={branch}
+									disabled={isConnected === false}
+								/>
+							</Tabs.TabPane>
 
-					<Tabs.TabPane
-						key={tabs.MACHINES}
-						tab={tabs.MACHINES}
-						disabled={!branch?.online_url}
-					>
-						<TabBranchMachines
-							branchId={branchId}
-							disabled={isConnected === false}
-						/>
-					</Tabs.TabPane>
+							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
+								<TabTransactions branch={branch} />
+							</Tabs.TabPane>
 
-					<Tabs.TabPane
-						key={tabs.TRANSACTIONS}
-						tab={tabs.TRANSACTIONS}
-						disabled={!branch?.online_url}
-					>
-						<TabTransactions branchId={branchId} />
-					</Tabs.TabPane>
+							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
+								<TabSessions branch={branch} />
+							</Tabs.TabPane>
 
-					<Tabs.TabPane
-						key={tabs.SESSIONS}
-						tab={tabs.SESSIONS}
-						disabled={!branch?.online_url}
-					>
-						<TabSessions branchId={branchId} />
-					</Tabs.TabPane>
-
-					<Tabs.TabPane
-						key={tabs.DAYS}
-						tab={tabs.DAYS}
-						disabled={!branch?.online_url}
-					>
-						<TabDays branchId={branchId} />
-					</Tabs.TabPane>
-
-					{/*
-
-					<Tabs.TabPane
-						key={tabs.CHECKINGS}
-						tab={tabs.CHECKINGS}
-						disabled={!branch?.online_url}
-					>
-						<ViewBranchCheckings branchId={branchId} />
-					</Tabs.TabPane> */}
-				</Tabs>
-			</Box>
+							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
+								<TabDays branch={branch} />
+							</Tabs.TabPane>
+						</Tabs>
+					</Box>
+				)}
+			</Spin>
 		</Content>
 	);
 };

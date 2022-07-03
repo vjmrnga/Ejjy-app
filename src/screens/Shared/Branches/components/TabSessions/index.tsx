@@ -33,10 +33,10 @@ const closingTypes = {
 };
 
 interface Props {
-	branchId: any;
+	branch: any;
 }
 
-export const TabSessions = ({ branchId }: Props) => {
+export const TabSessions = ({ branch }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -49,7 +49,7 @@ export const TabSessions = ({ branchId }: Props) => {
 	} = useSessions({
 		params: {
 			...params,
-			branchId,
+			branchId: branch.id,
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed = undefined;
 				if (params.closingType === closingTypes.AUTOMATIC) {

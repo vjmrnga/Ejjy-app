@@ -12,7 +12,7 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
 				service = SiteSettingsService.retrieveOffline;
 			}
 
-			return service(getLocalApiUrl).catch((e) => Promise.reject(e.errors));
+			return service(getLocalApiUrl()).catch((e) => Promise.reject(e.errors));
 		},
 
 		{

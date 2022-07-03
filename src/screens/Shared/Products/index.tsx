@@ -30,7 +30,7 @@ import { debounce } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, isCUDShown } from 'utils';
+import { convertIntoArray, getBranchId, getId, isCUDShown } from 'utils';
 import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
@@ -68,7 +68,12 @@ export const Products = () => {
 		data: { products, total },
 		isFetching: isFetchingProducts,
 		error: listError,
-	} = useProducts({ params });
+	} = useProducts({
+		params: {
+			...params,
+			branchId: getBranchId(),
+		},
+	});
 	const { mutate: deleteProduct, error: deleteError } = useProductDelete();
 
 	// METHODS
@@ -101,8 +106,8 @@ export const Products = () => {
 								isCUDShown(user.user_type)
 									? () =>
 											deleteProduct({
-												id: product.id,
-												actingUserId: user.id,
+												id: getId(product),
+												actingUserId: getId(user),
 											})
 									: undefined
 							}

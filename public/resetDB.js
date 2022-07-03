@@ -23,8 +23,6 @@ function logStatus(text) {
 }
 
 module.exports = async function () {
-	SQLITE_DB_NAME;
-
 	// Append the timestamp to sqlite db
 	const SQLITE_DB_PATH = path.join(API_PATH, SQLITE_DB_NAME);
 	if (fs.existsSync(SQLITE_DB_PATH)) {
@@ -33,6 +31,14 @@ module.exports = async function () {
 
 		fs.renameSync(SQLITE_DB_PATH, newSqliteDbName);
 		logStatus(`[RESET]: Renamed ${SQLITE_DB_NAME} into ${dbName}`);
+	} else {
+		dialog.showMessageBoxSync(window.getFocusedWindow(), {
+			type: 'error',
+			title: 'Error',
+			buttons: ['Close'],
+			message: 'SQLite Database was not found.',
+			cancelId: -1,
+		});
 	}
 
 	// Check if clean sqlite db exists and rename to sqlite db name
@@ -40,9 +46,21 @@ module.exports = async function () {
 	if (fs.existsSync(SQLITE_CLEAN_DB_PATH)) {
 		const newSqliteDbName = path.join(API_PATH, SQLITE_DB_NAME);
 
-		fs.renameSync(SQLITE_CLEAN_DB_PATH, newSqliteDbName);
+		fs.copyFileSync(SQLITE_CLEAN_DB_PATH, newSqliteDbName);
 		logStatus(
 			`[RESET]: Renamed ${SQLITE_CLEAN_DB_PATH} into ${newSqliteDbName}`,
 		);
+	} else {
+		dialog.showMessageBoxSync(window.getFocusedWindow(), {
+			type: 'error',
+			title: 'Error',
+			buttons: ['Close'],
+			message: 'A clean SQLite Database was not found.',
+			cancelId: -1,
+		});
+
+		return false;
 	}
+
+	return true;
 };

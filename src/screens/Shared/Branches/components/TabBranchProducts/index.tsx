@@ -5,7 +5,6 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import { TableActions, TableHeader } from 'components';
 import { ButtonLink, Label } from 'components/elements';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
-import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -16,7 +15,7 @@ import {
 import { useBranchProducts, useProductCategories, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatQuantity } from 'utils';
+import { convertIntoArray, formatQuantity, getId } from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './components/EditBranchProductsModal';
 import { ViewBranchProductModal } from './components/ViewBranchProductModal';
@@ -41,11 +40,11 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	branchId: any;
+	branch: any;
 	disabled: boolean;
 }
 
-export const TabBranchProducts = ({ branchId, disabled }: Props) => {
+export const TabBranchProducts = ({ branch, disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
@@ -74,7 +73,7 @@ export const TabBranchProducts = ({ branchId, disabled }: Props) => {
 	} = useBranchProducts({
 		params: {
 			...params,
-			branchId,
+			branchId: branch.id,
 			isSoldInBranch: (() => {
 				let isSoldInBranch = null;
 				if (params?.isSoldInBranch === isSoldInBranchOptions.SHOW_IN_STOCK) {
@@ -242,7 +241,7 @@ export const TabBranchProducts = ({ branchId, disabled }: Props) => {
 
 			{selectedBranchProduct && modalType === modals.EDIT && (
 				<EditBranchProductsModal
-					branchId={branchId}
+					branchId={getId(branch)}
 					branchProduct={selectedBranchProduct}
 					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}
@@ -251,7 +250,7 @@ export const TabBranchProducts = ({ branchId, disabled }: Props) => {
 
 			{selectedBranchProduct && modalType === modals.ADD && (
 				<AddBranchProductBalanceModal
-					branchId={branchId}
+					branchId={getId(branch)}
 					branchProduct={selectedBranchProduct}
 					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}

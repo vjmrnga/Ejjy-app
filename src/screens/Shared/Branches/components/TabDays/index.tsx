@@ -33,10 +33,10 @@ const closingTypes = {
 };
 
 interface Props {
-	branchId: any;
+	branch: any;
 }
 
-export const TabDays = ({ branchId }: Props) => {
+export const TabDays = ({ branch }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -49,7 +49,7 @@ export const TabDays = ({ branchId }: Props) => {
 	} = useBranchDays({
 		params: {
 			...params,
-			branchId,
+			branchId: branch.id,
 			isUnauthorized: (() => {
 				let isUnauthorized = undefined;
 				if (params.type === branchDayTypes.UNAUTHORIZED) {

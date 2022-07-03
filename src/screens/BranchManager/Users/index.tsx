@@ -18,6 +18,7 @@ import {
 	getFullName,
 	getUserTypeName,
 	isCUDShown,
+	isStandAlone,
 } from 'utils';
 
 export const Users = () => {
@@ -35,7 +36,7 @@ export const Users = () => {
 		error: listError,
 	} = useUsers({
 		params: {
-			branchId: getBranchId(),
+			branchId: isStandAlone() ? undefined : getBranchId(),
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});

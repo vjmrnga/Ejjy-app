@@ -240,7 +240,7 @@ const getFooter = (footerData) => {
 			<span>${softwareDeveloperTin}</span>
 			<span>${posAccreditationNumber}</span>
 			<span>${posAccreditationValidUntilDate}</span>
-			
+
 			<br />
 		</div>`;
 };
@@ -310,12 +310,12 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 						})</th>
 						<th style="text-align: right; font-weight: normal">QTY SERVED</th>
 					</tr>
-				</thead>  
+				</thead>
 				<tbody>
 					${products
 						.map(
 							(product) =>
-								`	
+								`
 							<tr>
 								<td>
 									<span style="display:block">${product.name}</span>
@@ -490,9 +490,9 @@ export const printOrderOfPayment = (orderOfPayment) => {
 			<br/>
 			<br/>
 
-			<div style="text-align: justify">&emsp;&emsp;&emsp;Please issue Collection Receipt in favor of 
-				<span style="${letterStyles}">${payor}</span> from 
-				<span style="${letterStyles}; min-width: 300px">${address}</span> in the amount of 
+			<div style="text-align: justify">&emsp;&emsp;&emsp;Please issue Collection Receipt in favor of
+				<span style="${letterStyles}">${payor}</span> from
+				<span style="${letterStyles}; min-width: 300px">${address}</span> in the amount of
 				<span style="${letterStyles}">${amount}</span> for payment of
 				<span style="${letterStyles}">${purposeDescription}</span> per Bill/SOA No.
 				<span style="${letterStyles}">${invoiceId}</span> dated
@@ -535,13 +535,13 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 		siteSettings,
 		title: 'COLLECTION RECEIPT',
 	})}
-	
+
 		<br />
 
 		<div style="text-align: center">Received payment from</div>
 
 		<br />
-		
+
 		<table style="width: 100%;">
 			<thead>
 				<tr>
@@ -549,7 +549,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 					<th></th>
 				</tr>
 			</thead>
-			
+
 			<tbody>
 				<tr>
 					<td>Name:</td>
@@ -573,7 +573,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<br />
 
 		<div>[optional if check]</div>
@@ -607,7 +607,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
@@ -735,7 +735,7 @@ export const printBirReport = ({ birReports, siteSettings }) => {
       <div class="details">${siteSettings.store_name}</div>
       <div class="details">${siteSettings.address_of_tax_payer}</div>
       <div class="details">${siteSettings.tin} - Branch Code</div>
-      <div class="details">POS Terminal</div>
+      <div class="details">Serial #</div>
 
       <br/>
 
@@ -795,7 +795,7 @@ export const printReceivingVoucherForm = ({
 			title: '[RECEIVING VOUCHER]',
 			siteSettings,
 		})}
-	
+
 		<br />
 
 		<table style="width: 100%;">
@@ -832,7 +832,7 @@ export const printReceivingVoucherForm = ({
 				</td>
 			</tr>
 		</table>
-		
+
 		<br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
@@ -846,7 +846,7 @@ export const printReceivingVoucherForm = ({
 			}</span>
 		</div>
 		<div>Supplier: ${receivingVoucher.supplier_name}</div>
-	
+
 		<br />
 
 		${getFooter(siteSettings)}
@@ -866,7 +866,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 			title: '[BO SLIP]',
 			siteSettings,
 		})}
-	
+
 		<br />
 
 		<table style="width: 100%;">
@@ -905,7 +905,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 				</td>
 			</tr>
 		</table>
-		
+
 		<br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
@@ -916,7 +916,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 			<span>C: ${EMPTY_CELL}</span>
 			<span style="text-align: right;">E: ${EMPTY_CELL}</span>
 		</div>
-	
+
 		<br />
 
 		${getFooter(siteSettings)}

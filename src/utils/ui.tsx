@@ -518,6 +518,9 @@ export const getCashBreakdownTypeDescription = (category, type) => {
 	return description;
 };
 
+export const getId = (object) =>
+	isStandAlone() ? object?.id : object?.online_id;
+
 export const filterOption = (input, option) =>
 	option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
 

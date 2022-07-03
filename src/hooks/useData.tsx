@@ -1,8 +1,25 @@
+import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { DataService } from 'services';
 import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const REFETCH_INTERVAL_MS = 60000;
+
+export const useInitializeData = ({ params }: Query) =>
+	useQuery(
+		['useInitializeData', params?.branchId],
+		() =>
+			DataService.initialize(
+				{ branch_id: params.branchId },
+				getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors)),
+		{
+			enabled: !!getOnlineApiUrl() && !!params?.branchId,
+			refetchInterval: REFETCH_INTERVAL_MS,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: ['isLoading'],
+		},
+	);
 
 export const useUploadData = () =>
 	useQuery(
@@ -15,21 +32,6 @@ export const useUploadData = () =>
 				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			refetchInterval: REFETCH_INTERVAL_MS,
-			refetchIntervalInBackground: true,
-			notifyOnChangeProps: [],
-		},
-	);
-
-export const useInitializeData = () =>
-	useQuery(
-		['useInitializeData'],
-		() =>
-			DataService.initialize(getLocalApiUrl()).catch((e) =>
-				Promise.reject(e.errors),
-			),
-		{
-			enabled: getOnlineApiUrl()?.length > 0,
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
 			notifyOnChangeProps: ['isLoading'],

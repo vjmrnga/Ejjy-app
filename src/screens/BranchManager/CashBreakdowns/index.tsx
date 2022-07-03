@@ -57,7 +57,7 @@ export const cashBreakdownOptions = [
 ];
 
 const columns: ColumnsType = [
-	{ title: 'Datetime', dataIndex: 'datetime' },
+	{ title: 'Date & Time', dataIndex: 'datetime' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Machine Name', dataIndex: 'machineName' },
 	{ title: 'User', dataIndex: 'user' },

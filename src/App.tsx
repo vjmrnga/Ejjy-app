@@ -10,10 +10,15 @@ import BranchManager from 'screens/BranchManager';
 import BranchPersonnel from 'screens/BranchPersonnel';
 import Login from 'screens/Common/Login/Login';
 import OfficeManager from 'screens/OfficeManager';
+import { getBranchId } from 'utils';
 import npmPackage from '../package.json';
 
 const App = () => {
-	const { isLoading: isInitializingData } = useInitializeData();
+	const { isLoading: isInitializingData } = useInitializeData({
+		params: {
+			branchId: getBranchId(),
+		},
+	});
 
 	return (
 		<>

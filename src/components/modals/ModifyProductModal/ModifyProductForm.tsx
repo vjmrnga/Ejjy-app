@@ -27,7 +27,7 @@ import { useProductCategories } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
-import { formatQuantity } from 'utils';
+import { formatQuantity, getId } from 'utils';
 import * as Yup from 'yup';
 
 const { Text } = Typography;
@@ -104,7 +104,7 @@ export const ModifyProductForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				actingUserId: user.id,
+				actingUserId: getId(user),
 				allowableSpoilage: product?.allowable_spoilage * 100 || '',
 				barcode: product?.barcode || '',
 				sellingBarcode: product?.selling_barcode || '',
@@ -124,7 +124,7 @@ export const ModifyProductForm = ({
 				name: product?.name || '',
 				piecesInBulk: product?.pieces_in_bulk,
 				conversionAmount: product?.conversion_amount || '',
-				pointSystemTagId: product?.point_system_tag?.id || '',
+				pointSystemTagId: getId(product?.point_system_tag),
 				pricePerBulk: product?.price_per_bulk || '',
 				pricePerPiece: product?.price_per_piece || '',
 				printDetails: product?.print_details || '',
@@ -620,12 +620,12 @@ export const ModifyProductForm = ({
 								showSearch
 								allowClear
 							>
-								{pointSystemTags.map((pointSystemTags) => (
+								{pointSystemTags.map((pointSystemTag) => (
 									<Select.Option
-										key={pointSystemTags.id}
-										value={pointSystemTags.id}
+										key={pointSystemTag.id}
+										value={getId(pointSystemTag)}
 									>
-										{pointSystemTags.name}
+										{pointSystemTag.name}
 									</Select.Option>
 								))}
 							</Select>

@@ -35,10 +35,9 @@ export const useBranchRetrieve = ({ id, params, options }: Query) =>
 	useQuery<any>(
 		['useBranchRetrieve', id, params?.baseURL],
 		async () => {
-			let service = BranchesService.retrieve;
-			if (!isStandAlone()) {
-				service = BranchesService.retrieveOffline;
-			}
+			const service = isStandAlone()
+				? BranchesService.retrieve
+				: BranchesService.retrieveOffline;
 
 			return service(id, params?.baseURL || getLocalApiUrl()).catch((e) =>
 				Promise.reject(e.errors),

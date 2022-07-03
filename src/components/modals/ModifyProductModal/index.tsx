@@ -9,7 +9,7 @@ import {
 	useProductEdit,
 } from 'hooks';
 import React, { useState } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId, isStandAlone } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
 interface Props {
@@ -25,7 +25,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 
 	const { data: branchProduct, isFetching: isFetchingBranchProduct } =
 		useBranchProductRetrieve({
-			id: product?.id,
+			id: getId(product),
 			options: {
 				enabled: product !== null,
 			},
@@ -56,11 +56,11 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	const onSubmit = async (formData) => {
 		if (product) {
 			await editProduct({
-				id: product?.id,
+				id: getId(product),
 				...formData,
 			});
 			await editBranchProduct({
-				id: branchProduct?.id,
+				id: getId(branchProduct),
 				...formData,
 			});
 			message.success('Product was edited successfully');
