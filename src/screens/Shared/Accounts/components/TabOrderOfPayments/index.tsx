@@ -150,7 +150,7 @@ export const TabOrderOfPayments = () => {
 				isLoading={isFetching}
 			/>
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<Table
 				columns={columns}

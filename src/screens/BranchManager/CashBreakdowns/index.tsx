@@ -6,7 +6,7 @@ import {
 	TableActions,
 	TableHeader,
 	TimeRangeFilter,
-	ViewCashBreakdownModal
+	ViewCashBreakdownModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
 import {
@@ -16,13 +16,13 @@ import {
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
-	timeRangeTypes
+	timeRangeTypes,
 } from 'global';
 import {
 	useBranchMachines,
 	useCashBreakdowns,
 	useQueryParams,
-	useUsers
+	useUsers,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -30,7 +30,7 @@ import {
 	convertIntoArray,
 	formatDateTime,
 	getCashBreakdownTypeDescription,
-	getFullName
+	getFullName,
 } from 'utils';
 
 export const cashBreakdownOptions = [
@@ -110,9 +110,13 @@ export const CashBreakdowns = () => {
 			<Box>
 				<TableHeader title="Cash Breakdowns" />
 
-				<Filter isLoading={isFetching} />
+				<RequestErrors
+					className="px-6"
+					errors={convertIntoArray(listError)}
+					withSpaceBottom
+				/>
 
-				<RequestErrors errors={convertIntoArray(listError)} />
+				<Filter isLoading={isFetching} />
 
 				<Table
 					columns={columns}

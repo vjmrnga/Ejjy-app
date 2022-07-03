@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyBranchMachineModal,
@@ -5,7 +6,7 @@ import {
 	TableActions,
 	TableHeader,
 } from 'components';
-import { useBranchMachines } from 'hooks';
+import { useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray } from 'utils';
 
@@ -33,12 +34,17 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 	const {
 		data: { branchMachines },
 		isFetching,
-		error,
+		error: listError,
 	} = useBranchMachines({
 		params: {
 			branchId,
 		},
 	});
+	const {
+		mutate: deleteBranchMachine,
+		isLoading,
+		error: deleteError,
+	} = useBranchMachineDelete();
 
 	// METHODS
 	useEffect(() => {
@@ -52,6 +58,10 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 				<TableActions
 					areButtonsDisabled={disabled}
 					onEdit={() => handleEdit(branchMachine)}
+					onRemove={() => {
+						message.success('Branch machine was deleted successfully');
+						deleteBranchMachine(branchMachine.id);
+					}}
 				/>
 			),
 		}));
@@ -79,13 +89,19 @@ export const TabBranchMachines = ({ branchId, disabled }: Props) => {
 				onCreateDisabled={disabled}
 			/>
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors
+				errors={[
+					...convertIntoArray(listError),
+					...convertIntoArray(deleteError?.errors),
+				]}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
-				loading={isFetching}
+				loading={isFetching || isLoading}
 				pagination={false}
 			/>
 

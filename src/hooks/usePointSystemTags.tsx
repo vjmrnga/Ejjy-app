@@ -1,20 +1,26 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { PointSystemTagsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const usePointSystemTags = ({ params }: Query) =>
 	useQuery<any>(
 		['usePointSystemTags', params?.page, params?.pageSize],
-		async () =>
-			PointSystemTagsService.list(
+		async () => {
+			let service = PointSystemTagsService.list;
+			if (!isStandAlone()) {
+				service = PointSystemTagsService.listOffline;
+			}
+
+			return service(
 				{
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+				getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors));
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -34,7 +40,7 @@ export const usePointSystemTagCreate = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -55,7 +61,7 @@ export const usePointSystemTagEdit = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -69,11 +75,7 @@ export const usePointSystemTagDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) =>
-			PointSystemTagsService.delete(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
+		(id: number) => PointSystemTagsService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('usePointSystemTags');

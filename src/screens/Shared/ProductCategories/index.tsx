@@ -3,6 +3,7 @@ import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { arrayMoveImmutable } from 'array-move';
 import {
+	ConnectionAlert,
 	Content,
 	ModifyProductCategoryModal,
 	RequestErrors,
@@ -11,7 +12,11 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
-import { useProductCategories, useProductCategoryDelete } from 'hooks';
+import {
+	usePingOnlineServer,
+	useProductCategories,
+	useProductCategoryDelete,
+} from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -20,7 +25,7 @@ import {
 	SortableHandle,
 } from 'react-sortable-hoc';
 import { ProductCategoriesService } from 'services';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, isCUDShown } from 'utils';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -45,15 +50,14 @@ export const ProductCategories = () => {
 	const sortedProductCategories = useRef([]);
 
 	// CUSTOM HOOKS
+	const { isConnected } = usePingOnlineServer();
 	const { user } = useAuth();
 	const {
 		data: { productCategories },
 		isFetching,
 		error: listError,
 	} = useProductCategories({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		mutate: deleteProductCategory,
@@ -70,6 +74,7 @@ export const ProductCategories = () => {
 				name: productCategory.name,
 				actions: (
 					<TableActions
+						areButtonsDisabled={isConnected === false}
 						onEdit={() => {
 							setSelectedProductCategory(productCategory);
 							setModifyProductCategoryModalVisible(true);
@@ -81,10 +86,11 @@ export const ProductCategories = () => {
 		);
 
 		setInitialProductCategories(productCategories);
-		setDataSource(formattedProductCategories);
-	}, [productCategories]);
 
-	const onEditOrder = useCallback(() => {
+		setDataSource(formattedProductCategories);
+	}, [productCategories, isConnected]);
+
+	const handleEditOrder = useCallback(() => {
 		sortedProductCategories.current.forEach((pc, index) => {
 			const productCategory = initialProductCategories[index];
 
@@ -110,30 +116,29 @@ export const ProductCategories = () => {
 	}, [sortedProductCategories.current, initialProductCategories]);
 
 	const getColumns = useCallback(() => {
-		const columns: ColumnsType = [
-			{
-				title: isSorted ? (
+		const columns: ColumnsType = [{ title: 'Name', dataIndex: 'name' }];
+
+		if (isCUDShown(user.user_type)) {
+			columns.unshift({
+				title: isSorted && (
 					<Button
 						type="primary"
 						shape="round"
 						icon={<SaveOutlined />}
-						onClick={onEditOrder}
+						onClick={handleEditOrder}
 					/>
-				) : (
-					''
 				),
 				dataIndex: 'sort',
 				width: 80,
 				className: 'drag-visible',
 				align: 'center',
 				render: () => <DragHandle />,
-			},
-			{ title: 'Name', dataIndex: 'name', key: 'name' },
-			{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
-		];
+			});
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
 
 		return columns;
-	}, [isSorted]);
+	}, [user, isSorted]);
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		if (oldIndex !== newIndex) {
@@ -170,21 +175,28 @@ export const ProductCategories = () => {
 	};
 
 	return (
-		<Content className="ProductCategories" title="Product Categories">
+		<Content title="Product Categories">
+			<ConnectionAlert />
+
 			<Box>
-				<TableHeader
-					buttonName="Create Product Category"
-					onCreate={() => {
-						setSelectedProductCategory(null);
-						setModifyProductCategoryModalVisible(true);
-					}}
-				/>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Product Category"
+						onCreateDisabled={isConnected === false}
+						onCreate={() => {
+							setSelectedProductCategory(null);
+							setModifyProductCategoryModalVisible(true);
+						}}
+					/>
+				)}
 
 				<RequestErrors
+					className="px-4"
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),
 					]}
+					withSpaceBottom
 				/>
 
 				<Table
@@ -192,7 +204,7 @@ export const ProductCategories = () => {
 					dataSource={dataSource}
 					scroll={{ x: 800 }}
 					pagination={false}
-					loading={isFetching}
+					loading={isFetching || isLoading}
 					components={{
 						body: {
 							wrapper: renderDraggableContainer,

@@ -16,20 +16,25 @@ import {
 	pageSizeOptions,
 	paymentTypes,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useAuth, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { AccountTotalBalance } from 'screens/BranchManager/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
-import { accountTabs } from 'screens/BranchManager/Accounts/data';
+import { AccountTotalBalance } from 'screens/Shared/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
+import { accountTabs } from 'screens/Shared/Accounts/data';
 import {
 	convertIntoArray,
 	formatDateTime,
 	formatInPeso,
 	getFullName,
+	isCUDShown,
 } from 'utils';
 import '../../style.scss';
 
-export const TabCreditTransactions = () => {
+interface Props {
+	disabled: boolean;
+}
+
+export const TabCreditTransactions = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -44,6 +49,7 @@ export const TabCreditTransactions = () => {
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { transactions, total },
 		isFetching,
@@ -86,6 +92,7 @@ export const TabCreditTransactions = () => {
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
 				actions: (
 					<TableActions
+						areButtonsDisabled={disabled}
 						onAdd={() => setSelectedCreditTransaction(transaction)}
 						onAddName="Create Order of Payment"
 					/>
@@ -94,7 +101,7 @@ export const TabCreditTransactions = () => {
 		});
 
 		setDataSource(formattedTransactions);
-	}, [transactions, payor]);
+	}, [transactions, payor, disabled]);
 
 	useEffect(() => {
 		if (queryParams.payor) {
@@ -112,7 +119,7 @@ export const TabCreditTransactions = () => {
 			{ title: 'Authorizer', dataIndex: 'authorizer' },
 		];
 
-		if (payor) {
+		if (payor && isCUDShown(user.user_type)) {
 			columns.push({
 				title: 'Actions',
 				dataIndex: 'actions',
@@ -139,6 +146,7 @@ export const TabCreditTransactions = () => {
 				<AccountTotalBalance
 					account={payor.account}
 					totalBalance={payor.total_balance}
+					disabled={disabled}
 					onClick={() => setIsCreateOrderOfPaymentModalVisible(true)}
 				/>
 			)}

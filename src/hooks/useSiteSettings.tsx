@@ -1,26 +1,18 @@
-import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
-import { IS_APP_LIVE } from 'global';
-import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
 import { SiteSettingsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
-export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
-	let baseURL = useSelector(
-		branchesSelectors.selectURLByBranchId(params?.branchId),
-	);
-
-	return useQuery<any>(
+export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
+	useQuery<any>(
 		['useSiteSettingsRetrieve', params?.branchId],
 		() => {
 			let service = SiteSettingsService.retrieve;
-			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+			if (!isStandAlone()) {
 				service = SiteSettingsService.retrieveOffline;
 			}
 
-			return service(getBaseURL()).catch((e) => Promise.reject(e.errors));
+			return service(getLocalApiUrl).catch((e) => Promise.reject(e.errors));
 		},
 
 		{
@@ -28,7 +20,6 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) => {
 			...options,
 		},
 	);
-};
 
 export const useSiteSettingsEdit = () =>
 	useMutation<any, any, any>(
@@ -93,6 +84,6 @@ export const useSiteSettingsEdit = () =>
 					thank_you_message: thankYouMessage,
 					tin: tin,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);

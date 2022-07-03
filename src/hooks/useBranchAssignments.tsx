@@ -11,6 +11,7 @@ const useBranchAssignments = ({ params }: Query) =>
 			params?.branchId,
 			params?.page,
 			params?.pageSize,
+			params?.timeRange,
 			params?.userId,
 		],
 		async () =>
@@ -19,6 +20,7 @@ const useBranchAssignments = ({ params }: Query) =>
 					branch_id: params?.branchId,
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					time_range: params?.timeRange,
 					user_id: params?.userId,
 				},
 				getLocalApiUrl(),

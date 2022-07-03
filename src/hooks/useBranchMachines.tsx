@@ -1,9 +1,8 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
-import { getBaseURL } from 'hooks/helper';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchMachinesService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -16,7 +15,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 		],
 		async () => {
 			let service = BranchMachinesService.list;
-			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+			if (!isStandAlone()) {
 				service = BranchMachinesService.listOffline;
 			}
 
@@ -27,7 +26,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					sales_time_range: params?.salesTimeRange,
 				},
-				params?.serverUrl || getBaseURL(),
+				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors));
 		},
 		{
@@ -43,11 +42,16 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useBranchMachineRetrieve', id],
-		async () =>
-			BranchMachinesService.retrieve(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		async () => {
+			let service = BranchMachinesService.retrieve;
+			if (!isStandAlone()) {
+				service = BranchMachinesService.retrieveOffline;
+			}
+
+			return service(id, getLocalApiUrl()).catch((e) =>
+				Promise.reject(e.errors),
+			);
+		},
 		{
 			select: (query) => query.data,
 			...options,
@@ -75,7 +79,7 @@ export const useBranchMachineCreate = () => {
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -108,8 +112,21 @@ export const useBranchMachineEdit = () => {
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchMachines');
+			},
+		},
+	);
+};
+
+export const useBranchMachineDelete = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		(id: number) => BranchMachinesService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useBranchMachines');

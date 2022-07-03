@@ -34,6 +34,7 @@ import {
 } from 'global';
 import _ from 'lodash';
 import React from 'react';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils/localStorage';
 
 // Getters
 
@@ -588,3 +589,13 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export const isUserFromBranch = _.memoize((userType) =>
 	[userTypes.BRANCH_MANAGER, userTypes.BRANCH_PERSONNEL].includes(userType),
 );
+
+export const isStandAlone = () => getLocalApiUrl() === getOnlineApiUrl();
+
+export const isCUDShown = (userType) => {
+	if (isUserFromBranch(userType)) {
+		return isStandAlone();
+	}
+
+	return true;
+};

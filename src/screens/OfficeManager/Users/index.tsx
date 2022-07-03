@@ -1,5 +1,5 @@
 import { Alert, Tabs } from 'antd';
-import { AddIcon, Content, ModifyUserModal } from 'components';
+import { AddIcon, ConnectionAlert, Content, ModifyUserModal } from 'components';
 import { Box, Button } from 'components/elements';
 import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
@@ -44,15 +44,7 @@ export const Users = () => {
 
 	return (
 		<Content title="Users">
-			{isConnected === false && (
-				<Alert
-					className="mb-4"
-					message="Online Server cannot be reached."
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
-					type="error"
-					showIcon
-				/>
-			)}
+			<ConnectionAlert />
 
 			<Box>
 				<Tabs

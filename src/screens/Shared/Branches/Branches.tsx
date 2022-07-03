@@ -1,6 +1,7 @@
 import { Alert, message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	ConnectionAlert,
 	Content,
 	ModifyBranchModal,
 	RequestErrors,
@@ -65,15 +66,7 @@ export const Branches = () => {
 
 	return (
 		<Content className="Branches" title="Branches">
-			{isConnected === false && (
-				<Alert
-					className="mb-4"
-					message="Online Server cannot be reached."
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
-					type="error"
-					showIcon
-				/>
-			)}
+			<ConnectionAlert />
 
 			<Box>
 				<TableHeader

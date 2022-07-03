@@ -19,4 +19,13 @@ const service = {
 	delete: async (id: number, baseURL) =>
 		axios.delete(`/point-system-tags/${id}/`, { baseURL }),
 };
-export default service;
+
+const serviceOffline = {
+	listOffline: async (params: IListRequest, baseURL) =>
+		axios.get('/offline-point-system-tags/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

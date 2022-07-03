@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Select, Table, Tag } from 'antd';
+import { Col, Input, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyAccountModal,
@@ -16,28 +16,17 @@ import {
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useAccounts, useQueryParams } from 'hooks';
+import { useAccounts, useAuth, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, formatDate, getFullName } from 'utils';
+import { convertIntoArray, formatDate, getFullName, isCUDShown } from 'utils';
 
-const columns: ColumnsType = [
-	{ title: 'Client Code', dataIndex: 'clientCode' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Address (Home)', dataIndex: 'homeAddress' },
-	{ title: 'Address (Business)', dataIndex: 'businessAddress' },
-	{ title: 'Contact #', dataIndex: 'contactNumber' },
-	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
-	{
-		title: 'Loyalty Membership',
-		dataIndex: 'isPointSystemEligible',
-		align: 'center',
-	},
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+interface Props {
+	disabled: boolean;
+}
 
-export const TabAccounts = () => {
+export const TabAccounts = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
@@ -46,6 +35,7 @@ export const TabAccounts = () => {
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { accounts, total },
 		isFetching,
@@ -72,6 +62,7 @@ export const TabAccounts = () => {
 			),
 			actions: (
 				<TableActions
+					areButtonsDisabled={disabled}
 					onEdit={() => {
 						setSelectedAccountEdit(account);
 					}}
@@ -80,15 +71,40 @@ export const TabAccounts = () => {
 		}));
 
 		setDataSource(data);
-	}, [accounts]);
+	}, [accounts, disabled]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Client Code', dataIndex: 'clientCode' },
+			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Address (Home)', dataIndex: 'homeAddress' },
+			{ title: 'Address (Business)', dataIndex: 'businessAddress' },
+			{ title: 'Contact #', dataIndex: 'contactNumber' },
+			{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
+			{
+				title: 'Loyalty Membership',
+				dataIndex: 'isPointSystemEligible',
+				align: 'center',
+			},
+		];
+
+		if (isCUDShown(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user]);
 
 	return (
 		<div>
-			<TableHeader
-				title="Accounts"
-				buttonName="Create Account"
-				onCreate={() => setIsCreateModalVisible(true)}
-			/>
+			{isCUDShown(user.user_type) && (
+				<TableHeader
+					title="Accounts"
+					buttonName="Create Account"
+					onCreate={() => setIsCreateModalVisible(true)}
+					onCreateDisabled={disabled}
+				/>
+			)}
 
 			<Filter
 				params={queryParams}
@@ -97,10 +113,10 @@ export const TabAccounts = () => {
 				}}
 			/>
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
 				scroll={{ x: 1000 }}
 				pagination={{

@@ -15,11 +15,17 @@ import {
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useCreditRegistrations, useQueryParams } from 'hooks';
+import { useAuth, useCreditRegistrations, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { accountTabs } from 'screens/BranchManager/Accounts/data';
-import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
+import { accountTabs } from 'screens/Shared/Accounts/data';
+import {
+	convertIntoArray,
+	formatDate,
+	formatInPeso,
+	getFullName,
+	isCUDShown,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },
@@ -30,7 +36,11 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const TabCreditRegistrations = () => {
+interface Props {
+	disabled: boolean;
+}
+
+export const TabCreditRegistrations = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
@@ -40,6 +50,7 @@ export const TabCreditRegistrations = () => {
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		isFetching,
 		data: { creditRegistrations, total },
@@ -69,6 +80,7 @@ export const TabCreditRegistrations = () => {
 				datetimeCreated: formatDate(account.datetime_created),
 				actions: (
 					<TableActions
+						areButtonsDisabled={disabled}
 						onView={() =>
 							setQueryParams(
 								{
@@ -79,24 +91,31 @@ export const TabCreditRegistrations = () => {
 							)
 						}
 						onViewName="View Credit Transactions"
-						onEdit={() => {
-							setSelectedCreditRegistration(creditRegistration);
-						}}
+						onEdit={
+							isCUDShown(user.user_type)
+								? () => {
+										setSelectedCreditRegistration(creditRegistration);
+								  }
+								: null
+						}
 					/>
 				),
 			};
 		});
 
 		setDataSource(data);
-	}, [creditRegistrations]);
+	}, [creditRegistrations, disabled]);
 
 	return (
 		<div>
-			<TableHeader
-				title="Credit Account"
-				buttonName="Create Credit Account"
-				onCreate={() => setIsCreateModalVisible(true)}
-			/>
+			{isCUDShown(user.user_type) && (
+				<TableHeader
+					title="Credit Account"
+					buttonName="Create Credit Account"
+					onCreate={() => setIsCreateModalVisible(true)}
+					onCreateDisabled={disabled}
+				/>
+			)}
 
 			<Filter
 				params={queryParams}
@@ -105,7 +124,7 @@ export const TabCreditRegistrations = () => {
 				}}
 			/>
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
 
 			<Table
 				columns={columns}

@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -230,39 +230,23 @@ const useBranchProductsNew = ({ params }: Query) =>
 			params?.search,
 			params?.serverUrl,
 		],
-		async () => {
-			let baseURL = params?.serverUrl;
-			if (!baseURL) {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-			}
-
-			const data = {
-				branch_id: params?.branchId,
-				has_bo_balance: params?.hasBoBalance,
-				has_negative_balance: params?.hasNegativeBalance,
-				is_sold_in_branch: params?.isSoldInBranch,
-				ordering: '-product__textcode',
-				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-				page: params?.page || DEFAULT_PAGE,
-				product_category: params?.productCategory,
-				product_ids: params?.productIds,
-				product_status: params?.productStatus,
-				search: params?.search,
-			};
-
-			try {
-				// NOTE: Fetch in branch url
-				return await BranchProductsService.list(data, baseURL);
-			} catch (e) {
-				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-				const response = await BranchProductsService.list(data, baseURL);
-				response.data.warning =
-					'Data Source: Backup Server, data might be outdated.';
-
-				return response;
-			}
-		},
+		async () =>
+			await BranchProductsService.list(
+				{
+					branch_id: params?.branchId,
+					has_bo_balance: params?.hasBoBalance,
+					has_negative_balance: params?.hasNegativeBalance,
+					is_sold_in_branch: params?.isSoldInBranch,
+					ordering: '-product__textcode',
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
+					product_category: params?.productCategory,
+					product_ids: params?.productIds,
+					product_status: params?.productStatus,
+					search: params?.search,
+				},
+				params?.serverUrl || getLocalApiUrl(),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -279,7 +263,7 @@ export const useBranchProductRetrieve = ({ id, params, options }: Query = {}) =>
 		async () =>
 			BranchProductsService.list(
 				{ branch_id: params?.branchId, product_ids: id },
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -335,7 +319,7 @@ export const useBranchProductEdit = () => {
 					price_per_piece: pricePerPiece,
 					reorder_point: reorderPoint,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -364,7 +348,7 @@ export const useBranchProductEditPriceCost = () => {
 					price_per_piece: pricePerPiece,
 					price_per_bulk: pricePerBulk,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {

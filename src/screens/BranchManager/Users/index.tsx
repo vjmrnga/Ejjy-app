@@ -1,4 +1,4 @@
-import { Alert, Table } from 'antd';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -9,22 +9,16 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
-import { usePingOnlineServer, useUserDelete, useUsers } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import { useAuth, useUserDelete, useUsers } from 'hooks';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import {
 	convertIntoArray,
 	getBranchId,
 	getFullName,
 	getUserTypeName,
+	isCUDShown,
 } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
 
 export const Users = () => {
 	// STATES
@@ -34,7 +28,7 @@ export const Users = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
-	const { isConnected } = usePingOnlineServer();
+	const { user } = useAuth();
 	const {
 		isFetching: isFetchingUsers,
 		data: { users },
@@ -60,7 +54,6 @@ export const Users = () => {
 			type: getUserTypeName(user.user_type),
 			actions: (
 				<TableActions
-					areButtonsDisabled={isConnected === false}
 					onEdit={() => {
 						setSelectedUser(user);
 						setModifyUserModalVisible(true);
@@ -73,6 +66,20 @@ export const Users = () => {
 		setDataSource(formattedUsers);
 	}, [users]);
 
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'ID', dataIndex: 'id' },
+			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Type', dataIndex: 'type' },
+		];
+
+		if (isCUDShown(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user]);
+
 	const handleSuccess = (user) => {
 		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
 			cachedData.data.results = [user, ...cachedData.data.results];
@@ -82,25 +89,16 @@ export const Users = () => {
 
 	return (
 		<Content title="Users">
-			{isConnected === false && (
-				<Alert
-					className="mb-4"
-					message="Head Office Server is Offline"
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Head Office server is restored."
-					type="error"
-					showIcon
-				/>
-			)}
-
 			<Box>
-				<TableHeader
-					buttonName="Create User"
-					onCreateDisabled={isConnected === false}
-					onCreate={() => setModifyUserModalVisible(true)}
-				/>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create User"
+						onCreate={() => setModifyUserModalVisible(true)}
+					/>
+				)}
 
 				<RequestErrors
-					className="px-6"
+					className="px-4"
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),
@@ -109,7 +107,7 @@ export const Users = () => {
 				/>
 
 				<Table
-					columns={columns}
+					columns={getColumns()}
 					dataSource={dataSource}
 					scroll={{ x: 650 }}
 					loading={isFetchingUsers || isDeletingUser}

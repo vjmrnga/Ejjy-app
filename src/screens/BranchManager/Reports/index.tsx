@@ -23,8 +23,8 @@ export const Reports = () => {
 			<Box>
 				<Spin size="large" spinning={isFetchingProductCategories}>
 					<RequestErrors
+						className="px-6 pt-6"
 						errors={convertIntoArray(productCategoriesErrors)}
-						withSpaceBottom
 					/>
 
 					<ReportsBranch productCategories={productCategories} />

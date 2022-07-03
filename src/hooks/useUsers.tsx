@@ -1,6 +1,5 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
-import { getBaseURL } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -9,6 +8,7 @@ import { UsersService } from 'services';
 import {
 	getLocalApiUrl,
 	getOnlineApiUrl,
+	isStandAlone,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -274,7 +274,7 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 		],
 		async () => {
 			let service = UsersService.list;
-			if (getLocalApiUrl() !== getOnlineApiUrl()) {
+			if (!isStandAlone()) {
 				service = UsersService.listOffline;
 			}
 
@@ -284,7 +284,7 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 				},
-				params?.serverUrl || getBaseURL(),
+				params?.serverUrl || getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors));
 		},
 		{
@@ -302,10 +302,7 @@ export const useUserRetrieve = ({ id, options }: Query) =>
 		['useUserRetrieve', id],
 		async () =>
 			// NOTE: We didn't catch the this request so we can check the status code of the error
-			UsersService.retrieve(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
+			UsersService.retrieve(id, getLocalApiUrl()),
 		{
 			select: (query) => query.data,
 			...options,
@@ -319,7 +316,7 @@ export const useUserAuthenticate = () =>
 				login,
 				password,
 			},
-			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			getLocalApiUrl(),
 		),
 	);
 

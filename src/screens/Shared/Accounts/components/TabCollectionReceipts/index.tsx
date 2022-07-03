@@ -104,6 +104,7 @@ export const TabCollectionReceipts = () => {
 					...convertIntoArray(collectionReceiptsError, 'Collection Receipts'),
 					...convertIntoArray(siteSettingsError, 'Site Settings'),
 				]}
+				withSpaceBottom
 			/>
 
 			<Table

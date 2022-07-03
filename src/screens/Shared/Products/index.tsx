@@ -1,7 +1,8 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Alert, Col, Input, Row, Select, Table } from 'antd';
+import { Col, Input, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import {
+	ConnectionAlert,
 	Content,
 	ModifyProductModal,
 	RequestErrors,
@@ -25,12 +26,11 @@ import {
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { useUsers } from 'hooks/useUsers';
 import { debounce } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, isUserFromBranch } from 'utils';
+import { convertIntoArray, isCUDShown } from 'utils';
 import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
@@ -93,15 +93,18 @@ export const Products = () => {
 							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
 							onEdit={
-								isUserFromBranch(user)
-									? undefined
-									: () => onOpenModal(product, modals.MODIFY)
+								isCUDShown(user.user_type)
+									? () => onOpenModal(product, modals.MODIFY)
+									: undefined
 							}
 							onRemove={
-								isUserFromBranch(user)
-									? undefined
-									: () =>
-											deleteProduct({ id: product.id, actingUserId: user.id })
+								isCUDShown(user.user_type)
+									? () =>
+											deleteProduct({
+												id: product.id,
+												actingUserId: user.id,
+											})
+									: undefined
 							}
 						/>
 					),
@@ -137,35 +140,24 @@ export const Products = () => {
 	// };
 
 	return (
-		<Content className="Products" title="Products">
-			{isConnected === false && (
-				<Alert
-					className="mb-4"
-					message="Online Server cannot be reached."
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
-					type="error"
-					showIcon
-				/>
-			)}
+		<Content title="Products">
+			<ConnectionAlert />
 
 			<Box>
-				<TableHeader
-					buttonName="Create Product"
-					onCreateDisabled={isConnected === false}
-					onCreate={
-						isUserFromBranch(user)
-							? undefined
-							: () => onOpenModal(null, modals.MODIFY)
-					}
-				/>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Product"
+						onCreateDisabled={isConnected === false}
+						onCreate={() => onOpenModal(null, modals.MODIFY)}
+					/>
+				)}
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
 						...convertIntoArray(listError, 'Product'),
 						...convertIntoArray(deleteError?.errors, 'Product Delete'),
 					]}
-					withSpaceBottom
 				/>
 
 				<Filter
@@ -258,10 +250,9 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 	);
 
 	return (
-		<Row className="PaddingHorizontal PaddingVertical pt-0" gutter={[16, 16]}>
+		<Row className="pa-6 pt-0" gutter={[16, 16]}>
 			<Col span={24}>
 				<RequestErrors
-					className="PaddingHorizontal"
 					errors={convertIntoArray(productCategoriesErrors, 'Product Category')}
 				/>
 			</Col>

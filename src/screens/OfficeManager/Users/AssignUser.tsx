@@ -3,6 +3,7 @@ import { Alert, Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	AddButtonIcon,
 	Breadcrumb,
+	ConnectionAlert,
 	Content,
 	ModifyCashieringAssignmentModal,
 	RequestErrors,
@@ -172,15 +173,7 @@ export const AssignUser = ({ match }: Props) => {
 			rightTitle={getFullName(user)}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 		>
-			{isConnected === false && (
-				<Alert
-					className="mb-4"
-					message="Online Server cannot be reached."
-					description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
-					type="error"
-					showIcon
-				/>
-			)}
+			<ConnectionAlert />
 
 			<Box>
 				{isUserFromBranch(user?.user_type) && (

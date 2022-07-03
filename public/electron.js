@@ -63,6 +63,26 @@ function createWindow() {
 		splashScreen = null;
 	});
 
+	// Migrate and run API
+	let spawnRun = null;
+	if (!isDev) {
+		const apiPath = path.join(process.resourcesPath, 'api');
+		spawn('python', ['manage.py', 'migrate'], {
+			cwd: apiPath,
+			detached: false,
+		});
+		spawnRun = spawn('python', ['manage.py', 'runserver', '0.0.0.0:8000'], {
+			cwd: apiPath,
+			detached: false,
+		});
+
+		logStatus('API: Started');
+
+		mainWindow.once('closed', () => {
+			kill(spawnRun.pid);
+		});
+	}
+
 	const menu = Menu.getApplicationMenu().items;
 	menu.push({
 		label: 'Development',
@@ -70,7 +90,9 @@ function createWindow() {
 			{
 				label: 'Reset Database',
 				click: () => {
+					kill(spawnRun.pid, 'SIGSTOP');
 					resetDB();
+					kill(spawnRun.pid, 'SIGCONT');
 
 					const choice = dialog.showMessageBoxSync(mainWindow, {
 						type: 'info',
@@ -89,28 +111,6 @@ function createWindow() {
 		],
 	});
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-
-	if (!isDev) {
-		const apiPath = path.join(process.resourcesPath, 'api');
-		spawn('python', ['manage.py', 'migrate'], {
-			cwd: apiPath,
-			detached: false,
-		});
-		const spawnRun = spawn(
-			'python',
-			['manage.py', 'runserver', '0.0.0.0:8000'],
-			{
-				cwd: apiPath,
-				detached: false,
-			},
-		);
-
-		logStatus('API: Started');
-
-		mainWindow.once('closed', () => {
-			kill(spawnRun.pid);
-		});
-	}
 }
 
 //-------------------------------------------------------------------
@@ -128,7 +128,7 @@ if (!gotTheLock) {
 		}
 	});
 
-	// Create myWindow, load the rest of the app, etc...
+	// Load the rest of the app, etc...
 	app.on('ready', createWindow);
 }
 
@@ -137,7 +137,6 @@ if (!gotTheLock) {
 //
 // We must only perform auto update in Windows OS
 //-------------------------------------------------------------------
-
 function logStatus(text) {
 	log.info(text);
 	mainWindow.webContents.send('message', text);

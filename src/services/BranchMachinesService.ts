@@ -27,11 +27,17 @@ const service = {
 
 	edit: async (id: number, body: Modify, baseURL) =>
 		axios.patch(`/branch-machines/${id}/`, body, { baseURL }),
+
+	delete: async (id: number, baseURL) =>
+		axios.delete(`/branch-machines/${id}/`, { baseURL }),
 };
 
 const serviceOffline = {
 	listOffline: async (params: List, baseURL) =>
 		axios.get('/offline-branch-machines/', { baseURL, params }),
+
+	retrieveOffline: async (id, baseURL) =>
+		axios.get(`/offline-branch-machines/${id}/`, { baseURL }),
 };
 
 export default {

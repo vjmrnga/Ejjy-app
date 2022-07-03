@@ -1,9 +1,8 @@
-import { Col, Form, Input, message, Modal, Row } from 'antd';
+import { Col, Input, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components';
 import { Button, FieldError, Label } from 'components/elements';
-import { ErrorMessage, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import { useProductCategoryCreate, useProductCategoryEdit } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
@@ -82,9 +81,6 @@ export const ModifyProductCategoryForm = ({
 	onSubmit,
 	onClose,
 }: FormProps) => {
-	// CUSTOM HOOKS
-	const { user } = useAuth();
-
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({

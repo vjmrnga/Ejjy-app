@@ -23,4 +23,13 @@ const service = {
 	delete: async (id: number, baseURL) =>
 		axios.delete(`/discount-options/${id}/`, { baseURL }),
 };
-export default service;
+
+const serviceOffline = {
+	listOffline: async (params: IListRequest, baseURL) =>
+		axios.get('/offline-discount-options/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

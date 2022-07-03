@@ -1,11 +1,22 @@
+import useAuth from 'hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import {
+	getLocalApiUrl,
+	getOnlineApiUrl,
+	isCUDShown,
+	isStandAlone,
+	isUserFromBranch,
+} from 'utils';
 
 const usePingOnlineServer = () => {
+	// STATES
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [isConnected, setIsConnected] = useState(null);
+
+	// CUSTOM HOOKS
+	const { user } = useAuth();
 
 	useQuery(
 		['usePingOnlineServer', isEnabled],
@@ -27,10 +38,15 @@ const usePingOnlineServer = () => {
 		const localApiUrl = getLocalApiUrl();
 		const onlineApiUrl = getOnlineApiUrl();
 
-		if (localApiUrl && onlineApiUrl && localApiUrl !== onlineApiUrl) {
+		if (
+			localApiUrl &&
+			onlineApiUrl &&
+			!isStandAlone() &&
+			!isUserFromBranch(user.user_type)
+		) {
 			setIsEnabled(true);
 		}
-	}, []);
+	}, [user]);
 
 	return { isConnected };
 };

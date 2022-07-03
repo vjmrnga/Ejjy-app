@@ -42,9 +42,10 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchId: any;
+	disabled: boolean;
 }
 
-export const TabBranchProducts = ({ branchId }: Props) => {
+export const TabBranchProducts = ({ branchId, disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
@@ -66,7 +67,7 @@ export const TabBranchProducts = ({ branchId }: Props) => {
 		},
 	});
 	const {
-		data: { branchProducts, total, warning },
+		data: { branchProducts, total },
 		isFetching: isFetchingBranchProducts,
 		error: branchProductsErrors,
 		refetch: refetchBranchProducts,
@@ -155,6 +156,7 @@ export const TabBranchProducts = ({ branchId }: Props) => {
 				),
 				actions: (
 					<TableActions
+						areButtonsDisabled={disabled}
 						onAddName="Supplier Delivery"
 						onAdd={() => {
 							setSelectedBranchProduct(branchProduct);
@@ -170,7 +172,7 @@ export const TabBranchProducts = ({ branchId }: Props) => {
 		});
 
 		setDataSource(formattedBranchProducts);
-	}, [branchProducts]);
+	}, [branchProducts, disabled]);
 
 	// NOTE: Hiding/showing of current balance is temporarily disabled as requested by Emman
 	// const handleKeyDown = (event) => {
@@ -208,7 +210,6 @@ export const TabBranchProducts = ({ branchId }: Props) => {
 				withSpaceTop
 				withSpaceBottom
 			/>
-			<RequestWarnings warnings={convertIntoArray(warning)} withSpaceBottom />
 
 			<Table
 				columns={columns}

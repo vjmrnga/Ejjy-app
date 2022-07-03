@@ -47,7 +47,7 @@ export const TabSessionAssignments = () => {
 	useEffect(() => {
 		const data = cashieringAssignments.map((assignment) => ({
 			key: assignment.id,
-			// branch: assignment.branch.name,
+			branch: assignment.branch.name,
 			name: getFullName(assignment.user),
 			date: dayjs.tz(assignment.datetime_start).format('MMMM DD, YYYY'),
 			time: `${formatTime(assignment.datetime_start)} – ${formatTime(

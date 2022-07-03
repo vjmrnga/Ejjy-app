@@ -1,15 +1,15 @@
 import { Tabs } from 'antd';
-import { Content } from 'components';
+import { ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
-import { useQueryParams } from 'hooks';
+import { usePingOnlineServer, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect } from 'react';
-import { TabAccounts } from 'screens/BranchManager/Accounts/components/TabAccounts';
-import { TabCollectionReceipts } from 'screens/BranchManager/Accounts/components/TabCollectionReceipts';
-import { TabCreditRegistrations } from 'screens/BranchManager/Accounts/components/TabCreditRegistration';
-import { TabCreditTransactions } from 'screens/BranchManager/Accounts/components/TabCreditTransactions';
-import { TabOrderOfPayments } from 'screens/BranchManager/Accounts/components/TabOrderOfPayments';
-import { accountTabs } from 'screens/BranchManager/Accounts/data';
+import { TabAccounts } from './components/TabAccounts';
+import { TabCollectionReceipts } from './components/TabCollectionReceipts';
+import { TabCreditRegistrations } from './components/TabCreditRegistration';
+import { TabCreditTransactions } from './components/TabCreditTransactions';
+import { TabOrderOfPayments } from './components/TabOrderOfPayments';
+import { accountTabs } from './data';
 import './style.scss';
 
 export const Accounts = () => {
@@ -18,6 +18,7 @@ export const Accounts = () => {
 		params: { tab: currentTab },
 		setQueryParams,
 	} = useQueryParams();
+	const { isConnected } = usePingOnlineServer();
 
 	// METHODS
 	useEffect(() => {
@@ -35,6 +36,8 @@ export const Accounts = () => {
 
 	return (
 		<Content title="Accounts">
+			<ConnectionAlert />
+
 			<Box className="ViewBranchMachine">
 				<Tabs
 					type="card"
@@ -44,21 +47,21 @@ export const Accounts = () => {
 					destroyInactiveTabPane
 				>
 					<Tabs.TabPane key={accountTabs.ACCOUNTS} tab={accountTabs.ACCOUNTS}>
-						<TabAccounts />
+						<TabAccounts disabled={isConnected === false} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
 						key={accountTabs.CREDIT_ACCOUNTS}
 						tab={accountTabs.CREDIT_ACCOUNTS}
 					>
-						<TabCreditRegistrations />
+						<TabCreditRegistrations disabled={isConnected === false} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
 						key={accountTabs.CREDIT_TRANSACTIONS}
 						tab={accountTabs.CREDIT_TRANSACTIONS}
 					>
-						<TabCreditTransactions />
+						<TabCreditTransactions disabled={isConnected === false} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane

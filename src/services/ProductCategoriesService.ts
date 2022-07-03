@@ -20,4 +20,12 @@ const service = {
 		axios.delete(`/product-categories/${id}/`, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: IListRequest, baseURL) =>
+		axios.get('/offline-product-categories/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

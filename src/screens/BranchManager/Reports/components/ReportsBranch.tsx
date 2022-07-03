@@ -293,8 +293,8 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 	return (
 		<div className="ReportsBranch">
 			<RequestErrors
+				className="px-6"
 				errors={convertIntoArray(errors, 'Branch Product')}
-				withSpaceBottom
 			/>
 
 			<Filter
@@ -433,7 +433,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 	);
 
 	return (
-		<Row className="PaddingHorizontal PaddingVertical" gutter={[16, 16]}>
+		<Row className="pa-6" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<Label label="Product Name" spacing />
 				<Select

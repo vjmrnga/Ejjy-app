@@ -12,22 +12,23 @@ import {
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { ViewAccount } from 'screens/BranchManager/Accounts/ViewAccount';
 import { CashBreakdowns } from 'screens/BranchManager/CashBreakdowns';
 import { Checkings } from 'screens/BranchManager/Checkings';
 import { FulfillChecking } from 'screens/BranchManager/Checkings/Fulfill';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
-import { DiscountOptions } from 'screens/BranchManager/DiscountOptions';
 import { Logs } from 'screens/BranchManager/Logs';
-import { PointSystemTags } from 'screens/BranchManager/PointSystemTags';
 import { Reports } from 'screens/BranchManager/Reports';
 import { Sales } from 'screens/BranchManager/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
-import { ProductCategories } from '../Shared/ProductCategories';
-import { Products } from '../Shared/Products';
-import { Accounts } from './Accounts';
+import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
+import { DiscountOptions } from 'screens/Shared/DiscountOptions';
+import { PointSystemTags } from 'screens/Shared/PointSystemTags';
+import { ProductCategories } from 'screens/Shared/ProductCategories';
+import { Products } from 'screens/Shared/Products';
+import { SiteSettings } from 'screens/Shared/SiteSettings';
+import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines';
@@ -40,7 +41,6 @@ import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
-import { SiteSettings } from './SiteSettings';
 import { Users } from './Users';
 
 const BranchManager = () => {

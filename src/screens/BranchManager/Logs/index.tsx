@@ -1,7 +1,12 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Content, RequestErrors, TimeRangeFilter } from 'components';
+import {
+	Content,
+	RequestErrors,
+	TableHeader,
+	TimeRangeFilter,
+} from 'components';
 import { Box, Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
@@ -69,13 +74,7 @@ export const Logs = () => {
 		<Content title="Logs">
 			<section className="Logs">
 				<Box>
-					<Filter
-						isLoading={
-							isFetchingLogs || isFetchingBranchMachines || isFetchingUsers
-						}
-						branchMachines={branchMachines}
-						users={users}
-					/>
+					<TableHeader title="Logs" />
 
 					<RequestErrors
 						className="px-6"
@@ -84,7 +83,16 @@ export const Logs = () => {
 							...convertIntoArray(branchMachinesError, 'Branch Machines'),
 							...convertIntoArray(usersError, 'Users'),
 						]}
+						withSpaceTop
 						withSpaceBottom
+					/>
+
+					<Filter
+						isLoading={
+							isFetchingLogs || isFetchingBranchMachines || isFetchingUsers
+						}
+						branchMachines={branchMachines}
+						users={users}
 					/>
 
 					<Table

@@ -1,32 +1,39 @@
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
-import { Content, RequestErrors, TableHeader } from 'components';
+import {
+	Content,
+	ModifyBranchMachineModal,
+	RequestErrors,
+	TableActions,
+	TableHeader,
+} from 'components';
 import { Box } from 'components/elements';
-import { useBranchMachines } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getBranchId } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
-	{ title: 'Server URL', dataIndex: 'serverUrl' },
-	{ title: 'Machine ID', dataIndex: 'machineID' },
-	{ title: 'PTU', dataIndex: 'ptu' },
-];
+import { convertIntoArray, getBranchId, isCUDShown } from 'utils';
 
 export const BranchMachines = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
+	const [modifyBranchMachineModalVisible, setModifyBranchMachineModalVisible] =
+		useState(false);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		data: { branchMachines },
 		isFetching,
-		error,
+		error: listError,
 	} = useBranchMachines({
-		params: {
-			branchId: getBranchId(),
-		},
+		params: { branchId: getBranchId() },
 	});
+	const {
+		mutate: deleteBranchMachine,
+		isLoading,
+		error: deleteError,
+	} = useBranchMachineDelete();
 
 	// METHODS
 	useEffect(() => {
@@ -40,26 +47,80 @@ export const BranchMachines = () => {
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
+			actions: (
+				<TableActions
+					onEdit={() => handleEdit(branchMachine)}
+					onRemove={() => {
+						message.success('Branch machine was deleted successfully');
+						deleteBranchMachine(branchMachine.id);
+					}}
+				/>
+			),
 		}));
 
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
 
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
+			{ title: 'Server URL', dataIndex: 'serverUrl' },
+			{ title: 'Machine ID', dataIndex: 'machineID' },
+			{ title: 'PTU', dataIndex: 'ptu' },
+		];
+
+		if (isCUDShown(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user]);
+
+	const handleCreate = () => {
+		setSelectedBranchMachine(null);
+		setModifyBranchMachineModalVisible(true);
+	};
+
+	const handleEdit = (branchMachine) => {
+		setSelectedBranchMachine(branchMachine);
+		setModifyBranchMachineModalVisible(true);
+	};
+
 	return (
 		<Content title="Branch Machines">
 			<Box>
-				<TableHeader buttonName="Create Branch Machine" />
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Branch Machine"
+						onCreate={handleCreate}
+					/>
+				)}
 
-				<RequestErrors errors={convertIntoArray(error)} />
+				<RequestErrors
+					className="px-4"
+					errors={[
+						...convertIntoArray(listError),
+						...convertIntoArray(deleteError?.errors),
+					]}
+					withSpaceBottom
+				/>
 
 				<Table
-					columns={columns}
+					columns={getColumns()}
 					dataSource={dataSource}
 					scroll={{ x: 800 }}
-					loading={isFetching}
+					loading={isFetching || isLoading}
 					pagination={false}
 				/>
 			</Box>
+
+			{modifyBranchMachineModalVisible && (
+				<ModifyBranchMachineModal
+					branchId={getBranchId()}
+					branchMachine={selectedBranchMachine}
+					onClose={() => setModifyBranchMachineModalVisible(false)}
+				/>
+			)}
 		</Content>
 	);
 };

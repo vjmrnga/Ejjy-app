@@ -1,6 +1,6 @@
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { RequestErrors, TableHeader } from 'components';
+import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
@@ -148,6 +148,9 @@ const Filter = () => {
 							</Select.Option>
 						))}
 					</Select>
+				</Col>
+				<Col lg={12} span={24}>
+					<TimeRangeFilter />
 				</Col>
 			</Row>
 		</>

@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	ConnectionAlert,
 	Content,
 	ModifyDiscountOptionModal,
 	RequestErrors,
@@ -15,23 +16,15 @@ import {
 	pageSizeOptions,
 } from 'global';
 import {
-	useDiscountOptions,
+	useAuth,
 	useDiscountOptionDelete,
+	useDiscountOptions,
+	usePingOnlineServer,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Code', dataIndex: 'code' },
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Percentage', dataIndex: 'percentage' },
-	{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
-	{ title: 'Fields', dataIndex: 'fields' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+import React, { useCallback, useEffect, useState } from 'react';
+import { convertIntoArray, isCUDShown } from 'utils';
 
 export const DiscountOptions = () => {
 	// STATES
@@ -44,6 +37,8 @@ export const DiscountOptions = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { isConnected } = usePingOnlineServer();
+	const { user } = useAuth();
 	const {
 		data: { discountOptions, total },
 		isFetching,
@@ -67,6 +62,7 @@ export const DiscountOptions = () => {
 			fields: discountOption.additional_fields,
 			actions: (
 				<TableActions
+					areButtonsDisabled={isConnected === false}
 					onEdit={() => {
 						setSelectedDiscountOption(discountOption);
 						setModifyDiscountOptionModalVisible(true);
@@ -80,25 +76,49 @@ export const DiscountOptions = () => {
 		}));
 
 		setDataSource(formattedDiscountOptions);
-	}, [discountOptions]);
+	}, [discountOptions, isConnected]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Code', dataIndex: 'code' },
+			{ title: 'Type', dataIndex: 'type' },
+			{ title: 'Percentage', dataIndex: 'percentage' },
+			{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
+			{ title: 'Fields', dataIndex: 'fields' },
+		];
+
+		if (isCUDShown(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user]);
 
 	return (
 		<Content title="Discount Options">
+			<ConnectionAlert />
+
 			<Box>
-				<TableHeader
-					buttonName="Create Discount Option"
-					onCreate={() => setModifyDiscountOptionModalVisible(true)}
-				/>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Discount Option"
+						onCreateDisabled={isConnected === false}
+						onCreate={() => setModifyDiscountOptionModalVisible(true)}
+					/>
+				)}
 
 				<RequestErrors
+					className="px-4"
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),
 					]}
+					withSpaceBottom
 				/>
 
 				<Table
-					columns={columns}
+					columns={getColumns()}
 					dataSource={dataSource}
 					scroll={{ x: 800 }}
 					loading={isFetching || isLoading}

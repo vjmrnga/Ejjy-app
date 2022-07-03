@@ -1,6 +1,7 @@
 import { message } from 'antd';
-import Table, { ColumnsType } from 'antd/lib/table';
+import Table from 'antd/lib/table';
 import {
+	ConnectionAlert,
 	Content,
 	ModifyPointSystemTagModal,
 	RequestErrors,
@@ -10,18 +11,19 @@ import {
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, pageSizeOptions } from 'global';
 import {
+	useAuth,
+	usePingOnlineServer,
 	usePointSystemTagDelete,
 	usePointSystemTags,
 	useQueryParams,
 } from 'hooks';
-import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Divisor Amount', dataIndex: 'divisorAmount' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatInPeso,
+	isCUDShown,
+	isUserFromBranch,
+} from 'utils';
 
 export const PointSystemTags = () => {
 	// STATES
@@ -34,6 +36,8 @@ export const PointSystemTags = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { isConnected } = usePingOnlineServer();
+	const { user } = useAuth();
 	const {
 		data: { pointSystemTags, total },
 		isFetching,
@@ -53,6 +57,7 @@ export const PointSystemTags = () => {
 			divisorAmount: formatInPeso(pointSystemTag.divisor_amount),
 			actions: (
 				<TableActions
+					areButtonsDisabled={isConnected === false}
 					onEdit={() => {
 						setSelectedPointSystemTag(pointSystemTag);
 						setModifyPointSystemTagModalVisible(true);
@@ -66,25 +71,45 @@ export const PointSystemTags = () => {
 		}));
 
 		setDataSource(data);
-	}, [pointSystemTags]);
+	}, [pointSystemTags, isConnected]);
+
+	const getColumns = useCallback(() => {
+		const columns = [
+			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Divisor Amount', dataIndex: 'divisorAmount' },
+		];
+
+		if (isCUDShown(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user]);
 
 	return (
 		<Content title="Point System Tags">
+			<ConnectionAlert />
+
 			<Box>
-				<TableHeader
-					buttonName="Create Point System Tag"
-					onCreate={() => setModifyPointSystemTagModalVisible(true)}
-				/>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Point System Tag"
+						onCreateDisabled={isConnected === false}
+						onCreate={() => setModifyPointSystemTagModalVisible(true)}
+					/>
+				)}
 
 				<RequestErrors
+					className="px-4"
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),
 					]}
+					withSpaceBottom
 				/>
 
 				<Table
-					columns={columns}
+					columns={getColumns()}
 					dataSource={dataSource}
 					loading={isFetching || isLoading}
 					bordered
