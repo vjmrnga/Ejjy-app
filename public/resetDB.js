@@ -12,6 +12,7 @@ const API_PATH = isDev
 
 const SQLITE_DB_NAME = 'db.sqlite3';
 const SQLITE_CLEAN_DB_NAME = 'db-clean.sqlite3';
+const SQLITE_STANDALONE_DB_NAME = 'db-carmen.sqlite3';
 
 function logStatus(text) {
 	log.info(text);
@@ -22,14 +23,14 @@ function logStatus(text) {
 	}
 }
 
-module.exports = async function () {
+function resetDB(backupDatabaseName) {
 	// Append the timestamp to sqlite db
-	const SQLITE_DB_PATH = path.join(API_PATH, SQLITE_DB_NAME);
-	if (fs.existsSync(SQLITE_DB_PATH)) {
+	const sqliteDatabasePath = path.join(API_PATH, SQLITE_DB_NAME);
+	if (fs.existsSync(sqliteDatabasePath)) {
 		const dbName = 'db-' + dayjs().format('DDMMYYYYHHmmss') + '.sqlite3';
 		const newSqliteDbName = path.join(API_PATH, dbName);
 
-		fs.renameSync(SQLITE_DB_PATH, newSqliteDbName);
+		fs.renameSync(sqliteDatabasePath, newSqliteDbName);
 		logStatus(`[RESET]: Renamed ${SQLITE_DB_NAME} into ${dbName}`);
 	} else {
 		dialog.showMessageBoxSync(window.getFocusedWindow(), {
@@ -42,13 +43,13 @@ module.exports = async function () {
 	}
 
 	// Check if clean sqlite db exists and rename to sqlite db name
-	const SQLITE_CLEAN_DB_PATH = path.join(API_PATH, SQLITE_CLEAN_DB_NAME);
-	if (fs.existsSync(SQLITE_CLEAN_DB_PATH)) {
+	const sqliteBackupDatabasePath = path.join(API_PATH, backupDatabaseName);
+	if (fs.existsSync(sqliteBackupDatabasePath)) {
 		const newSqliteDbName = path.join(API_PATH, SQLITE_DB_NAME);
 
-		fs.copyFileSync(SQLITE_CLEAN_DB_PATH, newSqliteDbName);
+		fs.copyFileSync(sqliteBackupDatabasePath, newSqliteDbName);
 		logStatus(
-			`[RESET]: Renamed ${SQLITE_CLEAN_DB_PATH} into ${newSqliteDbName}`,
+			`[RESET]: Renamed ${sqliteBackupDatabasePath} into ${newSqliteDbName}`,
 		);
 	} else {
 		dialog.showMessageBoxSync(window.getFocusedWindow(), {
@@ -63,4 +64,17 @@ module.exports = async function () {
 	}
 
 	return true;
+}
+
+function resetClean() {
+	return resetDB(SQLITE_CLEAN_DB_NAME);
+}
+
+function resetStandalone() {
+	return resetDB(SQLITE_STANDALONE_DB_NAME);
+}
+
+module.exports = {
+	resetClean,
+	resetStandalone,
 };

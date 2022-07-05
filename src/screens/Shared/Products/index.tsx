@@ -5,6 +5,7 @@ import {
 	ConnectionAlert,
 	Content,
 	ModifyProductModal,
+	PricesModal,
 	RequestErrors,
 	TableActions,
 	TableHeader,
@@ -31,7 +32,6 @@ import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { convertIntoArray, getBranchId, getId, isCUDShown } from 'utils';
-import { PricesModal } from '../../../components/modals/PricesModal';
 
 const columns: ColumnsType = [
 	{

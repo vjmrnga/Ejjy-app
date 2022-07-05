@@ -97,7 +97,7 @@ export const ModifyAccountForm = ({
 						<Col span={24}>
 							<Label id="type" label="Type" spacing />
 							<Select
-								style={{ width: '100%' }}
+								className="w-100"
 								value={values.type}
 								onChange={(value) => {
 									setFieldValue('type', value);
@@ -209,7 +209,7 @@ export const ModifyAccountForm = ({
 								size="large"
 								value={values.birthday}
 								onSelect={(value) => setFieldValue('birthday', value)}
-								style={{ width: '100%' }}
+								className="w-100"
 								allowClear={false}
 							/>
 							<ErrorMessage

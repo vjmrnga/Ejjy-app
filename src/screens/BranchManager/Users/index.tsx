@@ -1,10 +1,9 @@
-import { Table } from 'antd';
+import { Button, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
 	ModifyUserModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
@@ -12,6 +11,7 @@ import { MAX_PAGE_SIZE } from 'global';
 import { useAuth, useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import { useHistory } from 'react-router';
 import {
 	convertIntoArray,
 	getBranchId,
@@ -29,6 +29,7 @@ export const Users = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
+	const history = useHistory();
 	const { user } = useAuth();
 	const {
 		isFetching: isFetchingUsers,
@@ -54,13 +55,36 @@ export const Users = () => {
 			name: getFullName(user),
 			type: getUserTypeName(user.user_type),
 			actions: (
-				<TableActions
-					onEdit={() => {
-						setSelectedUser(user);
-						setModifyUserModalVisible(true);
-					}}
-					onRemove={() => deleteUser(user.id)}
-				/>
+				<Space>
+					<Button
+						type="primary"
+						onClick={() =>
+							history.push(`/branch-manager/users/assign/${user.id}`)
+						}
+					>
+						Cashiering Assignments
+					</Button>
+					<Button
+						type="primary"
+						onClick={() => {
+							setSelectedUser(user);
+							setModifyUserModalVisible(true);
+						}}
+					>
+						Edit
+					</Button>
+					<Popconfirm
+						placement="left"
+						title="Are you sure to remove this user?"
+						onConfirm={() => deleteUser(user.id)}
+						okText="Yes"
+						cancelText="No"
+					>
+						<Button type="primary" danger>
+							Delete
+						</Button>
+					</Popconfirm>
+				</Space>
 			),
 		}));
 

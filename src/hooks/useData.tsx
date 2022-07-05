@@ -1,7 +1,7 @@
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { DataService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const REFETCH_INTERVAL_MS = 60000;
 
@@ -32,6 +32,7 @@ export const useUploadData = () =>
 				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
+			enabled: !isStandAlone(),
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
 			notifyOnChangeProps: ['isLoading'],

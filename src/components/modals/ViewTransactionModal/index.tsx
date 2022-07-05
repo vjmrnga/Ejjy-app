@@ -1,13 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import {
-	Descriptions,
-	Divider,
-	Modal,
-	Space,
-	Spin,
-	Table,
-	Typography,
-} from 'antd';
+import { Descriptions, Modal, Space, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
 import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
@@ -15,7 +7,12 @@ import { EMPTY_CELL, saleTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
+import {
+	formatDateTime,
+	formatInPeso,
+	formatQuantity,
+	getFullName,
+} from 'utils';
 
 interface Props {
 	transaction: any | number;
@@ -275,13 +272,19 @@ export const ViewTransactionModal = ({
 								size="small"
 							>
 								<Descriptions.Item label="Name">
-									{transactionData.client?.name || defaultClientName}
+									{transactionData.client?.name ||
+										getFullName(transactionData.payment?.creditor_account) ||
+										defaultClientName}
 								</Descriptions.Item>
 								<Descriptions.Item label="TIN">
-									{transactionData.client?.tin || EMPTY_CELL}
+									{transactionData.client?.tin ||
+										transactionData.payment?.creditor_account?.tin ||
+										EMPTY_CELL}
 								</Descriptions.Item>
 								<Descriptions.Item label="Address">
-									{transactionData.client?.address || EMPTY_CELL}
+									{transactionData.client?.address ||
+										transactionData.payment?.creditor_account?.home_address ||
+										EMPTY_CELL}
 								</Descriptions.Item>
 							</Descriptions>
 						)}

@@ -18,7 +18,7 @@ log.info('App starting...');
 // Initialization
 //-------------------------------------------------------------------
 let mainWindow;
-let splashScreen;
+let splashWindow;
 function createWindow() {
 	let resetDB = null;
 	if (isDev) {
@@ -28,14 +28,14 @@ function createWindow() {
 	}
 
 	// Splash screen
-	splash = new BrowserWindow({
+	splashWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
 		transparent: true,
 		frame: false,
 		alwaysOnTop: true,
 	});
-	splash.loadURL(`file://${__dirname}/splash.html`);
+	splashWindow.loadURL(`file://${__dirname}/splash.html`);
 
 	// Main screen
 	mainWindow = new BrowserWindow({
@@ -53,14 +53,14 @@ function createWindow() {
 	}, 8000);
 
 	mainWindow.once('ready-to-show', () => {
-		splash.destroy();
+		splashWindow.destroy();
 		mainWindow.maximize();
 		mainWindow.show();
 	});
 
 	mainWindow.on('closed', () => {
+		splashWindow = null;
 		mainWindow = null;
-		splashScreen = null;
 	});
 
 	// Migrate and run API
@@ -69,10 +69,10 @@ function createWindow() {
 	// Set Menu
 	const menu = Menu.getApplicationMenu().items;
 	menu.push({
-		label: 'Development',
+		label: 'Database',
 		submenu: [
 			{
-				label: 'Reset Database',
+				label: 'Reset Clean',
 				click: () => {
 					mainWindow.setProgressBar(1);
 					if (spawnRun) {
@@ -80,7 +80,37 @@ function createWindow() {
 					}
 
 					setTimeout(() => {
-						const result = resetDB();
+						const result = resetDB.resetClean();
+						mainWindow.setProgressBar(-1);
+
+						if (result) {
+							const choice = dialog.showMessageBoxSync(mainWindow, {
+								type: 'info',
+								title: 'Success',
+								buttons: ['Close'],
+								message:
+									'Database was reset successfully. Click button below to restart the app.',
+								cancelId: -1,
+							});
+
+							if (choice === 0) {
+								app.relaunch();
+								app.exit();
+							}
+						}
+					}, 1000);
+				},
+			},
+			{
+				label: 'Reset Standalone',
+				click: () => {
+					mainWindow.setProgressBar(1);
+					if (spawnRun) {
+						kill(spawnRun.pid);
+					}
+
+					setTimeout(() => {
+						const result = resetDB.resetStandalone();
 						mainWindow.setProgressBar(-1);
 
 						if (result) {
