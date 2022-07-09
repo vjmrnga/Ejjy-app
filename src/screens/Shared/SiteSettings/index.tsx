@@ -22,6 +22,7 @@ import {
 	FormattedInputNumber,
 	Label,
 } from 'components/elements';
+import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
 import {
@@ -132,7 +133,18 @@ export const SiteSettings = () => {
 				addressOfTaxPayer: siteSettings?.address_of_tax_payer || '',
 			},
 			Schema: Yup.object().shape({
-				closeSessionDeadline: getValidTimeTest('Close Session Deadline'),
+				closeSessionDeadline: getValidTimeTest('Close Session Deadline').test(
+					'15-minutes-before-close-day-deadline',
+					'Close Session Deadline must be atleast 15 minutes before the Close Day Deadline',
+					function test(value) {
+						// NOTE: We need to use a no-named function so
+						// we can use 'this' and access the other form field value.
+						const closeSessionDeadline = dayjs(value);
+						const closeDayDeadline = dayjs(this.parent.closeDayDeadline);
+
+						return closeDayDeadline.diff(closeSessionDeadline, 'minute') >= 15;
+					},
+				),
 				closeDayDeadline: getValidTimeTest('Close Day Deadline'),
 				isMarkdownAllowedIfCredit: Yup.boolean()
 					.required()
@@ -223,10 +235,9 @@ export const SiteSettings = () => {
 				name={name}
 				format="h:mm A"
 				size="large"
-				minuteStep={5}
 				onSelect={(value) => setFieldValue(name, value)}
 				value={values[name]}
-				style={{ width: '100%' }}
+				className="w-100"
 				allowClear={false}
 				hideDisabledOptions
 				use12Hours
