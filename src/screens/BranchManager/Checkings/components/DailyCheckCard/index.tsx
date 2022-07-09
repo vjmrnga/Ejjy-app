@@ -2,6 +2,7 @@ import { AddIcon } from 'components';
 import { Box, Button } from 'components/elements';
 import React from 'react';
 import { formatDateTimeExtended } from 'utils';
+import './style.scss';
 
 interface Props {
 	dateTimeRequested?: any;
@@ -11,7 +12,7 @@ interface Props {
 export const DailyCheckCard = ({ dateTimeRequested, onDailyCheck }: Props) => (
 	<Box className="DailyCheckCard">
 		<div>
-			<p className="DailyCheckCard_title">Daily Check</p>
+			<p className="DailyCheckCard_title">Unfulfilled Daily Check</p>
 			<span className="DailyCheckCard_date">
 				{formatDateTimeExtended(dateTimeRequested)}
 			</span>

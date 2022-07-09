@@ -149,7 +149,8 @@ function startServer() {
 		});
 		spawnRun = spawn('python', ['manage.py', 'runserver', '0.0.0.0:8000'], {
 			cwd: apiPath,
-			detached: false,
+			detached: true,
+			stdio: 'ignore',
 		});
 
 		logStatus('API: Started');

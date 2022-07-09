@@ -11,15 +11,17 @@ import {
 } from 'global';
 import { useProductChecks, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { convertIntoArray, formatDateTime } from 'utils';
-import './style.scss';
+import { FulfillChecking } from './components/FulfillChecks';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Date & Time Requested', dataIndex: 'datetimeRequested' },
 	{ title: 'Date & Time Fulfilled', dataIndex: 'datetimeFulfilled' },
+	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Status', dataIndex: 'status' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const Checkings = () => {
@@ -27,7 +29,6 @@ export const Checkings = () => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { productChecks, total },
@@ -43,7 +44,7 @@ export const Checkings = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedProductChecks = productChecks.map((productCheck) => {
+		const data = productChecks.map((productCheck) => {
 			const { id, datetime_created, datetime_fulfilled, is_success } =
 				productCheck;
 
@@ -62,25 +63,17 @@ export const Checkings = () => {
 			};
 		});
 
-		setDataSource(formattedProductChecks);
+		setDataSource(data);
 	}, [productChecks]);
 
 	return (
-		<Content className="Checkings" title="Checkings">
-			<Box>
-				<TableHeader
-					title="Checkings"
-					buttonName="Fulfill Check"
-					onCreate={() => {
-						history.push('/branch-manager/checkings/fulfill');
-					}}
-				/>
+		<Content title="Checkings">
+			<FulfillChecking />
 
-				<Filter
-					setQueryParams={(params) => {
-						setQueryParams(params, { shouldResetPage: true });
-					}}
-				/>
+			<Box>
+				<TableHeader title="Checkings" />
+
+				<Filter />
 
 				<RequestErrors
 					className="px-6"
@@ -113,12 +106,9 @@ export const Checkings = () => {
 	);
 };
 
-interface FilterProps {
-	setQueryParams: any;
-}
-const Filter = ({ setQueryParams }: FilterProps) => {
+const Filter = () => {
 	// CUSTOM HOOKS
-	const { params } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 
 	return (
 		<Row className="px-6 mb-4" gutter={[16, 16]}>
@@ -129,9 +119,10 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 					options={[
 						{ label: 'Daily', value: productCheckingTypes.DAILY },
 						{ label: 'Random', value: productCheckingTypes.RANDOM },
+						{ label: 'All', value: undefined },
 					]}
 					onChange={(e) => {
-						setQueryParams({ type: e.target.value });
+						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
 					defaultValue={params.type || productCheckingTypes.DAILY}
 				/>

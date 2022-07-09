@@ -1,8 +1,8 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { Query } from 'hooks/inteface';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductChecksService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 const useProductChecks = ({ params }: Query) =>
 	useQuery<any>(
@@ -23,7 +23,7 @@ const useProductChecks = ({ params }: Query) =>
 					page: params?.page || DEFAULT_PAGE,
 					type: params?.type,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -38,10 +38,9 @@ export const useProductCheckRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useProductCheckRetrieve', id],
 		async () =>
-			ProductChecksService.retrieve(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+			ProductChecksService.retrieve(id, getLocalApiUrl()).catch((e) =>
+				Promise.reject(e.errors),
+			),
 		{
 			select: (query) => query.data,
 			...options,
@@ -50,31 +49,29 @@ export const useProductCheckRetrieve = ({ id, options }: Query) =>
 
 export const useProductCheckCreateDaily = (options = {}) =>
 	useMutation<any, any, any>(
-		() =>
-			ProductChecksService.createDailyChecks(
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
+		() => ProductChecksService.createDailyChecks(getLocalApiUrl()),
 		options,
 	);
 
 export const useProductCheckCreateRandom = (options = {}) =>
 	useMutation<any, any, any>(
-		() =>
-			ProductChecksService.createRandomChecks(
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
+		() => ProductChecksService.createRandomChecks(getLocalApiUrl()),
 		options,
 	);
 
-export const useProductCheckFulfill = (options = {}) =>
-	useMutation<any, any, any>(
+export const useProductCheckFulfill = (options = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
 		({ id, products }) =>
-			ProductChecksService.fulfill(
-				id,
-				{ products },
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			),
-		options,
+			ProductChecksService.fulfill(id, { products }, getLocalApiUrl()),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProductChecks');
+			},
+			...options,
+		},
 	);
+};
 
 export default useProductChecks;

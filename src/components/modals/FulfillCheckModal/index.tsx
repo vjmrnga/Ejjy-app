@@ -1,7 +1,6 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
-import { productCheckingTypes, quantityTypes, request } from 'global/types';
+import { productCheckingTypes, quantityTypes } from 'global/types';
 import { useProductCheckFulfill } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, convertToBulk } from 'utils';
@@ -9,15 +8,10 @@ import { FulfillCheckForm } from './FulfillCheckForm';
 
 interface Props {
 	productCheck: any;
-	onSuccess: any;
 	onClose: any;
 }
 
-export const FulfillCheckModal = ({
-	productCheck,
-	onSuccess,
-	onClose,
-}: Props) => {
+export const FulfillCheckModal = ({ productCheck, onClose }: Props) => {
 	// STATES
 	const [products, setProducts] = useState([]);
 
@@ -30,19 +24,16 @@ export const FulfillCheckModal = ({
 
 	// Effect: Format product check products
 	useEffect(() => {
-		if (productCheck) {
-			const formattedProductCheckProducts = productCheck?.products?.map(
-				(product) => ({
-					name: product?.product?.name,
-					barcode:
-						product?.product?.barcode || product?.product?.selling_barcode,
-					pieces_in_bulk: product?.product?.pieces_in_bulk,
-					product_check_product_id: product?.id,
-				}),
-			);
+		const formattedProductCheckProducts = productCheck.products.map(
+			(product) => ({
+				name: product.product.name,
+				barcode: product.product.barcode || product.product.selling_barcode,
+				pieces_in_bulk: product.product.pieces_in_bulk,
+				product_check_product_id: product.id,
+			}),
+		);
 
-			setProducts(formattedProductCheckProducts);
-		}
+		setProducts(formattedProductCheckProducts);
 	}, [productCheck]);
 
 	const onFulfill = async (formData) => {
@@ -66,14 +57,13 @@ export const FulfillCheckModal = ({
 
 		message.success('Product check was fulfilled successfully');
 
-		onSuccess();
 		onClose();
 	};
 
 	return (
 		<Modal
 			title={
-				productCheck?.type === productCheckingTypes.DAILY
+				productCheck.type === productCheckingTypes.DAILY
 					? 'Daily Check'
 					: 'Random Check'
 			}

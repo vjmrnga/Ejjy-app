@@ -14,7 +14,7 @@ export const useInitializeData = ({ params }: Query) =>
 				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
-			enabled: !!getOnlineApiUrl() && !!params?.branchId,
+			enabled: !!getOnlineApiUrl() && !!params?.branchId && !isStandAlone(),
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
 			notifyOnChangeProps: ['isLoading'],

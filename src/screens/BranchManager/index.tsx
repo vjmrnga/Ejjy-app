@@ -14,7 +14,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { CashBreakdowns } from 'screens/BranchManager/CashBreakdowns';
 import { Checkings } from 'screens/BranchManager/Checkings';
-import { FulfillChecking } from 'screens/BranchManager/Checkings/Fulfill';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { Logs } from 'screens/BranchManager/Logs';
 import { Reports } from 'screens/BranchManager/Reports';
@@ -387,11 +386,6 @@ const BranchManager = () => {
 					<Route path="/branch-manager/order-slips" component={OrderSlips} />
 
 					<Route path="/branch-manager/checkings" component={Checkings} exact />
-					<Route
-						path="/branch-manager/checkings/fulfill"
-						component={FulfillChecking}
-						exact
-					/>
 					<Route
 						path="/branch-manager/checkings/:id"
 						component={ViewChecking}
