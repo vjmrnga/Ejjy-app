@@ -134,15 +134,15 @@ export const SiteSettings = () => {
 			},
 			Schema: Yup.object().shape({
 				closeSessionDeadline: getValidTimeTest('Close Session Deadline').test(
-					'15-minutes-before-close-day-deadline',
-					'Close Session Deadline must be atleast 15 minutes before the Close Day Deadline',
+					'5-minutes-before-close-day-deadline',
+					'Close Session Deadline must be atleast 5 minutes before the Close Day Deadline',
 					function test(value) {
 						// NOTE: We need to use a no-named function so
 						// we can use 'this' and access the other form field value.
 						const closeSessionDeadline = dayjs(value);
 						const closeDayDeadline = dayjs(this.parent.closeDayDeadline);
 
-						return closeDayDeadline.diff(closeSessionDeadline, 'minute') >= 15;
+						return closeDayDeadline.diff(closeSessionDeadline, 'minute') >= 5;
 					},
 				),
 				closeDayDeadline: getValidTimeTest('Close Day Deadline'),
