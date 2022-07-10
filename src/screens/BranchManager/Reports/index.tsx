@@ -10,18 +10,23 @@ import { ReportsBranch } from './components/ReportsBranch';
 export const Reports = () => {
 	const {
 		data: { productCategories },
-		isFetching: isFetchingProductCategories,
+		isLoading: isLoadingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
 		params: {
 			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			refetchOnMount: 'always',
+			refetchInterval: 15000,
+			refetchIntervalInBackground: true,
 		},
 	});
 
 	return (
 		<Content className="Reports" title="Reports">
 			<Box>
-				<Spin size="large" spinning={isFetchingProductCategories}>
+				<Spin size="large" spinning={isLoadingProductCategories}>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={convertIntoArray(productCategoriesErrors)}
