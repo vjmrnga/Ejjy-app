@@ -173,16 +173,10 @@ export const ModifyUserForm = ({
 									onClick={() => {
 										setPasswordFieldsVisible((value) => !value);
 									}}
+									danger={passwordFieldsVisible}
 								>
-									{passwordFieldsVisible ? 'Hide' : 'Show'} Password Fields
+									{passwordFieldsVisible ? 'Cancel Edit' : 'Edit'} Password
 								</AntdButton>
-
-								{passwordFieldsVisible && (
-									<Alert
-										message="Password won't be saved if password fields are hidden."
-										type="info"
-									/>
-								)}
 							</Col>
 						) : (
 							<>
