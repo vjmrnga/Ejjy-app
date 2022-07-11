@@ -1,12 +1,18 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Divider, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
+import { useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import {
+	convertIntoArray,
+	formatDateTime,
+	formatQuantity,
+	getBranchProductStatus,
+} from 'utils';
 import { ColoredText } from '../../../../components';
-import { CashieringCard } from '../../../../components/CashieringCard/CashieringCard';
 import { FieldError, Label } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
@@ -22,14 +28,7 @@ import {
 import { request, requisitionSlipTypes } from '../../../../global/types';
 import { useBranchProducts } from '../../../../hooks/useBranchProducts';
 import { useNetwork } from '../../../../hooks/useNetwork';
-import { useQueryParams } from 'hooks';
 import { IProductCategory } from '../../../../models';
-import {
-	convertIntoArray,
-	formatDateTime,
-	formatQuantity,
-	getBranchProductStatus,
-} from 'utils';
 
 const currentBalanceColumn: ColumnType<any> = {
 	title: 'Current Balance',
@@ -224,12 +223,12 @@ export const BranchBalanceItem = ({
 			)}
 
 			<>
-				<CashieringCard
+				{/* <CashieringCard
 					branchId={branchId}
 					className="BranchBalanceItem_cashieringCard"
 					disabled={disabled || !hasInternetConnection}
 					bordered
-				/>
+				/> */}
 
 				<Divider dashed />
 

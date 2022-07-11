@@ -23,10 +23,10 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	serverUrl: any;
+	branchMachineId: any;
 }
 
-export const TabConnectivityLogs = ({ serverUrl }: Props) => {
+export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -38,8 +38,8 @@ export const TabConnectivityLogs = ({ serverUrl }: Props) => {
 		error: connectivityLogsError,
 	} = useConnectivityLogs({
 		params: {
+			branchMachineId,
 			...queryParams,
-			baseUrl: serverUrl,
 		},
 	});
 

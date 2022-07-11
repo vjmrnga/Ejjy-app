@@ -122,20 +122,14 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							destroyInactiveTabPane
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
-								<TabTransactions
-									branchMachineId={branchMachine.id}
-									serverUrl={branchMachine.server_url}
-								/>
+								<TabTransactions branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane
 								key={tabs.DAILY_INVOICE_REPORT}
 								tab={tabs.DAILY_INVOICE_REPORT}
 							>
-								<TabDailyInvoiceReport
-									branchMachineId={branchMachine.id}
-									serverUrl={branchMachine.server_url}
-								/>
+								<TabDailyInvoiceReport branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane
@@ -144,7 +138,6 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							>
 								<TabDailyProductSalesReport
 									branchMachineId={branchMachine.id}
-									serverUrl={branchMachine.server_url}
 								/>
 							</Tabs.TabPane>
 
@@ -154,15 +147,11 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							>
 								<TabTransactionAdjustmentReport
 									branchMachineId={branchMachine.id}
-									serverUrl={branchMachine.server_url}
 								/>
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.BIR_REPORT} tab={tabs.BIR_REPORT}>
-								<TabBirReport
-									branchMachineId={branchMachine.id}
-									serverUrl={branchMachine.server_url}
-								/>
+								<TabBirReport branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
@@ -177,7 +166,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 								key={tabs.CONNECTIVITY_LOGS}
 								tab={tabs.CONNECTIVITY_LOGS}
 							>
-								<TabConnectivityLogs serverUrl={branchMachine.server_url} />
+								<TabConnectivityLogs branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 						</Tabs>
 					)}

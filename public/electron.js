@@ -44,6 +44,11 @@ function createWindow() {
 		show: false,
 	});
 
+	mainWindow.webContents.on('new-window', (event, url) => {
+		event.preventDefault();
+		mainWindow.loadURL(url);
+	});
+
 	setTimeout(() => {
 		mainWindow.loadURL(
 			isDev

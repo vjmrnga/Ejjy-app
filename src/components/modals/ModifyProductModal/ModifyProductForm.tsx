@@ -206,7 +206,7 @@ export const ModifyProductForm = ({
 							then: Yup.number().required().moreThan(0),
 							otherwise: Yup.number().notRequired().nullable(),
 						})
-						.label('Conversion Amount'),
+						.label('Conversion (Grams)'),
 					allowableSpoilage: Yup.number()
 						.when(['unitOfMeasurement'], {
 							is: (unitOfMeasurementValue) =>
@@ -683,7 +683,7 @@ export const ModifyProductForm = ({
 							<Col sm={12} xs={24}>
 								{renderInputField({
 									name: 'conversionAmount',
-									label: 'Conversion Amount',
+									label: 'Conversion (Grams)',
 									setFieldValue,
 									values,
 									type: inputTypes.NUMBER,

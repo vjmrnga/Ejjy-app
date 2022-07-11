@@ -1,91 +1,71 @@
-import { Spin } from 'antd';
+import { Button, Spin, Tooltip } from 'antd';
 import cn from 'classnames';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
-import swal from 'sweetalert';
-import { RequestErrors, RequestWarnings } from '..';
-import { EMPTY_CELL, IS_APP_LIVE } from '../../global/constants';
-import { request } from '../../global/types';
+import { EMPTY_CELL } from 'global';
 import {
-	useBranchesDayAuthorizationsCreate,
+	useAuth,
+	useBranchesDayAuthorizationCreate,
+	useBranchesDayAuthorizationEnd,
 	useBranchesDayAuthorizationsRetrieve,
-} from '../../hooks';
-import { useAuth } from '../../hooks/useAuth';
-import { useBranchesDays } from '../../hooks/useBranchesDays';
+	useSiteSettingsRetrieve,
+} from 'hooks';
+import React, { useCallback } from 'react';
+import swal from 'sweetalert';
 import { convertIntoArray, formatDateTimeExtended } from 'utils';
-import { Box, Button } from '../elements';
+import { RequestErrors } from '..';
+import { Box } from '../elements';
 import './style.scss';
 
 interface Props {
-	branchId: number;
 	className?: string;
 	bordered?: boolean;
-	disabled?: boolean;
-	loading?: boolean;
-	isAuthorization?: boolean;
 }
 
-export const CashieringCard = ({
-	className,
-	branchId,
-	bordered,
-	disabled,
-	loading,
-	isAuthorization,
-}: Props) => {
-	// STATES
-	const [branchDay, setBranchDay] = useState(null);
-
+export const CashieringCard = ({ className, bordered }: Props) => {
 	// CUSTOM HOOKS
 	const { user } = useAuth();
-	const {
-		getBranchDay,
-		createBranchDay,
-		editBranchDay,
-		status: branchesDaysStatus,
-		errors: branchesDaysErrors,
-		warnings: branchesDaysWarnings,
-	} = useBranchesDays();
-	const {
-		data: branchDayAuthorization,
-		isFetching: isFetchingBranchDayAuthorization,
-	} = useBranchesDayAuthorizationsRetrieve({
-		branchId,
-	});
+	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
+		useSiteSettingsRetrieve({
+			options: { refetchOnMount: 'always' },
+		});
+	const { data: branchDay, isFetching: isFetchingBranchDayAuthorization } =
+		useBranchesDayAuthorizationsRetrieve();
 	const {
 		mutate: createBranchDayAuthorization,
 		isLoading: isCreatingBranchDayAuthorization,
-	} = useBranchesDayAuthorizationsCreate({ branchId });
+		error: createError,
+	} = useBranchesDayAuthorizationCreate();
+	const {
+		mutate: endBranchDayAuthorization,
+		isLoading: isEndingBranchDayAuthorization,
+		error: endError,
+	} = useBranchesDayAuthorizationEnd();
 
 	// METHODS
-	useEffect(() => {
-		if (!isAuthorization) {
-			getBranchDay(branchId, onBranchDayResponse);
-		}
-	}, [isAuthorization]);
 
-	useEffect(() => {
-		if (branchDayAuthorization?.id && isAuthorization) {
-			setBranchDay(branchDayAuthorization);
-		}
-	}, [branchDayAuthorization, isAuthorization]);
+	const isPastCloseDayDeadline = useCallback(() => {
+		if (siteSettings) {
+			const today = dayjs();
+			const closeDayDeadline = dayjs(
+				siteSettings.close_day_deadline,
+				'hh:mm:ss',
+			);
 
-	const onBranchDayResponse = ({ status, response }) => {
-		if (status === request.SUCCESS) {
-			const date = dayjs.tz(response?.datetime_created);
-			if (date?.isToday()) {
-				setBranchDay(response);
-			}
+			return closeDayDeadline.diff(today, 'milliseconds') <= 0;
 		}
-	};
+
+		return null;
+	}, [siteSettings]);
 
 	const getTitle = useCallback(() => {
 		if (branchDay?.datetime_ended) {
 			return 'Day has been ended.';
 		}
+
 		if (branchDay) {
 			return 'Day has been started.';
 		}
+
 		return EMPTY_CELL;
 	}, [branchDay]);
 
@@ -93,47 +73,15 @@ export const CashieringCard = ({
 		if (branchDay?.datetime_ended) {
 			return formatDateTimeExtended(branchDay?.datetime_ended);
 		}
+
 		if (branchDay) {
 			return formatDateTimeExtended(branchDay?.datetime_created);
 		}
+
 		return null;
 	}, [branchDay]);
 
-	const onStartDay = () => {
-		const onlineStartedById = IS_APP_LIVE ? user.id : null;
-		const startedById = IS_APP_LIVE ? null : user.id;
-
-		if (isAuthorization) {
-			createBranchDayAuthorization(
-				{
-					branchId,
-					startedById,
-					onlineStartedById,
-				},
-				{
-					onSuccess: (data) => {
-						setBranchDay(data);
-					},
-				},
-			);
-		} else {
-			createBranchDay(
-				{ branchId, startedById, onlineStartedById },
-				onBranchDayResponse,
-			);
-		}
-	};
-
-	const onEndDay = () => {
-		const onlineEndedById = IS_APP_LIVE ? user.id : null;
-		const endedById = IS_APP_LIVE ? null : user.id;
-		editBranchDay(
-			{ id: branchDay.id, branchId, endedById, onlineEndedById },
-			onBranchDayResponse,
-		);
-	};
-
-	const onClick = () => {
+	const handleClick = () => {
 		swal({
 			title: 'Confirmation',
 			text: `Are you sure you want to ${branchDay ? 'Close Day' : 'Open Day'}?`,
@@ -155,9 +103,9 @@ export const CashieringCard = ({
 		}).then((value) => {
 			if (value) {
 				if (branchDay) {
-					onEndDay();
+					endBranchDayAuthorization({ id: branchDay.id });
 				} else {
-					onStartDay();
+					createBranchDayAuthorization({ startedById: user.id });
 				}
 			}
 		});
@@ -171,20 +119,18 @@ export const CashieringCard = ({
 		>
 			<Spin
 				spinning={
-					branchesDaysStatus === request.REQUESTING ||
-					isCreatingBranchDayAuthorization ||
+					isFetchingSiteSettings ||
 					isFetchingBranchDayAuthorization ||
-					loading
+					isCreatingBranchDayAuthorization ||
+					isEndingBranchDayAuthorization
 				}
 			>
 				<div className="CashieringCard_container">
 					<RequestErrors
-						errors={convertIntoArray(branchesDaysErrors)}
-						withSpaceBottom
-					/>
-
-					<RequestWarnings
-						warnings={convertIntoArray(branchesDaysWarnings)}
+						errors={[
+							...convertIntoArray(createError?.errors),
+							...convertIntoArray(endError?.errors),
+						]}
 						withSpaceBottom
 					/>
 
@@ -192,14 +138,24 @@ export const CashieringCard = ({
 						<p className="CashieringCard_title">{getTitle()}</p>
 						<span className="CashieringCard_date">{getDate()}</span>
 					</div>
-
+					{}
 					{!branchDay?.datetime_ended && (
-						<Button
-							text={branchDay ? 'Close Day' : 'Open Day'}
-							variant="primary"
-							onClick={onClick}
-							disabled={disabled}
-						/>
+						<Tooltip
+							title={
+								isPastCloseDayDeadline()
+									? 'Already past the close day deadline.'
+									: null
+							}
+						>
+							<Button
+								type="primary"
+								size="large"
+								onClick={handleClick}
+								disabled={isPastCloseDayDeadline()}
+							>
+								{branchDay ? 'Close Day' : 'Open Day'}
+							</Button>
+						</Tooltip>
 					)}
 				</div>
 			</Spin>

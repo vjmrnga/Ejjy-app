@@ -1,48 +1,48 @@
-import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
-import { IS_APP_LIVE } from 'global';
-import { useMutation, useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchesDayService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
-export const useBranchesDayAuthorizationsRetrieve = ({ branchId }) => {
-	let baseURL = useSelector(branchesSelectors.selectURLByBranchId(branchId));
-
+export const useBranchesDayAuthorizationsRetrieve = () => {
 	return useQuery<any>(
-		['useBranchesDayAuthorizationsRetrieve', branchId],
-		() => {
-			if (!baseURL && branchId) {
-				throw ['Branch has no online url.'];
-			} else {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-			}
-
-			return BranchesDayService.retrieveLatestAuthorization(baseURL).catch(
-				(e) => Promise.reject(e.errors),
-			);
-		},
+		['useBranchesDayAuthorizationsRetrieve'],
+		() =>
+			BranchesDayService.retrieve(getLocalApiUrl()).catch((e) =>
+				Promise.reject(e.errors),
+			),
 		{
 			select: (query) => query?.data,
 		},
 	);
 };
 
-export const useBranchesDayAuthorizationsCreate = ({ branchId }) => {
-	let baseURL = useSelector(branchesSelectors.selectURLByBranchId(branchId));
+export const useBranchesDayAuthorizationCreate = () => {
+	const queryClient = useQueryClient();
 
-	return useMutation(({ onlineStartedById, startedById }: any) => {
-		if (!baseURL && branchId) {
-			throw ['Branch has no online url.'];
-		} else {
-			baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-		}
-
-		return BranchesDayService.createAuthorization(
-			{
-				started_by_id: startedById,
-				online_started_by_id: onlineStartedById,
+	return useMutation<any, any, any>(
+		({ startedById }: any) =>
+			BranchesDayService.create(
+				{
+					started_by_id: startedById,
+				},
+				getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchesDayAuthorizationsRetrieve');
 			},
-			baseURL,
-		);
-	});
+		},
+	);
+};
+
+export const useBranchesDayAuthorizationEnd = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id }) => BranchesDayService.end(id, getLocalApiUrl()),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchesDayAuthorizationsRetrieve');
+			},
+		},
+	);
 };

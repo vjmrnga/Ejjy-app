@@ -2,12 +2,13 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { ConnectivityLogsService } from 'services';
+import { getLocalApiUrl } from 'utils';
 
 const useConnectivityLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useConnectivityLogs',
-			params?.baseUrl,
+			params?.branchMachineId,
 			params?.page,
 			params?.pageSize,
 			params?.timeRange,
@@ -16,6 +17,7 @@ const useConnectivityLogs = ({ params }: Query) =>
 		() =>
 			ConnectivityLogsService.list(
 				{
+					branch_machine_id: params?.branchMachineId,
 					page: params?.page || DEFAULT_PAGE,
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					time_range:
@@ -24,7 +26,7 @@ const useConnectivityLogs = ({ params }: Query) =>
 							: params?.timeRange,
 					type: params?.type,
 				},
-				params?.baseUrl,
+				getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },

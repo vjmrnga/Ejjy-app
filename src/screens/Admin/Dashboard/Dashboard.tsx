@@ -32,14 +32,14 @@ export const Dashboard = () => {
 				>
 					{branches.map(({ name, id, online_url }) => (
 						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-							{id === Number(currentActiveKey) && (
+							{/* {id === Number(currentActiveKey) && (
 								<CashieringCard
 									className="BranchBalanceItem_cashieringCard"
 									branchId={id}
 									disabled={!online_url}
 									bordered
 								/>
-							)}
+							)} */}
 						</Tabs.TabPane>
 					))}
 				</Tabs>

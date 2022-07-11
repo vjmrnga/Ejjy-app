@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-interface ICreateBranchDay {
+interface Create {
 	started_by_id: number;
-	online_started_by_id?: number;
 }
 
 interface IEditBranchDay {
@@ -17,7 +16,7 @@ const service = {
 
 	retrieve: async (baseURL) => axios.get('/branches-days/latest/', { baseURL }),
 
-	create: async (body: ICreateBranchDay, baseURL) =>
+	create: async (body: Create, baseURL) =>
 		axios.post('/branches-days/', body, { baseURL }),
 
 	edit: async (id: number, body: IEditBranchDay, baseURL) =>
@@ -25,16 +24,21 @@ const service = {
 };
 
 const serviceAuthorizations = {
-	listAuthorizations: async (params: IListRequest, baseURL) =>
-		axios.get('/branches-day-authorizations/', { params, baseURL }),
-
-	retrieveLatestAuthorization: async (baseURL) =>
+	retrieve: async (baseURL) =>
 		axios.get('/branches-day-authorizations/latest-today/', { baseURL }),
 
-	createAuthorization: async (body, baseURL) =>
+	create: async (body: Create, baseURL) =>
 		axios.post<any>('/branches-day-authorizations/', body, {
 			baseURL,
 		}),
+	end: async (id, baseURL) =>
+		axios.post<any>(
+			`/branches-day-authorizations/${id}/end/`,
+			{},
+			{
+				baseURL,
+			},
+		),
 };
 
 export default {

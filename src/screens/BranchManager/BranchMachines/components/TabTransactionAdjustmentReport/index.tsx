@@ -36,7 +36,6 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchMachineId: number;
-	serverUrl: any;
 }
 
 export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {

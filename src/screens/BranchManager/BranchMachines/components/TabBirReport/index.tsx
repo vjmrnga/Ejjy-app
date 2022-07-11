@@ -66,7 +66,6 @@ const columns: ColumnsType = [
 
 interface Props {
 	branchMachineId: number;
-	serverUrl: any;
 }
 
 export const TabBirReport = ({ branchMachineId }: Props) => {

@@ -61,7 +61,6 @@ const voidedStatuses = [
 
 interface Props {
 	branchMachineId: number;
-	serverUrl: any;
 }
 
 export const TabTransactions = ({ branchMachineId }: Props) => {
