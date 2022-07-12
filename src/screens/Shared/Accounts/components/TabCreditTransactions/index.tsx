@@ -12,15 +12,13 @@ import {
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
 	pageSizeOptions,
 	paymentTypes,
+	timeRangeTypes,
 } from 'global';
 import { useAuth, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { AccountTotalBalance } from 'screens/Shared/Accounts/components/TabCreditTransactions/components/AccountTotalBalance';
-import { accountTabs } from 'screens/Shared/Accounts/data';
 import {
 	convertIntoArray,
 	formatDateTime,
@@ -28,7 +26,8 @@ import {
 	getFullName,
 	isCUDShown,
 } from 'utils';
-import '../../style.scss';
+import { accountTabs } from '../../data';
+import { AccountTotalBalance } from './components/AccountTotalBalance';
 
 interface Props {
 	disabled: boolean;
@@ -48,7 +47,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	const [payor, setPayor] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const { user } = useAuth();
 	const {
 		data: { transactions, total },
@@ -58,7 +57,8 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 		params: {
 			modeOfPayment: paymentTypes.CREDIT,
 			payorCreditorAccountId: payor?.account?.id,
-			...queryParams,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+			...params,
 		},
 	});
 
@@ -66,14 +66,8 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	useEffect(() => {
 		const formattedTransactions = transactions.map((transaction) => {
-			const {
-				id,
-				invoice,
-				total_amount,
-				employee_id,
-				datetime_created,
-				payment,
-			} = transaction;
+			const { id, invoice, total_amount, teller, datetime_created, payment } =
+				transaction;
 
 			return {
 				key: id,
@@ -88,7 +82,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					</Button>
 				),
 				amount: formatInPeso(total_amount),
-				cashier: employee_id,
+				cashier: teller.employee_id,
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
 				actions: (
 					<TableActions
@@ -104,10 +98,10 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	}, [transactions, payor, disabled]);
 
 	useEffect(() => {
-		if (queryParams.payor) {
-			setPayor(JSON.parse(_.toString(queryParams.payor)));
+		if (params.payor) {
+			setPayor(JSON.parse(_.toString(params.payor)));
 		}
-	}, [queryParams.payor]);
+	}, [params.payor]);
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType = [
@@ -160,9 +154,9 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				dataSource={dataSource}
 				scroll={{ x: 1000 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
