@@ -218,18 +218,10 @@ export const ViewTransactionModal = ({
 							size="small"
 						>
 							<Descriptions.Item label="VAT Exempt">
-								{formatInPeso(
-									transactionData.overall_discount > 0
-										? transactionData.invoice.vat_exempt_discount
-										: transactionData.invoice.vat_exempt,
-								)}
+								{formatInPeso(transactionData.invoice.vat_exempt)}
 							</Descriptions.Item>
 							<Descriptions.Item label="VAT Sales">
-								{formatInPeso(
-									transactionData.overall_discount > 0
-										? transactionData.invoice.vat_sales_discount
-										: transactionData.invoice.vat_sales,
-								)}
+								{formatInPeso(transactionData.invoice.vat_sales)}
 							</Descriptions.Item>
 							<Descriptions.Item label="VAT Amount">
 								{formatInPeso(transactionData.invoice.vat_12_percent)}
