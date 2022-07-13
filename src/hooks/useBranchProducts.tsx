@@ -45,9 +45,6 @@ export const useBranchProducts = () => {
 
 	// ACTIONS
 	const getBranchProductsAction = useActionDispatch(actions.getBranchProducts);
-	const getBranchProductsWithAnalyticsAction = useActionDispatch(
-		actions.getBranchProductsWithAnalytics,
-	);
 	const getBranchProductAction = useActionDispatch(actions.getBranchProduct);
 	const editBranchProductAction = useActionDispatch(actions.editBranchProduct);
 	const editBranchProductBalanceAction = useActionDispatch(
@@ -135,21 +132,6 @@ export const useBranchProducts = () => {
 		});
 	};
 
-	const getBranchProductsWithAnalytics = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: getBranchProductsWithAnalyticsAction,
-			requestType: types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
 	const getBranchProduct = (data, extraCallback = null) => {
 		getBranchProductAction({
 			...data,
@@ -197,9 +179,7 @@ export const useBranchProducts = () => {
 		currentPage,
 		pageSize,
 		updateItemInPagination,
-
 		getBranchProducts,
-		getBranchProductsWithAnalytics,
 		getBranchProduct,
 		editBranchProduct,
 		editBranchProductBalance,
@@ -219,6 +199,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchProducts',
+			params?.branchId,
 			params?.hasBoBalance,
 			params?.hasNegativeBalance,
 			params?.isSoldInBranch,
@@ -228,7 +209,6 @@ const useBranchProductsNew = ({ params }: Query) =>
 			params?.productIds,
 			params?.productStatus,
 			params?.search,
-			params?.serverUrl,
 		],
 		async () =>
 			await BranchProductsService.list(
@@ -245,22 +225,60 @@ const useBranchProductsNew = ({ params }: Query) =>
 					product_status: params?.productStatus,
 					search: params?.search,
 				},
-				params?.serverUrl || getLocalApiUrl(),
+				getLocalApiUrl(),
 			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				branchProducts: query.data.results,
 				total: query.data.count,
-				warning: query.data?.warning,
 			}),
+		},
+	);
+
+export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
+	useQuery<any>(
+		[
+			'useBranchProducts',
+			params?.isSoldInBranch,
+			params?.ordering,
+			params?.page,
+			params?.pageSize,
+			params?.productCategory,
+			params?.productIds,
+			params?.productStatus,
+			params?.timeRange,
+			params?.branchId,
+		],
+		async () =>
+			await BranchProductsService.listWithAnalytics(
+				{
+					branch_id: params?.branchId,
+					is_sold_in_branch: params?.isSoldInBranch,
+					ordering: params?.ordering,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
+					product_category: params?.productCategory,
+					product_ids: params?.productIds,
+					product_status: params?.productStatus,
+					time_range: params?.timeRange,
+				},
+				getLocalApiUrl(),
+			),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				branchProducts: query.data.results,
+				total: query.data.count,
+			}),
+			...options,
 		},
 	);
 
 export const useBranchProductRetrieve = ({ id, params, options }: Query = {}) =>
 	useQuery<any>(
 		['useBranchProductRetrieve', id],
-		async () =>
+		() =>
 			BranchProductsService.list(
 				{ branch_id: params?.branchId, product_ids: id },
 				getLocalApiUrl(),
@@ -323,6 +341,7 @@ export const useBranchProductEdit = () => {
 			),
 		{
 			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchProducts');
 				queryClient.invalidateQueries('useBranchProductRetrieve');
 			},
 		},

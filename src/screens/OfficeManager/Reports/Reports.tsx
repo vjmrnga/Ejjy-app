@@ -45,33 +45,35 @@ export const Reports = () => {
 		});
 	};
 
-	return (
-		<Content className="Reports" title="Reports">
-			<Box>
-				<Spin size="large" spinning={isFetchingProductCategories}>
-					<RequestErrors
-						errors={convertIntoArray(productCategoriesErrors)}
-						withSpaceBottom
-					/>
+	return null;
 
-					<Tabs
-						type="card"
-						className="PaddingHorizontal PaddingVertical"
-						activeKey={toString(currentBranchId)}
-						onTabClick={onTabClick}
-						destroyInactiveTabPane
-					>
-						{branches.map(({ name, id, online_url }) => (
-							<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-								<ReportsBranch
-									branchId={id}
-									productCategories={productCategories}
-								/>
-							</Tabs.TabPane>
-						))}
-					</Tabs>
-				</Spin>
-			</Box>
-		</Content>
-	);
+	// return (
+	// 	<Content className="Reports" title="Reports">
+	// 		<Box>
+	// 			<Spin size="large" spinning={isFetchingProductCategories}>
+	// 				<RequestErrors
+	// 					errors={convertIntoArray(productCategoriesErrors)}
+	// 					withSpaceBottom
+	// 				/>
+
+	// 				<Tabs
+	// 					type="card"
+	// 					className="PaddingHorizontal PaddingVertical"
+	// 					activeKey={toString(currentBranchId)}
+	// 					onTabClick={onTabClick}
+	// 					destroyInactiveTabPane
+	// 				>
+	// 					{branches.map(({ name, id, online_url }) => (
+	// 						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
+	// 							<ReportsBranch
+	// 								branchId={id}
+	// 								productCategories={productCategories}
+	// 							/>
+	// 						</Tabs.TabPane>
+	// 					))}
+	// 				</Tabs>
+	// 			</Spin>
+	// 		</Box>
+	// 	</Content>
+	// );
 };

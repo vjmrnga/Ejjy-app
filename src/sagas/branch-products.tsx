@@ -69,66 +69,6 @@ function* list({ payload }: any) {
 	}
 }
 
-function* listWithAnalytics({ payload }: any) {
-	const {
-		page,
-		pageSize,
-		branchId,
-		productIds,
-		ordering,
-		productCategory,
-		timeRange,
-		isSoldInBranch,
-		callback,
-	} = payload;
-	callback({ status: request.REQUESTING });
-
-	const baseURL = getBaseUrl(branchId, callback);
-
-	const data = {
-		page,
-		page_size: pageSize,
-		ordering,
-		product_ids: productIds,
-		product_category: productCategory,
-		time_range: timeRange,
-		is_sold_in_branch: isSoldInBranch,
-	};
-
-	let isFetchedFromBackupURL = false;
-
-	try {
-		let response = null;
-
-		try {
-			// Fetch in branch url
-			response = yield call(service.listWithAnalytics, data, baseURL);
-		} catch (e) {
-			// Retry to fetch in backup branch url
-			const baseBackupURL = yield select(
-				branchesSelectors.selectBackUpURLByBranchId(branchId),
-			);
-			if (baseURL && baseBackupURL) {
-				// Fetch branch url
-				response = yield call(service.listWithAnalytics, data, baseBackupURL);
-				isFetchedFromBackupURL = true;
-			} else {
-				throw e;
-			}
-		}
-
-		callback({
-			status: request.SUCCESS,
-			warnings: isFetchedFromBackupURL
-				? ['Data Source: Backup Server, data might be outdated.']
-				: [],
-			data: response.data,
-		});
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 function* get({ payload }: any) {
 	const { page, pageSize, branchId, productIds, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -218,10 +158,6 @@ const listWatcherSaga = function* listWatcherSaga() {
 	yield takeLatest(types.GET_BRANCH_PRODUCTS, list);
 };
 
-const listWithAnalyticsWatcherSaga = function* listWithAnalyticsWatcherSaga() {
-	yield takeLatest(types.GET_BRANCH_PRODUCTS_WITH_ANALYTICS, listWithAnalytics);
-};
-
 const getWatcherSaga = function* getWatcherSaga() {
 	yield takeEvery(types.GET_BRANCH_PRODUCT, get);
 };
@@ -236,7 +172,6 @@ const editBalanceWatcherSaga = function* editBalanceWatcherSaga() {
 
 export default [
 	listWatcherSaga(),
-	listWithAnalyticsWatcherSaga(),
 	getWatcherSaga(),
 	editWatcherSaga(),
 	editBalanceWatcherSaga(),

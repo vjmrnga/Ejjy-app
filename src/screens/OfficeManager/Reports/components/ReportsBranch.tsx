@@ -141,240 +141,241 @@ interface Props {
 }
 
 export const ReportsBranch = ({ branchId, productCategories }: Props) => {
-	// STATES
-	const [data, setData] = useState([]);
-	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
-	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
+	return null;
+	// // STATES
+	// const [data, setData] = useState([]);
+	// const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
+	// const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
-	// CUSTOM HOOKS
-	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProductsWithAnalytics,
-		status: branchProductsStatus,
-		errors,
-		warnings,
-	} = useBranchProducts();
+	// // CUSTOM HOOKS
+	// const {
+	// 	branchProducts,
+	// 	pageCount,
+	// 	pageSize,
+	// 	currentPage,
+	// 	getBranchProductsWithAnalytics,
+	// 	status: branchProductsStatus,
+	// 	errors,
+	// 	warnings,
+	// } = useBranchProducts();
 
-	const {
-		params: { ordering },
-		refreshList,
-		setQueryParams,
-	} = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onParamsCheck: (params) => {
-			const newParams = {};
+	// const {
+	// 	params: { ordering },
+	// 	refreshList,
+	// 	setQueryParams,
+	// } = useQueryParams({
+	// 	page: currentPage,
+	// 	pageSize,
+	// 	onParamsCheck: (params) => {
+	// 		const newParams = {};
 
-			const timeRange = toString(params.timeRange);
-			if (!timeRange) {
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
+	// 		const timeRange = toString(params.timeRange);
+	// 		if (!timeRange) {
+	// 			newParams['timeRange'] = timeRangeTypes.DAILY;
+	// 		}
 
-			const isSoldInBranch = toString(params.isSoldInBranch);
-			if (!isSoldInBranch) {
-				newParams['isSoldInBranch'] = '1';
-			}
+	// 		const isSoldInBranch = toString(params.isSoldInBranch);
+	// 		if (!isSoldInBranch) {
+	// 			newParams['isSoldInBranch'] = '1';
+	// 		}
 
-			return newParams;
-		},
-		onQueryParamChange: (params) => {
-			const newData = {
-				...params,
-				productIds:
-					params?.productIds?.length > 0 ? params.productIds : undefined,
-				isSoldInBranch:
-					params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
-						? undefined
-						: true,
-			};
+	// 		return newParams;
+	// 	},
+	// 	onQueryParamChange: (params) => {
+	// 		const newData = {
+	// 			...params,
+	// 			productIds:
+	// 				params?.productIds?.length > 0 ? params.productIds : undefined,
+	// 			isSoldInBranch:
+	// 				params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
+	// 					? undefined
+	// 					: true,
+	// 		};
 
-			getBranchProductsWithAnalytics(newData, true);
+	// 		getBranchProductsWithAnalytics(newData, true);
 
-			clearInterval(intervalRef.current);
-			intervalRef.current = setInterval(() => {
-				getBranchProductsWithAnalytics(newData, true);
-			}, INTERVAL_MS);
-		},
-	});
+	// 		clearInterval(intervalRef.current);
+	// 		intervalRef.current = setInterval(() => {
+	// 			getBranchProductsWithAnalytics(newData, true);
+	// 		}, INTERVAL_MS);
+	// 	},
+	// });
 
-	// REFS
-	const intervalRef = useRef(null);
+	// // REFS
+	// const intervalRef = useRef(null);
 
-	// METHODS
-	useEffect(
-		() => () => {
-			// Cleanup in case logged out due to single sign on
-			clearInterval(intervalRef.current);
-		},
-		[],
-	);
+	// // METHODS
+	// useEffect(
+	// 	() => () => {
+	// 		// Cleanup in case logged out due to single sign on
+	// 		clearInterval(intervalRef.current);
+	// 	},
+	// 	[],
+	// );
 
-	useEffect(() => {
-		switch (ordering) {
-			case sorts.CURRENT_BALANCE_ASC:
-				columns[2].sortOrder = 'ascend';
-				break;
-			case sorts.CURRENT_BALANCE_DES:
-				columns[2].sortOrder = 'descend';
-				break;
-			case sorts.QUANTITY_SOLD_ASC:
-				columns[4].sortOrder = 'ascend';
-				break;
-			case sorts.QUANTITY_SOLD_DES:
-				columns[4].sortOrder = 'descend';
-				break;
-			case sorts.DAILY_AVERAGE_SOLD_ASC:
-				columns[5].sortOrder = 'ascend';
-				break;
-			case sorts.DAILY_AVERAGE_SOLD_DES:
-				columns[5].sortOrder = 'descend';
-				break;
-			case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC:
-				columns[6].sortOrder = 'ascend';
-				break;
-			case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES:
-				columns[6].sortOrder = 'descend';
-				break;
-			default:
-			// Do nothing
-		}
-	}, []);
+	// useEffect(() => {
+	// 	switch (ordering) {
+	// 		case sorts.CURRENT_BALANCE_ASC:
+	// 			columns[2].sortOrder = 'ascend';
+	// 			break;
+	// 		case sorts.CURRENT_BALANCE_DES:
+	// 			columns[2].sortOrder = 'descend';
+	// 			break;
+	// 		case sorts.QUANTITY_SOLD_ASC:
+	// 			columns[4].sortOrder = 'ascend';
+	// 			break;
+	// 		case sorts.QUANTITY_SOLD_DES:
+	// 			columns[4].sortOrder = 'descend';
+	// 			break;
+	// 		case sorts.DAILY_AVERAGE_SOLD_ASC:
+	// 			columns[5].sortOrder = 'ascend';
+	// 			break;
+	// 		case sorts.DAILY_AVERAGE_SOLD_DES:
+	// 			columns[5].sortOrder = 'descend';
+	// 			break;
+	// 		case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC:
+	// 			columns[6].sortOrder = 'ascend';
+	// 			break;
+	// 		case sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES:
+	// 			columns[6].sortOrder = 'descend';
+	// 			break;
+	// 		default:
+	// 		// Do nothing
+	// 	}
+	// }, []);
 
-	useEffect(() => {
-		if (!isCompletedInitialFetch && branchProducts.length) {
-			setIsCompletedInitialFetch(true);
-		}
+	// useEffect(() => {
+	// 	if (!isCompletedInitialFetch && branchProducts.length) {
+	// 		setIsCompletedInitialFetch(true);
+	// 	}
 
-		const newBranchProducts = branchProducts?.map((branchProduct) => {
-			const {
-				product,
-				max_balance,
-				current_balance,
-				product_status,
-				quantity_sold,
-				daily_average_sold,
-				daily_average_sold_percentage,
-				average_daily_consumption,
-			} = branchProduct;
-			const { barcode, name, textcode, unit_of_measurement } = product;
-			const remainingBalance =
-				(Number(current_balance) / Number(max_balance)) * 100;
+	// 	const newBranchProducts = branchProducts?.map((branchProduct) => {
+	// 		const {
+	// 			product,
+	// 			max_balance,
+	// 			current_balance,
+	// 			product_status,
+	// 			quantity_sold,
+	// 			daily_average_sold,
+	// 			daily_average_sold_percentage,
+	// 			average_daily_consumption,
+	// 		} = branchProduct;
+	// 		const { barcode, name, textcode, unit_of_measurement } = product;
+	// 		const remainingBalance =
+	// 			(Number(current_balance) / Number(max_balance)) * 100;
 
-			const currentBalance = formatQuantity({
-				unitOfMeasurement: unit_of_measurement,
-				quantity: current_balance,
-			});
+	// 		const currentBalance = formatQuantity({
+	// 			unitOfMeasurement: unit_of_measurement,
+	// 			quantity: current_balance,
+	// 		});
 
-			const quantitySold = formatQuantity({
-				unitOfMeasurement: unit_of_measurement,
-				quantity: quantity_sold,
-			});
+	// 		const quantitySold = formatQuantity({
+	// 			unitOfMeasurement: unit_of_measurement,
+	// 			quantity: quantity_sold,
+	// 		});
 
-			const maxBalance = formatQuantity({
-				unitOfMeasurement: unit_of_measurement,
-				quantity: max_balance,
-			});
+	// 		const maxBalance = formatQuantity({
+	// 			unitOfMeasurement: unit_of_measurement,
+	// 			quantity: max_balance,
+	// 		});
 
-			return {
-				barcode: barcode || textcode,
-				name,
-				balance: `${currentBalance} / ${maxBalance}`,
-				remaining_balance: `${remainingBalance.toFixed(2)}%`,
-				quantity_sold: quantitySold,
-				daily_average_sold,
-				daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
-				average_daily_consumption: formatQuantity({
-					unitOfMeasurement: unit_of_measurement,
-					quantity: average_daily_consumption,
-				}),
-				status: getBranchProductStatus(product_status),
-				actions: (
-					<TableActions
-						onEdit={() => {
-							setSelectedBranchProduct(branchProduct);
-						}}
-					/>
-				),
-			};
-		});
+	// 		return {
+	// 			barcode: barcode || textcode,
+	// 			name,
+	// 			balance: `${currentBalance} / ${maxBalance}`,
+	// 			remaining_balance: `${remainingBalance.toFixed(2)}%`,
+	// 			quantity_sold: quantitySold,
+	// 			daily_average_sold,
+	// 			daily_average_sold_percentage: `${daily_average_sold_percentage}%`,
+	// 			average_daily_consumption: formatQuantity({
+	// 				unitOfMeasurement: unit_of_measurement,
+	// 				quantity: average_daily_consumption,
+	// 			}),
+	// 			status: getBranchProductStatus(product_status),
+	// 			actions: (
+	// 				<TableActions
+	// 					onEdit={() => {
+	// 						setSelectedBranchProduct(branchProduct);
+	// 					}}
+	// 				/>
+	// 			),
+	// 		};
+	// 	});
 
-		setData(newBranchProducts);
-	}, [branchProducts]);
+	// 	setData(newBranchProducts);
+	// }, [branchProducts]);
 
-	return (
-		<div className="ReportsBranch">
-			<RequestErrors
-				errors={convertIntoArray(errors, 'Branch Product')}
-				withSpaceBottom
-			/>
+	// return (
+	// 	<div className="ReportsBranch">
+	// 		<RequestErrors
+	// 			errors={convertIntoArray(errors, 'Branch Product')}
+	// 			withSpaceBottom
+	// 		/>
 
-			<RequestWarnings
-				warnings={convertIntoArray(warnings, 'Branch Product')}
-				withSpaceBottom
-			/>
+	// 		<RequestWarnings
+	// 			warnings={convertIntoArray(warnings, 'Branch Product')}
+	// 			withSpaceBottom
+	// 		/>
 
-			<Filter
-				productCategories={productCategories}
-				setQueryParams={(params) => {
-					setIsCompletedInitialFetch(false);
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-			/>
+	// 		<Filter
+	// 			productCategories={productCategories}
+	// 			setQueryParams={(params) => {
+	// 				setIsCompletedInitialFetch(false);
+	// 				setQueryParams(params, { shouldResetPage: true });
+	// 			}}
+	// 		/>
 
-			<Table
-				className="ReportsBranch_table TableNoPadding"
-				columns={columns}
-				dataSource={data}
-				scroll={{ x: 1400 }}
-				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
-					position: ['bottomCenter'],
-					onChange: (page, newPageSize) => {
-						setQueryParams({
-							page,
-							pageSize: newPageSize,
-						});
-					},
-					disabled: !data,
-					pageSizeOptions,
-				}}
-				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
-					if (extra.action === 'sort') {
-						columns[2].sortOrder = null;
-						columns[4].sortOrder = null;
-						columns[5].sortOrder = null;
-						columns[6].sortOrder = null;
-						// eslint-disable-next-line no-param-reassign
-						sorter.column.sortOrder = sorter.order;
+	// 		<Table
+	// 			className="ReportsBranch_table TableNoPadding"
+	// 			columns={columns}
+	// 			dataSource={data}
+	// 			scroll={{ x: 1400 }}
+	// 			pagination={{
+	// 				current: currentPage,
+	// 				total: pageCount,
+	// 				pageSize,
+	// 				position: ['bottomCenter'],
+	// 				onChange: (page, newPageSize) => {
+	// 					setQueryParams({
+	// 						page,
+	// 						pageSize: newPageSize,
+	// 					});
+	// 				},
+	// 				disabled: !data,
+	// 				pageSizeOptions,
+	// 			}}
+	// 			onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
+	// 				if (extra.action === 'sort') {
+	// 					columns[2].sortOrder = null;
+	// 					columns[4].sortOrder = null;
+	// 					columns[5].sortOrder = null;
+	// 					columns[6].sortOrder = null;
+	// 					// eslint-disable-next-line no-param-reassign
+	// 					sorter.column.sortOrder = sorter.order;
 
-						setIsCompletedInitialFetch(false);
-						setQueryParams({
-							ordering: getSortOrder(sorter.columnKey, sorter.order),
-						});
-					}
-				}}
-				loading={
-					isCompletedInitialFetch
-						? false
-						: branchProductsStatus === request.REQUESTING
-				}
-			/>
+	// 					setIsCompletedInitialFetch(false);
+	// 					setQueryParams({
+	// 						ordering: getSortOrder(sorter.columnKey, sorter.order),
+	// 					});
+	// 				}
+	// 			}}
+	// 			loading={
+	// 				isCompletedInitialFetch
+	// 					? false
+	// 					: branchProductsStatus === request.REQUESTING
+	// 			}
+	// 		/>
 
-			{selectedBranchProduct && (
-				<EditBranchProductsModal
-					branchId={branchId}
-					branchProduct={selectedBranchProduct}
-					onSuccess={refreshList}
-					onClose={() => setSelectedBranchProduct(false)}
-				/>
-			)}
-		</div>
-	);
+	// 		{selectedBranchProduct && (
+	// 			<EditBranchProductsModal
+	// 				branchId={branchId}
+	// 				branchProduct={selectedBranchProduct}
+	// 				onSuccess={refreshList}
+	// 				onClose={() => setSelectedBranchProduct(false)}
+	// 			/>
+	// 		)}
+	// 	</div>
+	// );
 };
 
 interface FilterProps {

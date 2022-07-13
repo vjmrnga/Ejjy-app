@@ -13,20 +13,13 @@ export const Reports = () => {
 		isLoading: isLoadingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			refetchOnMount: 'always',
-			refetchInterval: 15000,
-			refetchIntervalInBackground: true,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	return (
-		<Content className="Reports" title="Reports">
+		<Content title="Reports">
 			<Box>
-				<Spin size="large" spinning={isLoadingProductCategories}>
+				<Spin spinning={isLoadingProductCategories}>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={convertIntoArray(productCategoriesErrors)}

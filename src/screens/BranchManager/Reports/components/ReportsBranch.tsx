@@ -4,24 +4,27 @@ import { RequestErrors, TableActions, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
 	ALL_OPTION_KEY,
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
-	request,
 	timeRangeTypes,
 } from 'global';
-import { useProducts, useQueryParams } from 'hooks';
-import { useBranchProducts } from 'hooks/useBranchProducts';
-import { toString } from 'lodash';
-import debounce from 'lodash/debounce';
+import {
+	useBranchProductsWithAnalytics,
+	useProducts,
+	useQueryParams,
+} from 'hooks';
+import _ from 'lodash';
 import { IProductCategory } from 'models';
-import * as queryString from 'query-string';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
+	filterOption,
 	formatQuantity,
 	getBranchProductStatus,
+	getProductCode,
 } from 'utils';
-import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
+import { EditBranchProductsModal } from './EditBranchProductsModal';
 
 const columns: ColumnsType = [
 	{
@@ -31,8 +34,8 @@ const columns: ColumnsType = [
 		fixed: 'left',
 	},
 	{
-		title: 'Barcode',
-		dataIndex: 'barcode',
+		title: 'Code',
+		dataIndex: 'code',
 	},
 	{
 		title: 'Balance',
@@ -78,7 +81,6 @@ const columns: ColumnsType = [
 	},
 ];
 
-const INTERVAL_MS = 30000;
 const SEARCH_DEBOUNCE_TIME = 1000;
 
 const sorts = {
@@ -128,78 +130,37 @@ interface Props {
 
 export const ReportsBranch = ({ productCategories }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
-	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
+	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
 
 	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProductsWithAnalytics,
-		status: branchProductsStatus,
-		errors,
-		warnings,
-	} = useBranchProducts();
-
-	const {
-		params: { ordering },
-		refreshList,
-		setQueryParams,
-	} = useQueryParams({
-		page: currentPage,
-		pageSize,
-		onParamsCheck: (params) => {
-			const newParams = {};
-
-			const timeRange = toString(params.timeRange);
-			if (!timeRange) {
-				newParams['timeRange'] = timeRangeTypes.DAILY;
-			}
-
-			const isSoldInBranch = toString(params.isSoldInBranch);
-			if (!isSoldInBranch) {
-				newParams['isSoldInBranch'] = '1';
-			}
-
-			return newParams;
+		data: { branchProducts, total },
+		isFetching,
+		isFetched,
+		error: listError,
+	} = useBranchProductsWithAnalytics({
+		params: {
+			...params,
+			isSoldInBranch:
+				params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
+					? undefined
+					: true,
+			productIds:
+				params?.productIds?.length > 0 ? params.productIds : undefined,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 		},
-		onQueryParamChange: (params) => {
-			const newData = {
-				...params,
-				productIds:
-					params?.productIds?.length > 0 ? params.productIds : undefined,
-				isSoldInBranch:
-					params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
-						? undefined
-						: true,
-			};
-
-			getBranchProductsWithAnalytics(newData, true);
-
-			clearInterval(intervalRef.current);
-			intervalRef.current = setInterval(() => {
-				getBranchProductsWithAnalytics(newData, true);
-			}, INTERVAL_MS);
+		options: {
+			notifyOnChangeProps: ['data', 'isFetching', 'isFetched'],
+			refetchInterval: 30000,
+			refetchIntervalInBackground: true,
 		},
 	});
 
-	// REFS
-	const intervalRef = useRef(null);
-
 	// METHODS
-	useEffect(
-		() => () => {
-			// Cleanup in case logged out due to single sign on
-			clearInterval(intervalRef.current);
-		},
-		[],
-	);
-
 	useEffect(() => {
-		switch (ordering) {
+		switch (params?.ordering) {
 			case sorts.CURRENT_BALANCE_ASC:
 				columns[2].sortOrder = 'ascend';
 				break;
@@ -230,11 +191,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		if (!isCompletedInitialFetch && branchProducts.length) {
-			setIsCompletedInitialFetch(true);
-		}
-
-		const newBranchProducts = branchProducts?.map((branchProduct) => {
+		const data = branchProducts.map((branchProduct) => {
 			const {
 				product,
 				max_balance,
@@ -245,7 +202,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 				daily_average_sold_percentage,
 				average_daily_consumption,
 			} = branchProduct;
-			const { barcode, name, textcode, unit_of_measurement } = product;
+			const { name, unit_of_measurement } = product;
 			const remainingBalance =
 				(Number(current_balance) / Number(max_balance)) * 100;
 
@@ -265,7 +222,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 			});
 
 			return {
-				barcode: barcode || textcode,
+				code: getProductCode(product),
 				name,
 				balance: `${currentBalance} / ${maxBalance}`,
 				remaining_balance: `${remainingBalance.toFixed(2)}%`,
@@ -287,40 +244,31 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 			};
 		});
 
-		setData(newBranchProducts);
+		setDataSource(data);
 	}, [branchProducts]);
 
 	return (
-		<div className="ReportsBranch">
-			<RequestErrors
-				className="px-6"
-				errors={convertIntoArray(errors, 'Branch Product')}
-			/>
+		<div>
+			<RequestErrors className="px-6" errors={convertIntoArray(listError)} />
 
-			<Filter
-				productCategories={productCategories}
-				setQueryParams={(params) => {
-					setIsCompletedInitialFetch(false);
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-			/>
+			<Filter productCategories={productCategories} />
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				scroll={{ x: 1400 }}
 				pagination={{
-					current: currentPage,
-					total: pageCount,
-					pageSize,
-					position: ['bottomCenter'],
+					current: Number(params.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
 							pageSize: newPageSize,
 						});
 					},
-					disabled: !data,
+					disabled: !dataSource,
+					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
 				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
@@ -332,24 +280,19 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 						// eslint-disable-next-line no-param-reassign
 						sorter.column.sortOrder = sorter.order;
 
-						setIsCompletedInitialFetch(false);
-						setQueryParams({
-							ordering: getSortOrder(sorter.field, sorter.order),
-						});
+						setQueryParams(
+							{ ordering: getSortOrder(sorter.field, sorter.order) },
+							{ shouldResetPage: true },
+						);
 					}
 				}}
-				loading={
-					isCompletedInitialFetch
-						? false
-						: branchProductsStatus === request.REQUESTING
-				}
+				loading={isFetching && !isFetched}
 			/>
 
 			{selectedBranchProduct && (
 				<EditBranchProductsModal
 					branchProduct={selectedBranchProduct}
-					onSuccess={refreshList}
-					onClose={() => setSelectedBranchProduct(false)}
+					onClose={() => setSelectedBranchProduct(null)}
 				/>
 			)}
 		</div>
@@ -358,44 +301,32 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 
 interface FilterProps {
 	productCategories: IProductCategory[];
-	setQueryParams: any;
 }
 
-const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
+const Filter = ({ productCategories }: FilterProps) => {
 	// STATES
 	const [productOptions, setProductOptions] = useState([]);
-	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 	const [searchKeyword, setSearchKeyword] = useState('');
 
 	// CUSTOM HOOKS
-	const history = useHistory();
-	const params = queryString.parse(history.location.search);
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { products },
 		isFetching: isFetchingProducts,
 	} = useProducts({
-		params: {
-			ids: params?.productIds,
-			search: searchKeyword,
-		},
+		params: { search: searchKeyword },
+	});
+	const {
+		data: { products: paramProducts },
+		isFetching: isFetchingParamProducts,
+	} = useProducts({
+		params: { ids: params?.productIds },
+		options: { enabled: selectedProducts.length === 0 },
 	});
 
 	// METHODS
-	useEffect(() => {
-		// Set default time range type
-		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
-		if (
-			![timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange) &&
-			timeRange?.indexOf(',')
-		) {
-			setTimeRangeType(timeRangeTypes.DATE_RANGE);
-		} else {
-			setTimeRangeType(timeRange);
-		}
-	}, []);
-
 	useEffect(() => {
 		setProductOptions(
 			products.map((product) => ({
@@ -403,29 +334,24 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 				value: product.id,
 			})),
 		);
-
-		if (!isDefaultProductFetched) {
-			const productIds = toString(params.productIds)
-				.split(',')
-				.map((x) => Number(x));
-			const options = products
-				.filter((product) => productIds.includes(product.id))
-				.map((product) => ({
-					label: product.name,
-					value: product.id,
-				}));
-
-			setSelectedProducts(options);
-
-			// Only set default product fetched true if exact same length;
-			if (options.length === productIds.length) {
-				setIsDefaultProductFetched(true);
-			}
-		}
 	}, [products]);
 
+	useEffect(() => {
+		const productIds = _.toString(params.productIds)
+			.split(',')
+			.map((id) => Number(id));
+		const options = paramProducts
+			.filter((product) => productIds.includes(product.id))
+			.map((product) => ({
+				label: product.name,
+				value: product.id,
+			}));
+
+		setSelectedProducts(options);
+	}, [paramProducts]);
+
 	const onSearchDebounced = useCallback(
-		debounce((keyword) => {
+		_.debounce((keyword) => {
 			setProductOptions([]);
 			setSearchKeyword(keyword.toLowerCase());
 		}, SEARCH_DEBOUNCE_TIME),
@@ -438,18 +364,22 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 				<Label label="Product Name" spacing />
 				<Select
 					mode="multiple"
-					style={{ width: '100%' }}
+					className="w-100"
 					filterOption={false}
 					onSearch={onSearchDebounced}
-					notFoundContent={isFetchingProducts ? <Spin size="small" /> : null}
+					notFoundContent={
+						isFetchingProducts || isFetchingParamProducts ? (
+							<Spin size="small" />
+						) : null
+					}
 					options={productOptions}
 					value={selectedProducts}
 					onChange={(values) => {
 						setSelectedProducts(values);
-
-						setQueryParams({
-							productIds: values.map(({ value }) => value).join(','),
-						});
+						setQueryParams(
+							{ productIds: values.map(({ value }) => value).join(',') },
+							{ shouldResetPage: true },
+						);
 					}}
 					labelInValue
 				/>
@@ -457,18 +387,16 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Product Category" spacing />
 				<Select
-					style={{ width: '100%' }}
+					className="w-100"
 					defaultValue={params.productCategory}
 					onChange={(value) => {
-						setQueryParams({ productCategory: value });
+						setQueryParams(
+							{ productCategory: value },
+							{ shouldResetPage: true },
+						);
 					}}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					showSearch
 					allowClear
 				>
@@ -481,6 +409,7 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<TimeRangeFilter />
 			</Col>
+
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
@@ -490,9 +419,11 @@ const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
 					]}
 					value={params.isSoldInBranch}
 					onChange={(e) => {
-						setQueryParams({ isSoldInBranch: e.target.value }, true);
+						setQueryParams(
+							{ isSoldInBranch: e.target.value },
+							{ shouldResetPage: true },
+						);
 					}}
-					// eslint-disable-next-line react/jsx-boolean-value
 					defaultValue={params.isSoldInBranch}
 					optionType="button"
 				/>

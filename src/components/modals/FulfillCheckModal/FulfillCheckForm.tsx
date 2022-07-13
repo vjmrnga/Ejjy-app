@@ -3,6 +3,7 @@ import { Button, FieldError, FormInput, FormSelect } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { quantityTypeOptions, quantityTypes } from 'global';
 import React, { useCallback } from 'react';
+import { getProductCode } from 'utils';
 import * as Yup from 'yup';
 
 const columns = [
@@ -78,7 +79,7 @@ export const FulfillCheckForm = ({
 					columns={columns}
 					data={products.map((product, index) => [
 						// Code
-						product?.barcode || product?.selling_barcode || product?.textcode,
+						getProductCode(product),
 						// Name
 						product?.name,
 						// Quantity / Bulk | Pieces

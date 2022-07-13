@@ -37,7 +37,6 @@ import React from 'react';
 import { getLocalApiUrl, getOnlineApiUrl } from 'utils/localStorage';
 
 // Getters
-
 export const getColoredText = (
 	isDefault,
 	x,
@@ -520,6 +519,12 @@ export const getCashBreakdownTypeDescription = (category, type) => {
 
 export const getId = (object) =>
 	isStandAlone() ? object?.id : object?.online_id;
+
+export const getProductCode = (product) =>
+	product?.barcode ||
+	product?.selling_barcode ||
+	product?.textcode ||
+	EMPTY_CELL;
 
 export const filterOption = (input, option) =>
 	option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;

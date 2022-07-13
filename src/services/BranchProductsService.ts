@@ -9,6 +9,7 @@ interface List extends IListRequest {
 	product_category?: string;
 	product_ids?: number[] | number | string;
 	product_status?: string;
+	time_range?: string;
 }
 
 interface Edit {
@@ -43,6 +44,9 @@ interface EditPriceCost {
 const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/branches-products/', { baseURL, params }),
+
+	listWithAnalytics: async (params: List, baseURL) =>
+		axios.get('/branches-products/with-analytics/', { baseURL, params }),
 
 	edit: async (id: Number, body: Edit, baseURL) =>
 		axios.patch(`/branches-products/${id}/`, body, { baseURL }),
