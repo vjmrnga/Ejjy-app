@@ -198,29 +198,35 @@ const print = ({
 };
 
 const getHeader = (headerData) => {
-	const { siteSettings, title } = headerData;
+	const { branchMachine, siteSettings, title } = headerData;
 	const {
 		contact_number: contactNumber,
 		address_of_tax_payer: location,
 		proprietor,
-		ptu_number: ptuNumber,
 		store_name: storeName,
 		tax_type: taxType,
 		tin,
 	} = siteSettings;
+	const {
+		name,
+		permit_to_use: ptuNumber,
+		machine_identification_number: machineID,
+		pos_terminal: posTerminal,
+	} = branchMachine;
 
 	return `
-		<div style="text-align: center; display: flex; flex-direction: column">
-			<span style="white-space: pre-line">${storeName}</span>
-			<span style="white-space: pre-line">${location}</span>
-      <span>${contactNumber}</span>
-			<span>${proprietor}</span>
-			<span>${taxType} | ${tin}</span>
-			<span>Back Office</span>
-      <span>${ptuNumber}</span>
-			${title ? '</br>' : ''}
-			${title ? `<span>[${title}]</span>` : ''}
-		</div>`;
+    <div style="text-align: center; display: flex; flex-direction: column">
+    <span style="white-space: pre-line">${storeName}</span>
+    <span style="white-space: pre-line">${location}</span>
+    <span>${contactNumber} | ${name}</span>
+    <span>${proprietor}</span>
+    <span>${taxType} | ${tin}</span>
+    <span>${machineID}</span>
+    <span>${ptuNumber}</span>
+    <span>${posTerminal}</span>
+    ${title ? '</br>' : ''}
+    ${title ? `<span>[${title}]</span>` : ''}
+  </div>`;
 };
 
 const getFooter = (footerData) => {
@@ -230,7 +236,6 @@ const getFooter = (footerData) => {
 		software_developer_tin: softwareDeveloperTin,
 		pos_accreditation_number: posAccreditationNumber,
 		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
-		ptu_number: ptuNumber,
 	} = footerData;
 
 	return `
@@ -240,7 +245,6 @@ const getFooter = (footerData) => {
 			<span>${softwareDeveloperTin}</span>
 			<span>${posAccreditationNumber}</span>
 			<span>${posAccreditationValidUntilDate}</span>
-
 			<br />
 		</div>`;
 };

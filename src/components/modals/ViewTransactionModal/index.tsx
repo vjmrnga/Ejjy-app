@@ -124,7 +124,12 @@ export const ViewTransactionModal = ({
 			<Spin spinning={isTransactionFetching || isSiteSettingsFetching}>
 				{transactionData?.id && (
 					<>
-						<ReceiptHeader title={title} />
+						{transactionData?.branch_machine && (
+							<ReceiptHeader
+								branchMachine={transactionData.branch_machine}
+								title={title}
+							/>
+						)}
 
 						<Table
 							className="mt-6"

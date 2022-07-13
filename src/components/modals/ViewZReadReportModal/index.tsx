@@ -115,7 +115,9 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
-			<ReceiptHeader />
+			{report?.branch_machine && (
+				<ReceiptHeader branchMachine={report.branch_machine} />
+			)}
 
 			<Space align="center" className="mt-6 w-100 justify-space-between">
 				<Text>Z-READ</Text>

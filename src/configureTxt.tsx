@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
-import { saleTypes, vatTypes } from 'global';
 import React from 'react';
-import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
+import { formatInPeso } from 'utils';
 import { ReportTextFile } from 'utils/ReportTextFile';
 
 const PESO_SIGN = 'P';
@@ -9,92 +8,93 @@ const EMPTY_CELL = '';
 
 const writeHeader = (headerData) => {
 	const {
-		title,
-		proprietor,
-		location,
-		tin,
-		taxType,
-		machineId,
-		machinePrinterSerialNumber,
+		branchMachine,
+		siteSettings,
 		reportTextFile,
 		rowNumber: currentRowNumber,
+		title,
 	} = headerData;
+	const {
+		contact_number: contactNumber,
+		address_of_tax_payer: location,
+		proprietor,
+		store_name: storeName,
+		tax_type: taxType,
+		tin,
+	} = siteSettings;
+	const {
+		branch,
+		name,
+		permit_to_use: ptuNumber,
+		machine_identification_number: machineID,
+		pos_terminal: posTerminal,
+	} = branchMachine;
 	let rowNumber = currentRowNumber;
 
+	const storeNames = storeName.trim().split('\n');
+	storeNames.forEach((name) => {
+		reportTextFile.write({
+			text: name,
+			alignment: ReportTextFile.ALIGNMENTS.CENTER,
+			rowNumber,
+		});
+		rowNumber += 1;
+	});
+
+	const locations = location.trim().split('\n');
+	locations.forEach((name) => {
+		reportTextFile.write({
+			text: name,
+			alignment: ReportTextFile.ALIGNMENTS.CENTER,
+			rowNumber,
+		});
+		rowNumber += 1;
+	});
+
 	reportTextFile.write({
-		text: 'EJ AND JY',
+		text: `${contactNumber} | ${name}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'WET MARKET AND ENTERPRISES',
+		text: proprietor,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'POB., CARMEN, AGUSAN DEL NORTE',
+		text: `${taxType} | ${tin}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'Tel# 808-8866',
+		text: machineID,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
-	if (proprietor) {
-		reportTextFile.write({
-			text: proprietor,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
+	reportTextFile.write({
+		text: ptuNumber,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
 
-	if (location) {
-		reportTextFile.write({
-			text: location,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (tin) {
-		reportTextFile.write({
-			text: `${taxType} | ${tin}`,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (machineId) {
-		reportTextFile.write({
-			text: machineId,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (machinePrinterSerialNumber) {
-		reportTextFile.write({
-			text: machinePrinterSerialNumber,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
+	reportTextFile.write({
+		text: posTerminal,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
 
 	if (title) {
+		rowNumber += 1;
 		reportTextFile.write({
 			text: `[${title}]`,
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
@@ -105,79 +105,58 @@ const writeHeader = (headerData) => {
 	return rowNumber;
 };
 
-const writeFooter = (headerData) => {
+const writeFooter = (footerData) => {
 	const {
 		siteSettings,
 		reportTextFile,
 		rowNumber: currentRowNumber,
-	} = headerData;
+	} = footerData;
 	const {
-		software_developer,
-		software_developer_tin,
-		pos_accreditation_number,
-		pos_accreditation_date,
-		pos_accreditation_valid_until_date,
+		software_developer: softwareDeveloper,
+		software_developer_address: softwareDeveloperAddress,
+		software_developer_tin: softwareDeveloperTin,
+		pos_accreditation_number: posAccreditationNumber,
+		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
 	} = siteSettings;
 	let rowNumber = currentRowNumber;
 
-	if (software_developer) {
+	reportTextFile.write({
+		text: softwareDeveloper,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	const locations = softwareDeveloperAddress.trim().split('\n');
+	locations.forEach((name) => {
 		reportTextFile.write({
-			text: software_developer,
+			text: name,
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});
 		rowNumber += 1;
-	}
+	});
 
 	reportTextFile.write({
-		text: 'Burgos St., Poblacion, Carmen',
+		text: softwareDeveloperTin,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'Agusan del Norte',
+		text: posAccreditationNumber,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
-	if (software_developer_tin) {
-		reportTextFile.write({
-			text: software_developer_tin,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (pos_accreditation_number) {
-		reportTextFile.write({
-			text: pos_accreditation_number,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (pos_accreditation_date) {
-		reportTextFile.write({
-			text: pos_accreditation_date,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
-	if (pos_accreditation_valid_until_date) {
-		reportTextFile.write({
-			text: pos_accreditation_valid_until_date,
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
+	reportTextFile.write({
+		text: posAccreditationValidUntilDate,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
 
 	return rowNumber;
 };
@@ -187,11 +166,8 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	let rowNumber = 0;
 
 	rowNumber = writeHeader({
-		proprietor: report?.proprietor,
-		location: report?.location,
-		tin: report?.tin,
-		taxType: siteSettings.tax_type,
-		permitNumber: siteSettings.permit_number,
+		branchMachine: report.branch_machine,
+		siteSettings,
 		reportTextFile,
 		rowNumber,
 	});
@@ -431,11 +407,8 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	let rowNumber = 0;
 
 	rowNumber = writeHeader({
-		proprietor: report?.proprietor,
-		location: report?.location,
-		tin: report?.tin,
-		taxType: siteSettings.tax_type,
-		permitNumber: siteSettings.permit_number,
+		branchMachine: report.branch_machine,
+		siteSettings,
 		reportTextFile,
 		rowNumber,
 	});

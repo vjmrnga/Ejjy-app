@@ -129,7 +129,9 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					src={require('../../../assets/images/no-transaction.png')}
 				/>
 			)}
-			<ReceiptHeader />
+			{report?.branch_machine && (
+				<ReceiptHeader branchMachine={report.branch_machine} />
+			)}
 
 			<Space align="center" className="mt-6 w-100 justify-space-between">
 				<Text>X-READ</Text>
