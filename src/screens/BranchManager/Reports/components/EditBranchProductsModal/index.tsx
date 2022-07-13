@@ -50,11 +50,6 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 		await editBranchProduct({
 			...formData,
 			id: branchProduct.id,
-
-			// TODO: Remove this once dili na ni required nga fields
-			isDailyChecked: branchProduct.is_daily_checked,
-			isRandomlyChecked: branchProduct.is_randomly_checked,
-			isSoldInBranch: branchProduct.is_sold_in_branch,
 		});
 		message.success('Branch product was edited successfully');
 		handleClose();
