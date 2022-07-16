@@ -50,10 +50,6 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		console.log('run', params);
-	}, [params]);
-
-	useEffect(() => {
 		const data = connectivityLogs.map((connectivityLog) => ({
 			key: connectivityLog.id,
 			type: <ConnectivityType type={connectivityLog.type} />,
@@ -65,7 +61,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Connectivity Logs" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Connectivity Logs" />
 
 			<Filter
 				isLoading={isConnectivityLogsFetching && !isConnectivityLogsFetched}

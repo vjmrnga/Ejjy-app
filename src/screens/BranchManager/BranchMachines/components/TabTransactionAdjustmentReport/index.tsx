@@ -135,7 +135,10 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Transaction Adjustment Report" />
+			<TableHeader
+				wrapperClassName="pt-2 px-0"
+				title="Transaction Adjustment Report"
+			/>
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 

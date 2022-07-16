@@ -8,6 +8,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	timeRangeTypes,
 } from 'global';
 import {
 	useBranches,
@@ -16,13 +17,7 @@ import {
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	formatDate,
-	formatTime,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, filterOption, formatTime, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Branch', dataIndex: 'branch' },
@@ -39,9 +34,14 @@ export const TabSessionAssignments = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { cashieringAssignments, total },
-		isFetching,
-		error,
-	} = useCashieringAssignments({ params });
+		isFetching: isCashieringAssignmentsFetching,
+		error: cashieringAssignmentsError,
+	} = useCashieringAssignments({
+		params: {
+			...params,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -60,11 +60,17 @@ export const TabSessionAssignments = () => {
 
 	return (
 		<div>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Branch Assignments" />
+			<TableHeader
+				wrapperClassName="pt-2 px-0"
+				title="Cashiering Assignments"
+			/>
 
 			<Filter />
 
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(cashieringAssignmentsError)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
@@ -84,7 +90,7 @@ export const TabSessionAssignments = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isCashieringAssignmentsFetching}
 			/>
 		</div>
 	);
@@ -95,25 +101,25 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branches },
-		isFetching: isFetchingBranches,
-		error: branchErrors,
-	} = useBranches();
+		isFetching: isBranchesFetching,
+		error: branchError,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 	const {
 		data: { users },
-		isFetching: isFetchingUsers,
-		error: userErrors,
+		isFetching: isUsersFetching,
+		error: userError,
 	} = useUsers({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	return (
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(userErrors, 'Users'),
-					...convertIntoArray(branchErrors, 'Branches'),
+					...convertIntoArray(userError, 'Users'),
+					...convertIntoArray(branchError, 'Branches'),
 				]}
 				withSpaceBottom
 			/>
@@ -129,7 +135,7 @@ const Filter = () => {
 						}}
 						optionFilterProp="children"
 						filterOption={filterOption}
-						disabled={isFetchingBranches}
+						disabled={isBranchesFetching}
 						allowClear
 						showSearch
 					>
@@ -151,7 +157,7 @@ const Filter = () => {
 						}}
 						optionFilterProp="children"
 						filterOption={filterOption}
-						disabled={isFetchingUsers}
+						disabled={isUsersFetching}
 						allowClear
 						showSearch
 					>

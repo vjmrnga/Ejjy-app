@@ -154,7 +154,7 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 
 	return (
 		<div className="ViewBranchMachineSessions">
-			<TableHeader title="Sessions" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Sessions" />
 
 			<Filter isLoading={isSessionsFetching && !isSessionsFetched} />
 

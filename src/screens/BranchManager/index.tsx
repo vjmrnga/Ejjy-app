@@ -23,6 +23,7 @@ import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
 import { AssignUser } from 'screens/BranchManager/Users/AssignUser';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
+import { Assignments } from 'screens/Shared/Assignments';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
@@ -182,6 +183,13 @@ const BranchManager = () => {
 				link: '/branch-manager/discount-options',
 			},
 			{
+				key: 'accounts',
+				name: 'Accounts',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/branch-manager/accounts',
+			},
+			{
 				key: 'users',
 				name: 'Users',
 				activeIcon: require('../../assets/images/icon-users-active.svg'),
@@ -189,11 +197,11 @@ const BranchManager = () => {
 				link: '/branch-manager/users',
 			},
 			{
-				key: 'accounts',
-				name: 'Accounts',
+				key: 'assignments',
+				name: 'Assignments',
 				activeIcon: require('../../assets/images/icon-users-active.svg'),
 				defaultIcon: require('../../assets/images/icon-users.svg'),
-				link: '/branch-manager/accounts',
+				link: '/branch-manager/assignments',
 			},
 			{
 				key: 'requisition-slips',
@@ -309,6 +317,13 @@ const BranchManager = () => {
 						component={DiscountOptions}
 					/>
 
+					<Route path="/branch-manager/accounts" exact component={Accounts} />
+					<Route
+						path="/branch-manager/accounts/:id"
+						component={ViewAccount}
+						exact
+					/>
+
 					<Route path="/branch-manager/users" exact component={Users} />
 					<Route
 						path="/branch-manager/users/assign/:id"
@@ -316,10 +331,9 @@ const BranchManager = () => {
 						exact
 					/>
 
-					<Route path="/branch-manager/accounts" exact component={Accounts} />
 					<Route
-						path="/branch-manager/accounts/:id"
-						component={ViewAccount}
+						path="/branch-manager/assignments"
+						component={Assignments}
 						exact
 					/>
 

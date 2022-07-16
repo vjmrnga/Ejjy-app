@@ -2,7 +2,7 @@ import { Container } from 'components';
 import { useBranches } from 'hooks';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Assignments } from 'screens/OfficeManager/Assignments';
+import { Assignments } from 'screens/Shared/Assignments';
 import { Accounts } from 'screens/Shared/Accounts';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
 import { Branches } from 'screens/Shared/Branches/Branches';

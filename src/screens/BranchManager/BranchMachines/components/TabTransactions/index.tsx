@@ -26,10 +26,10 @@ import { convertIntoArray, filterOption, formatInPeso } from 'utils';
 import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id', key: 'id' },
-	{ title: 'Invoice', dataIndex: 'invoice', key: 'invoice' },
-	{ title: 'Amount', dataIndex: 'amount', key: 'amount' },
-	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{ title: 'ID', dataIndex: 'id' },
+	{ title: 'Invoice', dataIndex: 'invoice' },
+	{ title: 'Amount', dataIndex: 'amount' },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
 const transactionStatusOptions = [
@@ -114,7 +114,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Transactions" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Transactions" />
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 

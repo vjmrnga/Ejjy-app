@@ -173,6 +173,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	return (
 		<>
 			<TableHeader
+				wrapperClassName="pt-2 px-0"
 				title="BIR Report"
 				buttonName="Print PDF"
 				onCreate={onPrintPDF}

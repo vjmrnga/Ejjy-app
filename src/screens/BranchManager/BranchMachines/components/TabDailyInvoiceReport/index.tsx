@@ -131,7 +131,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Daily Invoice Report" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Daily Invoice Report" />
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 

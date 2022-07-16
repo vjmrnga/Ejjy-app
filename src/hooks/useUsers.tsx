@@ -1,5 +1,6 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -272,20 +273,21 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 			params?.pageSize,
 			params?.serverUrl,
 		],
-		async () => {
-			let service = UsersService.list;
-			if (!isStandAlone()) {
-				service = UsersService.listOffline;
-			}
+		() => {
+			const service = isStandAlone()
+				? UsersService.list
+				: UsersService.listOffline;
 
-			return service(
-				{
-					branch_id: params?.branchId,
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-				},
-				params?.serverUrl || getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						branch_id: params?.branchId,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					},
+					params?.serverUrl || getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },

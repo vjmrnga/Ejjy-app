@@ -7,6 +7,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	timeRangeTypes,
 } from 'global';
 import {
 	useBranchAssignments,
@@ -36,9 +37,14 @@ export const TabBranchAssignments = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchAssignments, total },
-		isFetching,
-		error,
-	} = useBranchAssignments({ params });
+		isFetching: isBranchAssignmentsFetching,
+		error: branchAssignmentsError,
+	} = useBranchAssignments({
+		params: {
+			...params,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -58,7 +64,10 @@ export const TabBranchAssignments = () => {
 
 			<Filter />
 
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchAssignmentsError)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
@@ -78,7 +87,7 @@ export const TabBranchAssignments = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isBranchAssignmentsFetching}
 			/>
 		</div>
 	);
@@ -89,17 +98,17 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branches },
-		isFetching: isFetchingBranches,
+		isFetching: isBranchesFetching,
 		error: branchErrors,
-	} = useBranches();
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 	const {
 		data: { users },
-		isFetching: isFetchingUsers,
+		isFetching: isUsersFetching,
 		error: userErrors,
 	} = useUsers({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	return (
@@ -123,7 +132,7 @@ const Filter = () => {
 						}}
 						optionFilterProp="children"
 						filterOption={filterOption}
-						disabled={isFetchingBranches}
+						disabled={isBranchesFetching}
 						allowClear
 						showSearch
 					>
@@ -145,7 +154,7 @@ const Filter = () => {
 						}}
 						optionFilterProp="children"
 						filterOption={filterOption}
-						disabled={isFetchingUsers}
+						disabled={isUsersFetching}
 						allowClear
 						showSearch
 					>

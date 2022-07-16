@@ -134,7 +134,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Daily Product Sales" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Daily Product Sales" />
 
 			<Filter
 				isLoading={

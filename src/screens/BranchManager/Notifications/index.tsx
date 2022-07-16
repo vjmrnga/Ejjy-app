@@ -12,7 +12,6 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TabBranchProducts } from './components/TabBranchProducts';
 import { TabSalesTracker } from './components/TabSalesTracker';
-import './style.scss';
 
 const tabs = {
 	BRANCH_PRODUCTS: 'Branch Products',
@@ -90,7 +89,7 @@ export const Notifications = () => {
 	};
 
 	return (
-		<Content title="Notifications" className="Notifications">
+		<Content title="Notifications">
 			<Box>
 				<Tabs
 					type="card"

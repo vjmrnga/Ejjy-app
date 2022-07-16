@@ -71,7 +71,7 @@ export const TabSalesTracker = () => {
 
 	return (
 		<Spin spinning={isSalesTrackerFetching || isSiteSettingsFetching}>
-			<TableHeader title="Sales Tracker" />
+			<TableHeader wrapperClassName="pt-2 px-0" title="Sales Tracker" />
 
 			<RequestErrors
 				errors={[
