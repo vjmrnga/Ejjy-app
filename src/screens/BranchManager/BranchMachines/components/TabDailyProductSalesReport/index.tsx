@@ -1,10 +1,8 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Radio, Row, Table } from 'antd';
+import { Col, Radio, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
 	RequestErrors,
-	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
 	TransactionStatus,
@@ -16,12 +14,12 @@ import {
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
-	SEARCH_DEBOUNCE_TIME,
+	refetchOptions,
+	timeRangeTypes,
 	transactionStatus,
 } from 'global';
-import { useQueryParams, useTransactionProducts, useTransactions } from 'hooks';
-import _ from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useQueryParams, useTransactionProducts } from 'hooks';
+import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDate,
@@ -53,20 +51,23 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { transactionProducts, total, warning: transactionProductsWarning },
+		data: { transactionProducts, total },
 		isFetching: isTransactionProductsFetching,
+		isFetched: isTransactionProductsFetched,
 		error: transactionProductsError,
 	} = useTransactionProducts({
 		params: {
+			...params,
 			branchMachineId,
-			...queryParams,
-			isVatExempted: queryParams.isVatExempted
-				? queryParams.isVatExempted === 'true'
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+			isVatExempted: params.isVatExempted
+				? params.isVatExempted === 'true'
 				: undefined,
-			statuses: queryParams.statuses || undefined,
+			statuses: params.statuses || undefined,
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
@@ -136,31 +137,21 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 			<TableHeader title="Daily Product Sales" />
 
 			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isTransactionProductsFetching}
+				isLoading={
+					isTransactionProductsFetching && !isTransactionProductsFetched
+				}
 			/>
 
-			<RequestErrors
-				errors={convertIntoArray(
-					transactionProductsError,
-					'Transaction Products',
-				)}
-			/>
-			<RequestWarnings
-				warnings={convertIntoArray(transactionProductsWarning)}
-			/>
+			<RequestErrors errors={convertIntoArray(transactionProductsError)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 1400 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -171,7 +162,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionProductsFetching}
+				loading={isTransactionProductsFetching && !isTransactionProductsFetched}
 			/>
 
 			{selectedTransaction && (
@@ -185,12 +176,12 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
+const Filter = ({ isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
@@ -217,8 +208,10 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 						},
 					]}
 					onChange={(e) => {
-						const { value } = e.target;
-						setQueryParams({ isVatExempted: value });
+						setQueryParams(
+							{ isVatExempted: e.target.value },
+							{ shouldResetPage: true },
+						);
 					}}
 					optionType="button"
 				/>
@@ -243,8 +236,10 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 						},
 					]}
 					onChange={(e) => {
-						const { value } = e.target;
-						setQueryParams({ statuses: value });
+						setQueryParams(
+							{ statuses: e.target.value },
+							{ shouldResetPage: true },
+						);
 					}}
 					optionType="button"
 				/>

@@ -1,3 +1,4 @@
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
@@ -7,16 +8,16 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
 	useQuery<any>(
 		['useSiteSettingsRetrieve', params?.branchId],
 		() => {
-			let service = SiteSettingsService.retrieve;
-			if (!isStandAlone()) {
-				service = SiteSettingsService.retrieveOffline;
-			}
+			const service = isStandAlone()
+				? SiteSettingsService.retrieve
+				: SiteSettingsService.retrieveOffline;
 
-			return service(getLocalApiUrl()).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(service(getLocalApiUrl()));
 		},
 
 		{
 			select: (query) => query.data,
+			refetchOnMount: 'always',
 			...options,
 		},
 	);

@@ -7,6 +7,8 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
+	productStatus,
+	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import {
@@ -137,9 +139,9 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchProducts, total },
-		isFetching,
-		isFetched,
-		error: listError,
+		isFetching: isBranchProductsFetching,
+		isFetched: isisBranchProductsFetched,
+		error: branchProductsError,
 	} = useBranchProductsWithAnalytics({
 		params: {
 			...params,
@@ -151,11 +153,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 				params?.productIds?.length > 0 ? params.productIds : undefined,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 		},
-		options: {
-			notifyOnChangeProps: ['data', 'isFetching', 'isFetched'],
-			refetchInterval: 30000,
-			refetchIntervalInBackground: true,
-		},
+		options: refetchOptions,
 	});
 
 	// METHODS
@@ -249,7 +247,10 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 
 	return (
 		<div>
-			<RequestErrors className="px-6" errors={convertIntoArray(listError)} />
+			<RequestErrors
+				className="px-6"
+				errors={convertIntoArray(branchProductsError)}
+			/>
 
 			<Filter productCategories={productCategories} />
 
@@ -286,7 +287,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 						);
 					}
 				}}
-				loading={isFetching && !isFetched}
+				loading={isBranchProductsFetching && !isisBranchProductsFetched}
 			/>
 
 			{selectedBranchProduct && (
@@ -306,7 +307,6 @@ interface FilterProps {
 const Filter = ({ productCategories }: FilterProps) => {
 	// STATES
 	const [productOptions, setProductOptions] = useState([]);
-	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 	const [searchKeyword, setSearchKeyword] = useState('');
 
@@ -316,7 +316,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 		data: { products },
 		isFetching: isFetchingProducts,
 	} = useProducts({
-		params: { search: searchKeyword },
+		params: { search: searchKeyword || undefined },
 	});
 	const {
 		data: { products: paramProducts },
@@ -403,6 +403,28 @@ const Filter = ({ productCategories }: FilterProps) => {
 					{productCategories.map(({ name }) => (
 						<Select.Option value={name}>{name}</Select.Option>
 					))}
+				</Select>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Product Status" spacing />
+				<Select
+					className="w-100"
+					onChange={(value) => {
+						setQueryParams({ productStatus: value }, { shouldResetPage: true });
+					}}
+					optionFilterProp="children"
+					filterOption={filterOption}
+					showSearch
+					allowClear
+				>
+					<Select.Option value={productStatus.AVAILABLE}>
+						Available
+					</Select.Option>
+					<Select.Option value={productStatus.REORDER}>Reorder</Select.Option>
+					<Select.Option value={productStatus.OUT_OF_STOCK}>
+						Out of Stock
+					</Select.Option>
 				</Select>
 			</Col>
 

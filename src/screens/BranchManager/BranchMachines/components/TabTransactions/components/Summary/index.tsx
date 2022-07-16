@@ -1,5 +1,6 @@
 import { Col, Row, Spin, Statistic } from 'antd';
 import { RequestErrors } from 'components';
+import { refetchOptions, timeRangeTypes } from 'global';
 import { useQueryParams, useTransactionsSummary } from 'hooks';
 import React from 'react';
 import { convertIntoArray, formatInPeso } from 'utils';
@@ -9,16 +10,21 @@ interface Props {
 	branchMachineId: number;
 }
 
-export const Summary = ({ branchMachineId }: Props) => {
+const Component = ({ branchMachineId }: Props) => {
 	const { params } = useQueryParams();
 	const {
 		data: { summary = null } = {},
-		isFetching: isFetchingTransactionsSummary,
 		error: transactionsSummaryError,
+		isLoading: isTransactionsSummaryLoading,
 	} = useTransactionsSummary({
 		params: {
-			branchMachineId,
 			...params,
+			branchMachineId,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+		},
+		options: {
+			...refetchOptions,
+			notifyOnChangeProps: ['data', 'isLoading'],
 		},
 	});
 
@@ -29,7 +35,7 @@ export const Summary = ({ branchMachineId }: Props) => {
 				errors={convertIntoArray(transactionsSummaryError)}
 			/>
 
-			<Spin spinning={isFetchingTransactionsSummary}>
+			<Spin spinning={isTransactionsSummaryLoading}>
 				<Row gutter={[16, 16]}>
 					<Col xs={24} sm={8} md={8}>
 						<Statistic
@@ -87,3 +93,5 @@ export const Summary = ({ branchMachineId }: Props) => {
 		</div>
 	);
 };
+
+export const Summary = React.memo(Component);

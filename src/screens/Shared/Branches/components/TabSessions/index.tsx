@@ -8,6 +8,7 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	timeRangeTypes,
 } from 'global';
 import { useQueryParams, useSessions, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -48,8 +49,9 @@ export const TabSessions = ({ branch }: Props) => {
 		error: listError,
 	} = useSessions({
 		params: {
-			...params,
 			branchId: branch.id,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+			...params,
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed = undefined;
 				if (params.closingType === closingTypes.AUTOMATIC) {

@@ -41,11 +41,7 @@ export const TabStockIn = () => {
 		data: siteSettings,
 		isFetching: isSiteSettingsFetching,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
-		options: {
-			refetchOnMount: 'always',
-		},
-	});
+	} = useSiteSettingsRetrieve();
 	const {
 		data: { receivingVouchers, total },
 		isFetching: isReceivingVouchersFetching,

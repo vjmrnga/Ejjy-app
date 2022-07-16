@@ -1,6 +1,8 @@
 import { Button, Calendar, message, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	CashieringCard,
+	Content,
 	TableHeader,
 	ViewXReadReportModal,
 	ViewZReadReportModal,
@@ -26,7 +28,7 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const MachineReportTable = () => {
+export const Dashboard = () => {
 	// STATES
 	const [xReadReport, setXReadReport] = useState(null);
 	const [zReadReport, setZReadReport] = useState(null);
@@ -53,43 +55,35 @@ export const MachineReportTable = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchMachines = branchMachines.map((branchMachine) => {
-			return {
-				key: branchMachine.id,
-				machines: branchMachine.name,
-				connectivityStatus: branchMachine.is_online ? (
-					<Tag color="green">Online</Tag>
-				) : (
-					<Tag color="red">Offline</Tag>
-				),
-				actions: (
-					<Space>
-						<Button
-							type="primary"
-							onClick={() => viewXReadReport(branchMachine)}
-						>
-							View XRead (Active Session)
-						</Button>
-						<Button
-							type="primary"
-							onClick={() => {
-								setSelectedBranchMachine(branchMachine);
-								setDatePickerModalVisible(true);
-								setSelectedDate(moment());
-							}}
-						>
-							View XRead (Date)
-						</Button>
-						<Button
-							type="primary"
-							onClick={() => viewZReadReport(branchMachine)}
-						>
-							View ZRead
-						</Button>
-					</Space>
-				),
-			};
-		});
+		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
+			key: branchMachine.id,
+			machines: branchMachine.name,
+			connectivityStatus: branchMachine.is_online ? (
+				<Tag color="green">Online</Tag>
+			) : (
+				<Tag color="red">Offline</Tag>
+			),
+			actions: (
+				<Space>
+					<Button type="primary" onClick={() => viewXReadReport(branchMachine)}>
+						View XRead (Active Session)
+					</Button>
+					<Button
+						type="primary"
+						onClick={() => {
+							setSelectedBranchMachine(branchMachine);
+							setDatePickerModalVisible(true);
+							setSelectedDate(moment());
+						}}
+					>
+						View XRead (Date)
+					</Button>
+					<Button type="primary" onClick={() => viewZReadReport(branchMachine)}>
+						View ZRead
+					</Button>
+				</Space>
+			),
+		}));
 
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
@@ -135,57 +129,61 @@ export const MachineReportTable = () => {
 	}, [selectedDate]);
 
 	return (
-		<Box>
-			<TableHeader title="Reports per Machine" />
+		<Content title="Dashboard">
+			<CashieringCard />
 
-			<Table
-				columns={columns}
-				dataSource={dataSource}
-				scroll={{ x: 650 }}
-				pagination={false}
-				loading={
-					isCreatingXReadReport ||
-					isCreatingZReadReport ||
-					isLoadingBranchMachines
-				}
-			/>
+			<Box>
+				<TableHeader title="Reports per Machine" />
 
-			{xReadReport && (
-				<ViewXReadReportModal
-					report={xReadReport}
-					onClose={() => setXReadReport(null)}
+				<Table
+					columns={columns}
+					dataSource={dataSource}
+					scroll={{ x: 650 }}
+					pagination={false}
+					loading={
+						isCreatingXReadReport ||
+						isCreatingZReadReport ||
+						isLoadingBranchMachines
+					}
 				/>
-			)}
 
-			{zReadReport && (
-				<ViewZReadReportModal
-					report={zReadReport}
-					onClose={() => setZReadReport(null)}
-				/>
-			)}
+				{xReadReport && (
+					<ViewXReadReportModal
+						report={xReadReport}
+						onClose={() => setXReadReport(null)}
+					/>
+				)}
 
-			<Modal
-				className="Modal__hasFooter"
-				title="Select Date"
-				visible={datePickerModalVisible}
-				onOk={onSubmitDateSelection}
-				onCancel={() => {
-					setSelectedBranchMachine(null);
-					setDatePickerModalVisible(false);
-					setDateError(null);
-				}}
-			>
-				<Calendar
-					disabledDate={(current) => current.isAfter(moment(), 'date')}
-					fullscreen={false}
-					defaultValue={moment()}
-					onSelect={(value) => {
-						setSelectedDate(value);
+				{zReadReport && (
+					<ViewZReadReportModal
+						report={zReadReport}
+						onClose={() => setZReadReport(null)}
+					/>
+				)}
+
+				<Modal
+					className="Modal__hasFooter"
+					title="Select Date"
+					visible={datePickerModalVisible}
+					onOk={onSubmitDateSelection}
+					onCancel={() => {
+						setSelectedBranchMachine(null);
+						setDatePickerModalVisible(false);
 						setDateError(null);
 					}}
-				/>
-				{dateError && <FieldError error={dateError} />}
-			</Modal>
-		</Box>
+				>
+					<Calendar
+						disabledDate={(current) => current.isAfter(moment(), 'date')}
+						fullscreen={false}
+						defaultValue={moment()}
+						onSelect={(value) => {
+							setSelectedDate(value);
+							setDateError(null);
+						}}
+					/>
+					{dateError && <FieldError error={dateError} />}
+				</Modal>
+			</Box>
+		</Content>
 	);
 };

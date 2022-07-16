@@ -1,5 +1,6 @@
 import { actions, types } from 'ducks/branches-days';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -159,7 +160,7 @@ export const useBranchesDays = () => {
 	};
 };
 
-const useBranchDaysNew = ({ params }: Query) =>
+const useBranchDaysNew = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchDays',
@@ -173,27 +174,30 @@ const useBranchDaysNew = ({ params }: Query) =>
 			params?.page,
 			params?.timeRange,
 		],
-		async () =>
-			BranchesDaysService.list(
-				{
-					branch_id: params?.branchId,
-					branch_machine_id: params?.branchMachineId,
-					closed_by_user_id: params?.closedByUserId,
-					is_automatically_closed: params?.isAutomaticallyClosed,
-					is_unauthorized: params?.isUnauthorized,
-					opened_by_user_id: params?.openedByUserId,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					time_range: params?.timeRange,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(
+				BranchesDaysService.list(
+					{
+						branch_id: params?.branchId,
+						branch_machine_id: params?.branchMachineId,
+						closed_by_user_id: params?.closedByUserId,
+						is_automatically_closed: params?.isAutomaticallyClosed,
+						is_unauthorized: params?.isUnauthorized,
+						opened_by_user_id: params?.openedByUserId,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				branchDays: query.data.results,
 				total: query.data.count,
 			}),
+			...options,
 		},
 	);
 

@@ -23,7 +23,7 @@ export const TimeMismatchBoundary = () => {
 	} = useBranchMachines();
 	const { data: siteSettings, isFetched: isSiteSettingsFetched } =
 		useSiteSettingsRetrieve({
-			options: { notifyOnChangeProps: ['data'] },
+			options: { notifyOnChangeProps: ['data', 'isFetched'] },
 		});
 
 	// METHODS

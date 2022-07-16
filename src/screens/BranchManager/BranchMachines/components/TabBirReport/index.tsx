@@ -7,6 +7,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
+	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import { useBirReports, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
@@ -75,31 +76,29 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: siteSettings,
 		isFetching: isSiteSettingsFetching,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
-		options: {
-			refetchOnMount: 'always',
-		},
-	});
+	} = useSiteSettingsRetrieve();
 	const {
 		data: { birReports, total },
 		isFetching: isBirReportsFetching,
+		isFetched: isBirReportsFetched,
 		error: birReportsError,
 	} = useBirReports({
 		params: {
 			branchMachineId,
 			timeRange: timeRangeTypes.DAILY,
-			...queryParams,
+			...params,
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedReports = birReports.map((report) => ({
+		const data = birReports.map((report) => ({
 			key: report.id,
 			date: formatDate(report.date),
 			beginningOrNumber: report?.beginning_or?.or_number || EMPTY_CELL,
@@ -138,7 +137,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 					: report.remarks,
 		}));
 
-		setDataSource(formattedReports);
+		setDataSource(data);
 	}, [birReports]);
 
 	const onPrintPDF = () => {
@@ -181,7 +180,11 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			/>
 
 			<Filter
-				isLoading={isBirReportsFetching || isSiteSettingsFetching || isPrinting}
+				isLoading={
+					(isBirReportsFetching && !isBirReportsFetched) ||
+					isSiteSettingsFetching ||
+					isPrinting
+				}
 			/>
 
 			<RequestErrors
@@ -196,9 +199,9 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				dataSource={dataSource}
 				scroll={{ x: 3000 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams(
 							{
@@ -213,7 +216,11 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 					pageSizeOptions,
 				}}
 				size="middle"
-				loading={isBirReportsFetching || isSiteSettingsFetching || isPrinting}
+				loading={
+					(isBirReportsFetching && !isBirReportsFetched) ||
+					isSiteSettingsFetching ||
+					isPrinting
+				}
 				bordered
 			/>
 

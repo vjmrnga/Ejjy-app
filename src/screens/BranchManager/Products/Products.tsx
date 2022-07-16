@@ -3,7 +3,7 @@ import { Col, Input, Row, Select, Table } from 'antd';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, ButtonLink, Label } from 'components/elements';
 import {
-	branchProductStatus,
+	productStatus,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
@@ -17,7 +17,7 @@ import { debounce } from 'lodash';
 import { IProductCategory } from 'models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getBranchProductStatus } from 'utils';
+import { convertIntoArray, filterOption, getBranchProductStatus } from 'utils';
 import { ViewProductModal } from './components/ViewProductModal';
 import './style.scss';
 
@@ -257,25 +257,18 @@ const Filter = ({
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
-					style={{ width: '100%' }}
+					className="w-100"
 					onChange={onSelectStatus}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					showSearch
 					allowClear
 				>
-					<Select.Option value={branchProductStatus.AVAILABLE}>
+					<Select.Option value={productStatus.AVAILABLE}>
 						Available
 					</Select.Option>
-					<Select.Option value={branchProductStatus.REORDER}>
-						Reorder
-					</Select.Option>
-					<Select.Option value={branchProductStatus.OUT_OF_STOCK}>
+					<Select.Option value={productStatus.REORDER}>Reorder</Select.Option>
+					<Select.Option value={productStatus.OUT_OF_STOCK}>
 						Out of Stock
 					</Select.Option>
 				</Select>

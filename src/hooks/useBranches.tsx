@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchesService } from 'services';
@@ -7,19 +8,20 @@ import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 const useBranches = ({ params, options }: Query = {}) =>
 	useQuery<any>(
 		['useBranches', params?.baseURL, params?.page, params?.pageSize],
-		async () => {
-			let service = BranchesService.list;
-			if (!isStandAlone()) {
-				service = BranchesService.listOffline;
-			}
+		() => {
+			const service = isStandAlone()
+				? BranchesService.list
+				: BranchesService.listOffline;
 
-			return service(
-				{
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-				},
-				params?.baseURL || getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+					},
+					params?.baseURL || getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -34,13 +36,13 @@ const useBranches = ({ params, options }: Query = {}) =>
 export const useBranchRetrieve = ({ id, params, options }: Query) =>
 	useQuery<any>(
 		['useBranchRetrieve', id, params?.baseURL],
-		async () => {
+		() => {
 			const service = isStandAlone()
 				? BranchesService.retrieve
 				: BranchesService.retrieveOffline;
 
-			return service(id, params?.baseURL || getLocalApiUrl()).catch((e) =>
-				Promise.reject(e.errors),
+			return wrapServiceWithCatch(
+				service(id, params?.baseURL || getLocalApiUrl()),
 			);
 		},
 		{

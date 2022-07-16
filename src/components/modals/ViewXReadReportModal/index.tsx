@@ -29,9 +29,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve({
-		options: { refetchOnMount: 'always' },
-	});
+	const { data: siteSettings } = useSiteSettingsRetrieve();
 
 	// METHODS
 	const handlePrint = () => {

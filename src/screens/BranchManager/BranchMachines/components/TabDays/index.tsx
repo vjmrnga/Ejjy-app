@@ -8,10 +8,17 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	refetchOptions,
+	timeRangeTypes,
 } from 'global';
 import { useBranchDays, useQueryParams, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatDateTimeShortMonth,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -44,12 +51,14 @@ export const TabDays = ({ branchMachineId }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchDays, total },
-		isFetching,
-		error: listError,
+		error: branchDaysError,
+		isFetching: isBranchDaysFetching,
+		isFetched: isBranchDaysFetched,
 	} = useBranchDays({
 		params: {
 			...params,
 			branchMachineId,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isUnauthorized: (() => {
 				let isUnauthorized = undefined;
 				if (params.type === branchDayTypes.UNAUTHORIZED) {
@@ -71,11 +80,12 @@ export const TabDays = ({ branchMachineId }: Props) => {
 				return isAutomaticallyClosed;
 			})(),
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchDays = branchDays.map((branchDay) => {
+		const data = branchDays.map((branchDay) => {
 			const {
 				id,
 				started_by,
@@ -114,7 +124,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 			};
 		});
 
-		setDataSource(formattedBranchDays);
+		setDataSource(data);
 	}, [branchDays]);
 
 	const renderUser = ({ startedBy, endedBy, isAutomaticallyClosed }) => {
@@ -177,15 +187,18 @@ export const TabDays = ({ branchMachineId }: Props) => {
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" />
 
-			<Filter isLoading={isFetching} />
+			<Filter isLoading={isBranchDaysFetching && !isBranchDaysFetched} />
 
-			<RequestErrors errors={convertIntoArray(listError)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchDaysError)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 650 }}
-				loading={isFetching}
+				loading={isBranchDaysFetching && !isBranchDaysFetched}
 				bordered
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
@@ -215,7 +228,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { users },
-		isFetching,
+		isFetching: isUsersFetching,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
@@ -234,13 +247,8 @@ const Filter = ({ isLoading }: FilterProps) => {
 					}}
 					defaultValue={params.openedByUserId}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					disabled={isFetching || isLoading}
+					filterOption={filterOption}
+					disabled={isUsersFetching || isLoading}
 					showSearch
 					allowClear
 				>
@@ -264,13 +272,8 @@ const Filter = ({ isLoading }: FilterProps) => {
 					}}
 					defaultValue={params.closedByUserId}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					disabled={isFetching || isLoading}
+					filterOption={filterOption}
+					disabled={isUsersFetching || isLoading}
 					showSearch
 					allowClear
 				>
@@ -301,7 +304,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					disabled={isFetching || isLoading}
+					disabled={isUsersFetching || isLoading}
 					defaultValue={params.closingType || closingTypes.ALL}
 				/>
 			</Col>
@@ -320,7 +323,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
 					defaultValue={params.type || branchDayTypes.ALL}
-					disabled={isFetching || isLoading}
+					disabled={isUsersFetching || isLoading}
 				/>
 			</Col>
 		</Row>

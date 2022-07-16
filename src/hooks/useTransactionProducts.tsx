@@ -1,17 +1,11 @@
-import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
 import { TransactionProductsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 import { Query } from './inteface';
 
-const useTransactionProducts = ({ params }: Query) => {
-	let baseURL = useSelector(
-		branchesSelectors.selectURLByBranchId(params.branchId),
-	);
-
-	return useQuery<any>(
+const useTransactionProducts = ({ params, options }: Query) =>
+	useQuery<any>(
 		[
 			'useTransactionProducts',
 			params?.isVatExempted,
@@ -21,46 +15,26 @@ const useTransactionProducts = ({ params }: Query) => {
 			params?.statuses,
 			params?.timeRange,
 		],
-		async () => {
-			if (!baseURL && params.branchId) {
-				throw ['Branch has no online url.'];
-			} else {
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-			}
-
-			baseURL = params.serverUrl || baseURL;
-
-			const data = {
-				is_vat_exempted: params?.isVatExempted,
-				or_number: params?.orNumber,
-				page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-				page: params?.page || DEFAULT_PAGE,
-				statuses: params?.statuses,
-				time_range: params?.timeRange,
-			};
-
-			try {
-				// NOTE: Fetch in branch url
-				return await TransactionProductsService.list(data, baseURL);
-			} catch (e) {
-				// NOTE: Retry to fetch in local url
-				baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-				const response = await TransactionProductsService.list(data, baseURL);
-				response.data.warning =
-					'Data Source: Backup Server, data might be outdated.';
-
-				return response;
-			}
-		},
+		() =>
+			TransactionProductsService.list(
+				{
+					is_vat_exempted: params?.isVatExempted,
+					or_number: params?.orNumber,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					page: params?.page || DEFAULT_PAGE,
+					statuses: params?.statuses,
+					time_range: params?.timeRange,
+				},
+				getLocalApiUrl(),
+			).catch((e) => Promise.reject(e.errors)),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
 				transactionProducts: query.data.results,
 				total: query.data.count,
-				warning: query.data?.warning,
 			}),
+			...options,
 		},
 	);
-};
 
 export default useTransactionProducts;

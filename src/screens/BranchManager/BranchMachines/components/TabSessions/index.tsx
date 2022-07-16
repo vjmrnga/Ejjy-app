@@ -8,10 +8,17 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	refetchOptions,
+	timeRangeTypes,
 } from 'global';
 import { useQueryParams, useSessions, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatDateTimeShortMonth,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -44,12 +51,14 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { sessions, total },
-		isFetching,
-		error: listError,
+		error: sessionsError,
+		isFetching: isSessionsFetching,
+		isFetched: isSessionsFetched,
 	} = useSessions({
 		params: {
 			...params,
 			branchMachineId,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed = undefined;
 				if (params.closingType === closingTypes.AUTOMATIC) {
@@ -71,11 +80,12 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 				return isUnauthorized;
 			})(),
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchSession = sessions.map((session) => {
+		const data = sessions.map((session) => {
 			const {
 				id,
 				user,
@@ -109,7 +119,7 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 			};
 		});
 
-		setDataSource(formattedBranchSession);
+		setDataSource(data);
 	}, [sessions]);
 
 	const renderDateTime = ({
@@ -146,15 +156,15 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" />
 
-			<Filter isLoading={isFetching} />
+			<Filter isLoading={isSessionsFetching && !isSessionsFetched} />
 
-			<RequestErrors errors={convertIntoArray(listError)} withSpaceBottom />
+			<RequestErrors errors={convertIntoArray(sessionsError)} withSpaceBottom />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
-				loading={isFetching}
+				loading={isSessionsFetching && !isSessionsFetched}
 				bordered
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
@@ -183,7 +193,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { users },
-		isFetching,
+		isFetching: isUsersFetching,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
@@ -199,13 +209,8 @@ const Filter = ({ isLoading }: FilterProps) => {
 						setQueryParams({ userId: value }, { shouldResetPage: true });
 					}}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					disabled={isFetching || isLoading}
+					filterOption={filterOption}
+					disabled={isUsersFetching || isLoading}
 					allowClear
 					showSearch
 				>
@@ -218,7 +223,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isFetching || isLoading} />
+				<TimeRangeFilter disabled={isUsersFetching || isLoading} />
 			</Col>
 
 			<Col lg={12} span={24}>
@@ -236,7 +241,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					disabled={isFetching || isLoading}
+					disabled={isUsersFetching || isLoading}
 					defaultValue={params.closingType || closingTypes.ALL}
 				/>
 			</Col>
@@ -253,7 +258,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					onChange={(e) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
-					disabled={isFetching || isLoading}
+					disabled={isUsersFetching || isLoading}
 					defaultValue={params.type || sessionTypes.ALL}
 				/>
 			</Col>

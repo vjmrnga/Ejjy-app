@@ -2,7 +2,12 @@ import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
 import { printCollectionReceipt } from 'configurePrinter';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, pageSizeOptions } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	pageSizeOptions,
+	refetchOptions,
+} from 'global';
 import {
 	useCollectionReceipts,
 	useQueryParams,
@@ -33,44 +38,39 @@ export const TabCollectionReceipts = () => {
 		data: siteSettings,
 		isFetching: isSiteSettingsFetching,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
-		options: {
-			refetchOnMount: 'always',
-		},
-	});
+	} = useSiteSettingsRetrieve();
 	const {
 		data: { collectionReceipts, total },
 		isFetching: isCollectionReceiptsFetching,
+		isFetched: isCollectionReceiptsFetched,
 		error: collectionReceiptsError,
-	} = useCollectionReceipts({ params: {} });
+	} = useCollectionReceipts({ options: refetchOptions });
 
 	// METHODS
 	useEffect(() => {
-		const formattedOrderOfPayments = collectionReceipts.map(
-			(collectionReceipt) => {
-				const { id, amount, order_of_payment } = collectionReceipt;
-				const { payor } = order_of_payment;
+		const data = collectionReceipts.map((collectionReceipt) => {
+			const { id, amount, order_of_payment } = collectionReceipt;
+			const { payor } = order_of_payment;
 
-				return {
-					key: id,
-					id,
-					orderOfPaymentId: order_of_payment.id,
-					payor: getFullName(payor),
-					amount: formatInPeso(amount),
-					actions: (
-						<Button
-							type="link"
-							onClick={() => onPrintPDF(collectionReceipt)}
-							loading={isPrinting === id}
-						>
-							Print PDF
-						</Button>
-					),
-				};
-			},
-		);
+			return {
+				key: id,
+				id,
+				orderOfPaymentId: order_of_payment.id,
+				payor: getFullName(payor),
+				amount: formatInPeso(amount),
+				actions: (
+					<Button
+						type="link"
+						onClick={() => onPrintPDF(collectionReceipt)}
+						loading={isPrinting === id}
+					>
+						Print PDF
+					</Button>
+				),
+			};
+		});
 
-		setDataSource(formattedOrderOfPayments);
+		setDataSource(data);
 	}, [collectionReceipts, isPrinting]);
 
 	const onPrintPDF = (collectionReceipt) => {
@@ -96,7 +96,7 @@ export const TabCollectionReceipts = () => {
 	};
 
 	return (
-		<div>
+		<>
 			<TableHeader title="Collection Receipts" />
 
 			<RequestErrors
@@ -125,8 +125,11 @@ export const TabCollectionReceipts = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isCollectionReceiptsFetching || isSiteSettingsFetching}
+				loading={
+					(isCollectionReceiptsFetching && !isCollectionReceiptsFetched) ||
+					isSiteSettingsFetching
+				}
 			/>
-		</div>
+		</>
 	);
 };

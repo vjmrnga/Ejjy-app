@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { OrderOfPaymentsService } from 'services';
@@ -14,17 +15,19 @@ const useOrderOfPayments = ({ params }: Query) =>
 			params?.page,
 			params?.pageSize,
 		],
-		async () =>
-			OrderOfPaymentsService.list(
-				{
-					is_pending: params?.isPending,
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					payor_id: params?.payorId,
-					time_range: params?.timeRange,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(
+				OrderOfPaymentsService.list(
+					{
+						is_pending: params?.isPending,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						payor_id: params?.payorId,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

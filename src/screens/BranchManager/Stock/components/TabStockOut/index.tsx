@@ -36,11 +36,7 @@ export const TabStockOut = () => {
 		data: siteSettings,
 		isFetching: isSiteSettingsFetching,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
-		options: {
-			refetchOnMount: 'always',
-		},
-	});
+	} = useSiteSettingsRetrieve();
 	const {
 		data: { backOrders, total },
 		isFetching: isBackOrdersFetching,

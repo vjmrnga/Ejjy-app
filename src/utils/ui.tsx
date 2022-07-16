@@ -15,7 +15,7 @@ import {
 import { BadgePill } from 'components/elements';
 import {
 	backOrdersStatuses,
-	branchProductStatus,
+	productStatus,
 	cashBreakdownCategories,
 	cashBreakdownTypes,
 	deliveryReceiptStatus,
@@ -60,13 +60,13 @@ export const getColoredText = (
 
 export const getBranchProductStatus = _.memoize((status: string) => {
 	switch (status) {
-		case branchProductStatus.AVAILABLE: {
+		case productStatus.AVAILABLE: {
 			return <AvailableBadgePill />;
 		}
-		case branchProductStatus.REORDER: {
+		case productStatus.REORDER: {
 			return <ReorderBadgePill />;
 		}
-		case branchProductStatus.OUT_OF_STOCK: {
+		case productStatus.OUT_OF_STOCK: {
 			return <OutOfStocksBadgePill />;
 		}
 		default:

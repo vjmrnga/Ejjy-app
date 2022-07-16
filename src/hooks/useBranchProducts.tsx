@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -211,21 +212,23 @@ const useBranchProductsNew = ({ params }: Query) =>
 			params?.search,
 		],
 		async () =>
-			await BranchProductsService.list(
-				{
-					branch_id: params?.branchId,
-					has_bo_balance: params?.hasBoBalance,
-					has_negative_balance: params?.hasNegativeBalance,
-					is_sold_in_branch: params?.isSoldInBranch,
-					ordering: '-product__textcode',
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					product_category: params?.productCategory,
-					product_ids: params?.productIds,
-					product_status: params?.productStatus,
-					search: params?.search,
-				},
-				getLocalApiUrl(),
+			wrapServiceWithCatch(
+				BranchProductsService.list(
+					{
+						branch_id: params?.branchId,
+						has_bo_balance: params?.hasBoBalance,
+						has_negative_balance: params?.hasNegativeBalance,
+						is_sold_in_branch: params?.isSoldInBranch,
+						ordering: '-product__textcode',
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						product_category: params?.productCategory,
+						product_ids: params?.productIds,
+						product_status: params?.productStatus,
+						search: params?.search,
+					},
+					getLocalApiUrl(),
+				),
 			),
 		{
 			initialData: { data: { results: [], count: 0 } },

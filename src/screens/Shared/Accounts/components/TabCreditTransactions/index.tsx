@@ -14,6 +14,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	paymentTypes,
+	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import { useAuth, useQueryParams, useTransactions } from 'hooks';
@@ -51,7 +52,8 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	const { user } = useAuth();
 	const {
 		data: { transactions, total },
-		isFetching,
+		isFetching: isTransactionsFetching,
+		isFetched: isTransactionsFetched,
 		error,
 	} = useTransactions({
 		params: {
@@ -60,12 +62,13 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			...params,
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 
 	useEffect(() => {
-		const formattedTransactions = transactions.map((transaction) => {
+		const data = transactions.map((transaction) => {
 			const { id, invoice, total_amount, teller, datetime_created, payment } =
 				transaction;
 
@@ -94,7 +97,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			};
 		});
 
-		setDataSource(formattedTransactions);
+		setDataSource(data);
 	}, [transactions, payor, disabled]);
 
 	useEffect(() => {
@@ -145,7 +148,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				/>
 			)}
 
-			<Filter isLoading={isFetching} />
+			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 
 			<RequestErrors errors={convertIntoArray(error)} />
 
@@ -167,7 +170,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 			/>
 
 			{selectedAccount && (

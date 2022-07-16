@@ -12,14 +12,15 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
+	refetchOptions,
 } from 'global';
 import { useConnectivityLogs, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime } from 'utils';
+import { convertIntoArray, filterOption, formatDateTime } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
+	{ title: 'Date & Time Created', dataIndex: 'datetime' },
 ];
 
 interface Props {
@@ -31,29 +32,35 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		isFetching: isConnectivityLogsFetching,
 		data: { connectivityLogs, total },
 		error: connectivityLogsError,
+		isFetching: isConnectivityLogsFetching,
+		isFetched: isConnectivityLogsFetched,
 	} = useConnectivityLogs({
 		params: {
+			// We explicitly set the params to prevent multiple re-rerending because of the `tab` query parameter.
+			page: params?.page,
+			pageSize: params?.pageSize,
 			branchMachineId,
-			...queryParams,
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedConnectivityLogs = connectivityLogs.map(
-			(connectivityLog) => ({
-				key: connectivityLog.id,
-				type: <ConnectivityType type={connectivityLog.type} />,
-				datetime_created: formatDateTime(connectivityLog.datetime_created),
-			}),
-		);
+		console.log('run', params);
+	}, [params]);
 
-		setDataSource(formattedConnectivityLogs);
+	useEffect(() => {
+		const data = connectivityLogs.map((connectivityLog) => ({
+			key: connectivityLog.id,
+			type: <ConnectivityType type={connectivityLog.type} />,
+			datetime: formatDateTime(connectivityLog.datetime_created),
+		}));
+
+		setDataSource(data);
 	}, [connectivityLogs]);
 
 	return (
@@ -61,11 +68,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 			<TableHeader title="Connectivity Logs" />
 
 			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isConnectivityLogsFetching}
+				isLoading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
 			/>
 
 			<RequestErrors errors={convertIntoArray(connectivityLogsError)} />
@@ -74,9 +77,9 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 				columns={columns}
 				dataSource={dataSource}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -87,55 +90,52 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isConnectivityLogsFetching}
+				loading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
 			/>
 		</>
 	);
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<TimeRangeFilter disabled={isLoading} isRangeOnly />
-		</Col>
-		<Col lg={12} span={24}>
-			<Label label="Type" spacing />
-			<Select
-				style={{ width: '100%' }}
-				value={params.type}
-				onChange={(value) => {
-					setQueryParams({ type: value });
-				}}
-				disabled={isLoading}
-				optionFilterProp="children"
-				filterOption={(input, option) =>
-					option.children
-						.toString()
-						.toLowerCase()
-						.indexOf(input.toLowerCase()) >= 0
-				}
-				showSearch
-				allowClear
-			>
-				<Select.Option
-					key={connectivityTypes.OFFLINE_TO_ONLINE}
-					value={connectivityTypes.OFFLINE_TO_ONLINE}
+const Filter = ({ isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<TimeRangeFilter disabled={isLoading} isRangeOnly />
+			</Col>
+			<Col lg={12} span={24}>
+				<Label label="Type" spacing />
+				<Select
+					className="w-100"
+					value={params.type}
+					onChange={(value) => {
+						setQueryParams({ type: value }, { shouldResetPage: true });
+					}}
+					disabled={isLoading}
+					optionFilterProp="children"
+					filterOption={filterOption}
+					showSearch
+					allowClear
 				>
-					Offline to Online
-				</Select.Option>
-				<Select.Option
-					key={connectivityTypes.ONLINE_TO_OFFLINE}
-					value={connectivityTypes.ONLINE_TO_OFFLINE}
-				>
-					Online to Offline
-				</Select.Option>
-			</Select>
-		</Col>
-	</Row>
-);
+					<Select.Option
+						key={connectivityTypes.OFFLINE_TO_ONLINE}
+						value={connectivityTypes.OFFLINE_TO_ONLINE}
+					>
+						Offline to Online
+					</Select.Option>
+					<Select.Option
+						key={connectivityTypes.ONLINE_TO_OFFLINE}
+						value={connectivityTypes.ONLINE_TO_OFFLINE}
+					>
+						Online to Offline
+					</Select.Option>
+				</Select>
+			</Col>
+		</Row>
+	);
+};

@@ -2,7 +2,6 @@ import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
-	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
 	TransactionStatus,
@@ -15,13 +14,15 @@ import {
 	EMPTY_CELL,
 	pageSizeOptions,
 	paymentTypes,
+	refetchOptions,
+	timeRangeTypes,
 	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TransactionsCancelled } from 'screens/Shared/Branches/components/TabTransactions/components/TransactionsCancelled';
-import { convertIntoArray, formatInPeso } from 'utils';
+import { convertIntoArray, filterOption, formatInPeso } from 'utils';
 import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [
@@ -71,56 +72,53 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { transactions, total, warning },
-		isFetching: isFetchingTransactions,
+		data: { transactions, total },
 		error: transactionsError,
+		isFetching: isTransactionsFetching,
+		isFetched: isTransactionsFetched,
 	} = useTransactions({
-		params: { branchMachineId, ...params },
+		params: {
+			...params,
+			branchMachineId,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchTransactions = transactions.map(
-			(branchTransaction) => {
-				const {
-					id,
-					invoice,
-					total_amount,
-					status: branchTransactionStatus,
-					payment,
-				} = branchTransaction;
+		const data = transactions.map((transaction) => {
+			const { id, invoice, total_amount, status, payment } = transaction;
 
-				return {
-					key: id,
-					id: (
-						<ButtonLink
-							text={id}
-							onClick={() => setSelectedTransaction(branchTransaction)}
-						/>
+			return {
+				key: id,
+				id: (
+					<ButtonLink
+						text={id}
+						onClick={() => setSelectedTransaction(transaction)}
+					/>
+				),
+				invoice: invoice?.or_number || EMPTY_CELL,
+				amount: formatInPeso(total_amount),
+				status:
+					payment.mode === paymentTypes.CREDIT ? (
+						<BadgePill label="Pending" variant="secondary" />
+					) : (
+						<TransactionStatus status={status} />
 					),
-					invoice: invoice?.or_number || EMPTY_CELL,
-					amount: formatInPeso(total_amount),
-					status:
-						payment.mode === paymentTypes.CREDIT ? (
-							<BadgePill label="Pending" variant="secondary" />
-						) : (
-							<TransactionStatus status={branchTransactionStatus} />
-						),
-				};
-			},
-		);
+			};
+		});
 
-		setDataSource(formattedBranchTransactions);
+		setDataSource(data);
 	}, [transactions]);
 
 	return (
 		<>
 			<TableHeader title="Transactions" />
 
-			<Filter isLoading={isFetchingTransactions} />
+			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 
 			<RequestErrors errors={convertIntoArray(transactionsError)} />
-			<RequestWarnings warnings={convertIntoArray(warning)} />
 
 			{voidedStatuses.includes(_.toString(params?.statuses)) && (
 				<TransactionsCancelled
@@ -149,7 +147,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetchingTransactions}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 			/>
 
 			{selectedTransaction && (
@@ -184,12 +182,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					}}
 					disabled={isLoading}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					showSearch
 					allowClear
 				>

@@ -1,15 +1,22 @@
+import { REPORTS_RETRY_INTERVAL_MS } from 'global/constants';
 import { upperFirst } from 'lodash';
 import {
-	branchProductStatus,
 	deliveryReceiptProductStatus,
 	preparationSlipStatus,
 	productCheckingTypes,
+	productStatus,
 	quantityTypes,
 	requisitionSlipActions,
 	userTypes,
 } from './types';
 
 export const pageSizeOptions = ['10', '20', '50'];
+
+export const refetchOptions: any = {
+	notifyOnChangeProps: ['data', 'isFetching', 'isFetched'],
+	refetchInterval: REPORTS_RETRY_INTERVAL_MS,
+	refetchIntervalInBackground: true,
+};
 
 export const quantityTypeOptions = [
 	{
@@ -127,15 +134,15 @@ export const booleanOptions = [
 export const branchProductStatusOptions = [
 	{
 		name: 'Available',
-		value: branchProductStatus.AVAILABLE,
+		value: productStatus.AVAILABLE,
 	},
 	{
 		name: 'Reorder',
-		value: branchProductStatus.REORDER,
+		value: productStatus.REORDER,
 	},
 	{
 		name: 'Out of Stock',
-		value: branchProductStatus.OUT_OF_STOCK,
+		value: productStatus.OUT_OF_STOCK,
 	},
 ];
 
@@ -146,15 +153,15 @@ export const branchProductStatusOptionsWithAll = [
 	},
 	{
 		name: 'Available',
-		value: branchProductStatus.AVAILABLE,
+		value: productStatus.AVAILABLE,
 	},
 	{
 		name: 'Reorder',
-		value: branchProductStatus.REORDER,
+		value: productStatus.REORDER,
 	},
 	{
 		name: 'Out of Stock',
-		value: branchProductStatus.OUT_OF_STOCK,
+		value: productStatus.OUT_OF_STOCK,
 	},
 ];
 

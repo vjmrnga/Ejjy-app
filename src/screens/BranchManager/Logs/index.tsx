@@ -50,7 +50,6 @@ export const Logs = () => {
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
-
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
@@ -59,7 +58,7 @@ export const Logs = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedLogs = logs.map((log) => ({
+		const data = logs.map((log) => ({
 			key: log.id,
 			branchMachine: log?.branch_machine?.name || EMPTY_CELL,
 			user: getFullName(log.acting_user),
@@ -67,7 +66,7 @@ export const Logs = () => {
 			datetimeCreated: formatDateTimeExtended(log.datetime_created),
 		}));
 
-		setDataSource(formattedLogs);
+		setDataSource(data);
 	}, [logs]);
 
 	return (

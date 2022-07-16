@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { DiscountOptionsService } from 'services';
@@ -7,19 +8,20 @@ import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 const useDiscountOptions = ({ params }: Query) =>
 	useQuery<any>(
 		['useDiscountOptions', params?.page, params?.pageSize],
-		async () => {
-			let service = DiscountOptionsService.list;
-			if (!isStandAlone()) {
-				service = DiscountOptionsService.listOffline;
-			}
+		() => {
+			const service = isStandAlone()
+				? DiscountOptionsService.list
+				: DiscountOptionsService.listOffline;
 
-			return service(
-				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					},
+					getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },

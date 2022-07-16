@@ -25,9 +25,7 @@ export const CashieringCard = ({ className, bordered }: Props) => {
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
-		useSiteSettingsRetrieve({
-			options: { refetchOnMount: 'always' },
-		});
+		useSiteSettingsRetrieve();
 	const { data: branchDay, isFetching: isFetchingBranchDayAuthorization } =
 		useBranchesDayAuthorizationsRetrieve();
 	const {

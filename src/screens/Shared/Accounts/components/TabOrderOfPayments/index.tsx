@@ -15,6 +15,7 @@ import {
 	orderOfPaymentPurposes,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	timeRangeTypes,
 } from 'global';
 import { useAccounts, useOrderOfPayments, useQueryParams } from 'hooks';
 import { jsPDF } from 'jspdf';
@@ -29,12 +30,12 @@ import {
 
 const columns: ColumnsType = [
 	{ title: 'OP #', dataIndex: 'id' },
-	{ title: 'Date & Time Created', dataIndex: 'datetime_created' },
+	{ title: 'Date & Time Created', dataIndex: 'datetime' },
 	{ title: 'Payor', dataIndex: 'payor' },
 	{ title: 'Address', dataIndex: 'address' },
-	{ title: 'Amount of Payment', dataIndex: 'amount_of_payment' },
+	{ title: 'Amount of Payment', dataIndex: 'amountOfPayment' },
 	{ title: 'Purpose', dataIndex: 'purpose' },
-	{ title: 'Charge Sales Invoice', dataIndex: 'charge_sales_invoice' },
+	{ title: 'Charge Sales Invoice', dataIndex: 'chargeSalesInvoice' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -47,12 +48,17 @@ export const TabOrderOfPayments = () => {
 	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { orderOfPayments, total },
-		isFetching,
-		error,
-	} = useOrderOfPayments({ params: queryParams });
+		isFetching: isOrderOfPaymentsFetching,
+		error: orderOfPaymentsError,
+	} = useOrderOfPayments({
+		params: {
+			...params,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -77,12 +83,12 @@ export const TabOrderOfPayments = () => {
 			return {
 				key: id,
 				id,
-				datetime_created: formatDateTime(datetime_created),
+				datetime: formatDateTime(datetime_created),
 				payor: getFullName(payor),
 				address: payor.home_address,
-				amount_of_payment: formatInPeso(amount),
+				amountOfPayment: formatInPeso(amount),
 				purpose: purposeDescription,
-				charge_sales_invoice: charge_sales_transaction?.invoice ? (
+				chargeSalesInvoice: charge_sales_transaction?.invoice ? (
 					<>
 						<Button
 							type="link"
@@ -104,7 +110,7 @@ export const TabOrderOfPayments = () => {
 				actions: (
 					<Button
 						type="link"
-						onClick={() => onPrintPDF(orderOfPayment)}
+						onClick={() => handlePrintPDF(orderOfPayment)}
 						loading={isPrinting === id}
 					>
 						Print PDF
@@ -116,7 +122,7 @@ export const TabOrderOfPayments = () => {
 		setDataSource(formattedOrderOfPayments);
 	}, [orderOfPayments, isPrinting]);
 
-	const onPrintPDF = (orderOfPayment) => {
+	const handlePrintPDF = (orderOfPayment) => {
 		setIsPrinting(orderOfPayment.id);
 
 		const html = printOrderOfPayment(orderOfPayment);
@@ -142,24 +148,21 @@ export const TabOrderOfPayments = () => {
 		<div>
 			<TableHeader title="Order of Payments" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isFetching}
-			/>
+			<Filter isLoading={isOrderOfPaymentsFetching} />
 
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(orderOfPaymentsError)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 1200 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -170,7 +173,7 @@ export const TabOrderOfPayments = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isOrderOfPaymentsFetching}
 			/>
 
 			{selectedTransaction && (
@@ -184,19 +187,18 @@ export const TabOrderOfPayments = () => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
+const Filter = ({ isLoading }: FilterProps) => {
 	// STATES
 	const [accountSearch, setAccountSearch] = useState('');
 
 	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		isFetching,
 		data: { accounts },
+		isFetching: isAccountsFetching,
 	} = useAccounts({ params: { search: accountSearch } });
 
 	// METHODS
@@ -212,14 +214,14 @@ const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Payor" spacing />
 				<Select
-					style={{ width: '100%' }}
+					className="w-100"
 					filterOption={false}
 					defaultActiveFirstOption={false}
 					onSearch={onSearchDebounced}
-					notFoundContent={isFetching ? <Spin size="small" /> : null}
+					notFoundContent={isAccountsFetching ? <Spin size="small" /> : null}
 					value={params.payorId ? Number(params.payorId) : null}
 					onChange={(value) => {
-						setQueryParams({ payorId: value });
+						setQueryParams({ payorId: value }, { shouldResetPage: true });
 					}}
 					showSearch
 					allowClear

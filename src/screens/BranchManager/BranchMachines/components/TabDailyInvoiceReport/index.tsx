@@ -3,7 +3,6 @@ import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
 	RequestErrors,
-	RequestWarnings,
 	TableHeader,
 	ViewBackOrderModal,
 	ViewTransactionModal,
@@ -14,6 +13,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
+	refetchOptions,
 	timeRangeTypes,
 	transactionStatus,
 } from 'global';
@@ -43,18 +43,20 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { transactions, total, warning },
-		isFetching,
-		error,
+		data: { transactions, total },
+		error: transactionsError,
+		isFetching: isTransactionsFetching,
+		isFetched: isTransactionsFetched,
 	} = useTransactions({
 		params: {
 			branchMachineId,
 			statuses: transactionStatus.FULLY_PAID,
 			timeRange: timeRangeTypes.DAILY,
-			...queryParams,
+			...params,
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
@@ -131,25 +133,18 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 		<>
 			<TableHeader title="Daily Invoice Report" />
 
-			<Filter
-				params={queryParams}
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-				isLoading={isFetching}
-			/>
+			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 
-			<RequestErrors errors={convertIntoArray(error)} />
-			<RequestWarnings warnings={convertIntoArray(warning)} />
+			<RequestErrors errors={convertIntoArray(transactionsError)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
 				scroll={{ x: 800 }}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -160,7 +155,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 			/>
 
 			{selectedTransaction && (
@@ -181,28 +176,33 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 };
 
 interface FilterProps {
-	params: any;
 	isLoading: boolean;
-	setQueryParams: any;
 }
 
-const Filter = ({ params, isLoading, setQueryParams }: FilterProps) => (
-	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
-			<Label label="Date" spacing />
-			<DatePicker
-				disabled={isLoading}
-				format="MM/DD/YY"
-				value={
-					_.toString(params.timeRange).split(',')?.length === 2
-						? moment(_.toString(params.timeRange).split(',')[0])
-						: moment()
-				}
-				onChange={(date, dateString) => {
-					setQueryParams({ timeRange: [dateString, dateString].join(',') });
-				}}
-				allowClear={false}
-			/>
-		</Col>
-	</Row>
-);
+const Filter = ({ isLoading }: FilterProps) => {
+	const { params, setQueryParams } = useQueryParams();
+
+	return (
+		<Row className="mb-4" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Date" spacing />
+				<DatePicker
+					disabled={isLoading}
+					format="MM/DD/YY"
+					value={
+						_.toString(params.timeRange).split(',')?.length === 2
+							? moment(_.toString(params.timeRange).split(',')[0])
+							: moment()
+					}
+					onChange={(date, dateString) => {
+						setQueryParams(
+							{ timeRange: [dateString, dateString].join(',') },
+							{ shouldResetPage: true },
+						);
+					}}
+					allowClear={false}
+				/>
+			</Col>
+		</Row>
+	);
+};

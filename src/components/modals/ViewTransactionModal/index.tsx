@@ -16,8 +16,6 @@ import {
 
 interface Props {
 	transaction: any | number;
-	branchMachineId?: number;
-	serverUrl?: string;
 	onClose: any;
 }
 
@@ -30,12 +28,7 @@ const columns: ColumnsType = [
 	{ title: 'Amount', dataIndex: 'amount', align: 'right' },
 ];
 
-export const ViewTransactionModal = ({
-	transaction,
-	branchMachineId,
-	serverUrl,
-	onClose,
-}: Props) => {
+export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [transactionData, setTransactionData] = useState(null);
@@ -45,18 +38,10 @@ export const ViewTransactionModal = ({
 
 	// CUSTOM HOOKS
 	const { data: siteSettings, isFetching: isSiteSettingsFetching } =
-		useSiteSettingsRetrieve({
-			options: {
-				refetchOnMount: 'always',
-			},
-		});
+		useSiteSettingsRetrieve();
 	const { data: transactionRetrieved, isFetching: isTransactionFetching } =
 		useTransactionRetrieve({
 			id: transaction,
-			params: {
-				branchMachineId,
-				serverUrl,
-			},
 			options: {
 				enabled: _.isNumber(transaction),
 			},

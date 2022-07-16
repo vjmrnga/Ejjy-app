@@ -33,7 +33,7 @@ import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
-import { Dashboard } from './Dashboard/Dashboard';
+import { Dashboard } from './Dashboard';
 import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
@@ -43,6 +43,12 @@ import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { Users } from './Users';
 
+const refetchOptions: any = {
+	refetchInterval: 60000,
+	refetchIntervalInBackground: true,
+	notifyOnChangeProps: ['data'],
+};
+
 const BranchManager = () => {
 	// STATES
 	const [notificationsCount, setNotificationsCount] = useState(0);
@@ -51,13 +57,7 @@ const BranchManager = () => {
 	const { isFetching: isFetchingBranches } = useBranches({
 		options: { enabled: IS_APP_LIVE },
 	});
-	const { data: siteSettings } = useSiteSettingsRetrieve({
-		options: {
-			refetchInterval: 60000,
-			refetchIntervalInBackground: true,
-			notifyOnChangeProps: ['data'],
-		},
-	});
+	const { data: siteSettings } = useSiteSettingsRetrieve();
 	const {
 		data: { total: branchProductsTotal },
 	} = useBranchProducts({
@@ -65,24 +65,13 @@ const BranchManager = () => {
 			hasNegativeBalance: true,
 			pageSize: MAX_PAGE_SIZE,
 		},
-		options: {
-			refetchInterval: 60000,
-			refetchIntervalInBackground: true,
-			notifyOnChangeProps: ['data'],
-		},
+		options: refetchOptions,
 	});
 	const {
 		data: { salesTrackers },
 	} = useSalesTracker({
-		params: {
-			page: 1,
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			refetchInterval: 60000,
-			refetchIntervalInBackground: true,
-			notifyOnChangeProps: ['data'],
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: refetchOptions,
 	});
 	useUploadData();
 

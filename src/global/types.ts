@@ -47,7 +47,7 @@ export const requisitionSlipActions = {
 	OUT_OF_STOCK: 'out_of_stock',
 };
 
-export const branchProductStatus = {
+export const productStatus = {
 	AVAILABLE: 'available',
 	REORDER: 'reorder',
 	OUT_OF_STOCK: 'out_of_stock',

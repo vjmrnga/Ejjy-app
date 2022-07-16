@@ -8,6 +8,7 @@ interface List extends IListRequest {
 	payor_creditor_account_id?: number;
 	statuses?: string;
 	time_range?: string;
+	or_number?: string;
 }
 
 const service = {

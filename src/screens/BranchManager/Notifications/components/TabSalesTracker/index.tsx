@@ -18,8 +18,7 @@ export const TabSalesTracker = () => {
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve({
 		options: {
-			refetchOnMount: 'always',
-			notifyOnChangeProps: ['data'],
+			notifyOnChangeProps: ['data', 'isFetching'],
 		},
 	});
 	const {
