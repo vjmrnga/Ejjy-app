@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { convertIntoArray, filterOption, formatTime, getFullName } from 'utils';
 
 const columns: ColumnsType = [
-	{ title: 'Branch', dataIndex: 'branch' },
+	{ title: 'Branch Machine', dataIndex: 'branchMachine' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Date', dataIndex: 'date' },
 	{ title: 'Time', dataIndex: 'time' },
@@ -47,7 +47,7 @@ export const TabSessionAssignments = () => {
 	useEffect(() => {
 		const data = cashieringAssignments.map((assignment) => ({
 			key: assignment.id,
-			branch: assignment.branch.name,
+			branchMachine: `${assignment.branch_machine.branch.name} - ${assignment.branch_machine.name}`,
 			name: getFullName(assignment.user),
 			date: dayjs.tz(assignment.datetime_start).format('MMMM DD, YYYY'),
 			time: `${formatTime(assignment.datetime_start)} – ${formatTime(

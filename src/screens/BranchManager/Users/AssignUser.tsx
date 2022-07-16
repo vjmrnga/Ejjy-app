@@ -52,8 +52,8 @@ export const AssignUser = ({ match }: Props) => {
 	const { user: actingUser } = useAuth();
 	const {
 		data: user,
-		isFetching: isFetchingUser,
-		isSuccess: isSuccessUser,
+		isFetching: isUserFetching,
+		isSuccess: isUserSuccess,
 		error: userErrors,
 	} = useUserRetrieve({
 		id: userId,
@@ -70,7 +70,7 @@ export const AssignUser = ({ match }: Props) => {
 	});
 	const {
 		data: { cashieringAssignments },
-		isFetching: isFetchingCashieringAssignments,
+		isFetching: isCashieringAssignmentsFetching,
 		error: cashieringAssignmentsError,
 	} = useCashieringAssignments({
 		params: {
@@ -78,7 +78,7 @@ export const AssignUser = ({ match }: Props) => {
 			userId,
 		},
 		options: {
-			enabled: isSuccessUser,
+			enabled: isUserSuccess,
 		},
 	});
 	const { mutateAsync: deleteCashieringAssignment, error: deleteError } =
@@ -197,7 +197,7 @@ export const AssignUser = ({ match }: Props) => {
 							columns={columns}
 							dataSource={dataSource}
 							scroll={{ x: 1000 }}
-							loading={isFetchingUser || isFetchingCashieringAssignments}
+							loading={isUserFetching || isCashieringAssignmentsFetching}
 							pagination={false}
 						/>
 

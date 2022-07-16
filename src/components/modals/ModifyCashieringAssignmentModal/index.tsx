@@ -9,7 +9,7 @@ import {
 } from 'hooks';
 import moment, { Moment } from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, filterOption } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { Button, FieldError, Label } from '../../elements';
@@ -247,12 +247,7 @@ export const ModifyCashieringAssignmentForm = ({
 									}}
 									value={values.branchMachineId}
 									optionFilterProp="children"
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									filterOption={filterOption}
 									showSearch
 									allowClear
 								>

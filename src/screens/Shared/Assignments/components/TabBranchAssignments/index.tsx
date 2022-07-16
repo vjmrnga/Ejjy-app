@@ -50,7 +50,7 @@ export const TabBranchAssignments = () => {
 	useEffect(() => {
 		const data = branchAssignments.map((branchAssignment) => ({
 			key: branchAssignment.id,
-			branch: branchAssignment.branch.name,
+			branch: branchAssignment.branch?.name,
 			name: getFullName(branchAssignment.user),
 			datetime: formatDateTime(branchAssignment.datetime_created),
 		}));
