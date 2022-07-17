@@ -2,13 +2,13 @@
 import { Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { formatDateTime, formatQuantity } from 'utils';
 import {
 	ColoredText,
 	DetailsRow,
 	DetailsSingle,
 } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
-import { formatDateTime, formatQuantity } from 'utils';
 import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 
 const columns: ColumnsType = [
@@ -24,13 +24,13 @@ interface Props {
 
 export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 	<Modal
-		title="View Adjustment Slip"
 		className="Modal__large Modal__hasFooter"
 		footer={[<Button key="close" text="Close" onClick={onClose} />]}
-		onCancel={onClose}
-		visible
+		title="View Adjustment Slip"
 		centered
 		closable
+		visible
+		onCancel={onClose}
 	>
 		<DetailsRow>
 			<DetailsSingle
@@ -58,7 +58,7 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 				new_quantity:
 					Number(item.new_fulfilled_quantity_piece) ===
 					DEFAULT_APPROVED_FULFILLED_QUANTITY ? (
-						<ColoredText variant="primary" text="Approved" />
+						<ColoredText text="Approved" variant="primary" />
 					) : (
 						formatQuantity({
 							unitOfMeasurement:
@@ -67,8 +67,8 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 						})
 					),
 			}))}
-			scroll={{ x: 800 }}
 			pagination={false}
+			scroll={{ x: 800 }}
 		/>
 	</Modal>
 );

@@ -28,7 +28,7 @@ export const formatNumberWithCommas = (x) =>
 	x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 
 export const formatInPeso = (value, pesoSign = '₱') => {
-	const standardRound = (value) => _.round(value, 3).toFixed(2);
+	const standardRound = (number) => _.round(number, 3).toFixed(2);
 	const x = Number(value);
 
 	return _.isNaN(x)

@@ -147,6 +147,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			birReports,
 			siteSettings,
 		});
+		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'l',
 			unit: 'px',
@@ -173,9 +174,9 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	return (
 		<>
 			<TableHeader
-				wrapperClassName="pt-2 px-0"
-				title="BIR Report"
 				buttonName="Print PDF"
+				title="BIR Report"
+				wrapperClassName="pt-2 px-0"
 				onCreate={onPrintPDF}
 				onCreateDisabled={isPrinting}
 			/>
@@ -198,7 +199,11 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 3000 }}
+				loading={
+					(isBirReportsFetching && !isBirReportsFetched) ||
+					isSiteSettingsFetching ||
+					isPrinting
+				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -216,19 +221,14 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 3000 }}
 				size="middle"
-				loading={
-					(isBirReportsFetching && !isBirReportsFetched) ||
-					isSiteSettingsFetching ||
-					isPrinting
-				}
 				bordered
 			/>
 
 			<div
-				dangerouslySetInnerHTML={{
-					__html: html,
-				}}
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>
 		</>

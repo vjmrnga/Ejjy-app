@@ -116,7 +116,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
 				quantity: formatQuantity({
 					unitOfMeasurement: product?.unit_of_measurement,
-					quantity: quantity,
+					quantity,
 				}),
 				code: `${product?.textcode || ''} / ${
 					product?.barcode || product?.selling_barcode || ''
@@ -134,7 +134,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Daily Product Sales" />
+			<TableHeader title="Daily Product Sales" wrapperClassName="pt-2 px-0" />
 
 			<Filter
 				isLoading={
@@ -147,7 +147,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 1400 }}
+				loading={isTransactionProductsFetching && !isTransactionProductsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -162,7 +162,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionProductsFetching && !isTransactionProductsFetched}
+				scroll={{ x: 1400 }}
 			/>
 
 			{selectedTransaction && (
@@ -191,7 +191,6 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="V/VE" spacing />
 				<Radio.Group
-					value={params.isVatExempted}
 					defaultValue=""
 					options={[
 						{
@@ -207,19 +206,19 @@ const Filter = ({ isLoading }: FilterProps) => {
 							value: 'true',
 						},
 					]}
+					optionType="button"
+					value={params.isVatExempted}
 					onChange={(e) => {
 						setQueryParams(
 							{ isVatExempted: e.target.value },
 							{ shouldResetPage: true },
 						);
 					}}
-					optionType="button"
 				/>
 			</Col>
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Radio.Group
-					value={params.statuses}
 					defaultValue=""
 					options={[
 						{
@@ -235,13 +234,14 @@ const Filter = ({ isLoading }: FilterProps) => {
 							value: 'void_edited,void_cancelled',
 						},
 					]}
+					optionType="button"
+					value={params.statuses}
 					onChange={(e) => {
 						setQueryParams(
 							{ statuses: e.target.value },
 							{ shouldResetPage: true },
 						);
 					}}
-					optionType="button"
 				/>
 			</Col>
 		</Row>

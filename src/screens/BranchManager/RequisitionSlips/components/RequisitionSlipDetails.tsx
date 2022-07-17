@@ -2,9 +2,9 @@ import { Col, Row } from 'antd';
 import cn from 'classnames';
 import { upperFirst } from 'lodash';
 import React, { useCallback } from 'react';
+import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import { Label } from '../../../../components/elements';
 import { userTypes } from '../../../../global/types';
-import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import '../style.scss';
 
 export const requisitionSlipDetailsType = {
@@ -34,8 +34,8 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 					type === requisitionSlipDetailsType.SINGLE_VIEW,
 			})}
 		>
-			<Col span={24} lg={12}>
-				<Row gutter={[16, 16]} align="middle">
+			<Col lg={12} span={24}>
+				<Row align="middle" gutter={[16, 16]}>
 					<Col span={12}>
 						<Label label="Date &amp; Time Created" />
 					</Col>
@@ -43,7 +43,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 						<strong>{formatDateTime(requisitionSlip?.datetime_created)}</strong>
 					</Col>
 				</Row>
-				<Row gutter={[16, 16]} align="middle">
+				<Row align="middle" gutter={[16, 16]}>
 					<Col span={12}>
 						<Label label="Requestor" />
 					</Col>
@@ -52,7 +52,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 					</Col>
 				</Row>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
-					<Row gutter={[16, 16]} align="middle">
+					<Row align="middle" gutter={[16, 16]}>
 						<Col span={12}>
 							<Label label="Request Type" />
 						</Col>
@@ -63,7 +63,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 				)}
 			</Col>
 
-			<Col span={24} lg={12}>
+			<Col lg={12} span={24}>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
 					<Row gutter={[16, 16]}>
 						<Col span={12}>
@@ -79,7 +79,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 				)}
 
 				{type === requisitionSlipDetailsType.CREATE_EDIT && (
-					<Row gutter={[16, 16]} align="middle">
+					<Row align="middle" gutter={[16, 16]}>
 						<Col span={12}>
 							<Label label="F-RS1" />
 						</Col>

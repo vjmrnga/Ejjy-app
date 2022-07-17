@@ -9,8 +9,8 @@ export const ConnectionAlert = () => {
 		isConnected === false && (
 			<Alert
 				className="mb-4"
-				message="Online Server cannot be reached."
 				description="Create, Edit, and Delete functionalities are temporarily disabled until connection to Online Server is restored."
+				message="Online Server cannot be reached."
 				type="error"
 				showIcon
 			/>

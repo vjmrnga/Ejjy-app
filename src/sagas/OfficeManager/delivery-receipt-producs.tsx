@@ -1,11 +1,11 @@
 import { put, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import {
 	actions,
 	types,
 } from '../../ducks/OfficeManager/delivery-receipt-products';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/delivery-receipt-producs';
 
 /* WORKERS */

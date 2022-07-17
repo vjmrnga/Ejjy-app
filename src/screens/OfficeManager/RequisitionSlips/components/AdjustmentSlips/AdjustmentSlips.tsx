@@ -62,27 +62,27 @@ export const AdjustmentSlips = ({
 	return (
 		<Box>
 			<TableHeader
-				title="Adjustment Slips"
 				buttonName="Create Adjustment Slip"
+				title="Adjustment Slips"
 				onCreate={onCreateAdjustmentSlip}
 				onCreateDisabled={!hasProductUnderInvestigation()}
 			/>
 
 			<AdjustmentSlipsTable
 				adjustmentSlips={adjustmentSlips}
-				onViewAdjustmentSlip={onViewAdjustmentSlip}
 				loading={adjustmentSlipStatus === request.REQUESTING}
+				onViewAdjustmentSlip={onViewAdjustmentSlip}
 			/>
 
 			<ViewAdjustmentSlipModal
-				visible={viewAdjustmentSlipVisible}
 				adjustmentSlip={selectedAdjustmentSlip}
+				visible={viewAdjustmentSlipVisible}
 				onClose={() => setViewAdjustmentSlipVisible(false)}
 			/>
 
 			<CreateAdjustmentSlipModal
-				fetchDeliveryReceipt={fetchDeliveryReceipt}
 				deliveryReceipt={deliveryReceipt}
+				fetchDeliveryReceipt={fetchDeliveryReceipt}
 				visible={createAdjustmentSlipVisible}
 				onClose={() => setCreateAdjustmentSlipVisible(false)}
 			/>

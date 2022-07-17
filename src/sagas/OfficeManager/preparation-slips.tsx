@@ -1,9 +1,9 @@
 // TODO: This needs to be refactored, content of this must be merged with order slip saga
 import { retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { types } from '../../ducks/OfficeManager/preparation-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/order-slips';
 
 /* WORKERS */

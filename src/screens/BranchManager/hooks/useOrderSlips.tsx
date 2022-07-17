@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { modifiedExtraCallback, onCallback } from 'utils';
 import { actions, types } from '../../../ducks/order-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

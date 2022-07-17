@@ -48,11 +48,11 @@ export const getColoredText = (
 
 	if (isDefault) {
 		text = isOverOnlyIfDefault ? text : y;
-		component = <ColoredText variant="default" text={text} />;
+		component = <ColoredText text={text} variant="default" />;
 	} else if (x !== y) {
-		component = <ColoredText variant="error" text={text} />;
+		component = <ColoredText text={text} variant="error" />;
 	} else if (x === y) {
-		component = <ColoredText variant="primary" text={text} />;
+		component = <ColoredText text={text} variant="primary" />;
 	}
 
 	return component;
@@ -549,13 +549,13 @@ export const confirmPassword = ({
 		okText: 'Submit',
 		content: (
 			<Input.Password
-				size="large"
 				placeholder="Input Password"
-				onPressEnter={() => {
-					onSubmit();
-				}}
+				size="large"
 				onChange={(e) => {
 					password = e.target.value;
+				}}
+				onPressEnter={() => {
+					onSubmit();
 				}}
 			/>
 		),

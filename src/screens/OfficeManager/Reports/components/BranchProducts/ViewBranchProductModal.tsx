@@ -1,8 +1,8 @@
 import { Divider, Modal } from 'antd';
+import { DetailsRow, DetailsSingle } from 'components';
+import { Button, Label } from 'components/elements';
+import { SHOW_HIDE_SHORTCUT } from 'global';
 import React, { useEffect, useState } from 'react';
-import { DetailsRow, DetailsSingle } from '../../../../../components';
-import { Button, Label } from '../../../../../components/elements';
-import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import {
 	confirmPassword,
 	formatInPeso,
@@ -66,12 +66,12 @@ export const ViewBranchProductModal = ({
 	return (
 		<Modal
 			className="ViewBranchProductModal Modal__large Modal__hasFooter"
+			footer={[<Button key="button" text="Close" onClick={handleClose} />]}
 			title={title}
 			visible={visible}
-			footer={[<Button text="Close" onClick={handleClose} />]}
-			onCancel={handleClose}
 			centered
 			closable
+			onCancel={handleClose}
 		>
 			{branchProduct && (
 				<DetailsRow>

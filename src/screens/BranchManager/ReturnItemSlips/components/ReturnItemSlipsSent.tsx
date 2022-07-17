@@ -1,13 +1,13 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 import { ButtonLink } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
-import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -75,6 +75,7 @@ export const ReturnItemSlipsSent = ({ selectReturnItemSlip }: Props) => {
 		<Table
 			columns={columns}
 			dataSource={data}
+			loading={returnItemSlipsStatus === request.REQUESTING}
 			pagination={{
 				current: currentPage,
 				total: pageCount,
@@ -84,7 +85,6 @@ export const ReturnItemSlipsSent = ({ selectReturnItemSlip }: Props) => {
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}
-			loading={returnItemSlipsStatus === request.REQUESTING}
 		/>
 	);
 };

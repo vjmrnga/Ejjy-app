@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { modifiedCallback, modifiedExtraCallback } from 'utils';
 import { actions, selectors, types } from '../../../ducks/order-slips';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback, modifiedExtraCallback } from 'utils';
 
 const CREATE_SUCCESS_MESSAGE = 'Order slip was created successfully';
 const CREATE_ERROR_MESSAGE = 'An error occurred while creating the order slip';

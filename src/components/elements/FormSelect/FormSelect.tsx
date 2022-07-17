@@ -36,18 +36,18 @@ const FormSelect = ({
 		<select
 			{...field}
 			className={cn('FormSelect', { FormSelect__disabled: disabled })}
+			disabled={disabled}
 			id={id}
 			name={id}
-			disabled={disabled}
 			onChange={onChangeField}
 		>
 			{placeholder && (
-				<option value="" selected disabled>
+				<option value="" disabled selected>
 					{placeholder}
 				</option>
 			)}
 			{options.map(({ name, value, selected = false }) => (
-				<option selected={selected} value={value}>
+				<option key={value} selected={selected} value={value}>
 					{name}
 				</option>
 			))}

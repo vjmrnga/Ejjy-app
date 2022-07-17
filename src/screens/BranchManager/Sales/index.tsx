@@ -21,8 +21,6 @@ const columns: ColumnsType = [
 	{ title: 'Net Sales', dataIndex: 'netSales', fixed: 'right' },
 ];
 
-const BRANCH_MACHINES_INTERVAL_MS = 5000;
-
 export const Sales = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
@@ -97,7 +95,7 @@ export const Sales = () => {
 					<Col span={24}>
 						<div className="Summary">
 							<Row gutter={[16, 16]}>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="TOTAL SALES"
 										value={formatInPeso(
@@ -105,13 +103,13 @@ export const Sales = () => {
 										)}
 									/>
 								</Col>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="Cash Sales"
 										value={formatInPeso(summary.cashSales)}
 									/>
 								</Col>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="Credit Sales"
 										value={formatInPeso(summary.creditSales)}
@@ -124,7 +122,7 @@ export const Sales = () => {
 					<Col span={24}>
 						<div className="Summary">
 							<Row gutter={[16, 16]}>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="TOTAL CASH ON HAND"
 										value={formatInPeso(
@@ -132,13 +130,13 @@ export const Sales = () => {
 										)}
 									/>
 								</Col>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="Cash Sales"
 										value={formatInPeso(summary.cashSales)}
 									/>
 								</Col>
-								<Col xs={24} sm={8} md={8}>
+								<Col md={8} sm={8} xs={24}>
 									<Statistic
 										title="Credit Payment"
 										value={formatInPeso(summary.creditPayment)}
@@ -152,9 +150,9 @@ export const Sales = () => {
 						<Table
 							columns={columns}
 							dataSource={dataSource}
-							scroll={{ x: 1200 }}
-							pagination={false}
 							loading={isBranchMachinesFetching && !isBranchMachinesFetched}
+							pagination={false}
+							scroll={{ x: 1200 }}
 						/>
 					</Col>
 				</Row>

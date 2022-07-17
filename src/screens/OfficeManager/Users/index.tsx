@@ -1,4 +1,4 @@
-import { Alert, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import { AddIcon, ConnectionAlert, Content, ModifyUserModal } from 'components';
 import { Box, Button } from 'components/elements';
 import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
@@ -48,20 +48,20 @@ export const Users = () => {
 
 			<Box>
 				<Tabs
-					type="card"
 					activeKey={toString(currentBranchId)}
-					onTabClick={handleTabClick}
+					className="pa-6"
 					tabBarExtraContent={
 						<Button
 							disabled={isConnected === false}
+							icon={<AddIcon />}
+							iconDirection="left"
 							text="Create User"
 							variant="primary"
 							onClick={() => setModifyUserModalVisible(true)}
-							iconDirection="left"
-							icon={<AddIcon />}
 						/>
 					}
-					className="pa-6"
+					type="card"
+					onTabClick={handleTabClick}
 				>
 					<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branch">
 						<BranchUsers
@@ -109,12 +109,12 @@ export const Users = () => {
 				{reassignUserModalVisible && (
 					<BranchAssignmentUserModal
 						user={selectedUser}
-						onSuccess={() => {
-							queryClient.invalidateQueries('useUsers');
-						}}
 						onClose={() => {
 							setReassignUserModalVisible(false);
 							setSelectedUser(null);
+						}}
+						onSuccess={() => {
+							queryClient.invalidateQueries('useUsers');
 						}}
 					/>
 				)}

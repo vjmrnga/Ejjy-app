@@ -1,33 +1,18 @@
-import { Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import React, {
-	forwardRef,
-	useEffect,
-	useImperativeHandle,
-	useState,
-} from 'react';
-import { AddButtonIcon } from '../../../../components';
-import { ButtonLink } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { backOrdersStatuses, request } from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useBackOrders } from '../../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from 'utils';
+import { forwardRef } from 'react';
 
-const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date Received', dataIndex: 'datetime_received' },
-	{ title: 'Status', dataIndex: 'status' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+// const columns: ColumnsType = [
+// 	{ title: 'ID', dataIndex: 'id' },
+// 	{ title: 'Date Received', dataIndex: 'datetime_received' },
+// 	{ title: 'Status', dataIndex: 'status' },
+// 	{ title: 'Actions', dataIndex: 'actions' },
+// ];
 
-interface Props {
-	selectBackOrder: any;
-	onFulfill: any;
-}
+// interface Props {
+// 	selectBackOrder: any;
+// 	onFulfill: any;
+// }
 
-const Component = ({ selectBackOrder, onFulfill }: Props, ref) => {
+const Component = () => {
 	return null;
 	// // STATES
 	// const [data, setData] = useState([]);

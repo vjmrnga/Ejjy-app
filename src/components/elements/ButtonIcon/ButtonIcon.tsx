@@ -29,10 +29,10 @@ const ButtonIcon = ({
 }: Props) => (
 	<Tooltip placement="top" title={tooltip}>
 		<button
+			className={cn('ButtonIcon', classNames, { disabled, loading })}
 			// eslint-disable-next-line react/button-has-type
 			type={type}
 			onClick={onClick}
-			className={cn('ButtonIcon', classNames, { disabled, loading })}
 		>
 			{loading ? <Spin indicator={loadingIcon} /> : <>{icon}</>}
 		</button>

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-this-in-sfc */
 import { Divider, message, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
@@ -190,26 +191,26 @@ export const CreateStockOut = () => {
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
+						disabled={!selected}
 						id={`${fieldKey}.quantity`}
-						onChange={(value) => {
-							onChangeQuantity(productId, value);
-						}}
 						isWholeNumber={
 							!(
 								quantity_type === quantityTypes.PIECE &&
 								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 							)
 						}
-						disabled={!selected}
+						type="number"
+						onChange={(value) => {
+							onChangeQuantity(productId, value);
+						}}
 					/>
 					<FormSelect
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
+						disabled
 						onChange={(value) => {
 							onChangeQuantityType(productId, value);
 						}}
-						disabled
 					/>
 				</div>
 				<ErrorMessage
@@ -226,11 +227,11 @@ export const CreateStockOut = () => {
 		return (
 			<>
 				<FormInput
+					disabled={!selected}
 					id={`${fieldKey}.remarks`}
 					onChange={(value) => {
 						onChangeRemarks(productId, value);
 					}}
-					disabled={!selected}
 				/>
 				<ErrorMessage
 					name={`${fieldKey}.remarks`}
@@ -337,9 +338,9 @@ export const CreateStockOut = () => {
 		<Content className="CreateBackOrder" title="Stocks">
 			<Box>
 				<TableHeader
+					searchDisabled={activeTab === tabs.SELECTED}
 					title="Create Stock Out"
 					onSearch={onSearch}
-					searchDisabled={activeTab === tabs.SELECTED}
 				/>
 
 				<RequestErrors
@@ -352,20 +353,20 @@ export const CreateStockOut = () => {
 				/>
 
 				<Formik
-					innerRef={formRef}
 					initialValues={getFormDetails().DefaultValues}
+					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
+					enableReinitialize
 					onSubmit={() => {
 						setCreateStockOutModalVisible(true);
 					}}
-					enableReinitialize
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
 							<div className="PaddingHorizontal">
 								<Tabs
-									type="card"
 									activeKey={activeTab}
+									type="card"
 									onTabClick={setActiveTab}
 								>
 									<Tabs.TabPane key={tabs.ALL} tab="All Products" />
@@ -385,13 +386,13 @@ export const CreateStockOut = () => {
 										renderRemarks,
 										onChangeCheckbox,
 									}}
+									loading={loading}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
 										onPageChange,
 									}}
-									loading={loading}
 								/>
 							</div>
 
@@ -400,10 +401,10 @@ export const CreateStockOut = () => {
 							<div className="CreateBackOrder_createContainer">
 								<Button
 									classNames="CreateBackOrder_btnCreate"
-									type="submit"
-									text="Create"
-									variant="primary"
 									disabled={loading || isEmpty(productsRef.current)}
+									text="Create"
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>
@@ -412,11 +413,11 @@ export const CreateStockOut = () => {
 
 				{createStockOutModalVisible && (
 					<CreateStockOutModal
-						onSubmit={(formData) => {
-							onCreate(formData);
+						onClose={() => {
 							setCreateStockOutModalVisible(false);
 						}}
-						onClose={() => {
+						onSubmit={(formData) => {
+							onCreate(formData);
 							setCreateStockOutModalVisible(false);
 						}}
 					/>
@@ -449,7 +450,7 @@ const ProductsTable = ({
 		setDataSource(
 			values.branchProducts.map((product, index) => {
 				const fieldKey = `branchProducts.${index}`;
-				const isVatExempted = product.isVatExempted;
+				const { isVatExempted } = product;
 
 				return {
 					key: fieldKey,
@@ -495,6 +496,7 @@ const ProductsTable = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				loading={loading}
 				pagination={
 					activeTab === tabs.ALL
 						? {
@@ -509,7 +511,6 @@ const ProductsTable = ({
 						: false
 				}
 				scroll={{ x: 800 }}
-				loading={loading}
 			/>
 		</>
 	);

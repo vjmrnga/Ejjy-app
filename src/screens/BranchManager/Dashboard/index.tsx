@@ -120,7 +120,8 @@ export const Dashboard = () => {
 		if (!selectedDate) {
 			setDateError('No selected date yet.');
 			return;
-		} else if (selectedDate.isAfter(moment(), 'day')) {
+		}
+		if (selectedDate.isAfter(moment(), 'day')) {
 			setDateError("Date must not be after today's date.");
 			return;
 		}
@@ -138,13 +139,13 @@ export const Dashboard = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
-					pagination={false}
 					loading={
 						isCreatingXReadReport ||
 						isCreatingZReadReport ||
 						isLoadingBranchMachines
 					}
+					pagination={false}
+					scroll={{ x: 650 }}
 				/>
 
 				{xReadReport && (
@@ -165,17 +166,17 @@ export const Dashboard = () => {
 					className="Modal__hasFooter"
 					title="Select Date"
 					visible={datePickerModalVisible}
-					onOk={onSubmitDateSelection}
 					onCancel={() => {
 						setSelectedBranchMachine(null);
 						setDatePickerModalVisible(false);
 						setDateError(null);
 					}}
+					onOk={onSubmitDateSelection}
 				>
 					<Calendar
+						defaultValue={moment()}
 						disabledDate={(current) => current.isAfter(moment(), 'date')}
 						fullscreen={false}
-						defaultValue={moment()}
 						onSelect={(value) => {
 							setSelectedDate(value);
 							setDateError(null);

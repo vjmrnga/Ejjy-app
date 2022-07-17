@@ -82,22 +82,22 @@ export const Logs = () => {
 							...convertIntoArray(branchMachinesError, 'Branch Machines'),
 							...convertIntoArray(usersError, 'Users'),
 						]}
-						withSpaceTop
 						withSpaceBottom
+						withSpaceTop
 					/>
 
 					<Filter
+						branchMachines={branchMachines}
 						isLoading={
 							isFetchingLogs || isFetchingBranchMachines || isFetchingUsers
 						}
-						branchMachines={branchMachines}
 						users={users}
 					/>
 
 					<Table
 						columns={columns}
 						dataSource={dataSource}
-						scroll={{ x: 1000 }}
+						loading={isFetchingLogs}
 						pagination={{
 							current: Number(params.page) || DEFAULT_PAGE,
 							total,
@@ -112,7 +112,7 @@ export const Logs = () => {
 							position: ['bottomCenter'],
 							pageSizeOptions,
 						}}
-						loading={isFetchingLogs}
+						scroll={{ x: 1000 }}
 					/>
 				</Box>
 			</section>
@@ -134,26 +134,26 @@ const Filter = ({ branchMachines, isLoading, users }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Branch Machine" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={(value) => {
-						setQueryParams(
-							{ branchMachineId: value },
-							{ shouldResetPage: true },
-						);
-					}}
 					defaultValue={
 						params.branchMachineId ? Number(params.branchMachineId) : null
 					}
-					loading={isLoading}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					loading={isLoading}
+					optionFilterProp="children"
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ branchMachineId: value },
+							{ shouldResetPage: true },
+						);
+					}}
 				>
 					{branchMachines.map(({ id, name }) => (
 						<Select.Option key={id} value={id}>
@@ -166,23 +166,23 @@ const Filter = ({ branchMachines, isLoading, users }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="User" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={(value) => {
-						setQueryParams({ actingUserId: value }, { shouldResetPage: true });
-					}}
 					defaultValue={
 						params.actingUserId ? Number(params.actingUserId) : null
 					}
-					loading={isLoading}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					loading={isLoading}
+					optionFilterProp="children"
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ actingUserId: value }, { shouldResetPage: true });
+					}}
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>

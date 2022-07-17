@@ -60,7 +60,7 @@ export const TabBranchAssignments = () => {
 
 	return (
 		<div>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Branch Assignments" />
+			<TableHeader title="Branch Assignments" wrapperClassName="pt-2 px-0" />
 
 			<Filter />
 
@@ -72,7 +72,7 @@ export const TabBranchAssignments = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isBranchAssignmentsFetching}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -87,7 +87,7 @@ export const TabBranchAssignments = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isBranchAssignmentsFetching}
+				scroll={{ x: 800 }}
 			/>
 		</div>
 	);
@@ -122,19 +122,19 @@ const Filter = () => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
-				<Col xs={24} sm={12}>
+				<Col sm={12} xs={24}>
 					<Label label="Branch" spacing />
 					<Select
 						className="w-100"
+						disabled={isBranchesFetching}
+						filterOption={filterOption}
+						optionFilterProp="children"
 						value={params.branchId ? Number(params.branchId) : null}
+						allowClear
+						showSearch
 						onChange={(value) => {
 							setQueryParams({ branchId: value }, { shouldResetPage: true });
 						}}
-						optionFilterProp="children"
-						filterOption={filterOption}
-						disabled={isBranchesFetching}
-						allowClear
-						showSearch
 					>
 						{branches.map((branch) => (
 							<Select.Option key={branch.id} value={branch.id}>
@@ -144,19 +144,19 @@ const Filter = () => {
 					</Select>
 				</Col>
 
-				<Col xs={24} sm={12}>
+				<Col sm={12} xs={24}>
 					<Label label="User" spacing />
 					<Select
 						className="w-100"
+						disabled={isUsersFetching}
+						filterOption={filterOption}
+						optionFilterProp="children"
 						value={params.userId ? Number(params.userId) : null}
+						allowClear
+						showSearch
 						onChange={(value) => {
 							setQueryParams({ userId: value }, { shouldResetPage: true });
 						}}
-						optionFilterProp="children"
-						filterOption={filterOption}
-						disabled={isUsersFetching}
-						allowClear
-						showSearch
 					>
 						{users.map((user) => (
 							<Select.Option key={user.id} value={user.id}>

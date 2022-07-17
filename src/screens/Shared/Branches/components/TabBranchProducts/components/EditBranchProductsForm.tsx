@@ -4,6 +4,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { sleep } from 'utils';
 import { DetailsRow, DetailsSingle } from '../../../../../../components';
 import {
 	Button,
@@ -20,7 +21,6 @@ import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../../global/types';
-import { sleep } from 'utils';
 
 const { Text } = Typography;
 
@@ -121,6 +121,7 @@ export const EditBranchProductsForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -151,7 +152,6 @@ export const EditBranchProductsForm = ({
 					resetForm,
 				);
 			}}
-			enableReinitialize
 		>
 			{({ values }) => (
 				<Form className="form">
@@ -171,9 +171,9 @@ export const EditBranchProductsForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Checking" spacing />
 							<FormRadioButton
+								disabled={!values.is_sold_in_branch}
 								id="checking"
 								items={checkingTypesOptions}
-								disabled={!values.is_sold_in_branch}
 							/>
 							<ErrorMessage
 								name="checking"
@@ -194,11 +194,11 @@ export const EditBranchProductsForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								min={0}
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="reorder_point"
 								label="Reorder Point"
-								disabled={!values.is_sold_in_branch}
+								min={0}
+								type="number"
 							/>
 							<ErrorMessage
 								name="reorder_point"
@@ -208,10 +208,10 @@ export const EditBranchProductsForm = ({
 
 						<Col sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="max_balance"
 								label="Max Balance"
-								disabled={!values.is_sold_in_branch}
+								type="number"
 							/>
 							<ErrorMessage
 								name="max_balance"
@@ -227,9 +227,9 @@ export const EditBranchProductsForm = ({
 
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
+								disabled={!values.is_sold_in_branch}
 								id="price_per_piece"
 								label="Price (Piece)"
-								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
@@ -239,9 +239,9 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
+								disabled={!values.is_sold_in_branch}
 								id="markdown_price_per_piece1"
 								label="Wholesale Price (piece)"
-								disabled={!values.is_sold_in_branch}
 								isMoney
 							/>
 							<ErrorMessage
@@ -251,11 +251,11 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="markdown_price_per_piece2"
 								label="Special Price (piece)"
 								step=".01"
-								disabled={!values.is_sold_in_branch}
+								type="number"
 								isMoney
 							/>
 							<ErrorMessage
@@ -266,10 +266,10 @@ export const EditBranchProductsForm = ({
 
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="price_per_bulk"
 								label="Price (Bulk)"
-								disabled={!values.is_sold_in_branch}
+								type="number"
 								isMoney
 							/>
 							<ErrorMessage
@@ -279,10 +279,10 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="markdown_price_per_bulk1"
 								label="Wholesale Price (bulk)"
-								disabled={!values.is_sold_in_branch}
+								type="number"
 								isMoney
 							/>
 							<ErrorMessage
@@ -292,11 +292,11 @@ export const EditBranchProductsForm = ({
 						</Col>
 						<Col md={8} sm={12} xs={24}>
 							<FormInputLabel
-								type="number"
+								disabled={!values.is_sold_in_branch}
 								id="markdown_price_per_bulk2"
 								label="Special Price (bulk)"
 								step=".01"
-								disabled={!values.is_sold_in_branch}
+								type="number"
 								isMoney
 							/>
 							<ErrorMessage
@@ -311,14 +311,14 @@ export const EditBranchProductsForm = ({
 
 								<Col sm={12} xs={24}>
 									<FormInputLabel
-										type="number"
+										disabled={!values.is_sold_in_branch}
 										id="current_balance"
-										label="Current Balance"
 										isWholeNumber={
 											branchProduct.product.unit_of_measurement ===
 											unitOfMeasurementTypes.NON_WEIGHING
 										}
-										disabled={!values.is_sold_in_branch}
+										label="Current Balance"
+										type="number"
 									/>
 									<ErrorMessage
 										name="current_balance"
@@ -331,16 +331,16 @@ export const EditBranchProductsForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading || isSubmitting}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={branchProduct ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={loading || isSubmitting}
+							text={branchProduct ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

@@ -75,7 +75,7 @@ export const Notifications = () => {
 
 			// Set new notification count
 			const newNotificationsCount = resetCount + transactionCount;
-			if (newNotificationsCount != salesTrackerCount) {
+			if (newNotificationsCount !== salesTrackerCount) {
 				setSalesTrackerCount(newNotificationsCount);
 			}
 		}
@@ -92,18 +92,18 @@ export const Notifications = () => {
 		<Content title="Notifications">
 			<Box>
 				<Tabs
-					type="card"
-					className="PaddingHorizontal PaddingVertical"
 					activeKey={_.toString(currentTab)}
-					onTabClick={onTabClick}
+					className="PaddingHorizontal PaddingVertical"
+					type="card"
 					destroyInactiveTabPane
+					onTabClick={onTabClick}
 				>
 					<Tabs.TabPane
 						key={tabs.BRANCH_PRODUCTS}
 						tab={
 							<Space align="center">
 								<span>{tabs.BRANCH_PRODUCTS}</span>
-								<Badge overflowCount={999} count={branchProductsCount} />
+								<Badge count={branchProductsCount} overflowCount={999} />
 							</Space>
 						}
 					>
@@ -115,7 +115,7 @@ export const Notifications = () => {
 						tab={
 							<Space align="center">
 								<span>{tabs.SALES_TRACKER}</span>
-								<Badge overflowCount={999} count={salesTrackerCount} />
+								<Badge count={salesTrackerCount} overflowCount={999} />
 							</Space>
 						}
 					>

@@ -7,7 +7,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 const FormattedInputNumber = (props: InputNumberProps) => (
 	<InputNumber
-		prefix="₱"
+		decimalSeparator="."
 		formatter={(value, info) => {
 			let formattedValue = '';
 			if (info.userTyping) {
@@ -19,7 +19,7 @@ const FormattedInputNumber = (props: InputNumberProps) => (
 			return formattedValue;
 		}}
 		parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-		decimalSeparator="."
+		prefix="₱"
 		{...props}
 	/>
 );

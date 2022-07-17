@@ -55,7 +55,6 @@ export const Sales = () => {
 				<Space direction="vertical" size={10}>
 					<Label label="Quantity Sold Date" />
 					<Radio.Group
-						value={timeRangeType}
 						options={[
 							{ label: 'Daily', value: timeRangeTypes.DAILY },
 							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
@@ -64,6 +63,8 @@ export const Sales = () => {
 								value: timeRangeTypes.DATE_RANGE,
 							},
 						]}
+						optionType="button"
+						value={timeRangeType}
 						onChange={(e) => {
 							const { value } = e.target;
 							setTimeRangeType(value);
@@ -72,24 +73,9 @@ export const Sales = () => {
 								setQueryParams({ timeRange: value });
 							}
 						}}
-						optionType="button"
 					/>
 					{timeRangeType === timeRangeTypes.DATE_RANGE && (
 						<DatePicker.RangePicker
-							format="MM/DD/YY"
-							onCalendarChange={(dates, dateStrings) => {
-								if (dates?.[0] && dates?.[1]) {
-									setQueryParams({ timeRange: dateStrings.join(',') });
-								}
-							}}
-							defaultValue={
-								toString(params.timeRange).split(',')?.length === 2
-									? [
-											moment(toString(params.timeRange).split(',')[0]),
-											moment(toString(params.timeRange).split(',')[1]),
-									  ]
-									: undefined
-							}
 							defaultPickerValue={
 								toString(params.timeRange).split(',')?.length === 2
 									? [
@@ -98,6 +84,20 @@ export const Sales = () => {
 									  ]
 									: undefined
 							}
+							defaultValue={
+								toString(params.timeRange).split(',')?.length === 2
+									? [
+											moment(toString(params.timeRange).split(',')[0]),
+											moment(toString(params.timeRange).split(',')[1]),
+									  ]
+									: undefined
+							}
+							format="MM/DD/YY"
+							onCalendarChange={(dates, dateStrings) => {
+								if (dates?.[0] && dates?.[1]) {
+									setQueryParams({ timeRange: dateStrings.join(',') });
+								}
+							}}
 						/>
 					)}
 				</Space>

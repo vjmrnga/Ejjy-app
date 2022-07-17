@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { convertIntoArray, convertToBulk, formatQuantity } from 'utils';
 import { TableHeaderOrderSlip } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
@@ -15,7 +16,6 @@ import {
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
-import { convertIntoArray, convertToBulk, formatQuantity } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { useUsers } from '../../../../../hooks/useUsers';
@@ -331,8 +331,9 @@ export const OrderSlips = ({
 	return (
 		<Box>
 			<TableHeaderOrderSlip
-				title="F-OS1"
 				buttonName="Create Order Slip"
+				pending={getPendingCount()}
+				title="F-OS1"
 				onCreate={onCreateOrderSlip}
 				onCreateDisabled={
 					![
@@ -342,17 +343,16 @@ export const OrderSlips = ({
 				}
 				onOutOfStock={onCreateOutOfStock}
 				onOutOfStockDisabled={!hasAvailableProducts()}
-				pending={getPendingCount()}
 			/>
 
 			<OrderSlipsTable
-				orderSlips={orderSlips}
-				onViewOrderSlip={onViewOrderSlip}
-				onEditOrderSlip={onEditOrderSlip}
-				onCreateDeliveryReceipt={onCreateDeliveryReceipt}
 				loading={[deliveryReceiptStatus, orderSlipRequestStatus].includes(
 					request.REQUESTING,
 				)}
+				orderSlips={orderSlips}
+				onCreateDeliveryReceipt={onCreateDeliveryReceipt}
+				onEditOrderSlip={onEditOrderSlip}
+				onViewOrderSlip={onViewOrderSlip}
 			/>
 
 			{viewOrderSlipVisible && (
@@ -363,19 +363,7 @@ export const OrderSlips = ({
 			)}
 
 			<CreateEditOrderSlipModal
-				updateRequisitionSlipByFetching={fetchRequisitionSlip}
-				requisitionSlip={requisitionSlip}
-				orderSlip={selectedOrderSlip}
-				selectedBranchId={selectedBranchId}
 				branchPersonnels={branchPersonnels}
-				requestedProducts={requisitionSlipProducts}
-				onChangePreparingBranch={onChangePreparingBranch}
-				visible={createEditOrderSlipVisible}
-				onClose={() => setCreateEditOrderSlipVisible(false)}
-				warnings={[
-					...convertIntoArray(branchProductsWarnings, 'Branch Products'),
-					...convertIntoArray(userWarnings, 'Users'),
-				]}
 				errors={[
 					...convertIntoArray(branchProducstErrors, 'Branch Products'),
 					...convertIntoArray(userErrors, 'Users'),
@@ -383,11 +371,23 @@ export const OrderSlips = ({
 				loading={[usersStatus, branchProductsStatus].includes(
 					request.REQUESTING,
 				)}
+				orderSlip={selectedOrderSlip}
+				requestedProducts={requisitionSlipProducts}
+				requisitionSlip={requisitionSlip}
+				selectedBranchId={selectedBranchId}
+				updateRequisitionSlipByFetching={fetchRequisitionSlip}
+				visible={createEditOrderSlipVisible}
+				warnings={[
+					...convertIntoArray(branchProductsWarnings, 'Branch Products'),
+					...convertIntoArray(userWarnings, 'Users'),
+				]}
+				onChangePreparingBranch={onChangePreparingBranch}
+				onClose={() => setCreateEditOrderSlipVisible(false)}
 			/>
 
 			<SetOutOfStockModal
-				updateRequisitionSlipByFetching={fetchRequisitionSlip}
 				requisitionSlip={requisitionSlip}
+				updateRequisitionSlipByFetching={fetchRequisitionSlip}
 				visible={createOutOfStockVisible}
 				onClose={() => setCreateOutOfStockVisible(false)}
 			/>

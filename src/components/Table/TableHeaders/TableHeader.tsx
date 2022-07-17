@@ -58,21 +58,21 @@ export const TableHeader = ({
 					{onSearch && (
 						<SearchInput
 							classNames="search-input"
+							disabled={searchDisabled}
 							placeholder={searchPlaceholder}
 							onChange={(event) => {
 								debounceSearchedChange(event.target.value.trim());
 							}}
-							disabled={searchDisabled}
 						/>
 					)}
 
 					{onStatusSelect && (
 						<Select
 							classNames="status-select"
+							disabled={statusDisabled}
 							options={statuses}
 							placeholder="Status"
 							onChange={onStatusSelect}
-							disabled={statusDisabled}
 						/>
 					)}
 				</div>
@@ -82,13 +82,13 @@ export const TableHeader = ({
 
 					{onCreate && (
 						<Button
+							disabled={onCreateDisabled}
+							icon={<AddIcon />}
+							iconDirection="left"
 							text={buttonName}
+							tooltip={onCreateTooltip}
 							variant="primary"
 							onClick={onCreate}
-							iconDirection="left"
-							icon={<AddIcon />}
-							disabled={onCreateDisabled}
-							tooltip={onCreateTooltip}
 						/>
 					)}
 				</div>

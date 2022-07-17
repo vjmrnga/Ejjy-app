@@ -1,4 +1,5 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { actions, types } from '../ducks/order-slips';
 import { actions as requisitionSlipActions } from '../ducks/requisition-slips';
 import {
@@ -8,7 +9,6 @@ import {
 } from '../global/constants';
 import { request } from '../global/types';
 import { service } from '../services/order-slips';
-import { getOnlineApiUrl } from 'utils';
 
 /* WORKERS */
 function* list({ payload }: any) {

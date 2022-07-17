@@ -3,6 +3,7 @@ import { Col, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { formatDateTime, formatQuantity, getBackOrderStatus } from 'utils';
 import {
 	Breadcrumb,
 	Content,
@@ -15,7 +16,6 @@ import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { backOrdersStatuses, request } from '../../../global/types';
 import { useBackOrders } from '../../../hooks/useBackOrders';
-import { formatDateTime, formatQuantity, getBackOrderStatus } from 'utils';
 import { useBackOrderAdjustmentSlips } from '../hooks/useBackOrderAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
@@ -71,14 +71,14 @@ export const ViewBackOrder = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Back Order"
-			rightTitle={`#${backOrderId}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			rightTitle={`#${backOrderId}`}
+			title="[VIEW] Back Order"
 		>
 			<Details backOrder={backOrder} backOrdersStatus={backOrdersStatus} />
 			<AdjustmentSlips
-				backOrderId={backOrderId}
 				backOrder={backOrder}
+				backOrderId={backOrderId}
 				retrieveBackOrder={retrieveBackOrderFn}
 			/>
 		</Content>
@@ -159,8 +159,8 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 				<Table
 					columns={columns}
 					dataSource={requestedProducts}
-					scroll={{ x: 800 }}
 					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 		</Spin>
@@ -209,8 +209,8 @@ const AdjustmentSlips = ({
 	return (
 		<Box>
 			<TableHeader
-				title="Adjustment Slips"
 				buttonName="Create Adjustment Slip"
+				title="Adjustment Slips"
 				onCreate={() => {
 					setCreateAdjustmentSlipVisible(true);
 				}}
@@ -219,10 +219,10 @@ const AdjustmentSlips = ({
 
 			<AdjustmentSlipsTable
 				adjustmentSlips={adjustmentSlips}
+				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 				onViewAdjustmentSlip={(adjustmentSlip) => {
 					setSelectedAdjustmentSlip(adjustmentSlip);
 				}}
-				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 			/>
 
 			{selectedAdjustmentSlip && (
@@ -235,11 +235,11 @@ const AdjustmentSlips = ({
 			{createAdjustmentSlipVisible && (
 				<CreateAdjustmentSlipModal
 					backOrder={backOrder}
+					onClose={() => setCreateAdjustmentSlipVisible(false)}
 					onSuccess={() => {
 						retrieveBackOrder();
 						listBackOrderAdjustmentSlipsFn();
 					}}
-					onClose={() => setCreateAdjustmentSlipVisible(false)}
 				/>
 			)}
 		</Box>

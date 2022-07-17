@@ -14,7 +14,7 @@ import jsPDF from 'jspdf';
 import React, { useState } from 'react';
 import { formatDate, formatInPeso } from 'utils';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 interface Props {
 	report: any;
@@ -72,7 +72,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 	return (
 		<Modal
 			className="Modal__hasFooter"
-			title="Z-Read Report"
 			footer={[
 				<Button
 					key="print"
@@ -107,6 +106,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					Create TXT
 				</Button>,
 			]}
+			title="Z-Read Report"
 			width={425}
 			centered
 			closable
@@ -204,6 +204,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			<ReceiptFooter />
 
 			<div
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>

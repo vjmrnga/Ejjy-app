@@ -3,10 +3,10 @@ import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TabStockIn } from 'screens/BranchManager/Stock/components/TabStockIn';
-import { TabStockOut } from 'screens/BranchManager/Stock/components/TabStockOut';
+import { TabStockIn } from './components/TabStockIn';
+import { TabStockOut } from './components/TabStockOut';
 
 const tabs = {
 	STOCK_IN: 'Stock In',
@@ -38,22 +38,22 @@ export const Stocks = () => {
 		<Content title="Stock">
 			<Box>
 				<Tabs
-					type="card"
-					className="PaddingHorizontal PaddingVertical"
 					activeKey={_.toString(currentTab)}
-					onTabClick={onTabClick}
-					destroyInactiveTabPane
+					className="PaddingHorizontal PaddingVertical"
 					tabBarExtraContent={
 						<Link
 							to={`stocks/stock-${
 								_.toString(currentTab) === tabs.STOCK_IN ? 'in' : 'out'
 							}/create`}
 						>
-							<Button type="primary" size="large">
+							<Button size="large" type="primary">
 								Create {_.toString(currentTab)}
 							</Button>
 						</Link>
 					}
+					type="card"
+					destroyInactiveTabPane
+					onTabClick={onTabClick}
 				>
 					<Tabs.TabPane key={tabs.STOCK_IN} tab={tabs.STOCK_IN}>
 						<TabStockIn />

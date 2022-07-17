@@ -104,7 +104,7 @@ export const TabTransactions = ({ branch }: Props) => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-0" title="Transactions" />
+			<TableHeader title="Transactions" wrapperClassName="pt-0" />
 
 			<Filter isLoading={isFetching} />
 
@@ -117,15 +117,15 @@ export const TabTransactions = ({ branch }: Props) => {
 			].includes(toString(params?.statuses)) && (
 				<TransactionsCancelled
 					branchId={getId(branch)}
-					timeRange={toString(params?.timeRange)}
 					statuses={toString(params?.statuses)}
+					timeRange={toString(params?.timeRange)}
 				/>
 			)}
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isFetching}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -140,7 +140,7 @@ export const TabTransactions = ({ branch }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				scroll={{ x: 800 }}
 			/>
 
 			{selectedTransaction && (
@@ -168,21 +168,21 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
-					style={{ width: '100%' }}
-					value={params.statuses}
-					onChange={(value) => {
-						setQueryParams({ statuses: value }, { shouldResetPage: true });
-					}}
 					disabled={isLoading}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
+					value={params.statuses}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ statuses: value }, { shouldResetPage: true });
+					}}
 				>
 					{transactionStatusOptions.map((option) => (
 						<Select.Option key={option.value} value={option.value}>

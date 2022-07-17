@@ -35,12 +35,12 @@ export const BranchAssignmentUserModal = ({
 
 	return (
 		<Modal
-			title="[Assign] User"
 			footer={null}
-			onCancel={onClose}
+			title="[Assign] User"
 			centered
 			closable
 			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(createError?.errors)}
@@ -48,10 +48,10 @@ export const BranchAssignmentUserModal = ({
 			/>
 
 			<BranchAssignmentUserForm
-				user={user}
 				isLoading={isCreatingBranchAssignment}
-				onSubmit={handleSubmit}
+				user={user}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -94,16 +94,17 @@ export const BranchAssignmentUserForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Col span={24}>
 						<Label label="Branch" spacing />
 						<Select
+							allowClear={false}
 							className="w-100"
 							filterOption={(input, option) =>
 								option.children
@@ -111,15 +112,14 @@ export const BranchAssignmentUserForm = ({
 									.toLowerCase()
 									.indexOf(input.toLowerCase()) >= 0
 							}
+							loading={isFetchingBranches}
 							optionFilterProp="children"
-							value={values.branchId}
 							size="large"
-							allowClear={false}
+							value={values.branchId}
 							showSearch
 							onChange={(value) => {
 								setFieldValue('branchId', value);
 							}}
-							loading={isFetchingBranches}
 						>
 							{branches.map((branch) => (
 								<Select.Option key={branch.id} value={branch.id}>
@@ -134,12 +134,12 @@ export const BranchAssignmentUserForm = ({
 					</Col>
 
 					<div className="ModalCustomFooter">
-						<Button type="button" text="Cancel" onClick={onClose} />
+						<Button text="Cancel" type="button" onClick={onClose} />
 						<Button
-							type="submit"
-							text="Submit"
-							variant="primary"
 							loading={isLoading}
+							text="Submit"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

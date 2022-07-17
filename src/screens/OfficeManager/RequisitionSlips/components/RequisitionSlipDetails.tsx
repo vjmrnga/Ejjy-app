@@ -2,11 +2,11 @@ import { Col, Row } from 'antd';
 import cn from 'classnames';
 import { upperFirst } from 'lodash';
 import React, { useCallback } from 'react';
+import { formatDateTime } from 'utils';
 import { Label, Select } from '../../../../components/elements';
 import { requisitionSlipActionsOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useRequisitionSlips } from '../../../../hooks/useRequisitionSlips';
-import { formatDateTime } from 'utils';
 import '../style.scss';
 
 export const requisitionSlipDetailsType = {
@@ -49,8 +49,8 @@ export const RequisitionSlipDetails = ({
 				details: type === requisitionSlipDetailsType.SINGLE_VIEW,
 			})}
 		>
-			<Col span={24} lg={12}>
-				<Row gutter={[16, 16]} align="middle">
+			<Col lg={12} span={24}>
+				<Row align="middle" gutter={[16, 16]}>
 					<Col span={12}>
 						<Label label="Date &amp; Time Created" />
 					</Col>
@@ -58,7 +58,7 @@ export const RequisitionSlipDetails = ({
 						<span>{formatDateTime(requisitionSlip?.datetime_created)}</span>
 					</Col>
 				</Row>
-				<Row gutter={[16, 16]} align="middle">
+				<Row align="middle" gutter={[16, 16]}>
 					<Col span={12}>
 						<Label label="Requestor" />
 					</Col>
@@ -67,7 +67,7 @@ export const RequisitionSlipDetails = ({
 					</Col>
 				</Row>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
-					<Row gutter={[16, 16]} align="middle">
+					<Row align="middle" gutter={[16, 16]}>
 						<Col span={12}>
 							<Label label="Request Type" />
 						</Col>
@@ -78,7 +78,7 @@ export const RequisitionSlipDetails = ({
 				)}
 			</Col>
 
-			<Col span={24} lg={12}>
+			<Col lg={12} span={24}>
 				{type === requisitionSlipDetailsType.SINGLE_VIEW && (
 					<Row gutter={[16, 16]}>
 						<Col span={12}>
@@ -87,18 +87,18 @@ export const RequisitionSlipDetails = ({
 						<Col span={12}>
 							<Select
 								classNames="status-select"
+								disabled={requisitionSlipsStatus === request.REQUESTING}
 								options={requisitionSlipActionsOptions}
 								placeholder="status"
 								value={requisitionSlip?.action?.action}
 								onChange={onStatusChange}
-								disabled={requisitionSlipsStatus === request.REQUESTING}
 							/>
 						</Col>
 					</Row>
 				)}
 
 				{type === requisitionSlipDetailsType.CREATE_EDIT && (
-					<Row gutter={[16, 16]} align="middle">
+					<Row align="middle" gutter={[16, 16]}>
 						<Col span={12}>
 							<Label label="F-RS1" />
 						</Col>

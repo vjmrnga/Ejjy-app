@@ -83,9 +83,9 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	return (
 		<>
 			<TableHeader
+				buttonName="Create Branch Machine"
 				title="Branch Machines"
 				wrapperClassName="pt-0"
-				buttonName="Create Branch Machine"
 				onCreate={handleCreate}
 				onCreateDisabled={disabled}
 			/>
@@ -101,9 +101,9 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
 				loading={isFetching || isLoading}
 				pagination={false}
+				scroll={{ x: 800 }}
 			/>
 
 			{modifyBranchMachineModalVisible && (

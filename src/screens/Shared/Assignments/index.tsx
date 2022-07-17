@@ -37,11 +37,11 @@ export const Assignments = () => {
 		<Content title="Assignments">
 			<Box>
 				<Tabs
-					type="card"
-					className="pa-6"
 					activeKey={toString(currentTab)}
-					onTabClick={onTabClick}
+					className="pa-6"
+					type="card"
 					destroyInactiveTabPane
+					onTabClick={onTabClick}
 				>
 					<Tabs.TabPane key={assignmentTabs.BRANCH} tab={assignmentTabs.BRANCH}>
 						<TabBranchAssignments />

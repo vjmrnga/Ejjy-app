@@ -40,12 +40,12 @@ export const ModifyBranchModal = ({ branch, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={`${branch ? '[Edit]' : '[Create]'} Branch`}
-			visible
 			footer={null}
-			onCancel={onClose}
+			title={`${branch ? '[Edit]' : '[Create]'} Branch`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -58,8 +58,8 @@ export const ModifyBranchModal = ({ branch, onClose }: Props) => {
 			<ModifyBranchForm
 				branch={branch}
 				isLoading={isCreatingBranch || isEditingBranch}
-				onSubmit={handleSubmit}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -97,10 +97,10 @@ export const ModifyBranchForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -109,8 +109,8 @@ export const ModifyBranchForm = ({
 							<Label label="Name" spacing />
 							<Input
 								name="name"
-								value={values['name']}
 								size="large"
+								value={values['name']}
 								onChange={(e) => {
 									setFieldValue('name', e.target.value);
 								}}
@@ -125,8 +125,8 @@ export const ModifyBranchForm = ({
 							<Label label="Online URL" spacing />
 							<Input
 								name="onlineUrl"
-								value={values['onlineUrl']}
 								size="large"
+								value={values['onlineUrl']}
 								onChange={(e) => {
 									setFieldValue('onlineUrl', e.target.value);
 								}}
@@ -140,16 +140,16 @@ export const ModifyBranchForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isLoading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={branch ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={isLoading}
+							text={branch ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

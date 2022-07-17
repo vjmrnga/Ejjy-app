@@ -1,8 +1,9 @@
+import { userTypes } from 'global';
+import { useAuth } from 'hooks/useAuth';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { userTypes } from '../../global/types';
-import { useAuth } from '../../hooks/useAuth';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const NoAuthRoute = ({ forUserType, ...rest }: any) => {
 	const { user } = useAuth();
 	const { user_type: userType } = user || {};

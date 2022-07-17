@@ -30,8 +30,8 @@ export const AccountTotalBalance = ({
 					{isCUDShown(user.user_type) && (
 						<Button
 							className="mt-3"
-							type="primary"
 							disabled={disabled}
+							type="primary"
 							onClick={onClick}
 						>
 							Create Order of Payment

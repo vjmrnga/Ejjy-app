@@ -55,12 +55,12 @@ export const ModifyDiscountOptionModal = ({
 
 	return (
 		<Modal
-			title={`${discountOption ? '[Edit]' : '[Create]'} Discount Option`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${discountOption ? '[Edit]' : '[Create]'} Discount Option`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -73,8 +73,8 @@ export const ModifyDiscountOptionModal = ({
 			<ModifyDiscountOptionForm
 				discountOption={discountOption}
 				isLoading={isCreating || isEditing}
-				onSubmit={handleSubmit}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -143,6 +143,7 @@ export const ModifyDiscountOptionForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit({
 					...formData,
@@ -152,12 +153,11 @@ export const ModifyDiscountOptionForm = ({
 							: undefined,
 				});
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
-						<Col xs={24} sm={12}>
+						<Col sm={12} xs={24}>
 							<Label label="Name" spacing />
 							<Input
 								name="name"
@@ -172,7 +172,7 @@ export const ModifyDiscountOptionForm = ({
 							/>
 						</Col>
 
-						<Col xs={24} sm={12}>
+						<Col sm={12} xs={24}>
 							<Label label="Code" spacing />
 							<Input
 								name="code"
@@ -187,45 +187,45 @@ export const ModifyDiscountOptionForm = ({
 							/>
 						</Col>
 
-						<Col xs={24} sm={12}>
+						<Col sm={12} xs={24}>
 							<Label id="isVatInclusive" label="VAT Inclusive" spacing />
 							<Radio.Group
-								value={values.isVatInclusive}
 								options={[
 									{ label: 'Yes', value: true },
 									{ label: 'No', value: false },
 								]}
+								optionType="button"
+								value={values.isVatInclusive}
 								onChange={(e) => {
 									const { value } = e.target;
 									setFieldValue('isVatInclusive', value);
 								}}
-								optionType="button"
 							/>
 						</Col>
 
-						<Col xs={24} sm={12}>
+						<Col sm={12} xs={24}>
 							<Label id="type" label="Type" spacing />
 							<Radio.Group
-								value={values.type}
 								options={[
 									{ label: 'Amount', value: discountTypes.AMOUNT },
 									{ label: 'Percentage', value: discountTypes.PERCENTAGE },
 								]}
+								optionType="button"
+								value={values.type}
 								onChange={(e) => {
 									const { value } = e.target;
 									setFieldValue('type', value);
 									setFieldValue('percentage', undefined);
 								}}
-								optionType="button"
 							/>
 						</Col>
 
 						{values.type === discountTypes.PERCENTAGE && (
-							<Col xs={24} sm={12}>
+							<Col sm={12} xs={24}>
 								<FormInputLabel
-									type="number"
 									id="percentage"
 									label="Percentage"
+									type="number"
 								/>
 								<ErrorMessage
 									name="percentage"
@@ -237,7 +237,7 @@ export const ModifyDiscountOptionForm = ({
 						<Col xs={24}>
 							<Divider />
 
-							<Row gutter={[16, 16]} justify="center" align="bottom">
+							<Row align="bottom" gutter={[16, 16]} justify="center">
 								{values.additionalFields.map((field, index) => (
 									<>
 										<Col xs={21}>
@@ -258,21 +258,21 @@ export const ModifyDiscountOptionForm = ({
 											/>
 										</Col>
 										<Col
-											xs={3}
 											className="d-flex align-center justify-center pb-1"
+											xs={3}
 										>
 											<AntdButton
+												icon={<CloseOutlined />}
+												shape="circle"
 												size="small"
 												type="primary"
-												shape="circle"
-												icon={<CloseOutlined />}
+												danger
 												onClick={() => {
 													const { additionalFields } = values;
 													additionalFields.splice(index, 1);
 
 													setFieldValue('additionalFields', additionalFields);
 												}}
-												danger
 											/>
 										</Col>
 									</>
@@ -295,16 +295,16 @@ export const ModifyDiscountOptionForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isLoading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={discountOption ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={isLoading}
+							text={discountOption ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

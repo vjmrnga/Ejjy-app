@@ -53,8 +53,8 @@ export const ReturnItemSlips = () => {
 
 				<Tabs
 					className="ReturnItemSlips_tabs PaddingHorizontal PaddingVertical"
-					type="card"
 					defaultActiveKey={activeTab}
+					type="card"
 					onTabClick={setActiveTab}
 				>
 					<Tabs.TabPane key={tabs.RECEIVE} tab="Receive">
@@ -87,8 +87,8 @@ export const ReturnItemSlips = () => {
 				{modalType === modals.FULFILL && selectedReturnItemSlip && (
 					<FulfillReturnItemSlipModal
 						returnItemSlip={selectedReturnItemSlip}
-						onSuccess={() => returnItemSlipsReceiveRef.current?.refreshList()}
 						onClose={() => onOpenModal(null, null)}
+						onSuccess={() => returnItemSlipsReceiveRef.current?.refreshList()}
 					/>
 				)}
 			</Box>

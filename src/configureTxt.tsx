@@ -23,7 +23,6 @@ const writeHeader = (headerData) => {
 		tin,
 	} = siteSettings;
 	const {
-		branch,
 		name,
 		permit_to_use: ptuNumber,
 		machine_identification_number: machineID,
@@ -32,9 +31,9 @@ const writeHeader = (headerData) => {
 	let rowNumber = currentRowNumber;
 
 	const storeNames = storeName.trim().split('\n');
-	storeNames.forEach((name) => {
+	storeNames.forEach((item) => {
 		reportTextFile.write({
-			text: name,
+			text: item,
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});
@@ -42,9 +41,9 @@ const writeHeader = (headerData) => {
 	});
 
 	const locations = location.trim().split('\n');
-	locations.forEach((name) => {
+	locations.forEach((item) => {
 		reportTextFile.write({
-			text: name,
+			text: item,
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});

@@ -140,6 +140,7 @@ export const SiteSettings = () => {
 						// NOTE: We need to use a no-named function so
 						// we can use 'this' and access the other form field value.
 						const closeSessionDeadline = dayjs(value);
+						// eslint-disable-next-line react/no-this-in-sfc
 						const closeDayDeadline = dayjs(this.parent.closeDayDeadline);
 
 						return closeDayDeadline.diff(closeSessionDeadline, 'minute') >= 5;
@@ -214,12 +215,12 @@ export const SiteSettings = () => {
 		<>
 			<Label id={name} label={label} spacing />
 			<DatePicker
+				allowClear={false}
 				format="YYYY-MM-DD"
 				size="large"
+				style={{ width: '100%' }}
 				value={values[name]}
 				onSelect={(value) => setFieldValue(name, value)}
-				style={{ width: '100%' }}
-				allowClear={false}
 			/>
 			<ErrorMessage
 				name={name}
@@ -232,15 +233,15 @@ export const SiteSettings = () => {
 		<>
 			<Label id={name} label={label} spacing />
 			<TimePicker
-				name={name}
-				format="h:mm A"
-				size="large"
-				onSelect={(value) => setFieldValue(name, value)}
-				value={values[name]}
-				className="w-100"
 				allowClear={false}
+				className="w-100"
+				format="h:mm A"
+				name={name}
+				size="large"
+				value={values[name]}
 				hideDisabledOptions
 				use12Hours
+				onSelect={(value) => setFieldValue(name, value)}
 			/>
 			<ErrorMessage
 				name={name}
@@ -261,32 +262,32 @@ export const SiteSettings = () => {
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
 					name={name}
-					value={values[name]}
+					size="large"
 					type={type}
+					value={values[name]}
 					onChange={(e) => {
 						setFieldValue(name, e.target.value);
 					}}
-					size="large"
 				/>
 			)}
 			{type === inputTypes.TEXTAREA && (
 				<Input.TextArea
 					name={name}
-					value={values[name]}
 					rows={3}
+					size="large"
+					value={values[name]}
 					onChange={(e) => {
 						setFieldValue(name, e.target.value);
 					}}
-					size="large"
 				/>
 			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
+					controls={false}
 					name={name}
 					size="large"
-					value={values[name]}
-					controls={false}
 					style={{ width: '100%' }}
+					value={values[name]}
 					onChange={(value) => {
 						setFieldValue(name, value);
 					}}
@@ -331,10 +332,10 @@ export const SiteSettings = () => {
 					<Formik
 						initialValues={getFormDetails().DefaultValues}
 						validationSchema={getFormDetails().Schema}
+						enableReinitialize
 						onSubmit={(formData) => {
 							onSubmit(formData);
 						}}
-						enableReinitialize
 					>
 						{({ values, setFieldValue }) => (
 							<Form>
@@ -343,63 +344,63 @@ export const SiteSettings = () => {
 								<Row gutter={[16, 16]}>
 									<Divider>Store Details</Divider>
 
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										<Label label="Markdown on Credit Transactions" spacing />
 										<Radio.Group
-											value={values.isMarkdownAllowedIfCredit}
 											options={[
 												{ label: 'Allowed', value: true },
 												{ label: 'Not Allowed', value: false },
 											]}
+											optionType="button"
+											value={values.isMarkdownAllowedIfCredit}
 											onChange={(e) => {
 												setFieldValue(
 													'isMarkdownAllowedIfCredit',
 													e.target.value,
 												);
 											}}
-											optionType="button"
 										/>
 									</Col>
 
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										<Label label="Discount on Credit Transactions" spacing />
 										<Radio.Group
-											value={values.isDiscountAllowedIfCredit}
 											options={[
 												{ label: 'Allowed', value: true },
 												{ label: 'Not Allowed', value: false },
 											]}
+											optionType="button"
+											value={values.isDiscountAllowedIfCredit}
 											onChange={(e) => {
 												setFieldValue(
 													'isDiscountAllowedIfCredit',
 													e.target.value,
 												);
 											}}
-											optionType="button"
 										/>
 									</Col>
 
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										<Label label="Time Checker Feature" spacing />
 										<Radio.Group
-											value={values.isTimeCheckerFeatureEnabled}
 											options={[
 												{ label: 'Enabled', value: true },
 												{ label: 'Disabled', value: false },
 											]}
+											optionType="button"
+											value={values.isTimeCheckerFeatureEnabled}
 											onChange={(e) => {
 												setFieldValue(
 													'isTimeCheckerFeatureEnabled',
 													e.target.value,
 												);
 											}}
-											optionType="button"
 										/>
 									</Col>
 
 									<Divider>Receipt Header</Divider>
 
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										{renderInputField({
 											name: 'storeName',
 											label: 'Store Name',
@@ -408,7 +409,7 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col>
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										{renderInputField({
 											name: 'addressOfTaxPayer',
 											label: 'Address of Tax Payer',
@@ -418,7 +419,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'proprietor',
 											label: 'Proprietor',
@@ -427,7 +428,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col span={24} md={12}>
+									<Col md={12} span={24}>
 										{renderInputField({
 											name: 'contactNumber',
 											label: 'Contact Number',
@@ -436,22 +437,22 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										<Label label="VAT Type" spacing />
 										<Radio.Group
-											value={values.taxType}
 											options={[
 												{ label: 'VAT', value: taxTypes.VAT },
 												{ label: 'NVAT', value: taxTypes.NVAT },
 											]}
+											optionType="button"
+											value={values.taxType}
 											onChange={(e) => {
 												setFieldValue('taxType', e.target.value);
 											}}
-											optionType="button"
 										/>
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'tin',
 											label: 'TIN',
@@ -460,7 +461,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'permitNumber',
 											label: 'Permit Number',
@@ -471,7 +472,7 @@ export const SiteSettings = () => {
 
 									<Divider>Receipt Footer</Divider>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'softwareDeveloper',
 											label: 'Software Developer',
@@ -479,7 +480,7 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col>
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'softwareDeveloperTin',
 											label: 'Software Developer TIN',
@@ -498,7 +499,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderInputField({
 											name: 'posAccreditationNumber',
 											label: 'POS Accreditation Number',
@@ -507,7 +508,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderDatePicker({
 											name: 'posAccreditationDate',
 											label: 'POS Accreditation Date',
@@ -516,7 +517,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderDatePicker({
 											name: 'posAccreditationValidUntilDate',
 											label: 'POS Accreditation Valid Until Date',
@@ -525,7 +526,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderInputField({
 											name: 'ptuNumber',
 											label: 'PTU Number',
@@ -533,7 +534,7 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col>
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderDatePicker({
 											name: 'ptuDate',
 											label: 'PTU Date',
@@ -542,7 +543,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={8}>
+									<Col sm={8} xs={24}>
 										{renderDatePicker({
 											name: 'ptuValidUntilDate',
 											label: 'PTU Valid Until Date',
@@ -553,7 +554,7 @@ export const SiteSettings = () => {
 
 									<Divider>Cashiering Details</Divider>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderTimePicker({
 											name: 'closeSessionDeadline',
 											label: 'Close Session Deadline',
@@ -562,7 +563,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderTimePicker({
 											name: 'closeDayDeadline',
 											label: 'Close Day Deadline',
@@ -571,7 +572,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'reportingPeriodDayOfMonth',
 											label: 'Reporting Day of the Month',
@@ -581,7 +582,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'productVersion',
 											label: 'Product Version',
@@ -601,7 +602,7 @@ export const SiteSettings = () => {
 
 									<Divider>Notification</Divider>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'resetCounterNotificationThresholdAmount',
 											label: 'Reset Counter Notification Threshold Amount',
@@ -611,7 +612,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col xs={24} sm={12}>
+									<Col sm={12} xs={24}>
 										{renderInputField({
 											name: 'resetCounterNotificationThresholdInvoiceNumber',
 											label:
@@ -628,12 +629,12 @@ export const SiteSettings = () => {
 										<Divider />
 
 										<Button
-											htmlType="submit"
-											type="primary"
-											size="large"
-											loading={isLoading}
-											block
 											disabled={isConnected === false}
+											htmlType="submit"
+											loading={isLoading}
+											size="large"
+											type="primary"
+											block
 										>
 											Save
 										</Button>

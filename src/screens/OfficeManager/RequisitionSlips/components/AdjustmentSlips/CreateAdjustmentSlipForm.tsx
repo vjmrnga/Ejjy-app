@@ -1,6 +1,7 @@
 import { FieldArray, Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { getDeliveryReceiptStatus, sleep } from 'utils';
 import { TableNormal } from '../../../../../components';
 import {
 	Button,
@@ -8,7 +9,6 @@ import {
 	FormCheckbox,
 	FormInput,
 } from '../../../../../components/elements';
-import { getDeliveryReceiptStatus, sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '80px' },
@@ -79,9 +79,9 @@ export const CreateAdjustmentSlipForm = ({
 	const getQuantity = (index, key, values, touched, errors) => (
 		<>
 			<FormInput
-				type="number"
-				id={`deliveryReceiptProducts.${index}.${key}`}
 				disabled={!values?.deliveryReceiptProducts?.[index]?.selected}
+				id={`deliveryReceiptProducts.${index}.${key}`}
+				type="number"
 			/>
 			{errors?.deliveryReceiptProducts?.[index]?.[key] &&
 			touched?.deliveryReceiptProducts?.[index]?.[key] ? (
@@ -94,13 +94,13 @@ export const CreateAdjustmentSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData: any) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, errors, touched }) => (
 				<FieldArray
@@ -146,17 +146,17 @@ export const CreateAdjustmentSlipForm = ({
 
 							<div className="ModalCustomFooter">
 								<Button
-									type="button"
-									text="Cancel"
-									onClick={onClose}
 									disabled={loading || isSubmitting}
+									text="Cancel"
+									type="button"
+									onClick={onClose}
 								/>
 								<Button
-									type="submit"
-									text="Create"
-									variant="primary"
-									loading={loading || isSubmitting}
 									disabled={!deliveryReceiptProducts.length}
+									loading={loading || isSubmitting}
+									text="Create"
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>

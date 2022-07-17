@@ -1,11 +1,11 @@
 import { Divider, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { formatQuantity } from 'utils';
 import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { request } from '../../../../../global/types';
-import { formatQuantity } from 'utils';
 import { useOrderSlipAdjustmentSlips } from '../../../hooks/useOrderSlipAdjustmentSlips';
 import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
@@ -94,13 +94,13 @@ export const CreateAdjustmentSlipModal = ({
 
 	return (
 		<Modal
-			title="Create Adjustment Slip"
 			className="Modal__large"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="Create Adjustment Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors errors={errors} />
 
@@ -113,10 +113,10 @@ export const CreateAdjustmentSlipModal = ({
 
 			<Label label="Products" spacing />
 			<CreateAdjustmentSlipForm
-				preparationSlipProducts={preparationSlipProducts}
-				onSubmit={onCreateAdjustmentSlipSubmit}
-				onClose={onClose}
 				loading={adjustmentSlipsStatus === request.REQUESTING}
+				preparationSlipProducts={preparationSlipProducts}
+				onClose={onClose}
+				onSubmit={onCreateAdjustmentSlipSubmit}
 			/>
 		</Modal>
 	);

@@ -44,18 +44,18 @@ export const AssignBackOrderModal = ({
 
 	return (
 		<Modal
-			title={title}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<AssignBackOrderForm
 				backOrder={backOrder}
-				onSubmit={onAssignBackOrder}
-				onClose={onClose}
 				loading={backOrdersStatus === request.REQUESTING}
+				onClose={onClose}
+				onSubmit={onAssignBackOrder}
 			/>
 		</Modal>
 	);

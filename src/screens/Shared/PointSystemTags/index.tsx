@@ -18,12 +18,7 @@ import {
 	useQueryParams,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatInPeso,
-	isCUDShown,
-	isUserFromBranch,
-} from 'utils';
+import { convertIntoArray, formatInPeso, isCUDShown } from 'utils';
 
 export const PointSystemTags = () => {
 	// STATES
@@ -94,8 +89,8 @@ export const PointSystemTags = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Point System Tag"
-						onCreateDisabled={isConnected === false}
 						onCreate={() => setModifyPointSystemTagModalVisible(true)}
+						onCreateDisabled={isConnected === false}
 					/>
 				)}
 
@@ -112,7 +107,6 @@ export const PointSystemTags = () => {
 					columns={getColumns()}
 					dataSource={dataSource}
 					loading={isFetching || isLoading}
-					bordered
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -127,6 +121,7 @@ export const PointSystemTags = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
+					bordered
 				/>
 
 				{modifyPointSystemTagModalVisible && (

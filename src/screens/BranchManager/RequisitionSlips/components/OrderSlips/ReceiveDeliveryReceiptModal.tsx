@@ -1,6 +1,7 @@
 import { Divider, Modal } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { convertIntoArray } from 'utils';
 import { RequestErrors } from '../../../../../components';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { types } from '../../../../../ducks/BranchManager/delivery-receipts';
@@ -9,7 +10,6 @@ import {
 	request,
 	requisitionSlipActions,
 } from '../../../../../global/types';
-import { convertIntoArray } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import {
 	RequisitionSlipDetails,
@@ -112,13 +112,13 @@ export const ReceiveDeliveryReceiptModal = ({
 
 	return (
 		<Modal
-			title={title}
 			className="Modal__large"
-			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			title={title}
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(deliveryReceiptErrors)}
@@ -133,10 +133,10 @@ export const ReceiveDeliveryReceiptModal = ({
 			<Divider dashed />
 
 			<ReceiveDeliveryReceiptForm
-				products={products}
-				onSubmit={onReceiveDeliveryReceiptSubmit}
-				onClose={onClose}
 				loading={isReceiving()}
+				products={products}
+				onClose={onClose}
+				onSubmit={onReceiveDeliveryReceiptSubmit}
 			/>
 		</Modal>
 	);

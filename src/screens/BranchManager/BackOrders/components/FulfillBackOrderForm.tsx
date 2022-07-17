@@ -5,6 +5,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { sleep } from 'utils';
 import {
 	Button,
 	FieldError,
@@ -16,7 +17,6 @@ import {
 	quantityTypes,
 	unitOfMeasurementTypes,
 } from '../../../../global/types';
-import { sleep } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -95,7 +95,6 @@ export const FulfillBackOrderForm = ({
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
 						id={`${fieldKey}.quantity`}
 						isWholeNumber={
 							!(
@@ -103,6 +102,7 @@ export const FulfillBackOrderForm = ({
 								unitOfMeasurement === unitOfMeasurementTypes.WEIGHING
 							)
 						}
+						type="number"
 					/>
 					<FormSelect
 						id={`${fieldKey}.quantityType`}
@@ -121,6 +121,7 @@ export const FulfillBackOrderForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -128,7 +129,6 @@ export const FulfillBackOrderForm = ({
 
 				onSubmit(formData, resetForm);
 			}}
-			enableReinitialize
 		>
 			{({ values }) => (
 				<Form>
@@ -139,22 +139,22 @@ export const FulfillBackOrderForm = ({
 							name: product.product.name,
 							quantity: renderQuantity(index, values[index]),
 						}))}
-						pagination={false}
 						loading={loading || isSubmitting}
+						pagination={false}
 					/>
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading || isSubmitting}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text="Fulfill"
-							variant="primary"
 							loading={loading || isSubmitting}
+							text="Fulfill"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

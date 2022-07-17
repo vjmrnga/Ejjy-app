@@ -1,2 +1,2 @@
-export * from "./ReceiptFooter";
-export * from "./ReceiptHeader";
+export * from './ReceiptFooter';
+export * from './ReceiptHeader';

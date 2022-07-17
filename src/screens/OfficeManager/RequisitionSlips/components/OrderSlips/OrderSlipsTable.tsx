@@ -1,9 +1,9 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatDateTime, getOrderSlipStatus } from 'utils';
 import { ButtonLink } from '../../../../../components/elements';
 import { orderSlipStatus as osStatus } from '../../../../../global/types';
-import { formatDateTime, getOrderSlipStatus } from 'utils';
 import { OrderSlipActions } from './OrderSlipActions';
 
 const columns: ColumnsType = [
@@ -76,7 +76,7 @@ export const OrderSlipsTable = ({
 						),
 						dr: deliveryReceipt,
 						actions: (
-							<OrderSlipActions onEdit={onEdit} onCreateDR={onCreateDR} />
+							<OrderSlipActions onCreateDR={onCreateDR} onEdit={onEdit} />
 						),
 					};
 				}),
@@ -88,9 +88,9 @@ export const OrderSlipsTable = ({
 		<Table
 			columns={columns}
 			dataSource={data}
-			scroll={{ x: 650 }}
-			pagination={false}
 			loading={loading}
+			pagination={false}
+			scroll={{ x: 650 }}
 		/>
 	);
 };

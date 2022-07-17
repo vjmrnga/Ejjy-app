@@ -50,22 +50,22 @@ const BranchPersonnel = () => {
 		<Container sidebarItems={sidebarItems}>
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
-					<Route path="/branch-personnel/dashboard" component={Dashboard} />
+					<Route component={Dashboard} path="/branch-personnel/dashboard" />
 
 					<Route
-						path="/branch-personnel/preparation-slips"
 						component={PreparationSlips}
+						path="/branch-personnel/preparation-slips"
 						exact
 					/>
 					<Route
-						path="/branch-personnel/preparation-slips/:id"
 						component={FulfillPreparationSlips}
+						path="/branch-personnel/preparation-slips/:id"
 						exact
 					/>
 
 					<Route
-						path="/branch-personnel/notifications"
 						component={Notifications}
+						path="/branch-personnel/notifications"
 					/>
 
 					<Redirect to="/branch-personnel/dashboard" />

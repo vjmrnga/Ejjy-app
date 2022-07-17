@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { modifiedExtraCallback, onCallback } from 'utils';
 import { actions } from '../ducks/branch-product-pending-price-updates';
 import { request } from '../global/types';
-import { modifiedExtraCallback, onCallback } from 'utils';
 import {
 	executePaginatedRequest,
 	getDataForCurrentPage,

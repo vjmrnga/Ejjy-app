@@ -56,17 +56,16 @@ export const Dashboard = () => {
 					/>
 
 					<Tabs
-						type="card"
 						activeKey={toString(currentBranchId)}
-						onTabClick={onTabClick}
+						type="card"
 						destroyInactiveTabPane
+						onTabClick={onTabClick}
 					>
 						{branches.map(({ name, id, online_url }) => (
-							<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
+							<Tabs.TabPane key={id} disabled={!online_url} tab={name}>
 								<BranchBalanceItem
 									branchId={id}
 									productCategories={productCategories}
-									disabled={!online_url}
 								/>
 							</Tabs.TabPane>
 						))}

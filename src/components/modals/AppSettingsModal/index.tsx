@@ -26,20 +26,20 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="App Settings"
 			className="Modal"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="App Settings"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<AppSettingsForm
 				branchId={getBranchId()}
 				localApiUrl={getLocalApiUrl()}
 				onlineApiUrl={getOnlineApiUrl()}
-				onSubmit={handleSubmit}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

@@ -1,9 +1,9 @@
 import { Col, Divider, Modal, Radio, Row, Space } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { Button, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [
@@ -75,18 +75,18 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="View Order Slip"
 			className="Modal__large Modal__hasFooter"
 			footer={[
-				<Space size={10}>
+				<Space key="buttons" size={10}>
 					<Button text="Close" onClick={onClose} />
-					<Button variant="primary" text="Print" disabled />
+					<Button text="Print" variant="primary" disabled />
 				</Space>,
 			]}
-			onCancel={onClose}
-			visible
+			title="View Order Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<OrderSlipDetails orderSlip={orderSlip} />
 
@@ -96,16 +96,16 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 				<Col sm={12} span={24}>
 					<Label label="Quantity Type" spacing />
 					<Radio.Group
+						defaultValue={quantityTypes.PIECE}
 						options={[
 							{ label: 'Piece', value: quantityTypes.PIECE },
 							{ label: 'Bulk', value: quantityTypes.BULK },
 						]}
+						optionType="button"
 						onChange={(e) => {
 							const { value } = e.target;
 							setQuantityType(value);
 						}}
-						defaultValue={quantityTypes.PIECE}
-						optionType="button"
 					/>
 				</Col>
 
@@ -113,8 +113,8 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ x: 650, y: 250 }}
 						pagination={false}
+						scroll={{ x: 650, y: 250 }}
 					/>
 				</Col>
 			</Row>

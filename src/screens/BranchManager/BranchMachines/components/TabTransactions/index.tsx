@@ -114,7 +114,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Transactions" />
+			<TableHeader title="Transactions" wrapperClassName="pt-2 px-0" />
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 
@@ -122,8 +122,8 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 			{voidedStatuses.includes(_.toString(params?.statuses)) && (
 				<TransactionsCancelled
-					timeRange={_.toString(params?.timeRange)}
 					statuses={_.toString(params?.statuses)}
+					timeRange={_.toString(params?.timeRange)}
 				/>
 			)}
 
@@ -132,7 +132,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -147,7 +147,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				scroll={{ x: 800 }}
 			/>
 
 			{selectedTransaction && (
@@ -176,15 +176,15 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Status" spacing />
 				<Select
 					className="w-100"
+					disabled={isLoading}
+					filterOption={filterOption}
+					optionFilterProp="children"
 					value={params.statuses}
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams({ statuses: value }, { shouldResetPage: true });
 					}}
-					disabled={isLoading}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					showSearch
-					allowClear
 				>
 					{transactionStatusOptions.map((option) => (
 						<Select.Option key={option.value} value={option.value}>

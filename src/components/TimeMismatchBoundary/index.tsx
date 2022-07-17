@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { Button, Result } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';

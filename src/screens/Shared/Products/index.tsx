@@ -28,10 +28,14 @@ import {
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { debounce } from 'lodash';
-import * as queryString from 'query-string';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { convertIntoArray, getBranchId, getId, isCUDShown } from 'utils';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	filterOption,
+	getBranchId,
+	getId,
+	isCUDShown,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{
@@ -55,10 +59,7 @@ export const Products = () => {
 	const [modalType, setModalType] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
-	const [hasPendingTransactions, setHasPendingTransactions] = useState(false);
-
-	// REFS
-	const pendingTransactionsRef = useRef(null);
+	const [hasPendingTransactions] = useState(false);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -66,8 +67,8 @@ export const Products = () => {
 	const { user } = useAuth();
 	const {
 		data: { products, total },
-		isFetching: isFetchingProducts,
-		error: listError,
+		isFetching: isProductsFetching,
+		error: productsError,
 	} = useProducts({
 		params: {
 			...params,
@@ -94,9 +95,9 @@ export const Products = () => {
 					actions: hasPendingTransactions ? null : (
 						<TableActions
 							areButtonsDisabled={isConnected === false}
-							onAddName="Set Prices"
-							onAddIcon={require('assets/images/icon-money.svg')}
 							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
+							onAddIcon={require('assets/images/icon-money.svg')}
+							onAddName="Set Prices"
 							onEdit={
 								isCUDShown(user.user_type)
 									? () => onOpenModal(product, modals.MODIFY)
@@ -152,29 +153,25 @@ export const Products = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Product"
-						onCreateDisabled={isConnected === false}
 						onCreate={() => onOpenModal(null, modals.MODIFY)}
+						onCreateDisabled={isConnected === false}
 					/>
 				)}
 
 				<RequestErrors
 					className="px-6"
 					errors={[
-						...convertIntoArray(listError, 'Product'),
+						...convertIntoArray(productsError, 'Product'),
 						...convertIntoArray(deleteError?.errors, 'Product Delete'),
 					]}
 				/>
 
-				<Filter
-					setQueryParams={(params) => {
-						setQueryParams(params, { shouldResetPage: true });
-					}}
-				/>
+				<Filter />
 
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
+					loading={isProductsFetching}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -189,7 +186,7 @@ export const Products = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={isFetchingProducts}
+					scroll={{ x: 650 }}
 				/>
 
 				{modalType === modals.VIEW && selectedProduct && (
@@ -228,14 +225,9 @@ export const Products = () => {
 	);
 };
 
-interface FilterProps {
-	setQueryParams: any;
-}
-
-const Filter = ({ setQueryParams }: FilterProps) => {
+const Filter = () => {
 	// CUSTOM HOOKS
-	const history = useHistory();
-	const params = queryString.parse(history.location.search);
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
@@ -249,7 +241,7 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((search) => {
-			setQueryParams({ search });
+			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
 		[],
 	);
@@ -265,34 +257,34 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Category" spacing />
 				<Select
-					style={{ width: '100%' }}
 					defaultValue={params.productCategory}
-					onChange={(value) => {
-						setQueryParams({ productCategory: value });
-					}}
+					filterOption={filterOption}
 					loading={isFetchingProductCategories}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ productCategory: value },
+							{ shouldResetPage: true },
+						);
+					}}
 				>
-					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
+					{productCategories.map(({ id, name }) => (
+						<Select.Option key={id} value={name}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>

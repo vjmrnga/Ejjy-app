@@ -2,13 +2,13 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 import { AddButtonIcon, Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
-import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 import { AssignReturnItemSlipModal } from './components/AssignReturnItemSlipModal';
 
 const columns: ColumnsType = [
@@ -59,8 +59,8 @@ export const ReturnItemSlips = () => {
 				status: getReturnItemSlipStatus(returnItemSlip.status),
 				actions: !returnItemSlip.receiver ? (
 					<AddButtonIcon
-						onClick={() => setSelectedReturnItemSlip(returnItemSlip)}
 						tooltip="Assign"
+						onClick={() => setSelectedReturnItemSlip(returnItemSlip)}
 					/>
 				) : (
 					EMPTY_CELL
@@ -85,7 +85,7 @@ export const ReturnItemSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 800 }}
+					loading={returnItemSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -95,15 +95,15 @@ export const ReturnItemSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={returnItemSlipsStatus === request.REQUESTING}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 
 			{selectedReturnItemSlip && (
 				<AssignReturnItemSlipModal
 					returnItemSlip={selectedReturnItemSlip}
-					onSuccess={() => getReturnItemSlips({ page: 1 }, true)}
 					onClose={() => setSelectedReturnItemSlip(null)}
+					onSuccess={() => getReturnItemSlips({ page: 1 }, true)}
 				/>
 			)}
 		</Content>

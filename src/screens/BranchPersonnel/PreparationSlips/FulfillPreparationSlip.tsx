@@ -1,26 +1,27 @@
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { Input, message, Modal, Spin } from 'antd';
+import {
+	CheckIcon,
+	Content,
+	KeyboardButton,
+	PreparationSlipDetails,
+	RequestErrors,
+	TableNormal,
+} from 'components';
+import { Box, Button, Label } from 'components/elements';
+import {
+	IS_APP_LIVE,
+	preparationSlipStatus,
+	request,
+	SEARCH_DEBOUNCE_TIME,
+	unitOfMeasurementTypes,
+} from 'global';
+import { useAuth } from 'hooks';
+import { usePreparationSlips } from 'hooks/usePreparationSlips';
 import { debounce, throttle, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 import { useHistory } from 'react-router-dom';
-import {
-	CheckIcon,
-	Content,
-	PreparationSlipDetails,
-	RequestErrors,
-	TableNormal,
-} from '../../../components';
-import { Box, Button, Label } from '../../../components/elements';
-import { KeyboardButton } from '../../../components/KeyboardButton/KeyboardButton';
-import { IS_APP_LIVE, SEARCH_DEBOUNCE_TIME } from '../../../global/constants';
-import {
-	preparationSlipStatus,
-	request,
-	unitOfMeasurementTypes,
-} from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import { convertIntoArray, formatQuantity, getKeyDownCombination } from 'utils';
 import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
@@ -180,16 +181,16 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					isHidden: true,
 					product: products[key],
 				},
-				<div className="FulfillPreparationSlip_productName">
+				<div key="name" className="FulfillPreparationSlip_productName">
 					{fulfilled > 0 ? <CheckIcon /> : null}
 					<span>{name}</span>
 				</div>,
 				formatQuantity({
-					unitOfMeasurement: unitOfMeasurement,
+					unitOfMeasurement,
 					quantity: ordered,
 				}),
 				formatQuantity({
-					unitOfMeasurement: unitOfMeasurement,
+					unitOfMeasurement,
 					quantity: fulfilled,
 				}),
 			];
@@ -413,12 +414,12 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			<BarcodeReader onError={handleError} onScan={handleScan} />
 			<Spin
 				size="large"
-				tip={getFetchLoadingText()}
 				spinning={[
 					prepSlipStatus,
 					fulfillPrepSlipStatus,
 					savePrepSlipStatus,
 				].includes(request.REQUESTING)}
+				tip={getFetchLoadingText()}
 			>
 				<Box>
 					<PreparationSlipDetails
@@ -457,9 +458,9 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					</div>
 
 					<TableNormal
+						activeRow={selectedIndex}
 						columns={columns}
 						data={data}
-						activeRow={selectedIndex}
 						displayInPage
 					/>
 
@@ -484,10 +485,10 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 
 			{fulfillType && (
 				<FulfillSlipModal
-					type={fulfillType}
 					product={selectedProduct}
-					onSubmit={onUpdate}
+					type={fulfillType}
 					onClose={() => setFulfillType(false)}
+					onSubmit={onUpdate}
 				/>
 			)}
 		</Content>

@@ -19,11 +19,11 @@ export const DailyCheckCard = ({ dateTimeRequested, onDailyCheck }: Props) => (
 		</div>
 
 		<Button
+			icon={<AddIcon />}
+			iconDirection="left"
 			text="Input Daily Check"
 			variant="primary"
 			onClick={onDailyCheck}
-			iconDirection="left"
-			icon={<AddIcon />}
 		/>
 	</Box>
 );

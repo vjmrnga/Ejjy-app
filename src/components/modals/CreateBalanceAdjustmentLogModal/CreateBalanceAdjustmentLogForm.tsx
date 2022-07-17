@@ -48,15 +48,15 @@ export const CreateBalanceAdjustmentLogForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<Row gutter={[16, 16]}>
 					<Col span={24}>
-						<FormInputLabel type="number" id="newBalance" label="New Balance" />
+						<FormInputLabel id="newBalance" label="New Balance" type="number" />
 						<ErrorMessage
 							name="newBalance"
 							render={(error) => <FieldError error={error} />}
@@ -66,16 +66,16 @@ export const CreateBalanceAdjustmentLogForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Create"
-						variant="primary"
 						loading={loading}
+						text="Create"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

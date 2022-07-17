@@ -4,6 +4,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { sleep } from 'utils';
 import {
 	Button,
 	FieldError,
@@ -11,7 +12,6 @@ import {
 	FormInput,
 } from '../../../../../components/elements';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
-import { sleep } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Select', dataIndex: 'selected', width: 50, align: 'center' },
@@ -85,13 +85,13 @@ export const CreateAdjustmentSlipForm = ({
 	const getQuantity = (index, values) => (
 		<>
 			<FormInput
-				type="number"
+				disabled={!values?.[index]?.selected || values?.[index]?.approved}
 				id={`${index}.newFulfilledQuantityPiece`}
 				isWholeNumber={
 					values?.[index]?.unitOfMeasurement ===
 					unitOfMeasurementTypes.NON_WEIGHING
 				}
-				disabled={!values?.[index]?.selected || values?.[index]?.approved}
+				type="number"
 			/>
 			<ErrorMessage
 				name={`${index}.newFulfilledQuantityPiece`}
@@ -104,13 +104,13 @@ export const CreateAdjustmentSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData: any) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -144,24 +144,24 @@ export const CreateAdjustmentSlipForm = ({
 							fulfilled_quantity: item.fulfilledQuantityPiece,
 							quantity: getQuantity(index, values),
 						}))}
-						scroll={{ x: 800 }}
-						pagination={false}
 						loading={loading}
+						pagination={false}
+						scroll={{ x: 800 }}
 					/>
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading || isSubmitting}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text="Create"
-							variant="primary"
-							loading={loading || isSubmitting}
 							disabled={!preparationSlipProducts.length}
+							loading={loading || isSubmitting}
+							text="Create"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

@@ -166,116 +166,116 @@ const OfficeManager = () => {
 		<Container sidebarItems={sidebarItems}>
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
-					<Route path="/office-manager/products" component={Products} />
+					<Route component={Products} path="/office-manager/products" />
 
 					<Route
-						path="/office-manager/product-categories"
 						component={ProductCategories}
+						path="/office-manager/product-categories"
 					/>
 
 					<Route
-						path="/office-manager/point-system-tags"
 						component={PointSystemTags}
+						path="/office-manager/point-system-tags"
 					/>
 
-					<Route path="/office-manager/branches" component={Branches} exact />
+					<Route component={Branches} path="/office-manager/branches" exact />
 					<Route
-						path="/office-manager/branches/:id"
 						component={ViewBranch}
+						path="/office-manager/branches/:id"
 						exact
 					/>
 
-					<Route path="/office-manager/users" exact component={Users} />
+					<Route component={Users} path="/office-manager/users" exact />
 					<Route
-						path="/office-manager/users/assign/:id"
 						component={AssignUser}
+						path="/office-manager/users/assign/:id"
 						exact
 					/>
 
-					<Route path="/office-manager/accounts" exact component={Accounts} />
+					<Route component={Accounts} path="/office-manager/accounts" exact />
 					<Route
-						path="/office-manager/accounts/:id"
 						component={ViewAccount}
+						path="/office-manager/accounts/:id"
 						exact
 					/>
 
 					<Route
-						path="/office-manager/assignments"
 						component={Assignments}
+						path="/office-manager/assignments"
 						exact
 					/>
 
 					<Route
-						path="/office-manager/discount-options"
 						component={DiscountOptions}
+						path="/office-manager/discount-options"
 					/>
 
 					<Route
-						path="/office-manager/site-settings"
 						component={SiteSettings}
+						path="/office-manager/site-settings"
 					/>
 
 					{/* Disabled as of the moment */}
-					<Route path="/office-manager/dashboard" component={Dashboard} />
+					<Route component={Dashboard} path="/office-manager/dashboard" />
 
-					<Route path="/office-manager/checkings" component={Checkings} exact />
+					<Route component={Checkings} path="/office-manager/checkings" exact />
 					<Route
-						path="/office-manager/checkings/:branchId/:id"
 						component={ViewChecking}
+						path="/office-manager/checkings/:branchId/:id"
 						exact
 					/>
 
 					<Route
-						path="/office-manager/requisition-slips"
 						component={RequisitionSlips}
+						path="/office-manager/requisition-slips"
 						exact
 					/>
 					<Route
-						path="/office-manager/requisition-slips/:id"
 						component={ViewRequisitionSlip}
+						path="/office-manager/requisition-slips/:id"
 						exact
 					/>
 					<Route
-						path="/office-manager/requisition-slips/delivery-receipt/:id"
 						component={ViewDeliveryReceipt}
+						path="/office-manager/requisition-slips/delivery-receipt/:id"
 					/>
 
 					<Route
-						path="/office-manager/return-item-slips"
 						component={ReturnItemSlips}
+						path="/office-manager/return-item-slips"
 						exact
 					/>
 					<Route
-						path="/office-manager/return-item-slips/:id"
 						component={ViewReturnItemSlip}
+						path="/office-manager/return-item-slips/:id"
 						exact
 					/>
 
 					<Route
-						path="/office-manager/back-orders"
 						component={BackOrders}
+						path="/office-manager/back-orders"
 						exact
 					/>
 					<Route
-						path="/office-manager/back-orders/:id"
 						component={ViewBackOrder}
+						path="/office-manager/back-orders/:id"
 						exact
 					/>
 
 					<Route
-						path="/office-manager/notifications"
 						component={Notifications}
+						path="/office-manager/notifications"
 					/>
-					<Route path="/office-manager/reports" component={Reports} />
+					<Route component={Reports} path="/office-manager/reports" />
 
 					<Route
-						path="/office-manager/pending-transactions"
 						component={PendingTransactions}
+						path="/office-manager/pending-transactions"
 						exact
 					/>
 					<Route
-						path="/office-manager/pending-transactions/:id"
 						component={ViewPendingTransaction}
+						path="/office-manager/pending-transactions/:id"
 						exact
 					/>
 

@@ -52,6 +52,7 @@ export const AddBranchProductBalanceForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (values) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -59,19 +60,18 @@ export const AddBranchProductBalanceForm = ({
 
 				onSubmit(values);
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<Row gutter={[16, 16]}>
 					<Col span={24}>
 						<FormInputLabel
-							type="number"
 							id="balance"
-							label="Qty Delivered"
 							isWholeNumber={
 								branchProduct.product.unit_of_measurement ===
 								unitOfMeasurementTypes.NON_WEIGHING
 							}
+							label="Qty Delivered"
+							type="number"
 						/>
 						<ErrorMessage
 							name="balance"
@@ -82,16 +82,16 @@ export const AddBranchProductBalanceForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading || isSubmitting}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Add"
-						variant="primary"
 						loading={loading || isSubmitting}
+						text="Add"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

@@ -1,12 +1,4 @@
-import {
-	Alert,
-	Button as AntdButton,
-	Col,
-	Divider,
-	Input,
-	Row,
-	Select,
-} from 'antd';
+import { Button as AntdButton, Col, Divider, Input, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { userTypeBranchOptions, userTypeOptions } from 'global';
 import React, { useCallback, useState } from 'react';
@@ -71,13 +63,13 @@ export const ModifyUserForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit({
 					...formData,
 					password: passwordFieldsVisible ? formData.password : undefined,
 				});
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -86,8 +78,8 @@ export const ModifyUserForm = ({
 							<Label label="First Name" spacing />
 							<Input
 								name="firstName"
-								value={values['firstName']}
 								size="large"
+								value={values['firstName']}
 								onChange={(e) => {
 									setFieldValue('firstName', e.target.value);
 								}}
@@ -102,8 +94,8 @@ export const ModifyUserForm = ({
 							<Label label="Last Name" spacing />
 							<Input
 								name="lastName"
-								value={values['lastName']}
 								size="large"
+								value={values['lastName']}
 								onChange={(e) => {
 									setFieldValue('lastName', e.target.value);
 								}}
@@ -117,10 +109,10 @@ export const ModifyUserForm = ({
 						<Col span={24}>
 							<Label label="Email Address" spacing />
 							<Input
-								type="email"
 								name="email"
-								value={values['email']}
 								size="large"
+								type="email"
+								value={values['email']}
 								onChange={(e) => {
 									setFieldValue('email', e.target.value);
 								}}
@@ -134,6 +126,7 @@ export const ModifyUserForm = ({
 						<Col span={24}>
 							<Label label="User Type" spacing />
 							<Select
+								allowClear={false}
 								className="w-100"
 								filterOption={(input, option) =>
 									option.children
@@ -142,9 +135,8 @@ export const ModifyUserForm = ({
 										.indexOf(input.toLowerCase()) >= 0
 								}
 								optionFilterProp="children"
-								value={values.userType}
 								size="large"
-								allowClear={false}
+								value={values.userType}
 								showSearch
 								onChange={(value) => {
 									setFieldValue('userType', value);
@@ -169,11 +161,11 @@ export const ModifyUserForm = ({
 							<Col span={24}>
 								<AntdButton
 									className="d-block mx-auto"
+									danger={passwordFieldsVisible}
 									type="link"
 									onClick={() => {
 										setPasswordFieldsVisible((value) => !value);
 									}}
-									danger={passwordFieldsVisible}
 								>
 									{passwordFieldsVisible ? 'Cancel Edit' : 'Edit'} Password
 								</AntdButton>
@@ -185,8 +177,8 @@ export const ModifyUserForm = ({
 									<Label label="Username" spacing />
 									<Input
 										name="username"
-										value={values['username']}
 										size="large"
+										value={values['username']}
 										onChange={(e) => {
 											setFieldValue('username', e.target.value);
 										}}
@@ -205,8 +197,8 @@ export const ModifyUserForm = ({
 									<Label label="Password" spacing />
 									<Input.Password
 										name="password"
-										value={values['password']}
 										size="large"
+										value={values['password']}
 										onChange={(e) => {
 											setFieldValue('password', e.target.value);
 										}}
@@ -221,8 +213,8 @@ export const ModifyUserForm = ({
 									<Label label="Confirm Password" spacing />
 									<Input.Password
 										name="confirmPassword"
-										value={values['confirmPassword']}
 										size="large"
+										value={values['confirmPassword']}
 										onChange={(e) => {
 											setFieldValue('confirmPassword', e.target.value);
 										}}
@@ -238,16 +230,16 @@ export const ModifyUserForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isLoading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={user ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={isLoading}
+							text={user ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

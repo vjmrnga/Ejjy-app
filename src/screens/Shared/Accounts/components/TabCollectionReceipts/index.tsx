@@ -60,9 +60,9 @@ export const TabCollectionReceipts = () => {
 				amount: formatInPeso(amount),
 				actions: (
 					<Button
+						loading={isPrinting === id}
 						type="link"
 						onClick={() => onPrintPDF(collectionReceipt)}
-						loading={isPrinting === id}
 					>
 						Print PDF
 					</Button>
@@ -77,6 +77,7 @@ export const TabCollectionReceipts = () => {
 		setIsPrinting(collectionReceipt.id);
 
 		const html = printCollectionReceipt({ collectionReceipt, siteSettings });
+		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'p',
 			unit: 'px',
@@ -110,7 +111,10 @@ export const TabCollectionReceipts = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={
+					(isCollectionReceiptsFetching && !isCollectionReceiptsFetched) ||
+					isSiteSettingsFetching
+				}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -125,10 +129,7 @@ export const TabCollectionReceipts = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={
-					(isCollectionReceiptsFetching && !isCollectionReceiptsFetched) ||
-					isSiteSettingsFetching
-				}
+				scroll={{ x: 800 }}
 			/>
 		</>
 	);

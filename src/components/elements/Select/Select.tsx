@@ -30,7 +30,7 @@ const Select = ({
 		onChange={(event) => onChange(event.target.value)}
 	>
 		{placeholder && (
-			<option value={null} selected disabled>
+			<option value={null} disabled selected>
 				{placeholder}
 			</option>
 		)}

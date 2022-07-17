@@ -1,11 +1,11 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { actions, types } from '../../ducks/BranchManager/delivery-receipts';
 import { actions as orderSlipActions } from '../../ducks/order-slips';
 import { actions as requisitionSlipsActions } from '../../ducks/requisition-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/delivery-receipts';
-import { getOnlineApiUrl } from 'utils';
 
 /* WORKERS */
 function* getById({ payload }: any) {

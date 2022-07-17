@@ -5,12 +5,12 @@ import cn from 'classnames';
 import React, { useCallback, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
+import { getUserTypeName } from 'utils';
 import { ONLINE_ROUTES } from '../../../global/constants';
 import { userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNetwork } from '../../../hooks/useNetwork';
 import { useUI } from '../../../hooks/useUI';
-import { getUserTypeName } from 'utils';
 import './style.scss';
 
 interface Props {
@@ -39,21 +39,21 @@ export const Sidebar = ({ items }: Props) => {
 
 	return (
 		<Layout.Sider
+			breakpoint="md"
 			className={cn('Sidebar', { Sidebar__collapsed: isSidebarCollapsed })}
+			collapsedWidth="0"
 			theme="light"
 			width={280}
-			breakpoint="md"
-			collapsedWidth="0"
 			onCollapse={(collapsed) => onCollapseSidebar(collapsed)}
 		>
 			<img
-				src={require('../../../assets/images/logo.jpg')}
 				alt="logo"
 				className="Sidebar_logo"
+				src={require('../../../assets/images/logo.jpg')}
 			/>
 			<div className="Sidebar_sidebarList">
 				{items.map((item) => (
-					<Link tabIndex={-1} to={item.link} key={item.key}>
+					<Link key={item.key} tabIndex={-1} to={item.link}>
 						<div
 							className={cn('Sidebar_sidebarList_item', {
 								Sidebar_sidebarList_item__active: pathname.startsWith(
@@ -62,14 +62,14 @@ export const Sidebar = ({ items }: Props) => {
 							})}
 						>
 							<img
-								src={item.defaultIcon}
 								alt={item.name}
 								className="Sidebar_sidebarList_item_icon"
+								src={item.defaultIcon}
 							/>
 							<img
-								src={item.activeIcon}
 								alt={item.name}
 								className="Sidebar_sidebarList_item_icon Sidebar_sidebarList_item_icon__active"
+								src={item.activeIcon}
 							/>
 							<span className="Sidebar_sidebarList_item_name">{item.name}</span>
 
@@ -82,9 +82,9 @@ export const Sidebar = ({ items }: Props) => {
 							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
 								<Tooltip title="Locked if no internet">
 									<img
-										src={require('../../../assets/images/icon-lock.svg')}
 										alt={item.name}
 										className="Sidebar_sidebarList_item_iconLock"
+										src={require('../../../assets/images/icon-lock.svg')}
 									/>
 								</Tooltip>
 							)}
@@ -100,18 +100,18 @@ export const Sidebar = ({ items }: Props) => {
 				<div className="menu">
 					<div className="item">
 						<img
-							src={require('../../../assets/images/icon-account.svg')}
 							alt="icon"
 							className="icon"
+							src={require('../../../assets/images/icon-account.svg')}
 						/>
 						<span className="name">Account</span>
 					</div>
 
 					<div className="item" onClick={() => logout(user.id)}>
 						<img
-							src={require('../../../assets/images/icon-logout.svg')}
 							alt="icon"
 							className="icon"
+							src={require('../../../assets/images/icon-logout.svg')}
 						/>
 						<span className="name">Logout</span>
 					</div>
@@ -119,9 +119,9 @@ export const Sidebar = ({ items }: Props) => {
 
 				<div className="user-details">
 					<img
-						src={require('../../../assets/images/sample-avatar.png')}
 						alt="user avatar"
 						className="avatar"
+						src={require('../../../assets/images/sample-avatar.png')}
 					/>
 					<div className="user-text-info">
 						<span className="name">{getName()}</span>

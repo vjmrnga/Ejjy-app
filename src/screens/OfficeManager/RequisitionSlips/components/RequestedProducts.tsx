@@ -1,9 +1,9 @@
 import { Divider, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import { convertToBulk, formatQuantity } from 'utils';
 import { QuantitySelect } from '../../../../components';
 import { Box, Label } from '../../../../components/elements';
 import { quantityTypes } from '../../../../global/types';
-import { convertToBulk, formatQuantity } from 'utils';
 import '../style.scss';
 import {
 	RequisitionSlipDetails,
@@ -96,8 +96,8 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 			<Table
 				columns={getColumns()}
 				dataSource={data}
-				scroll={{ y: 250 }}
 				pagination={false}
+				scroll={{ y: 250 }}
 			/>
 		</Box>
 	);

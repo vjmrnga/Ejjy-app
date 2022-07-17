@@ -94,26 +94,26 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={title}
 			className="Modal__large Modal__hasFooter"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<Spin spinning={isFetching}>
 				{backOrderData?.type === backOrderTypes.DAMAGED && (
 					<Descriptions
+						className="w-100"
+						column={2}
 						labelStyle={{
 							width: 200,
 						}}
-						bordered
-						className="w-100"
-						column={2}
 						size="small"
+						bordered
 					>
-						<Descriptions.Item span={2} label="ID">
+						<Descriptions.Item label="ID" span={2}>
 							{backOrderData.id}
 						</Descriptions.Item>
 
@@ -139,13 +139,13 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 
 				{backOrderData?.type === backOrderTypes.FOR_RETURN && (
 					<Descriptions
+						className="w-100"
+						column={2}
 						labelStyle={{
 							width: 200,
 						}}
-						bordered
-						className="w-100"
-						column={2}
 						size="small"
+						bordered
 					>
 						<Descriptions.Item label="ID">{backOrderData.id}</Descriptions.Item>
 						<Descriptions.Item label="Date & Time Created">
@@ -154,7 +154,7 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 						<Descriptions.Item label="Encoded By">
 							{getFullName(backOrderData.encoded_by)}
 						</Descriptions.Item>
-						<Descriptions.Item span={2} label="Overall Remarks">
+						<Descriptions.Item label="Overall Remarks" span={2}>
 							{backOrderData.overall_remarks}
 						</Descriptions.Item>
 					</Descriptions>
@@ -165,8 +165,8 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 800 }}
 					pagination={false}
+					scroll={{ x: 800 }}
 					bordered
 				/>
 			</Spin>

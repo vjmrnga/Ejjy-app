@@ -49,12 +49,12 @@ export const ModifyPointSystemTagModal = ({
 
 	return (
 		<Modal
-			title={`${pointSystemTag ? '[Edit]' : '[Create]'} Point System Tag`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${pointSystemTag ? '[Edit]' : '[Create]'} Point System Tag`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -65,10 +65,10 @@ export const ModifyPointSystemTagModal = ({
 			/>
 
 			<ModifyPointSystemTagForm
-				pointSystemTag={pointSystemTag}
 				isLoading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
+				pointSystemTag={pointSystemTag}
 				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);
@@ -106,10 +106,10 @@ export const ModifyPointSystemTagForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form className="form">
@@ -125,10 +125,10 @@ export const ModifyPointSystemTagForm = ({
 						<Col span={24}>
 							<Label id="divisorAmount" label="Divisor Amount" spacing />
 							<FormattedInputNumber
+								className="w-100"
+								controls={false}
 								size="large"
 								value={values.divisorAmount}
-								controls={false}
-								className="w-100"
 								onChange={(value) => {
 									setFieldValue('divisorAmount', value);
 								}}
@@ -142,16 +142,16 @@ export const ModifyPointSystemTagForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isLoading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={pointSystemTag ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={isLoading}
+							text={pointSystemTag ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

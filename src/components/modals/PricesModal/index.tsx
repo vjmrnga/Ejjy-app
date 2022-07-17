@@ -71,18 +71,18 @@ export const PricesModal = ({ product, onClose }: Props) => {
 
 	return (
 		<Modal
+			footer={null}
 			title={
 				<>
 					<span>Prices</span>
 					<span className="ModalTitleMainInfo">{product.name}</span>
 				</>
 			}
-			footer={null}
-			onCancel={onClose}
-			visible
+			width={600}
 			centered
 			closable
-			width={600}
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -100,11 +100,11 @@ export const PricesModal = ({ product, onClose }: Props) => {
 
 			<PricesForm
 				branchProduct={branchProduct}
-				onSubmit={onSubmit}
-				onClose={onClose}
 				loading={
 					isCreatePriceMarkdownLoading || isEditingBranchProductPriceCost
 				}
+				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);

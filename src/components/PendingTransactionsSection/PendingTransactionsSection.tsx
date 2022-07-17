@@ -7,10 +7,10 @@ import React, {
 	useImperativeHandle,
 	useState,
 } from 'react';
+import { formatDateTime, showErrorMessages } from 'utils';
 import { PendingApprovalBadgePill, TableActions } from '..';
 import { request } from '../../global/types';
 import { usePendingTransactions } from '../../hooks/usePendingTransactions';
-import { formatDateTime, showErrorMessages } from 'utils';
 import Box from '../elements/Box/Box';
 import { TableHeader } from '../Table/TableHeaders/TableHeader';
 
@@ -181,9 +181,9 @@ const PendingTransactionsSectionComponent = (
 				<Table
 					columns={getColumns()}
 					dataSource={data}
-					scroll={{ x: 800 }}
-					pagination={false}
 					loading={pendingTransactionsStatus === request.REQUESTING}
+					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 		</section>

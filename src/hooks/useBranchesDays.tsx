@@ -1,16 +1,11 @@
 import { actions, types } from 'ducks/branches-days';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { BranchesDaysService } from 'services';
-import {
-	getLocalApiUrl,
-	getOnlineApiUrl,
-	modifiedExtraCallback,
-	onCallback,
-} from 'utils';
+import { getLocalApiUrl, modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
 	executePaginatedRequest,

@@ -73,7 +73,7 @@ export const TabBranchProducts = () => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Branch Products" />
+			<TableHeader title="Branch Products" wrapperClassName="pt-2 px-0" />
 
 			<Filter />
 
@@ -82,7 +82,7 @@ export const TabBranchProducts = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isFetching}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -97,7 +97,7 @@ export const TabBranchProducts = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				scroll={{ x: 800 }}
 			/>
 
 			{selectedBranchProduct && (
@@ -130,10 +130,10 @@ const Filter = () => {
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 		</Row>

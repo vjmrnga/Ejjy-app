@@ -1,6 +1,7 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { convertIntoArray, convertToPieces } from 'utils';
 import { RequestWarnings } from '../../../../../components';
 import { Label, Select } from '../../../../../components/elements';
 import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
@@ -9,7 +10,6 @@ import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManag
 import { types } from '../../../../../ducks/order-slips';
 import { IS_APP_LIVE } from '../../../../../global/constants';
 import { quantityTypes, request } from '../../../../../global/types';
-import { convertIntoArray, convertToPieces } from 'utils';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import {
 	RequisitionSlipDetails,
@@ -154,13 +154,13 @@ export const CreateEditOrderSlipModal = ({
 
 	return (
 		<Modal
-			title={`${orderSlip ? '[Edit]' : '[Create]'} F-OS1`}
 			className="Modal__large ModalLarge__scrollable"
-			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			title={`${orderSlip ? '[Edit]' : '[Create]'} F-OS1`}
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -183,27 +183,27 @@ export const CreateEditOrderSlipModal = ({
 
 			<Divider dashed />
 
-			<Row gutter={[16, 16]} align="middle">
+			<Row align="middle" gutter={[16, 16]}>
 				<Col span={12}>
 					<Label label="Requested Products" spacing />
 				</Col>
 				<Col span={12}>
 					<Select
-						placeholder="Select Branch"
 						options={getBranchOptions()}
-						onChange={onChangePreparingBranch}
+						placeholder="Select Branch"
 						value={selectedBranchId}
+						onChange={onChangePreparingBranch}
 					/>
 				</Col>
 			</Row>
 
 			<CreateEditOrderSlipForm
+				assignedPersonnelOptions={getAssignedPersonnelOptions()}
+				loading={orderSlipsStatus === request.REQUESTING || loading}
 				orderSlip={orderSlip}
 				requestedProducts={requestedProducts}
-				assignedPersonnelOptions={getAssignedPersonnelOptions()}
-				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 				onClose={onClose}
-				loading={orderSlipsStatus === request.REQUESTING || loading}
+				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
 			/>
 		</Modal>
 	);

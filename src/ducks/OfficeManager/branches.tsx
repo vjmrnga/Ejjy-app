@@ -49,20 +49,20 @@ export const selectors = {
 	selectBranches: () => createSelector(selectState, (state) => state.branches),
 	selectBranchById: (id) =>
 		createSelector(selectState, (state) =>
-			state.branches.find((branch) => branch.id == id),
+			state.branches.find((branch) => branch.id === id),
 		),
 	selectURLByBranchId: (id) =>
 		createSelector(
 			selectState,
 			(state) =>
-				state.branches.find((branch) => branch.id == id)?.online_url ??
+				state.branches.find((branch) => branch.id === id)?.online_url ??
 				undefined,
 		),
 	selectBackUpURLByBranchId: (id) =>
 		createSelector(
 			selectState,
 			(state) =>
-				state.branches.find((branch) => branch.id == id)?.backup_server_url ??
+				state.branches.find((branch) => branch.id === id)?.backup_server_url ??
 				undefined,
 		),
 };

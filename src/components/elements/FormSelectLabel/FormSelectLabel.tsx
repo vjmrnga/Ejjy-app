@@ -16,10 +16,10 @@ const FormSelectLabel = ({
 	<>
 		<Label id={id} label={inputLabel} spacing />
 		<Select
-			id={id}
-			placeholder={placeholder}
-			options={options}
 			disabled={disabled}
+			id={id}
+			options={options}
+			placeholder={placeholder}
 		/>
 	</>
 );

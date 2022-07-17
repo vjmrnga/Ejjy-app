@@ -16,29 +16,29 @@ export const EmptyIcon = ({ classNames, size }: PropsWithWrapper) => (
 
 export const CheckIcon = ({ classNames, size }: PropsWithWrapper) => (
 	<div className={cn('Icon', 'primary', classNames, size)}>
-		<img src={require('../../assets/images/icon-check-white.svg')} alt="icon" />
+		<img alt="icon" src={require('../../assets/images/icon-check-white.svg')} />
 	</div>
 );
 
 export const ErrorIcon = ({ classNames, size }: PropsWithWrapper) => (
 	<div className={cn('Icon', 'error', classNames, size)}>
-		<img src={require('../../assets/images/icon-x-white.svg')} alt="icon" />
+		<img alt="icon" src={require('../../assets/images/icon-x-white.svg')} />
 	</div>
 );
 
 export const AddIcon = ({ classNames }: Props) => (
 	<img
-		src={require('../../assets/images/icon-add-white.svg')}
-		width="16"
 		alt="icon"
 		className={classNames}
+		src={require('../../assets/images/icon-add-white.svg')}
+		width="16"
 	/>
 );
 
 export const InfoIcon = ({ classNames }: Props) => (
 	<img
-		src={require('../../assets/images/icon-info.svg')}
 		alt="icon"
 		className={classNames}
+		src={require('../../assets/images/icon-info.svg')}
 	/>
 );

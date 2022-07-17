@@ -122,9 +122,9 @@ export const ProductCategories = () => {
 			columns.unshift({
 				title: isSorted && (
 					<Button
-						type="primary"
-						shape="round"
 						icon={<SaveOutlined />}
+						shape="round"
+						type="primary"
 						onClick={handleEditOrder}
 					/>
 				),
@@ -158,14 +158,15 @@ export const ProductCategories = () => {
 
 	const renderDraggableContainer = (props) => (
 		<SortableBody
-			useDragHandle
-			disableAutoscroll
 			helperClass="row-dragging"
+			disableAutoscroll
+			useDragHandle
 			onSortEnd={onSortEnd}
 			{...props}
 		/>
 	);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const renderDraggableBodyRow = ({ className, style, ...restProps }) => {
 		// function findIndex base on Table rowKey props and should always be a right array index
 		const index = dataSource.findIndex(
@@ -182,11 +183,11 @@ export const ProductCategories = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Product Category"
-						onCreateDisabled={isConnected === false}
 						onCreate={() => {
 							setSelectedProductCategory(null);
 							setModifyProductCategoryModalVisible(true);
 						}}
+						onCreateDisabled={isConnected === false}
 					/>
 				)}
 
@@ -201,16 +202,16 @@ export const ProductCategories = () => {
 
 				<Table
 					columns={getColumns()}
-					dataSource={dataSource}
-					scroll={{ x: 800 }}
-					pagination={false}
-					loading={isFetching || isLoading}
 					components={{
 						body: {
 							wrapper: renderDraggableContainer,
 							row: renderDraggableBodyRow,
 						},
 					}}
+					dataSource={dataSource}
+					loading={isFetching || isLoading}
+					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 

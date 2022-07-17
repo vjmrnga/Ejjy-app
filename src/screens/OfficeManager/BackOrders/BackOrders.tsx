@@ -1,24 +1,11 @@
-import { Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AddButtonIcon, Content } from '../../../components';
-import { Box } from '../../../components/elements';
-import { EMPTY_CELL } from '../../../global/constants';
-import { pageSizeOptions } from '../../../global/options';
-import { request, backOrdersStatuses } from '../../../global/types';
-import { useBackOrders } from '../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from 'utils';
-import { AssignBackOrderModal } from './components/AssignBackOrderModal';
-
-const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date Returned', dataIndex: 'datetime_sent' },
-	{ title: 'Date Received', dataIndex: 'datetime_received' },
-	{ title: 'Returned By (Branch)', dataIndex: 'returned_by_branch' },
-	{ title: 'Status', dataIndex: 'status' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+// const columns: ColumnsType = [
+// 	{ title: 'ID', dataIndex: 'id' },
+// 	{ title: 'Date Returned', dataIndex: 'datetime_sent' },
+// 	{ title: 'Date Received', dataIndex: 'datetime_received' },
+// 	{ title: 'Returned By (Branch)', dataIndex: 'returned_by_branch' },
+// 	{ title: 'Status', dataIndex: 'status' },
+// 	{ title: 'Actions', dataIndex: 'actions' },
+// ];
 
 export const BackOrders = () => {
 	return null;

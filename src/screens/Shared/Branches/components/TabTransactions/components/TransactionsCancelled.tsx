@@ -7,11 +7,7 @@ import { MAX_PAGE_SIZE } from 'global';
 import { useSiteSettingsRetrieve, useTransactions } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatInPeso,
-	isUserFromBranch,
-} from 'utils';
+import { convertIntoArray, formatInPeso, isUserFromBranch } from 'utils';
 
 interface Props {
 	branchId?: string;
@@ -102,11 +98,11 @@ export const TransactionsCancelled = ({
 
 					{!isUserFromBranch(user.user_type) && (
 						<Button
+							disabled={transactions.length === 0}
+							loading={isPrinting}
 							text="Print"
 							variant="primary"
 							onClick={onPrint}
-							loading={isPrinting}
-							disabled={transactions.length === 0}
 						/>
 					)}
 				</div>
@@ -118,6 +114,4 @@ export const TransactionsCancelled = ({
 CashieringCard.defaultProps = {
 	className: undefined,
 	bordered: false,
-	disabled: false,
-	loading: false,
 };

@@ -19,7 +19,7 @@ interface Props {
 	onClose: any;
 }
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const columns: ColumnsType = [
 	{ title: 'Item', dataIndex: 'item' },
@@ -64,7 +64,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 				item: branch_product.product.name,
 				quantity: formatQuantity({
 					unitOfMeasurement: branch_product.product.unit_of_measurement,
-					quantity: quantity,
+					quantity,
 				}),
 				rate: formatInPeso(price_per_piece),
 				amount: formatInPeso(quantity * Number(price_per_piece)),
@@ -81,8 +81,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		}
 	}, [transaction, transactionRetrieved]);
 
-	useEffect(() => {}, [transactionRetrieved, transaction]);
-
 	useEffect(() => {
 		if (transactionData?.id) {
 			if (transactionData.payment.mode === saleTypes.CASH) {
@@ -97,14 +95,14 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="View Transaction"
 			className="Modal__hasFooter"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			title="View Transaction"
+			width={400}
 			centered
 			closable
-			width={400}
+			visible
+			onCancel={onClose}
 		>
 			<Spin spinning={isTransactionFetching || isSiteSettingsFetching}>
 				{transactionData?.id && (

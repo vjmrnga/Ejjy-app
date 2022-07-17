@@ -78,6 +78,7 @@ export const ModifyAccountForm = ({
 		<Formik
 			initialValues={getFormDetails().defaultValues}
 			validationSchema={getFormDetails().schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit({
 					...formData,
@@ -89,7 +90,6 @@ export const ModifyAccountForm = ({
 						: undefined,
 				});
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -98,7 +98,16 @@ export const ModifyAccountForm = ({
 							<Label id="type" label="Type" spacing />
 							<Select
 								className="w-100"
+								disabled={account !== null}
+								filterOption={(input, option) =>
+									option.children
+										.toString()
+										.toLowerCase()
+										.indexOf(input.toLowerCase()) >= 0
+								}
+								optionFilterProp="children"
 								value={values.type}
+								showSearch
 								onChange={(value) => {
 									setFieldValue('type', value);
 
@@ -111,15 +120,6 @@ export const ModifyAccountForm = ({
 										setFieldValue('businessAddress', undefined);
 									}
 								}}
-								optionFilterProp="children"
-								filterOption={(input, option) =>
-									option.children
-										.toString()
-										.toLowerCase()
-										.indexOf(input.toLowerCase()) >= 0
-								}
-								disabled={account !== null}
-								showSearch
 							>
 								<Select.Option
 									key={accountTypes.PERSONAL}
@@ -179,7 +179,7 @@ export const ModifyAccountForm = ({
 							/>
 						</Col>
 
-						<Col span={24} md={12}>
+						<Col md={12} span={24}>
 							<Label id="gender" label="Gender" spacing />
 							<FormRadioButton
 								id="gender"
@@ -202,15 +202,15 @@ export const ModifyAccountForm = ({
 							/>
 						</Col>
 
-						<Col span={24} md={12}>
+						<Col md={12} span={24}>
 							<Label id="birthday" label="Birthday" spacing />
 							<DatePicker
+								allowClear={false}
+								className="w-100"
 								format="MMMM DD, YYYY"
 								size="large"
 								value={values.birthday}
 								onSelect={(value) => setFieldValue('birthday', value)}
-								className="w-100"
-								allowClear={false}
 							/>
 							<ErrorMessage
 								name="birthday"
@@ -230,11 +230,11 @@ export const ModifyAccountForm = ({
 							values.type,
 						) && (
 							<>
-								<Col span={24} md={12}>
+								<Col md={12} span={24}>
 									<FormInputLabel
 										id="businessName"
 										label={
-											values.type == accountTypes.CORPORATE
+											values.type === accountTypes.CORPORATE
 												? 'Business Name'
 												: 'Agency Name'
 										}
@@ -244,11 +244,11 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col span={24} md={12}>
+								<Col md={12} span={24}>
 									<FormInputLabel
 										id="businessAddress"
 										label={
-											values.type == accountTypes.CORPORATE
+											values.type === accountTypes.CORPORATE
 												? 'Address (Business)'
 												: 'Address (Agency)'
 										}
@@ -280,31 +280,31 @@ export const ModifyAccountForm = ({
 						<Col span={24}>
 							<Label label="Loyalty Membership" spacing />
 							<Radio.Group
-								value={values.isPointSystemEligible}
 								options={[
 									{ label: 'Yes', value: true },
 									{ label: 'No', value: false },
 								]}
+								optionType="button"
+								value={values.isPointSystemEligible}
 								onChange={(e) => {
 									setFieldValue('isPointSystemEligible', e.target.value);
 								}}
-								optionType="button"
 							/>
 						</Col>
 					</Row>
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={account ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={loading}
+							text={account ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

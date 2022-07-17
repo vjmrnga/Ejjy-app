@@ -19,12 +19,12 @@ export const AddButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -37,12 +37,12 @@ export const EditButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -55,12 +55,12 @@ export const RemoveButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -73,12 +73,12 @@ export const ViewButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -91,12 +91,12 @@ export const DeliverButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -109,12 +109,12 @@ export const CancelButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -127,12 +127,12 @@ export const FetchButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -145,12 +145,12 @@ export const RestoreButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );
 
@@ -163,11 +163,11 @@ export const CheckButtonIcon = ({
 	classNames,
 }: Props) => (
 	<ButtonIcon
-		disabled={disabled}
-		type={type}
-		icon={<img src={imgSrc} alt="icon" />}
-		onClick={onClick}
-		tooltip={tooltip}
 		classNames={classNames}
+		disabled={disabled}
+		icon={<img alt="icon" src={imgSrc} />}
+		tooltip={tooltip}
+		type={type}
+		onClick={onClick}
 	/>
 );

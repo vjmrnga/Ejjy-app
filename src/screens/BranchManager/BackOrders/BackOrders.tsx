@@ -1,13 +1,7 @@
 /* eslint-disable no-underscore-dangle */
+import { Content, ViewBackOrderModal, ViewTransactionModal } from 'components';
+import { Box } from 'components/elements';
 import React, { useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import {
-	Content,
-	ViewBackOrderModal,
-	ViewTransactionModal,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import { useAuth } from '../../../hooks/useAuth';
 import { BackOrdersTable } from './components/BackOrdersTable';
 import { FulfillBackOrderModal } from './components/FulfillBackOrderModal';
 import './style.scss';
@@ -25,10 +19,6 @@ export const BackOrders = () => {
 
 	// REFS
 	const backOrdersReceiveRef = useRef(null);
-
-	// CUSTOM HOOKS
-	const history = useHistory();
-	const { user } = useAuth();
 
 	// METHODS
 	const onOpenModal = (backOrder, type) => {
@@ -61,7 +51,7 @@ export const BackOrders = () => {
 					/>
 				)} */}
 
-				{/* 
+				{/*
 				// NOTE: Temporarily commented out since we cannot create BO as of the moment
 				{user?.branch?.id !== MAIN_BRANCH_ID ? (
 					// NOTE: Only managers not from Main branch can create back order
@@ -81,7 +71,7 @@ export const BackOrders = () => {
 							onOpenModal(backOrder, modals.FULFILL);
 						}}
 					/>
-				)} 
+				)}
 				*/}
 
 				{selectedTransaction && (
@@ -101,8 +91,8 @@ export const BackOrders = () => {
 				{modalType === modals.FULFILL && selectedBackOrder && (
 					<FulfillBackOrderModal
 						backOrder={selectedBackOrder}
-						onSuccess={() => backOrdersReceiveRef.current?.refreshList()}
 						onClose={() => onOpenModal(null, null)}
+						onSuccess={() => backOrdersReceiveRef.current?.refreshList()}
 					/>
 				)}
 			</Box>

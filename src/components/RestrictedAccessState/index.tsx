@@ -11,9 +11,9 @@ export const RestrictedAccessState = ({ title, description, icon }: Props) => (
 	<div className="RestrictedAccessState">
 		{icon || (
 			<img
+				alt="icon"
 				className="RestrictedAccessState_icon"
 				src={require('../../assets/images/icon-danger.svg')}
-				alt="icon"
 			/>
 		)}
 

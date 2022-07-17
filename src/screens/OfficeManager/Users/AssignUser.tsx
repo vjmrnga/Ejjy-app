@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Alert, Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
+import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	AddButtonIcon,
 	Breadcrumb,
@@ -109,13 +109,13 @@ export const AssignUser = ({ match }: Props) => {
 						<Assignments
 							assignments={assignments}
 							disabled={isConnected === false}
-							onEdit={setSelectedCashieringAssignment}
 							onDelete={(assignment) =>
 								deleteCashieringAssignment({
 									id: assignment.id,
 									actingUserId: actingUser.id,
 								})
 							}
+							onEdit={setSelectedCashieringAssignment}
 						/>
 					),
 					actions: !isDateAfter && (
@@ -168,10 +168,10 @@ export const AssignUser = ({ match }: Props) => {
 
 	return (
 		<Content
-			className="AssignUsers"
-			title="Assign User"
-			rightTitle={getFullName(user)}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			className="AssignUsers"
+			rightTitle={getFullName(user)}
+			title="Assign User"
 		>
 			<ConnectionAlert />
 
@@ -196,15 +196,15 @@ export const AssignUser = ({ match }: Props) => {
 						<Table
 							columns={columns}
 							dataSource={dataSource}
-							scroll={{ x: 1000 }}
 							loading={isFetchingUser || isFetchingCashieringAssignments}
 							pagination={false}
+							scroll={{ x: 1000 }}
 						/>
 
 						{(selectedDate || selectedCashieringAssignment) && (
 							<ModifyCashieringAssignmentModal
-								assignments={cashieringAssignments}
 								assignment={selectedCashieringAssignment}
+								assignments={cashieringAssignments}
 								date={selectedDate}
 								userId={userId}
 								onClose={() => {
@@ -247,11 +247,11 @@ const Assignments = ({
 
 					<Tooltip title="Edit">
 						<Button
-							type="primary"
-							shape="circle"
-							size="small"
 							disabled={disabled}
 							icon={<EditOutlined />}
+							shape="circle"
+							size="small"
+							type="primary"
 							onClick={() =>
 								confirmPassword({ onSuccess: () => onEdit(assignment) })
 							}
@@ -260,12 +260,12 @@ const Assignments = ({
 
 					<Tooltip title="Delete">
 						<Button
-							danger
-							shape="circle"
-							size="small"
-							ghost
 							disabled={disabled}
 							icon={<DeleteOutlined />}
+							shape="circle"
+							size="small"
+							danger
+							ghost
 							onClick={() =>
 								confirmPassword({ onSuccess: onDelete(assignment) })
 							}

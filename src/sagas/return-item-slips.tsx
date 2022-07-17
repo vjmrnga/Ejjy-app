@@ -1,10 +1,9 @@
 import { call, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl, getLocalApiUrl } from 'utils';
 import { types } from '../ducks/return-item-slips';
 import { IS_APP_LIVE, MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/return-item-slips';
-import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* list({ payload }: any) {

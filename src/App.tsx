@@ -27,11 +27,11 @@ const App = () => {
 			<Spin
 				className="GlobalSpinner"
 				size="large"
-				tip="Please wait while we set things up for you!"
 				spinning={isInitializingData}
+				tip="Please wait while we set things up for you!"
 			>
 				<Switch>
-					<NoAuthRoute path="/login" exact component={Login} />
+					<NoAuthRoute component={Login} path="/login" exact />
 
 					<CommonRoute
 						forUserType={userTypes.ADMIN}

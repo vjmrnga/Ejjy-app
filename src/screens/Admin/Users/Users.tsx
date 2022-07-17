@@ -1,5 +1,6 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { convertIntoArray, getUserTypeName, showErrorMessages } from 'utils';
 import {
 	Content,
 	RequestErrors,
@@ -10,7 +11,6 @@ import { Box } from '../../../components/elements';
 import { MAX_PAGE_SIZE } from '../../../global/constants';
 import { request, userPendingApprovalTypes } from '../../../global/types';
 import { useUsers } from '../../../hooks/useUsers';
-import { convertIntoArray, getUserTypeName, showErrorMessages } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', key: 'name' },
@@ -106,9 +106,9 @@ const PendingUserCreation = () => {
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 800 }}
-				pagination={false}
 				loading={usersStatus === request.REQUESTING}
+				pagination={false}
+				scroll={{ x: 800 }}
 			/>
 		</Box>
 	);
@@ -193,9 +193,9 @@ const PendingEditUserType = () => {
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 800 }}
-				pagination={false}
 				loading={usersStatus === request.REQUESTING}
+				pagination={false}
+				scroll={{ x: 800 }}
 			/>
 		</Box>
 	);

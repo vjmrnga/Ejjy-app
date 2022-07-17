@@ -1,11 +1,11 @@
 import { Table } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { formatDateTime, getOrderSlipStatusBranchManager, sleep } from 'utils';
 import { Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { formatDateTime, getOrderSlipStatusBranchManager, sleep } from 'utils';
 import { useOrderSlips } from '../hooks/useOrderSlips';
 import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 
@@ -90,12 +90,12 @@ export const OrderSlips = () => {
 	return (
 		<Content className="OrderSlips" title="Order Slips">
 			<Box>
-				<TableHeader title="F-OS1" pending={pendingCount} />
+				<TableHeader pending={pendingCount} title="F-OS1" />
 
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 650 }}
+					loading={orderSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -105,7 +105,7 @@ export const OrderSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={orderSlipsStatus === request.REQUESTING}
+					scroll={{ x: 650 }}
 				/>
 
 				{selectedOrderSlip && (

@@ -4,6 +4,11 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
+	formatDateTime,
+	formatQuantity,
+	getPreparationSlipStatus,
+} from 'utils';
+import {
 	Breadcrumb,
 	ColoredText,
 	Content,
@@ -16,11 +21,6 @@ import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { request, preparationSlipStatus } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import {
-	formatDateTime,
-	formatQuantity,
-	getPreparationSlipStatus,
-} from 'utils';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import './style.scss';
@@ -87,17 +87,17 @@ export const ViewPendingTransaction = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] F-PS1"
-			rightTitle={`#${pendingTransactionId}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			rightTitle={`#${pendingTransactionId}`}
+			title="[VIEW] F-PS1"
 		>
 			<Details
 				pendingTransaction={pendingTransaction}
 				preparationSlipsStatus={preparationSlipsStatus}
 			/>
 			<AdjustmentSlips
-				pendingTransactionId={pendingTransactionId}
 				pendingTransaction={pendingTransaction}
+				pendingTransactionId={pendingTransactionId}
 				retrievePreparationSlip={retrievePreparationSlip}
 			/>
 		</Content>
@@ -141,9 +141,9 @@ const Details = ({
 					}),
 					personnel: `${item.assigned_person.first_name} ${item.assigned_person.last_name}`,
 					has_qty_allowance: item.product.has_quantity_allowance ? (
-						<ColoredText variant="primary" text="Yes" />
+						<ColoredText text="Yes" variant="primary" />
 					) : (
-						<ColoredText variant="error" text="No" />
+						<ColoredText text="No" variant="error" />
 					),
 				})),
 			);
@@ -171,8 +171,8 @@ const Details = ({
 				<Table
 					columns={columns}
 					dataSource={requestedProducts}
-					scroll={{ x: 1200 }}
 					pagination={false}
+					scroll={{ x: 1200 }}
 				/>
 			</Box>
 		</Spin>
@@ -221,8 +221,8 @@ const AdjustmentSlips = ({
 	return (
 		<Box>
 			<TableHeader
-				title="Adjustment Slips"
 				buttonName="Create Adjustment Slip"
+				title="Adjustment Slips"
 				onCreate={() => {
 					setCreateAdjustmentSlipVisible(true);
 				}}
@@ -233,10 +233,10 @@ const AdjustmentSlips = ({
 
 			<AdjustmentSlipsTable
 				adjustmentSlips={adjustmentSlips}
+				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 				onViewAdjustmentSlip={(adjustmentSlip) => {
 					setSelectedAdjustmentSlip(adjustmentSlip);
 				}}
-				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 			/>
 
 			{selectedAdjustmentSlip && (
@@ -249,11 +249,11 @@ const AdjustmentSlips = ({
 			{createAdjustmentSlipVisible && (
 				<CreateAdjustmentSlipModal
 					preparationSlip={pendingTransaction}
+					onClose={() => setCreateAdjustmentSlipVisible(false)}
 					onSuccess={() => {
 						retrievePreparationSlip();
 						listAdjustmentSlips();
 					}}
-					onClose={() => setCreateAdjustmentSlipVisible(false)}
 				/>
 			)}
 		</Box>

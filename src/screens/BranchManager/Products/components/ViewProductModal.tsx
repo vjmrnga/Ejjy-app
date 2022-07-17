@@ -1,7 +1,7 @@
 import { Divider, Modal } from 'antd';
+import { DetailsHalf, DetailsRow, DetailsSingle } from 'components';
+import { Button } from 'components/elements';
 import React from 'react';
-import { DetailsHalf, DetailsRow, DetailsSingle } from '../../../../components';
-import { Button } from '../../../../components/elements';
 import { getProductType, getUnitOfMeasurement } from 'utils';
 
 interface Props {
@@ -11,13 +11,13 @@ interface Props {
 
 export const ViewProductModal = ({ branchProduct, onClose }: Props) => (
 	<Modal
-		title="[View] Product"
 		className="Modal__large Modal__hasFooter"
-		footer={[<Button text="Close" onClick={onClose} />]}
-		onCancel={onClose}
-		visible
+		footer={[<Button key="button" text="Close" onClick={onClose} />]}
+		title="[View] Product"
 		centered
 		closable
+		visible
+		onCancel={onClose}
 	>
 		<DetailsRow>
 			<DetailsSingle label="Barcode" value={branchProduct.product.barcode} />

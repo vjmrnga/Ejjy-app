@@ -18,22 +18,22 @@ export const DailyProductSalesReportTotal = ({
 }: Props) => (
 	<div className="DailyProductSalesReportTotal mb-4">
 		<Row gutter={[16, 16]}>
-			<Col xs={24} sm={12} md={6}>
+			<Col md={6} sm={12} xs={24}>
 				<Statistic title="Net Sales" value={formatInPeso(totalSales)} />
 			</Col>
-			<Col xs={24} sm={12} md={6}>
+			<Col md={6} sm={12} xs={24}>
 				<Statistic
 					title="Total Vat Sales"
 					value={formatInPeso(totalVatSales)}
 				/>
 			</Col>
-			<Col xs={24} sm={12} md={6}>
+			<Col md={6} sm={12} xs={24}>
 				<Statistic
 					title="Total Vat Exempt Sales"
 					value={formatInPeso(totalVatExemptSales)}
 				/>
 			</Col>
-			<Col xs={24} sm={12} md={6}>
+			<Col md={6} sm={12} xs={24}>
 				<Statistic
 					title="Total Amount of Voided Transactions"
 					value={formatInPeso(totalAmountVoidedTransactions)}

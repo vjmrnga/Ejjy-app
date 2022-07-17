@@ -50,8 +50,8 @@ export const FulfillCheckForm = ({
 		<>
 			<div className="QuantityContainer">
 				<FormInput
-					type="number"
 					id={`products.${index}.fulfilledQuantityPiece`}
+					type="number"
 				/>
 				<FormSelect
 					id={`products.${index}.quantityType`}
@@ -69,10 +69,10 @@ export const FulfillCheckForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<TableNormal
@@ -89,16 +89,16 @@ export const FulfillCheckForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={isLoading}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Submit"
-						variant="primary"
 						loading={isLoading}
+						text="Submit"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

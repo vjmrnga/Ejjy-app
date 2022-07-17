@@ -121,9 +121,7 @@ export const CashBreakdowns = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 800 }}
 					loading={isFetching}
-					bordered
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -138,6 +136,8 @@ export const CashBreakdowns = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
+					scroll={{ x: 800 }}
+					bordered
 				/>
 
 				{selectedCashBreakdown && (
@@ -180,9 +180,19 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Type" spacing />
 				<Select
 					className="w-100"
+					disabled={isLoading}
+					filterOption={(input, option) =>
+						option.children
+							.toString()
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+					optionFilterProp="children"
 					value={params.cbType}
+					allowClear
+					showSearch
 					onChange={(value) => {
-						let selectedType = _.toString(value);
+						const selectedType = _.toString(value);
 						let type = '';
 						let category = '';
 						if (
@@ -214,16 +224,6 @@ const Filter = ({ isLoading }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					disabled={isLoading}
-					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
-					allowClear
 				>
 					{cashBreakdownOptions.map((option) => (
 						<Select.Option key={option.value} value={option.value}>
@@ -238,22 +238,22 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.branchMachineId}
-					onChange={(value) => {
-						setQueryParams(
-							{ branchMachineId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-					optionFilterProp="children"
+					disabled={isFetchingBranchMachines || isLoading}
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					disabled={isFetchingBranchMachines || isLoading}
+					optionFilterProp="children"
 					allowClear
 					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ branchMachineId: value },
+							{ shouldResetPage: true },
+						);
+					}}
 				>
 					{branchMachines.map(({ id, name }) => (
 						<Select.Option key={id} value={id}>
@@ -268,22 +268,22 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.creatingUserId}
-					onChange={(value) => {
-						setQueryParams(
-							{ creatingUserId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-					optionFilterProp="children"
+					disabled={isFetchingUsers || isLoading}
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					disabled={isFetchingUsers || isLoading}
+					optionFilterProp="children"
 					allowClear
 					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ creatingUserId: value },
+							{ shouldResetPage: true },
+						);
+					}}
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>

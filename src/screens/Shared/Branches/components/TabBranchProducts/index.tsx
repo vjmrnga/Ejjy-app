@@ -15,7 +15,7 @@ import {
 import { useBranchProducts, useProductCategories, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatQuantity, getId } from 'utils';
+import { convertIntoArray, filterOption, formatQuantity, getId } from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './components/EditBranchProductsModal';
 import { ViewBranchProductModal } from './components/ViewBranchProductModal';
@@ -55,10 +55,10 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams({
-		onParamsCheck: (params) => {
+		onParamsCheck: (queryParams) => {
 			const newParams = {};
 
-			if (!params.isSoldInBranch) {
+			if (!queryParams.isSoldInBranch) {
 				newParams['isSoldInBranch'] = isSoldInBranchOptions.SHOW_IN_STOCK;
 			}
 
@@ -117,11 +117,11 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 
 			const currentBalance = (
 				<Tooltip
+					overlayClassName="button-tooltip"
 					title={formatQuantity({
 						unitOfMeasurement: unit_of_measurement,
 						quantity: current_balance,
 					})}
-					overlayClassName="button-tooltip"
 				>
 					{formatQuantity({
 						unitOfMeasurement: unit_of_measurement,
@@ -156,11 +156,11 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 				actions: (
 					<TableActions
 						areButtonsDisabled={disabled}
-						onAddName="Supplier Delivery"
 						onAdd={() => {
 							setSelectedBranchProduct(branchProduct);
 							setModalType(modals.ADD);
 						}}
+						onAddName="Supplier Delivery"
 						onEdit={() => {
 							setSelectedBranchProduct(branchProduct);
 							setModalType(modals.EDIT);
@@ -193,27 +193,23 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 	return (
 		<div>
 			<TableHeader
-				wrapperClassName="pt-0"
-				title="Products"
 				buttonName="Create Branch Product"
+				title="Products"
+				wrapperClassName="pt-0"
 			/>
 
-			<Filter
-				setQueryParams={(params) => {
-					setQueryParams(params, { shouldResetPage: true });
-				}}
-			/>
+			<Filter />
 
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
-				withSpaceTop
 				withSpaceBottom
+				withSpaceTop
 			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isFetchingBranchProducts}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -228,8 +224,8 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 800 }}
 				bordered
-				loading={isFetchingBranchProducts}
 			/>
 
 			{selectedBranchProduct && modalType === modals.VIEW && (
@@ -243,8 +239,8 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 				<EditBranchProductsModal
 					branchId={getId(branch)}
 					branchProduct={selectedBranchProduct}
-					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}
+					onSuccess={refetchBranchProducts}
 				/>
 			)}
 
@@ -252,20 +248,16 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 				<AddBranchProductBalanceModal
 					branchId={getId(branch)}
 					branchProduct={selectedBranchProduct}
-					onSuccess={refetchBranchProducts}
 					onClose={() => setModalType(null)}
+					onSuccess={refetchBranchProducts}
 				/>
 			)}
 		</div>
 	);
 };
 
-interface FilterProps {
-	setQueryParams: any;
-}
-
-const Filter = ({ setQueryParams }: FilterProps) => {
-	const { params } = useQueryParams();
+const Filter = () => {
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
@@ -276,7 +268,7 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 	// METHODS
 	const onSearchDebounced = useCallback(
 		debounce((keyword) => {
-			setQueryParams({ search: keyword });
+			setQueryParams({ search: keyword }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
 		[params],
 	);
@@ -286,31 +278,29 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Product Category" spacing />
 				<Select
-					style={{ width: '100%' }}
-					value={params.productCategory}
-					onChange={(value) => {
-						setQueryParams({ productCategory: value });
-					}}
+					filterOption={filterOption}
 					loading={isFetchingProductCategories}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
+					style={{ width: '100%' }}
+					value={params.productCategory}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ productCategory: value },
+							{ shouldResetPage: true },
+						);
+					}}
 				>
 					{productCategories.map(({ name }) => (
 						<Select.Option key={name} value={name}>
@@ -323,7 +313,6 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
-					value={params.isSoldInBranch}
 					options={[
 						{ label: 'Show All', value: isSoldInBranchOptions.SHOW_ALL },
 						{
@@ -335,11 +324,15 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 							value: isSoldInBranchOptions.SHOW_IN_STOCK,
 						},
 					]}
+					optionType="button"
+					value={params.isSoldInBranch}
 					onChange={(e) => {
 						const { value } = e.target;
-						setQueryParams({ isSoldInBranch: value });
+						setQueryParams(
+							{ isSoldInBranch: value },
+							{ shouldResetPage: true },
+						);
 					}}
-					optionType="button"
 				/>
 			</Col>
 		</Row>

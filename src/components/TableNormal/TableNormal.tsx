@@ -76,19 +76,19 @@ export const TableNormal = ({
 									key={`tr-${rowIndex}`}
 									style={{ height: `${row?.height || ROW_HEIGHT}px` }}
 								>
-									<td colSpan={row.span} key={`td-${rowIndex}`}>
+									<td key={`td-${rowIndex}`} colSpan={row.span}>
 										{row.content}
 									</td>
 								</tr>
 							) : (
 								<tr
+									key={`tr-${rowIndex}`}
 									ref={(el) => {
 										rowRefs.current[rowIndex] = el;
 									}}
 									className={cn({ active: rowIndex === activeRow })}
-									tabIndex={rowIndex}
-									key={`tr-${rowIndex}`}
 									style={{ height: `${ROW_HEIGHT}px` }}
+									tabIndex={rowIndex}
 								>
 									{row
 										.filter((item) => !item?.isHidden)

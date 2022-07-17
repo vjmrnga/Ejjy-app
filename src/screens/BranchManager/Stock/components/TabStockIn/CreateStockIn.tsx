@@ -191,26 +191,26 @@ export const CreateStockIn = () => {
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
+						disabled={!selected}
 						id={`${fieldKey}.quantity`}
-						onChange={(value) => {
-							onChangeQuantity(productId, value);
-						}}
 						isWholeNumber={
 							!(
 								quantity_type === quantityTypes.PIECE &&
 								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 							)
 						}
-						disabled={!selected}
+						type="number"
+						onChange={(value) => {
+							onChangeQuantity(productId, value);
+						}}
 					/>
 					<FormSelect
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
+						disabled
 						onChange={(value) => {
 							onChangeQuantityType(productId, value);
 						}}
-						disabled
 					/>
 				</div>
 				<ErrorMessage
@@ -227,15 +227,15 @@ export const CreateStockIn = () => {
 		return (
 			<>
 				<FormattedInputNumber
-					size="large"
-					defaultValue={productsRef?.current?.[productId]?.costPerPiece || ''}
 					controls={false}
+					defaultValue={productsRef?.current?.[productId]?.costPerPiece || ''}
+					disabled={!selected}
+					size="large"
 					style={{ width: '100%' }}
 					onChange={(value) => {
 						onChangeCostPerPiece(productId, value);
 						setFieldValue(`${fieldKey}.costPerPiece`, value);
 					}}
-					disabled={!selected}
 				/>
 				<ErrorMessage
 					name={`${fieldKey}.costPerPiece`}
@@ -342,9 +342,9 @@ export const CreateStockIn = () => {
 		<Content className="CreateBackOrder" title="Stocks">
 			<Box>
 				<TableHeader
+					searchDisabled={activeTab === tabs.SELECTED}
 					title="Create Stock In"
 					onSearch={onSearch}
-					searchDisabled={activeTab === tabs.SELECTED}
 				/>
 
 				<RequestErrors
@@ -357,20 +357,20 @@ export const CreateStockIn = () => {
 				/>
 
 				<Formik
-					innerRef={formRef}
 					initialValues={getFormDetails().DefaultValues}
+					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
+					enableReinitialize
 					onSubmit={() => {
 						setCreateStockInModalVisible(true);
 					}}
-					enableReinitialize
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
 							<div className="PaddingHorizontal">
 								<Tabs
-									type="card"
 									activeKey={activeTab}
+									type="card"
 									onTabClick={setActiveTab}
 								>
 									<Tabs.TabPane key={tabs.ALL} tab="All Products" />
@@ -390,13 +390,13 @@ export const CreateStockIn = () => {
 										renderCostPerPiece,
 										onChangeCheckbox,
 									}}
+									loading={loading}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
 										onPageChange,
 									}}
-									loading={loading}
 								/>
 							</div>
 
@@ -405,10 +405,10 @@ export const CreateStockIn = () => {
 							<div className="CreateBackOrder_createContainer">
 								<Button
 									classNames="CreateBackOrder_btnCreate"
-									type="submit"
-									text="Create"
-									variant="primary"
 									disabled={loading || isEmpty(productsRef.current)}
+									text="Create"
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>
@@ -417,11 +417,11 @@ export const CreateStockIn = () => {
 
 				{createStockInModalVisible && (
 					<CreateStockInModal
-						onSubmit={(formData) => {
-							onCreate(formData);
+						onClose={() => {
 							setCreateStockInModalVisible(false);
 						}}
-						onClose={() => {
+						onSubmit={(formData) => {
+							onCreate(formData);
 							setCreateStockInModalVisible(false);
 						}}
 					/>
@@ -454,7 +454,7 @@ const ProductsTable = ({
 		setDataSource(
 			values.branchProducts.map((product, index) => {
 				const fieldKey = `branchProducts.${index}`;
-				const isVatExempted = product.isVatExempted;
+				const { isVatExempted } = product;
 
 				return {
 					key: fieldKey,
@@ -503,6 +503,7 @@ const ProductsTable = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				loading={loading}
 				pagination={
 					activeTab === tabs.ALL
 						? {
@@ -517,7 +518,6 @@ const ProductsTable = ({
 						: false
 				}
 				scroll={{ x: 800 }}
-				loading={loading}
 			/>
 		</>
 	);

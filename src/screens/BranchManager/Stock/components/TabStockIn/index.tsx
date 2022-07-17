@@ -67,8 +67,8 @@ export const TabStockIn = () => {
 			amountPaid: formatInPeso(receivingVoucher.amount_paid),
 			actions: (
 				<Button
-					type="link"
 					loading={isPrinting === receivingVoucher.id}
+					type="link"
 					onClick={() => {
 						onPrintPDF(receivingVoucher);
 					}}
@@ -88,6 +88,7 @@ export const TabStockIn = () => {
 			receivingVoucher,
 			siteSettings,
 		});
+		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'p',
 			unit: 'px',
@@ -122,6 +123,7 @@ export const TabStockIn = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				loading={isReceivingVouchersFetching || isSiteSettingsFetching}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -136,7 +138,6 @@ export const TabStockIn = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isReceivingVouchersFetching || isSiteSettingsFetching}
 				bordered
 			/>
 
@@ -148,9 +149,8 @@ export const TabStockIn = () => {
 			)}
 
 			<div
-				dangerouslySetInnerHTML={{
-					__html: html,
-				}}
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>
 		</>

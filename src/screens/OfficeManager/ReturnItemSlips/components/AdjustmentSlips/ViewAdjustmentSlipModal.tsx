@@ -1,9 +1,9 @@
 import { Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { formatDateTime, formatQuantity } from 'utils';
 import { DetailsRow, DetailsSingle } from '../../../../../components';
 import { Button, Label } from '../../../../../components/elements';
-import { formatDateTime, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -18,13 +18,13 @@ interface Props {
 
 export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 	<Modal
-		title="View Adjustment Slip"
 		className="Modal__large Modal__hasFooter"
 		footer={[<Button key="close" text="Close" onClick={onClose} />]}
-		onCancel={onClose}
-		visible
+		title="View Adjustment Slip"
 		centered
 		closable
+		visible
+		onCancel={onClose}
 	>
 		<DetailsRow>
 			<DetailsSingle
@@ -53,8 +53,8 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 					quantity: item.new_quantity_received,
 				}),
 			}))}
-			scroll={{ x: 800 }}
 			pagination={false}
+			scroll={{ x: 800 }}
 		/>
 	</Modal>
 );

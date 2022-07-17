@@ -1,4 +1,4 @@
-import { Alert, message } from 'antd';
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectionAlert,
@@ -71,8 +71,8 @@ export const Branches = () => {
 			<Box>
 				<TableHeader
 					buttonName="Create Branch"
-					onCreateDisabled={isConnected === false}
 					onCreate={() => setModifyBranchModalVisible(true)}
+					onCreateDisabled={isConnected === false}
 				/>
 
 				<RequestErrors
@@ -85,9 +85,9 @@ export const Branches = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
-					pagination={false}
 					loading={isFetchingBranches || isDeletingBranch}
+					pagination={false}
+					scroll={{ x: 650 }}
 				/>
 
 				{modifyBranchModalVisible && (

@@ -1,9 +1,9 @@
 import { Col, Modal, Radio, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { PreparationSlipDetails } from 'components';
+import { Button, Label } from 'components/elements';
+import { quantityTypes } from 'global';
 import React, { useEffect, useState } from 'react';
-import { PreparationSlipDetails } from '../../../../components';
-import { Button, Label } from '../../../../components/elements';
-import { quantityTypes } from '../../../../global/types';
 import { convertToBulk, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
@@ -68,16 +68,16 @@ export const ViewPreparationSlipModal = ({
 	return (
 		<Modal
 			className="Modal__large Modal__hasFooter"
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
 			title="View Preparation Slip"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<PreparationSlipDetails preparationSlip={preparationSlip} />
 
-			<Row gutter={[16, 16]} justify="space-between" align="middle">
+			<Row align="middle" gutter={[16, 16]} justify="space-between">
 				<Col sm={12} span={24}>
 					<Label label="Products" spacing />
 				</Col>
@@ -86,15 +86,15 @@ export const ViewPreparationSlipModal = ({
 					<Space direction="horizontal">
 						<Label label="Quantity Type" />
 						<Radio.Group
+							defaultValue={quantityTypes.PIECE}
 							options={[
 								{ label: 'Piece', value: quantityTypes.PIECE },
 								{ label: 'Bulk', value: quantityTypes.BULK },
 							]}
+							optionType="button"
 							onChange={(e) => {
 								setQuantityType(e.target.value);
 							}}
-							defaultValue={quantityTypes.PIECE}
-							optionType="button"
 						/>
 					</Space>
 				</Col>
@@ -103,8 +103,8 @@ export const ViewPreparationSlipModal = ({
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 650, y: 250 }}
 				pagination={false}
+				scroll={{ x: 650, y: 250 }}
 			/>
 		</Modal>
 	);

@@ -43,13 +43,13 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={`${account ? '[Edit]' : '[Create]'} Account`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${account ? '[Edit]' : '[Create]'} Account`}
+			width={600}
 			centered
 			closable
-			width={600}
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -62,8 +62,8 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 			<ModifyAccountForm
 				account={account}
 				loading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
 				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);

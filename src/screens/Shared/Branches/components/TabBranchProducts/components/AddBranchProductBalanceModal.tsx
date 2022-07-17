@@ -88,13 +88,13 @@ export const AddBranchProductBalanceModal = ({
 	return (
 		<Modal
 			className="AddBranchProductBalance"
-			title="Supplier Delivery"
 			footer={null}
-			onCancel={handleClose}
-			visible
+			title="Supplier Delivery"
 			centered
 			closable
 			destroyOnClose
+			visible
+			onCancel={handleClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors)}
@@ -130,9 +130,9 @@ export const AddBranchProductBalanceModal = ({
 
 			<AddBranchProductBalanceForm
 				branchProduct={branchProduct}
-				onSubmit={onAddBranchProductBalance}
-				onClose={handleClose}
 				loading={branchProductsStatus === request.REQUESTING}
+				onClose={handleClose}
+				onSubmit={onAddBranchProductBalance}
 			/>
 		</Modal>
 	);

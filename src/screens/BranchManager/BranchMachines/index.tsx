@@ -108,9 +108,9 @@ export const BranchMachines = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					scroll={{ x: 800 }}
 					loading={isFetching || isLoading}
 					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 

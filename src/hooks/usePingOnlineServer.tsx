@@ -1,11 +1,10 @@
-import useAuth from 'hooks/useAuth';
+import { useAuth } from 'hooks';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
 import {
 	getLocalApiUrl,
 	getOnlineApiUrl,
-	isCUDShown,
 	isStandAlone,
 	isUserFromBranch,
 } from 'utils';

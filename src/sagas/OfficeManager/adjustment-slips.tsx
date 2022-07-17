@@ -1,4 +1,5 @@
 import { call, put, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { actions, types } from '../../ducks/OfficeManager/adjustment-slips';
 import {
 	MAX_PAGE_SIZE,
@@ -6,7 +7,6 @@ import {
 	RETRY_INTERVAL_MS,
 } from '../../global/constants';
 import { request } from '../../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/adjustment-slips';
 
 /* WORKERS */

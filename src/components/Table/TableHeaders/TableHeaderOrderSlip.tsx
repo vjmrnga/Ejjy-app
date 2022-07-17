@@ -77,25 +77,25 @@ export const TableHeaderOrderSlip = ({
 
 				{onOutOfStock && (
 					<Button
+						disabled={onOutOfStockDisabled}
+						icon={<AddIcon />}
+						iconDirection="left"
 						text="Out Of Stock"
+						tooltip={onOutOfStockTooltip}
 						variant="primary"
 						onClick={onOutOfStock}
-						iconDirection="left"
-						icon={<AddIcon />}
-						disabled={onOutOfStockDisabled}
-						tooltip={onOutOfStockTooltip}
 					/>
 				)}
 
 				{onCreate && (
 					<Button
+						disabled={onCreateDisabled}
+						icon={<AddIcon />}
+						iconDirection="left"
 						text={buttonName}
+						tooltip={onCreateTooltip}
 						variant="primary"
 						onClick={onCreate}
-						iconDirection="left"
-						icon={<AddIcon />}
-						disabled={onCreateDisabled}
-						tooltip={onCreateTooltip}
 					/>
 				)}
 			</div>

@@ -1,8 +1,8 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { actions, types } from '../../ducks/Admin/failed-transfers';
 import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branches';
 import { request } from '../../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/Admin/failed-transfers';
 
 /* WORKERS */

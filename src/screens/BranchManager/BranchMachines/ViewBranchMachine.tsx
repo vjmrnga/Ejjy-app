@@ -91,16 +91,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Branch Machine"
-			rightTitle={branchMachine?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			rightTitle={branchMachine?.name}
+			title="[VIEW] Branch Machine"
 		>
 			<Spin spinning={isLoading}>
 				{branchMachine?.is_online === false && (
 					<Alert
 						className="mb-4"
-						message="Branch Machine Connectivity"
 						description="The branch machine is offline. Data might be outdated."
+						message="Branch Machine Connectivity"
 						type="warning"
 						showIcon
 					/>
@@ -115,11 +115,11 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 					{branchMachine?.server_url && (
 						<Tabs
-							type="card"
-							className="PaddingHorizontal PaddingVertical"
 							activeKey={toString(currentTab)}
-							onTabClick={onTabClick}
+							className="PaddingHorizontal PaddingVertical"
+							type="card"
 							destroyInactiveTabPane
+							onTabClick={onTabClick}
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
 								<TabTransactions branchMachineId={branchMachine.id} />

@@ -1,9 +1,9 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/requisition-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/requisition-slips';
 
 /* WORKERS */

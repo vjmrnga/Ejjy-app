@@ -60,7 +60,7 @@ export const Notifications = () => {
 	return (
 		<Content className="Notifications" title="Notifications">
 			{notifications.map(({ message, datetime }) => (
-				<NotificationItem message={message} datetime={datetime} />
+				<NotificationItem key="message" datetime={datetime} message={message} />
 			))}
 		</Content>
 	);

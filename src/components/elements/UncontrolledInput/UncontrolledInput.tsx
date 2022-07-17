@@ -27,16 +27,16 @@ const UncontrolledInput = ({
 	autoFocus,
 }: Props) => (
 	<input
-		type={type}
-		id={id}
-		name={id}
+		autoFocus={autoFocus}
 		className={cn('Input', classNames)}
-		placeholder={placeholder}
+		disabled={disabled}
+		id={id}
 		max={max}
 		min={min}
-		disabled={disabled}
+		name={id}
+		placeholder={placeholder}
+		type={type}
 		onChange={(event) => onChange(event.target.value)}
-		autoFocus={autoFocus}
 	/>
 );
 

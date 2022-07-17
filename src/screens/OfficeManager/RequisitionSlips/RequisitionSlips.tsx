@@ -3,16 +3,15 @@ import { upperFirst } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useBranches, useQueryParams } from 'hooks';
+import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import { Content, TableHeaderRequisitionSlip } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { ALL_OPTION_KEY, EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { useBranches } from 'hooks';
-import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
-import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import './style.scss';
 
 const columns = [
@@ -93,8 +92,8 @@ export const RequisitionSlips = () => {
 	return (
 		<Content
 			className="RequisitionSlips"
-			title="F-RS1"
 			description="Requests from branches"
+			title="F-RS1"
 		>
 			<Box>
 				<TableHeaderRequisitionSlip pending={pendingCount} />
@@ -108,6 +107,7 @@ export const RequisitionSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
+					loading={requisitionSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -122,7 +122,6 @@ export const RequisitionSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions: ['5', '10', '15'],
 					}}
-					loading={requisitionSlipsStatus === request.REQUESTING}
 				/>
 			</Box>
 		</Content>
@@ -145,23 +144,23 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Branch" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={(value) => {
-						setQueryParams({ branchId: value });
-					}}
-					// NOTE: Need to convert to Number so default value will work
 					defaultValue={
 						params.branchId ? Number(params.branchId) : ALL_OPTION_KEY
 					}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					// NOTE: Need to convert to Number so default value will work
+					optionFilterProp="children"
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ branchId: value });
+					}}
 				>
 					<Select.Option value="all">All</Select.Option>
 					{branches.map(({ id, name }) => (
@@ -174,20 +173,20 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={(value) => {
-						setQueryParams({ status: value });
-					}}
 					defaultValue={params.status || ALL_OPTION_KEY}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ status: value });
+					}}
 				>
 					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (
 						<Select.Option key={value} value={value}>

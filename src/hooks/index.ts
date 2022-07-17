@@ -1,3 +1,4 @@
+/* eslint-disable import/export */
 export * from './useAccounts';
 export { default as useAccounts } from './useAccounts';
 export { default as useAuth } from './useAuth';

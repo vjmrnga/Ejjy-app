@@ -1,8 +1,24 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Divider, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
+import { ColoredText } from 'components';
+import { FieldError, Label } from 'components/elements';
+import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestWarnings } from 'components/RequestWarnings/RequestWarnings';
+import {
+	branchProductStatusOptions,
+	EMPTY_CELL,
+	MAIN_BRANCH_ID,
+	pageSizeOptions,
+	request,
+	requisitionSlipTypes,
+	SEARCH_DEBOUNCE_TIME,
+} from 'global';
 import { useQueryParams } from 'hooks';
+import { useBranchProducts } from 'hooks/useBranchProducts';
+import { useNetwork } from 'hooks/useNetwork';
 import { debounce } from 'lodash';
+import { IProductCategory } from 'models';
 import * as queryString from 'query-string';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -12,23 +28,6 @@ import {
 	formatQuantity,
 	getBranchProductStatus,
 } from 'utils';
-import { ColoredText } from '../../../../components';
-import { FieldError, Label } from '../../../../components/elements';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { RequestWarnings } from '../../../../components/RequestWarnings/RequestWarnings';
-import {
-	EMPTY_CELL,
-	MAIN_BRANCH_ID,
-	SEARCH_DEBOUNCE_TIME,
-} from '../../../../global/constants';
-import {
-	branchProductStatusOptions,
-	pageSizeOptions,
-} from '../../../../global/options';
-import { request, requisitionSlipTypes } from '../../../../global/types';
-import { useBranchProducts } from '../../../../hooks/useBranchProducts';
-import { useNetwork } from '../../../../hooks/useNetwork';
-import { IProductCategory } from '../../../../models';
 
 const currentBalanceColumn: ColumnType<any> = {
 	title: 'Current Balance',
@@ -74,14 +73,9 @@ const NETWORK_INTERVAL_MS = 5000;
 interface Props {
 	branchId: number;
 	productCategories: IProductCategory[];
-	disabled: boolean;
 }
 
-export const BranchBalanceItem = ({
-	branchId,
-	productCategories,
-	disabled,
-}: Props) => {
+export const BranchBalanceItem = ({ branchId, productCategories }: Props) => {
 	// STATES
 	const [data, setData] = useState([]);
 	const [isCompletedInitialFetch, setIsCompletedInitialFetch] = useState(false);
@@ -124,8 +118,6 @@ export const BranchBalanceItem = ({
 	const networkIntervalRef = useRef(null);
 
 	// METHODS
-	useEffect(() => () => {}, []);
-
 	useEffect(() => {
 		const testBranchConnectionFn = () => {
 			testBranchConnection({ branchId }, ({ status }) => {
@@ -208,9 +200,9 @@ export const BranchBalanceItem = ({
 		let component = null;
 
 		if (requisitionSlipTypes.AUTOMATIC === type) {
-			component = <ColoredText variant="primary" text="Automatic" />;
+			component = <ColoredText text="Automatic" variant="primary" />;
 		} else if (requisitionSlipTypes.MANUAL === type) {
-			component = <ColoredText variant="secondary" text="Manual" />;
+			component = <ColoredText text="Manual" variant="secondary" />;
 		}
 
 		return component;
@@ -233,8 +225,8 @@ export const BranchBalanceItem = ({
 				<Divider dashed />
 
 				<Filter
-					productCategories={productCategories}
 					hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
+					productCategories={productCategories}
 					setQueryParams={(params) => {
 						setQueryParams(params, { shouldResetPage: true });
 					}}
@@ -243,8 +235,8 @@ export const BranchBalanceItem = ({
 
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
-				withSpaceTop
 				withSpaceBottom
+				withSpaceTop
 			/>
 
 			<RequestWarnings
@@ -256,7 +248,11 @@ export const BranchBalanceItem = ({
 				className="BranchBalanceItem_table"
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 1000 }}
+				loading={
+					isCompletedInitialFetch
+						? false
+						: branchProductsStatus === request.REQUESTING
+				}
 				pagination={{
 					current: currentPage,
 					total: pageCount,
@@ -271,11 +267,7 @@ export const BranchBalanceItem = ({
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={
-					isCompletedInitialFetch
-						? false
-						: branchProductsStatus === request.REQUESTING
-				}
+				scroll={{ x: 1000 }}
 				bordered
 			/>
 		</div>
@@ -309,30 +301,30 @@ const Filter = ({
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Category" spacing />
 				<Select
-					style={{ width: '100%' }}
-					value={params.productCategory}
-					onChange={(value) => {
-						setQueryParams({ productCategory: value });
-					}}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
+					value={params.productCategory}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ productCategory: value });
+					}}
 				>
 					{productCategories.map(({ name }) => (
 						<Select.Option key={name} value={name}>
@@ -345,23 +337,25 @@ const Filter = ({
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
-					style={{ width: '100%' }}
-					value={params.productStatus}
-					onChange={(value) => {
-						setQueryParams({ productStatus: value });
-					}}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
+					value={params.productStatus}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ productStatus: value });
+					}}
 				>
 					{branchProductStatusOptions.map(({ name, value }) => (
-						<Select.Option value={value}>{name}</Select.Option>
+						<Select.Option key={value} value={value}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -370,17 +364,17 @@ const Filter = ({
 				<Col lg={12} span={24}>
 					<Label label="Show has BO Balance" spacing />
 					<Radio.Group
+						defaultValue={null}
 						options={[
 							{ label: 'Show All', value: null },
 							{ label: 'Has BO Balance', value: true },
 						]}
+						optionType="button"
 						value={params.hasBoBalance}
 						onChange={(e) => {
 							const { value } = e.target;
 							setQueryParams({ hasBoBalance: value });
 						}}
-						defaultValue={null}
-						optionType="button"
 					/>
 				</Col>
 			)}

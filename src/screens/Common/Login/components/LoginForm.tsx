@@ -1,13 +1,13 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
+import { convertIntoArray, sleep } from 'utils';
 import {
 	Button,
 	FieldError,
 	FormInputLabel,
 } from '../../../../components/elements';
 import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { convertIntoArray, sleep } from 'utils';
 import '../style.scss';
 
 const FormDetails = {
@@ -54,17 +54,17 @@ export const LoginForm = ({ loading, errors, onSubmit }: ILoginForm) => {
 						</div>
 
 						<div className="input-field">
-							<FormInputLabel type="password" id="password" label="Password" />
+							<FormInputLabel id="password" label="Password" type="password" />
 							{formErrors.password && touched.password ? (
 								<FieldError error={formErrors.password} />
 							) : null}
 						</div>
 
 						<Button
-							type="submit"
-							text="Login"
-							variant="secondary"
 							loading={loading || isSubmitting}
+							text="Login"
+							type="submit"
+							variant="secondary"
 							block
 						/>
 					</Form>

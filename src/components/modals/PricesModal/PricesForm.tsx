@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Select, Typography } from 'antd';
+import { Col, Divider, Row, Select } from 'antd';
 import {
 	Button,
 	FieldError,
@@ -47,10 +47,10 @@ export const PricesForm = ({
 		<>
 			<Label id={name} label={label} spacing />
 			<FormattedInputNumber
-				size="large"
-				value={values[name]}
 				controls={false}
+				size="large"
 				style={{ width: '100%' }}
+				value={values[name]}
 				onChange={(value) => {
 					setFieldValue(name, value);
 				}}
@@ -66,10 +66,10 @@ export const PricesForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(values) => {
 				onSubmit(values);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -115,20 +115,20 @@ export const PricesForm = ({
 						<Col span={24}>
 							<Label id="type" label="Current Sales Price Type" spacing />
 							<Select
-								style={{ width: '100%' }}
-								value={values.type}
-								onChange={(value) => {
-									setFieldValue('type', value);
-								}}
-								size="large"
-								optionFilterProp="children"
 								filterOption={(input, option) =>
 									option.children
 										.toString()
 										.toLowerCase()
 										.indexOf(input.toLowerCase()) >= 0
 								}
+								optionFilterProp="children"
+								size="large"
+								style={{ width: '100%' }}
+								value={values.type}
 								showSearch
+								onChange={(value) => {
+									setFieldValue('type', value);
+								}}
 							>
 								<Select.Option
 									key={markdownTypes.REGULAR}
@@ -159,16 +159,16 @@ export const PricesForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text="Submit"
-							variant="primary"
 							loading={loading}
+							text="Submit"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

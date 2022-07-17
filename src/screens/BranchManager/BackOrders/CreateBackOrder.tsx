@@ -2,12 +2,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isEmpty, isInteger } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import * as Yup from 'yup';
-import { Content, RequestErrors, TableHeader } from '../../../components';
 import {
 	Box,
 	Button,
@@ -15,26 +9,24 @@ import {
 	FormCheckbox,
 	FormInput,
 	FormSelect,
-} from '../../../components/elements';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	branchProductStatusOptionsWithAll,
 	pageSizeOptions,
 	quantityTypeOptions,
-} from '../../../global/options';
-import {
 	quantityTypes,
 	request,
 	unitOfMeasurementTypes,
-} from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useBackOrders } from '../../../hooks/useBackOrders';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import {
-	convertIntoArray,
-	convertToPieces,
-	getBranchProductStatus,
-	sleep,
-} from 'utils';
+} from 'global';
+import { useAuth } from 'hooks';
+import { useBackOrders } from 'hooks/useBackOrders';
+import { useBranchProducts } from 'hooks/useBranchProducts';
+import { isEmpty, isInteger } from 'lodash';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { convertIntoArray, getBranchProductStatus, sleep } from 'utils';
+import * as Yup from 'yup';
+import { Content, RequestErrors, TableHeader } from '../../../components';
 
 const tabs = {
 	ALL: 'ALL',
@@ -60,7 +52,6 @@ export const CreateBackOrder = () => {
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
-	const history = useHistory();
 	const { user } = useAuth();
 	const {
 		branchProducts,
@@ -180,26 +171,26 @@ export const CreateBackOrder = () => {
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
+						disabled={!selected}
 						id={`${fieldKey}.quantity`}
-						onChange={(value) => {
-							onChangeQuantity(productId, value);
-						}}
 						isWholeNumber={
 							!(
 								quantity_type === quantityTypes.PIECE &&
 								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 							)
 						}
-						disabled={!selected}
+						type="number"
+						onChange={(value) => {
+							onChangeQuantity(productId, value);
+						}}
 					/>
 					<FormSelect
+						disabled={!selected}
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
 						onChange={(value) => {
 							onChangeQuantityType(productId, value);
 						}}
-						disabled={!selected}
 					/>
 				</div>
 				<ErrorMessage
@@ -269,19 +260,17 @@ export const CreateBackOrder = () => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
-			const products = productIds.map((id) => {
-				const { piecesInBulk, quantityType, quantity } =
-					productsRef.current[id];
-
-				return {
-					product_id: id,
-					quantity_returned:
-						quantityType === quantityTypes.PIECE
-							? quantity
-							: convertToPieces(quantity, piecesInBulk),
-				};
-			});
-
+			// const products = productIds.map((id) => {
+			// 	const { piecesInBulk, quantityType, quantity } =
+			// 		productsRef.current[id];
+			// 	return {
+			// 		product_id: id,
+			// 		quantity_returned:
+			// 			quantityType === quantityTypes.PIECE
+			// 				? quantity
+			// 				: convertToPieces(quantity, piecesInBulk),
+			// 	};
+			// });
 			// createBackOrder({ senderId: user?.id, products }, ({ status }) => {
 			// 	if (status === request.SUCCESS) {
 			// 		history.push('/branch-manager/back-orders');
@@ -298,9 +287,11 @@ export const CreateBackOrder = () => {
 		<Content className="CreateBackOrder" title="Back Order">
 			<Box>
 				<TableHeader
+					searchDisabled={activeTab === tabs.SELECTED}
+					statusDisabled={activeTab === tabs.SELECTED}
+					statuses={branchProductStatusOptionsWithAll}
 					title="Create Back Order"
 					onSearch={onSearch}
-					statuses={branchProductStatusOptionsWithAll}
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
@@ -314,8 +305,6 @@ export const CreateBackOrder = () => {
 						);
 						setSelectedStatus(status);
 					}}
-					statusDisabled={activeTab === tabs.SELECTED}
-					searchDisabled={activeTab === tabs.SELECTED}
 				/>
 
 				<RequestErrors
@@ -328,9 +317,10 @@ export const CreateBackOrder = () => {
 				/>
 
 				<Formik
-					innerRef={formRef}
 					initialValues={getFormDetails().DefaultValues}
+					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
+					enableReinitialize
 					onSubmit={async () => {
 						setSubmitting(true);
 						await sleep(500);
@@ -338,14 +328,13 @@ export const CreateBackOrder = () => {
 
 						onCreate();
 					}}
-					enableReinitialize
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
 							<div className="PaddingHorizontal">
 								<Tabs
-									type="card"
 									activeKey={activeTab}
+									type="card"
 									onTabClick={setActiveTab}
 								>
 									<Tabs.TabPane key={tabs.ALL} tab="All Products" />
@@ -364,13 +353,13 @@ export const CreateBackOrder = () => {
 										renderQuantity,
 										onChangeCheckbox,
 									}}
+									loading={loading || isSubmitting}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
 										onPageChange,
 									}}
-									loading={loading || isSubmitting}
 								/>
 							</div>
 
@@ -379,12 +368,12 @@ export const CreateBackOrder = () => {
 							<div className="CreateBackOrder_createContainer">
 								<Button
 									classNames="CreateBackOrder_btnCreate"
-									type="submit"
-									text="Create"
-									variant="primary"
 									disabled={
 										loading || isSubmitting || isEmpty(productsRef.current)
 									}
+									text="Create"
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>
@@ -454,6 +443,7 @@ const ProductsTable = ({
 			<Table
 				columns={columns}
 				dataSource={data}
+				loading={loading}
 				pagination={
 					activeTab === tabs.ALL
 						? {
@@ -467,7 +457,6 @@ const ProductsTable = ({
 						  }
 						: false
 				}
-				loading={loading}
 			/>
 		</>
 	);

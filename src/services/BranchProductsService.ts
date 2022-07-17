@@ -48,7 +48,7 @@ const service = {
 	listWithAnalytics: async (params: List, baseURL) =>
 		axios.get('/branches-products/with-analytics/', { baseURL, params }),
 
-	edit: async (id: Number, body: Edit, baseURL) =>
+	edit: async (id: number, body: Edit, baseURL) =>
 		axios.patch(`/branches-products/${id}/`, body, { baseURL }),
 
 	editPriceCost: async (body: EditPriceCost, baseURL) =>

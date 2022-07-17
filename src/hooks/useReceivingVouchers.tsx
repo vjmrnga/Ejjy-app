@@ -36,7 +36,7 @@ export const useReceivingVoucherCreate = () =>
 		}: any) =>
 			ReceivingVouchersService.create(
 				{
-					products: products,
+					products,
 					supplier_name: supplierName,
 					supplier_address: supplierAddress,
 					supplier_tin: supplierTin,

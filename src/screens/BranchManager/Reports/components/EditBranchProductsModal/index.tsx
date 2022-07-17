@@ -77,12 +77,12 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={title}
 			footer={null}
-			onCancel={handleClose}
-			visible
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={handleClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(editError?.errors)}
@@ -91,10 +91,10 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
-				onSubmit={handleSubmit}
-				onClose={handleClose}
-				isLoading={isEditing}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
+				isLoading={isEditing}
+				onClose={handleClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -159,6 +159,7 @@ export const EditBranchProductsForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit({
 					...formData,
@@ -168,12 +169,11 @@ export const EditBranchProductsForm = ({
 						: undefined,
 				});
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<DetailsRow>
 					<Col span={24}>
-						<FormInputLabel type="number" id="maxBalance" label="Max Balance" />
+						<FormInputLabel id="maxBalance" label="Max Balance" type="number" />
 						<ErrorMessage
 							name="maxBalance"
 							render={(error) => <FieldError error={error} />}
@@ -186,13 +186,13 @@ export const EditBranchProductsForm = ({
 
 							<Col span={24}>
 								<FormInputLabel
-									type="number"
 									id="currentBalance"
-									label="Current Balance"
 									isWholeNumber={
 										branchProduct?.product?.unit_of_measurement ===
 										unitOfMeasurementTypes.NON_WEIGHING
 									}
+									label="Current Balance"
+									type="number"
 								/>
 								<ErrorMessage
 									name="currentBalance"
@@ -205,16 +205,16 @@ export const EditBranchProductsForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={isLoading}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Edit"
-						variant="primary"
 						loading={isLoading}
+						text="Edit"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

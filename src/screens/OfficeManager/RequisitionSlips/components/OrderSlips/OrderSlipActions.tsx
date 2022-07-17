@@ -9,16 +9,16 @@ interface Props {
 
 export const OrderSlipActions = ({ onEdit, onCreateDR }: Props) => (
 	<div className="order-slip-actions">
-		{onEdit && <EditButtonIcon onClick={onEdit} tooltip="Edit" />}
+		{onEdit && <EditButtonIcon tooltip="Edit" onClick={onEdit} />}
 		{onCreateDR && (
 			<Popconfirm
+				cancelText="Cancel"
+				okText="Confirm"
 				placement="topLeft"
 				title="Please confirm the creation of delivery receipt for this order slip"
 				onConfirm={onCreateDR}
-				okText="Confirm"
-				cancelText="Cancel"
 			>
-				<DeliverButtonIcon onClick={null} tooltip="Create Delivery Receipt" />
+				<DeliverButtonIcon tooltip="Create Delivery Receipt" onClick={null} />
 			</Popconfirm>
 		)}
 	</div>

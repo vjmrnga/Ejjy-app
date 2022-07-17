@@ -52,10 +52,10 @@ export const AppSettingsForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(values) => {
 				onSubmit(values);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -64,8 +64,8 @@ export const AppSettingsForm = ({
 							<Label label="Local API URL" spacing />
 							<Input
 								name="localApiUrl"
-								value={values['localApiUrl']}
 								size="large"
+								value={values['localApiUrl']}
 								onChange={(e) => {
 									setFieldValue('localApiUrl', e.target.value);
 								}}
@@ -80,16 +80,16 @@ export const AppSettingsForm = ({
 							<Label label="Online API URL" spacing />
 							<Input
 								name="onlineApiUrl"
-								value={values['onlineApiUrl']}
 								size="large"
-								onFocus={(e) => {
-									setBaseURL(e.target.value);
-								}}
+								value={values['onlineApiUrl']}
 								onBlur={(e) => {
 									setBaseURL(e.target.value);
 								}}
 								onChange={(e) => {
 									setFieldValue('onlineApiUrl', e.target.value);
+								}}
+								onFocus={(e) => {
+									setBaseURL(e.target.value);
 								}}
 							/>
 							<ErrorMessage
@@ -101,6 +101,7 @@ export const AppSettingsForm = ({
 						<Col span={24}>
 							<Label label="Branch" spacing />
 							<Select
+								allowClear={false}
 								className="w-100"
 								filterOption={(input, option) =>
 									option.children
@@ -108,15 +109,14 @@ export const AppSettingsForm = ({
 										.toLowerCase()
 										.indexOf(input.toLowerCase()) >= 0
 								}
+								loading={isFetchingBranches}
 								optionFilterProp="children"
-								value={values.branchId ? Number(values.branchId) : undefined}
 								size="large"
-								allowClear={false}
+								value={values.branchId ? Number(values.branchId) : undefined}
 								showSearch
 								onChange={(value) => {
 									setFieldValue('branchId', value);
 								}}
-								loading={isFetchingBranches}
 							>
 								{branches.map((branch) => (
 									<Select.Option key={branch.id} value={branch.id}>
@@ -132,8 +132,8 @@ export const AppSettingsForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button type="button" text="Cancel" onClick={onClose} />
-						<Button type="submit" text="Submit" variant="primary" />
+						<Button text="Cancel" type="button" onClick={onClose} />
+						<Button text="Submit" type="submit" variant="primary" />
 					</div>
 				</Form>
 			)}

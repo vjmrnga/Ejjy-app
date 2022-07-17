@@ -72,13 +72,13 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="Redeem Points"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="Redeem Points"
+			width={600}
 			centered
 			closable
-			width={600}
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -106,9 +106,9 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 						</Col>
 						<Col span={24}>
 							<FormInputLabel
-								type="password"
 								id="password"
 								label="Authorizer's Password"
+								type="password"
 							/>
 							<ErrorMessage
 								name="password"
@@ -121,9 +121,9 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 						<Col span={24}>
 							<FormInputLabel
 								disabled={account.total_points_balance === 0}
-								type="number"
 								id="points"
 								label={`Points (Balance: ${account.total_points_balance})`}
+								type="number"
 							/>
 							<ErrorMessage
 								name="points"
@@ -142,16 +142,16 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isRedeemingPoints || isAuthenticating}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text="Redeem"
-							variant="primary"
 							loading={isRedeemingPoints || isAuthenticating}
+							text="Redeem"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

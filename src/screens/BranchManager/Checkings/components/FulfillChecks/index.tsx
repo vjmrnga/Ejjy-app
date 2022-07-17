@@ -110,7 +110,9 @@ export const FulfillChecking = () => {
 					<Table
 						columns={columns}
 						dataSource={dataSource}
-						scroll={{ x: 650 }}
+						loading={
+							isFetchingRandomProductChecks || isFetchingDailyProductChecks
+						}
 						pagination={{
 							current: Number(params.page) || DEFAULT_PAGE,
 							total,
@@ -125,9 +127,7 @@ export const FulfillChecking = () => {
 							position: ['bottomCenter'],
 							pageSizeOptions,
 						}}
-						loading={
-							isFetchingRandomProductChecks || isFetchingDailyProductChecks
-						}
+						scroll={{ x: 650 }}
 					/>
 				</Box>
 			)}

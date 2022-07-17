@@ -101,8 +101,8 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 		<Box>
 			<Spin spinning={isFetching}>
 				<TableHeader
-					title="Points Transactions"
 					buttonName="Redeem Points"
+					title="Points Transactions"
 					onCreate={() => setIsRedeemModalVisible(true)}
 					onCreateDisabled={!account}
 				/>
@@ -135,7 +135,6 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 1000 }}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -150,6 +149,7 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
+					scroll={{ x: 1000 }}
 					size="small"
 					bordered
 				/>
@@ -164,11 +164,11 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 				{isRedeemModalVisible && (
 					<RedeemPointsModal
 						account={account}
+						onClose={() => setIsRedeemModalVisible(false)}
 						onSuccess={() => {
 							queryClient.invalidateQueries('usePointTransactions');
 							queryClient.invalidateQueries('useAccountRetrieve');
 						}}
-						onClose={() => setIsRedeemModalVisible(false)}
 					/>
 				)}
 			</Spin>

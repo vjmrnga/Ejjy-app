@@ -46,12 +46,12 @@ export const ModifyUserModal = ({
 
 	return (
 		<Modal
-			title={`${user ? '[Edit]' : '[Create]'} User`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${user ? '[Edit]' : '[Create]'} User`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -62,11 +62,11 @@ export const ModifyUserModal = ({
 			/>
 
 			<ModifyUserForm
-				user={user}
 				branchUsersOnly={branchUsersOnly}
 				isLoading={isCreating || isEditing}
-				onSubmit={handleSubmit}
+				user={user}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

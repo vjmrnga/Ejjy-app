@@ -1,5 +1,6 @@
 import { Divider } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import { formatDateTime, getDeliveryReceiptStatus } from 'utils';
 import {
 	CheckIcon,
 	ColoredText,
@@ -12,7 +13,6 @@ import {
 	ViewButtonIcon,
 } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
-import { formatDateTime, getDeliveryReceiptStatus } from 'utils';
 import { ViewProductAdjustmentSlipsModal } from './ViewProductAdjustmentSlipsModal';
 
 const columns = [
@@ -117,8 +117,8 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 				</span>
 				<ColoredText
 					size="small"
-					variant={colorVariant}
 					text={`${mainMessage} ${extraMessage}`}
+					variant={colorVariant}
 				/>
 			</div>
 		);
@@ -156,8 +156,8 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 			<TableNormal columns={columns} data={receivedProducts} displayInPage />
 
 			<ViewProductAdjustmentSlipsModal
-				deliveryReceiptProductId={selectedDeliveryReceiptProduct?.id}
 				barcode={selectedDeliveryReceiptProduct?.barcode}
+				deliveryReceiptProductId={selectedDeliveryReceiptProduct?.id}
 				name={selectedDeliveryReceiptProduct?.name}
 				visible={viewProductAdjustmentsSlipVisible}
 				onClose={() => setViewProductAdjustmentsSlipVisible(false)}

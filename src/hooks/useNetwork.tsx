@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { modifiedExtraCallback } from 'utils';
 import { actions, selectors } from '../ducks/network';
 import { request } from '../global/types';
-import { modifiedExtraCallback } from 'utils';
 import { useActionDispatch } from './useActionDispatch';
 
 export const useNetwork = () => {

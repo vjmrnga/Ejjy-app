@@ -61,7 +61,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Connectivity Logs" />
+			<TableHeader title="Connectivity Logs" wrapperClassName="pt-2 px-0" />
 
 			<Filter
 				isLoading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
@@ -72,6 +72,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				loading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -86,7 +87,6 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
 			/>
 		</>
 	);
@@ -108,15 +108,15 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Type" spacing />
 				<Select
 					className="w-100"
+					disabled={isLoading}
+					filterOption={filterOption}
+					optionFilterProp="children"
 					value={params.type}
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams({ type: value }, { shouldResetPage: true });
 					}}
-					disabled={isLoading}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					showSearch
-					allowClear
 				>
 					<Select.Option
 						key={connectivityTypes.OFFLINE_TO_ONLINE}

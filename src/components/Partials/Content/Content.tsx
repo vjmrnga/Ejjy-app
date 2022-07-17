@@ -1,10 +1,7 @@
 import { Layout, Tooltip } from 'antd';
 import cn from 'classnames';
-import React, { ReactNode, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router';
-import { ONLINE_ROUTES } from '../../../global/constants';
-import { useNetwork } from '../../../hooks/useNetwork';
-import { useUI } from '../../../hooks/useUI';
+import { useUI } from 'hooks/useUI';
+import React, { ReactNode } from 'react';
 import { InfoIcon } from '../../Icons/Icons';
 import './style.scss';
 
@@ -29,7 +26,7 @@ export const Content = ({
 	// Restore this functionality once it is revisited and if still needed
 	const { isSidebarCollapsed } = useUI();
 	// const { hasInternetConnection, testConnection } = useNetwork();
-	const { pathname: pathName } = useLocation();
+	// const { pathname: pathName } = useLocation();
 
 	// useEffect(() => {
 	// 	testConnection();
@@ -56,7 +53,7 @@ export const Content = ({
 					<h3 className="ContentLayout_header_title">
 						{title}
 						{description && (
-							<Tooltip title={description} placement="right">
+							<Tooltip placement="right" title={description}>
 								<InfoIcon classNames="ContentLayout_header_title_iconInfo" />
 								<span />
 							</Tooltip>

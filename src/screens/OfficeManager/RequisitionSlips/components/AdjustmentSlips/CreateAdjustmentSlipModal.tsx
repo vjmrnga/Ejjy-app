@@ -1,19 +1,11 @@
 import { Divider, message, Modal } from 'antd';
+import { DetailsRow, DetailsSingle, RequestErrors } from 'components';
+import { Label, Textarea } from 'components/elements';
+import { selectors as authSelectors } from 'ducks/auth';
+import { types } from 'ducks/OfficeManager/adjustment-slips';
+import { deliveryReceiptStatus, request } from 'global';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	DetailsRow,
-	DetailsSingle,
-	RequestErrors,
-} from '../../../../../components';
-import {
-	FieldError,
-	Label,
-	Textarea,
-} from '../../../../../components/elements';
-import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { types } from '../../../../../ducks/OfficeManager/adjustment-slips';
-import { deliveryReceiptStatus, request } from '../../../../../global/types';
 import { confirmPassword, convertIntoArray } from 'utils';
 import { useAdjustmentSlips } from '../../../hooks/useAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
@@ -151,13 +143,13 @@ export const CreateAdjustmentSlipModal = ({
 
 	return (
 		<Modal
-			title="Create Adjustment Slip"
 			className="Modal__large"
-			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			title="Create Adjustment Slip"
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<RequestErrors errors={convertIntoArray(errors)} withSpaceBottom />
 
@@ -174,9 +166,9 @@ export const CreateAdjustmentSlipModal = ({
 
 			<CreateAdjustmentSlipForm
 				deliveryReceiptProducts={deliveryReceiptProducts}
-				onSubmit={onCreateAdjustmentSlipSubmit}
-				onClose={onClose}
 				loading={adjustmentSlipsStatus === request.REQUESTING}
+				onClose={onClose}
+				onSubmit={onCreateAdjustmentSlipSubmit}
 			/>
 		</Modal>
 	);

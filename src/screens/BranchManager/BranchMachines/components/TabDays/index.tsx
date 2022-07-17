@@ -60,7 +60,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 			branchMachineId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isUnauthorized: (() => {
-				let isUnauthorized = undefined;
+				let isUnauthorized;
 				if (params.type === branchDayTypes.UNAUTHORIZED) {
 					isUnauthorized = true;
 				} else if (params.type === branchDayTypes.AUTHORIZED) {
@@ -70,7 +70,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 				return isUnauthorized;
 			})(),
 			isAutomaticallyClosed: (() => {
-				let isAutomaticallyClosed = undefined;
+				let isAutomaticallyClosed;
 				if (params.closingType === closingTypes.AUTOMATIC) {
 					isAutomaticallyClosed = true;
 				} else if (params.closingType === closingTypes.MANUAL) {
@@ -185,7 +185,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 
 	return (
 		<div className="ViewBranchMachineDays">
-			<TableHeader wrapperClassName="pt-2 px-0" title="Days" />
+			<TableHeader title="Days" wrapperClassName="pt-2 px-0" />
 
 			<Filter isLoading={isBranchDaysFetching && !isBranchDaysFetched} />
 
@@ -197,9 +197,7 @@ export const TabDays = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 650 }}
 				loading={isBranchDaysFetching && !isBranchDaysFetched}
-				bordered
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -214,6 +212,8 @@ export const TabDays = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 650 }}
+				bordered
 			/>
 		</div>
 	);
@@ -239,18 +239,18 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Opened By" spacing />
 				<Select
 					className="w-100"
+					defaultValue={params.openedByUserId}
+					disabled={isUsersFetching || isLoading}
+					filterOption={filterOption}
+					optionFilterProp="children"
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams(
 							{ openedByUserId: value },
 							{ shouldResetPage: true },
 						);
 					}}
-					defaultValue={params.openedByUserId}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					disabled={isUsersFetching || isLoading}
-					showSearch
-					allowClear
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
@@ -264,18 +264,18 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Closed By" spacing />
 				<Select
 					className="w-100"
+					defaultValue={params.closedByUserId}
+					disabled={isUsersFetching || isLoading}
+					filterOption={filterOption}
+					optionFilterProp="children"
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams(
 							{ closedByUserId: value },
 							{ shouldResetPage: true },
 						);
 					}}
-					defaultValue={params.closedByUserId}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					disabled={isUsersFetching || isLoading}
-					showSearch
-					allowClear
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
@@ -292,20 +292,20 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Closing Type" spacing />
 				<Radio.Group
-					optionType="button"
+					defaultValue={params.closingType || closingTypes.ALL}
+					disabled={isUsersFetching || isLoading}
 					options={[
 						{ label: 'All', value: closingTypes.ALL },
 						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
 						{ label: 'Manual', value: closingTypes.MANUAL },
 					]}
+					optionType="button"
 					onChange={(e) => {
 						setQueryParams(
 							{ closingType: e.target.value },
 							{ shouldResetPage: true },
 						);
 					}}
-					disabled={isUsersFetching || isLoading}
-					defaultValue={params.closingType || closingTypes.ALL}
 				/>
 			</Col>
 
@@ -313,17 +313,17 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Authorization" spacing />
 
 				<Radio.Group
-					optionType="button"
+					defaultValue={params.type || branchDayTypes.ALL}
+					disabled={isUsersFetching || isLoading}
 					options={[
 						{ label: 'All', value: branchDayTypes.ALL },
 						{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
 						{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
 					]}
+					optionType="button"
 					onChange={(e) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
-					defaultValue={params.type || branchDayTypes.ALL}
-					disabled={isUsersFetching || isLoading}
 				/>
 			</Col>
 		</Row>

@@ -3,6 +3,7 @@ import { ErrorMessage, FieldArray, Form, Formik } from 'formik';
 import { isInteger, min } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { sleep } from 'utils';
 import { TableNormal } from '../../../../../components';
 import {
 	Button,
@@ -16,7 +17,6 @@ import {
 	quantityTypes,
 	unitOfMeasurementTypes,
 } from '../../../../../global/types';
-import { sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '50px' },
@@ -122,7 +122,7 @@ export const CreateEditOrderSlipForm = ({
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
+						disabled={!product.selected}
 						id={`requestedProducts.${index}.quantity`}
 						isWholeNumber={
 							!(
@@ -133,12 +133,12 @@ export const CreateEditOrderSlipForm = ({
 						max={
 							product.quantity_type === quantityTypes.PIECE ? maxPiece : maxBulk
 						}
-						disabled={!product.selected}
+						type="number"
 					/>
 					<FormSelect
+						disabled={!product.selected}
 						id={`requestedProducts.${index}.quantity_type`}
 						options={quantityTypeOptions}
-						disabled={!product.selected}
 					/>
 				</div>
 				<ErrorMessage
@@ -178,9 +178,9 @@ export const CreateEditOrderSlipForm = ({
 
 	const getAssignedPersonnel = (index, values) => (
 		<FormSelect
+			disabled={!values?.requestedProducts?.[index]?.selected}
 			id={`requestedProducts.${index}.assigned_personnel`}
 			options={assignedPersonnelOptions}
-			disabled={!values?.requestedProducts?.[index]?.selected}
 		/>
 	);
 
@@ -188,13 +188,13 @@ export const CreateEditOrderSlipForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData: any) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values }) => (
 				<FieldArray
@@ -248,17 +248,17 @@ export const CreateEditOrderSlipForm = ({
 
 							<div className="ModalCustomFooter">
 								<Button
-									type="button"
-									text="Cancel"
-									onClick={onClose}
 									disabled={loading || isSubmitting}
+									text="Cancel"
+									type="button"
+									onClick={onClose}
 								/>
 								<Button
-									type="submit"
-									text={orderSlip ? 'Edit' : 'Create'}
-									variant="primary"
-									loading={loading || isSubmitting}
 									disabled={!requestedProducts.length}
+									loading={loading || isSubmitting}
+									text={orderSlip ? 'Edit' : 'Create'}
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>

@@ -3,7 +3,7 @@
 // App
 export const APP_KEY = process.env.REACT_APP_KEY;
 export const APP_TITLE = process.env.REACT_APP_TITLE;
-export const IS_APP_LIVE = process.env.REACT_APP_IS_LIVE == 'true';
+export const IS_APP_LIVE = process.env.REACT_APP_IS_LIVE === 'true';
 export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
 // Local Storage

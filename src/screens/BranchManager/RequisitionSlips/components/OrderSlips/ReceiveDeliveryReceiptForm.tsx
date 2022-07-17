@@ -1,18 +1,18 @@
 /* eslint-disable react/no-this-in-sfc */
 import { Col, Row } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isInteger } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
 import {
 	Button,
 	FieldError,
 	FormInput,
 	Label,
 	UncontrolledInput,
-} from '../../../../../components/elements';
-import { unitOfMeasurementTypes } from '../../../../../global/types';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
+import { unitOfMeasurementTypes } from 'global';
+import { isInteger } from 'lodash';
+import React, { useCallback, useState } from 'react';
 import { sleep } from 'utils';
+import * as Yup from 'yup';
 
 interface Props {
 	products: any;
@@ -62,14 +62,14 @@ export const ReceiveDeliveryReceiptForm = ({
 
 	const getRow = (name, index) => (
 		<Row gutter={[25, 8]}>
-			<Col xs={24} sm={12}>
+			<Col sm={12} xs={24}>
 				<Label label="Product" spacing />
-				<UncontrolledInput placeholder={name} onChange={null} disabled />
+				<UncontrolledInput placeholder={name} disabled onChange={null} />
 			</Col>
 
-			<Col xs={24} sm={12}>
+			<Col sm={12} xs={24}>
 				<Label label="Quantity" spacing />
-				<FormInput type="number" id={`${index}.received_quantity_piece`} />
+				<FormInput id={`${index}.received_quantity_piece`} type="number" />
 				<ErrorMessage
 					name={`${index}.received_quantity_piece`}
 					render={(error) => <FieldError error={error} />}
@@ -82,34 +82,36 @@ export const ReceiveDeliveryReceiptForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<Row gutter={[0, 20]}>
 					{products.map(({ name }, index) => (
-						<Col span={24}>{getRow(name, index)}</Col>
+						<Col key={name} span={24}>
+							{getRow(name, index)}
+						</Col>
 					))}
 				</Row>
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading || isSubmitting}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Receive"
-						variant="primary"
-						loading={loading || isSubmitting}
 						disabled={!products.length}
+						loading={loading || isSubmitting}
+						text="Receive"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

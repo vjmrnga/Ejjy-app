@@ -16,7 +16,7 @@ export default function configureAxios() {
 	);
 
 	axios.interceptors.response.use(null, (error) => {
-		let modifiedError = { ...error };
+		const modifiedError = { ...error };
 
 		if (error.isAxiosError) {
 			if (typeof error?.response?.data === 'string') {

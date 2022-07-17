@@ -14,16 +14,16 @@ interface Props {
 export const Breadcrumb = ({ items }: Props) => (
 	<div className="Breadcrumb">
 		{items.map(({ name, link }, index) => (
-			<div className="item" key={`${name}-${index}`}>
+			<div key={`${name}-${index}`} className="item">
 				{index === items.length - 1 ? (
 					<span className="last">{name}</span>
 				) : (
 					<div className="link-icon-container">
 						<Link to={link}>{name}</Link>
 						<img
-							src={require('../../assets/images/icon-breadcrumb-divider.svg')}
-							className="divider"
 							alt="breadcrumb divider"
+							className="divider"
+							src={require('../../assets/images/icon-breadcrumb-divider.svg')}
 						/>
 					</div>
 				)}

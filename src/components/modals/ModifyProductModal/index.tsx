@@ -9,7 +9,7 @@ import {
 	useProductEdit,
 } from 'hooks';
 import React, { useState } from 'react';
-import { convertIntoArray, getId, isStandAlone } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 
 export const ModifyProductModal = ({ product, onClose }: Props) => {
 	// STATES
-	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
+	const [isCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
 
@@ -75,17 +75,17 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	return (
 		<Modal
 			className="ModifyProduct Modal__large ModalLarge__scrollable"
+			footer={null}
 			title={
 				<>
 					<span>{product ? '[Edit] Product' : '[Create] Product'}</span>
 					<span className="ModalTitleMainInfo">{product?.name}</span>
 				</>
 			}
-			footer={null}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -106,10 +106,10 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 					isFetchingBranchProduct ||
 					isFetchingPointSystemTags
 				}
+				pointSystemTags={pointSystemTags}
+				product={product}
 				onClose={onClose}
 				onSubmit={onSubmit}
-				product={product}
-				pointSystemTags={pointSystemTags}
 			/>
 		</Modal>
 	);

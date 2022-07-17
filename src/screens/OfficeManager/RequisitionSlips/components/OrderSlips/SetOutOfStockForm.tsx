@@ -1,8 +1,8 @@
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
+import { sleep } from 'utils';
 import { TableNormal } from '../../../../../components';
 import { Button, FormCheckbox } from '../../../../../components/elements';
-import { sleep } from 'utils';
 
 const columns = [
 	{ name: '', width: '80px' },
@@ -44,13 +44,13 @@ export const SetOutOfStockForm = ({
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
+			enableReinitialize
 			onSubmit={async (formData: any) => {
 				setSubmitting(true);
 				await sleep(500);
 				setSubmitting(false);
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			<Form>
 				<TableNormal
@@ -68,17 +68,17 @@ export const SetOutOfStockForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading || isSubmitting}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Submit"
-						variant="primary"
-						loading={loading || isSubmitting}
 						disabled={!products.length}
+						loading={loading || isSubmitting}
+						text="Submit"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

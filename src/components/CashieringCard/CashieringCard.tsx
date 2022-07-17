@@ -146,10 +146,10 @@ export const CashieringCard = ({ className, bordered }: Props) => {
 							}
 						>
 							<Button
-								type="primary"
-								size="large"
-								onClick={handleClick}
 								disabled={isPastCloseDayDeadline()}
+								size="large"
+								type="primary"
+								onClick={handleClick}
 							>
 								{branchDay ? 'Close Day' : 'Open Day'}
 							</Button>
@@ -164,6 +164,4 @@ export const CashieringCard = ({ className, bordered }: Props) => {
 CashieringCard.defaultProps = {
 	className: undefined,
 	bordered: false,
-	disabled: false,
-	loading: false,
 };

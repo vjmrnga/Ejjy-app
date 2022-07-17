@@ -77,13 +77,13 @@ export const FulfillSlipModal = ({
 
 	return (
 		<Modal
-			title={product?.name}
 			className="FulfillSlipModal Modal__hasFooter"
 			footer={null}
-			onCancel={close}
-			visible
+			title={product?.name}
 			centered
 			closable
+			visible
+			onCancel={close}
 		>
 			<KeyboardEventHandler
 				handleKeys={['enter', 'esc']}
@@ -111,14 +111,14 @@ export const FulfillSlipModal = ({
 						spacing
 					/>
 					<ControlledInput
-						type="number"
 						min={0}
+						type="number"
 						value={quantity}
+						autoFocus
 						onChange={(value) => {
 							setQuantity(value);
 							setError(null);
 						}}
-						autoFocus
 					/>
 					{error && <FieldError error={error} />}
 				</div>

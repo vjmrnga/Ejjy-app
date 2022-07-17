@@ -17,6 +17,7 @@ export interface IInputProps {
 	isMoney?: boolean;
 	isWholeNumber?: boolean;
 	disabled?: boolean;
+	onBlur?: any;
 }
 
 const FormInput = ({
@@ -99,27 +100,27 @@ const FormInput = ({
 		<div className="FormInput">
 			{isMoney && (
 				<img
+					alt="peso sign"
 					className="FormInput_pesoSign"
 					src={require('../../../assets/images/icon-peso.svg')}
-					alt="peso sign"
 				/>
 			)}
 			<input
 				// eslint-disable-next-line react/jsx-props-no-spreading
 				{...field}
-				type={type}
-				id={id}
-				name={id}
 				className={cn('FormInput_input', {
 					FormInput_input__isMoney: isMoney,
 				})}
-				placeholder={placeholder}
+				disabled={disabled}
+				id={id}
 				max={max}
 				min={min}
+				name={id}
+				placeholder={placeholder}
 				step={step}
-				disabled={disabled}
-				onChange={onChangeField}
+				type={type}
 				onBlur={onBlur}
+				onChange={onChangeField}
 				onKeyDown={onKeyDown}
 			/>
 		</div>
@@ -131,7 +132,9 @@ FormInput.defaultProps = {
 	placeholder: '',
 	disabled: false,
 	isMoney: false,
-	onBlur: () => {},
+	onBlur: () => {
+		// Do nothing
+	},
 };
 
 export default FormInput;

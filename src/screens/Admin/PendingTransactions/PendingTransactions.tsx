@@ -1,12 +1,12 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useRef, useState } from 'react';
+import { formatDateTime, showErrorMessages } from 'utils';
 import { Content, TableActions } from '../../../components';
 import { Box } from '../../../components/elements';
 import { PendingTransactionsSection } from '../../../components/PendingTransactionsSection/PendingTransactionsSection';
 import { TableHeader } from '../../../components/Table/TableHeaders/TableHeader';
 import { pendingTransactionTypes, request } from '../../../global/types';
 import { usePendingTransactions } from '../../../hooks/usePendingTransactions';
-import { formatDateTime, showErrorMessages } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Description', dataIndex: 'description', key: 'description' },
@@ -65,16 +65,6 @@ export const PendingTransactions = () => {
 					datetime_created: formatDateTime(datetime_created),
 					actions: (
 						<TableActions
-							onRestore={() => {
-								editPendingTransaction(
-									{ id, is_pending_approval: false },
-									(response) =>
-										onCallbackSuccess({
-											requestModel: request_model,
-											...response,
-										}),
-								);
-							}}
 							onRemove={() => {
 								removePendingTransaction(
 									{ id },
@@ -84,6 +74,16 @@ export const PendingTransactions = () => {
 											...response,
 										}),
 									true,
+								);
+							}}
+							onRestore={() => {
+								editPendingTransaction(
+									{ id, is_pending_approval: false },
+									(response) =>
+										onCallbackSuccess({
+											requestModel: request_model,
+											...response,
+										}),
 								);
 							}}
 						/>
@@ -114,9 +114,9 @@ export const PendingTransactions = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 800 }}
-					pagination={false}
 					loading={pendingTransactionsStatus === request.REQUESTING}
+					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 

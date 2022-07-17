@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { modifiedCallback } from 'utils';
 import {
 	actions,
 	selectors,
@@ -7,7 +8,6 @@ import {
 } from '../../../ducks/BranchManager/local-branch-settings';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback } from 'utils';
 
 const EDIT_SUCCESS_MESSAGE = 'Settings was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while editing the settings';

@@ -1,7 +1,7 @@
 import { Descriptions, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
-import { EMPTY_CELL, vatTypes } from 'global';
+import { vatTypes } from 'global';
 import React, { useEffect, useState } from 'react';
 import {
 	formatDateTime,
@@ -51,22 +51,22 @@ export const ViewReceivingVoucherModal = ({
 
 	return (
 		<Modal
-			title={'[View] Receiving Voucher'}
 			className="Modal__large Modal__hasFooter"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			title="[View] Receiving Voucher"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<Descriptions
+				className="w-100"
+				column={2}
 				labelStyle={{
 					width: 200,
 				}}
-				bordered
-				className="w-100"
-				column={2}
 				size="small"
+				bordered
 			>
 				<Descriptions.Item label="ID">{receivingVoucher.id}</Descriptions.Item>
 				<Descriptions.Item label="Datetime Created">
@@ -78,7 +78,7 @@ export const ViewReceivingVoucherModal = ({
 				<Descriptions.Item label="Supplier TIN">
 					{receivingVoucher.supplier_tin}
 				</Descriptions.Item>
-				<Descriptions.Item span={2} label="Supplier Address">
+				<Descriptions.Item label="Supplier Address" span={2}>
 					{receivingVoucher.supplier_address}
 				</Descriptions.Item>
 				<Descriptions.Item label="Encoded By">
@@ -87,7 +87,7 @@ export const ViewReceivingVoucherModal = ({
 				<Descriptions.Item label="Checked By">
 					{getFullName(receivingVoucher.checked_by)}
 				</Descriptions.Item>
-				<Descriptions.Item span={2} label="Amount Paid">
+				<Descriptions.Item label="Amount Paid" span={2}>
 					{formatInPeso(receivingVoucher.amount_paid)}
 				</Descriptions.Item>
 			</Descriptions>
@@ -97,8 +97,8 @@ export const ViewReceivingVoucherModal = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
 				pagination={false}
+				scroll={{ x: 800 }}
 				bordered
 			/>
 		</Modal>

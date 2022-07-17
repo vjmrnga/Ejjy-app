@@ -30,11 +30,11 @@ export const Users = () => {
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
 	const history = useHistory();
-	const { user } = useAuth();
+	const { user: currentUser } = useAuth();
 	const {
-		isFetching: isFetchingUsers,
 		data: { users },
-		error: listError,
+		error: usersError,
+		isFetching: isUsersFetching,
 	} = useUsers({
 		params: {
 			branchId: isStandAlone() ? undefined : getBranchId(),
@@ -49,7 +49,7 @@ export const Users = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedUsers = users.map((user) => ({
+		const data = users.map((user) => ({
 			key: user.id,
 			id: user.employee_id,
 			name: getFullName(user),
@@ -74,11 +74,11 @@ export const Users = () => {
 						Edit
 					</Button>
 					<Popconfirm
+						cancelText="No"
+						okText="Yes"
 						placement="left"
 						title="Are you sure to remove this user?"
 						onConfirm={() => deleteUser(user.id)}
-						okText="Yes"
-						cancelText="No"
 					>
 						<Button type="primary" danger>
 							Delete
@@ -88,7 +88,7 @@ export const Users = () => {
 			),
 		}));
 
-		setDataSource(formattedUsers);
+		setDataSource(data);
 	}, [users]);
 
 	const getColumns = useCallback(() => {
@@ -98,16 +98,16 @@ export const Users = () => {
 			{ title: 'Type', dataIndex: 'type' },
 		];
 
-		if (isCUDShown(user.user_type)) {
+		if (isCUDShown(currentUser.user_type)) {
 			columns.push({ title: 'Actions', dataIndex: 'actions' });
 		}
 
 		return columns;
-	}, [user]);
+	}, [currentUser]);
 
-	const handleSuccess = (user) => {
+	const handleSuccess = (addedUser) => {
 		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
-			cachedData.data.results = [user, ...cachedData.data.results];
+			cachedData.data.results = [addedUser, ...cachedData.data.results];
 			return cachedData;
 		});
 	};
@@ -115,7 +115,7 @@ export const Users = () => {
 	return (
 		<Content title="Users">
 			<Box>
-				{isCUDShown(user.user_type) && (
+				{isCUDShown(currentUser.user_type) && (
 					<TableHeader
 						buttonName="Create User"
 						onCreate={() => setModifyUserModalVisible(true)}
@@ -125,7 +125,7 @@ export const Users = () => {
 				<RequestErrors
 					className="px-4"
 					errors={[
-						...convertIntoArray(listError),
+						...convertIntoArray(usersError),
 						...convertIntoArray(deleteError?.errors),
 					]}
 					withSpaceBottom
@@ -134,21 +134,21 @@ export const Users = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
-					loading={isFetchingUsers || isDeletingUser}
+					loading={isUsersFetching || isDeletingUser}
 					pagination={false}
+					scroll={{ x: 650 }}
 				/>
 			</Box>
 
 			{modifyUserModalVisible && (
 				<ModifyUserModal
 					user={selectedUser}
-					onSuccess={handleSuccess}
+					branchUsersOnly
 					onClose={() => {
 						setSelectedUser(null);
 						setModifyUserModalVisible(false);
 					}}
-					branchUsersOnly
+					onSuccess={handleSuccess}
 				/>
 			)}
 		</Content>

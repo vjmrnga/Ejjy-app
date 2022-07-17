@@ -3,10 +3,10 @@ import { Col, Input, Row, Select, Table } from 'antd';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, ButtonLink, Label } from 'components/elements';
 import {
-	productStatus,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	productStatus,
 	request,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
@@ -164,18 +164,18 @@ export const Products = () => {
 					/>
 
 					<Filter
-						productCategories={productCategories}
 						isLoading={isFetchingProductCategories}
+						productCategories={productCategories}
+						onSearch={onSearch}
 						onSelectProductCategory={onSelectProductCategory}
 						onSelectStatus={onSelectStatus}
-						onSearch={onSearch}
 					/>
 				</div>
 
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
+					loading={branchProductsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -185,7 +185,7 @@ export const Products = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={branchProductsStatus === request.REQUESTING}
+					scroll={{ x: 650 }}
 				/>
 
 				{selectedBranchProduct && (
@@ -227,29 +227,26 @@ const Filter = ({
 				<Label label="Search" spacing />
 				<Input
 					prefix={<SearchOutlined />}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Product Category" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={onSelectProductCategory}
+					className="w-100"
+					filterOption={filterOption}
 					loading={isLoading}
 					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
 					allowClear
+					showSearch
+					onChange={onSelectProductCategory}
 				>
 					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
+						<Select.Option key={name} value={name}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -258,11 +255,11 @@ const Filter = ({
 				<Label label="Status" spacing />
 				<Select
 					className="w-100"
-					onChange={onSelectStatus}
-					optionFilterProp="children"
 					filterOption={filterOption}
-					showSearch
+					optionFilterProp="children"
 					allowClear
+					showSearch
+					onChange={onSelectStatus}
 				>
 					<Select.Option value={productStatus.AVAILABLE}>
 						Available

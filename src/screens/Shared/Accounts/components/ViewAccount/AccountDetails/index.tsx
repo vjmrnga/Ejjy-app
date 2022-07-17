@@ -12,6 +12,7 @@ export const AccountDetails = ({ account }: Props) => {
 
 	const getTypeName = (type) => {
 		let typeName = '';
+
 		switch (type) {
 			case accountTypes.PERSONAL:
 				typeName = 'Personal';
@@ -25,6 +26,8 @@ export const AccountDetails = ({ account }: Props) => {
 			case accountTypes.GOVERNMENT:
 				typeName = 'Government';
 				break;
+			default:
+				typeName = '';
 		}
 
 		return typeName;
@@ -67,7 +70,7 @@ export const AccountDetails = ({ account }: Props) => {
 				<>
 					<Descriptions.Item
 						label={
-							account.type == accountTypes.CORPORATE
+							account.type === accountTypes.CORPORATE
 								? 'Business Name'
 								: 'Agency Name'
 						}
@@ -76,7 +79,7 @@ export const AccountDetails = ({ account }: Props) => {
 					</Descriptions.Item>
 					<Descriptions.Item
 						label={
-							account.type == accountTypes.CORPORATE
+							account.type === accountTypes.CORPORATE
 								? 'Address (Business)'
 								: 'Address (Agency)'
 						}
@@ -89,7 +92,7 @@ export const AccountDetails = ({ account }: Props) => {
 			<Descriptions.Item label="Contact Number">
 				{account.contact_number}
 			</Descriptions.Item>
-			<Descriptions.Item span={2} label="Address (Home)">
+			<Descriptions.Item label="Address (Home)" span={2}>
 				{account.home_address}
 			</Descriptions.Item>
 

@@ -211,7 +211,7 @@ const useBranchProductsNew = ({ params }: Query) =>
 			params?.productStatus,
 			params?.search,
 		],
-		async () =>
+		() =>
 			wrapServiceWithCatch(
 				BranchProductsService.list(
 					{
@@ -253,20 +253,22 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 			params?.timeRange,
 			params?.branchId,
 		],
-		async () =>
-			await BranchProductsService.listWithAnalytics(
-				{
-					branch_id: params?.branchId,
-					is_sold_in_branch: params?.isSoldInBranch,
-					ordering: params?.ordering,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					product_category: params?.productCategory,
-					product_ids: params?.productIds,
-					product_status: params?.productStatus,
-					time_range: params?.timeRange,
-				},
-				getLocalApiUrl(),
+		() =>
+			wrapServiceWithCatch(
+				BranchProductsService.listWithAnalytics(
+					{
+						branch_id: params?.branchId,
+						is_sold_in_branch: params?.isSoldInBranch,
+						ordering: params?.ordering,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						product_category: params?.productCategory,
+						product_ids: params?.productIds,
+						product_status: params?.productStatus,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
 			),
 		{
 			initialData: { data: { results: [], count: 0 } },

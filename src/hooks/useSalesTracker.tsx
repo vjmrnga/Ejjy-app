@@ -1,8 +1,8 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { SalesTrackerService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useSalesTracker = ({ params, options }: Query) =>

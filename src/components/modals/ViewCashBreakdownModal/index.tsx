@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { FilePdfOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -105,7 +106,6 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 
 	return (
 		<Modal
-			title={`[View] ${type}`}
 			className="Modal__hasFooter"
 			footer={[
 				<Button
@@ -130,10 +130,11 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 					Create PDF
 				</Button>,
 			]}
-			onCancel={onClose}
-			visible
+			title={`[View] ${type}`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			{cashBreakdown.category === cashBreakdownCategories.CASH_OUT ? (
 				<CashOutDetails cashBreakdown={cashBreakdown} />
@@ -142,6 +143,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 			)}
 
 			<div
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>
@@ -155,10 +157,10 @@ const CashOutDetails = ({ cashBreakdown }) => {
 	return (
 		<>
 			<Descriptions
-				labelStyle={{ width: 200 }}
-				bordered
 				className="w-100"
 				column={1}
+				labelStyle={{ width: 200 }}
+				bordered
 			>
 				<Descriptions.Item label="Datetime">
 					{formatDateTime(cashBreakdown.datetime_created)}
@@ -187,10 +189,10 @@ const CashOutDetails = ({ cashBreakdown }) => {
 const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 	<>
 		<Descriptions
-			labelStyle={{ width: 200 }}
-			bordered
 			className="w-100"
 			column={1}
+			labelStyle={{ width: 200 }}
+			bordered
 		>
 			<Descriptions.Item label="Datetime Created">
 				{formatDateTime(cashBreakdown.datetime_created)}
@@ -210,7 +212,6 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 		</Descriptions>
 
 		<Table
-			rowKey="denom"
 			className="mt-6"
 			columns={columns}
 			dataSource={[
@@ -284,6 +285,8 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 					amount: formatInPeso(1000 * cashBreakdown.bills_1000),
 				},
 			]}
+			pagination={false}
+			rowKey="denom"
 			summary={() => {
 				const total = calculateCashBreakdownTotal(cashBreakdown);
 
@@ -295,7 +298,7 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 									Total
 								</Typography.Title>
 							</Table.Summary.Cell>
-							<Table.Summary.Cell index={1} colSpan={2} align="right">
+							<Table.Summary.Cell align="right" colSpan={2} index={1}>
 								<Typography.Title className="ma-0" level={4}>
 									{formatInPeso(total)}
 								</Typography.Title>
@@ -304,7 +307,6 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 					</>
 				);
 			}}
-			pagination={false}
 			bordered
 		/>
 	</>

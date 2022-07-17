@@ -34,7 +34,7 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 	const renderMonthPicker = useCallback(() => {
 		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
 
-		let defaultValue = undefined;
+		let defaultValue;
 		if (timeRangeValues.length === 2) {
 			// Get dates
 			const startDate = moment(timeRangeValues[0]);
@@ -59,9 +59,10 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 		return (
 			<DatePicker
 				className="w-100"
-				format="MMMM YYYY"
-				defaultValue={defaultValue}
 				defaultPickerValue={defaultValue}
+				defaultValue={defaultValue}
+				format="MMMM YYYY"
+				picker="month"
 				onChange={(date) => {
 					const firstDate = date.clone().startOf('month');
 					const lastDate = date.clone().endOf('month');
@@ -76,7 +77,6 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 						{ shouldResetPage: true },
 					);
 				}}
-				picker="month"
 			/>
 		);
 	}, [params.timeRange]);
@@ -93,6 +93,9 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 		return (
 			<DatePicker.RangePicker
 				className="w-100"
+				defaultPickerValue={defaultValue}
+				defaultValue={defaultValue}
+				disabled={disabled}
 				format={DATE_FORMAT}
 				onCalendarChange={(dates, dateStrings) => {
 					if (dates?.[0] && dates?.[1]) {
@@ -102,9 +105,6 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 						);
 					}
 				}}
-				defaultValue={defaultValue}
-				defaultPickerValue={defaultValue}
-				disabled={disabled}
 			/>
 		);
 	}, [params.timeRange, disabled]);
@@ -118,7 +118,7 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 			) : (
 				<Space direction="vertical" size={10}>
 					<Radio.Group
-						value={timeRangeType}
+						disabled={disabled}
 						options={[
 							{ label: 'Daily', value: timeRangeTypes.DAILY },
 							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
@@ -127,6 +127,8 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 								value: timeRangeTypes.DATE_RANGE,
 							},
 						]}
+						optionType="button"
+						value={timeRangeType}
 						onChange={(e) => {
 							const { value } = e.target;
 							setTimeRangeType(value);
@@ -135,8 +137,6 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 								setQueryParams({ timeRange: value }, { shouldResetPage: true });
 							}
 						}}
-						optionType="button"
-						disabled={disabled}
 					/>
 					{timeRangeType === timeRangeTypes.MONTHLY && renderMonthPicker()}
 					{timeRangeType === timeRangeTypes.DATE_RANGE && renderRangePicker()}

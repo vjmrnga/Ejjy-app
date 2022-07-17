@@ -54,10 +54,10 @@ export const Container = ({
 	return (
 		<Layout className="Container">
 			<Spin
-				wrapperClassName="Container_spinner"
 				size="large"
 				spinning={loading}
 				tip={loadingText}
+				wrapperClassName="Container_spinner"
 			>
 				<Sidebar items={sidebarItems} />
 				{children}

@@ -131,7 +131,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Daily Invoice Report" />
+			<TableHeader title="Daily Invoice Report" wrapperClassName="pt-2 px-0" />
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
 
@@ -140,7 +140,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -155,7 +155,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				scroll={{ x: 800 }}
 			/>
 
 			{selectedTransaction && (
@@ -187,6 +187,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Date" spacing />
 				<DatePicker
+					allowClear={false}
 					disabled={isLoading}
 					format="MM/DD/YY"
 					value={
@@ -200,7 +201,6 @@ const Filter = ({ isLoading }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					allowClear={false}
 				/>
 			</Col>
 		</Row>

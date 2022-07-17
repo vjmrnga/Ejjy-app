@@ -1,16 +1,16 @@
 import { Col, Divider, Modal } from 'antd';
 import React from 'react';
-import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { quantityTypes, request } from '../../../../global/types';
-import { useBackOrders } from '../../../../hooks/useBackOrders';
 import {
 	convertIntoArray,
 	convertToPieces,
 	formatDateTime,
 	getBackOrderStatus,
 } from 'utils';
+import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
+import { Label } from '../../../../components/elements';
+import { EMPTY_CELL } from '../../../../global/constants';
+import { quantityTypes, request } from '../../../../global/types';
+import { useBackOrders } from '../../../../hooks/useBackOrders';
 import { FulfillBackOrderForm } from './FulfillBackOrderForm';
 
 interface Props {
@@ -57,13 +57,13 @@ export const FulfillBackOrderModal = ({
 
 	return (
 		<Modal
-			title="[View] Back Order"
 			className="Modal__large"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="[View] Back Order"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<Col span={24}>
@@ -108,9 +108,9 @@ export const FulfillBackOrderModal = ({
 
 			<FulfillBackOrderForm
 				backOrder={backOrder}
-				onSubmit={onFulfill}
-				onClose={onClose}
 				loading={backOrdersStatus === request.REQUESTING}
+				onClose={onClose}
+				onSubmit={onFulfill}
 			/>
 		</Modal>
 	);

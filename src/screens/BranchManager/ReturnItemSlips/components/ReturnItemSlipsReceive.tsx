@@ -6,6 +6,7 @@ import React, {
 	useImperativeHandle,
 	useState,
 } from 'react';
+import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 import { AddButtonIcon } from '../../../../components';
 import { ButtonLink } from '../../../../components/elements';
 import { EMPTY_CELL } from '../../../../global/constants';
@@ -13,7 +14,6 @@ import { pageSizeOptions } from '../../../../global/options';
 import { request, returnItemSlipsStatuses } from '../../../../global/types';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
-import { formatDateTime, getReturnItemSlipStatus } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -67,10 +67,10 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 				actions:
 					returnItemSlip.status === returnItemSlipsStatuses.PENDING ? (
 						<AddButtonIcon
+							tooltip="Fulfill"
 							onClick={() => {
 								onFulfill(returnItemSlip);
 							}}
-							tooltip="Fulfill"
 						/>
 					) : (
 						EMPTY_CELL
@@ -107,6 +107,7 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 		<Table
 			columns={columns}
 			dataSource={data}
+			loading={returnItemSlipsStatus === request.REQUESTING}
 			pagination={{
 				current: currentPage,
 				total: pageCount,
@@ -116,7 +117,6 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}
-			loading={returnItemSlipsStatus === request.REQUESTING}
 		/>
 	);
 };

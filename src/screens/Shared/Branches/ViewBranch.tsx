@@ -69,9 +69,9 @@ export const ViewBranch = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Branch"
-			rightTitle={branch?.name}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			rightTitle={branch?.name}
+			title="[VIEW] Branch"
 		>
 			<ConnectionAlert />
 
@@ -79,11 +79,11 @@ export const ViewBranch = ({ match }: Props) => {
 				{branch && (
 					<Box className="ViewBranchMachine">
 						<Tabs
-							type="card"
-							className="PaddingHorizontal PaddingVertical"
 							activeKey={toString(currentTab)}
-							onTabClick={onTabClick}
+							className="PaddingHorizontal PaddingVertical"
+							type="card"
 							destroyInactiveTabPane
+							onTabClick={onTabClick}
 						>
 							<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
 								<TabBranchProducts

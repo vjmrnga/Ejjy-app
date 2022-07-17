@@ -31,32 +31,32 @@ const Component = ({ branchMachineId }: Props) => {
 	return (
 		<div className="Summary mb-4">
 			<RequestErrors
-				withSpaceBottom
 				errors={convertIntoArray(transactionsSummaryError)}
+				withSpaceBottom
 			/>
 
 			<Spin spinning={isTransactionsSummaryLoading}>
 				<Row gutter={[16, 16]}>
-					<Col xs={24} sm={8} md={8}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="Vatable Sales"
 							value={formatInPeso(summary?.vatable_sales)}
 						/>
 					</Col>
-					<Col xs={24} sm={16} md={16}>
+					<Col md={16} sm={16} xs={24}>
 						<Statistic
 							title="Voided Total"
 							value={formatInPeso(summary?.total_voided_sales)}
 						/>
 					</Col>
 
-					<Col xs={24} sm={8} md={8}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="Vat Amount"
 							value={formatInPeso(summary?.vat_amount)}
 						/>
 					</Col>
-					<Col xs={24} sm={16} md={16}>
+					<Col md={16} sm={16} xs={24}>
 						<Statistic
 							title="Discount Total"
 							value={formatInPeso(summary?.total_discount)}
@@ -70,19 +70,19 @@ const Component = ({ branchMachineId }: Props) => {
 						/>
 					</Col>
 
-					<Col xs={24} sm={8} md={8}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="TOTAL GROSS SALES"
 							value={formatInPeso(summary?.total_gross_sales)}
 						/>
 					</Col>
-					<Col xs={24} sm={8} md={8}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="TOTAL DEDUCTIONS"
 							value={formatInPeso(summary?.total_deductions)}
 						/>
 					</Col>
-					<Col xs={24} sm={8} md={8}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="NET SALES"
 							value={formatInPeso(summary?.total_net_sales)}

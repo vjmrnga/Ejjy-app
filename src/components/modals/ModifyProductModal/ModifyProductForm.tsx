@@ -32,7 +32,7 @@ import * as Yup from 'yup';
 
 const { Text } = Typography;
 
-const type = [
+const productTypeOptions = [
 	{
 		id: productTypes.WET,
 		label: 'Wet',
@@ -233,7 +233,7 @@ export const ModifyProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const unitOfMeasurement = this.parent.unitOfMeasurement;
+								const { unitOfMeasurement } = this.parent;
 								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
 									? isInteger(Number(value))
 									: true;
@@ -250,7 +250,7 @@ export const ModifyProductForm = ({
 							function test(value) {
 								// NOTE: We need to use a no-named function so
 								// we can use 'this' and access the other form field value.
-								const unitOfMeasurement = this.parent.unitOfMeasurement;
+								const { unitOfMeasurement } = this.parent;
 								return unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
 									? isInteger(Number(value))
 									: true;
@@ -290,7 +290,7 @@ export const ModifyProductForm = ({
 									function test(value) {
 										// NOTE: We need to use a no-named function so
 										// we can use 'this' and access the other form field value.
-										const unitOfMeasurement = this.parent.unitOfMeasurement;
+										const { unitOfMeasurement } = this.parent;
 										return unitOfMeasurement ===
 											unitOfMeasurementTypes.NON_WEIGHING
 											? isInteger(Number(value))
@@ -380,21 +380,21 @@ export const ModifyProductForm = ({
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
 					name={name}
-					value={values[name]}
+					size="large"
 					type={type}
+					value={values[name]}
 					onChange={(e) => {
 						setFieldValue(name, e.target.value);
 					}}
-					size="large"
 					{...options}
 				/>
 			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
-					size="large"
-					value={values[name]}
 					controls={false}
+					size="large"
 					style={{ width: '100%' }}
+					value={values[name]}
 					onChange={(value) => {
 						setFieldValue(name, value);
 					}}
@@ -412,11 +412,12 @@ export const ModifyProductForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData) => {
 				const isWeighing =
 					formData.unitOfMeasurement === unitOfMeasurementTypes.WEIGHING;
 
-				let data = {
+				const data = {
 					...formData,
 					hasQuantityAllowance: isWeighing
 						? formData.hasQuantityAllowance
@@ -430,7 +431,6 @@ export const ModifyProductForm = ({
 
 				onSubmit(data);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -470,9 +470,9 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-002" spacing />
 							<FormRadioButton
+								disabled={!values.sellingBarcode}
 								id="sellingBarcodeUnitOfMeasurement"
 								items={unitOfMeasurementOptions}
-								disabled={!values.sellingBarcode}
 							/>
 							<ErrorMessage
 								name="sellingBarcodeUnitOfMeasurement"
@@ -492,9 +492,9 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-002" spacing />
 							<FormRadioButton
+								disabled={!values.packingBarcode}
 								id="packingBarcodeUnitOfMeasurement"
 								items={unitOfMeasurementOptions}
-								disabled={!values.packingBarcode}
 							/>
 							<ErrorMessage
 								name="packingBarcodeUnitOfMeasurement"
@@ -563,7 +563,7 @@ export const ModifyProductForm = ({
 
 						<Col sm={12} xs={24}>
 							<Label label="TT-001" spacing />
-							<FormRadioButton id="type" items={type} />
+							<FormRadioButton id="type" items={productTypeOptions} />
 							<ErrorMessage
 								name="type"
 								render={(error) => <FieldError error={error} />}
@@ -585,11 +585,11 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Qty Allowance" spacing />
 							<FormRadioButton
-								id="hasQuantityAllowance"
-								items={booleanOptions}
 								disabled={
 									values?.unitOfMeasurement !== unitOfMeasurementTypes.WEIGHING
 								}
+								id="hasQuantityAllowance"
+								items={booleanOptions}
 							/>
 							<ErrorMessage
 								name="hasQuantityAllowance"
@@ -604,21 +604,21 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label id="pointSystemTagId" label="Point System Tag" spacing />
 							<Select
-								size="large"
 								className="w-100"
-								value={values.pointSystemTagId}
-								onChange={(value) => {
-									setFieldValue('pointSystemTagId', value);
-								}}
-								optionFilterProp="children"
 								filterOption={(input, option) =>
 									option.children
 										.toString()
 										.toLowerCase()
 										.indexOf(input.toLowerCase()) >= 0
 								}
-								showSearch
+								optionFilterProp="children"
+								size="large"
+								value={values.pointSystemTagId}
 								allowClear
+								showSearch
+								onChange={(value) => {
+									setFieldValue('pointSystemTagId', value);
+								}}
 							>
 								{pointSystemTags.map((pointSystemTag) => (
 									<Select.Option
@@ -640,12 +640,12 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Reorder Point" spacing />
 							<FormInput
-								type="number"
 								id="reorderPoint"
 								isWholeNumber={
 									values.unitOfMeasurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
+								type="number"
 							/>
 							<ErrorMessage
 								name="reorderPoint"
@@ -656,12 +656,12 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="Max Balance" spacing />
 							<FormInput
-								type="number"
 								id="maxBalance"
 								isWholeNumber={
 									values.unitOfMeasurement ===
 									unitOfMeasurementTypes.NON_WEIGHING
 								}
+								type="number"
 							/>
 							<ErrorMessage
 								name="maxBalance"
@@ -849,16 +849,16 @@ export const ModifyProductForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={product ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={loading}
+							text={product ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

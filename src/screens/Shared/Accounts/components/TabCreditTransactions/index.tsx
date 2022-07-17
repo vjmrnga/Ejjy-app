@@ -142,8 +142,8 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			{payor && (
 				<AccountTotalBalance
 					account={payor.account}
-					totalBalance={payor.total_balance}
 					disabled={disabled}
+					totalBalance={payor.total_balance}
 					onClick={() => setIsCreateOrderOfPaymentModalVisible(true)}
 				/>
 			)}
@@ -155,7 +155,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			<Table
 				columns={getColumns()}
 				dataSource={dataSource}
-				scroll={{ x: 1000 }}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -170,7 +170,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				scroll={{ x: 1000 }}
 			/>
 
 			{selectedAccount && (
@@ -191,11 +191,11 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				<CreateOrderOfPaymentModal
 					payor={payor}
 					transaction={selectedCreditTransaction}
-					onSuccess={onCreateOrderOfPaymentsSuccess}
 					onClose={() => {
 						setSelectedCreditTransaction(null);
 						setIsCreateOrderOfPaymentModalVisible(false);
 					}}
+					onSuccess={onCreateOrderOfPaymentsSuccess}
 				/>
 			)}
 		</div>

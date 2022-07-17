@@ -14,7 +14,7 @@ const FormTextareaLabel = ({
 }: Props) => (
 	<>
 		<Label id={id} label={inputLabel} spacing />
-		<Textarea id={id} placeholder={placeholder} disabled={disabled} />
+		<Textarea disabled={disabled} id={id} placeholder={placeholder} />
 	</>
 );
 

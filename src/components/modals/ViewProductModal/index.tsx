@@ -28,12 +28,12 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 	return (
 		<Modal
 			className="ViewProductModal Modal__large Modal__hasFooter"
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
 			title="View Product"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<DetailsSingle label="Barcode" value={product.barcode} />

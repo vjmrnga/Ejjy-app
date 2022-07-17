@@ -111,7 +111,7 @@ const BranchManager = () => {
 			// Set new notification count
 			const newNotificationsCount =
 				branchProductCount + resetCount + transactionCount;
-			if (newNotificationsCount != notificationsCount) {
+			if (newNotificationsCount !== notificationsCount) {
 				setNotificationsCount(newNotificationsCount);
 			}
 		}
@@ -283,134 +283,134 @@ const BranchManager = () => {
 
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
-					<Route path="/branch-manager/dashboard" component={Dashboard} />
+					<Route component={Dashboard} path="/branch-manager/dashboard" />
 
-					<Route path="/branch-manager/reports" component={Reports} />
+					<Route component={Reports} path="/branch-manager/reports" />
 
-					<Route path="/branch-manager/sales" component={Sales} />
+					<Route component={Sales} path="/branch-manager/sales" />
 
 					<Route
-						path="/branch-manager/product-categories"
 						component={ProductCategories}
+						path="/branch-manager/product-categories"
 					/>
-					<Route path="/branch-manager/products" component={Products} />
+					<Route component={Products} path="/branch-manager/products" />
 
 					<Route
-						path="/branch-manager/point-system-tags"
 						component={PointSystemTags}
+						path="/branch-manager/point-system-tags"
 					/>
 
-					<Route path="/branch-manager/stocks" component={Stocks} exact />
+					<Route component={Stocks} path="/branch-manager/stocks" exact />
 					<Route
-						path="/branch-manager/stocks/stock-in/create"
 						component={CreateStockIn}
+						path="/branch-manager/stocks/stock-in/create"
 						exact
 					/>
 					<Route
-						path="/branch-manager/stocks/stock-out/create"
 						component={CreateStockOut}
+						path="/branch-manager/stocks/stock-out/create"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/discount-options"
 						component={DiscountOptions}
+						path="/branch-manager/discount-options"
 					/>
 
-					<Route path="/branch-manager/accounts" exact component={Accounts} />
+					<Route component={Accounts} path="/branch-manager/accounts" exact />
 					<Route
-						path="/branch-manager/accounts/:id"
 						component={ViewAccount}
+						path="/branch-manager/accounts/:id"
 						exact
 					/>
 
-					<Route path="/branch-manager/users" exact component={Users} />
+					<Route component={Users} path="/branch-manager/users" exact />
 					<Route
-						path="/branch-manager/users/assign/:id"
 						component={AssignUser}
+						path="/branch-manager/users/assign/:id"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/assignments"
 						component={Assignments}
+						path="/branch-manager/assignments"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/branch-machines"
 						component={BranchMachines}
+						path="/branch-manager/branch-machines"
 						exact
 					/>
 					<Route
-						path="/branch-manager/branch-machines/:id"
 						component={ViewBranchMachine}
+						path="/branch-manager/branch-machines/:id"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/requisition-slips"
 						component={RequisitionSlips}
+						path="/branch-manager/requisition-slips"
 						exact
 					/>
 					<Route
-						path="/branch-manager/requisition-slips/create"
 						component={CreateRequisitionSlip}
+						path="/branch-manager/requisition-slips/create"
 						exact
 					/>
 					<Route
-						path="/branch-manager/requisition-slips/:id"
 						component={ViewRequisitionSlip}
+						path="/branch-manager/requisition-slips/:id"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/return-item-slips"
 						component={ReturnItemSlips}
+						path="/branch-manager/return-item-slips"
 						exact
 					/>
 					<Route
-						path="/branch-manager/return-item-slips/create"
 						component={CreateReturnItemSlip}
+						path="/branch-manager/return-item-slips/create"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/back-orders"
 						component={BackOrders}
+						path="/branch-manager/back-orders"
 						exact
 					/>
 					<Route
-						path="/branch-manager/back-orders/create"
 						component={CreateBackOrder}
+						path="/branch-manager/back-orders/create"
 						exact
 					/>
 
-					<Route path="/branch-manager/order-slips" component={OrderSlips} />
+					<Route component={OrderSlips} path="/branch-manager/order-slips" />
 
-					<Route path="/branch-manager/checkings" component={Checkings} exact />
+					<Route component={Checkings} path="/branch-manager/checkings" exact />
 					<Route
-						path="/branch-manager/checkings/:id"
 						component={ViewChecking}
+						path="/branch-manager/checkings/:id"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/cash-breakdowns"
 						component={CashBreakdowns}
+						path="/branch-manager/cash-breakdowns"
 						exact
 					/>
 
 					<Route
-						path="/branch-manager/notifications"
 						component={Notifications}
+						path="/branch-manager/notifications"
 					/>
 
-					<Route path="/branch-manager/logs" component={Logs} />
+					<Route component={Logs} path="/branch-manager/logs" />
 
 					<Route
-						path="/branch-manager/site-settings"
 						component={SiteSettings}
+						path="/branch-manager/site-settings"
 					/>
 
 					<Redirect to="/branch-manager/branch-machines" />

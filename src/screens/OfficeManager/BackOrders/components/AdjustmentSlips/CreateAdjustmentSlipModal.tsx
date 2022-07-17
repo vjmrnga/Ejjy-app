@@ -1,11 +1,11 @@
 import { Divider, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { formatQuantity } from 'utils';
 import { RequestErrors } from '../../../../../components';
 import { Label, Textarea } from '../../../../../components/elements';
 import { selectors as authSelectors } from '../../../../../ducks/auth';
 import { backOrdersStatuses, request } from '../../../../../global/types';
-import { formatQuantity } from 'utils';
 import { useBackOrderAdjustmentSlips } from '../../../hooks/useBackOrderAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 
@@ -96,13 +96,13 @@ export const CreateAdjustmentSlipModal = ({
 
 	return (
 		<Modal
-			title="Create Adjustment Slip"
 			className="Modal__large"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="Create Adjustment Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors errors={errors} />
 
@@ -116,9 +116,9 @@ export const CreateAdjustmentSlipModal = ({
 			<Label label="Products" spacing />
 			<CreateAdjustmentSlipForm
 				backOrderProducts={backOrderProducts}
-				onSubmit={onCreateAdjustmentSlipSubmit}
-				onClose={onClose}
 				loading={adjustmentSlipsStatus === request.REQUESTING}
+				onClose={onClose}
+				onSubmit={onCreateAdjustmentSlipSubmit}
 			/>
 		</Modal>
 	);

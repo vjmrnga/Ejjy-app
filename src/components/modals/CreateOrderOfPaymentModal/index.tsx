@@ -59,12 +59,12 @@ export const CreateOrderOfPaymentModal = ({
 	return (
 		<Modal
 			className="CreateOrderOfPaymentModal"
-			title="[Create] Order of Payment"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="[Create] Order of Payment"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(createError?.errors)}
@@ -72,11 +72,11 @@ export const CreateOrderOfPaymentModal = ({
 			/>
 
 			<CreateOrderOfPaymentForm
+				loading={isLoading}
 				payor={payor}
 				transaction={transaction}
-				loading={isLoading}
-				onSubmit={onCreate}
 				onClose={onClose}
+				onSubmit={onCreate}
 			/>
 		</Modal>
 	);
@@ -154,6 +154,7 @@ export const CreateOrderOfPaymentForm = ({
 		<Formik
 			initialValues={getFormDetails().defaultValues}
 			validationSchema={getFormDetails().schema}
+			enableReinitialize
 			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -161,7 +162,6 @@ export const CreateOrderOfPaymentForm = ({
 
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -169,17 +169,17 @@ export const CreateOrderOfPaymentForm = ({
 						<Col span={24}>
 							<Label label="Payor" spacing />
 							<Select
-								style={{ width: '100%' }}
-								filterOption={false}
 								defaultActiveFirstOption={false}
-								onSearch={onSearchDebounced}
+								disabled={payor !== null}
+								filterOption={false}
 								notFoundContent={isFetching ? <Spin size="small" /> : null}
+								style={{ width: '100%' }}
 								value={values.payorId}
+								showSearch
 								onChange={(value) => {
 									setFieldValue('payorId', value);
 								}}
-								disabled={payor !== null}
-								showSearch
+								onSearch={onSearchDebounced}
 							>
 								{accounts.map((account) => (
 									<Select.Option key={account.id} value={account.id}>
@@ -199,10 +199,10 @@ export const CreateOrderOfPaymentForm = ({
 								spacing
 							/>
 							<FormattedInputNumber
-								size="large"
-								value={values['amount']}
 								controls={false}
+								size="large"
 								style={{ width: '100%' }}
+								value={values['amount']}
 								onChange={(value) => {
 									setFieldValue('amount', value);
 								}}
@@ -216,20 +216,20 @@ export const CreateOrderOfPaymentForm = ({
 						<Col span={24}>
 							<Label id="purpose" label="Purpose" spacing />
 							<Select
-								style={{ width: '100%' }}
-								value={values.purpose}
-								onChange={(value) => {
-									setFieldValue('purpose', value);
-									setFieldValue('purposeOthers', '');
-								}}
-								optionFilterProp="children"
 								filterOption={(input, option) =>
 									option.children
 										.toString()
 										.toLowerCase()
 										.indexOf(input.toLowerCase()) >= 0
 								}
+								optionFilterProp="children"
+								style={{ width: '100%' }}
+								value={values.purpose}
 								showSearch
+								onChange={(value) => {
+									setFieldValue('purpose', value);
+									setFieldValue('purposeOthers', '');
+								}}
 							>
 								<Select.Option
 									key={orderOfPaymentPurposes.FULL_PAYMENT}
@@ -269,9 +269,9 @@ export const CreateOrderOfPaymentForm = ({
 
 						<Col span={24}>
 							<FormInputLabel
+								disabled={transaction !== null}
 								id="chargeSalesTransactionId"
 								label="Charge Sales Invoice # (Optional)"
-								disabled={transaction !== null}
 							/>
 							<ErrorMessage
 								name="chargeSalesTransactionId"
@@ -282,16 +282,16 @@ export const CreateOrderOfPaymentForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading || isSubmitting}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text="Create"
-							variant="primary"
 							loading={loading || isSubmitting}
+							text="Create"
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

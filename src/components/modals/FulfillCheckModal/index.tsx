@@ -62,17 +62,17 @@ export const FulfillCheckModal = ({ productCheck, onClose }: Props) => {
 
 	return (
 		<Modal
+			className="Modal__large"
+			footer={null}
 			title={
 				productCheck.type === productCheckingTypes.DAILY
 					? 'Daily Check'
 					: 'Random Check'
 			}
-			className="Modal__large"
-			footer={null}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(fulfillError?.errors)}
@@ -80,10 +80,10 @@ export const FulfillCheckModal = ({ productCheck, onClose }: Props) => {
 			/>
 
 			<FulfillCheckForm
-				products={products}
-				onSubmit={onFulfill}
-				onClose={onClose}
 				isLoading={isFulfilling}
+				products={products}
+				onClose={onClose}
+				onSubmit={onFulfill}
 			/>
 		</Modal>
 	);

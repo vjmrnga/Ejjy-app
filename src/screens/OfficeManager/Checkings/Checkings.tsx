@@ -1,10 +1,9 @@
 import { Tabs } from 'antd';
 import { toString } from 'lodash';
 import React, { useEffect } from 'react';
+import { useBranches, useQueryParams } from 'hooks';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
-import { useBranches } from 'hooks';
-import { useQueryParams } from 'hooks';
 import { BranchCheckings } from './components/BranchCheckings';
 
 export const Checkings = () => {
@@ -38,14 +37,14 @@ export const Checkings = () => {
 		<Content className="Checkings" title="Checkings">
 			<Box padding>
 				<Tabs
-					type="card"
 					activeKey={toString(currentBranchId)}
-					onTabClick={onTabClick}
+					type="card"
 					destroyInactiveTabPane
+					onTabClick={onTabClick}
 				>
 					{branches.map(({ name, id, online_url }) => (
-						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
-							<BranchCheckings branchId={id} />
+						<Tabs.TabPane key={id} disabled={!online_url} tab={name}>
+							{/* <BranchCheckings branchId={id} /> */}
 						</Tabs.TabPane>
 					))}
 				</Tabs>

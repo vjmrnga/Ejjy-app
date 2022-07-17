@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { modifiedCallback } from 'utils';
 import {
 	actions,
 	selectors,
@@ -7,7 +8,6 @@ import {
 } from '../../../ducks/BranchManager/delivery-receipts';
 import { request } from '../../../global/types';
 import { useActionDispatch } from '../../../hooks/useActionDispatch';
-import { modifiedCallback } from 'utils';
 
 const RECEIVE_SUCCESS_MESSAGE = 'Delivery receipt was received successfully';
 const RECEIVE_ERROR_MESSAGE =

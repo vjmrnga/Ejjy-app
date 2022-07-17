@@ -1,146 +1,120 @@
 /* eslint-disable dot-notation */
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, DatePicker, Radio, Row, Select, Spin, Table } from 'antd';
-import { ColumnsType, SorterResult } from 'antd/lib/table/interface';
-import { RequestErrors, RequestWarnings, TableActions } from 'components';
-import { Label } from 'components/elements';
-import {
-	ALL_OPTION_KEY,
-	pageSizeOptions,
-	request,
-	timeRangeTypes,
-} from 'global';
-import { useProducts, useQueryParams } from 'hooks';
-import { useBranchProducts } from 'hooks/useBranchProducts';
-import { toString } from 'lodash';
-import debounce from 'lodash/debounce';
-import { IProductCategory } from 'models';
-import moment from 'moment';
-import * as queryString from 'query-string';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import {
-	convertIntoArray,
-	formatQuantity,
-	getBranchProductStatus,
-} from 'utils';
-import { EditBranchProductsModal } from './BranchProducts/EditBranchProductsModal';
 
-const columns: ColumnsType = [
-	{
-		title: 'Name',
-		dataIndex: 'name',
-		key: 'name',
-		width: 150,
-		fixed: 'left',
-	},
-	{
-		title: 'Barcode',
-		dataIndex: 'barcode',
-		key: 'barcode',
-	},
-	{
-		title: 'Balance',
-		dataIndex: 'balance',
-		key: 'balance',
-		align: 'center',
-		sorter: true,
-	},
-	{
-		title: 'Remaining Bal',
-		dataIndex: 'remaining_balance',
-		key: 'remaining_balance',
-		align: 'center',
-	},
-	{
-		title: 'Quantity Sold',
-		dataIndex: 'quantity_sold',
-		key: 'quantity_sold',
-		align: 'center',
-		sorter: true,
-	},
-	{
-		title: 'Daily Average Sold',
-		dataIndex: 'daily_average_sold',
-		key: 'daily_average_sold',
-		align: 'center',
-		sorter: true,
-	},
-	{
-		title: 'Average Quantity Sold Percentage',
-		dataIndex: 'daily_average_sold_percentage',
-		key: 'daily_average_sold_percentage',
-		align: 'center',
-		sorter: true,
-	},
-	{
-		title: 'Average Daily Consumption',
-		dataIndex: 'average_daily_consumption',
-		key: 'average_daily_consumption',
-		align: 'center',
-	},
-	{
-		title: 'Status',
-		dataIndex: 'status',
-		key: 'status',
-	},
-	{
-		title: 'Actions',
-		dataIndex: 'actions',
-		key: 'actions',
-	},
-];
+// const columns: ColumnsType = [
+// 	{
+// 		title: 'Name',
+// 		dataIndex: 'name',
+// 		key: 'name',
+// 		width: 150,
+// 		fixed: 'left',
+// 	},
+// 	{
+// 		title: 'Barcode',
+// 		dataIndex: 'barcode',
+// 		key: 'barcode',
+// 	},
+// 	{
+// 		title: 'Balance',
+// 		dataIndex: 'balance',
+// 		key: 'balance',
+// 		align: 'center',
+// 		sorter: true,
+// 	},
+// 	{
+// 		title: 'Remaining Bal',
+// 		dataIndex: 'remaining_balance',
+// 		key: 'remaining_balance',
+// 		align: 'center',
+// 	},
+// 	{
+// 		title: 'Quantity Sold',
+// 		dataIndex: 'quantity_sold',
+// 		key: 'quantity_sold',
+// 		align: 'center',
+// 		sorter: true,
+// 	},
+// 	{
+// 		title: 'Daily Average Sold',
+// 		dataIndex: 'daily_average_sold',
+// 		key: 'daily_average_sold',
+// 		align: 'center',
+// 		sorter: true,
+// 	},
+// 	{
+// 		title: 'Average Quantity Sold Percentage',
+// 		dataIndex: 'daily_average_sold_percentage',
+// 		key: 'daily_average_sold_percentage',
+// 		align: 'center',
+// 		sorter: true,
+// 	},
+// 	{
+// 		title: 'Average Daily Consumption',
+// 		dataIndex: 'average_daily_consumption',
+// 		key: 'average_daily_consumption',
+// 		align: 'center',
+// 	},
+// 	{
+// 		title: 'Status',
+// 		dataIndex: 'status',
+// 		key: 'status',
+// 	},
+// 	{
+// 		title: 'Actions',
+// 		dataIndex: 'actions',
+// 		key: 'actions',
+// 	},
+// ];
 
-const INTERVAL_MS = 30000;
-const SEARCH_DEBOUNCE_TIME = 1000;
+// const INTERVAL_MS = 30000;
+// const SEARCH_DEBOUNCE_TIME = 1000;
 
-const sorts = {
-	CURRENT_BALANCE_ASC: 'current_balance',
-	CURRENT_BALANCE_DES: '-current_balance',
-	QUANTITY_SOLD_ASC: 'quantity_sold',
-	QUANTITY_SOLD_DES: '-quantity_sold',
-	DAILY_AVERAGE_SOLD_ASC: 'daily_average_sold',
-	DAILY_AVERAGE_SOLD_DES: '-daily_average_sold',
-	DAILY_AVERAGE_SOLD_PERCENTAGE_ASC: 'daily_average_sold_percentage',
-	DAILY_AVERAGE_SOLD_PERCENTAGE_DES: '-daily_average_sold_percentage',
-};
+// const sorts = {
+// 	CURRENT_BALANCE_ASC: 'current_balance',
+// 	CURRENT_BALANCE_DES: '-current_balance',
+// 	QUANTITY_SOLD_ASC: 'quantity_sold',
+// 	QUANTITY_SOLD_DES: '-quantity_sold',
+// 	DAILY_AVERAGE_SOLD_ASC: 'daily_average_sold',
+// 	DAILY_AVERAGE_SOLD_DES: '-daily_average_sold',
+// 	DAILY_AVERAGE_SOLD_PERCENTAGE_ASC: 'daily_average_sold_percentage',
+// 	DAILY_AVERAGE_SOLD_PERCENTAGE_DES: '-daily_average_sold_percentage',
+// };
 
-const getSortOrder = (column, order) => {
-	let sortOrder = null;
+// const getSortOrder = (column, order) => {
+// 	let sortOrder = null;
 
-	if (!order) {
-		return sortOrder;
-	}
+// 	if (!order) {
+// 		return sortOrder;
+// 	}
 
-	if (column === 'balance') {
-		sortOrder =
-			order === 'ascend'
-				? sorts.CURRENT_BALANCE_ASC
-				: sorts.CURRENT_BALANCE_DES;
-	} else if (column === 'quantity_sold') {
-		sortOrder =
-			order === 'ascend' ? sorts.QUANTITY_SOLD_ASC : sorts.QUANTITY_SOLD_DES;
-	} else if (column === 'daily_average_sold') {
-		sortOrder =
-			order === 'ascend'
-				? sorts.DAILY_AVERAGE_SOLD_ASC
-				: sorts.DAILY_AVERAGE_SOLD_DES;
-	} else if (column === 'daily_average_sold_percentage') {
-		sortOrder =
-			order === 'ascend'
-				? sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC
-				: sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES;
-	}
+// 	if (column === 'balance') {
+// 		sortOrder =
+// 			order === 'ascend'
+// 				? sorts.CURRENT_BALANCE_ASC
+// 				: sorts.CURRENT_BALANCE_DES;
+// 	} else if (column === 'quantity_sold') {
+// 		sortOrder =
+// 			order === 'ascend' ? sorts.QUANTITY_SOLD_ASC : sorts.QUANTITY_SOLD_DES;
+// 	} else if (column === 'daily_average_sold') {
+// 		sortOrder =
+// 			order === 'ascend'
+// 				? sorts.DAILY_AVERAGE_SOLD_ASC
+// 				: sorts.DAILY_AVERAGE_SOLD_DES;
+// 	} else if (column === 'daily_average_sold_percentage') {
+// 		sortOrder =
+// 			order === 'ascend'
+// 				? sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_ASC
+// 				: sorts.DAILY_AVERAGE_SOLD_PERCENTAGE_DES;
+// 	}
 
-	return sortOrder;
-};
+// 	return sortOrder;
+// };
 
-interface Props {
-	branchId: number;
-	productCategories: IProductCategory[];
-}
+// interface Props {
+// 	branchId: number;
+// 	productCategories: IProductCategory[];
+// }
 
-export const ReportsBranch = ({ branchId, productCategories }: Props) => {
+export const ReportsBranch = () => {
 	return null;
 	// // STATES
 	// const [data, setData] = useState([]);
@@ -378,192 +352,192 @@ export const ReportsBranch = ({ branchId, productCategories }: Props) => {
 	// );
 };
 
-interface FilterProps {
-	productCategories: IProductCategory[];
-	setQueryParams: any;
-}
+// interface FilterProps {
+// 	productCategories: IProductCategory[];
+// 	setQueryParams: any;
+// }
 
-const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
-	// STATES
-	const [productOptions, setProductOptions] = useState([]);
-	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
-	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
-	const [selectedProducts, setSelectedProducts] = useState([]);
-	const [searchKeyword, setSearchKeyword] = useState('');
+// const Filter = ({ productCategories, setQueryParams }: FilterProps) => {
+// 	// STATES
+// 	const [productOptions, setProductOptions] = useState([]);
+// 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
+// 	const [isDefaultProductFetched, setIsDefaultProductFetched] = useState(false);
+// 	const [selectedProducts, setSelectedProducts] = useState([]);
+// 	const [searchKeyword, setSearchKeyword] = useState('');
 
-	// CUSTOM HOOKS
-	const history = useHistory();
-	const params = queryString.parse(history.location.search);
-	const {
-		data: { products },
-		isFetching: isFetchingProducts,
-	} = useProducts({
-		params: {
-			ids: params?.productIds,
-			search: searchKeyword,
-		},
-	});
+// 	// CUSTOM HOOKS
+// 	const history = useHistory();
+// 	const params = queryString.parse(history.location.search);
+// 	const {
+// 		data: { products },
+// 		isFetching: isFetchingProducts,
+// 	} = useProducts({
+// 		params: {
+// 			ids: params?.productIds,
+// 			search: searchKeyword,
+// 		},
+// 	});
 
-	// METHODS
-	useEffect(() => {
-		// Set default time range type
-		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
-		if (
-			![timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange) &&
-			timeRange?.indexOf(',')
-		) {
-			setTimeRangeType(timeRangeTypes.DATE_RANGE);
-		} else {
-			setTimeRangeType(timeRange);
-		}
-	}, []);
+// 	// METHODS
+// 	useEffect(() => {
+// 		// Set default time range type
+// 		const timeRange = toString(params.timeRange) || timeRangeTypes.DAILY;
+// 		if (
+// 			![timeRangeTypes.DAILY, timeRangeTypes.MONTHLY].includes(timeRange) &&
+// 			timeRange?.indexOf(',')
+// 		) {
+// 			setTimeRangeType(timeRangeTypes.DATE_RANGE);
+// 		} else {
+// 			setTimeRangeType(timeRange);
+// 		}
+// 	}, []);
 
-	useEffect(() => {
-		setProductOptions(
-			products.map((product) => ({
-				label: product.name,
-				value: product.id,
-			})),
-		);
+// 	useEffect(() => {
+// 		setProductOptions(
+// 			products.map((product) => ({
+// 				label: product.name,
+// 				value: product.id,
+// 			})),
+// 		);
 
-		if (!isDefaultProductFetched) {
-			const productIds = toString(params.productIds)
-				.split(',')
-				.map((x) => Number(x));
-			const options = products
-				.filter((product) => productIds.includes(product.id))
-				.map((product) => ({
-					label: product.name,
-					value: product.id,
-				}));
+// 		if (!isDefaultProductFetched) {
+// 			const productIds = toString(params.productIds)
+// 				.split(',')
+// 				.map((x) => Number(x));
+// 			const options = products
+// 				.filter((product) => productIds.includes(product.id))
+// 				.map((product) => ({
+// 					label: product.name,
+// 					value: product.id,
+// 				}));
 
-			setSelectedProducts(options);
+// 			setSelectedProducts(options);
 
-			// Only set default product fetched true if exact same length;
-			if (options.length === productIds.length) {
-				setIsDefaultProductFetched(true);
-			}
-		}
-	}, [products]);
+// 			// Only set default product fetched true if exact same length;
+// 			if (options.length === productIds.length) {
+// 				setIsDefaultProductFetched(true);
+// 			}
+// 		}
+// 	}, [products]);
 
-	const onSearchDebounced = useCallback(
-		debounce((keyword) => {
-			setProductOptions([]);
-			setSearchKeyword(keyword.toLowerCase());
-		}, SEARCH_DEBOUNCE_TIME),
-		[params],
-	);
+// 	const onSearchDebounced = useCallback(
+// 		debounce((keyword) => {
+// 			setProductOptions([]);
+// 			setSearchKeyword(keyword.toLowerCase());
+// 		}, SEARCH_DEBOUNCE_TIME),
+// 		[params],
+// 	);
 
-	return (
-		<Row gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="Product Name" spacing />
-				<Select
-					mode="multiple"
-					style={{ width: '100%' }}
-					filterOption={false}
-					onSearch={onSearchDebounced}
-					notFoundContent={isFetchingProducts ? <Spin size="small" /> : null}
-					options={productOptions}
-					value={selectedProducts}
-					onChange={(values) => {
-						setSelectedProducts(values);
+// 	return (
+// 		<Row gutter={[16, 16]}>
+// 			<Col lg={12} span={24}>
+// 				<Label label="Product Name" spacing />
+// 				<Select
+// 					filterOption={false}
+// 					mode="multiple"
+// 					notFoundContent={isFetchingProducts ? <Spin size="small" /> : null}
+// 					options={productOptions}
+// 					style={{ width: '100%' }}
+// 					value={selectedProducts}
+// 					labelInValue
+// 					onChange={(values) => {
+// 						setSelectedProducts(values);
 
-						setQueryParams({
-							productIds: values.map(({ value }) => value).join(','),
-						});
-					}}
-					labelInValue
-				/>
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Product Category" spacing />
-				<Select
-					style={{ width: '100%' }}
-					defaultValue={params.productCategory}
-					onChange={(value) => {
-						setQueryParams({ productCategory: value });
-					}}
-					optionFilterProp="children"
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					showSearch
-					allowClear
-				>
-					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
-					))}
-				</Select>
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Quantity Sold Date" spacing />
-				<Radio.Group
-					value={timeRangeType}
-					options={[
-						{ label: 'Daily', value: timeRangeTypes.DAILY },
-						{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-						{
-							label: 'Select Date Range',
-							value: timeRangeTypes.DATE_RANGE,
-						},
-					]}
-					onChange={(e) => {
-						const { value } = e.target;
-						setTimeRangeType(value);
+// 						setQueryParams({
+// 							productIds: values.map(({ value }) => value).join(','),
+// 						});
+// 					}}
+// 					onSearch={onSearchDebounced}
+// 				/>
+// 			</Col>
+// 			<Col lg={12} span={24}>
+// 				<Label label="Product Category" spacing />
+// 				<Select
+// 					defaultValue={params.productCategory}
+// 					filterOption={(input, option) =>
+// 						option.children
+// 							.toString()
+// 							.toLowerCase()
+// 							.indexOf(input.toLowerCase()) >= 0
+// 					}
+// 					optionFilterProp="children"
+// 					style={{ width: '100%' }}
+// 					allowClear
+// 					showSearch
+// 					onChange={(value) => {
+// 						setQueryParams({ productCategory: value });
+// 					}}
+// 				>
+// 					{productCategories.map(({ name }) => (
+// 						<Select.Option value={name}>{name}</Select.Option>
+// 					))}
+// 				</Select>
+// 			</Col>
+// 			<Col lg={12} span={24}>
+// 				<Label label="Quantity Sold Date" spacing />
+// 				<Radio.Group
+// 					options={[
+// 						{ label: 'Daily', value: timeRangeTypes.DAILY },
+// 						{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
+// 						{
+// 							label: 'Select Date Range',
+// 							value: timeRangeTypes.DATE_RANGE,
+// 						},
+// 					]}
+// 					optionType="button"
+// 					value={timeRangeType}
+// 					onChange={(e) => {
+// 						const { value } = e.target;
+// 						setTimeRangeType(value);
 
-						if (value !== timeRangeTypes.DATE_RANGE) {
-							setQueryParams({ timeRange: value });
-						}
-					}}
-					optionType="button"
-				/>
-				{timeRangeType === timeRangeTypes.DATE_RANGE && (
-					<DatePicker.RangePicker
-						format="MM/DD/YY"
-						onCalendarChange={(dates, dateStrings) => {
-							if (dates?.[0] && dates?.[1]) {
-								setQueryParams({ timeRange: dateStrings.join(',') });
-							}
-						}}
-						defaultValue={
-							toString(params.timeRange).split(',')?.length === 2
-								? [
-										moment(toString(params.timeRange).split(',')[0]),
-										moment(toString(params.timeRange).split(',')[1]),
-								  ]
-								: undefined
-						}
-						defaultPickerValue={
-							toString(params.timeRange).split(',')?.length === 2
-								? [
-										moment(toString(params.timeRange).split(',')[0]),
-										moment(toString(params.timeRange).split(',')[1]),
-								  ]
-								: undefined
-						}
-					/>
-				)}
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Show Sold In Branch" spacing />
-				<Radio.Group
-					options={[
-						{ label: 'Show All', value: ALL_OPTION_KEY },
-						{ label: 'In Stock', value: '1' },
-					]}
-					value={params.isSoldInBranch}
-					onChange={(e) => {
-						setQueryParams({ isSoldInBranch: e.target.value }, true);
-					}}
-					// eslint-disable-next-line react/jsx-boolean-value
-					defaultValue={params.isSoldInBranch}
-					optionType="button"
-				/>
-			</Col>
-		</Row>
-	);
-};
+// 						if (value !== timeRangeTypes.DATE_RANGE) {
+// 							setQueryParams({ timeRange: value });
+// 						}
+// 					}}
+// 				/>
+// 				{timeRangeType === timeRangeTypes.DATE_RANGE && (
+// 					<DatePicker.RangePicker
+// 						defaultPickerValue={
+// 							toString(params.timeRange).split(',')?.length === 2
+// 								? [
+// 										moment(toString(params.timeRange).split(',')[0]),
+// 										moment(toString(params.timeRange).split(',')[1]),
+// 								  ]
+// 								: undefined
+// 						}
+// 						defaultValue={
+// 							toString(params.timeRange).split(',')?.length === 2
+// 								? [
+// 										moment(toString(params.timeRange).split(',')[0]),
+// 										moment(toString(params.timeRange).split(',')[1]),
+// 								  ]
+// 								: undefined
+// 						}
+// 						format="MM/DD/YY"
+// 						onCalendarChange={(dates, dateStrings) => {
+// 							if (dates?.[0] && dates?.[1]) {
+// 								setQueryParams({ timeRange: dateStrings.join(',') });
+// 							}
+// 						}}
+// 					/>
+// 				)}
+// 			</Col>
+// 			<Col lg={12} span={24}>
+// 				<Label label="Show Sold In Branch" spacing />
+// 				<Radio.Group
+// 					defaultValue={params.isSoldInBranch}
+// 					options={[
+// 						{ label: 'Show All', value: ALL_OPTION_KEY },
+// 						{ label: 'In Stock', value: '1' },
+// 					]}
+// 					optionType="button"
+// 					// eslint-disable-next-line react/jsx-boolean-value
+// 					value={params.isSoldInBranch}
+// 					onChange={(e) => {
+// 						setQueryParams({ isSoldInBranch: e.target.value }, true);
+// 					}}
+// 				/>
+// 			</Col>
+// 		</Row>
+// 	);
+// };

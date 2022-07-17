@@ -12,11 +12,11 @@ export interface ITextareaProps {
 const FormTextarea = ({ id, placeholder, disabled }: ITextareaProps) => (
 	<Field
 		as="textarea"
+		className={cn('FormTextarea', { disabled })}
+		disabled={disabled}
 		id={id}
 		name={id}
-		className={cn('FormTextarea', { disabled })}
 		placeholder={placeholder}
-		disabled={disabled}
 	/>
 );
 

@@ -95,16 +95,16 @@ export const ModifyCashieringAssignmentModal = ({
 
 	return (
 		<Modal
+			footer={null}
 			title={`${
 				assignment
 					? '[Edit] Assignment'
 					: `[Create] Assignment (${date.format('MMM D, YYYY')})`
 			}`}
-			footer={null}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -121,8 +121,8 @@ export const ModifyCashieringAssignmentModal = ({
 				branchMachines={branchMachines}
 				date={date}
 				loading={isCreateLoading || isEditLoading}
-				onSubmit={handleSubmit}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -228,10 +228,10 @@ export const ModifyCashieringAssignmentForm = ({
 		<Formik
 			initialValues={getFormDetails().defaultValues}
 			validationSchema={getFormDetails().schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -240,16 +240,16 @@ export const ModifyCashieringAssignmentForm = ({
 							<Col span={24}>
 								<Label label="Branch Machine" spacing />
 								<Select
-									size="large"
 									className="w-100"
+									filterOption={filterOption}
+									optionFilterProp="children"
+									size="large"
+									value={values.branchMachineId}
+									allowClear
+									showSearch
 									onChange={(value) => {
 										setFieldValue('branchMachineId', value);
 									}}
-									value={values.branchMachineId}
-									optionFilterProp="children"
-									filterOption={filterOption}
-									showSearch
-									allowClear
 								>
 									{branchMachines.map(({ id, name }) => (
 										<Select.Option key={id} value={id}>
@@ -267,15 +267,15 @@ export const ModifyCashieringAssignmentForm = ({
 						<Col span={24}>
 							<Label label="Schedule" spacing />
 							<TimePicker.RangePicker
-								size="large"
 								className="w-100"
+								format="h:mm A"
+								size="large"
+								value={values.times}
+								hideDisabledOptions
+								use12Hours
 								onChange={(times: any) => {
 									setFieldValue('times', times);
 								}}
-								value={values.times}
-								format="h:mm A"
-								hideDisabledOptions
-								use12Hours
 							/>
 							<ErrorMessage
 								name="times"
@@ -286,16 +286,16 @@ export const ModifyCashieringAssignmentForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={assignment ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={loading}
+							text={assignment ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

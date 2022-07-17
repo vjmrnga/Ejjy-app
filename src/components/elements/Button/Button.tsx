@@ -40,12 +40,11 @@ const Button = ({
 	tooltip,
 }: Props) => (
 	<Tooltip
+		overlayClassName="button-tooltip"
 		placement={tooltipPlacement}
 		title={tooltip}
-		overlayClassName="button-tooltip"
 	>
 		<button
-			type={type}
 			className={cn('Button', classNames, {
 				primary: variant === 'primary',
 				secondary: variant === 'secondary',
@@ -55,10 +54,11 @@ const Button = ({
 				disabled,
 				loading,
 			})}
+			type={type}
 			onClick={disabled ? null : onClick}
 		>
 			{loading ? (
-				<Spin indicator={loadingIcon} className="spinner" />
+				<Spin className="spinner" indicator={loadingIcon} />
 			) : (
 				<>
 					{iconDirection === 'left' && <div className="icon-left">{icon}</div>}

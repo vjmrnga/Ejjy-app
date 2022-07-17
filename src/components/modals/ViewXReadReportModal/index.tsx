@@ -20,7 +20,7 @@ interface Props {
 	onClose: any;
 }
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	// STATES
@@ -79,7 +79,6 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	return (
 		<Modal
 			className="ViewXReadReportModal Modal__hasFooter"
-			title="X-Read Report"
 			footer={[
 				<Button
 					key="print"
@@ -114,6 +113,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					Create TXT
 				</Button>,
 			]}
+			title="X-Read Report"
 			width={425}
 			centered
 			closable
@@ -255,6 +255,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 			<ReceiptFooter />
 
 			<div
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>

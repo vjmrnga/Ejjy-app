@@ -1,8 +1,7 @@
 import { Modal, Tag } from 'antd';
-import { upperFirst } from 'lodash';
 import React from 'react';
-import { accountTypes } from '../../../global/types';
 import { formatDate } from 'utils';
+import { accountTypes } from '../../../global/types';
 import { DetailsRow } from '../../Details/DetailsRow';
 import { DetailsSingle } from '../../Details/DetailsSingle';
 import { Button } from '../../elements';
@@ -30,6 +29,8 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 			case accountTypes.GOVERNMENT:
 				typeName = 'Government';
 				break;
+			default:
+				typeName = '';
 		}
 
 		return typeName;
@@ -37,12 +38,12 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 	return (
 		<Modal
 			className="Modal__hasFooter"
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
 			title="View Account"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<DetailsSingle label="Type" value={getTypeName(account.type)} />
@@ -60,7 +61,7 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 					<>
 						<DetailsSingle
 							label={
-								account.type == accountTypes.CORPORATE
+								account.type === accountTypes.CORPORATE
 									? 'Business Name'
 									: 'Agency Name'
 							}
@@ -68,7 +69,7 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 						/>
 						<DetailsSingle
 							label={
-								account.type == accountTypes.CORPORATE
+								account.type === accountTypes.CORPORATE
 									? 'Address (Business)'
 									: 'Address (Agency)'
 							}

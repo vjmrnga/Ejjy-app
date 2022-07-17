@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { RequestErrors } from '../../../../../../components/RequestErrors/RequestErrors';
-import { SHOW_HIDE_SHORTCUT } from '../../../../../../global/constants';
-import { request } from '../../../../../../global/types';
-import { useBranchProducts } from '../../../../../../hooks/useBranchProducts';
 import {
 	confirmPassword,
 	convertIntoArray,
 	getKeyDownCombination,
 } from 'utils';
+import { RequestErrors } from '../../../../../../components/RequestErrors/RequestErrors';
+import { SHOW_HIDE_SHORTCUT } from '../../../../../../global/constants';
+import { request } from '../../../../../../global/types';
+import { useBranchProducts } from '../../../../../../hooks/useBranchProducts';
 import { EditBranchProductsForm } from './EditBranchProductsForm';
 
 interface Props {
@@ -84,13 +84,13 @@ export const EditBranchProductsModal = ({
 
 	return (
 		<Modal
-			title={title}
 			className="Modal__large ModalLarge__scrollable"
 			footer={null}
-			onCancel={handleClose}
-			visible
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={handleClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors)}
@@ -99,10 +99,10 @@ export const EditBranchProductsModal = ({
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
-				onSubmit={onEditBranchProduct}
-				onClose={handleClose}
-				loading={branchProductsStatus === request.REQUESTING}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
+				loading={branchProductsStatus === request.REQUESTING}
+				onClose={handleClose}
+				onSubmit={onEditBranchProduct}
 			/>
 		</Modal>
 	);

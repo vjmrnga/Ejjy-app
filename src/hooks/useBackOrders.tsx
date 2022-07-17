@@ -1,6 +1,6 @@
 import { actions } from 'ducks/back-orders';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { BackOrdersService } from 'services';
 import {
@@ -8,19 +8,9 @@ import {
 	getOnlineApiUrl,
 	modifiedCallback,
 	modifiedExtraCallback,
-	onCallback,
 } from 'utils';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from 'utils/pagination';
 import { Query } from './inteface';
 import { useActionDispatch } from './useActionDispatch';
-
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching back orders';
 
 const EDIT_SUCCESS_MESSAGE = 'Back order was edited successfully';
 const EDIT_ERROR_MESSAGE = 'An error occurred while updating the back order';
@@ -35,29 +25,13 @@ export const useBackOrders = () => {
 	const [errors, setErrors] = useState<any>([]);
 
 	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(5);
 
 	// ACTIONS
-	const listAction = useActionDispatch(actions.list);
 	const retrieveAction = useActionDispatch(actions.retrieve);
 	const editAction = useActionDispatch(actions.edit);
 	const receiveAction = useActionDispatch(actions.receive);
 
 	// GENERAL METHODS
-	const executeRequest = (data, requestCallback, action) => {
-		action({
-			...data,
-			callback: onCallback(
-				callback,
-				requestCallback?.onSuccess,
-				requestCallback?.onError,
-			),
-		});
-	};
 
 	const callback = ({ status: requestStatus, errors: requestErrors = [] }) => {
 		setStatus(requestStatus);
@@ -65,44 +39,8 @@ export const useBackOrders = () => {
 	};
 
 	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
-			}),
-		);
-	}, [allData, currentPage, pageSize]);
-
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
-
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
 
 	// REQUEST METHODS
-	const listBackOrders = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: listAction,
-			requestType: null,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
 	const retrieveBackOrder = (id, extraCallback = null) => {
 		retrieveAction({
 			id,
@@ -135,14 +73,6 @@ export const useBackOrders = () => {
 	};
 
 	return {
-		backOrders: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
 		retrieveBackOrder,
 		editBackOrder,
 		receiveBackOrder,

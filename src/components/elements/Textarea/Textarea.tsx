@@ -10,11 +10,11 @@ interface Props {
 
 const Textarea = ({ id, placeholder, onChange, disabled }: Props) => (
 	<textarea
+		className="Textarea"
+		disabled={disabled}
 		id={id}
 		name={id}
-		className="Textarea"
 		placeholder={placeholder}
-		disabled={disabled}
 		onChange={(event) => onChange(event.target.value)}
 	/>
 );

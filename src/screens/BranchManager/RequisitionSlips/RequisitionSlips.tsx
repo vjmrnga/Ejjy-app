@@ -4,15 +4,15 @@ import { upperFirst } from 'lodash';
 import * as queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useQueryParams } from 'hooks';
+import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import { Content, TableHeader } from '../../../components';
 import { Box, Label } from '../../../components/elements';
 import { EMPTY_CELL } from '../../../global/constants';
 import { requisitionSlipActionsOptionsWithAll } from '../../../global/options';
 import { request, userTypes } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
-import { useQueryParams } from 'hooks';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
-import { formatDateTime, getRequisitionSlipStatus } from 'utils';
 import './style.scss';
 
 const columns = [
@@ -104,10 +104,10 @@ export const RequisitionSlips = () => {
 			<Box>
 				<TableHeader
 					buttonName="Create Requisition Slip"
+					pending={pendingCount}
 					onCreate={() => {
 						history.push('/branch-manager/requisition-slips/create');
 					}}
-					pending={pendingCount}
 				/>
 
 				<Filter
@@ -119,7 +119,7 @@ export const RequisitionSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 1000 }}
+					loading={requisitionSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -134,7 +134,7 @@ export const RequisitionSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions: ['5', '10', '15'],
 					}}
-					loading={requisitionSlipsStatus === request.REQUESTING}
+					scroll={{ x: 1000 }}
 				/>
 			</Box>
 		</Content>
@@ -154,20 +154,20 @@ const Filter = ({ setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
-					style={{ width: '100%' }}
-					onChange={(value) => {
-						setQueryParams({ status: value });
-					}}
 					defaultValue={params.status || 'all'}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ status: value });
+					}}
 				>
 					{requisitionSlipActionsOptionsWithAll.map(({ name, value }) => (
 						<Select.Option key={value} value={value}>

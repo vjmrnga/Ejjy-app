@@ -52,10 +52,10 @@ export const ViewDeliveryReceipt = ({ match }: Props) => {
 
 	return (
 		<Content
-			className="ViewDeliveryReceipt"
-			title="[VIEW] F-DS1"
-			rightTitle={`#${deliveryReceipt?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			className="ViewDeliveryReceipt"
+			rightTitle={`#${deliveryReceipt?.id}`}
+			title="[VIEW] F-DS1"
 		>
 			<Spin
 				size="large"

@@ -71,7 +71,7 @@ export const TabSalesTracker = () => {
 
 	return (
 		<Spin spinning={isSalesTrackerFetching || isSiteSettingsFetching}>
-			<TableHeader wrapperClassName="pt-2 px-0" title="Sales Tracker" />
+			<TableHeader title="Sales Tracker" wrapperClassName="pt-2 px-0" />
 
 			<RequestErrors
 				errors={[
@@ -92,13 +92,13 @@ const SalesTrackerTotalSalesNotification = ({
 }) => (
 	<Alert
 		className="mb-3"
-		message="Sales Tracker - Total Sales"
 		description={
 			<>
 				Current total sales in <b>{branchMachineName}</b> is{' '}
 				<b>{formatInPeso(totalSales)}</b>. Please reset as soon as possible.
 			</>
 		}
+		message="Sales Tracker - Total Sales"
 		type="warning"
 		showIcon
 	/>
@@ -110,13 +110,13 @@ const SalesTrackerInvoiceNotification = ({
 }) => (
 	<Alert
 		className="mb-3"
-		message="Sales Tracker - Invoice"
 		description={
 			<>
 				Current invoice count value in <b>{branchMachineName}</b> is{' '}
 				<b>{transactionCount}</b>. Please reset as soon as possible.
 			</>
 		}
+		message="Sales Tracker - Invoice"
 		type="warning"
 		showIcon
 	/>

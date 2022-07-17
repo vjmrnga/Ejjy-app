@@ -64,8 +64,8 @@ export const TabStockOut = () => {
 			remarks: backOrder.overall_remarks,
 			actions: (
 				<Button
-					type="link"
 					loading={isPrinting === backOrder.id}
+					type="link"
 					onClick={() => {
 						onPrintPDF(backOrder);
 					}}
@@ -85,6 +85,7 @@ export const TabStockOut = () => {
 			backOrder,
 			siteSettings,
 		});
+		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'p',
 			unit: 'px',
@@ -119,6 +120,7 @@ export const TabStockOut = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
+				loading={isBackOrdersFetching || isSiteSettingsFetching}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -133,7 +135,6 @@ export const TabStockOut = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isBackOrdersFetching || isSiteSettingsFetching}
 				bordered
 			/>
 
@@ -145,9 +146,8 @@ export const TabStockOut = () => {
 			)}
 
 			<div
-				dangerouslySetInnerHTML={{
-					__html: html,
-				}}
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
 				style={{ display: 'none' }}
 			/>
 		</>

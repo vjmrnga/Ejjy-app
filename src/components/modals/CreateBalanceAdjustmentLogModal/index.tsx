@@ -48,12 +48,12 @@ export const CreateBalanceAdjustmentLogModal = ({
 
 	return (
 		<Modal
-			title={title}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={convertIntoArray(createError?.errors)}
@@ -62,9 +62,9 @@ export const CreateBalanceAdjustmentLogModal = ({
 
 			<CreateBalanceAdjustmentLogForm
 				branchProduct={branchProduct}
-				onSubmit={onSubmit}
-				onClose={onClose}
 				loading={isCreating}
+				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);

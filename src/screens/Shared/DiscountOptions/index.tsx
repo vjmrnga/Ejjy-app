@@ -103,8 +103,8 @@ export const DiscountOptions = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Discount Option"
-						onCreateDisabled={isConnected === false}
 						onCreate={() => setModifyDiscountOptionModalVisible(true)}
+						onCreateDisabled={isConnected === false}
 					/>
 				)}
 
@@ -120,9 +120,7 @@ export const DiscountOptions = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					scroll={{ x: 800 }}
 					loading={isFetching || isLoading}
-					bordered
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -137,6 +135,8 @@ export const DiscountOptions = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
+					scroll={{ x: 800 }}
+					bordered
 				/>
 
 				{modifyDiscountOptionModalVisible && (

@@ -43,12 +43,12 @@ export const ModifyProductCategoryModal = ({
 
 	return (
 		<Modal
-			title={`${productCategory ? '[Edit]' : '[Create]'} Product Category`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${productCategory ? '[Edit]' : '[Create]'} Product Category`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -59,10 +59,10 @@ export const ModifyProductCategoryModal = ({
 			/>
 
 			<ModifyProductCategoryForm
-				productCategory={productCategory}
 				isLoading={isCreating || isEditing}
-				onSubmit={handleSubmit}
+				productCategory={productCategory}
 				onClose={onClose}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -100,10 +100,10 @@ export const ModifyProductCategoryForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -126,16 +126,16 @@ export const ModifyProductCategoryForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={isLoading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={productCategory ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={isLoading}
+							text={productCategory ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

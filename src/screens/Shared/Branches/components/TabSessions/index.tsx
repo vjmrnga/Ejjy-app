@@ -53,7 +53,7 @@ export const TabSessions = ({ branch }: Props) => {
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			...params,
 			isAutomaticallyClosed: (() => {
-				let isAutomaticallyClosed = undefined;
+				let isAutomaticallyClosed;
 				if (params.closingType === closingTypes.AUTOMATIC) {
 					isAutomaticallyClosed = true;
 				} else if (params.closingType === closingTypes.MANUAL) {
@@ -63,7 +63,7 @@ export const TabSessions = ({ branch }: Props) => {
 				return isAutomaticallyClosed;
 			})(),
 			isUnauthorized: (() => {
-				let isUnauthorized = undefined;
+				let isUnauthorized;
 				if (params.type === sessionTypes.UNAUTHORIZED) {
 					isUnauthorized = true;
 				} else if (params.type === sessionTypes.AUTHORIZED) {
@@ -146,7 +146,7 @@ export const TabSessions = ({ branch }: Props) => {
 
 	return (
 		<div className="ViewBranchMachineSessions">
-			<TableHeader wrapperClassName="pt-0" title="Sessions" />
+			<TableHeader title="Sessions" wrapperClassName="pt-0" />
 
 			<Filter isLoading={isFetching} />
 
@@ -155,9 +155,7 @@ export const TabSessions = ({ branch }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
 				loading={isFetching}
-				bordered
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -172,6 +170,8 @@ export const TabSessions = ({ branch }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 800 }}
+				bordered
 			/>
 		</div>
 	);
@@ -197,19 +197,19 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.userId}
-					onChange={(value) => {
-						setQueryParams({ userId: value }, { shouldResetPage: true });
-					}}
-					optionFilterProp="children"
+					disabled={isFetching || isLoading}
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					disabled={isFetching || isLoading}
+					optionFilterProp="children"
 					allowClear
 					showSearch
+					onChange={(value) => {
+						setQueryParams({ userId: value }, { shouldResetPage: true });
+					}}
 				>
 					{users.map((user) => (
 						<Select.Option key={user.id} value={user.id}>
@@ -226,37 +226,37 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Closing Type" spacing />
 				<Radio.Group
-					optionType="button"
+					defaultValue={params.closingType || closingTypes.ALL}
+					disabled={isFetching || isLoading}
 					options={[
 						{ label: 'All', value: closingTypes.ALL },
 						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
 						{ label: 'Manual', value: closingTypes.MANUAL },
 					]}
+					optionType="button"
 					onChange={(e) => {
 						setQueryParams(
 							{ closingType: e.target.value },
 							{ shouldResetPage: true },
 						);
 					}}
-					disabled={isFetching || isLoading}
-					defaultValue={params.closingType || closingTypes.ALL}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Authorization" spacing />
 				<Radio.Group
-					optionType="button"
+					defaultValue={params.type || sessionTypes.ALL}
+					disabled={isFetching || isLoading}
 					options={[
 						{ label: 'All', value: sessionTypes.ALL },
 						{ label: 'Authorized', value: sessionTypes.AUTHORIZED },
 						{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
 					]}
+					optionType="button"
 					onChange={(e) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
-					disabled={isFetching || isLoading}
-					defaultValue={params.type || sessionTypes.ALL}
 				/>
 			</Col>
 		</Row>

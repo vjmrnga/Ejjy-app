@@ -1,7 +1,7 @@
 import { Divider } from 'antd';
 import React from 'react';
-import { DetailsRow, DetailsSingle } from '..';
 import { formatDateTime } from 'utils';
+import { DetailsRow, DetailsSingle } from '..';
 
 interface Props {
 	preparationSlip: any;
@@ -19,6 +19,6 @@ export const PreparationSlipDetails = ({
 			value={formatDateTime(preparationSlip?.datetime_created)}
 		/>
 
-		<Divider dashed style={{ marginTop: '12px', marginBottom: '17px' }} />
+		<Divider style={{ marginTop: '12px', marginBottom: '17px' }} dashed />
 	</DetailsRow>
 );

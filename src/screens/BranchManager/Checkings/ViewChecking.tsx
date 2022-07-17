@@ -104,7 +104,6 @@ export const ViewChecking = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Check"
 			breadcrumb={
 				<Breadcrumb
 					items={[
@@ -113,6 +112,7 @@ export const ViewChecking = ({ match }: Props) => {
 					]}
 				/>
 			}
+			title="[VIEW] Check"
 		>
 			<Box>
 				<Spin spinning={isFetchingProductCheck}>
@@ -123,7 +123,7 @@ export const ViewChecking = ({ match }: Props) => {
 					/>
 
 					{productCheck && (
-						<Descriptions bordered className="ma-6" column={2} size="small">
+						<Descriptions className="ma-6" column={2} size="small" bordered>
 							<Descriptions.Item label="ID">
 								{productCheck.id}
 							</Descriptions.Item>
@@ -144,8 +144,8 @@ export const ViewChecking = ({ match }: Props) => {
 					<Table
 						columns={columns}
 						dataSource={dataSource}
-						scroll={{ x: 800 }}
 						pagination={false}
+						scroll={{ x: 800 }}
 						bordered
 					/>
 				</Spin>

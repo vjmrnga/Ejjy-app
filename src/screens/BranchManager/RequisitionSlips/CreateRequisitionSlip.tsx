@@ -7,6 +7,12 @@ import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
+import {
+	convertIntoArray,
+	convertToPieces,
+	getBranchProductStatus,
+	sleep,
+} from 'utils';
 import { Content, RequestErrors, TableHeader } from '../../../components';
 import {
 	Box,
@@ -30,12 +36,6 @@ import {
 import { useAuth } from '../../../hooks/useAuth';
 import { useBranchProducts } from '../../../hooks/useBranchProducts';
 import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
-import {
-	convertIntoArray,
-	convertToPieces,
-	getBranchProductStatus,
-	sleep,
-} from 'utils';
 
 const tabs = {
 	ALL: 'ALL',
@@ -181,26 +181,26 @@ export const CreateRequisitionSlip = () => {
 			<>
 				<div className="QuantityContainer">
 					<FormInput
-						type="number"
+						disabled={!selected}
 						id={`${fieldKey}.quantity`}
-						onChange={(value) => {
-							onChangeQuantity(productId, value);
-						}}
 						isWholeNumber={
 							!(
 								quantity_type === quantityTypes.PIECE &&
 								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
 							)
 						}
-						disabled={!selected}
+						type="number"
+						onChange={(value) => {
+							onChangeQuantity(productId, value);
+						}}
 					/>
 					<FormSelect
+						disabled={!selected}
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
 						onChange={(value) => {
 							onChangeQuantityType(productId, value);
 						}}
-						disabled={!selected}
 					/>
 				</div>
 				<ErrorMessage
@@ -307,9 +307,11 @@ export const CreateRequisitionSlip = () => {
 		<Content className="CreateRequisitionSlip" title="Requisition Slips">
 			<Box>
 				<TableHeader
+					searchDisabled={activeTab === tabs.SELECTED}
+					statusDisabled={activeTab === tabs.SELECTED}
+					statuses={branchProductStatusOptionsWithAll}
 					title="Create Requisition Slip"
 					onSearch={onSearch}
-					statuses={branchProductStatusOptionsWithAll}
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
@@ -323,8 +325,6 @@ export const CreateRequisitionSlip = () => {
 						);
 						setSelectedStatus(status);
 					}}
-					statusDisabled={activeTab === tabs.SELECTED}
-					searchDisabled={activeTab === tabs.SELECTED}
 				/>
 
 				<RequestErrors
@@ -337,9 +337,10 @@ export const CreateRequisitionSlip = () => {
 				/>
 
 				<Formik
-					innerRef={formRef}
 					initialValues={getFormDetails().DefaultValues}
+					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
+					enableReinitialize
 					onSubmit={async () => {
 						setSubmitting(true);
 						await sleep(500);
@@ -347,14 +348,13 @@ export const CreateRequisitionSlip = () => {
 
 						onCreate();
 					}}
-					enableReinitialize
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
 							<div className="PaddingHorizontal">
 								<Tabs
-									type="card"
 									activeKey={activeTab}
+									type="card"
 									onTabClick={setActiveTab}
 								>
 									<Tabs.TabPane key={tabs.ALL} tab="All Products" />
@@ -373,13 +373,13 @@ export const CreateRequisitionSlip = () => {
 										renderQuantity,
 										onChangeCheckbox,
 									}}
+									loading={loading || isSubmitting}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
 										onPageChange,
 									}}
-									loading={loading || isSubmitting}
 								/>
 							</div>
 
@@ -388,12 +388,12 @@ export const CreateRequisitionSlip = () => {
 							<div className="CreateRequisitionSlip_createContainer">
 								<Button
 									classNames="CreateRequisitionSlip_btnCreate"
-									type="submit"
-									text="Create"
-									variant="primary"
 									disabled={
 										loading || isSubmitting || isEmpty(productsRef.current)
 									}
+									text="Create"
+									type="submit"
+									variant="primary"
 								/>
 							</div>
 						</Form>
@@ -463,6 +463,7 @@ const ProductsTable = ({
 			<Table
 				columns={columns}
 				dataSource={data}
+				loading={loading}
 				pagination={
 					activeTab === tabs.ALL
 						? {
@@ -476,7 +477,6 @@ const ProductsTable = ({
 						  }
 						: false
 				}
-				loading={loading}
 			/>
 		</>
 	);

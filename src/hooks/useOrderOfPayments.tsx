@@ -51,8 +51,8 @@ export const useOrderOfPaymentsCreate = (options = {}) =>
 				{
 					created_by_id: createdById,
 					payor_id: payorId,
-					amount: amount,
-					purpose: purpose,
+					amount,
+					purpose,
 					extra_description: extraDescription,
 					charge_sales_transaction_id: chargeSalesTransactionId,
 				},

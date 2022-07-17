@@ -99,8 +99,8 @@ export const TabAccounts = ({ disabled }: Props) => {
 		<div>
 			{isCUDShown(user.user_type) && (
 				<TableHeader
-					title="Accounts"
 					buttonName="Create Account"
+					title="Accounts"
 					onCreate={() => setIsCreateModalVisible(true)}
 					onCreateDisabled={disabled}
 				/>
@@ -118,7 +118,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 			<Table
 				columns={getColumns()}
 				dataSource={dataSource}
-				scroll={{ x: 1000 }}
+				loading={isFetching}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -133,7 +133,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				scroll={{ x: 1000 }}
 			/>
 
 			{selectedAccount && (
@@ -146,11 +146,11 @@ export const TabAccounts = ({ disabled }: Props) => {
 			{(isCreateModalVisible || selectedAccountEdit) && (
 				<ModifyAccountModal
 					account={selectedAccountEdit}
-					onSuccess={refetchAccounts}
 					onClose={() => {
 						setIsCreateModalVisible(false);
 						setSelectedAccountEdit(null);
 					}}
+					onSuccess={refetchAccounts}
 				/>
 			)}
 		</div>
@@ -175,30 +175,30 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Type" spacing />
 				<Select
-					style={{ width: '100%' }}
-					value={params.type}
-					onChange={(value) => {
-						setQueryParams({ type: value });
-					}}
-					optionFilterProp="children"
 					filterOption={(input, option) =>
 						option.children
 							.toString()
 							.toLowerCase()
 							.indexOf(input.toLowerCase()) >= 0
 					}
-					showSearch
+					optionFilterProp="children"
+					style={{ width: '100%' }}
+					value={params.type}
 					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ type: value });
+					}}
 				>
 					<Select.Option
 						key={accountTypes.PERSONAL}

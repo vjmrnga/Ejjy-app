@@ -46,12 +46,12 @@ export const ModifyBranchMachineModal = ({
 
 	return (
 		<Modal
-			title={`${branchMachine ? '[Edit]' : '[Create]'} Branch Machine`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${branchMachine ? '[Edit]' : '[Create]'} Branch Machine`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -65,8 +65,8 @@ export const ModifyBranchMachineModal = ({
 				branchId={branchId}
 				branchMachine={branchMachine}
 				loading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
 				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);
@@ -120,6 +120,7 @@ export const ModifyBranchMachineForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -127,7 +128,6 @@ export const ModifyBranchMachineForm = ({
 				onSubmit(formData);
 				setSubmitting(false);
 			}}
-			enableReinitialize
 		>
 			<Form className="form">
 				<DetailsRow>
@@ -177,16 +177,16 @@ export const ModifyBranchMachineForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading || isSubmitting}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text={branchMachine ? 'Edit' : 'Create'}
-						variant="primary"
 						loading={loading || isSubmitting}
+						text={branchMachine ? 'Edit' : 'Create'}
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

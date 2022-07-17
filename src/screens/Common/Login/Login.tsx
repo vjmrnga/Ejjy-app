@@ -1,9 +1,8 @@
 import { Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box, Button } from 'components/elements';
-import { IS_APP_LIVE, MAX_PAGE_SIZE, request } from 'global';
-import { useUsers } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
+import { IS_APP_LIVE, request } from 'global';
+import { useAuth } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { getKeyDownCombination, getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { LoginForm } from './components/LoginForm';
@@ -13,19 +12,9 @@ const Login = () => {
 	// STATES
 	const [appSettingsModalVisible, setAppSettingsModalVisible] = useState(false);
 	const [isSetupButtonsVisible, setSetupButtonsVisible] = useState(false);
-	const [isUserAPIEnabled, setIsUserAPIersEnabled] = useState(false);
 
 	// CUSTOM HOOKS
 	const { login, status, errors } = useAuth();
-	useUsers({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			notifyOnChangeProps: [],
-			enabled: isUserAPIEnabled,
-		},
-	});
 
 	// METHODS
 	useEffect(() => {
@@ -56,15 +45,15 @@ const Login = () => {
 		<section className="Login">
 			<Box className="container">
 				<img
-					src={require('../../../assets/images/logo.jpg')}
 					alt="logo"
 					className="logo"
+					src={require('../../../assets/images/logo.jpg')}
 				/>
 
 				<LoginForm
-					onSubmit={login}
 					errors={errors}
 					loading={status === request.REQUESTING}
+					onSubmit={login}
 				/>
 
 				{isSetupButtonsVisible && (
@@ -72,19 +61,19 @@ const Login = () => {
 						<Divider />
 
 						<Button
-							type="button"
 							text="Set App Settings"
+							type="button"
 							variant="default"
-							onClick={() => setAppSettingsModalVisible(true)}
 							block
+							onClick={() => setAppSettingsModalVisible(true)}
 						/>
 
 						{appSettingsModalVisible && (
 							<AppSettingsModal
+								onClose={() => setAppSettingsModalVisible(false)}
 								onSuccess={() => {
 									window.location.reload();
 								}}
-								onClose={() => setAppSettingsModalVisible(false)}
 							/>
 						)}
 					</>

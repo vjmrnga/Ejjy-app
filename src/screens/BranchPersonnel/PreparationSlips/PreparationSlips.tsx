@@ -3,13 +3,13 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { formatDateTime, getPreparationSlipStatus } from 'utils';
 import { AddButtonIcon, Content, TableHeader } from '../../../components';
 import { Box, ButtonLink } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { preparationSlipStatus, request } from '../../../global/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
-import { formatDateTime, getPreparationSlipStatus } from 'utils';
 import { useOrderSlips } from '../../BranchManager/hooks/useOrderSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';
@@ -71,12 +71,12 @@ export const PreparationSlips = () => {
 				actions:
 					preparationSlip.status === preparationSlipStatus.NEW ? (
 						<AddButtonIcon
+							tooltip="Fulfill"
 							onClick={() => {
 								history.push(
 									`/branch-personnel/preparation-slips/${preparationSlip.id}`,
 								);
 							}}
-							tooltip="Fulfill"
 						/>
 					) : null,
 			}),
@@ -105,7 +105,7 @@ export const PreparationSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 650 }}
+					loading={preparationSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -115,7 +115,7 @@ export const PreparationSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={preparationSlipsStatus === request.REQUESTING}
+					scroll={{ x: 650 }}
 				/>
 
 				{selectedPreparationSlip && (

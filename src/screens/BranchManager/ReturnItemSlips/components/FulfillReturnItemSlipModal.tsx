@@ -1,16 +1,16 @@
 import { Col, Divider, Modal } from 'antd';
 import React from 'react';
-import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { quantityTypes, request } from '../../../../global/types';
-import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
 import {
 	convertIntoArray,
 	convertToPieces,
 	formatDateTime,
 	getReturnItemSlipStatus,
 } from 'utils';
+import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
+import { Label } from '../../../../components/elements';
+import { EMPTY_CELL } from '../../../../global/constants';
+import { quantityTypes, request } from '../../../../global/types';
+import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
 import { FulfillReturnItemSlipForm } from './FulfillReturnItemSlipForm';
 
 interface Props {
@@ -57,13 +57,13 @@ export const FulfillReturnItemSlipModal = ({
 
 	return (
 		<Modal
-			title="[View] Return Item Slip"
 			className="Modal__large"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="[View] Return Item Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<Col span={24}>
@@ -107,10 +107,10 @@ export const FulfillReturnItemSlipModal = ({
 			/>
 
 			<FulfillReturnItemSlipForm
-				returnItemSlip={returnItemSlip}
-				onSubmit={onFulfill}
-				onClose={onClose}
 				loading={returnItemSlipsStatus === request.REQUESTING}
+				returnItemSlip={returnItemSlip}
+				onClose={onClose}
+				onSubmit={onFulfill}
 			/>
 		</Modal>
 	);

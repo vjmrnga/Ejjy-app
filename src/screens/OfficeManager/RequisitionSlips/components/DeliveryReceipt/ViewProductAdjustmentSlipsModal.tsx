@@ -1,5 +1,6 @@
 import { Divider, Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { formatDate } from 'utils';
 import {
 	DetailsRow,
 	DetailsSingle,
@@ -7,7 +8,6 @@ import {
 } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { request } from '../../../../../global/types';
-import { formatDate } from 'utils';
 import { useDeliveryReceiptProducts } from '../../../hooks/useDeliveryReceiptProducts';
 
 interface Props {
@@ -76,13 +76,13 @@ export const ViewProductAdjustmentSlipsModal = ({
 
 	return (
 		<Modal
-			title="View Product’s Adjustment Slip"
 			className="Modal__large Modal__hasFooter"
-			visible={visible}
 			footer={[<Button key="close" text="Close" onClick={onModalClose} />]}
-			onCancel={onClose}
+			title="View Product’s Adjustment Slip"
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<Spin size="large" spinning={status === request.REQUESTING}>
 				<DetailsRow>

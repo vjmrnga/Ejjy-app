@@ -1,20 +1,14 @@
 import '../style.scss';
 
-interface Props {
-	title?: string;
-	totalSales: number;
-	timeRange: string;
-	firstTimeLoading: boolean;
-	loading: boolean;
-}
+// interface Props {
+// 	title?: string;
+// 	totalSales: number;
+// 	timeRange: string;
+// 	firstTimeLoading: boolean;
+// 	loading: boolean;
+// }
 
-export const SalesTotalCard = ({
-	title,
-	totalSales,
-	timeRange,
-	firstTimeLoading,
-	loading,
-}: Props) => {
+export const SalesTotalCard = () => {
 	return null;
 	// const getTotalSalesDescription = useCallback(() => {
 	// 	let description = null;

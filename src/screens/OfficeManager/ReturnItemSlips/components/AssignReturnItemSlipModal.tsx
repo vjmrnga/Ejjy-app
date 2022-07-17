@@ -45,18 +45,18 @@ export const AssignReturnItemSlipModal = ({
 
 	return (
 		<Modal
-			title={title}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={title}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<AssignReturnItemSlipForm
-				returnItemSlip={returnItemSlip}
-				onSubmit={onAssignReturnItemSlip}
-				onClose={onClose}
 				loading={returnItemSlipsStatus === request.REQUESTING}
+				returnItemSlip={returnItemSlip}
+				onClose={onClose}
+				onSubmit={onAssignReturnItemSlip}
 			/>
 		</Modal>
 	);

@@ -47,27 +47,27 @@ export const ViewOrderSlipModal = ({ orderSlip, visible, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="View Order Slip"
 			className="Modal__large Modal__hasFooter"
-			visible={visible}
 			footer={[<Button key="close" text="Close" onClick={onClose} />]}
-			onCancel={onClose}
+			title="View Order Slip"
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<OrderSlipDetails orderSlip={orderSlip} />
 
 			<Divider dashed />
 
-			<Row gutter={[16, 16]} align="middle" justify="space-between">
-				<Col xs={24} sm={12} lg={18}>
+			<Row align="middle" gutter={[16, 16]} justify="space-between">
+				<Col lg={18} sm={12} xs={24}>
 					<Label label="Requested Products" />
 				</Col>
-				<Col xs={24} sm={12} lg={6}>
+				<Col lg={6} sm={12} xs={24}>
 					<UncontrolledInput
 						placeholder={orderSlip?.assigned_store?.name}
-						onChange={null}
 						disabled
+						onChange={null}
 					/>
 				</Col>
 			</Row>

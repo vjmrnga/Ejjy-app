@@ -1,25 +1,14 @@
-import { Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
-import { ButtonLink } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { request } from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useBackOrders } from '../../../../hooks/useBackOrders';
-import { formatDateTime, getBackOrderStatus } from 'utils';
+// const columns: ColumnsType = [
+// 	{ title: 'ID', dataIndex: 'id' },
+// 	{ title: 'Date Sent', dataIndex: 'datetime_sent' },
+// 	{ title: 'Status', dataIndex: 'status' },
+// ];
 
-const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date Sent', dataIndex: 'datetime_sent' },
-	{ title: 'Status', dataIndex: 'status' },
-];
+// interface Props {
+// 	selectBackOrder: any;
+// }
 
-interface Props {
-	selectBackOrder: any;
-}
-
-export const BackOrdersSent = ({ selectBackOrder }: Props) => {
+export const BackOrdersSent = () => {
 	return null;
 	// // STATES
 	// const [data, setData] = useState([]);

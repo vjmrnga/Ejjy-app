@@ -41,8 +41,8 @@ export const ViewAccount = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Account"
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			title="[VIEW] Account"
 		>
 			<Box>
 				<Spin spinning={isFetchingAccount}>

@@ -28,18 +28,19 @@ const ControlledInput = ({
 	value,
 }: Props) => (
 	<input
-		type={type}
-		id={id}
-		name={id}
-		className={cn('Input', classNames)}
-		placeholder={placeholder}
-		max={max}
-		min={min}
-		disabled={disabled}
-		onChange={(event) => onChange(event.target.value)}
 		// eslint-disable-next-line jsx-a11y/no-autofocus
 		autoFocus={autoFocus}
+		className={cn('Input', classNames)}
+		disabled={disabled}
+		id={id}
+		max={max}
+		min={min}
+		name={id}
+		placeholder={placeholder}
+		type={type}
+		// eslint-disable-next-line jsx-a11y/no-autofocus
 		value={value}
+		onChange={(event) => onChange(event.target.value)}
 	/>
 );
 

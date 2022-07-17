@@ -1,6 +1,7 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { convertIntoArray } from 'utils';
 import {
 	RequestErrors,
 	TableActions,
@@ -9,7 +10,6 @@ import {
 import { pageSizeOptions } from '../../../../global/options';
 import { request } from '../../../../global/types';
 import { useBranchProductPendingPriceUpdates } from '../../../../hooks/useBranchProductPendingPriceUpdates';
-import { convertIntoArray } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -103,7 +103,7 @@ export const ViewBranchPendingPriceUpdates = ({ branchId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 650 }}
+				loading={branchProductPendingPriceUpdatesStatus === request.REQUESTING}
 				pagination={{
 					current: currentPage,
 					total: pageCount,
@@ -113,7 +113,7 @@ export const ViewBranchPendingPriceUpdates = ({ branchId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={branchProductPendingPriceUpdatesStatus === request.REQUESTING}
+				scroll={{ x: 650 }}
 			/>
 		</div>
 	);

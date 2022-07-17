@@ -1,5 +1,3 @@
-import { ColumnsType } from 'antd/lib/table/interface';
-
 // const columns: ColumnsType = [
 // 	{
 // 		title: 'Machine Name',
@@ -11,11 +9,11 @@ import { ColumnsType } from 'antd/lib/table/interface';
 // 	},
 // ];
 
-interface Props {
-	branchId: number;
-}
+// interface Props {
+// 	branchId: number;
+// }
 
-export const SalesBranch = ({ branchId }: Props) => {
+export const SalesBranch = () => {
 	return null;
 
 	// // STATES

@@ -40,11 +40,11 @@ export const Accounts = () => {
 
 			<Box className="ViewBranchMachine">
 				<Tabs
-					type="card"
-					className="PaddingHorizontal PaddingVertical"
 					activeKey={toString(currentTab)}
-					onTabClick={onTabClick}
+					className="PaddingHorizontal PaddingVertical"
+					type="card"
 					destroyInactiveTabPane
+					onTabClick={onTabClick}
 				>
 					<Tabs.TabPane key={accountTabs.ACCOUNTS} tab={accountTabs.ACCOUNTS}>
 						<TabAccounts disabled={isConnected === false} />

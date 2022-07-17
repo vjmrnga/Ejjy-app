@@ -123,7 +123,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 						(<ModeOfPayment modeOfPayment={transaction.payment.mode} />)
 					</>
 				),
-				remarks: remarks,
+				remarks,
 				totalAmount: formatInPeso(transaction.total_amount),
 				cashier: getFullName(transaction.teller),
 				authorizer: getFullName(transaction.void_authorizer),
@@ -136,8 +136,8 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	return (
 		<>
 			<TableHeader
-				wrapperClassName="pt-2 px-0"
 				title="Transaction Adjustment Report"
+				wrapperClassName="pt-2 px-0"
 			/>
 
 			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
@@ -147,7 +147,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 1200 }}
+				loading={isTransactionsFetching && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -162,7 +162,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				scroll={{ x: 1200 }}
 			/>
 
 			{selectedTransaction && (
@@ -194,6 +194,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Date" spacing />
 				<DatePicker
+					allowClear={false}
 					disabled={isLoading}
 					format="MM/DD/YY"
 					value={
@@ -207,7 +208,6 @@ const Filter = ({ isLoading }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					allowClear={false}
 				/>
 			</Col>
 		</Row>

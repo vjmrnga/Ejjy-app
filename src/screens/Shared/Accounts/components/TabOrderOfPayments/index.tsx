@@ -109,9 +109,9 @@ export const TabOrderOfPayments = () => {
 				),
 				actions: (
 					<Button
+						loading={isPrinting === id}
 						type="link"
 						onClick={() => handlePrintPDF(orderOfPayment)}
-						loading={isPrinting === id}
 					>
 						Print PDF
 					</Button>
@@ -126,6 +126,7 @@ export const TabOrderOfPayments = () => {
 		setIsPrinting(orderOfPayment.id);
 
 		const html = printOrderOfPayment(orderOfPayment);
+		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'p',
 			unit: 'px',
@@ -158,7 +159,7 @@ export const TabOrderOfPayments = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 1200 }}
+				loading={isOrderOfPaymentsFetching}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -173,7 +174,7 @@ export const TabOrderOfPayments = () => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isOrderOfPaymentsFetching}
+				scroll={{ x: 1200 }}
 			/>
 
 			{selectedTransaction && (
@@ -215,16 +216,16 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Payor" spacing />
 				<Select
 					className="w-100"
-					filterOption={false}
 					defaultActiveFirstOption={false}
-					onSearch={onSearchDebounced}
+					filterOption={false}
 					notFoundContent={isAccountsFetching ? <Spin size="small" /> : null}
 					value={params.payorId ? Number(params.payorId) : null}
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams({ payorId: value }, { shouldResetPage: true });
 					}}
-					showSearch
-					allowClear
+					onSearch={onSearchDebounced}
 				>
 					{accounts.map((account) => (
 						<Select.Option key={account.id} value={account.id}>

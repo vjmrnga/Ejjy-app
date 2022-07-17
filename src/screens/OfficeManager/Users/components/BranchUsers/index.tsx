@@ -58,8 +58,8 @@ export const BranchUsers = ({
 			actions: (
 				<Space>
 					<Button
-						type="primary"
 						disabled={disabled}
+						type="primary"
 						onClick={() =>
 							history.push(`/office-manager/users/assign/${user.id}`)
 						}
@@ -67,27 +67,27 @@ export const BranchUsers = ({
 						Cashiering Assignments
 					</Button>
 					<Button
-						type="primary"
 						disabled={disabled}
+						type="primary"
 						onClick={() => onReassignUser({ ...user, branchId })}
 					>
 						Assign Branch
 					</Button>
 					<Button
-						type="primary"
 						disabled={disabled}
+						type="primary"
 						onClick={() => onEditUser({ ...user, branchId })}
 					>
 						Edit
 					</Button>
 					<Popconfirm
+						cancelText="No"
+						okText="Yes"
 						placement="left"
 						title="Are you sure to remove this user?"
 						onConfirm={() => deleteUser(user.id)}
-						okText="Yes"
-						cancelText="No"
 					>
-						<Button type="primary" disabled={disabled} danger>
+						<Button disabled={disabled} type="primary" danger>
 							Delete
 						</Button>
 					</Popconfirm>
@@ -111,9 +111,9 @@ export const BranchUsers = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 650 }}
 				loading={isFetchingUsers || isDeletingUser}
 				pagination={false}
+				scroll={{ x: 650 }}
 			/>
 		</>
 	);

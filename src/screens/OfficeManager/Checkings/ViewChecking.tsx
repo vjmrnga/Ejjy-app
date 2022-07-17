@@ -1,53 +1,51 @@
-import { ColumnsType } from 'antd/lib/table/interface';
+// const columns: ColumnsType = [
+// 	{
+// 		title: 'Product',
+// 		children: [
+// 			{
+// 				title: 'Barcode',
+// 				dataIndex: 'barcode',
+// 				key: 'barcode',
+// 			},
+// 			{
+// 				title: 'Name',
+// 				dataIndex: 'name',
+// 				key: 'name',
+// 			},
+// 		],
+// 	},
+// 	{
+// 		title: 'Quantity',
+// 		children: [
+// 			{
+// 				title: 'Current',
+// 				dataIndex: 'current',
+// 				key: 'current',
+// 				align: 'center',
+// 			},
+// 			{
+// 				title: 'Fulfilled',
+// 				dataIndex: 'fulfilled',
+// 				key: 'fulfilled',
+// 				align: 'center',
+// 			},
+// 			{
+// 				title: 'Status',
+// 				dataIndex: 'match_status',
+// 				key: 'match_status',
+// 				align: 'center',
+// 			},
+// 		],
+// 	},
+// 	{ title: 'Adjustment', dataIndex: 'adjustment' },
+// 	{ title: 'Actions', dataIndex: 'actions' },
+// ];
 
-const columns: ColumnsType = [
-	{
-		title: 'Product',
-		children: [
-			{
-				title: 'Barcode',
-				dataIndex: 'barcode',
-				key: 'barcode',
-			},
-			{
-				title: 'Name',
-				dataIndex: 'name',
-				key: 'name',
-			},
-		],
-	},
-	{
-		title: 'Quantity',
-		children: [
-			{
-				title: 'Current',
-				dataIndex: 'current',
-				key: 'current',
-				align: 'center',
-			},
-			{
-				title: 'Fulfilled',
-				dataIndex: 'fulfilled',
-				key: 'fulfilled',
-				align: 'center',
-			},
-			{
-				title: 'Status',
-				dataIndex: 'match_status',
-				key: 'match_status',
-				align: 'center',
-			},
-		],
-	},
-	{ title: 'Adjustment', dataIndex: 'adjustment' },
-	{ title: 'Actions', dataIndex: 'actions' },
-];
-
-interface Props {
-	match: any;
-}
+// interface Props {
+// 	match: any;
+// }
 // TODO: Implement once office manager is ready to dev
-export const ViewChecking = ({ match }: Props) => {
+export const ViewChecking = () => {
 	return null;
 
 	// // VARIABLES

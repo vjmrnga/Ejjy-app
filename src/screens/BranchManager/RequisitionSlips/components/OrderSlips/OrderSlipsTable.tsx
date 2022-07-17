@@ -1,12 +1,12 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { formatDateTime, getOrderSlipStatusBranchManager } from 'utils';
 import { AddButtonIcon } from '../../../../../components';
 import { ButtonLink } from '../../../../../components/elements';
 import {
 	orderSlipStatus as osStatus,
 	request,
 } from '../../../../../global/types';
-import { formatDateTime, getOrderSlipStatusBranchManager } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -57,8 +57,8 @@ export const OrderSlipsTable = ({
 						actions:
 							status.value === osStatus.DELIVERED ? (
 								<AddButtonIcon
-									onClick={() => onReceiveDeliveryReceipt(orderSlip)}
 									tooltip="Receive"
+									onClick={() => onReceiveDeliveryReceipt(orderSlip)}
 								/>
 							) : null,
 					};
@@ -71,9 +71,9 @@ export const OrderSlipsTable = ({
 		<Table
 			columns={columns}
 			dataSource={data}
-			scroll={{ x: 650 }}
-			pagination={false}
 			loading={orderSlipStatus === request.REQUESTING}
+			pagination={false}
+			scroll={{ x: 650 }}
 		/>
 	);
 };

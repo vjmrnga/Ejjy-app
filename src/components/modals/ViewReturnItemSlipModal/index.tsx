@@ -2,9 +2,9 @@
 import { Col, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import { DetailsHalf, DetailsRow } from '../..';
 import { EMPTY_CELL } from '../../../global/constants';
-import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import { Button, Label } from '../../elements';
 
 const columns: ColumnsType = [
@@ -46,13 +46,13 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="[View] Return Item Slip"
 			className="Modal__large Modal__hasFooter"
-			footer={[<Button text="Close" onClick={onClose} />]}
-			onCancel={onClose}
-			visible
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			title="[View] Return Item Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<Col span={24}>
@@ -93,8 +93,8 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={data}
-				scroll={{ x: 800 }}
 				pagination={false}
+				scroll={{ x: 800 }}
 			/>
 		</Modal>
 	);

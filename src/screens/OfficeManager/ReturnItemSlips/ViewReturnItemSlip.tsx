@@ -3,6 +3,7 @@ import { Col, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import {
 	Breadcrumb,
 	Content,
@@ -15,7 +16,6 @@ import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { request, returnItemSlipsStatuses } from '../../../global/types';
 import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
-import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
 import { useReturnItemSlipAdjustmentSlips } from '../hooks/useReturnItemSlipAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
@@ -74,18 +74,18 @@ export const ViewReturnItemSlip = ({ match }: Props) => {
 
 	return (
 		<Content
-			title="[VIEW] Return Item Slip"
-			rightTitle={`#${returnItemSlipId}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			rightTitle={`#${returnItemSlipId}`}
+			title="[VIEW] Return Item Slip"
 		>
 			<Details
 				returnItemSlip={returnItemSlip}
 				returnItemSlipsStatus={returnItemSlipsStatus}
 			/>
 			<AdjustmentSlips
-				returnItemSlipId={returnItemSlipId}
-				returnItemSlip={returnItemSlip}
 				retrieveReturnItemSlip={retrieveReturnItemSlipFn}
+				returnItemSlip={returnItemSlip}
+				returnItemSlipId={returnItemSlipId}
 			/>
 		</Content>
 	);
@@ -165,8 +165,8 @@ const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 				<Table
 					columns={columns}
 					dataSource={requestedProducts}
-					scroll={{ x: 800 }}
 					pagination={false}
+					scroll={{ x: 800 }}
 				/>
 			</Box>
 		</Spin>
@@ -215,8 +215,8 @@ const AdjustmentSlips = ({
 	return (
 		<Box>
 			<TableHeader
-				title="Adjustment Slips"
 				buttonName="Create Adjustment Slip"
+				title="Adjustment Slips"
 				onCreate={() => {
 					setCreateAdjustmentSlipVisible(true);
 				}}
@@ -227,10 +227,10 @@ const AdjustmentSlips = ({
 
 			<AdjustmentSlipsTable
 				adjustmentSlips={adjustmentSlips}
+				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 				onViewAdjustmentSlip={(adjustmentSlip) => {
 					setSelectedAdjustmentSlip(adjustmentSlip);
 				}}
-				loading={orderSlipAdjustmentSlipsStatus === request.REQUESTING}
 			/>
 
 			{selectedAdjustmentSlip && (
@@ -243,11 +243,11 @@ const AdjustmentSlips = ({
 			{createAdjustmentSlipVisible && (
 				<CreateAdjustmentSlipModal
 					returnItemSlip={returnItemSlip}
+					onClose={() => setCreateAdjustmentSlipVisible(false)}
 					onSuccess={() => {
 						retrieveReturnItemSlip();
 						listReturnItemSlipAdjustmentSlipsFn();
 					}}
-					onClose={() => setCreateAdjustmentSlipVisible(false)}
 				/>
 			)}
 		</Box>

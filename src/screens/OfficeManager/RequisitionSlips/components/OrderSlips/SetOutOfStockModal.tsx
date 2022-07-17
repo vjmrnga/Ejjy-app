@@ -1,5 +1,6 @@
 import { message, Modal, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import { convertIntoArray } from 'utils';
 import { RequestErrors } from '../../../../../components';
 import { Label } from '../../../../../components/elements';
 import { types } from '../../../../../ducks/requisition-slips';
@@ -8,7 +9,6 @@ import {
 	requisitionSlipProductStatus,
 } from '../../../../../global/types';
 import { useRequisitionSlips } from '../../../../../hooks/useRequisitionSlips';
-import { convertIntoArray } from 'utils';
 import '../../style.scss';
 import { SetOutOfStockForm } from './SetOutOfStockForm';
 
@@ -104,13 +104,13 @@ export const SetOutOfStockModal = ({
 
 	return (
 		<Modal
-			title="Out of Stock"
 			className="SetOutOfStockModal Modal__large"
-			visible={visible}
 			footer={null}
-			onCancel={onClose}
+			title="Out of Stock"
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<Space
 				className="SetOutOfStockModal_space"
@@ -122,10 +122,10 @@ export const SetOutOfStockModal = ({
 				<Label label="Requested Products" />
 
 				<SetOutOfStockForm
-					products={products}
-					onSubmit={onSetOutOfStockSubmit}
-					onClose={onClose}
 					loading={isFetching() || isSettingOutOfStock()}
+					products={products}
+					onClose={onClose}
+					onSubmit={onSetOutOfStockSubmit}
 				/>
 			</Space>
 		</Modal>

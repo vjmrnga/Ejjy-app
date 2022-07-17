@@ -18,13 +18,10 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const {
 		data: { users },
-		isFetching,
-		error,
+		isFetching: isUsersFetching,
+		error: usersError,
 	} = useUsers({
-		params: {
-			page: 1,
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// METHODS
@@ -44,15 +41,15 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="Stock Out Details"
 			footer={null}
-			onCancel={onClose}
-			visible
+			title="Stock Out Details"
+			width={600}
 			centered
 			closable
-			width={600}
+			visible
+			onCancel={onClose}
 		>
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors errors={convertIntoArray(usersError)} withSpaceBottom />
 
 			<Formik
 				initialValues={getFormDetails().defaultValues}
@@ -67,21 +64,21 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 							<Col span={24}>
 								<Label id="encodedById" label="Encoded By" spacing />
 								<Select
-									size="large"
-									style={{ width: '100%' }}
-									value={values.encodedById}
-									onChange={(value) => {
-										setFieldValue('encodedById', value);
-									}}
-									optionFilterProp="children"
+									disabled={isUsersFetching}
 									filterOption={(input, option) =>
 										option.children
 											.toString()
 											.toLowerCase()
 											.indexOf(input.toLowerCase()) >= 0
 									}
-									disabled={isFetching}
+									optionFilterProp="children"
+									size="large"
+									style={{ width: '100%' }}
+									value={values.encodedById}
 									showSearch
+									onChange={(value) => {
+										setFieldValue('encodedById', value);
+									}}
 								>
 									{users.map((user) => (
 										<Select.Option key={user.id} value={user.id}>
@@ -110,8 +107,8 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 						</Row>
 
 						<div className="ModalCustomFooter">
-							<Button type="button" text="Cancel" onClick={onClose} />
-							<Button type="submit" text="Submit" variant="primary" />
+							<Button text="Cancel" type="button" onClick={onClose} />
+							<Button text="Submit" type="submit" variant="primary" />
 						</div>
 					</Form>
 				)}

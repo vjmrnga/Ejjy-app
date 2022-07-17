@@ -257,7 +257,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 1400 }}
+				loading={isBranchProductsFetching && !isisBranchProductsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -272,6 +272,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 1400 }}
 				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
 					if (extra.action === 'sort') {
 						columns[2].sortOrder = null;
@@ -287,7 +288,6 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 						);
 					}
 				}}
-				loading={isBranchProductsFetching && !isisBranchProductsFetched}
 			/>
 
 			{selectedBranchProduct && (
@@ -363,10 +363,9 @@ const Filter = ({ productCategories }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Product Name" spacing />
 				<Select
-					mode="multiple"
 					className="w-100"
 					filterOption={false}
-					onSearch={onSearchDebounced}
+					mode="multiple"
 					notFoundContent={
 						isFetchingProducts || isFetchingParamProducts ? (
 							<Spin size="small" />
@@ -374,6 +373,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 					}
 					options={productOptions}
 					value={selectedProducts}
+					labelInValue
 					onChange={(values) => {
 						setSelectedProducts(values);
 						setQueryParams(
@@ -381,7 +381,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					labelInValue
+					onSearch={onSearchDebounced}
 				/>
 			</Col>
 			<Col lg={12} span={24}>
@@ -389,19 +389,21 @@ const Filter = ({ productCategories }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.productCategory}
+					filterOption={filterOption}
+					optionFilterProp="children"
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams(
 							{ productCategory: value },
 							{ shouldResetPage: true },
 						);
 					}}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					showSearch
-					allowClear
 				>
 					{productCategories.map(({ name }) => (
-						<Select.Option value={name}>{name}</Select.Option>
+						<Select.Option key={name} value={name}>
+							{name}
+						</Select.Option>
 					))}
 				</Select>
 			</Col>
@@ -410,13 +412,13 @@ const Filter = ({ productCategories }: FilterProps) => {
 				<Label label="Product Status" spacing />
 				<Select
 					className="w-100"
+					filterOption={filterOption}
+					optionFilterProp="children"
+					allowClear
+					showSearch
 					onChange={(value) => {
 						setQueryParams({ productStatus: value }, { shouldResetPage: true });
 					}}
-					optionFilterProp="children"
-					filterOption={filterOption}
-					showSearch
-					allowClear
 				>
 					<Select.Option value={productStatus.AVAILABLE}>
 						Available
@@ -435,10 +437,12 @@ const Filter = ({ productCategories }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
+					defaultValue={params.isSoldInBranch}
 					options={[
 						{ label: 'Show All', value: ALL_OPTION_KEY },
 						{ label: 'In Stock', value: '1' },
 					]}
+					optionType="button"
 					value={params.isSoldInBranch}
 					onChange={(e) => {
 						setQueryParams(
@@ -446,8 +450,6 @@ const Filter = ({ productCategories }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					defaultValue={params.isSoldInBranch}
-					optionType="button"
 				/>
 			</Col>
 		</Row>

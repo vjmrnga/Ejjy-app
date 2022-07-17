@@ -1,7 +1,7 @@
 import Table, { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { ButtonLink } from '../../../../../components/elements';
 import { formatDateTime } from 'utils';
+import { ButtonLink } from '../../../../../components/elements';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id', key: 'id' },
@@ -50,8 +50,8 @@ export const AdjustmentSlipsTable = ({
 		<Table
 			columns={columns}
 			dataSource={data}
-			pagination={false}
 			loading={loading}
+			pagination={false}
 		/>
 	);
 };

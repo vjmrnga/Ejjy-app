@@ -142,22 +142,22 @@ const Admin = () => {
 		<Container sidebarItems={getSidebarItems()}>
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
-					<Route path="/admin/dashboard" component={Dashboard} />
+					<Route component={Dashboard} path="/admin/dashboard" />
 					<Route
-						path="/admin/pending-transactions"
 						component={PendingTransactions}
+						path="/admin/pending-transactions"
 					/>
-					<Route path="/admin/users" component={Users} />
-					<Route path="/admin/branches" exact component={Branches} />
-					<Route path="/admin/branches/:id" component={ViewBranch} />
-					<Route path="/admin/products" component={Products} />
+					<Route component={Users} path="/admin/users" />
+					<Route component={Branches} path="/admin/branches" exact />
+					<Route component={ViewBranch} path="/admin/branches/:id" />
+					<Route component={Products} path="/admin/products" />
 					<Route
-						path="/admin/product-categories"
 						component={ProductCategories}
+						path="/admin/product-categories"
 					/>
-					<Route path="/admin/logs" component={Logs} />
-					<Route path="/admin/sales" component={Sales} />
-					<Route path="/admin/notifications" component={Notifications} />
+					<Route component={Logs} path="/admin/logs" />
+					<Route component={Sales} path="/admin/sales" />
+					<Route component={Notifications} path="/admin/notifications" />
 
 					<Redirect to="/admin/dashboard" />
 				</Switch>

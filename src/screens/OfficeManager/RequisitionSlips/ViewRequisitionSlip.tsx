@@ -58,10 +58,10 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 
 	return (
 		<Content
-			className="ViewRequisitionSlip"
-			title="[VIEW] F-RS01"
-			rightTitle={`#${requisitionSlip?.id}`}
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
+			className="ViewRequisitionSlip"
+			rightTitle={`#${requisitionSlip?.id}`}
+			title="[VIEW] F-RS01"
 		>
 			<Spin
 				size="large"

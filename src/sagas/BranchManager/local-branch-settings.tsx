@@ -1,4 +1,5 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
+import { getLocalApiUrl } from 'utils';
 import {
 	actions,
 	types,
@@ -7,7 +8,6 @@ import { selectors as branchesSelectors } from '../../ducks/OfficeManager/branch
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
 import { service } from '../../services/BranchManager/local-branch-settings';
-import { getLocalApiUrl } from 'utils';
 
 /* WORKERS */
 function* get({ payload }: any) {

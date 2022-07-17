@@ -4,7 +4,6 @@ import {
 	Button,
 	FieldError,
 	FormattedInputNumber,
-	FormInputLabel,
 	Label,
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
@@ -61,12 +60,12 @@ export const ModifyCreditRegistrationModal = ({
 
 	return (
 		<Modal
-			title={`${creditRegistration ? '[Edit]' : '[Create]'} Credit Account`}
 			footer={null}
-			onCancel={onClose}
-			visible
+			title={`${creditRegistration ? '[Edit]' : '[Create]'} Credit Account`}
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<RequestErrors
 				errors={[
@@ -79,8 +78,8 @@ export const ModifyCreditRegistrationModal = ({
 			<CreateCreditRegistrationForm
 				creditRegistration={creditRegistration}
 				loading={isCreateLoading || isEditLoading}
-				onSubmit={onSubmit}
 				onClose={onClose}
+				onSubmit={onSubmit}
 			/>
 		</Modal>
 	);
@@ -135,10 +134,10 @@ export const CreateCreditRegistrationForm = ({
 		<Formik
 			initialValues={getFormDetails().defaultValues}
 			validationSchema={getFormDetails().schema}
+			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
 			}}
-			enableReinitialize
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
@@ -146,17 +145,17 @@ export const CreateCreditRegistrationForm = ({
 						<Col span={24}>
 							<Label label="Account" spacing />
 							<Select
-								style={{ width: '100%' }}
-								filterOption={false}
 								defaultActiveFirstOption={false}
-								onSearch={onSearchDebounced}
+								disabled={creditRegistration !== null}
+								filterOption={false}
 								notFoundContent={isFetching ? <Spin size="small" /> : null}
+								style={{ width: '100%' }}
 								value={values.accountId}
+								showSearch
 								onChange={(value) => {
 									setFieldValue('accountId', value);
 								}}
-								disabled={creditRegistration !== null}
-								showSearch
+								onSearch={onSearchDebounced}
 							>
 								{accounts.map((account) => (
 									<Select.Option key={account.id} value={account.id}>
@@ -173,10 +172,10 @@ export const CreateCreditRegistrationForm = ({
 						<Col span={24}>
 							<Label label="Credit Limit" spacing />
 							<FormattedInputNumber
-								size="large"
-								value={values['creditLimit']}
 								controls={false}
+								size="large"
 								style={{ width: '100%' }}
+								value={values['creditLimit']}
 								onChange={(value) => {
 									setFieldValue('creditLimit', value);
 								}}
@@ -190,16 +189,16 @@ export const CreateCreditRegistrationForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							type="button"
-							text="Cancel"
-							onClick={onClose}
 							disabled={loading}
+							text="Cancel"
+							type="button"
+							onClick={onClose}
 						/>
 						<Button
-							type="submit"
-							text={creditRegistration ? 'Edit' : 'Create'}
-							variant="primary"
 							loading={loading}
+							text={creditRegistration ? 'Edit' : 'Create'}
+							type="submit"
+							variant="primary"
 						/>
 					</div>
 				</Form>

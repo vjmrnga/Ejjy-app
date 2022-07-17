@@ -1,12 +1,12 @@
 import { Tabs } from 'antd';
-import { CashieringCard, Content } from 'components';
+import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useBranches } from 'hooks';
 import React, { useEffect, useState } from 'react';
 
 export const Dashboard = () => {
 	// STATES
-	const [currentActiveKey, setCurrentActiveKey] = useState(null);
+	const [, setCurrentActiveKey] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -31,7 +31,7 @@ export const Dashboard = () => {
 					}}
 				>
 					{branches.map(({ name, id, online_url }) => (
-						<Tabs.TabPane key={id} tab={name} disabled={!online_url}>
+						<Tabs.TabPane key={id} disabled={!online_url} tab={name}>
 							{/* {id === Number(currentActiveKey) && (
 								<CashieringCard
 									className="BranchBalanceItem_cashieringCard"

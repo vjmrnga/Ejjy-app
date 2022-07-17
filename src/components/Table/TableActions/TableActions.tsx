@@ -43,65 +43,65 @@ export const TableActions = ({
 		{onApprove && (
 			<CheckButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onApprove}
 				tooltip="Approve"
+				onClick={onApprove}
 			/>
 		)}
 		{onExecutePendingTransaction && (
 			<AddButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onExecutePendingTransaction}
 				tooltip="Execute"
+				onClick={onExecutePendingTransaction}
 			/>
 		)}
 		{onAdd && (
 			<AddButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onAdd}
-				tooltip={onAddName || 'Add'}
 				imgSrc={onAddIcon}
+				tooltip={onAddName || 'Add'}
+				onClick={onAdd}
 			/>
 		)}
 		{onView && (
 			<ViewButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onView}
 				tooltip={onViewName || 'View'}
+				onClick={onView}
 			/>
 		)}
 		{onAssign && (
 			<AddButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onAssign}
 				tooltip="Assign"
+				onClick={onAssign}
 			/>
 		)}
 		{onEdit && (
 			<EditButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onEdit}
 				tooltip="Edit"
+				onClick={onEdit}
 			/>
 		)}
 		{onRestore && (
 			<RestoreButtonIcon
 				disabled={areButtonsDisabled}
-				onClick={onRestore}
 				tooltip="Restore"
+				onClick={onRestore}
 			/>
 		)}
 		{onRemove && (
 			<Popconfirm
+				cancelText="No"
+				okText="Yes"
 				placement="left"
 				title="Are you sure to remove this?"
 				onConfirm={onRemove}
-				okText="Yes"
-				cancelText="No"
 			>
 				<RemoveButtonIcon
 					disabled={areButtonsDisabled}
-					onClick={null}
 					tooltip="Remove"
+					onClick={null}
 				/>
 			</Popconfirm>
 		)}

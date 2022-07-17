@@ -1,8 +1,8 @@
 import { call, retry, takeLatest } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { types } from '../ducks/preparation-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../services/preparation-slips';
 
 /* WORKERS */

@@ -4,7 +4,7 @@ import { AuthService } from 'services';
 import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import { actions, types } from '../ducks/auth';
 import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global';
-import { request, userTypes } from '../global/types';
+import { request } from '../global/types';
 
 /* WORKERS */
 function* login({ payload }: any) {

@@ -2,12 +2,12 @@
 
 import { Col, Divider, Modal, Radio, Row, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Button, Label } from 'components/elements';
+import { printOrderSlip } from 'configurePrinter';
+import { quantityTypes } from 'global';
+import { useAuth } from 'hooks/useAuth';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { Button, Label } from '../../../../../components/elements';
-import { printOrderSlip } from '../../../../../configurePrinter';
-import { quantityTypes } from '../../../../../global/types';
-import { useAuth } from '../../../../../hooks/useAuth';
 import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
@@ -128,23 +128,23 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 
 	return (
 		<Modal
-			title="View Order Slip"
 			className="Modal__large Modal__hasFooter"
 			footer={[
-				<Space size={10}>
+				<Space key="buttons" size={10}>
 					<Button text="Close" onClick={onClose} />
 					<Button
-						variant="primary"
-						text="Print"
-						onClick={onPrint}
 						loading={printingDisabled}
+						text="Print"
+						variant="primary"
+						onClick={onPrint}
 					/>
 				</Space>,
 			]}
-			onCancel={onClose}
-			visible
+			title="View Order Slip"
 			centered
 			closable
+			visible
+			onCancel={onClose}
 		>
 			<OrderSlipDetails orderSlip={orderSlip} />
 
@@ -154,38 +154,38 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 				<Col sm={12} span={24}>
 					<Label label="Quantity Type" spacing />
 					<Radio.Group
+						defaultValue={quantityTypes.PIECE}
 						options={[
 							{ label: 'Piece', value: quantityTypes.PIECE },
 							{ label: 'Bulk', value: quantityTypes.BULK },
 						]}
+						optionType="button"
 						onChange={(e) => {
 							const { value } = e.target;
 							setQuantityType(value);
 						}}
-						defaultValue={quantityTypes.PIECE}
-						optionType="button"
 					/>
 				</Col>
 
 				<Col sm={12} span={24}>
 					<Label label="Assigned Personnel" spacing />
 					<Select
-						style={{ width: '100%' }}
-						onChange={(value) => {
-							setPersonnel(value);
-						}}
-						optionFilterProp="children"
 						filterOption={(input, option) =>
 							option.children
 								.toString()
 								.toLowerCase()
 								.indexOf(input.toLowerCase()) >= 0
 						}
-						showSearch
+						optionFilterProp="children"
+						style={{ width: '100%' }}
 						allowClear
+						showSearch
+						onChange={(value) => {
+							setPersonnel(value);
+						}}
 					>
 						{personnels.map(({ id, first_name, last_name }) => (
-							<Select.Option value={id}>
+							<Select.Option key={id} value={id}>
 								{`${first_name} ${last_name}`}
 							</Select.Option>
 						))}
@@ -196,8 +196,8 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 					<Table
 						columns={columns}
 						dataSource={data}
-						scroll={{ x: 650, y: 250 }}
 						pagination={false}
+						scroll={{ x: 650, y: 250 }}
 					/>
 				</Col>
 			</Row>

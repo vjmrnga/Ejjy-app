@@ -84,7 +84,7 @@ export const Checkings = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					scroll={{ x: 650 }}
+					loading={isFetchingProductChecks}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -99,7 +99,7 @@ export const Checkings = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={isFetchingProductChecks}
+					scroll={{ x: 650 }}
 				/>
 			</Box>
 		</Content>
@@ -115,16 +115,16 @@ const Filter = () => {
 			<Col lg={12} span={24}>
 				<Label label="Type" spacing />
 				<Radio.Group
-					optionType="button"
+					defaultValue={params.type || productCheckingTypes.DAILY}
 					options={[
 						{ label: 'Daily', value: productCheckingTypes.DAILY },
 						{ label: 'Random', value: productCheckingTypes.RANDOM },
 						{ label: 'All', value: undefined },
 					]}
+					optionType="button"
 					onChange={(e) => {
 						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
 					}}
-					defaultValue={params.type || productCheckingTypes.DAILY}
 				/>
 			</Col>
 		</Row>

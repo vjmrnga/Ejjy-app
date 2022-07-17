@@ -2,11 +2,11 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatDateTime } from 'utils';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
 import { pageSizeOptions } from '../../../global/options';
 import { request } from '../../../global/types';
-import { formatDateTime } from 'utils';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 
 const columns: ColumnsType = [
@@ -66,7 +66,7 @@ export const PendingTransactions = () => {
 				<Table
 					columns={columns}
 					dataSource={data}
-					scroll={{ x: 650 }}
+					loading={preparationSlipsStatus === request.REQUESTING}
 					pagination={{
 						current: currentPage,
 						total: pageCount,
@@ -76,7 +76,7 @@ export const PendingTransactions = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions,
 					}}
-					loading={preparationSlipsStatus === request.REQUESTING}
+					scroll={{ x: 650 }}
 				/>
 			</Box>
 		</Content>

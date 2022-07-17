@@ -1,5 +1,6 @@
 import { Divider, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { formatDateTime } from 'utils';
 import {
 	DetailsRow,
 	DetailsSingle,
@@ -7,7 +8,6 @@ import {
 } from '../../../../../components';
 import { Button } from '../../../../../components/elements';
 import { EMPTY_CELL } from '../../../../../global/constants';
-import { formatDateTime } from 'utils';
 
 interface Props {
 	visible: boolean;
@@ -63,13 +63,13 @@ export const ViewAdjustmentSlipModal = ({
 
 	return (
 		<Modal
-			title="View Adjustment Slip"
 			className="Modal__large Modal__hasFooter"
-			visible={visible}
 			footer={[<Button key="close" text="Close" onClick={onClose} />]}
-			onCancel={onClose}
+			title="View Adjustment Slip"
+			visible={visible}
 			centered
 			closable
+			onCancel={onClose}
 		>
 			<DetailsRow>
 				<DetailsSingle

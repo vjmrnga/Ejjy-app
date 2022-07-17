@@ -9,7 +9,7 @@ interface Props {
 
 export const DetailsHalf = ({ value, label }: Props) => (
 	<Col sm={12} xs={24}>
-		<Row gutter={{ sm: 15, xs: 0 }} align="middle">
+		<Row align="middle" gutter={{ sm: 15, xs: 0 }}>
 			<Col sm={12} xs={24}>
 				<Label label={label} />
 			</Col>

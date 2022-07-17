@@ -1,13 +1,12 @@
 import { Select } from 'antd';
+import { RequestErrors } from 'components';
+import { Button, FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { MAIN_BRANCH_ID, MAX_PAGE_SIZE, request, userTypes } from 'global';
+import { useUsers } from 'hooks/useUsers';
 import React, { useCallback, useEffect, useState } from 'react';
+import { convertIntoArray, getFullName, sleep } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../../../components/elements';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
-import { MAIN_BRANCH_ID, MAX_PAGE_SIZE } from '../../../../global/constants';
-import { request, userTypes } from '../../../../global/types';
-import { useUsers } from '../../../../hooks/useUsers';
-import { convertIntoArray, sleep } from 'utils';
 
 interface Props {
 	backOrder: any;
@@ -79,15 +78,15 @@ export const AssignBackOrderForm = ({
 					<Form>
 						<Label label="Receiver (User)" spacing />
 						<Select
+							disabled={usersStatus === request.REQUESTING}
+							loading={usersStatus === request.REQUESTING}
 							style={{ width: '100%' }}
 							value={values.receiver_id}
-							loading={usersStatus === request.REQUESTING}
-							disabled={usersStatus === request.REQUESTING}
 							onChange={(value) => setFieldValue('receiver_id', value)}
 						>
-							{users.map(({ id, first_name, last_name }) => (
-								<Select.Option value={id}>
-									{`${first_name} ${last_name}`}
+							{users.map((user) => (
+								<Select.Option key={user.id} value={user.id}>
+									{getFullName(user)}
 								</Select.Option>
 							))}
 						</Select>
@@ -98,19 +97,19 @@ export const AssignBackOrderForm = ({
 
 						<div className="ModalCustomFooter">
 							<Button
-								type="button"
-								text="Cancel"
-								onClick={onClose}
 								disabled={
 									loading || isSubmitting || usersStatus === request.REQUESTING
 								}
+								text="Cancel"
+								type="button"
+								onClick={onClose}
 							/>
 							<Button
-								type="submit"
-								text="Assign"
-								variant="primary"
 								disabled={usersStatus === request.REQUESTING}
 								loading={loading || isSubmitting}
+								text="Assign"
+								type="submit"
+								variant="primary"
 							/>
 						</div>
 					</Form>

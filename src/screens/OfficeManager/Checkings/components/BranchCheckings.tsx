@@ -1,19 +1,18 @@
-import { ColumnsType } from 'antd/lib/table';
 import '../style.scss';
 
-const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
-	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
-	{ title: 'Date & Time Fulfilled', dataIndex: 'datetime_fulfilled' },
-	{ title: 'Status', dataIndex: 'status' },
-];
+// const columns: ColumnsType = [
+// 	{ title: 'ID', dataIndex: 'id' },
+// 	{ title: 'Date & Time Requested', dataIndex: 'datetime_requested' },
+// 	{ title: 'Date & Time Fulfilled', dataIndex: 'datetime_fulfilled' },
+// 	{ title: 'Status', dataIndex: 'status' },
+// ];
 
-interface Props {
-	branchId: any;
-}
+// interface Props {
+// 	branchId: any;
+// }
 
 // TODO: Implement once office manager is ready to dev
-export const BranchCheckings = ({ branchId }: Props) => {
+export const BranchCheckings = () => {
 	return null;
 
 	// // STATES

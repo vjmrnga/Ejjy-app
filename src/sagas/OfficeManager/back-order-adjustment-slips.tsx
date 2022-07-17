@@ -1,8 +1,8 @@
 import { call, retry, takeEvery } from 'redux-saga/effects';
+import { getOnlineApiUrl } from 'utils';
 import { types } from '../../ducks/OfficeManager/back-order-adjustment-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../../global/constants';
 import { request } from '../../global/types';
-import { getOnlineApiUrl } from 'utils';
 import { service } from '../../services/OfficeManager/back-order-adjustment-slips';
 
 /* WORKERS */

@@ -22,22 +22,22 @@ const FormRadioButton = ({ id, items, disabled }: Props) => {
 		<div className="FormRadioButton">
 			{items.map(({ id: itemId, value, label }) => (
 				<button
-					type="button"
+					key={itemId}
 					className={cn('FormRadioButton_button', {
 						FormRadioButton_button__disabled: disabled,
 						FormRadioButton_button__checked: value === field.value,
 						FormRadioButton_button__checked__disabled:
 							value === field.value && disabled,
 					})}
-					key={itemId}
+					type="button"
 					onClick={() => helpers.setValue(value)}
 				>
 					<span>{label}</span>
 					{value === field.value && (
 						<img
+							alt="check icon"
 							className="FormRadioButton_button_checkIcon"
 							src={require('../../../assets/images/icon-check-white.svg')}
-							alt="check icon"
 						/>
 					)}
 				</button>

@@ -23,11 +23,11 @@ const SearchInput = ({
 	<div className={cn('SearchInput', classNames)}>
 		<SearchOutlined className="icon" />
 		<input
-			onChange={onChange}
-			placeholder={placeholder}
-			tabIndex={1}
 			autoFocus={autoFocus}
 			disabled={disabled}
+			placeholder={placeholder}
+			tabIndex={1}
+			onChange={onChange}
 		/>
 	</div>
 );

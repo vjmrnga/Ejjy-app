@@ -4,6 +4,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
+import { sleep } from 'utils';
 import { DetailsRow } from '../../../../../components';
 import {
 	Button,
@@ -11,7 +12,6 @@ import {
 	FormInputLabel,
 } from '../../../../../components/elements';
 import { unitOfMeasurementTypes } from '../../../../../global/types';
-import { sleep } from 'utils';
 
 interface Props {
 	branchProduct: any;
@@ -78,6 +78,7 @@ export const EditBranchProductsForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
+			enableReinitialize
 			onSubmit={async (formData, { resetForm }) => {
 				setSubmitting(true);
 				await sleep(500);
@@ -95,15 +96,14 @@ export const EditBranchProductsForm = ({
 					resetForm,
 				);
 			}}
-			enableReinitialize
 		>
 			<Form className="form">
 				<DetailsRow>
 					<Col span={24}>
 						<FormInputLabel
-							type="number"
 							id="max_balance"
 							label="Max Balance"
+							type="number"
 						/>
 						<ErrorMessage
 							name="max_balance"
@@ -117,13 +117,13 @@ export const EditBranchProductsForm = ({
 
 							<Col span={24}>
 								<FormInputLabel
-									type="number"
 									id="current_balance"
-									label="Current Balance"
 									isWholeNumber={
 										branchProduct?.product?.unit_of_measurement ===
 										unitOfMeasurementTypes.NON_WEIGHING
 									}
+									label="Current Balance"
+									type="number"
 								/>
 								<ErrorMessage
 									name="current_balance"
@@ -136,16 +136,16 @@ export const EditBranchProductsForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						type="button"
-						text="Cancel"
-						onClick={onClose}
 						disabled={loading || isSubmitting}
+						text="Cancel"
+						type="button"
+						onClick={onClose}
 					/>
 					<Button
-						type="submit"
-						text="Edit"
-						variant="primary"
 						loading={loading || isSubmitting}
+						text="Edit"
+						type="submit"
+						variant="primary"
 					/>
 				</div>
 			</Form>

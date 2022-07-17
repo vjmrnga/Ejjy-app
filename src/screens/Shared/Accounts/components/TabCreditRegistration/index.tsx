@@ -6,8 +6,8 @@ import {
 	TableActions,
 	TableHeader,
 	ViewAccountModal,
+	ModifyCreditRegistrationModal,
 } from 'components';
-import { ModifyCreditRegistrationModal } from 'components/';
 import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
@@ -81,6 +81,13 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 				actions: (
 					<TableActions
 						areButtonsDisabled={disabled}
+						onEdit={
+							isCUDShown(user.user_type)
+								? () => {
+										setSelectedCreditRegistration(creditRegistration);
+								  }
+								: null
+						}
 						onView={() =>
 							setQueryParams(
 								{
@@ -91,13 +98,6 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 							)
 						}
 						onViewName="View Credit Transactions"
-						onEdit={
-							isCUDShown(user.user_type)
-								? () => {
-										setSelectedCreditRegistration(creditRegistration);
-								  }
-								: null
-						}
 					/>
 				),
 			};
@@ -110,8 +110,8 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 		<div>
 			{isCUDShown(user.user_type) && (
 				<TableHeader
-					title="Credit Account"
 					buttonName="Create Credit Account"
+					title="Credit Account"
 					onCreate={() => setIsCreateModalVisible(true)}
 					onCreateDisabled={disabled}
 				/>
@@ -129,7 +129,7 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				scroll={{ x: 800 }}
+				loading={isFetching}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -144,7 +144,7 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				loading={isFetching}
+				scroll={{ x: 800 }}
 			/>
 
 			{selectedAccount && (
@@ -157,11 +157,11 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 			{(isCreateModalVisible || selectedCreditRegistration) && (
 				<ModifyCreditRegistrationModal
 					creditRegistration={selectedCreditRegistration}
-					onSuccess={refetchCreditRegistrations}
 					onClose={() => {
 						setIsCreateModalVisible(false);
 						setSelectedCreditRegistration(null);
 					}}
+					onSuccess={refetchCreditRegistrations}
 				/>
 			)}
 		</div>
@@ -186,10 +186,10 @@ const Filter = ({ params, setQueryParams }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />
 				<Input
-					prefix={<SearchOutlined />}
 					defaultValue={params.search}
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					prefix={<SearchOutlined />}
 					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 		</Row>

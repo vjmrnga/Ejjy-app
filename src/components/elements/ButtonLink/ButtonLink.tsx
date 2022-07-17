@@ -7,7 +7,7 @@ interface Props {
 }
 
 const ButtonLink = ({ text, onClick }: Props) => (
-	<button type="button" className="ButtonLink" onClick={onClick}>
+	<button className="ButtonLink" type="button" onClick={onClick}>
 		{text}
 	</button>
 );

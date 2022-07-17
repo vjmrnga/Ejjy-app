@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const KeyboardButton = ({ keyboardKey, label, onClick }: Props) => (
-	<button type="button" className="KeyboardButton" onClick={onClick}>
+	<button className="KeyboardButton" type="button" onClick={onClick}>
 		<div className="key">{keyboardKey}</div>
 		<span className="label">{label}</span>
 	</button>

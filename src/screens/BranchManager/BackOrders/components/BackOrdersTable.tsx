@@ -36,12 +36,11 @@ export const BackOrdersTable = ({
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { backOrders, total },
-		isFetching,
-		error,
+		isFetching: isBackOrdersFetching,
 	} = useBackOrders({
 		params: {
-			type: backOrderTypes.DAMAGED,
 			...queryParams,
+			type: backOrderTypes.DAMAGED,
 		},
 	});
 
@@ -78,6 +77,7 @@ export const BackOrdersTable = ({
 		<Table
 			columns={columns}
 			dataSource={dataSource}
+			loading={isBackOrdersFetching}
 			pagination={{
 				current: Number(queryParams.page) || DEFAULT_PAGE,
 				total,
@@ -92,7 +92,6 @@ export const BackOrdersTable = ({
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}
-			loading={isFetching}
 		/>
 	);
 };
