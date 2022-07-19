@@ -44,27 +44,27 @@ export const ModifyAccountForm = ({
 			},
 			schema: Yup.object().shape({
 				type: Yup.string().required().label('Type'),
-				firstName: Yup.string().required().label('First Name'),
+				firstName: Yup.string().trim().required().label('First Name'),
 				middleName: Yup.string().nullable().label('Middle Name'),
-				lastName: Yup.string().required().label('Last Name'),
+				lastName: Yup.string().trim().required().label('Last Name'),
 				birthday: Yup.date().nullable().required().label('Birthday'),
-				tin: Yup.string().required().label('TIN'),
+				tin: Yup.string().trim().required().label('TIN'),
 				businessName: Yup.string()
 					.nullable()
 					.when('type', {
 						is: (type) =>
 							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-						then: Yup.string().required().label('Business Name'),
+						then: Yup.string().trim().required().label('Business Name'),
 					}),
-				homeAddress: Yup.string().required().label('Address (Home)'),
+				homeAddress: Yup.string().trim().required().label('Address (Home)'),
 				businessAddress: Yup.string()
 					.nullable()
 					.when('type', {
 						is: (type) =>
 							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-						then: Yup.string().required().label('Address (Business)'),
+						then: Yup.string().trim().required().label('Address (Business)'),
 					}),
-				contactNumber: Yup.string().required().label('Contact Number'),
+				contactNumber: Yup.string().trim().required().label('Contact Number'),
 				gender: Yup.string().required().label('Gender'),
 				isPointSystemEligible: Yup.boolean()
 					.required()

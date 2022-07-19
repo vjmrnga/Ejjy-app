@@ -222,7 +222,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 						</Space>
 						<Space className="w-100 justify-space-between">
 							<Text>{transactionData.invoice.or_number}</Text>
-							<Text>N2M1</Text>
 							<Text>{dataSource.length} item(s)</Text>
 						</Space>
 
