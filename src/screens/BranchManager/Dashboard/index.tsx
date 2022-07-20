@@ -8,6 +8,7 @@ import {
 	ViewZReadReportModal,
 } from 'components';
 import { Box, FieldError } from 'components/elements';
+import dayjs from 'dayjs';
 import {
 	useBranchMachines,
 	useXReadReportCreate,
@@ -66,7 +67,7 @@ export const Dashboard = () => {
 			actions: (
 				<Space>
 					<Button type="primary" onClick={() => viewXReadReport(branchMachine)}>
-						View XRead (Active Session)
+						View XRead (Today)
 					</Button>
 					<Button
 						type="primary"
@@ -91,7 +92,7 @@ export const Dashboard = () => {
 	const viewXReadReport = async (branchMachine, date = undefined) => {
 		const { data, status } = await createXReadReport({
 			branchMachineId: branchMachine.id,
-			date,
+			date: date || dayjs().format('YYYY-MM-DD'),
 			userId: user.id,
 		});
 

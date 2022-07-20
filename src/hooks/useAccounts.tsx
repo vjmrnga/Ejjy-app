@@ -12,6 +12,7 @@ const useAccounts = ({ params }: Query) =>
 			params?.pageSize,
 			params?.search,
 			params?.type,
+			params?.withCreditRegistration,
 		],
 		async () =>
 			AccountsService.list(
@@ -20,6 +21,7 @@ const useAccounts = ({ params }: Query) =>
 					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					search: params?.search,
 					type: params?.type,
+					with_credit_registration: params?.withCreditRegistration,
 				},
 				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
 			).catch((e) => Promise.reject(e.errors)),

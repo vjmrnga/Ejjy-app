@@ -11,9 +11,9 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
 import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getFullName, sleep } from 'utils';
+import { convertIntoArray, formatInPeso, getFullName } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {
@@ -98,7 +98,6 @@ export const CreateOrderOfPaymentForm = ({
 	onClose,
 }: FormProps) => {
 	// STATES
-	const [isSubmitting, setSubmitting] = useState(false);
 	const [accountSearch, setAccountSearch] = useState('');
 	const [maxAmount, setMaxAmount] = useState(0);
 
@@ -135,7 +134,7 @@ export const CreateOrderOfPaymentForm = ({
 						is: orderOfPaymentPurposes.OTHERS,
 						then: Yup.string().required().label('Purpose Description'),
 					}),
-					chargeSalesTransactionId: Yup.string().nullable(),
+					chargeSalesTransactionId: Yup.string().trim().nullable(),
 				},
 				[],
 			),
@@ -155,12 +154,11 @@ export const CreateOrderOfPaymentForm = ({
 			initialValues={getFormDetails().defaultValues}
 			validationSchema={getFormDetails().schema}
 			enableReinitialize
-			onSubmit={async (formData) => {
-				setSubmitting(true);
-				await sleep(500);
-				setSubmitting(false);
-
-				onSubmit(formData);
+			onSubmit={(formData) => {
+				onSubmit({
+					...formData,
+					chargeSalesTransactionId: _.trim(formData.chargeSalesTransactionId),
+				});
 			}}
 		>
 			{({ values, setFieldValue }) => (
@@ -282,13 +280,13 @@ export const CreateOrderOfPaymentForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							disabled={loading || isSubmitting}
+							disabled={loading}
 							text="Cancel"
 							type="button"
 							onClick={onClose}
 						/>
 						<Button
-							loading={loading || isSubmitting}
+							loading={loading}
 							text="Create"
 							type="submit"
 							variant="primary"

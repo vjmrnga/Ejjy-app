@@ -85,7 +85,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					</Button>
 				),
 				amount: formatInPeso(total_amount),
-				cashier: teller.employee_id,
+				cashier: getFullName(teller),
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
 				actions: (
 					<TableActions

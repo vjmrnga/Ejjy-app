@@ -1,10 +1,9 @@
 import { Tabs } from 'antd';
+import { useBranches, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect } from 'react';
-import { useBranches, useQueryParams } from 'hooks';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
-import { BranchCheckings } from './components/BranchCheckings';
 
 export const Checkings = () => {
 	// CUSTOM HOOKS

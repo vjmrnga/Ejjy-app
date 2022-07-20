@@ -50,6 +50,10 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 		await editBranchProduct({
 			...formData,
 			id: branchProduct.id,
+			// TODO: If we will not pass these values, it will cause an error 500
+			isDailyChecked: branchProduct.is_daily_checked,
+			isRandomlyChecked: branchProduct.is_randomly_checked,
+			isSoldInBranch: branchProduct.is_sold_in_branch,
 		});
 		message.success('Branch product was edited successfully');
 		handleClose();

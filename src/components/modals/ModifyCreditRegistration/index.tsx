@@ -105,10 +105,14 @@ export const CreateCreditRegistrationForm = ({
 	const {
 		isFetching,
 		data: { accounts },
-	} = useAccounts({ params: { search: accountSearch } });
+	} = useAccounts({
+		params: {
+			search: accountSearch,
+			withCreditRegistration: false,
+		},
+	});
 
 	// METHODS
-
 	const getFormDetails = useCallback(
 		() => ({
 			defaultValues: {

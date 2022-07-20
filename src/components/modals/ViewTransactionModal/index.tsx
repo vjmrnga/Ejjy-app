@@ -156,36 +156,38 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Descriptions.Item>
 						</Descriptions>
 
-						<Descriptions
-							className="mt-6 w-100"
-							colon={false}
-							column={1}
-							contentStyle={{
-								textAlign: 'right',
-								display: 'block',
-							}}
-							labelStyle={{
-								width: 200,
-								paddingLeft: 30,
-							}}
-							size="small"
-						>
-							<Descriptions.Item label="AMOUNT RECEIVED">
-								{formatInPeso(transactionData.payment.amount_tendered)}
-							</Descriptions.Item>
-							<Descriptions.Item label="AMOUNT DUE">
-								{formatInPeso(transactionData.total_amount)}
-							</Descriptions.Item>
-							<Descriptions.Item
-								contentStyle={{ fontWeight: 'bold' }}
-								label="CHANGE"
+						{transactionData.payment.mode === saleTypes.CASH && (
+							<Descriptions
+								className="mt-6 w-100"
+								colon={false}
+								column={1}
+								contentStyle={{
+									textAlign: 'right',
+									display: 'block',
+								}}
+								labelStyle={{
+									width: 200,
+									paddingLeft: 30,
+								}}
+								size="small"
 							>
-								{formatInPeso(
-									Number(transactionData.payment.amount_tendered) -
-										Number(transactionData.total_amount),
-								)}
-							</Descriptions.Item>
-						</Descriptions>
+								<Descriptions.Item label="AMOUNT RECEIVED">
+									{formatInPeso(transactionData.payment.amount_tendered)}
+								</Descriptions.Item>
+								<Descriptions.Item label="AMOUNT DUE">
+									{formatInPeso(transactionData.total_amount)}
+								</Descriptions.Item>
+								<Descriptions.Item
+									contentStyle={{ fontWeight: 'bold' }}
+									label="CHANGE"
+								>
+									{formatInPeso(
+										Number(transactionData.payment.amount_tendered) -
+											Number(transactionData.total_amount),
+									)}
+								</Descriptions.Item>
+							</Descriptions>
+						)}
 
 						<Descriptions
 							className="mt-6 w-100"

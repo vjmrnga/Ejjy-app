@@ -3,6 +3,7 @@ import { IListRequest } from './interfaces';
 
 interface List extends IListRequest {
 	type?: string;
+	with_credit_registration?: boolean;
 }
 
 interface Modify {
