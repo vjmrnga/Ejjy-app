@@ -17,7 +17,7 @@ import {
 	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
-import { toString } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso, getId } from 'utils';
 import { TransactionsCancelled } from './components/TransactionsCancelled';
@@ -114,11 +114,11 @@ export const TabTransactions = ({ branch }: Props) => {
 			{[
 				transactionStatus.VOID_CANCELLED,
 				transactionStatus.VOID_EDITED,
-			].includes(toString(params?.statuses)) && (
+			].includes(_.toString(params?.statuses)) && (
 				<TransactionsCancelled
 					branchId={getId(branch)}
-					statuses={toString(params?.statuses)}
-					timeRange={toString(params?.timeRange)}
+					statuses={_.toString(params?.statuses)}
+					timeRange={_.toString(params?.timeRange)}
 				/>
 			)}
 

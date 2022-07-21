@@ -38,7 +38,6 @@ export const TransactionsCancelled = ({
 			statuses,
 			branchId,
 			serverUrl,
-			page: 1,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -60,15 +59,15 @@ export const TransactionsCancelled = ({
 		setAmount(totalAmount);
 	}, [transactions]);
 
-	const onPrint = () => {
+	const handlePrint = () => {
 		setIsPrinting(true);
 
 		printCancelledTransactions({
-			filterStatus: statuses,
-			filterRange: timeRange,
 			amount,
-			transactions,
+			filterRange: timeRange,
+			filterStatus: statuses,
 			siteSettings,
+			transactions,
 			onComplete: () => {
 				setIsPrinting(false);
 			},
@@ -102,7 +101,7 @@ export const TransactionsCancelled = ({
 							loading={isPrinting}
 							text="Print"
 							variant="primary"
-							onClick={onPrint}
+							onClick={handlePrint}
 						/>
 					)}
 				</div>

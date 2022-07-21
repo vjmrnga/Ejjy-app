@@ -62,7 +62,7 @@ export const TabCollectionReceipts = () => {
 					<Button
 						loading={isPrinting === id}
 						type="link"
-						onClick={() => onPrintPDF(collectionReceipt)}
+						onClick={() => handlePrintPDF(collectionReceipt)}
 					>
 						Print PDF
 					</Button>
@@ -73,7 +73,7 @@ export const TabCollectionReceipts = () => {
 		setDataSource(data);
 	}, [collectionReceipts, isPrinting]);
 
-	const onPrintPDF = (collectionReceipt) => {
+	const handlePrintPDF = (collectionReceipt) => {
 		setIsPrinting(collectionReceipt.id);
 
 		const html = printCollectionReceipt({ collectionReceipt, siteSettings });

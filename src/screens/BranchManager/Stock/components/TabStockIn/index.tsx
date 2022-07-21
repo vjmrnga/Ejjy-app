@@ -70,7 +70,7 @@ export const TabStockIn = () => {
 					loading={isPrinting === receivingVoucher.id}
 					type="link"
 					onClick={() => {
-						onPrintPDF(receivingVoucher);
+						handlePrintPDF(receivingVoucher);
 					}}
 				>
 					Print PDF
@@ -81,7 +81,7 @@ export const TabStockIn = () => {
 		setDataSource(data);
 	}, [receivingVouchers, isPrinting]);
 
-	const onPrintPDF = (receivingVoucher) => {
+	const handlePrintPDF = (receivingVoucher) => {
 		setIsPrinting(receivingVoucher.id);
 
 		const dataHtml = printReceivingVoucherForm({

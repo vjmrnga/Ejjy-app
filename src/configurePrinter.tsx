@@ -209,24 +209,25 @@ const getHeader = (headerData) => {
 	} = siteSettings;
 	const {
 		name,
-		permit_to_use: ptuNumber,
 		machine_identification_number: machineID,
+		permit_to_use: ptuNumber,
 		pos_terminal: posTerminal,
-	} = branchMachine;
+	} = branchMachine || {};
 
 	return `
     <div style="text-align: center; display: flex; flex-direction: column">
-    <span style="white-space: pre-line">${storeName}</span>
-    <span style="white-space: pre-line">${location}</span>
-    <span>${contactNumber} | ${name}</span>
-    <span>${proprietor}</span>
-    <span>${taxType} | ${tin}</span>
-    <span>${machineID}</span>
-    <span>${ptuNumber}</span>
-    <span>${posTerminal}</span>
-    ${title ? '</br>' : ''}
-    ${title ? `<span>[${title}]</span>` : ''}
-  </div>`;
+      <span style="white-space: pre-line">${storeName}</span>
+      <span style="white-space: pre-line">${location}</span>
+      <span>${contactNumber} | ${name}</span>
+      <span>${proprietor}</span>
+      <span>${taxType} | ${tin}</span>
+      <span>${machineID}</span>
+      <span>${ptuNumber}</span>
+      <span>${posTerminal}</span>
+      ${title ? '</br>' : ''}
+      ${title ? `<span>[${title}]</span>` : ''}
+    </div>
+  `;
 };
 
 const getFooter = (footerData) => {
@@ -362,13 +363,15 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 };
 
 export const printCancelledTransactions = ({
-	filterStatus,
-	filterRange,
 	amount,
-	transactions,
+	filterRange,
+	filterStatus,
 	siteSettings,
+	transactions,
 	onComplete,
 }) => {
+	const branchMachine = transactions?.[0]?.branch_machine;
+
 	const data = `
 	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
 		<style>
@@ -379,7 +382,10 @@ export const printCancelledTransactions = ({
 			}
 		</style>
 
-		${getHeader({ siteSettings })}
+		${getHeader({
+			branchMachine,
+			siteSettings,
+		})}
 
 		<br />
 
@@ -536,6 +542,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 	const data = `
 	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 	${getHeader({
+		branchMachine: collectionReceipt.branch_machine,
 		siteSettings,
 		title: 'COLLECTION RECEIPT',
 	})}
@@ -580,39 +587,44 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 
 		<br />
 
-		<div>[optional if check]</div>
-		<table style="width: 100%;">
-			<thead>
-				<tr>
-					<th style="width: 175px"></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Bank:</td>
-					<td>${collectionReceipt.bank_name || EMPTY_CELL}</td>
-				</tr>
-				<tr>
-					<td>Branch:</td>
-					<td>${collectionReceipt.bank_branch || EMPTY_CELL}</td>
-				</tr>
-				<tr>
-					<td>Check No:</td>
-					<td>${collectionReceipt.check_number || EMPTY_CELL}</td>
-				</tr>
-				<tr>
-					<td>Check Date:</td>
-					<td>${
-						collectionReceipt.check_date
-							? formatDate(collectionReceipt.check_date)
-							: EMPTY_CELL
-					}</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<br />
+		${
+			collectionReceipt.check_number
+				? `
+        <div>CHECK DETAILS</div>
+        <table style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="width: 130px"></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bank:</td>
+              <td>${collectionReceipt.bank_name || EMPTY_CELL}</td>
+            </tr>
+            <tr>
+              <td>Branch:</td>
+              <td>${collectionReceipt.bank_branch || EMPTY_CELL}</td>
+            </tr>
+            <tr>
+              <td>Check No:</td>
+              <td>${collectionReceipt.check_number || EMPTY_CELL}</td>
+            </tr>
+            <tr>
+              <td>Check Date:</td>
+              <td>${
+								collectionReceipt.check_date
+									? formatDate(collectionReceipt.check_date)
+									: EMPTY_CELL
+							}</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+      `
+				: ''
+		}
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>${formatDateTime24Hour(collectionReceipt?.datetime_created)}</span>
@@ -625,8 +637,6 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 			<span>${invoice?.or_number || EMPTY_CELL}</span>
 		</div>
 
-		<br />
-		<br />
 		<br />
 
 		<div style="text-align: center; display: flex; flex-direction: column">
@@ -934,11 +944,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 	const data = `
 	<div class="container" style="width: 100%; position: relative; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
-			proprietor: report?.proprietor,
-			location: report?.location,
-			tin: report?.tin,
-			taxType: siteSettings.tax_type,
-			permitNumber: siteSettings.permit_number,
+			branchMachine: report.branch_machine,
+			siteSettings,
 		})}
 
     ${
@@ -1116,8 +1123,10 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 			font-family: 'Courier', monospace;
 		"
 	>
-
-		${getHeader({ siteSettings })}
+		${getHeader({
+			branchMachine: report.branch_machine,
+			siteSettings,
+		})}
 
 		<div
 			style="display: flex; align-items: center; justify-content: space-between"
@@ -1379,7 +1388,7 @@ export const printCashBreakdown = ({
       <span style="white-space: pre-line">${
 				siteSettings.address_of_tax_payer
 			}</span>
-      <span>${branchMachine.branch.name} - ${branchMachine.name}</span>
+      <span>${branchMachine.name}</span>
 
 			<br />
 
@@ -1468,59 +1477,84 @@ export const printCashBreakdown = ({
 	});
 };
 
-export const printCashOut = ({ cashOut, isPdf = false }) => {
+export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 	const metadata = cashOut.cash_out_metadata;
 
-	const cashOutId = metadata.id;
+	const {
+		payee,
+		particulars,
+		received_by: receivedBy,
+		prepared_by_user: preparedByUser,
+	} = metadata;
 	const datetime = formatDateTime(cashOut.datetime_created);
-	const payee = metadata.payee;
 	const amount = formatInPeso(metadata.amount, 'P');
-	const authorizer = getFullName(metadata.approved_by_user);
-	const cashier = getFullName(metadata.prepared_by_user);
-
-	const letterStyles =
-		'display: inline-block; min-width: 100px; padding: 0 8px; border-bottom: 2px solid black; text-align:center;';
+	const preparedBy = getFullName(metadata.prepared_by_user);
+	const approvedBy = getFullName(metadata.approved_by_user);
+	const branchMachine = cashOut.branch_machine;
 
 	const data = `
-		<div class="container" style="width: 100%; font-size: 16px; line-height: 140%; font-family: 'Courier', monospace;">
-			<div>Entity Name: EJ & JY WET MARKET AND ENTERPRISES</div>
-      <div>No.: <span style="width: 100px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${cashOutId}</span></div>
-      <div>Datetime: <span style="width: 200px; display: inline-block; border-bottom: 2px solid black; text-align:center;">${datetime}</span></div>
+	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
+		<div style="text-align: center; display: flex; flex-direction: column">
+      <span style="white-space: pre-line">${siteSettings.store_name}</span>
+      <span style="white-space: pre-line">${
+				siteSettings.address_of_tax_payer
+			}</span>
+      <span>${branchMachine.name}</span>
 
-			<br/>
-			<br/>
+			<br />
 
-			<div style="text-align: center">ORDER OF PAYMENT</div>
-
-			<br/>
-
-			<div>${cashier}</div>
-			<div>Cashiering Unit</div>
-
-			<br/>
-			<br/>
-
-			<div style="text-align: justify">&emsp;&emsp;&emsp;Please issue Cash Out Receipt in favor of
-				<span style="${letterStyles}">${payee}</span> in the amount of
-				<span style="${letterStyles}">${amount}</span>.
-			</div>
-
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-
-      <div style="padding: 0 12px; width: 40%; float:right;">
-        <div style="width: 100%; text-align: center;">
-          ${authorizer}
-        </div>
-        <div style="width: 100%; border-top: 2px solid black; text-align: center;">
-          Head of the General Manager/Authorized Official
-        </div>
-      </div>
-
+			<span>[DISBURSEMENT VOUCHER]</span>
 		</div>
+
+		<br />
+
+		<table style="width: 100%;">
+			<thead>
+				<tr>
+					<th style="width: 130px"></th>
+					<th></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>Payee:</td>
+					<td>${payee}</td>
+				</tr>
+        <tr>
+					<td>Particulars:</td>
+					<td>${particulars}</td>
+				</tr>
+				<tr>
+					<td>Amount:</td>
+					<td>${amount}</td>
+				</tr>
+        <tr>
+					<td>Received by:</td>
+					<td>${receivedBy}</td>
+				</tr>
+				<tr>
+					<td>Prepared by:</td>
+					<td>${preparedBy}</td>
+				</tr>
+				<tr>
+					<td>Approved by:</td>
+					<td>${approvedBy}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<br />
+
+    <div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${datetime}</span>
+			<span style="text-align: right;">${preparedByUser.employee_id}</span>
+		</div>
+
+    <br />
+
+    ${getFooter(siteSettings)}
+	</div>
 	`;
 
 	if (isPdf) {

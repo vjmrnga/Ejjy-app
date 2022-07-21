@@ -76,7 +76,11 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 
 		let dataHtml;
 		if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
-			dataHtml = printCashOut({ cashOut: cashBreakdown, isPdf: true });
+			dataHtml = printCashOut({
+				cashOut: cashBreakdown,
+				siteSettings,
+				isPdf: true,
+			});
 		} else {
 			dataHtml = printCashBreakdown({
 				cashBreakdown,
