@@ -1,200 +1,61 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Row, Select, Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import {
-	Content,
-	RequestErrors,
-	TableHeader,
-	TimeRangeFilter,
-} from 'components';
-import { Box, Label } from 'components/elements';
-import {
-	DEFAULT_PAGE,
-	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
-	MAX_PAGE_SIZE,
-	pageSizeOptions,
-} from 'global';
-import { useBranchMachines, useQueryParams, useUsers } from 'hooks';
-import useUserLogs from 'hooks/useUserLogs';
-import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTimeExtended, getFullName } from 'utils';
+import { Tabs } from 'antd';
+import { Content } from 'components';
+import { Box } from 'components/elements';
+import { useQueryParams } from 'hooks';
+import { toString } from 'lodash';
+import React, { useEffect } from 'react';
+import { TabUserLogs } from 'screens/BranchManager/Logs/components/TabUserLogs';
+import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
+import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
 
-const columns: ColumnsType = [
-	{
-		title: 'Branch Machine',
-		dataIndex: 'branchMachine',
-	},
-	{ title: 'User', dataIndex: 'user' },
-	{ title: 'Description', dataIndex: 'description' },
-	{ title: 'Date & Time', dataIndex: 'datetimeCreated' },
-];
+export const logsTabs = {
+	USER: 'User',
+	BRANCH: 'Branch',
+	SESSION: 'Session',
+};
 
 export const Logs = () => {
-	// STATES
-	const [dataSource, setDataSource] = useState([]);
-
 	// CUSTOM HOOKS
-	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { branchMachines },
-		isFetching: isFetchingBranchMachines,
-		error: branchMachinesError,
-	} = useBranchMachines({
-		params: { pageSize: MAX_PAGE_SIZE },
-	});
-	const {
-		data: { users },
-		isFetching: isFetchingUsers,
-		error: usersError,
-	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
-	});
-	const {
-		data: { logs, total },
-		isFetching: isFetchingLogs,
-		error: logsError,
-	} = useUserLogs({ params });
+		params: { tab: currentTab },
+		setQueryParams,
+	} = useQueryParams();
 
 	// METHODS
 	useEffect(() => {
-		const data = logs.map((log) => ({
-			key: log.id,
-			branchMachine: log?.branch_machine?.name || EMPTY_CELL,
-			user: getFullName(log.acting_user),
-			description: log.description,
-			datetimeCreated: formatDateTimeExtended(log.datetime_created),
-		}));
+		if (!currentTab) {
+			onTabClick(logsTabs.BRANCH);
+		}
+	}, [currentTab]);
 
-		setDataSource(data);
-	}, [logs]);
+	const onTabClick = (tab) => {
+		setQueryParams(
+			{ tab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
 
 	return (
-		<Content title="Logs">
-			<section className="Logs">
-				<Box>
-					<TableHeader title="Logs" />
-
-					<RequestErrors
-						className="px-6"
-						errors={[
-							...convertIntoArray(logsError, 'Logs'),
-							...convertIntoArray(branchMachinesError, 'Branch Machines'),
-							...convertIntoArray(usersError, 'Users'),
-						]}
-						withSpaceBottom
-						withSpaceTop
-					/>
-
-					<Filter
-						branchMachines={branchMachines}
-						isLoading={
-							isFetchingLogs || isFetchingBranchMachines || isFetchingUsers
-						}
-						users={users}
-					/>
-
-					<Table
-						columns={columns}
-						dataSource={dataSource}
-						loading={isFetchingLogs}
-						pagination={{
-							current: Number(params.page) || DEFAULT_PAGE,
-							total,
-							pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-							onChange: (page, newPageSize) => {
-								setQueryParams({
-									page,
-									pageSize: newPageSize,
-								});
-							},
-							disabled: !dataSource,
-							position: ['bottomCenter'],
-							pageSizeOptions,
-						}}
-						scroll={{ x: 1000 }}
-					/>
-				</Box>
-			</section>
+		<Content title="Assignments">
+			<Box>
+				<Tabs
+					activeKey={toString(currentTab)}
+					className="pa-6"
+					type="card"
+					destroyInactiveTabPane
+					onTabClick={onTabClick}
+				>
+					<Tabs.TabPane key={logsTabs.USER} tab={logsTabs.USER}>
+						<TabUserLogs />
+					</Tabs.TabPane>
+					<Tabs.TabPane key={logsTabs.BRANCH} tab={logsTabs.BRANCH}>
+						<TabBranchAssignments />
+					</Tabs.TabPane>
+					<Tabs.TabPane key={logsTabs.SESSION} tab={logsTabs.SESSION}>
+						<TabSessionAssignments />
+					</Tabs.TabPane>
+				</Tabs>
+			</Box>
 		</Content>
-	);
-};
-
-interface FilterProps {
-	branchMachines: any;
-	isLoading: boolean;
-	users: any;
-}
-
-const Filter = ({ branchMachines, isLoading, users }: FilterProps) => {
-	const { params, setQueryParams } = useQueryParams();
-
-	return (
-		<Row className="PaddingHorizontal PaddingVertical" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="Branch Machine" spacing />
-				<Select
-					defaultValue={
-						params.branchMachineId ? Number(params.branchMachineId) : null
-					}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					loading={isLoading}
-					optionFilterProp="children"
-					style={{ width: '100%' }}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ branchMachineId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{branchMachines.map(({ id, name }) => (
-						<Select.Option key={id} value={id}>
-							{name}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-
-			<Col lg={12} span={24}>
-				<Label label="User" spacing />
-				<Select
-					defaultValue={
-						params.actingUserId ? Number(params.actingUserId) : null
-					}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
-					loading={isLoading}
-					optionFilterProp="children"
-					style={{ width: '100%' }}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams({ actingUserId: value }, { shouldResetPage: true });
-					}}
-				>
-					{users.map((user) => (
-						<Select.Option key={user.id} value={user.id}>
-							{getFullName(user)}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isLoading} />
-			</Col>
-		</Row>
 	);
 };

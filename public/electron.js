@@ -45,14 +45,16 @@ function createWindow() {
 	});
 
 	mainWindow.webContents.on('new-window', (event, url) => {
-		event.preventDefault();
-		mainWindow.loadURL(url);
+		if (!url.startsWith('blob:')) {
+			event.preventDefault();
+			mainWindow.loadURL();
+		}
 	});
 
 	setTimeout(() => {
 		mainWindow.loadURL(
 			isDev
-				? 'http://localhost:3005'
+				? 'http://localhost:3010'
 				: `file://${path.join(__dirname, '../build/index.html')}`,
 		);
 	}, 8000);

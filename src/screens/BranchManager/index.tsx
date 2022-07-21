@@ -23,7 +23,6 @@ import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
 import { AssignUser } from 'screens/BranchManager/Users/AssignUser';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
-import { Assignments } from 'screens/Shared/Assignments';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
@@ -197,13 +196,6 @@ const BranchManager = () => {
 				link: '/branch-manager/users',
 			},
 			{
-				key: 'assignments',
-				name: 'Assignments',
-				activeIcon: require('../../assets/images/icon-users-active.svg'),
-				defaultIcon: require('../../assets/images/icon-users.svg'),
-				link: '/branch-manager/assignments',
-			},
-			{
 				key: 'requisition-slips',
 				name: 'Requisition Slips',
 				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
@@ -328,12 +320,6 @@ const BranchManager = () => {
 					<Route
 						component={AssignUser}
 						path="/branch-manager/users/assign/:id"
-						exact
-					/>
-
-					<Route
-						component={Assignments}
-						path="/branch-manager/assignments"
 						exact
 					/>
 
