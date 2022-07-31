@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 import { TabUserLogs } from 'screens/BranchManager/Logs/components/TabUserLogs';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
 import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
+import { isStandAlone } from 'utils';
 
 export const logsTabs = {
 	USER: 'User',
@@ -48,9 +49,11 @@ export const Logs = () => {
 					<Tabs.TabPane key={logsTabs.USER} tab={logsTabs.USER}>
 						<TabUserLogs />
 					</Tabs.TabPane>
-					<Tabs.TabPane key={logsTabs.BRANCH} tab={logsTabs.BRANCH}>
-						<TabBranchAssignments />
-					</Tabs.TabPane>
+					{!isStandAlone() && (
+						<Tabs.TabPane key={logsTabs.BRANCH} tab={logsTabs.BRANCH}>
+							<TabBranchAssignments />
+						</Tabs.TabPane>
+					)}
 					<Tabs.TabPane key={logsTabs.SESSION} tab={logsTabs.SESSION}>
 						<TabSessionAssignments />
 					</Tabs.TabPane>
