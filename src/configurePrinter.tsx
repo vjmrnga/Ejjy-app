@@ -1218,7 +1218,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 		</div>
 
 		<div style="text-align: center">
-			End OR#: ${report?.ending_or?.or_number || EMPTY_CELL}
+			End SI #: ${report?.ending_or?.or_number || EMPTY_CELL}
 		</div>
 
 		<br />

@@ -227,9 +227,9 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				size={0}
 			>
 				<Text>
-					Beginning OR #: {report?.beginning_or?.or_number || EMPTY_CELL}
+					Beginning SI #: {report?.beginning_or?.or_number || EMPTY_CELL}
 				</Text>
-				<Text>Ending OR #: {report?.ending_or?.or_number || EMPTY_CELL}</Text>
+				<Text>Ending SI #: {report?.ending_or?.or_number || EMPTY_CELL}</Text>
 			</Space>
 
 			<Descriptions

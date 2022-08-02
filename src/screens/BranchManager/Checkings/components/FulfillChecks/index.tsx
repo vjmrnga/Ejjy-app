@@ -7,6 +7,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
+import dayjs from 'dayjs';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -49,7 +50,6 @@ export const FulfillChecking = () => {
 			type: productCheckingTypes.RANDOM,
 			isFilledUp: false,
 			onlyOfToday: true,
-			...params,
 		},
 	});
 
@@ -58,16 +58,7 @@ export const FulfillChecking = () => {
 		const productChecks = [...dailyProductChecks, ...randomProductChecks];
 
 		const data = productChecks
-			.filter((productCheck) => {
-				const type = params?.type;
-				let filter = true;
-
-				if (type) {
-					filter = productCheck.type === type;
-				}
-
-				return filter;
-			})
+			.filter((productCheck) => dayjs(productCheck.datetime_created).isToday())
 			.map((productCheck) => ({
 				datetimeRequested: formatDateTime(productCheck?.datetime_created),
 				type:
@@ -85,13 +76,13 @@ export const FulfillChecking = () => {
 			}));
 
 		setDataSource(data);
-	}, [params?.type, dailyProductChecks, randomProductChecks]);
+	}, [dailyProductChecks, randomProductChecks]);
 
 	return (
 		<>
 			{dataSource.length > 0 && (
 				<Box>
-					<TableHeader title="Random Checks" />
+					<TableHeader title="Unfulfilled Checks" />
 
 					<RequestErrors
 						errors={[

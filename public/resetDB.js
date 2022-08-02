@@ -5,6 +5,7 @@ const { resolve } = require('path');
 const isDev = require('electron-is-dev');
 const window = require('electron').BrowserWindow;
 const log = require('electron-log');
+const { dialog } = require('electron');
 
 const API_PATH = isDev
 	? resolve('api')

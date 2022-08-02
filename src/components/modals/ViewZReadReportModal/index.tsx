@@ -198,7 +198,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			</Space>
 
 			<Text className="w-100 text-center d-block">
-				End OR #: {report?.ending_or?.or_number || EMPTY_CELL}
+				End SI #: {report?.ending_or?.or_number || EMPTY_CELL}
 			</Text>
 
 			<ReceiptFooter />

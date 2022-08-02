@@ -571,7 +571,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `End OR#: ${report?.ending_or?.or_number || EMPTY_CELL}`,
+		text: `End SI #: ${report?.ending_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
