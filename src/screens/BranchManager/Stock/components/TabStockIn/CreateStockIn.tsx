@@ -1,6 +1,7 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, message, Table, Tabs } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Divider, Input, message, Row, Select, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -16,23 +17,35 @@ import {
 	FormCheckbox,
 	FormInput,
 	FormSelect,
+	Label,
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	quantityTypeOptions,
 	quantityTypes,
-	request,
+	SEARCH_DEBOUNCE_TIME,
 	unitOfMeasurementTypes,
 	vatTypes,
 } from 'global';
-import { useReceivingVoucherCreate } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
-import { useBranchProducts } from 'hooks/useBranchProducts';
-import { isEmpty, isInteger } from 'lodash';
+import {
+	useBranchProducts,
+	useProductCategories,
+	useQueryParams,
+	useReceivingVoucherCreate,
+} from 'hooks';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, convertToPieces } from 'utils';
+import {
+	convertIntoArray,
+	convertToPieces,
+	filterOption,
+	getBranchId,
+} from 'utils';
 import * as Yup from 'yup';
 
 const tabs = {
@@ -49,7 +62,6 @@ const columns: ColumnsType = [
 
 export const CreateStockIn = () => {
 	// STATES
-	const [searchedKeyword, setSeachedKeyword] = useState('');
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
 	const [createStockInModalVisible, setCreateStockInModalVisible] =
@@ -60,30 +72,24 @@ export const CreateStockIn = () => {
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
 	const history = useHistory();
-	const { user } = useAuth();
 	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProducts,
-		status: branchProductsStatus,
-		errors: branchProductsErrors,
-	} = useBranchProducts();
+		data: { branchProducts, total },
+		isFetching: isBranchProductsFetching,
+		error: branchProductsErrors,
+	} = useBranchProducts({
+		params: {
+			...params,
+			isSoldInBranch: true,
+			branchId: getBranchId(),
+		},
+	});
 	const {
 		mutateAsync: createReceivingVoucher,
 		isLoading: isReceivingVouchersLoading,
 		error: receivingVouchersError,
 	} = useReceivingVoucherCreate();
-
-	// VARIABLES
-	const branchId = user?.branch?.id;
-
-	// METHODS
-	useEffect(() => {
-		getBranchProducts({ branchId, page: 1 });
-	}, []);
 
 	// METHODS: Form methods
 	const getFormDetails = useCallback(
@@ -155,7 +161,7 @@ export const CreateStockIn = () => {
 												quantityType === quantityTypes.PIECE;
 
 											if (!isWeighingPiece) {
-												return isInteger(Number(value));
+												return _.isInteger(Number(value));
 											}
 
 											return true;
@@ -275,35 +281,6 @@ export const CreateStockIn = () => {
 	};
 
 	// METHODS: Filters
-	const onPageChange = (page, newPageSize) => {
-		getBranchProducts(
-			{
-				branchId,
-				search: searchedKeyword,
-				isSoldInBranch: true,
-				page,
-				pageSize: newPageSize,
-			},
-			newPageSize !== pageSize,
-		);
-	};
-
-	const onSearch = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
-
-		getBranchProducts(
-			{
-				branchId,
-				search: lowerCaseKeyword,
-				isSoldInBranch: true,
-				page: 1,
-			},
-			true,
-		);
-
-		setSeachedKeyword(lowerCaseKeyword);
-	};
-
 	const onCreate = async (formData) => {
 		const productIds = Object.keys(productsRef.current);
 
@@ -336,16 +313,17 @@ export const CreateStockIn = () => {
 		}
 	};
 
-	const loading =
-		branchProductsStatus === request.REQUESTING || isReceivingVouchersLoading;
+	const isLoading = isBranchProductsFetching || isReceivingVouchersLoading;
+
 	return (
 		<Content className="CreateBackOrder" title="Stocks">
 			<Box>
 				<TableHeader
 					searchDisabled={activeTab === tabs.SELECTED}
 					title="Create Stock In"
-					onSearch={onSearch}
 				/>
+
+				<Filter isLoading={isLoading} />
 
 				<RequestErrors
 					className="PaddingHorizontal"
@@ -390,12 +368,20 @@ export const CreateStockIn = () => {
 										renderCostPerPiece,
 										onChangeCheckbox,
 									}}
-									loading={loading}
+									isLoading={isLoading}
 									paginationProps={{
-										currentPage,
-										pageCount,
-										pageSize,
-										onPageChange,
+										current: Number(params.page) || DEFAULT_PAGE,
+										total,
+										pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+										onChange: (page, newPageSize) => {
+											setQueryParams({
+												page,
+												pageSize: newPageSize,
+											});
+										},
+										disabled: !isLoading,
+										position: ['bottomCenter'],
+										pageSizeOptions,
 									}}
 								/>
 							</div>
@@ -405,7 +391,7 @@ export const CreateStockIn = () => {
 							<div className="CreateBackOrder_createContainer">
 								<Button
 									classNames="CreateBackOrder_btnCreate"
-									disabled={loading || isEmpty(productsRef.current)}
+									disabled={isLoading || _.isEmpty(productsRef.current)}
 									text="Create"
 									type="submit"
 									variant="primary"
@@ -435,7 +421,7 @@ const ProductsTable = ({
 	activeTab,
 	formProps,
 	paginationProps,
-	loading,
+	isLoading,
 }: any) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
@@ -503,7 +489,7 @@ const ProductsTable = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={loading}
+				loading={isLoading}
 				pagination={
 					activeTab === tabs.ALL
 						? {
@@ -511,7 +497,7 @@ const ProductsTable = ({
 								total: pageCount,
 								pageSize,
 								onChange: onPageChange,
-								disabled: loading,
+								disabled: isLoading,
 								position: ['bottomCenter'],
 								pageSizeOptions,
 						  }
@@ -520,5 +506,71 @@ const ProductsTable = ({
 				scroll={{ x: 800 }}
 			/>
 		</>
+	);
+};
+
+interface FilterProps {
+	isLoading: boolean;
+}
+
+const Filter = ({ isLoading }: FilterProps) => {
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { productCategories },
+		isFetching: isProductCategoriesFetching,
+	} = useProductCategories({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+
+	// METHODS
+	const onSearchDebounced = useCallback(
+		_.debounce((keyword) => {
+			setQueryParams(
+				{ search: keyword?.toLowerCase() },
+				{ shouldResetPage: true },
+			);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
+
+	return (
+		<Row className="pa-6 pt-0" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					defaultValue={params.search}
+					disabled={isLoading}
+					prefix={<SearchOutlined />}
+					allowClear
+					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Product Category" spacing />
+				<Select
+					className="w-100"
+					disabled={isLoading}
+					filterOption={filterOption}
+					loading={isLoading || isProductCategoriesFetching}
+					optionFilterProp="children"
+					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams(
+							{ productCategory: value },
+							{ shouldResetPage: true },
+						);
+					}}
+				>
+					{productCategories.map(({ name }) => (
+						<Select.Option key={name} value={name}>
+							{name}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
 	);
 };

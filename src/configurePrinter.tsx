@@ -806,7 +806,7 @@ export const printReceivingVoucherForm = ({
 	const data = `
 	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
-			title: '[RECEIVING VOUCHER]',
+			title: 'RECEIVING VOUCHER',
 			siteSettings,
 		})}
 
@@ -877,7 +877,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	const data = `
 	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
 		${getHeader({
-			title: '[BO SLIP]',
+			title: 'BO SLIP',
 			siteSettings,
 		})}
 
