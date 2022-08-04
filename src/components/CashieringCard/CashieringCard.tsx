@@ -101,7 +101,7 @@ export const CashieringCard = ({ className, bordered }: Props) => {
 		}).then((value) => {
 			if (value) {
 				if (branchDay) {
-					endBranchDayAuthorization({ id: branchDay.id });
+					endBranchDayAuthorization({ id: branchDay.id, endedById: user.id });
 				} else {
 					createBranchDayAuthorization({ startedById: user.id });
 				}

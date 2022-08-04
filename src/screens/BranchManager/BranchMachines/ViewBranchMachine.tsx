@@ -108,7 +108,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 				<Box className="ViewBranchMachine">
 					{error && (
-						<div className="PaddingVertical PaddingHorizontal">
+						<div className="PaddingVertical PaddingHorizontal pb-0">
 							<RequestErrors errors={convertIntoArray(error)} />
 						</div>
 					)}

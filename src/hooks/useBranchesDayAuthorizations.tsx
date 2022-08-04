@@ -38,7 +38,14 @@ export const useBranchesDayAuthorizationEnd = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ id }) => BranchesDayService.end(id, getLocalApiUrl()),
+		({ id, endedById }) =>
+			BranchesDayService.end(
+				id,
+				{
+					ended_by_id: endedById,
+				},
+				getLocalApiUrl(),
+			),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useBranchesDayAuthorizationsRetrieve');
