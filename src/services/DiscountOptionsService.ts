@@ -6,6 +6,7 @@ interface Modify {
 	code: string;
 	type: string;
 	percentage: number;
+	is_special_discount: boolean;
 	is_vat_inclusive: boolean;
 	additional_fields?: string;
 }

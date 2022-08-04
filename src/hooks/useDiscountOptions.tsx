@@ -36,11 +36,20 @@ export const useDiscountOptionCreate = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ additionalFields, code, isVatInclusive, name, percentage, type }: any) =>
+		({
+			additionalFields,
+			code,
+			isSpecialDiscount,
+			isVatInclusive,
+			name,
+			percentage,
+			type,
+		}: any) =>
 			DiscountOptionsService.create(
 				{
 					additional_fields: additionalFields,
 					code,
+					is_special_discount: isSpecialDiscount,
 					is_vat_inclusive: isVatInclusive,
 					name,
 					percentage,
@@ -64,6 +73,7 @@ export const useDiscountOptionEdit = () => {
 			id,
 			additionalFields,
 			code,
+			isSpecialDiscount,
 			isVatInclusive,
 			name,
 			percentage,
@@ -74,6 +84,7 @@ export const useDiscountOptionEdit = () => {
 				{
 					additional_fields: additionalFields,
 					code,
+					is_special_discount: isSpecialDiscount,
 					is_vat_inclusive: isVatInclusive,
 					name,
 					percentage,

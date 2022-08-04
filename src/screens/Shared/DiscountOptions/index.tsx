@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { List, message, Tag, Typography } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectionAlert,
@@ -26,9 +26,20 @@ import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, isCUDShown } from 'utils';
 
+interface DataType {
+	key: React.Key;
+	name: string;
+	code: string;
+	type: string;
+	percentage: string;
+	isSpecialDiscount: string | React.ReactNode;
+	isVatInclusive: string | React.ReactNode;
+	fields?: string;
+}
+
 export const DiscountOptions = () => {
 	// STATES
-	const [dataSource, setDataSource] = useState([]);
+	const [dataSource, setDataSource] = useState<DataType[]>([]);
 	const [selectedDiscountOption, setSelectedDiscountOption] = useState(null);
 	const [
 		modifyDiscountOptionModalVisible,
@@ -52,13 +63,22 @@ export const DiscountOptions = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedDiscountOptions = discountOptions.map((discountOption) => ({
+		const data = discountOptions.map((discountOption) => ({
 			key: discountOption.id,
 			name: discountOption.name,
 			code: discountOption.code,
 			type: _.upperFirst(discountOption.type),
 			percentage: discountOption.percentage || EMPTY_CELL,
-			isVatInclusive: discountOption.is_vat_inclusive ? 'Yes' : 'No',
+			isSpecialDiscount: discountOption.is_special_discount ? (
+				<Tag color="green">Yes</Tag>
+			) : (
+				<Tag color="blue">No</Tag>
+			),
+			isVatInclusive: discountOption.is_vat_inclusive ? (
+				<Tag color="green">Yes</Tag>
+			) : (
+				<Tag color="blue">No</Tag>
+			),
 			fields: discountOption.additional_fields,
 			actions: (
 				<TableActions
@@ -75,17 +95,21 @@ export const DiscountOptions = () => {
 			),
 		}));
 
-		setDataSource(formattedDiscountOptions);
+		setDataSource(data);
 	}, [discountOptions, isConnected]);
 
 	const getColumns = useCallback(() => {
-		const columns: ColumnsType = [
+		const columns: ColumnsType<DataType> = [
 			{ title: 'Name', dataIndex: 'name' },
 			{ title: 'Code', dataIndex: 'code' },
 			{ title: 'Type', dataIndex: 'type' },
 			{ title: 'Percentage', dataIndex: 'percentage' },
-			{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive' },
-			{ title: 'Fields', dataIndex: 'fields' },
+			{
+				title: 'Special Discount',
+				dataIndex: 'isSpecialDiscount',
+				align: 'center',
+			},
+			{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive', align: 'center' },
 		];
 
 		if (isCUDShown(user.user_type)) {
@@ -120,6 +144,18 @@ export const DiscountOptions = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
+					expandable={{
+						expandedRowRender: (item) => (
+							<List
+								dataSource={item.fields.split(',')}
+								header={<Typography.Title level={5}>FIELDS:</Typography.Title>}
+								renderItem={(field) => <List.Item>{field}</List.Item>}
+								size="small"
+								bordered
+							/>
+						),
+						rowExpandable: (item) => !_.isEmpty(item.fields),
+					}}
 					loading={isFetching || isLoading}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,

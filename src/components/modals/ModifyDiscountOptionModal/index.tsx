@@ -101,6 +101,7 @@ export const ModifyDiscountOptionForm = ({
 				code: discountOption?.code || '',
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
+				isSpecialDiscount: discountOption?.is_special_discount || false,
 				isVatInclusive: discountOption?.is_vat_inclusive || true,
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
@@ -130,7 +131,9 @@ export const ModifyDiscountOptionForm = ({
 							)
 							.label('Percentage'),
 					}),
+				isSpecialDiscount: Yup.boolean().required().label('Special Discount'),
 				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
+
 				additionalFields: Yup.array()
 					.of(Yup.string().required().label('Field'))
 					.notRequired(),
@@ -184,6 +187,22 @@ export const ModifyDiscountOptionForm = ({
 							<ErrorMessage
 								name="code"
 								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col sm={12} xs={24}>
+							<Label id="isSpecialDiscount" label="Special Discount" spacing />
+							<Radio.Group
+								options={[
+									{ label: 'Yes', value: true },
+									{ label: 'No', value: false },
+								]}
+								optionType="button"
+								value={values.isSpecialDiscount}
+								onChange={(e) => {
+									const { value } = e.target;
+									setFieldValue('isSpecialDiscount', value);
+								}}
 							/>
 						</Col>
 
