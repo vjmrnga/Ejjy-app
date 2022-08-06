@@ -51,6 +51,10 @@ function createWindow() {
 		}
 	});
 
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		return { action: url.startsWith('blob:') ? 'allow' : 'deny' };
+	});
+
 	setTimeout(() => {
 		mainWindow.loadURL(
 			isDev
