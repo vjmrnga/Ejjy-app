@@ -464,6 +464,11 @@ export const ModifyProductForm = ({
 								label: 'Scale Barcode',
 								setFieldValue,
 								values,
+								options: {
+									disabled:
+										values.unitOfMeasurement ===
+										unitOfMeasurementTypes.WEIGHING,
+								},
 							})}
 						</Col>
 

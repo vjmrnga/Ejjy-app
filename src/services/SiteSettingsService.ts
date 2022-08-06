@@ -6,6 +6,7 @@ interface Edit {
 	close_session_deadline: string;
 	contact_number: string;
 	is_discount_allowed_if_credit: boolean;
+	is_manual_input_allowed: boolean;
 	is_markdown_allowed_if_credit: boolean;
 	is_time_checker_feature_enabled: boolean;
 	permit_number: string;

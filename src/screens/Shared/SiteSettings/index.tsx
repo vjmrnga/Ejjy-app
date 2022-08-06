@@ -84,6 +84,7 @@ export const SiteSettings = () => {
 					siteSettings?.is_markdown_allowed_if_credit || false,
 				isDiscountAllowedIfCredit:
 					siteSettings?.is_discount_allowed_if_credit || false,
+				isManualInputAllowed: siteSettings?.is_manual_input_allowed || false,
 				isTimeCheckerFeatureEnabled:
 					siteSettings?.is_time_checker_feature_enabled || false,
 
@@ -153,6 +154,10 @@ export const SiteSettings = () => {
 				isDiscountAllowedIfCredit: Yup.boolean()
 					.required()
 					.label('Discount on Credit Transactions'),
+				isManualInputAllowed: Yup.boolean()
+					.required()
+					.label('Manual Input for Weighing'),
+
 				isTimeCheckerFeatureEnabled: Yup.boolean()
 					.required()
 					.label('Time Checker Feature'),
@@ -376,6 +381,21 @@ export const SiteSettings = () => {
 													'isDiscountAllowedIfCredit',
 													e.target.value,
 												);
+											}}
+										/>
+									</Col>
+
+									<Col md={12} span={24}>
+										<Label label="Manual Input for Weighing" spacing />
+										<Radio.Group
+											options={[
+												{ label: 'Allowed', value: true },
+												{ label: 'Not Allowed', value: false },
+											]}
+											optionType="button"
+											value={values.isManualInputAllowed}
+											onChange={(e) => {
+												setFieldValue('isManualInputAllowed', e.target.value);
 											}}
 										/>
 									</Col>
