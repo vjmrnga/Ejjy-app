@@ -30,13 +30,13 @@ import { Users } from './Users';
 import { AssignUser } from './Users/AssignUser';
 
 const sidebarItems = [
-	// {
-	// 	key: 'dashboard',
-	// 	name: 'Dashboard',
-	// 	activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-dashboard.svg'),
-	// 	link: '/office-manager/dashboard',
-	// },
+	{
+		key: 'dashboard',
+		name: 'Dashboard',
+		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
+		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
+		link: '/office-manager/dashboard',
+	},
 	{
 		key: 'products',
 		name: 'Products',

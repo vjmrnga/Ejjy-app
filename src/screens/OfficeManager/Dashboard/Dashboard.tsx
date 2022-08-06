@@ -1,13 +1,12 @@
 import { Spin, Tabs } from 'antd';
 import { Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
 import { useBranches, useProductCategories, useQueryParams } from 'hooks';
-import { toString } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { convertIntoArray } from 'utils';
-import { BranchBalanceItem } from './components/BranchBalanceItem';
-import './style.scss';
+import { BranchProductBalances } from './components/BranchProductBalances';
 
 export const Dashboard = () => {
 	// CUSTOM HOOKS
@@ -19,9 +18,7 @@ export const Dashboard = () => {
 		isFetching: isFetchingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// VARIABLES
@@ -41,14 +38,14 @@ export const Dashboard = () => {
 	const onTabClick = (branchId) => {
 		setQueryParams({
 			branchId,
-			page: 1,
-			pageSize: 10,
+			page: DEFAULT_PAGE,
+			pageSize: DEFAULT_PAGE_SIZE,
 		});
 	};
 
 	return (
-		<Content className="Dashboard" title="Dashboard">
-			<Box padding>
+		<Content title="Dashboard">
+			<Box>
 				<Spin spinning={isFetchingProductCategories}>
 					<RequestErrors
 						errors={convertIntoArray(productCategoriesErrors)}
@@ -56,14 +53,15 @@ export const Dashboard = () => {
 					/>
 
 					<Tabs
-						activeKey={toString(currentBranchId)}
+						activeKey={_.toString(currentBranchId)}
+						className="pa-6"
 						type="card"
 						destroyInactiveTabPane
 						onTabClick={onTabClick}
 					>
-						{branches.map(({ name, id, online_url }) => (
-							<Tabs.TabPane key={id} disabled={!online_url} tab={name}>
-								<BranchBalanceItem
+						{branches.map(({ name, id }) => (
+							<Tabs.TabPane key={id} tab={name}>
+								<BranchProductBalances
 									branchId={id}
 									productCategories={productCategories}
 								/>

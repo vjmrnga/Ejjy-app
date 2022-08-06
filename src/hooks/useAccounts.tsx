@@ -1,4 +1,5 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { AccountsService } from 'services';
@@ -14,17 +15,20 @@ const useAccounts = ({ params }: Query) =>
 			params?.type,
 			params?.withCreditRegistration,
 		],
-		async () =>
-			AccountsService.list(
-				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					search: params?.search,
-					type: params?.type,
-					with_credit_registration: params?.withCreditRegistration,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+
+		() =>
+			wrapServiceWithCatch(
+				AccountsService.list(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						search: params?.search,
+						type: params?.type,
+						with_credit_registration: params?.withCreditRegistration,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -37,11 +41,7 @@ const useAccounts = ({ params }: Query) =>
 export const useAccountRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useAccountRetrieve', id],
-		async () =>
-			AccountsService.retrieve(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() => wrapServiceWithCatch(AccountsService.retrieve(id, getLocalApiUrl())),
 		{
 			select: (query) => query.data,
 			...options,
@@ -79,7 +79,7 @@ export const useAccountCreate = () =>
 					tin,
 					type,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 
@@ -116,7 +116,7 @@ export const useAccountEdit = () =>
 					tin,
 					type,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 
@@ -130,7 +130,7 @@ export const useAccountRedeemPoints = () =>
 					redeem_remarks: redeemRemarks,
 					redeemed_points: redeemedPoints,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 
