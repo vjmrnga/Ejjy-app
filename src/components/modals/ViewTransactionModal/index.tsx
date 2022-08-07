@@ -3,7 +3,7 @@ import { Descriptions, Modal, Space, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
 import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
-import { EMPTY_CELL, saleTypes } from 'global';
+import { EMPTY_CELL, saleTypes, taxTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -32,8 +32,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [transactionData, setTransactionData] = useState(null);
-	const [discountOptionFields, setDiscountOptionFields] = useState(null);
-	const [defaultClientName, setDefaultClientName] = useState('');
+	const [fields, setFields] = useState([]);
 	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
@@ -49,12 +48,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		// Set transaction
-		const newTransaction = _.isNumber(transaction)
-			? transactionRetrieved
-			: transaction;
-		setTransactionData(newTransaction);
-
 		// Set transaction products
 		const products =
 			transaction?.products || transactionRetrieved?.products || [];
@@ -71,27 +64,66 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 			}),
 		);
 		setDataSource(formattedProducts);
-
-		// Set discount option additional fields
-		if (newTransaction?.discount_option_additional_fields_values?.length > 0) {
-			const discountOptionFieldsJSON = JSON.parse(
-				newTransaction.discount_option_additional_fields_values,
-			);
-			setDiscountOptionFields(discountOptionFieldsJSON);
-		}
 	}, [transaction, transactionRetrieved]);
 
 	useEffect(() => {
-		if (transactionData?.id) {
-			if (transactionData.payment.mode === saleTypes.CASH) {
-				setDefaultClientName('walk-in cash');
+		// Set transaction
+		const newTransaction = _.isNumber(transaction)
+			? transactionRetrieved
+			: transaction;
+		setTransactionData(newTransaction);
+
+		// Set title
+		if (newTransaction?.id) {
+			if (newTransaction.payment.mode === saleTypes.CASH) {
 				setTitle('CASH SALES INVOICE');
-			} else if (transactionData.payment.mode === saleTypes.CREDIT) {
-				setDefaultClientName('walk-in credit');
+			} else if (newTransaction.payment.mode === saleTypes.CREDIT) {
 				setTitle('CHARGE SALES INVOICE');
 			}
 		}
-	}, [transactionData]);
+
+		// Set client fields
+		let newFields = [];
+		if (newTransaction?.discount_option_additional_fields_values?.length > 0) {
+			const discountOptionFields = JSON.parse(
+				newTransaction.discount_option_additional_fields_values,
+			);
+
+			newFields = Object.keys(discountOptionFields).map((key) => ({
+				key,
+				value: discountOptionFields[key],
+			}));
+		} else if (
+			newTransaction?.client?.name ||
+			newTransaction?.payment?.creditor_account
+		) {
+			newFields = [
+				{
+					key: 'NAME',
+					value:
+						newTransaction.client?.name ||
+						getFullName(newTransaction.payment?.creditor_account) ||
+						EMPTY_CELL,
+				},
+				{
+					key: 'TIN',
+					value:
+						newTransaction.client?.tin ||
+						newTransaction.payment?.creditor_account?.tin ||
+						EMPTY_CELL,
+				},
+				{
+					key: 'ADDRESS',
+					value:
+						newTransaction.client?.address ||
+						newTransaction.payment?.creditor_account?.home_address ||
+						EMPTY_CELL,
+				},
+			];
+		}
+
+		setFields(newFields);
+	}, [transactionRetrieved, transaction]);
 
 	return (
 		<Modal
@@ -139,10 +171,15 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							{transactionData.discount_option && (
 								<>
 									<Descriptions.Item label="GROSS AMOUNT">
-										{formatInPeso(transactionData.gross_amount)}
+										{formatInPeso(transactionData.gross_amount)}&nbsp;
 									</Descriptions.Item>
+									{transactionData.invoice.vat_amount > 0 && (
+										<Descriptions.Item label="VAT AMOUNT">
+											({formatInPeso(transactionData.invoice.vat_amount)})
+										</Descriptions.Item>
+									)}
 									<Descriptions.Item
-										label={`DISCOUNT | ${transactionData.discount_option.name}`}
+										label={`DISCOUNT | ${transactionData.discount_option.code}`}
 									>
 										({formatInPeso(transactionData.overall_discount)})
 									</Descriptions.Item>
@@ -189,32 +226,34 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Descriptions>
 						)}
 
-						<Descriptions
-							className="mt-6 w-100"
-							colon={false}
-							column={1}
-							contentStyle={{
-								textAlign: 'right',
-								display: 'block',
-							}}
-							labelStyle={{
-								width: 200,
-							}}
-							size="small"
-						>
-							<Descriptions.Item label="VAT Exempt">
-								{formatInPeso(transactionData.invoice.vat_exempt)}
-							</Descriptions.Item>
-							<Descriptions.Item label="VAT Sales">
-								{formatInPeso(transactionData.invoice.vat_sales)}
-							</Descriptions.Item>
-							<Descriptions.Item label="VAT Amount">
-								{formatInPeso(transactionData.invoice.vat_12_percent)}
-							</Descriptions.Item>
-							<Descriptions.Item label="ZERO Rated">
-								{EMPTY_CELL}
-							</Descriptions.Item>
-						</Descriptions>
+						{siteSettings.tax_type === taxTypes.VAT && (
+							<Descriptions
+								className="mt-6 w-100"
+								colon={false}
+								column={1}
+								contentStyle={{
+									textAlign: 'right',
+									display: 'block',
+								}}
+								labelStyle={{
+									width: 200,
+								}}
+								size="small"
+							>
+								<Descriptions.Item label="VAT Exempt">
+									{formatInPeso(transactionData.invoice.vat_exempt)}
+								</Descriptions.Item>
+								<Descriptions.Item label="VAT Sales">
+									{formatInPeso(transactionData.invoice.vat_sales)}
+								</Descriptions.Item>
+								<Descriptions.Item label="VAT Amount">
+									{formatInPeso(transactionData.invoice.vat_12_percent)}
+								</Descriptions.Item>
+								<Descriptions.Item label="ZERO Rated">
+									{formatInPeso(0)}
+								</Descriptions.Item>
+							</Descriptions>
+						)}
 
 						<Space className="mt-6 w-100 justify-space-between">
 							<Text>
@@ -227,7 +266,31 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							<Text>{dataSource.length} item(s)</Text>
 						</Space>
 
-						{discountOptionFields ? (
+						{transactionData?.adjustment_remarks
+							?.previous_voided_transaction && (
+							<Space className="w-100 justify-space-between">
+								<Text>
+									Prev Invoice #:{' '}
+									{
+										transactionData.adjustment_remarks
+											.previous_voided_transaction.invoice.or_number
+									}
+								</Text>
+							</Space>
+						)}
+						{transactionData?.adjustment_remarks?.new_updated_transaction && (
+							<Space className="w-100 justify-space-between">
+								<Text>
+									New Invoice #:{' '}
+									{
+										transactionData.adjustment_remarks.new_updated_transaction
+											.invoice.or_number
+									}
+								</Text>
+							</Space>
+						)}
+
+						{fields.length > 0 && (
 							<Descriptions
 								colon={false}
 								column={1}
@@ -237,36 +300,11 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								}}
 								size="small"
 							>
-								{Object.keys(discountOptionFields).map((key) => (
+								{Object.keys(fields).map((key) => (
 									<Descriptions.Item key={key} label={key}>
-										{discountOptionFields[key]}
+										{fields[key]}
 									</Descriptions.Item>
 								))}
-							</Descriptions>
-						) : (
-							<Descriptions
-								colon={false}
-								column={1}
-								labelStyle={{
-									width: 200,
-								}}
-								size="small"
-							>
-								<Descriptions.Item label="Name">
-									{transactionData.client?.name ||
-										getFullName(transactionData.payment?.creditor_account) ||
-										defaultClientName}
-								</Descriptions.Item>
-								<Descriptions.Item label="TIN">
-									{transactionData.client?.tin ||
-										transactionData.payment?.creditor_account?.tin ||
-										EMPTY_CELL}
-								</Descriptions.Item>
-								<Descriptions.Item label="Address">
-									{transactionData.client?.address ||
-										transactionData.payment?.creditor_account?.home_address ||
-										EMPTY_CELL}
-								</Descriptions.Item>
 							</Descriptions>
 						)}
 

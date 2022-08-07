@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
+import { taxTypes } from 'global';
 import React from 'react';
-import { formatInPeso } from 'utils';
-import { ReportTextFile } from 'utils/ReportTextFile';
+import { formatInPeso, ReportTextFile } from 'utils';
 
 const PESO_SIGN = 'P';
 const EMPTY_CELL = '';
@@ -172,7 +172,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	});
 	rowNumber += 1;
 
-	if (report?.gross_sales === 0) {
+	if (report.gross_sales === 0) {
 		rowNumber += 1;
 		reportTextFile.write({
 			text: 'NO TRANSACTION',
@@ -189,7 +189,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `AS OF ${dayjs().format('MM/DD/YYYY')}`,
+		text: `For ${dayjs().format('MM/DD/YYYY')}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -203,7 +203,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.cash_sales, PESO_SIGN),
+		text: `${formatInPeso(report.cash_sales, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -215,7 +215,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.credit_pay, PESO_SIGN),
+		text: `${formatInPeso(report.credit_pay, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -227,46 +227,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(
-			Number(report.cash_sales) + Number(report.credit_pay),
-			PESO_SIGN,
-		),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: '   DISCOUNTS',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: `(${formatInPeso(report.discount, PESO_SIGN)})`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: '   VOIDED SALES',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: `(${formatInPeso(report.sales_return, PESO_SIGN)})`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: 'NET SALES',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.net_sales, PESO_SIGN),
+		text: `${formatInPeso(report.gross_sales, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -280,109 +241,276 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.vat_exempt, PESO_SIGN),
+		text: `${formatInPeso(report.vat_exempt, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
 	rowNumber += 1;
-	reportTextFile.write({
-		text: 'VAT Sales',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.vat_sales, PESO_SIGN),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-	reportTextFile.write({
-		text: 'VAT Amount',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.vat_12_percent, PESO_SIGN),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: 'VATable Sales',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_sales, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT Amount',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_amount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
 	reportTextFile.write({
 		text: 'ZERO Rated',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(0, PESO_SIGN),
+		text: `${formatInPeso(0, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
 	rowNumber += 1;
 
+	reportTextFile.write({
+		text: '----------------',
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: report?.branch_machine?.name || 'MN',
+		text: 'GROSS SALES',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
+	reportTextFile.write({
+		text: `${formatInPeso(report.gross_sales, PESO_SIGN)} `,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   REG. DISCOUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.regular_discount, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   SPECIAL DISCOUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.special_discount, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   VOIDED SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.void, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: '   VAT AMOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `(${formatInPeso(report.vat_amount, PESO_SIGN)})`,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
+	reportTextFile.write({
+		text: 'NET SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.net_sales, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: '----------------',
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'ADJUSTMENT ON VAT:',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   SPECIAL DISCOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_special_discount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   OTHERS',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.others, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   TOTAL',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.total_vat_adjusted, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '----------------',
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT AMOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_amount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT ADJ.',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `(${formatInPeso(report.total_vat_adjusted, PESO_SIGN)})`,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT PAYABLE',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_payable, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
+	rowNumber += 1;
+
 	reportTextFile.write({
 		text: dayjs().format('MM/DD/YYYY h:mmA'),
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `${report?.total_transactions} tran(s)`,
+		text: `${report.total_transactions} tran(s)`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `C: ${
-			report?.cashiering_session
-				? report.cashiering_session.user.employee_id
-				: ''
-		}`,
+		text: report.generated_by.employee_id,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
-	reportTextFile.write({
-		text: `PB: ${report?.generated_by?.employee_id}`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
 	rowNumber += 1;
 
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `Beg Invoice #: ${report?.beginning_or?.or_number || EMPTY_CELL}`,
+		text: `Beg Invoice #: ${report.beginning_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `End Invoice #: ${report?.ending_or?.or_number || EMPTY_CELL}`,
+		text: `End Invoice #: ${report.ending_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `Beg Sales: ${formatInPeso(report?.beginning_sales, PESO_SIGN)}`,
+		text: `Beg Sales: ${formatInPeso(report.beginning_sales, PESO_SIGN)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `Cur Sales: ${formatInPeso(report?.total_sales, PESO_SIGN)}`,
+		text: `Cur Sales: ${formatInPeso(report.net_sales, PESO_SIGN)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `End Sales: ${formatInPeso(report?.ending_sales, PESO_SIGN)}`,
+		text: `End Sales: ${formatInPeso(report.ending_sales, PESO_SIGN)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -433,7 +561,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.cash_sales, PESO_SIGN),
+		text: `${formatInPeso(report.cash_sales, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -445,7 +573,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.credit_pay, PESO_SIGN),
+		text: `${formatInPeso(report.credit_pay, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -457,46 +585,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(
-			Number(report.cash_sales) + Number(report.credit_pay),
-			PESO_SIGN,
-		),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: '   DISCOUNTS',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: `(${formatInPeso(report.discount, PESO_SIGN)})`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: '   VOIDED SALES',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: `(${formatInPeso(report.sales_return, PESO_SIGN)})`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: 'NET SALES',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.net_sales, PESO_SIGN),
+		text: `${formatInPeso(report.gross_sales, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -510,59 +599,235 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(report.vat_exempt, PESO_SIGN),
+		text: `${formatInPeso(report.vat_exempt, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
 	rowNumber += 1;
-	reportTextFile.write({
-		text: 'VAT Sales',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.vat_sales, PESO_SIGN),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
-	reportTextFile.write({
-		text: 'VAT Amount',
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	reportTextFile.write({
-		text: formatInPeso(report.vat_12_percent, PESO_SIGN),
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-		rowNumber,
-	});
-	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: 'VATable Sales',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_sales, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT Amount',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_amount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
 	reportTextFile.write({
 		text: 'ZERO Rated',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: formatInPeso(0, PESO_SIGN),
+		text: `${formatInPeso(0, PESO_SIGN)} `,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
 	rowNumber += 1;
 
+	reportTextFile.write({
+		text: '----------------',
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: report?.branch_machine?.name || 'MN',
+		text: 'GROSS SALES',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: dayjs().format('MM/DD/YYYY h:mmA'),
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		text: `${formatInPeso(report.gross_sales, PESO_SIGN)} `,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   REG. DISCOUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `${report?.generated_by?.employee_id || EMPTY_CELL}`,
+		text: `(${formatInPeso(report.regular_discount, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   SPECIAL DISCOUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.special_discount, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: '   VOIDED SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.void, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: '   VAT AMOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `(${formatInPeso(report.vat_amount, PESO_SIGN)})`,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
+	reportTextFile.write({
+		text: 'NET SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `(${formatInPeso(report.net_sales, PESO_SIGN)})`,
+		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	if (siteSettings.tax_type === taxTypes.VAT) {
+		reportTextFile.write({
+			text: '----------------',
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'ADJUSTMENT ON VAT:',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   SPECIAL DISCOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_special_discount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   OTHERS',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.others, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   TOTAL',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.total_vat_adjusted, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '----------------',
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT AMOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_amount, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT ADJ.',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `(${formatInPeso(report.total_vat_adjusted, PESO_SIGN)})`,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: 'VAT PAYABLE',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: `${formatInPeso(report.vat_payable, PESO_SIGN)} `,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: dayjs().format('MM/DD/YYYY h:mmA'),
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	reportTextFile.write({
+		text: `${report.generated_by?.employee_id || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -571,7 +836,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `End SI #: ${report?.ending_or?.or_number || EMPTY_CELL}`,
+		text: `End SI #: ${report.ending_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});

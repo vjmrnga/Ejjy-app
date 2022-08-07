@@ -1,17 +1,18 @@
 /* eslint-disable */
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import qz from 'qz-tray';
 import {
+	cashBreakdownCategories,
 	orderOfPaymentPurposes,
 	quantityTypes,
+	taxTypes,
 	vatTypes,
-} from './global/types';
+} from 'global';
+import qz from 'qz-tray';
 import {
 	calculateCashBreakdownTotal,
 	formatDate,
 	formatDateTime,
-	formatDateTime24Hour,
 	formatInPeso,
 	formatQuantity,
 	getCashBreakdownTypeDescription,
@@ -528,13 +529,13 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 	const invoice =
 		collectionReceipt.order_of_payment?.charge_sales_transaction?.invoice;
 	const orderOfPayment = collectionReceipt.order_of_payment;
-	const payor = orderOfPayment.payor;
+	const { payor, amount } = orderOfPayment;
 
 	let description = orderOfPayment.extra_description;
-	if ((orderOfPayment.purpose = orderOfPaymentPurposes.FULL_PAYMENT)) {
+	if (orderOfPayment.purpose === orderOfPaymentPurposes.FULL_PAYMENT) {
 		description = 'Full Payment';
 	} else if (
-		(orderOfPayment.purpose = orderOfPaymentPurposes.PARTIAL_PAYMENT)
+		orderOfPayment.purpose === orderOfPaymentPurposes.PARTIAL_PAYMENT
 	) {
 		description = 'Partial Payment';
 	}
@@ -547,16 +548,14 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 		title: 'COLLECTION RECEIPT',
 	})}
 
-		<br />
+	<br />
 
 		<div style="text-align: center">Received payment from</div>
-
-		<br />
 
 		<table style="width: 100%;">
 			<thead>
 				<tr>
-					<th style="width: 175px"></th>
+					<th style="width: 130px"></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -566,13 +565,17 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 					<td>Name:</td>
 					<td>${getFullName(payor)}</td>
 				</tr>
+        <tr>
+					<td>Address:</td>
+					<td>${payor.home_address || EMPTY_CELL}</td>
+				</tr>
 				<tr>
 					<td>Tin:</td>
-					<td></td>
+					<td>${payor.tin || EMPTY_CELL}</td>
 				</tr>
 				<tr>
 					<td>the sum of:</td>
-					<td>${formatInPeso(collectionReceipt.amount, 'P')}</td>
+					<td>${formatInPeso(amount, PESO_SIGN)}</td>
 				</tr>
 				<tr>
 					<td>Description:</td>
@@ -587,7 +590,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 
 		<br />
 
-		${
+    ${
 			collectionReceipt.check_number
 				? `
         <div>CHECK DETAILS</div>
@@ -627,21 +630,21 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 		}
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime24Hour(collectionReceipt?.datetime_created)}</span>
+			<span>${formatDateTime(collectionReceipt?.datetime_created)}</span>
 			<span style="text-align: right;">${
 				collectionReceipt?.created_by?.employee_id
 			}</span>
 		</div>
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${invoice?.or_number || EMPTY_CELL}</span>
+			<span>${collectionReceipt?.id || EMPTY_CELL}</span>
 		</div>
 
 		<br />
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-			<span>THIS RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.</span>
-			<span>THIS DOCUMENT IS NOT VALID FOR CLAIMING INPUT TAXES.</span>
+      <span>THIS DOCUMENT IS NOT VALID FOR CLAIMING INPUT TAXES.</span>
+      <span>${siteSettings?.thank_you_message || EMPTY_CELL}</span>
 		</div>
 	</div>
 	`;
@@ -985,55 +988,34 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>X-READ</span>
-			<span style="text-align: right;">AS OF ${dayjs().format('MM/DD/YYYY')}</span>
+			<span style="text-align: right;">For ${dayjs().format('MM/DD/YYYY')}</span>
 		</div>
 
 		<br />
 
-    <table style="width: 100%;">
-      <tr>
-        <td>CASH SALES</td>
-        <td style="text-align: right">${formatInPeso(
+		<table style="width: 100%;">
+			<tr>
+				<td>CASH SALES</td>
+				<td style="text-align: right">${formatInPeso(
 					report.cash_sales,
 					PESO_SIGN,
-				)}</td>
-      </tr>
-      <tr>
-        <td>CREDIT SALES</td>
-        <td style="text-align: right">${formatInPeso(
+				)}&nbsp;</td>
+			</tr>
+			<tr>
+				<td>CREDIT SALES</td>
+				<td style="text-align: right">${formatInPeso(
 					report.credit_pay,
 					PESO_SIGN,
-				)}</td>
-      </tr>
-      <tr>
-        <td>GROSS SALES</td>
-        <td style="text-align: right">${formatInPeso(
-					Number(report.cash_sales) + Number(report.credit_pay),
+				)}&nbsp;</td>
+			</tr>
+			<tr>
+				<td>GROSS SALES</td>
+				<td style="text-align: right">${formatInPeso(
+					report.gross_sales,
 					PESO_SIGN,
-				)}</td>
-      </tr>
-      <tr>
-        <td style="padding-left: 30px">DISCOUNTS</td>
-        <td style="text-align: right">(${formatInPeso(
-					report.discount,
-					PESO_SIGN,
-				)})</td>
-      </tr>
-      <tr>
-        <td style="padding-left: 30px">VOIDED SALES</td>
-        <td style="text-align: right">(${formatInPeso(
-					report.sales_return,
-					PESO_SIGN,
-				)})</td>
-      </tr>
-      <tr>
-        <td><b>NET SALES</b></td>
-        <td style="text-align: right;"><b>${formatInPeso(
-					report.net_sales,
-					PESO_SIGN,
-				)}</b></td>
-      </tr>
-    </table>
+				)}&nbsp;</td>
+			</tr>
+		</table>
 
 		<br />
 
@@ -1041,51 +1023,167 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 			<tr>
 				<td>VAT Exempt</td>
 				<td style="text-align: right">${formatInPeso(
-					report?.vat_exempt,
+					report.vat_exempt,
 					PESO_SIGN,
-				)}</td>
+				)}&nbsp;</td>
 			</tr>
-			<tr>
-				<td>VAT Sales</td>
-				<td style="text-align: right">${formatInPeso(report?.vat_sales, PESO_SIGN)}</td>
-			</tr>
-			<tr>
-				<td>VAT Amount</td>
-				<td style="text-align: right">${formatInPeso(
-					report?.vat_12_percent,
-					PESO_SIGN,
-				)}</td>
-			</tr>
+      ${
+				siteSettings.tax_type === taxTypes.VAT
+					? `
+          <tr>
+            <td>VATable Sales</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_sales,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td>VAT Amount</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        `
+					: ''
+			}
       <tr>
 				<td>ZERO Rated</td>
-				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}</td>
+				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}&nbsp;</td>
 			</tr>
 		</table>
 
-		<br />
+		<div style="width: 100%; text-align: right">----------------</div>
+
+    <table style="width: 100%;">
+      <tr>
+        <td>GROSS SALES</td>
+        <td style="text-align: right">${formatInPeso(
+					report.gross_sales,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">REG. DISCOUNT</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.regular_discount,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.special_discount,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">VOIDED SALES</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.void,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      ${
+				siteSettings.tax_type === taxTypes.VAT
+					? `
+          <tr>
+            <td style="padding-left: 15px">VAT AMOUNT</td>
+            <td style="text-align: right">(${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)})</td>
+          </tr>`
+					: ''
+			}
+      <tr>
+        <td><b>NET SALES</b></td>
+        <td style="text-align: right;"><b>${formatInPeso(
+					report.net_sales,
+					PESO_SIGN,
+				)}</b>&nbsp;</td>
+      </tr>
+    </table>
+
+    ${
+			siteSettings.tax_type === taxTypes.VAT
+				? `
+        <div style="width: 100%; text-align: right">----------------</div>
+
+        <table style="width: 100%;">
+          <tr>
+            <td>ADJUSTMENT ON VAT:</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_special_discount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">OTHERS</td>
+            <td style="text-align: right">${formatInPeso(
+							report.others,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">TOTAL</td>
+            <td style="text-align: right">${formatInPeso(
+							report.total_vat_adjusted,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        </table>
+
+        <div style="width: 100%; text-align: right">----------------</div>
+
+        <table style="width: 100%;">
+          <tr>
+            <td>VAT AMOUNT</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td>VAT ADJ.</td>
+            <td style="text-align: right">(${formatInPeso(
+							report.total_vat_adjusted,
+							PESO_SIGN,
+						)})</td>
+          </tr>
+          <tr>
+            <td>VAT PAYABLE</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_payable,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        </table>
+        `
+				: ''
+		}
+
+    <br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${report?.branch_machine?.name || 'MN'} </span>
 			<span style="text-align: center;">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
-			<span style="text-align: right;">${report?.total_transactions} tran(s)</span>
+			<span style="text-align: right;">${report.total_transactions} tran(s)</span>
 		</div>
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>C: ${
-				report?.cashiering_session
-					? report.cashiering_session.user.employee_id
-					: ''
-			}</span>
-			<span>PB: ${report?.generated_by?.employee_id}</span>
+			<span>${report.generated_by.employee_id}</span>
 		</div>
 
 		<br />
 
 		<div style="text-align: center;">Beg Invoice #: ${
-			report?.beginning_or?.or_number || EMPTY_CELL
+			report.beginning_or?.or_number || EMPTY_CELL
 		}</div>
 		<div style="text-align: center;">End Invoice #: ${
-			report?.ending_or?.or_number || EMPTY_CELL
+			report.ending_or?.or_number || EMPTY_CELL
 		}</div>
 
 		<div style="display: flex">
@@ -1097,18 +1195,17 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 			<div>
 				<div style="display: flex; align-items: center; justify-content: space-between">
 					<span>P </span>
-					<span>${formatInPeso(report?.beginning_sales, '')}</span>
+					<span>${formatInPeso(report.beginning_sales, '')}</span>
 				</div>
 				<div style="display: flex; align-items: center; justify-content: space-between">
 					<span>P </span>
-					<span>${formatInPeso(report?.total_sales, '')}</span>
+					<span>${formatInPeso(report.net_sales, '')}</span>
 				</div>
 				<div style="display: flex; align-items: center; justify-content: space-between">
 					<span>P </span>
-					<span>${formatInPeso(report?.ending_sales, '')}</span>
+					<span>${formatInPeso(report.ending_sales, '')}</span>
 				</div>
 			</div>
-			<div style="flex: 1;"></div>
 		</div>
 
 		<br />
@@ -1166,48 +1263,27 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 		<br />
 
-		<table style="width: 100%">
+		<table style="width: 100%;">
 			<tr>
 				<td>CASH SALES</td>
 				<td style="text-align: right">${formatInPeso(
-					report?.cash_sales,
+					report.cash_sales,
 					PESO_SIGN,
-				)}</td>
+				)}&nbsp;</td>
 			</tr>
 			<tr>
 				<td>CREDIT SALES</td>
 				<td style="text-align: right">${formatInPeso(
-					report?.credit_pay,
+					report.credit_pay,
 					PESO_SIGN,
-				)}</td>
+				)}&nbsp;</td>
 			</tr>
 			<tr>
 				<td>GROSS SALES</td>
 				<td style="text-align: right">${formatInPeso(
-					Number(report?.cash_sales) + Number(report?.credit_pay),
+					report.gross_sales,
 					PESO_SIGN,
-				)}</td>
-			</tr>
-			<tr>
-				<td style="padding-left: 30px">DISCOUNTS</td>
-				<td style="text-align: right">(${formatInPeso(
-					report?.discount,
-					PESO_SIGN,
-				)})</td>
-			</tr>
-			<tr>
-				<td style="padding-left: 30px">VOIDED SALES</td>
-				<td style="text-align: right">(${formatInPeso(
-					report?.sales_return,
-					PESO_SIGN,
-				)})</td>
-			</tr>
-			<tr>
-				<td><b>NET SALES</b></td>
-				<td style="text-align: right"><b>${formatInPeso(
-					report?.net_sales,
-					PESO_SIGN,
-				)}</b></td>
+				)}&nbsp;</td>
 			</tr>
 		</table>
 
@@ -1217,31 +1293,152 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 			<tr>
 				<td>VAT Exempt</td>
 				<td style="text-align: right">${formatInPeso(
-					report?.vat_exempt,
+					report.vat_exempt,
 					PESO_SIGN,
-				)}</td>
+				)}&nbsp;</td>
 			</tr>
-			<tr>
-				<td>VAT Sales</td>
-				<td style="text-align: right">${formatInPeso(report?.vat_sales, PESO_SIGN)}</td>
-			</tr>
-			<tr>
-				<td>VAT Amount</td>
-				<td style="text-align: right">${formatInPeso(
-					report?.vat_12_percent,
-					PESO_SIGN,
-				)}</td>
-			</tr>
+      ${
+				siteSettings.tax_type === taxTypes.VAT
+					? `
+          <tr>
+            <td>VATable Sales</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_sales,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td>VAT Amount</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        `
+					: ''
+			}
       <tr>
 				<td>ZERO Rated</td>
-				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}</td>
+				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}&nbsp;</td>
 			</tr>
 		</table>
+
+		<div style="width: 100%; text-align: right">----------------</div>
+
+    <table style="width: 100%;">
+      <tr>
+        <td>GROSS SALES</td>
+        <td style="text-align: right">${formatInPeso(
+					report.gross_sales,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">REG. DISCOUNT</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.regular_discount,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.special_discount,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">VOIDED SALES</td>
+        <td style="text-align: right">(${formatInPeso(
+					report.void,
+					PESO_SIGN,
+				)})</td>
+      </tr>
+      ${
+				siteSettings.tax_type === taxTypes.VAT
+					? `
+          <tr>
+            <td style="padding-left: 15px">VAT AMOUNT</td>
+            <td style="text-align: right">(${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)})</td>
+          </tr>`
+					: ''
+			}
+      <tr>
+        <td><b>NET SALES</b></td>
+        <td style="text-align: right;"><b>${formatInPeso(
+					report.net_sales,
+					PESO_SIGN,
+				)}</b>&nbsp;</td>
+      </tr>
+    </table>
+
+    ${
+			siteSettings.tax_type === taxTypes.VAT
+				? `
+        <div style="width: 100%; text-align: right">----------------</div>
+
+        <table style="width: 100%;">
+          <tr>
+            <td>ADJUSTMENT ON VAT:</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_special_discount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">OTHERS</td>
+            <td style="text-align: right">${formatInPeso(
+							report.others,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 15px">TOTAL</td>
+            <td style="text-align: right">${formatInPeso(
+							report.total_vat_adjusted,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        </table>
+
+        <div style="width: 100%; text-align: right">----------------</div>
+
+        <table style="width: 100%;">
+          <tr>
+            <td>VAT AMOUNT</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_amount,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+          <tr>
+            <td>VAT ADJ.</td>
+            <td style="text-align: right">(${formatInPeso(
+							report.total_vat_adjusted,
+							PESO_SIGN,
+						)})</td>
+          </tr>
+          <tr>
+            <td>VAT PAYABLE</td>
+            <td style="text-align: right">${formatInPeso(
+							report.vat_payable,
+							PESO_SIGN,
+						)}&nbsp;</td>
+          </tr>
+        </table>
+        `
+				: ''
+		}
 
 		<br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${report?.branch_machine?.name}</span>
 			<span style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
 			<span>${report?.generated_by?.employee_id || EMPTY_CELL}</span>
 		</div>
@@ -1474,6 +1671,11 @@ export const printCashBreakdown = ({
 			<span>${formatDateTime(dayjs())}</span>
 			<span>${session?.user?.employee_id}</span>
 		</div>
+    ${
+			cashBreakdown.category === cashBreakdownCategories.CASH_IN
+				? `<div>Remarks: ${cashBreakdown.remarks}</div>`
+				: ''
+		}
 
 		<br />
 		<br />
