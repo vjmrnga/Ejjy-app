@@ -10,8 +10,12 @@ import {
 	Row,
 } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { discountTypes } from 'global';
-import { useDiscountOptionCreate, useDiscountOptionEdit } from 'hooks';
+import { discountTypes, taxTypes } from 'global';
+import {
+	useDiscountOptionCreate,
+	useDiscountOptionEdit,
+	useSiteSettingsRetrieve,
+} from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils';
@@ -93,6 +97,10 @@ export const ModifyDiscountOptionForm = ({
 	onSubmit,
 	onClose,
 }: FormProps) => {
+	// CUSTOM HOOKS
+	const { data: siteSettings } = useSiteSettingsRetrieve();
+
+	// METHODS
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
@@ -102,7 +110,10 @@ export const ModifyDiscountOptionForm = ({
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
 				isSpecialDiscount: discountOption?.is_special_discount || false,
-				isVatInclusive: discountOption?.is_vat_inclusive || true,
+				isVatInclusive:
+					siteSettings.tax_type === taxTypes.NVAT
+						? true
+						: !!discountOption?.is_vat_inclusive,
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
 			Schema: Yup.object().shape({
@@ -139,7 +150,7 @@ export const ModifyDiscountOptionForm = ({
 					.notRequired(),
 			}),
 		}),
-		[discountOption],
+		[discountOption, siteSettings],
 	);
 
 	return (
@@ -209,6 +220,7 @@ export const ModifyDiscountOptionForm = ({
 						<Col sm={12} xs={24}>
 							<Label id="isVatInclusive" label="VAT Inclusive" spacing />
 							<Radio.Group
+								disabled={siteSettings.tax_type === taxTypes.NVAT}
 								options={[
 									{ label: 'Yes', value: true },
 									{ label: 'No', value: false },

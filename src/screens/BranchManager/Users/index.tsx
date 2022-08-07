@@ -7,7 +7,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE } from 'global';
+import { MAX_PAGE_SIZE, userTypes } from 'global';
 import { useAuth, useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -49,44 +49,50 @@ export const Users = () => {
 
 	// METHODS
 	useEffect(() => {
-		const data = users.map((user) => ({
-			key: user.id,
-			id: user.employee_id,
-			name: getFullName(user),
-			type: getUserTypeName(user.user_type),
-			actions: (
-				<Space>
-					<Button
-						type="primary"
-						onClick={() =>
-							history.push(`/branch-manager/users/assign/${user.id}`)
-						}
-					>
-						Cashiering Assignments
-					</Button>
-					<Button
-						type="primary"
-						onClick={() => {
-							setSelectedUser(user);
-							setModifyUserModalVisible(true);
-						}}
-					>
-						Edit
-					</Button>
-					<Popconfirm
-						cancelText="No"
-						okText="Yes"
-						placement="left"
-						title="Are you sure to remove this user?"
-						onConfirm={() => deleteUser(user.id)}
-					>
-						<Button type="primary" danger>
-							Delete
+		const data = users
+			.filter((user) => user.username !== 'dev')
+			.map((user) => ({
+				key: user.id,
+				id: user.employee_id,
+				name: getFullName(user),
+				type: getUserTypeName(user.user_type),
+				actions: (
+					<Space>
+						{user.user_type !== userTypes.ADMIN && (
+							<Button
+								type="primary"
+								onClick={() =>
+									history.push(`/branch-manager/users/assign/${user.id}`)
+								}
+							>
+								Cashiering Assignments
+							</Button>
+						)}
+						<Button
+							type="primary"
+							onClick={() => {
+								setSelectedUser(user);
+								setModifyUserModalVisible(true);
+							}}
+						>
+							Edit
 						</Button>
-					</Popconfirm>
-				</Space>
-			),
-		}));
+						{user.user_type !== userTypes.ADMIN && (
+							<Popconfirm
+								cancelText="No"
+								okText="Yes"
+								placement="left"
+								title="Are you sure to remove this user?"
+								onConfirm={() => deleteUser(user.id)}
+							>
+								<Button type="primary" danger>
+									Delete
+								</Button>
+							</Popconfirm>
+						)}
+					</Space>
+				),
+			}));
 
 		setDataSource(data);
 	}, [users]);

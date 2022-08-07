@@ -79,7 +79,7 @@ export const TabStockIn = () => {
 		}));
 
 		setDataSource(data);
-	}, [receivingVouchers, isPrinting]);
+	}, [receivingVouchers, siteSettings, isPrinting]);
 
 	const handlePrintPDF = (receivingVoucher) => {
 		setIsPrinting(receivingVoucher.id);

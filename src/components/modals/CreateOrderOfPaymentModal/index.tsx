@@ -13,7 +13,12 @@ import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatInPeso,
+	getFullName,
+} from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {
@@ -197,9 +202,8 @@ export const CreateOrderOfPaymentForm = ({
 								spacing
 							/>
 							<FormattedInputNumber
+								className="w-100"
 								controls={false}
-								size="large"
-								style={{ width: '100%' }}
 								value={values['amount']}
 								onChange={(value) => {
 									setFieldValue('amount', value);
@@ -214,14 +218,9 @@ export const CreateOrderOfPaymentForm = ({
 						<Col span={24}>
 							<Label id="purpose" label="Purpose" spacing />
 							<Select
-								filterOption={(input, option) =>
-									option.children
-										.toString()
-										.toLowerCase()
-										.indexOf(input.toLowerCase()) >= 0
-								}
+								className="w-100"
+								filterOption={filterOption}
 								optionFilterProp="children"
-								style={{ width: '100%' }}
 								value={values.purpose}
 								showSearch
 								onChange={(value) => {

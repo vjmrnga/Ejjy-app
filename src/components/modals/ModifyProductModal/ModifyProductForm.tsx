@@ -21,12 +21,14 @@ import {
 	MAX_PAGE_SIZE,
 	productCheckingTypes,
 	productTypes,
+	taxTypes,
 	unitOfMeasurementTypes,
 } from 'global';
-import { useProductCategories } from 'hooks';
+import { useProductCategories, useSiteSettingsRetrieve } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 import { formatQuantity, getId } from 'utils';
 import * as Yup from 'yup';
 
@@ -92,6 +94,7 @@ export const ModifyProductForm = ({
 }: Props) => {
 	// CUSTOM HOOKS
 	const { user } = useAuth();
+	const { data: siteSettings } = useSiteSettingsRetrieve();
 	const {
 		data: { productCategories },
 	} = useProductCategories({
@@ -114,7 +117,11 @@ export const ModifyProductForm = ({
 				description: product?.description || '',
 				hasQuantityAllowance: product?.has_quantity_allowance || false,
 				isShownInScaleList: product?.is_shown_in_scale_list || false,
-				isVatExempted: product?.is_vat_exempted?.toString() || 'false',
+				isVatExempted:
+					siteSettings.tax_type === taxTypes.NVAT
+						? 'true'
+						: (!!product?.is_vat_exempted).toString(),
+
 				maxBalance: product?.max_balance
 					? formatQuantity({
 							unitOfMeasurement: product?.unit_of_measurement,
@@ -578,6 +585,7 @@ export const ModifyProductForm = ({
 						<Col sm={12} xs={24}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
+								disabled={siteSettings.tax_type === taxTypes.NVAT}
 								id="isVatExempted"
 								items={isVatExemptedOptions}
 							/>

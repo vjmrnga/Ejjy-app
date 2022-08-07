@@ -67,7 +67,7 @@ export const TabStockOut = () => {
 					loading={isPrinting === backOrder.id}
 					type="link"
 					onClick={() => {
-						onPrintPDF(backOrder);
+						handlePrintPDF(backOrder);
 					}}
 				>
 					Print PDF
@@ -76,9 +76,9 @@ export const TabStockOut = () => {
 		}));
 
 		setDataSource(data);
-	}, [backOrders, isPrinting]);
+	}, [backOrders, siteSettings, isPrinting]);
 
-	const onPrintPDF = (backOrder) => {
+	const handlePrintPDF = (backOrder) => {
 		setIsPrinting(backOrder.id);
 
 		const dataHtml = printStockOutForm({

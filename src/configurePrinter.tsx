@@ -580,7 +580,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 				</tr>
 				<tr>
 					<td>with invoice:</td>
-					<td>${invoice?.id || EMPTY_CELL}</td>
+					<td>${invoice?.or_number || EMPTY_CELL}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -801,6 +801,11 @@ export const printReceivingVoucherForm = ({
 	receivingVoucher,
 	siteSettings,
 }) => {
+	/**
+	 * * The following details are hidden as it is not implemented yet (per Emman):
+	 * * 1. Invoice #
+	 */
+
 	const products = receivingVoucher.products;
 
 	const data = `
@@ -816,7 +821,9 @@ export const printReceivingVoucherForm = ({
 			${products
 				.map(
 					(item) => `<tr>
-						<td colspan="2">${item.product.name}</td>
+						<td colspan="2">${item.product.name} - ${
+						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
+					}</td>
 					</tr>
 					<tr>
 						<td style="padding-left: 30px">${formatQuantity({
@@ -824,12 +831,7 @@ export const printReceivingVoucherForm = ({
 							quantity: item.quantity,
 						})} @ ${formatInPeso(item.cost_per_piece, PESO_SIGN)}</td>
 						<td style="text-align: right">
-							${formatInPeso(
-								Number(item.quantity) * Number(item.cost_per_piece),
-								PESO_SIGN,
-							)} ${
-						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
-					}
+							${formatInPeso(Number(item.quantity) * Number(item.cost_per_piece), PESO_SIGN)}
 						</td>
 					</tr>`,
 				)
@@ -851,7 +853,6 @@ export const printReceivingVoucherForm = ({
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>${formatDateTime(receivingVoucher.datetime_created)}</span>
-			<span style="text-align: right;">[ref # / trans#]</span>
 		</div>
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${receivingVoucher.checked_by.employee_id}</span>
@@ -871,6 +872,29 @@ export const printReceivingVoucherForm = ({
 };
 
 export const printStockOutForm = ({ backOrder, siteSettings }) => {
+	/**
+	 * * The following details are hidden as it is not implemented yet (per Emman):
+	 * * 1. Supplier
+	 * * 2. Check/Authorizer
+	 * * 3. Invoice #
+	 */
+
+	//    <div style="display: flex; align-items: center; justify-content: space-between">
+	//    <span>${formatDateTime(backOrder.datetime_created)}</span>
+	//    <span style="text-align: right;">${
+	//      backOrder.transaction?.invoice?.or_number || EMPTY_CELL
+	//    }</span>
+	//  </div>
+	//  <div style="display: flex; align-items: center; justify-content: space-between">
+	//    <span>C: ${backOrder?.sender?.employee_id || EMPTY_CELL}</span>
+	//    <span style="text-align: right;">E: ${
+	//      backOrder?.encoded_by?.employee_id || EMPTY_CELL
+	//    }</span>
+	//  </div>
+	//  <div>
+	//    <span>Supplier: ${backOrder?.supplier_name || EMPTY_CELL}</span>
+	//  </div>
+
 	const products = backOrder.products;
 	let totalAmount = 0;
 
@@ -892,7 +916,9 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 					totalAmount += subtotal;
 
 					return `<tr>
-						<td colspan="2">${item.product.name}</td>
+						<td colspan="2">${item.product.name} - ${
+						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
+					}</td>
 					</tr>
 					<tr>
 						<td style="padding-left: 30px">${formatQuantity({
@@ -900,9 +926,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 							quantity: item.quantity_returned,
 						})} @ ${formatInPeso(item.current_price_per_piece, PESO_SIGN)}</td>
 						<td style="text-align: right">
-							${formatInPeso(subtotal, PESO_SIGN)} ${
-						item.product.is_vat_exempted ? vatTypes.VAT_EMPTY : vatTypes.VATABLE
-					}
+							${formatInPeso(subtotal, PESO_SIGN)}
 						</td>
 					</tr>`;
 				})
@@ -913,7 +937,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 
 		<table style="width: 100%;">
 			<tr>
-				<td>TOTAL AMOUNT PAID</td>
+				<td>TOTAL AMOUNT</td>
 				<td style="text-align: right; font-weight: bold;">
 					${formatInPeso(totalAmount, PESO_SIGN)}
 				</td>
@@ -924,12 +948,17 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>${formatDateTime(backOrder.datetime_created)}</span>
-			<span style="text-align: right;">[ref # / trans#]</span>
+			<span style="text-align: right;">${EMPTY_CELL}</span>
 		</div>
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${EMPTY_CELL}</span>
-			<span style="text-align: right;">E: ${EMPTY_CELL}</span>
+			<span style="text-align: right;">E: ${
+				backOrder?.encoded_by?.employee_id || EMPTY_CELL
+			}</span>
 		</div>
+    <div>
+      <span>Supplier: ${EMPTY_CELL}</span>
+    </div>
 
 		<br />
 
