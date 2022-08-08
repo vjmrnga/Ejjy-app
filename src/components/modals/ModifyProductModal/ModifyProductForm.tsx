@@ -1,6 +1,4 @@
 /* eslint-disable react/no-this-in-sfc */
-/* eslint-disable no-confusing-arrow */
-/* eslint-disable newline-per-chained-call */
 import { Col, Divider, Input, Row, Select, Typography } from 'antd';
 import { ScrollToFieldError } from 'components';
 import {
@@ -28,7 +26,6 @@ import { useProductCategories, useSiteSettingsRetrieve } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 import { formatQuantity, getId } from 'utils';
 import * as Yup from 'yup';
 

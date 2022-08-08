@@ -22,7 +22,7 @@ export const Content = ({
 	className,
 	children,
 }: Props) => {
-	// TODO: Temporarily disabled checking if has internet connection.
+	//! Temporarily disabled checking if has internet connection.
 	// Restore this functionality once it is revisited and if still needed
 	const { isSidebarCollapsed } = useUI();
 	// const { hasInternetConnection, testConnection } = useNetwork();
