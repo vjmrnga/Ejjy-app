@@ -1,4 +1,4 @@
-import { Col, Radio, Row } from 'antd';
+import { Col, Radio, Row, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { BadgePill, Box, Label } from 'components/elements';
@@ -21,7 +21,6 @@ const columns: ColumnsType = [
 	{ title: 'Date & Time Fulfilled', dataIndex: 'datetimeFulfilled' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Status', dataIndex: 'status' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const Checkings = () => {
@@ -37,7 +36,6 @@ export const Checkings = () => {
 	} = useProductChecks({
 		params: {
 			isFilledUp: true,
-			type: productCheckingTypes.DAILY,
 			...params,
 		},
 	});
@@ -55,6 +53,12 @@ export const Checkings = () => {
 				datetimeFulfilled: datetime_fulfilled
 					? formatDateTime(datetime_fulfilled)
 					: EMPTY_CELL,
+				type:
+					productCheck.type === productCheckingTypes.DAILY ? (
+						<Tag color="purple">Daily Check</Tag>
+					) : (
+						<Tag color="blue">Random Check</Tag>
+					),
 				status: is_success ? (
 					<BadgePill label="Success" variant="primary" />
 				) : (
@@ -115,7 +119,7 @@ const Filter = () => {
 			<Col lg={12} span={24}>
 				<Label label="Type" spacing />
 				<Radio.Group
-					defaultValue={params.type || productCheckingTypes.DAILY}
+					defaultValue={params.type || undefined}
 					options={[
 						{ label: 'Daily', value: productCheckingTypes.DAILY },
 						{ label: 'Random', value: productCheckingTypes.RANDOM },
