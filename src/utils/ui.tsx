@@ -497,7 +497,7 @@ export const getCashBreakdownTypeDescription = (category, type) => {
 	if (category === cashBreakdownCategories.CASH_BREAKDOWN) {
 		switch (type) {
 			case cashBreakdownTypes.START_SESSION:
-				description = 'Beginning Session';
+				description = 'Start Session';
 				break;
 			case cashBreakdownTypes.MID_SESSION:
 				description = 'Cash Collection';

@@ -47,7 +47,7 @@ export const cashBreakdownOptions = [
 		value: cashBreakdownTypes.MID_SESSION,
 	},
 	{
-		label: 'Beginning Session',
+		label: 'Start Session',
 		value: cashBreakdownTypes.START_SESSION,
 	},
 	{
