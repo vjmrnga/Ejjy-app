@@ -63,10 +63,17 @@ const Component = ({ branchMachineId }: Props) => {
 						/>
 					</Col>
 
-					<Col xs={24}>
+					<Col md={8} sm={8} xs={24}>
 						<Statistic
 							title="Vat Exempt Sales"
 							value={formatInPeso(summary?.vat_exempt_sales)}
+						/>
+					</Col>
+
+					<Col md={16} sm={16} xs={24}>
+						<Statistic
+							title="Vat Payable"
+							value={formatInPeso(summary?.vat_amount)}
 						/>
 					</Col>
 
