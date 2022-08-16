@@ -63,7 +63,7 @@ export const Users = () => {
 					type="card"
 					onTabClick={handleTabClick}
 				>
-					<Tabs.TabPane key={NO_BRANCH_ID} tab="No Branch">
+					<Tabs.TabPane key={NO_BRANCH_ID} tab="User List">
 						<BranchUsers
 							branchId={NO_BRANCH_ID}
 							disabled={isConnected === false}
