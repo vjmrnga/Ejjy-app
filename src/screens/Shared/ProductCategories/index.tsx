@@ -1,6 +1,6 @@
 import { MenuOutlined, SaveOutlined } from '@ant-design/icons';
-import { Button, Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import { Button, Table, Tooltip } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
 import {
 	ConnectionAlert,
@@ -13,32 +13,38 @@ import {
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
 import {
+	useAuth,
 	usePingOnlineServer,
 	useProductCategories,
 	useProductCategoryDelete,
+	useProductCategoryEdit,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
+import { cloneDeep } from 'lodash';
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	SortableContainer,
 	SortableElement,
 	SortableHandle,
 } from 'react-sortable-hoc';
-import { ProductCategoriesService } from 'services';
 import { convertIntoArray, isCUDShown } from 'utils';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
 ));
 
-const SortableItem = SortableElement((props) => <tr {...props} />);
-
-const SortableBody = SortableContainer((props) => <tbody {...props} />);
+const SortableItem = SortableElement(
+	(props: React.HTMLAttributes<HTMLTableRowElement>) => <tr {...props} />,
+);
+const SortableBody = SortableContainer(
+	(props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+		<tbody {...props} />
+	),
+);
 
 export const ProductCategories = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [initialProductCategories, setInitialProductCategories] = useState([]);
 	const [selectedProductCategory, setSelectedProductCategory] = useState(null);
 	const [
 		modifyProductCategoryModalVisible,
@@ -47,86 +53,88 @@ export const ProductCategories = () => {
 	const [isSorted, setIsSorted] = useState(false);
 
 	// REFS
-	const sortedProductCategories = useRef([]);
+	const sortedProductCategoriesRef = useRef([]);
 
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
 	const { user } = useAuth();
 	const {
 		data: { productCategories },
-		isFetching,
+		isFetching: isFetchingProductCategories,
 		error: listError,
 	} = useProductCategories({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
+		mutate: editProductCategory,
+		isLoading: isEditingProductCategory,
+		error: editError,
+	} = useProductCategoryEdit();
+	const {
 		mutate: deleteProductCategory,
-		isLoading,
+		isLoading: isDeletingProductCategory,
 		error: deleteError,
 	} = useProductCategoryDelete();
 
 	// EFFECTS
 	useEffect(() => {
-		const formattedProductCategories = productCategories.map(
-			(productCategory) => ({
-				key: productCategory.id,
-				id: productCategory.id,
-				name: productCategory.name,
-				actions: (
-					<TableActions
-						areButtonsDisabled={isConnected === false}
-						onEdit={() => {
-							setSelectedProductCategory(productCategory);
-							setModifyProductCategoryModalVisible(true);
-						}}
-						onRemove={() => deleteProductCategory(productCategory.id)}
-					/>
-				),
-			}),
-		);
+		const sortedProductCategories = cloneDeep(productCategories);
+		sortedProductCategories.sort((a, b) => a.priority_level - b.priority_level);
+		console.log('productCategories', productCategories);
+		console.log('sortedProductCategories', sortedProductCategories);
+		const data = sortedProductCategories.map((productCategory, index) => ({
+			id: productCategory.id,
+			name: productCategory.name,
+			actions: (
+				<TableActions
+					areButtonsDisabled={isConnected === false}
+					onEdit={() => {
+						setSelectedProductCategory(productCategory);
+						setModifyProductCategoryModalVisible(true);
+					}}
+					onRemove={() => deleteProductCategory(productCategory.id)}
+				/>
+			),
+			index,
+		}));
 
-		setInitialProductCategories(productCategories);
-
-		setDataSource(formattedProductCategories);
+		setDataSource(data);
 	}, [productCategories, isConnected]);
 
-	const handleEditOrder = useCallback(() => {
-		sortedProductCategories.current.forEach((pc, index) => {
-			const productCategory = initialProductCategories[index];
+	const handleSaveEdits = useCallback(() => {
+		console.log('sortedProductCategories', sortedProductCategoriesRef);
 
-			if (productCategory.id !== pc.id) {
-				const onlineUrl = user?.branch?.online_url;
-
-				if (onlineUrl) {
-					ProductCategoriesService.edit(
-						pc.id,
-						{
-							name: pc.name,
-							priority_level: index,
-						},
-						onlineUrl,
-					).catch(() => {
-						// Do nothing
+		sortedProductCategoriesRef.current.forEach(
+			(sortedProductCategory, index) => {
+				if (sortedProductCategory.priority_level !== index) {
+					editProductCategory({
+						id: sortedProductCategory.id,
+						name: sortedProductCategory.name,
+						priorityLevel: index,
 					});
 				}
-			}
-		});
+			},
+		);
 
 		setIsSorted(false);
-	}, [sortedProductCategories.current, initialProductCategories]);
+	}, [sortedProductCategoriesRef.current]);
 
 	const getColumns = useCallback(() => {
-		const columns: ColumnsType = [{ title: 'Name', dataIndex: 'name' }];
+		const columns: ColumnsType = [
+			{ title: 'Name', dataIndex: 'name', className: 'drag-visible' },
+		];
 
 		if (isCUDShown(user.user_type)) {
 			columns.unshift({
 				title: isSorted && (
-					<Button
-						icon={<SaveOutlined />}
-						shape="round"
-						type="primary"
-						onClick={handleEditOrder}
-					/>
+					<Tooltip title="Save Order">
+						<Button
+							icon={<SaveOutlined />}
+							shape="round"
+							type="primary"
+							onClick={handleSaveEdits}
+						/>
+					</Tooltip>
 				),
 				dataIndex: 'sort',
 				width: 80,
@@ -143,16 +151,14 @@ export const ProductCategories = () => {
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		if (oldIndex !== newIndex) {
 			const newData = arrayMoveImmutable(
-				[].concat(dataSource),
+				dataSource.slice(),
 				oldIndex,
 				newIndex,
 			).filter((el) => !!el);
 
 			setDataSource(newData);
-
 			setIsSorted(true);
-
-			sortedProductCategories.current = newData;
+			sortedProductCategoriesRef.current = newData;
 		}
 	};
 
@@ -196,6 +202,7 @@ export const ProductCategories = () => {
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(editError?.errors),
 					]}
 					withSpaceBottom
 				/>
@@ -209,9 +216,14 @@ export const ProductCategories = () => {
 						},
 					}}
 					dataSource={dataSource}
-					loading={isFetching || isLoading}
+					loading={
+						isFetchingProductCategories ||
+						isDeletingProductCategory ||
+						isEditingProductCategory
+					}
 					pagination={false}
-					scroll={{ x: 800 }}
+					// Intentionally used `index` as row key to make the draggable work
+					rowKey="index"
 				/>
 			</Box>
 
