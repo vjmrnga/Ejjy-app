@@ -25,7 +25,7 @@ export const Logs = () => {
 	// METHODS
 	useEffect(() => {
 		if (!currentTab) {
-			onTabClick(logsTabs.BRANCH);
+			onTabClick(logsTabs.USER);
 		}
 	}, [currentTab]);
 
