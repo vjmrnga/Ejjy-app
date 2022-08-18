@@ -451,10 +451,18 @@ export const ModifyProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
+							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								id="unitOfMeasurement"
 								items={unitOfMeasurementOptions}
+								onChange={(value) => {
+									if (value === unitOfMeasurementTypes.WEIGHING) {
+										setFieldValue(
+											'sellingBarcode',
+											product?.selling_barcode || '',
+										);
+									}
+								}}
 							/>
 							<ErrorMessage
 								name="unitOfMeasurement"
@@ -477,11 +485,11 @@ export const ModifyProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
+							<Label label="&nbsp;" spacing />
 							<FormRadioButton
-								disabled={!values.sellingBarcode}
 								id="sellingBarcodeUnitOfMeasurement"
 								items={unitOfMeasurementOptions}
+								disabled
 							/>
 							<ErrorMessage
 								name="sellingBarcodeUnitOfMeasurement"
@@ -499,7 +507,7 @@ export const ModifyProductForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label label="TT-002" spacing />
+							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								disabled={!values.packingBarcode}
 								id="packingBarcodeUnitOfMeasurement"
