@@ -1,14 +1,13 @@
 import { Col, Row, Select } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
-	Content,
 	RequestErrors,
 	TableActions,
 	TableHeader,
 	TimeRangeFilter,
 	ViewCashBreakdownModal,
 } from 'components';
-import { Box, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import {
 	cashBreakdownCategories,
 	cashBreakdownTypes,
@@ -28,6 +27,7 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
+	filterOption,
 	formatDateTime,
 	getCashBreakdownTypeDescription,
 	getFullName,
@@ -64,7 +64,7 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
-export const CashBreakdowns = () => {
+export const TabCashBreakdowns = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedCashBreakdown, setSelectedCashBreakdown] = useState(null);
@@ -84,7 +84,7 @@ export const CashBreakdowns = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedCashBreakdowns = cashBreakdowns.map((cashBreakdown) => ({
+		const data = cashBreakdowns.map((cashBreakdown) => ({
 			key: cashBreakdown.id,
 			datetime: formatDateTime(cashBreakdown.datetime_created),
 			type: getCashBreakdownTypeDescription(
@@ -102,54 +102,51 @@ export const CashBreakdowns = () => {
 			),
 		}));
 
-		setDataSource(formattedCashBreakdowns);
+		setDataSource(data);
 	}, [cashBreakdowns]);
 
 	return (
-		<Content title="Cash Breakdowns">
-			<Box>
-				<TableHeader title="Cash Breakdowns" />
+		<>
+			<TableHeader title="Cash Breakdowns" wrapperClassName="pt-2 px-0" />
 
-				<RequestErrors
-					className="px-6"
-					errors={convertIntoArray(listError)}
-					withSpaceBottom
-				/>
+			<RequestErrors
+				className="px-6"
+				errors={convertIntoArray(listError)}
+				withSpaceBottom
+			/>
 
-				<Filter isLoading={isFetching} />
+			<Filter isLoading={isFetching} />
 
-				<Table
-					columns={columns}
-					dataSource={dataSource}
-					loading={isFetching}
-					pagination={{
-						current: Number(params.page) || DEFAULT_PAGE,
-						total,
-						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-						onChange: (page, newPageSize) => {
-							setQueryParams({
-								page,
-								pageSize: newPageSize,
-							});
-						},
-						disabled: !dataSource,
-						position: ['bottomCenter'],
-						pageSizeOptions,
+			<Table
+				columns={columns}
+				dataSource={dataSource}
+				loading={isFetching}
+				pagination={{
+					current: Number(params.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
+					disabled: !dataSource,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				scroll={{ x: 800 }}
+			/>
+
+			{selectedCashBreakdown && (
+				<ViewCashBreakdownModal
+					cashBreakdown={selectedCashBreakdown}
+					onClose={() => {
+						setSelectedCashBreakdown(null);
 					}}
-					scroll={{ x: 800 }}
-					bordered
 				/>
-
-				{selectedCashBreakdown && (
-					<ViewCashBreakdownModal
-						cashBreakdown={selectedCashBreakdown}
-						onClose={() => {
-							setSelectedCashBreakdown(null);
-						}}
-					/>
-				)}
-			</Box>
-		</Content>
+			)}
+		</>
 	);
 };
 
@@ -171,7 +168,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	});
 
 	return (
-		<Row className="mb-4 px-6" gutter={[16, 16]}>
+		<Row className="mb-4" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
 				<TimeRangeFilter disabled={isLoading} />
 			</Col>
@@ -181,12 +178,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					disabled={isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
 					value={params.cbType}
 					allowClear
@@ -239,12 +231,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					defaultValue={params.branchMachineId}
 					disabled={isFetchingBranchMachines || isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
 					showSearch
@@ -269,12 +256,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					defaultValue={params.creatingUserId}
 					disabled={isFetchingUsers || isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
 					showSearch

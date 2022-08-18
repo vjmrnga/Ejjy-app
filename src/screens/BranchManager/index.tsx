@@ -12,7 +12,6 @@ import {
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { CashBreakdowns } from 'screens/BranchManager/CashBreakdowns';
 import { Checkings } from 'screens/BranchManager/Checkings';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { Logs } from 'screens/BranchManager/Logs';
@@ -231,13 +230,6 @@ const BranchManager = () => {
 				link: '/branch-manager/checkings',
 			},
 			{
-				key: 'cash-breakdowns',
-				name: 'Cash Breakdowns',
-				activeIcon: require('../../assets/images/icon-sales-active.svg'),
-				defaultIcon: require('../../assets/images/icon-sales.svg'),
-				link: '/branch-manager/cash-breakdowns',
-			},
-			{
 				key: 'site-settings',
 				name: 'Site Settings',
 				activeIcon: require('../../assets/images/icon-settings-active.svg'),
@@ -378,12 +370,6 @@ const BranchManager = () => {
 					<Route
 						component={ViewChecking}
 						path="/branch-manager/checkings/:id"
-						exact
-					/>
-
-					<Route
-						component={CashBreakdowns}
-						path="/branch-manager/cash-breakdowns"
 						exact
 					/>
 
