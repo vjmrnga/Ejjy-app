@@ -295,14 +295,14 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								colon={false}
 								column={1}
 								labelStyle={{
-									width: 200,
+									width: 100,
 									paddingLeft: 15,
 								}}
 								size="small"
 							>
-								{Object.keys(fields).map((key) => (
+								{fields.map(({ key, value }) => (
 									<Descriptions.Item key={key} label={key}>
-										{fields[key]}
+										{value}
 									</Descriptions.Item>
 								))}
 							</Descriptions>
