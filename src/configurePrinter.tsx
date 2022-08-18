@@ -459,7 +459,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 	const address = orderOfPayment.payor.home_address;
 	const amount = formatInPeso(orderOfPayment.amount, 'P');
 	const invoiceId =
-		orderOfPayment?.charge_sales_transaction?.invoice?.id || '&nbsp;';
+		orderOfPayment?.charge_sales_transaction?.invoice?.or_number || '&nbsp;';
 	const invoiceDate = orderOfPayment?.charge_sales_transaction
 		? formatDateTime(
 				orderOfPayment.charge_sales_transaction.invoice.datetime_created,
@@ -505,7 +505,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 				<span style="${letterStyles}">${payor}</span> from
 				<span style="${letterStyles}; min-width: 300px">${address}</span> in the amount of
 				<span style="${letterStyles}">${amount}</span> for payment of
-				<span style="${letterStyles}">${purposeDescription}</span> per Bill/SOA No.
+				<span style="${letterStyles}">${purposeDescription}</span> per Charge Invoice No.
 				<span style="${letterStyles}">${invoiceId}</span> dated
 				<span style="${letterStyles}">${invoiceDate}</span>.
 			</div>
@@ -517,7 +517,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 			<br/>
 
 			<div style="padding: 0 12px; width: 60%; border-top: 2px solid black; float:right; text-align: center;">
-				Head of the General Manager/Authorized Official
+				Manager/Authorized Official
 			</div>
 		</div>
 	`;

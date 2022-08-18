@@ -13,9 +13,10 @@ interface Props {
 	id: string;
 	items: Item[];
 	disabled?: boolean;
+	onChange?: any;
 }
 
-const FormRadioButton = ({ id, items, disabled }: Props) => {
+const FormRadioButton = ({ id, items, disabled, onChange }: Props) => {
 	const [field, , helpers] = useField(id);
 
 	return (
@@ -30,7 +31,10 @@ const FormRadioButton = ({ id, items, disabled }: Props) => {
 							value === field.value && disabled,
 					})}
 					type="button"
-					onClick={() => helpers.setValue(value)}
+					onClick={() => {
+						helpers.setValue(value);
+						onChange?.(value);
+					}}
 				>
 					<span>{label}</span>
 					{value === field.value && (
