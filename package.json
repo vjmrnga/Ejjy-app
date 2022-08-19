@@ -1,7 +1,7 @@
 {
 	"name": "ejjy",
 	"productName": "EJJY Inventory",
-	"version": "0.1.184",
+	"version": "0.1.186",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
