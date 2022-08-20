@@ -52,10 +52,8 @@ export const useProductCategoryCreate = () => {
 	);
 };
 
-export const useProductCategoryEdit = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
+export const useProductCategoryEdit = () =>
+	useMutation<any, any, any>(
 		({ id, name, priorityLevel }: any) =>
 			ProductCategoriesService.edit(
 				id,
@@ -65,13 +63,8 @@ export const useProductCategoryEdit = () => {
 				},
 				getOnlineApiUrl(),
 			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useProductCategories');
-			},
-		},
+		{},
 	);
-};
 
 export const useProductCategoryDelete = () => {
 	const queryClient = useQueryClient();

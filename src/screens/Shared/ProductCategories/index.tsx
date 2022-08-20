@@ -1,5 +1,5 @@
-import { MenuOutlined, SaveOutlined } from '@ant-design/icons';
-import { Button, Table, Tooltip } from 'antd';
+import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
+import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
 import {
@@ -21,12 +21,13 @@ import {
 } from 'hooks';
 import { cloneDeep } from 'lodash';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	SortableContainer,
 	SortableElement,
 	SortableHandle,
 } from 'react-sortable-hoc';
+import { useDebouncedCallback } from 'use-debounce';
 import { convertIntoArray, isCUDShown } from 'utils';
 
 const DragHandle = SortableHandle(() => (
@@ -50,10 +51,6 @@ export const ProductCategories = () => {
 		modifyProductCategoryModalVisible,
 		setModifyProductCategoryModalVisible,
 	] = useState(false);
-	const [isSorted, setIsSorted] = useState(false);
-
-	// REFS
-	const sortedProductCategoriesRef = useRef([]);
 
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
@@ -77,14 +74,15 @@ export const ProductCategories = () => {
 	} = useProductCategoryDelete();
 
 	// EFFECTS
+
 	useEffect(() => {
 		const sortedProductCategories = cloneDeep(productCategories);
 		sortedProductCategories.sort((a, b) => a.priority_level - b.priority_level);
-		console.log('productCategories', productCategories);
-		console.log('sortedProductCategories', sortedProductCategories);
+
 		const data = sortedProductCategories.map((productCategory, index) => ({
 			id: productCategory.id,
 			name: productCategory.name,
+			priorityLevel: productCategory.priority_level,
 			actions: (
 				<TableActions
 					areButtonsDisabled={isConnected === false}
@@ -101,23 +99,17 @@ export const ProductCategories = () => {
 		setDataSource(data);
 	}, [productCategories, isConnected]);
 
-	const handleSaveEdits = useCallback(() => {
-		console.log('sortedProductCategories', sortedProductCategoriesRef);
-
-		sortedProductCategoriesRef.current.forEach(
-			(sortedProductCategory, index) => {
-				if (sortedProductCategory.priority_level !== index) {
-					editProductCategory({
-						id: sortedProductCategory.id,
-						name: sortedProductCategory.name,
-						priorityLevel: index,
-					});
-				}
-			},
-		);
-
-		setIsSorted(false);
-	}, [sortedProductCategoriesRef.current]);
+	const handleSaveEdits = useDebouncedCallback((sortedProductCategories) => {
+		sortedProductCategories.forEach((productCategory, index) => {
+			if (productCategory.priorityLevel !== index) {
+				editProductCategory({
+					id: productCategory.id,
+					name: productCategory.name,
+					priorityLevel: index,
+				});
+			}
+		});
+	}, 500);
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType = [
@@ -126,15 +118,8 @@ export const ProductCategories = () => {
 
 		if (isCUDShown(user.user_type)) {
 			columns.unshift({
-				title: isSorted && (
-					<Tooltip title="Save Order">
-						<Button
-							icon={<SaveOutlined />}
-							shape="round"
-							type="primary"
-							onClick={handleSaveEdits}
-						/>
-					</Tooltip>
+				title: isEditingProductCategory && (
+					<LoadingOutlined style={{ fontSize: 16 }} spin />
 				),
 				dataIndex: 'sort',
 				width: 80,
@@ -146,7 +131,7 @@ export const ProductCategories = () => {
 		}
 
 		return columns;
-	}, [user, isSorted]);
+	}, [user, isEditingProductCategory]);
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		if (oldIndex !== newIndex) {
@@ -157,8 +142,7 @@ export const ProductCategories = () => {
 			).filter((el) => !!el);
 
 			setDataSource(newData);
-			setIsSorted(true);
-			sortedProductCategoriesRef.current = newData;
+			handleSaveEdits(newData);
 		}
 	};
 
@@ -216,11 +200,7 @@ export const ProductCategories = () => {
 						},
 					}}
 					dataSource={dataSource}
-					loading={
-						isFetchingProductCategories ||
-						isDeletingProductCategory ||
-						isEditingProductCategory
-					}
+					loading={isFetchingProductCategories || isDeletingProductCategory}
 					pagination={false}
 					// Intentionally used `index` as row key to make the draggable work
 					rowKey="index"
