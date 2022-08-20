@@ -50,10 +50,14 @@ export const Users = () => {
 	// METHODS
 	useEffect(() => {
 		const data = users
-			.filter(
-				(user) =>
-					!(user.username === 'dev' || user.user_type === userTypes.ADMIN),
-			)
+			.filter((user) => {
+				const isDev = user.username === 'dev';
+
+				const isAdminAndNotStandalone =
+					user.user_type === userTypes.ADMIN && !isStandAlone();
+
+				return !(isDev || isAdminAndNotStandalone);
+			})
 			.map((user) => ({
 				key: user.id,
 				id: user.employee_id,
