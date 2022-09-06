@@ -16,10 +16,7 @@ export const BranchMachinesInfo = () => (
 			accumsan pharetra mauris faucibus porttitor. Suspendisse nec bibendum
 			metus. Sed elementum neque sem, nec pellentesque ligula malesuada at.
 		</p>
-		<Image
-			src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg"
-			width={400}
-		/>
+		<Image src={require('./images/placeholder.svg')} width={400} />
 		<p>
 			Etiam lobortis magna vitae magna dapibus sollicitudin. Suspendisse
 			potenti. Morbi et sem eu neque viverra bibendum. Aenean dignissim eros nec
