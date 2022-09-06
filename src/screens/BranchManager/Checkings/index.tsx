@@ -1,7 +1,7 @@
 import { Col, Radio, Row, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
-import { BadgePill, Box, Label } from 'components/elements';
+import { Box, Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -19,8 +19,13 @@ const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Date & Time Requested', dataIndex: 'datetimeRequested' },
 	{ title: 'Date & Time Fulfilled', dataIndex: 'datetimeFulfilled' },
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Status', dataIndex: 'status' },
+	{ title: 'Type', dataIndex: 'type', align: 'center' },
+	{
+		title: 'Fulfillment Status',
+		dataIndex: 'fulfillmentStatus',
+		align: 'center',
+	},
+	{ title: 'Status', dataIndex: 'status', align: 'center' },
 ];
 
 export const Checkings = () => {
@@ -35,7 +40,8 @@ export const Checkings = () => {
 		error: productChecksErrors,
 	} = useProductChecks({
 		params: {
-			isFilledUp: true,
+			isFilledUp:
+				params?.type === productCheckingTypes.DAILY ? false : undefined,
 			...params,
 		},
 	});
@@ -59,10 +65,15 @@ export const Checkings = () => {
 					) : (
 						<Tag color="blue">Random Check</Tag>
 					),
-				status: is_success ? (
-					<BadgePill label="Success" variant="primary" />
+				fulfillmentStatus: datetime_fulfilled ? (
+					<Tag color="green">Fulfilled</Tag>
 				) : (
-					<BadgePill label="Error" variant="error" />
+					<Tag color="orange">Unfulfilled</Tag>
+				),
+				status: is_success ? (
+					<Tag color="green">Success</Tag>
+				) : (
+					<Tag color="red">Error</Tag>
 				),
 			};
 		});
@@ -119,11 +130,11 @@ const Filter = () => {
 			<Col lg={12} span={24}>
 				<Label label="Type" spacing />
 				<Radio.Group
-					defaultValue={params.type || undefined}
+					defaultValue={params.type || 'all'}
 					options={[
 						{ label: 'Daily', value: productCheckingTypes.DAILY },
 						{ label: 'Random', value: productCheckingTypes.RANDOM },
-						{ label: 'All', value: undefined },
+						{ label: 'All', value: 'all' },
 					]}
 					optionType="button"
 					onChange={(e) => {
