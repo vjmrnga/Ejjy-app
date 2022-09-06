@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	BranchMachinesInfo,
 	Content,
 	ModifyBranchMachineModal,
 	RequestErrors,
@@ -88,6 +89,8 @@ export const BranchMachines = () => {
 
 	return (
 		<Content title="Branch Machines">
+			<BranchMachinesInfo />
+
 			<Box>
 				{isCUDShown(user.user_type) && (
 					<TableHeader

@@ -9,6 +9,7 @@ export * from './Details/DetailsHalf';
 export * from './Details/DetailsRow';
 export * from './Details/DetailsSingle';
 export * from './Icons/Icons';
+export * from './info';
 export * from './KeyboardButton/KeyboardButton';
 export * from './modals';
 export * from './NotificationItem';
