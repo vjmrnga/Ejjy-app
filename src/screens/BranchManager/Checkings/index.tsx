@@ -2,6 +2,7 @@ import { Col, Radio, Row, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, Label } from 'components/elements';
+import dayjs from 'dayjs';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -41,42 +42,63 @@ export const Checkings = () => {
 	} = useProductChecks({
 		params: {
 			isFilledUp:
-				params?.type === productCheckingTypes.DAILY ? false : undefined,
+				params?.type === productCheckingTypes.RANDOM ? true : undefined,
 			...params,
 		},
 	});
 
 	// METHODS
 	useEffect(() => {
-		const data = productChecks.map((productCheck) => {
-			const { id, datetime_created, datetime_fulfilled, is_success } =
-				productCheck;
+		const data = productChecks
+			.filter((productCheck) => {
+				if (
+					productCheck.type === productCheckingTypes.DAILY &&
+					!productCheck.datetime_fulfilled &&
+					dayjs.tz(productCheck.datetime_created).isToday()
+				) {
+					// Hide check if:
+					// 1. Daily type
+					// 2. Unfulfilled
+					// 3. Created today
+					return false;
+				}
 
-			return {
-				key: id,
-				id: <Link to={`checkings/${id}`}>{id}</Link>,
-				datetimeRequested: formatDateTime(datetime_created),
-				datetimeFulfilled: datetime_fulfilled
-					? formatDateTime(datetime_fulfilled)
-					: EMPTY_CELL,
-				type:
-					productCheck.type === productCheckingTypes.DAILY ? (
-						<Tag color="purple">Daily Check</Tag>
+				return true;
+			})
+			.map((productCheck) => {
+				const { id, datetime_created, datetime_fulfilled, is_success } =
+					productCheck;
+
+				let status = <Tag color="yellow">Pending</Tag>;
+				if (datetime_fulfilled) {
+					status = is_success ? (
+						<Tag color="green">Success</Tag>
 					) : (
-						<Tag color="blue">Random Check</Tag>
+						<Tag color="red">Error</Tag>
+					);
+				}
+
+				return {
+					key: id,
+					id: <Link to={`checkings/${id}`}>{id}</Link>,
+					datetimeRequested: formatDateTime(datetime_created),
+					datetimeFulfilled: datetime_fulfilled
+						? formatDateTime(datetime_fulfilled)
+						: EMPTY_CELL,
+					type:
+						productCheck.type === productCheckingTypes.DAILY ? (
+							<Tag color="purple">Daily Check</Tag>
+						) : (
+							<Tag color="blue">Random Check</Tag>
+						),
+					fulfillmentStatus: datetime_fulfilled ? (
+						<Tag color="green">Fulfilled</Tag>
+					) : (
+						<Tag color="orange">Unfulfilled</Tag>
 					),
-				fulfillmentStatus: datetime_fulfilled ? (
-					<Tag color="green">Fulfilled</Tag>
-				) : (
-					<Tag color="orange">Unfulfilled</Tag>
-				),
-				status: is_success ? (
-					<Tag color="green">Success</Tag>
-				) : (
-					<Tag color="red">Error</Tag>
-				),
-			};
-		});
+					status,
+				};
+			});
 
 		setDataSource(data);
 	}, [productChecks]);

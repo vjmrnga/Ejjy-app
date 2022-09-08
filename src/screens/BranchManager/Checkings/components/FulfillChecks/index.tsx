@@ -39,6 +39,7 @@ export const FulfillChecking = () => {
 		params: {
 			isFilledUp: false,
 			type: productCheckingTypes.DAILY,
+			onlyOfToday: true,
 		},
 	});
 	const {
@@ -49,7 +50,6 @@ export const FulfillChecking = () => {
 		params: {
 			type: productCheckingTypes.RANDOM,
 			isFilledUp: false,
-			onlyOfToday: true,
 		},
 	});
 

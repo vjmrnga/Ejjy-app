@@ -209,17 +209,17 @@ const getHeader = (headerData) => {
 		tin,
 	} = siteSettings;
 	const {
-		name,
-		machine_identification_number: machineID,
-		permit_to_use: ptuNumber,
-		pos_terminal: posTerminal,
+		name = '',
+		machine_identification_number: machineID = '',
+		permit_to_use: ptuNumber = '',
+		pos_terminal: posTerminal = '',
 	} = branchMachine || {};
 
 	return `
     <div style="text-align: center; display: flex; flex-direction: column">
       <span style="white-space: pre-line">${storeName}</span>
       <span style="white-space: pre-line">${location}</span>
-      <span>${contactNumber} | ${name}</span>
+      <span>${contactNumber} ${name ? '| ' + name : ''}</span>
       <span>${proprietor}</span>
       <span>${taxType} | ${tin}</span>
       <span>${machineID}</span>
