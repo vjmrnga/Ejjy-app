@@ -1,5 +1,7 @@
 import axios from 'axios';
 
-export const service = {
+const service = {
 	test: async (baseURL) => axios.get('branches/', { baseURL }),
 };
+
+export default service;

@@ -27,6 +27,7 @@ export * from './useData';
 export * from './useDiscountOptions';
 export { default as useDiscountOptions } from './useDiscountOptions';
 export { default as useLogs } from './useLogs';
+export { default as useNetwork } from './useNetwork';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
 export { default as usePingOnlineServer } from './usePingOnlineServer';

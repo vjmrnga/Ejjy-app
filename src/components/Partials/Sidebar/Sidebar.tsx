@@ -1,15 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Layout, Tooltip } from 'antd';
+import { Layout } from 'antd';
 import cn from 'classnames';
+import { userTypes } from 'global';
+import { useAuth } from 'hooks';
 import React, { useCallback, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { getUserTypeName } from 'utils';
-import { ONLINE_ROUTES } from '../../../global/constants';
-import { userTypes } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useNetwork } from '../../../hooks/useNetwork';
 import { useUI } from '../../../hooks/useUI';
 import './style.scss';
 
@@ -24,7 +22,8 @@ export const Sidebar = ({ items }: Props) => {
 	// CUSTOM HOOKS
 	const { pathname } = useLocation();
 	const { user, logout } = useAuth();
-	const { hasInternetConnection } = useNetwork();
+	// TODO: Create a reducer for this which will be updated everytime network check is done
+	// const { hasInternetConnection } = useNetwork();
 	const { isSidebarCollapsed, onCollapseSidebar } = useUI();
 
 	// METHODS
@@ -79,7 +78,7 @@ export const Sidebar = ({ items }: Props) => {
 								</span>
 							)}
 
-							{ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
+							{/* {ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
 								<Tooltip title="Locked if no internet">
 									<img
 										alt={item.name}
@@ -87,7 +86,7 @@ export const Sidebar = ({ items }: Props) => {
 										src={require('../../../assets/images/icon-lock.svg')}
 									/>
 								</Tooltip>
-							)}
+							)} */}
 						</div>
 					</Link>
 				))}

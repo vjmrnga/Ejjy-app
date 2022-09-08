@@ -23,6 +23,7 @@ export { default as CreditRegistrationsService } from './CreditRegistrationsServ
 export { default as DataService } from './DataService';
 export { default as DiscountOptionsService } from './DiscountOptionsService';
 export { default as LogsService } from './LogsService';
+export { default as NetworkService } from './NetworkService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
 export { default as PointSystemTagsService } from './PointSystemTagsService';
 export { default as PointTransactionsService } from './PointTransactionsService';

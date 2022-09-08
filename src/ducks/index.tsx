@@ -7,7 +7,6 @@ import history from '../utils/history';
 import { adminReducers } from './Admin';
 import authReducer, { key as AUTH_KEY, types } from './auth';
 import { branchManagerReducers } from './BranchManager';
-import networkReducer, { key as NETWORK_KEY } from './network';
 import { officeManagerReducers } from './OfficeManager';
 import requestReducer, { REQUEST_KEY } from './request';
 import requisitionSlipsReducer, {
@@ -21,7 +20,6 @@ const appReducer = combineReducers({
 	[REQUEST_KEY]: requestReducer,
 	[REQUISITION_SLIP_KEY]: requisitionSlipsReducer,
 	[UI_KEY]: uiReducer,
-	[NETWORK_KEY]: networkReducer,
 	...adminReducers,
 	...officeManagerReducers,
 	...branchManagerReducers,
