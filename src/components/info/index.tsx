@@ -1,6 +1,8 @@
 export * from './AccountsInfo';
 export * from './BackOrdersInfo';
+export * from './BranchesInfo';
 export * from './BranchMachinesInfo';
+export * from './BranchManagerUsersInfo';
 export * from './CheckingInfo';
 export * from './DashboardInfo';
 export * from './DiscountOptionsInfo';
@@ -12,5 +14,5 @@ export * from './ReportsInfo';
 export * from './SalesInfo';
 export * from './SiteSettingsInfo';
 export * from './StocksInfo';
-export * from './UsersInfo';
+export * from './ViewBranchInfo';
 export * from './ViewBranchMachineInfo';

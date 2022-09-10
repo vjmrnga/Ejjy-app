@@ -1,6 +1,7 @@
 import { Tabs } from 'antd';
 import { AddIcon, ConnectionAlert, Content, ModifyUserModal } from 'components';
 import { Box, Button } from 'components/elements';
+import { OfficeManagerUsersInfo } from 'components/info/OfficeManagerUsersInfo';
 import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -45,6 +46,8 @@ export const Users = () => {
 	return (
 		<Content title="Users">
 			<ConnectionAlert />
+
+			<OfficeManagerUsersInfo />
 
 			<Box>
 				<Tabs

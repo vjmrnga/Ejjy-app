@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	BranchesInfo,
 	ConnectionAlert,
 	Content,
 	ModifyBranchModal,
@@ -67,6 +68,8 @@ export const Branches = () => {
 	return (
 		<Content className="Branches" title="Branches">
 			<ConnectionAlert />
+
+			<BranchesInfo />
 
 			<Box>
 				<TableHeader
