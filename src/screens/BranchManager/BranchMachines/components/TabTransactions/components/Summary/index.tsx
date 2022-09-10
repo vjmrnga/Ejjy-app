@@ -10,8 +10,9 @@ interface Props {
 	branchMachineId: number;
 }
 
-const Component = ({ branchMachineId }: Props) => {
+export const Summary = ({ branchMachineId }: Props) => {
 	const { params } = useQueryParams();
+
 	const {
 		data: { summary = null } = {},
 		error: transactionsSummaryError,
@@ -72,7 +73,7 @@ const Component = ({ branchMachineId }: Props) => {
 
 					<Col md={16} sm={16} xs={24}>
 						<Statistic
-							title="Vat Payable"
+							title="Vat Amount"
 							value={formatInPeso(summary?.vat_amount)}
 						/>
 					</Col>
@@ -100,5 +101,3 @@ const Component = ({ branchMachineId }: Props) => {
 		</div>
 	);
 };
-
-export const Summary = React.memo(Component);

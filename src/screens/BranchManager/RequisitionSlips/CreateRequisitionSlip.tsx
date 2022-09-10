@@ -57,7 +57,6 @@ export const CreateRequisitionSlip = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// REFS
-	const formRef = useRef(null);
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
@@ -338,7 +337,6 @@ export const CreateRequisitionSlip = () => {
 
 				<Formik
 					initialValues={getFormDetails().DefaultValues}
-					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
 					enableReinitialize
 					onSubmit={async () => {

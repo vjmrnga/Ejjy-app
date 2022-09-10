@@ -61,10 +61,11 @@ const App = () => {
 			<Helmet title={`${APP_TITLE} (v${npmPackage.version})`} />
 
 			<Spin
+				className="GlobalSpinner"
 				size="large"
 				spinning={isConnectingNetwork || isInitializingData}
+				style={{ width: '100vw', height: '100vh' }}
 				tip={getLoadingMessage()}
-				wrapperClassName="GlobalSpinner"
 			>
 				<Switch>
 					<NoAuthRoute component={Login} path="/login" exact />

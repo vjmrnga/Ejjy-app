@@ -6,13 +6,13 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import * as Yup from 'yup';
 import {
 	convertIntoArray,
 	convertToPieces,
 	getBranchProductStatus,
 	sleep,
 } from 'utils';
+import * as Yup from 'yup';
 import { Content, RequestErrors, TableHeader } from '../../../components';
 import {
 	Box,
@@ -56,7 +56,6 @@ export const CreateReturnItemSlip = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// REFS
-	const formRef = useRef(null);
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
@@ -329,7 +328,6 @@ export const CreateReturnItemSlip = () => {
 
 				<Formik
 					initialValues={getFormDetails().DefaultValues}
-					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
 					enableReinitialize
 					onSubmit={async () => {

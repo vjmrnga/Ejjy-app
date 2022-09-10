@@ -68,7 +68,6 @@ export const CreateStockIn = () => {
 		useState(false);
 
 	// REFS
-	const formRef = useRef(null);
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
@@ -336,7 +335,6 @@ export const CreateStockIn = () => {
 
 				<Formik
 					initialValues={getFormDetails().DefaultValues}
-					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
 					enableReinitialize
 					onSubmit={() => {

@@ -48,7 +48,6 @@ export const CreateBackOrder = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// REFS
-	const formRef = useRef(null);
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
@@ -318,7 +317,6 @@ export const CreateBackOrder = () => {
 
 				<Formik
 					initialValues={getFormDetails().DefaultValues}
-					innerRef={formRef}
 					validationSchema={getFormDetails().Schema}
 					enableReinitialize
 					onSubmit={async () => {
