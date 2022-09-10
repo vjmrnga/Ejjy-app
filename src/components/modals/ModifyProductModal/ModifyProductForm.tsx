@@ -105,15 +105,22 @@ export const ModifyProductForm = ({
 		() => ({
 			DefaultValues: {
 				actingUserId: getId(user),
-				allowableSpoilage: product?.allowable_spoilage * 100 || '',
+				allowableSpoilage:
+					(branchProduct?.allowable_spoilage || product?.allowable_spoilage) *
+						100 || '',
 				barcode: product?.barcode || '',
 				sellingBarcode: product?.selling_barcode || '',
 				packingBarcode: product?.packing_barcode || '',
-				costPerBulk: product?.cost_per_bulk || '',
-				costPerPiece: product?.cost_per_piece || '',
+				costPerBulk:
+					branchProduct?.cost_per_bulk || product?.cost_per_bulk || '',
+				costPerPiece:
+					branchProduct?.cost_per_piece || product?.cost_per_piece || '',
 				description: product?.description || '',
 				hasQuantityAllowance: product?.has_quantity_allowance || false,
-				isShownInScaleList: product?.is_shown_in_scale_list || false,
+				isShownInScaleList:
+					branchProduct?.is_shown_in_scale_list ||
+					product?.is_shown_in_scale_list ||
+					false,
 				isVatExempted:
 					siteSettings.tax_type === taxTypes.NVAT
 						? 'true'
@@ -122,21 +129,23 @@ export const ModifyProductForm = ({
 				maxBalance: product?.max_balance
 					? formatQuantity({
 							unitOfMeasurement: product?.unit_of_measurement,
-							quantity: product.max_balance,
+							quantity: branchProduct?.max_balance || product.max_balance,
 					  })
 					: '',
 				name: product?.name || '',
 				piecesInBulk: product?.pieces_in_bulk,
 				conversionAmount: product?.conversion_amount || '',
 				pointSystemTagId: getId(product?.point_system_tag),
-				pricePerBulk: product?.price_per_bulk || '',
-				pricePerPiece: product?.price_per_piece || '',
+				pricePerBulk:
+					branchProduct?.price_per_bulk || product?.price_per_bulk || '',
+				pricePerPiece:
+					branchProduct?.price_per_piece || product?.price_per_piece || '',
 				printDetails: product?.print_details || '',
 				productCategory: product?.product_category,
 				reorderPoint: product?.reorder_point
 					? formatQuantity({
-							unitOfMeasurement: product?.unit_of_measurement,
-							quantity: product.reorder_point,
+							unitOfMeasurement: product.unit_of_measurement,
+							quantity: branchProduct?.reorder_point || product.reorder_point,
 					  })
 					: '',
 				textcode: product?.textcode || '',

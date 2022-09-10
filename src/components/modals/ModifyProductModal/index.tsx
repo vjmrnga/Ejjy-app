@@ -22,7 +22,6 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	const [isCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
-
 	const { data: branchProduct, isFetching: isFetchingBranchProduct } =
 		useBranchProductRetrieve({
 			id: getId(product),
