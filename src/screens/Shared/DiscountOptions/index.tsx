@@ -3,6 +3,7 @@ import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectionAlert,
 	Content,
+	DiscountOptionsInfo,
 	ModifyDiscountOptionModal,
 	RequestErrors,
 	TableActions,
@@ -122,6 +123,8 @@ export const DiscountOptions = () => {
 	return (
 		<Content title="Discount Options">
 			<ConnectionAlert />
+
+			<DiscountOptionsInfo />
 
 			<Box>
 				{isCUDShown(user.user_type) && (

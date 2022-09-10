@@ -5,6 +5,7 @@ import {
 	ModifyUserModal,
 	RequestErrors,
 	TableHeader,
+	UsersInfo,
 } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE, userTypes } from 'global';
@@ -127,6 +128,8 @@ export const Users = () => {
 
 	return (
 		<Content title="Users">
+			<UsersInfo />
+
 			<Box>
 				{isCUDShown(currentUser.user_type) && (
 					<TableHeader

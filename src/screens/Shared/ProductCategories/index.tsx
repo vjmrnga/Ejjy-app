@@ -6,6 +6,7 @@ import {
 	ConnectionAlert,
 	Content,
 	ModifyProductCategoryModal,
+	ProductCategoriesInfo,
 	RequestErrors,
 	TableActions,
 	TableHeader,
@@ -167,6 +168,8 @@ export const ProductCategories = () => {
 
 	return (
 		<Content title="Product Categories">
+			<ProductCategoriesInfo />
+
 			<ConnectionAlert />
 
 			<Box>

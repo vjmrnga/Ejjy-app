@@ -15,6 +15,7 @@ import {
 	Content,
 	RequestErrors,
 	ScrollToFieldError,
+	SiteSettingsInfo,
 } from 'components';
 import {
 	Box,
@@ -323,6 +324,8 @@ export const SiteSettings = () => {
 	return (
 		<Content title="Site Settings">
 			<ConnectionAlert />
+
+			<SiteSettingsInfo />
 
 			<Box padding>
 				<Spin spinning={isFetching}>

@@ -30,7 +30,7 @@ import { Products } from 'screens/Shared/Products';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { isStandAlone } from 'utils';
 import { Accounts } from '../Shared/Accounts';
-import { BackOrders } from './BackOrders/BackOrders';
+import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
 import { BranchMachines } from './BranchMachines';
 import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';

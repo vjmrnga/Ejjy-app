@@ -1,5 +1,5 @@
 import { Button, Tabs } from 'antd';
-import { Content } from 'components';
+import { Content, StocksInfo } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -36,6 +36,8 @@ export const Stocks = () => {
 
 	return (
 		<Content title="Stock">
+			<StocksInfo />
+
 			<Box>
 				<Tabs
 					activeKey={_.toString(currentTab)}

@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import { Content, RequestErrors } from 'components';
+import { Content, ReportsInfo, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
 import { useProductCategories } from 'hooks';
@@ -18,6 +18,7 @@ export const Reports = () => {
 
 	return (
 		<Content title="Reports">
+			<ReportsInfo />
 			<Box>
 				<Spin spinning={isLoadingProductCategories}>
 					<RequestErrors

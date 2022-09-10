@@ -6,6 +6,7 @@ import {
 	Content,
 	ModifyProductModal,
 	PricesModal,
+	ProductsInfo,
 	RequestErrors,
 	TableActions,
 	TableHeader,
@@ -147,6 +148,8 @@ export const Products = () => {
 
 	return (
 		<Content title="Products">
+			<ProductsInfo />
+
 			<ConnectionAlert />
 
 			<Box>

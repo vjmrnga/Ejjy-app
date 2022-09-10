@@ -1,5 +1,5 @@
 import { Tabs } from 'antd';
-import { ConnectionAlert, Content } from 'components';
+import { AccountsInfo, ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
 import { usePingOnlineServer, useQueryParams } from 'hooks';
 import { toString } from 'lodash';
@@ -37,6 +37,8 @@ export const Accounts = () => {
 	return (
 		<Content title="Accounts">
 			<ConnectionAlert />
+
+			<AccountsInfo />
 
 			<Box className="ViewBranchMachine">
 				<Tabs

@@ -70,7 +70,7 @@ export const TabUserLogs = () => {
 
 	return (
 		<div>
-			<TableHeader title="Logs" wrapperClassName="pt-2 px-0" />
+			<TableHeader title="User Logs" wrapperClassName="pt-2 px-0" />
 
 			<Filter
 				branchMachines={branchMachines}

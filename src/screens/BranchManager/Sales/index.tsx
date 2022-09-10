@@ -1,6 +1,6 @@
 import { Col, Row, Statistic, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { Content, RequestErrors, TimeRangeFilter } from 'components';
+import { Content, RequestErrors, SalesInfo, TimeRangeFilter } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE, refetchOptions, timeRangeTypes } from 'global';
 import { useBranchMachines, useQueryParams } from 'hooks';
@@ -81,6 +81,7 @@ export const Sales = () => {
 
 	return (
 		<Content title="Sales">
+			<SalesInfo />
 			<Box padding>
 				<Row gutter={[16, 16]}>
 					<Col span={24}>

@@ -1,5 +1,5 @@
 import { Badge, Space, Tabs } from 'antd';
-import { Content } from 'components';
+import { Content, NotificationsInfo } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
 import {
@@ -90,6 +90,8 @@ export const Notifications = () => {
 
 	return (
 		<Content title="Notifications">
+			<NotificationsInfo />
+
 			<Box>
 				<Tabs
 					activeKey={_.toString(currentTab)}

@@ -1,0 +1,40 @@
+.BaseInfo {
+	&__button {
+		position: fixed !important;
+		right: 1.5em;
+		bottom: 1em;
+		z-index: 999;
+	}
+}
+
+.Modal {
+	&__baseInfo {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-weight: bold;
+		}
+
+		img {
+			max-width: 100%;
+		}
+
+		ol,
+		ul {
+			margin-bottom: 1em;
+			padding-left: 1em;
+
+			ol,
+			ul {
+				margin-top: 1em;
+			}
+
+			li {
+				margin-bottom: 1em;
+			}
+		}
+	}
+}
