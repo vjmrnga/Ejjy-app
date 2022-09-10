@@ -196,7 +196,7 @@ export const useBranchProducts = () => {
 	};
 };
 
-const useBranchProductsNew = ({ params }: Query) =>
+const useBranchProductsNew = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchProducts',
@@ -236,7 +236,16 @@ const useBranchProductsNew = ({ params }: Query) =>
 				branchProducts: query.data.results,
 				total: query.data.count,
 			}),
+			...options,
 		},
+	);
+
+export const useBranchProductsOffline = ({ options }: Query) =>
+	useQuery<any>(
+		['useBranchProductsOffline'],
+		() =>
+			wrapServiceWithCatch(BranchProductsService.listOffline(getLocalApiUrl())),
+		options,
 	);
 
 export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>

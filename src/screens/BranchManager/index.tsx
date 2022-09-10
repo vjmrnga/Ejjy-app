@@ -4,6 +4,7 @@ import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranches,
 	useBranchProducts,
+	useBranchProductsOffline,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
@@ -27,6 +28,7 @@ import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
+import { isStandAlone } from 'utils';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders/BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
@@ -71,6 +73,12 @@ const BranchManager = () => {
 	} = useSalesTracker({
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: refetchOptions,
+	});
+	useBranchProductsOffline({
+		options: {
+			...refetchOptions,
+			enabled: !isStandAlone(),
+		},
 	});
 	useUploadData();
 

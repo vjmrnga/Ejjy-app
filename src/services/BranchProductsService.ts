@@ -55,4 +55,12 @@ const service = {
 		axios.patch('/branches-products/update-price-and-cost/', body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (baseURL) =>
+		axios.get('/branches-products/offline/', { baseURL }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};
