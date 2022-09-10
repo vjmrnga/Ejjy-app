@@ -7,12 +7,7 @@ import { EMPTY_CELL, saleTypes, taxTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import {
-	formatDateTime,
-	formatInPeso,
-	formatQuantity,
-	getFullName,
-} from 'utils';
+import { formatDateTime, formatInPeso, getFullName } from 'utils';
 
 interface Props {
 	transaction: any | number;
@@ -52,13 +47,16 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		const products =
 			transaction?.products || transactionRetrieved?.products || [];
 		const formattedProducts = products.map(
-			({ id, branch_product, quantity, price_per_piece }) => ({
+			({
+				id,
+				branch_product,
+				original_quantity,
+				quantity,
+				price_per_piece,
+			}) => ({
 				key: id,
 				item: branch_product.product.name,
-				quantity: formatQuantity({
-					unitOfMeasurement: branch_product.product.unit_of_measurement,
-					quantity,
-				}),
+				quantity: original_quantity,
 				rate: formatInPeso(price_per_piece),
 				amount: formatInPeso(quantity * Number(price_per_piece)),
 			}),
