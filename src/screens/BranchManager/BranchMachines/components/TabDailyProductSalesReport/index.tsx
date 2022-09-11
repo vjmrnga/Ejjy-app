@@ -41,6 +41,11 @@ const columns: ColumnsType = [
 	{ title: 'Remarks', dataIndex: 'remarks' },
 ];
 
+const ALL_STATUS = [
+	transactionStatus.VOID_CANCELLED,
+	transactionStatus.FULLY_PAID,
+].join(',');
+
 interface Props {
 	branchMachineId: number;
 }
@@ -219,19 +224,22 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Radio.Group
-					defaultValue=""
+					defaultValue={ALL_STATUS}
 					options={[
 						{
 							label: 'All',
-							value: '',
+							value: ALL_STATUS,
 						},
 						{
 							label: 'Success',
-							value: 'fully_paid',
+							value: transactionStatus.FULLY_PAID,
 						},
 						{
 							label: 'Voided',
-							value: 'void_edited,void_cancelled',
+							value: [
+								transactionStatus.VOID_CANCELLED,
+								transactionStatus.VOID_EDITED,
+							].join(','),
 						},
 					]}
 					optionType="button"
