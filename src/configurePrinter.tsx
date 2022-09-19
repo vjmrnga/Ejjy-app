@@ -188,7 +188,7 @@ const getFooter = (footerData) => {
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 	const data = `
-		<div style="width: 430pt; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 7pt; line-height: 100%">
+		<div style="width: 430pt; font-family: Arial, sans-serif; font-size: 7pt; line-height: 100%">
 			<div style="text-align: center;">
 					<div style="font-size: 10pt;">EJ AND JY</div>
 					<div>WET MARKET AND ENTERPRISES</div>
@@ -309,7 +309,7 @@ export const printCancelledTransactions = ({
 	const branchMachine = transactions?.[0]?.branch_machine;
 
 	const data = `
-	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
+	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace">
 		<style>
 			td {
 				padding-top: 0;
@@ -412,7 +412,7 @@ export const printOrderOfPayment = (orderOfPayment) => {
 		'display: inline-block; min-width: 225px; padding: 0 8px; border-bottom: 2px solid black; text-align:center; font-weight: bold';
 
 	const data = `
-		<div style="padding: 24px; width: 795px; font-size: 24px; line-height: 140%; font-family: 'Courier', monospace;">
+		<div style="padding: 24px; width: 795px; font-size: 24px; line-height: 140%; font-family: 'Arial', monospace;">
 			<div><b>Entity Name: EJ & JY WET MARKET AND ENTERPRISES</b></div>
 			<div style="display:flex; justify-content: space-between">
 				<div>
@@ -476,7 +476,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 	}
 
 	const data = `
-	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+	<div style="padding: 24px; width: 795px; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace;">
 	${getHeader({
 		branchMachine: collectionReceipt.branch_machine,
 		siteSettings,
@@ -747,7 +747,7 @@ export const printReceivingVoucherForm = ({
 	const products = receivingVoucher.products;
 
 	const data = `
-	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace;">
 		${getHeader({
 			title: 'RECEIVING VOUCHER',
 			siteSettings,
@@ -837,7 +837,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	let totalAmount = 0;
 
 	const data = `
-	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+	<div style="padding: 24px; width: 380px; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace;">
 		${getHeader({
 			title: 'BO SLIP',
 			siteSettings,
@@ -909,7 +909,7 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 
 export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 	const data = `
-	<div class="container" style="width: 100%; position: relative; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace;">
+	<div class="container" style="width: 100%; position: relative; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace;">
 		${getHeader({
 			branchMachine: report.branch_machine,
 			siteSettings,
@@ -1181,7 +1181,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 			width: 100%;
 			font-size: 16px;
 			line-height: 100%;
-			font-family: 'Courier', monospace;
+			font-family: 'Arial', monospace;
 		"
 	>
 		${getHeader({
@@ -1535,7 +1535,7 @@ export const printCashBreakdown = ({
 	);
 
 	const data = `
-	<div class="container" style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
+	<div class="container" style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace">
 		<style>
 			td {
 				padding-top: 0;
@@ -1659,7 +1659,7 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 	const branchMachine = cashOut.branch_machine;
 
 	const data = `
-	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Courier', monospace">
+	<div style="width: 100%; font-size: 16px; line-height: 100%; font-family: 'Arial', monospace">
 		<div style="text-align: center; display: flex; flex-direction: column">
       <span style="white-space: pre-line">${siteSettings.store_name}</span>
       <span style="white-space: pre-line">${
