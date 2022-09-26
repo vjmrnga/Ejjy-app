@@ -1,4 +1,4 @@
-import { Col, message, Modal, Row, Select, Spin } from 'antd';
+import { Col, Input, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
 import {
 	Button,
@@ -9,7 +9,11 @@ import {
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
-import { useAccounts, useOrderOfPaymentsCreate } from 'hooks';
+import {
+	useAccounts,
+	useCheckInvoiceValidity,
+	useOrderOfPaymentsCreate,
+} from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -34,16 +38,41 @@ export const CreateOrderOfPaymentModal = ({
 	onSuccess,
 	onClose,
 }: ModalProps) => {
+	// STATES
+	const [invoiceValidityError, setInvoiceValidityError] = useState(null);
+
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
 		mutateAsync: createOrderOfPayment,
-		isLoading,
+		isLoading: isCreating,
 		error: createError,
 	} = useOrderOfPaymentsCreate();
+	const {
+		mutateAsync: checkInvoiceValidity,
+		isLoading: isChecking,
+		error: checkInvoiceValidityError,
+	} = useCheckInvoiceValidity();
 
 	// METHODS
 	const onCreate = async (formData) => {
+		if (invoiceValidityError) {
+			setInvoiceValidityError(null);
+		}
+
+		if (formData.chargeSalesTransactionId) {
+			const response = await checkInvoiceValidity({
+				orNumber: formData.chargeSalesTransactionId,
+			});
+
+			if (response.data === false) {
+				setInvoiceValidityError(
+					'Inputted invoice number is invalid or does not exist.',
+				);
+				return;
+			}
+		}
+
 		await createOrderOfPayment({
 			createdById: user.id,
 			payorId: formData.payorId,
@@ -72,12 +101,19 @@ export const CreateOrderOfPaymentModal = ({
 			onCancel={onClose}
 		>
 			<RequestErrors
-				errors={convertIntoArray(createError?.errors)}
+				errors={[
+					...convertIntoArray(createError?.errors, 'Create'),
+					...convertIntoArray(
+						checkInvoiceValidityError?.errors,
+						'Invoice Validity',
+					),
+					invoiceValidityError,
+				]}
 				withSpaceBottom
 			/>
 
 			<CreateOrderOfPaymentForm
-				loading={isLoading}
+				loading={isCreating || isChecking}
 				payor={payor}
 				transaction={transaction}
 				onClose={onClose}
@@ -108,7 +144,7 @@ export const CreateOrderOfPaymentForm = ({
 
 	// CUSTOM HOOKS
 	const {
-		isFetching,
+		isFetching: isFetchingAccount,
 		data: { accounts },
 	} = useAccounts({ params: { search: accountSearch } });
 
@@ -175,7 +211,9 @@ export const CreateOrderOfPaymentForm = ({
 								defaultActiveFirstOption={false}
 								disabled={payor !== null}
 								filterOption={false}
-								notFoundContent={isFetching ? <Spin size="small" /> : null}
+								notFoundContent={
+									isFetchingAccount ? <Spin size="small" /> : null
+								}
 								style={{ width: '100%' }}
 								value={values.payorId}
 								showSearch
@@ -265,10 +303,16 @@ export const CreateOrderOfPaymentForm = ({
 						)}
 
 						<Col span={24}>
-							<FormInputLabel
-								disabled={transaction !== null}
+							<Label
 								id="chargeSalesTransactionId"
 								label="Charge Sales Invoice # (Optional)"
+								spacing
+							/>
+							<Input
+								value={values['chargeSalesTransactionId']}
+								onChange={(e) => {
+									setFieldValue('chargeSalesTransactionId', e.target.value);
+								}}
 							/>
 							<ErrorMessage
 								name="chargeSalesTransactionId"

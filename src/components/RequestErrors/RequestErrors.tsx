@@ -27,7 +27,7 @@ export const RequestErrors = ({
 		direction="vertical"
 		size={size}
 	>
-		{errors?.map((error, index) => (
+		{errors?.filter(Boolean)?.map((error, index) => (
 			<FieldError key={index} error={error} />
 		))}
 	</Space>

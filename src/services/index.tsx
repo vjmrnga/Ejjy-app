@@ -22,6 +22,7 @@ export { default as ConnectivityLogsService } from './ConnectivityLogsService';
 export { default as CreditRegistrationsService } from './CreditRegistrationsService';
 export { default as DataService } from './DataService';
 export { default as DiscountOptionsService } from './DiscountOptionsService';
+export { default as InvoiceService } from './InvoiceService';
 export { default as LogsService } from './LogsService';
 export { default as NetworkService } from './NetworkService';
 export { default as OrderOfPaymentsService } from './OrderOfPaymentsService';
