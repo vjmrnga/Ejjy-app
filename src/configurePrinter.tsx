@@ -926,7 +926,9 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>X-READ</span>
-			<span style="text-align: right;">For ${dayjs().format('MM/DD/YYYY')}</span>
+			<span style="text-align: right;">For ${formatDate(
+				report.datetime_created,
+			)}</span>
 		</div>
 
 		<br />

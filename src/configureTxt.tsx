@@ -189,7 +189,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `For ${dayjs().format('MM/DD/YYYY')}`,
+		text: `For ${formatDate(report.datetime_created)}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});

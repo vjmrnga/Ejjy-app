@@ -133,7 +133,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space align="center" className="mt-6 w-100 justify-space-between">
 				<Text>X-READ</Text>
-				<Text>{`For ${formatDate(report.date)}`}</Text>
+				<Text>{`For ${formatDate(report.datetime_created)}`}</Text>
 			</Space>
 
 			<Descriptions
