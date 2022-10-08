@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { taxTypes } from 'global';
 import React from 'react';
-import { formatInPeso, ReportTextFile } from 'utils';
+import { formatDate, formatInPeso, ReportTextFile } from 'utils';
 
 const PESO_SIGN = 'P';
 const EMPTY_CELL = '';

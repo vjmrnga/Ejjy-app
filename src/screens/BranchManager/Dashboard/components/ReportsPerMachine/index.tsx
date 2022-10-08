@@ -158,28 +158,30 @@ export const ReportsPerMachine = () => {
 				/>
 			)}
 
-			<Modal
-				className="Modal__hasFooter"
-				title="Select Date"
-				visible={datePickerModalVisible}
-				onCancel={() => {
-					setSelectedBranchMachine(null);
-					setDatePickerModalVisible(false);
-					setDateError(null);
-				}}
-				onOk={handleSubmitDateSelection}
-			>
-				<Calendar
-					defaultValue={moment()}
-					disabledDate={(current) => current.isAfter(moment(), 'date')}
-					fullscreen={false}
-					onSelect={(value) => {
-						setSelectedDate(value);
+			{datePickerModalVisible && (
+				<Modal
+					className="Modal__hasFooter"
+					title="Select Date"
+					visible
+					onCancel={() => {
+						setSelectedBranchMachine(null);
+						setDatePickerModalVisible(false);
 						setDateError(null);
 					}}
-				/>
-				{dateError && <FieldError error={dateError} />}
-			</Modal>
+					onOk={handleSubmitDateSelection}
+				>
+					<Calendar
+						defaultValue={moment()}
+						disabledDate={(current) => current.isAfter(moment(), 'date')}
+						fullscreen={false}
+						onSelect={(value) => {
+							setSelectedDate(value);
+							setDateError(null);
+						}}
+					/>
+					{dateError && <FieldError error={dateError} />}
+				</Modal>
+			)}
 		</Box>
 	);
 };
