@@ -44,6 +44,7 @@ export const Checkings = () => {
 		params: {
 			isFilledUp:
 				params?.type === productCheckingTypes.RANDOM ? true : undefined,
+			type: params.type || 'all',
 			...params,
 		},
 	});
