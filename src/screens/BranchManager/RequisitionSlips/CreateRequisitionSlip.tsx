@@ -48,6 +48,7 @@ const columns: ColumnsType = [
 	{ title: 'Status', dataIndex: 'status', key: 'status' },
 ];
 
+// TODO: Once the RS endpoints sorted out, remove this `useGoogleApiUrl`
 export const CreateRequisitionSlip = () => {
 	// STATES
 	const [searchedKeyword, setSeachedKeyword] = useState('');
@@ -82,7 +83,7 @@ export const CreateRequisitionSlip = () => {
 
 	// METHODS
 	useEffect(() => {
-		getBranchProducts({ branchId, page: 1 });
+		getBranchProducts({ branchId, page: 1, useGoogleApiUrl: true });
 	}, []);
 
 	// METHODS: Form methods
@@ -243,6 +244,7 @@ export const CreateRequisitionSlip = () => {
 				isSoldInBranch: true,
 				page,
 				pageSize: newPageSize,
+				useGoogleApiUrl: true,
 			},
 			newPageSize !== pageSize,
 		);
@@ -258,6 +260,7 @@ export const CreateRequisitionSlip = () => {
 				productStatus: selectedStatus === 'all' ? null : selectedStatus,
 				isSoldInBranch: true,
 				page: 1,
+				useGoogleApiUrl: true,
 			},
 			true,
 		);
@@ -319,6 +322,7 @@ export const CreateRequisitionSlip = () => {
 								productStatus: status === 'all' ? null : status,
 								isSoldInBranch: true,
 								page: 1,
+								useGoogleApiUrl: true,
 							},
 							true,
 						);

@@ -12,4 +12,7 @@ export const getLocalApiUrl = () => localStorage.getItem(APP_LOCAL_API_URL_KEY);
 export const getOnlineApiUrl = () =>
 	localStorage.getItem(APP_ONLINE_API_URL_KEY);
 
+export const getGoogleApiUrl = () =>
+	'https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1';
+
 export const getAppPrinterName = () => localStorage.getItem(APP_PRINTER_NAME);

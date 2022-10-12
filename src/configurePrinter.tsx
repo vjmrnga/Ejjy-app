@@ -296,8 +296,6 @@ export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 		</div>
 	`;
 
-	console.log(data);
-
 	return data;
 };
 

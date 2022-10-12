@@ -1,5 +1,5 @@
 import { call, put, retry, select, takeLatest } from 'redux-saga/effects';
-import { getOnlineApiUrl } from 'utils';
+import { getGoogleApiUrl } from 'utils';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { actions, types } from '../ducks/requisition-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
@@ -22,7 +22,7 @@ function* list({ payload }: any) {
 				branch_id: branchId,
 				status,
 			},
-			getOnlineApiUrl(),
+			getGoogleApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -46,7 +46,7 @@ function* listExtended({ payload }: any) {
 				branch_id: branchId,
 				status,
 			},
-			getOnlineApiUrl(),
+			getGoogleApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -106,7 +106,7 @@ function* getById({ payload }: any) {
 			service.getById,
 			id,
 			requestingUserType,
-			getOnlineApiUrl(),
+			getGoogleApiUrl(),
 		);
 
 		yield put(
@@ -129,7 +129,7 @@ function* getPendingCount({ payload }: any) {
 		const response = yield call(
 			service.getPendingCount,
 			{ user_id: userId },
-			getOnlineApiUrl(),
+			getGoogleApiUrl(),
 		);
 
 		callback({ status: request.SUCCESS, data: response.data });
@@ -143,7 +143,7 @@ function* create({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.create, data, getOnlineApiUrl());
+		const response = yield call(service.create, data, getGoogleApiUrl());
 
 		yield put(
 			actions.save({
@@ -162,7 +162,7 @@ function* edit({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		const response = yield call(service.edit, data, getOnlineApiUrl());
+		const response = yield call(service.edit, data, getGoogleApiUrl());
 
 		yield put(
 			actions.save({
@@ -181,7 +181,7 @@ function* setOutOfStock({ payload }: any) {
 	callback({ status: request.REQUESTING });
 
 	try {
-		yield call(service.edit, data, getOnlineApiUrl());
+		yield call(service.edit, data, getGoogleApiUrl());
 		yield put(actions.removeRequisitionSlipByBranch());
 		callback({ status: request.SUCCESS });
 	} catch (e) {

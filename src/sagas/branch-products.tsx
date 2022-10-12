@@ -1,4 +1,5 @@
 import { call, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { getGoogleApiUrl } from 'utils';
 import { types } from '../ducks/branch-products';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
@@ -17,11 +18,16 @@ function* list({ payload }: any) {
 		productStatus,
 		productCategory,
 		hasBoBalance,
+		useGoogleApiUrl = false, // TODO: Once the RS endpoints sorted out, remove this
 		callback,
 	} = payload;
 	callback({ status: request.REQUESTING });
 
-	const baseURL = getBaseUrl(branchId, callback);
+	let baseURL = getBaseUrl(branchId, callback);
+
+	if (useGoogleApiUrl) {
+		baseURL = getGoogleApiUrl();
+	}
 
 	const data = {
 		page,

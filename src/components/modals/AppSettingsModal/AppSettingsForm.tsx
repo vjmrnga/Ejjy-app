@@ -88,7 +88,7 @@ export const AppSettingsForm = ({
 				branchId: Yup.string().required().label('Branch'),
 				localApiUrl: Yup.string().required().label('Local API URL'),
 				onlineApiUrl: Yup.string().required().label('Online API URL'),
-				printerName: Yup.string().required().label('Printer Name'),
+				printerName: Yup.string().label('Printer Name'),
 			}),
 		}),
 		[localApiUrl, onlineApiUrl, printerName],
