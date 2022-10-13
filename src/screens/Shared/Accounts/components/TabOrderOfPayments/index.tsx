@@ -91,6 +91,7 @@ export const TabOrderOfPayments = () => {
 				chargeSalesInvoice: charge_sales_transaction?.invoice ? (
 					<>
 						<Button
+							className="pa-0"
 							type="link"
 							onClick={() => setSelectedTransaction(charge_sales_transaction)}
 						>
