@@ -171,9 +171,11 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									<Descriptions.Item label="GROSS AMOUNT">
 										{formatInPeso(transactionData.gross_amount)}&nbsp;
 									</Descriptions.Item>
-									{transactionData.invoice.vat_amount > 0 && (
+									{transactionData.invoice.vat_sales_discount > 0 && (
 										<Descriptions.Item label="VAT AMOUNT">
-											({formatInPeso(transactionData.invoice.vat_amount)})
+											(
+											{formatInPeso(transactionData.invoice.vat_sales_discount)}
+											)
 										</Descriptions.Item>
 									)}
 									<Descriptions.Item
@@ -245,7 +247,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									{formatInPeso(transactionData.invoice.vat_sales)}
 								</Descriptions.Item>
 								<Descriptions.Item label="VAT Amount">
-									{formatInPeso(transactionData.invoice.vat_12_percent)}
+									{formatInPeso(transactionData.invoice.vat_amount)}
 								</Descriptions.Item>
 								<Descriptions.Item label="ZERO Rated">
 									{formatInPeso(0)}
