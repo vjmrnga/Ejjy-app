@@ -3,7 +3,7 @@ import { Descriptions, Modal, Space, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'components/elements';
 import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
-import { EMPTY_CELL, saleTypes, taxTypes } from 'global';
+import { EMPTY_CELL, saleTypes, taxTypes, vatTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -17,10 +17,10 @@ interface Props {
 const { Text } = Typography;
 
 const columns: ColumnsType = [
-	{ title: 'Item', dataIndex: 'item' },
-	{ title: 'Quantity', dataIndex: 'quantity', align: 'center' },
-	{ title: 'Rate', dataIndex: 'rate', align: 'right' },
-	{ title: 'Amount', dataIndex: 'amount', align: 'right' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Qty', dataIndex: 'qty', align: 'center' },
+	{ title: 'Rate', dataIndex: 'rate', align: 'center' },
+	{ title: 'Subtotal', dataIndex: 'subtotal', align: 'center' },
 ];
 
 export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
@@ -46,21 +46,19 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		// Set transaction products
 		const products =
 			transaction?.products || transactionRetrieved?.products || [];
-		const formattedProducts = products.map(
-			({
-				id,
-				branch_product,
-				original_quantity,
-				quantity,
-				price_per_piece,
-			}) => ({
-				key: id,
-				item: branch_product.product.name,
-				quantity: original_quantity,
-				rate: formatInPeso(price_per_piece),
-				amount: formatInPeso(quantity * Number(price_per_piece)),
-			}),
-		);
+
+		const formattedProducts = products.map((item) => ({
+			key: item.id,
+			name: `${item.branch_product.product.name} - ${
+				item.branch_product.product.is_vat_exempted
+					? vatTypes.VAT_EMPTY
+					: vatTypes.VATABLE
+			}`,
+			qty: item.original_quantity,
+			rate: formatInPeso(item.price_per_piece),
+			subtotal: formatInPeso(item.quantity * item.price_per_piece),
+		}));
+
 		setDataSource(formattedProducts);
 	}, [transaction, transactionRetrieved]);
 
@@ -295,7 +293,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								colon={false}
 								column={1}
 								labelStyle={{
-									width: 100,
+									width: 200,
 									paddingLeft: 15,
 								}}
 								size="small"
