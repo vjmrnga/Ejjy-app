@@ -31,11 +31,11 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 	const { data: siteSettings } = useSiteSettingsRetrieve();
 
 	// METHODS
-	const onPrint = () => {
+	const handlePrint = () => {
 		printZReadReport({ report, siteSettings });
 	};
 
-	const onCreatePdf = () => {
+	const handleCreatePdf = () => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
@@ -63,7 +63,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 		}, 2000);
 	};
 
-	const onCreateTxt = () => {
+	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
 		createZReadTxt({ report, siteSettings });
 		setIsCreatingTxt(false);
@@ -79,7 +79,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					icon={<PrinterOutlined />}
 					size="large"
 					type="primary"
-					onClick={onPrint}
+					onClick={handlePrint}
 				>
 					Print
 				</Button>,
@@ -90,7 +90,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					loading={isCreatingPdf}
 					size="large"
 					type="primary"
-					onClick={onCreatePdf}
+					onClick={handleCreatePdf}
 				>
 					Create PDF
 				</Button>,
@@ -101,7 +101,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					loading={isCreatingTxt}
 					size="large"
 					type="primary"
-					onClick={onCreateTxt}
+					onClick={handleCreateTxt}
 				>
 					Create TXT
 				</Button>,

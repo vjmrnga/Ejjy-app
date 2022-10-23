@@ -68,12 +68,16 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 				spinning={requisitionSlipsStatus === request.REQUESTING}
 				tip="Fetching requisition slip..."
 			>
-				<RequestedProducts requisitionSlip={requisitionSlip} />
+				{requisitionSlip && (
+					<>
+						<RequestedProducts requisitionSlip={requisitionSlip} />
 
-				<OrderSlips
-					fetchRequisitionSlip={fetchRequisitionSlip}
-					requisitionSlip={requisitionSlip}
-				/>
+						<OrderSlips
+							fetchRequisitionSlip={fetchRequisitionSlip}
+							requisitionSlip={requisitionSlip}
+						/>
+					</>
+				)}
 			</Spin>
 		</Content>
 	);

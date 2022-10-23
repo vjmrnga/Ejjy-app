@@ -48,7 +48,7 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 		}
 	}, [requisitionSlip]);
 
-	const onQuantityTypeChange = useCallback(
+	const handleQuantityTypeChange = useCallback(
 		(quantityType) => {
 			const formattedRequestedProducts = data.map((requestProduct) => ({
 				...requestProduct,
@@ -70,20 +70,19 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 				title: (
 					<QuantitySelect
 						quantityText="Quantity Requested"
-						onQuantityTypeChange={onQuantityTypeChange}
+						onQuantityTypeChange={handleQuantityTypeChange}
 					/>
 				),
 				dataIndex: 'quantity',
 				key: 'quantity',
 			},
 		],
-		[onQuantityTypeChange],
+		[handleQuantityTypeChange],
 	);
 
 	return (
 		<Box>
 			<RequisitionSlipDetails
-				className="PaddingHorizontal PaddingVertical"
 				requisitionSlip={requisitionSlip}
 				type={requisitionSlipDetailsType.SINGLE_VIEW}
 			/>

@@ -20,6 +20,7 @@ import {
 	getCashBreakdownTypeDescription,
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
+	getProductCode,
 	getTransactionStatusDescription,
 } from 'utils';
 import authenticateQZTray from 'utils/qztray';
@@ -188,6 +189,104 @@ const getFooter = (footerData) => {
 
 const getPageStyle = (extraStyle = '') =>
 	`width: 100%; font-size: 12.5px; font-family: 'Arial', 'Courier New', monospace; line-height: 125%; position: relative;${extraStyle}`;
+
+export const printRequisitionSlip = ({
+	requisitionSlip,
+	siteSettings,
+	user,
+	isPdf = false,
+}) => {
+	const data = `
+  <div class="container" style="${getPageStyle()}">
+  ${getHeader({
+		title: 'REQUISITION SLIP',
+		siteSettings,
+	})}
+
+    <br />
+
+    <table style="width: 100%;">
+      <tr>
+        <td>Date & Time Requested:</td>
+        <td style="text-align: right">${formatDateTime(
+					requisitionSlip.datetime_created,
+				)}</td>
+      </tr>
+      <tr>
+        <td>F-RS1:</td>
+        <td style="text-align: right">${requisitionSlip.id}</td>
+      </tr>
+    </table>
+
+    <br />
+
+    <table style="width: 100%;">
+      <thead>
+        <tr>
+          <th style="text-align: left; font-weight: normal">NAME</th>
+          <th style="text-align: center; font-weight: normal">QTY ORDERED</th>
+          <th style="text-align: right; font-weight: normal">QTY PREPARED</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${requisitionSlip.products
+					.map(
+						({ quantity_piece, product }) => `
+            <tr>
+              <td>
+                <span style="display:block">${product.name}</span>
+                <small>CODE: ${getProductCode(product)}</small>
+              </td>
+
+              <td style="text-align: center">
+                ${formatQuantity({
+									unitOfMeasurement: product.unit_of_measurement,
+									quantity: quantity_piece,
+								})}
+              </td>
+
+              <td style="text-align: right">___</td>
+            </tr>
+          `,
+					)
+					.join('')}
+      </tbody>
+    </table>
+
+    <br/>
+    <br/>
+
+    <table style="width: 100%;">
+      <tr>
+        <td>Date & Time Printed:</td>
+        <td style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</td>
+      </tr>
+      <tr>
+        <td>Printed By:</td>
+        <td style="text-align: right">${getFullName(user)}</td>
+      </tr>
+    </table>
+  </div>
+`;
+
+	if (isPdf) {
+		return `
+      <html lang="en">
+      <head>
+        <style>
+          .container, .container > div, .container > table {
+            width: 795px !important;
+          }
+        </style>
+      </head>
+      <body>
+          ${data}
+      </body>
+    </html>`;
+	}
+
+	return data;
+};
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
 	const data = `
