@@ -52,7 +52,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	} = useProductEdit();
 
 	// METHODS
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		if (product) {
 			await editProduct({
 				id: getId(product),
@@ -108,7 +108,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 				pointSystemTags={pointSystemTags}
 				product={product}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

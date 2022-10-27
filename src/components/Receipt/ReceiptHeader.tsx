@@ -5,7 +5,7 @@ import React from 'react';
 const { Text } = Typography;
 
 interface Props {
-	branchMachine: any;
+	branchMachine?: any;
 	title?: string;
 }
 
@@ -20,14 +20,14 @@ export const ReceiptHeader = ({ branchMachine, title }: Props) => {
 		store_name: storeName,
 		tax_type: taxType,
 		tin,
-	} = siteSettings;
+	} = siteSettings || {};
 
 	const {
-		name,
-		permit_to_use: ptuNumber,
-		machine_identification_number: machineID,
-		pos_terminal: posTerminal,
-	} = branchMachine;
+		name = '',
+		permit_to_use: ptuNumber = '',
+		machine_identification_number: machineID = '',
+		pos_terminal: posTerminal = '',
+	} = branchMachine || {};
 
 	return (
 		<Space

@@ -526,6 +526,16 @@ export const getProductCode = (product) =>
 	product?.textcode ||
 	EMPTY_CELL;
 
+export const getRequestor = (requisitionSlip) => {
+	const {
+		first_name = '',
+		last_name = '',
+		branch = {},
+	} = requisitionSlip?.requesting_user || {};
+
+	return `${first_name} ${last_name} - ${branch?.name || ''}`;
+};
+
 export const filterOption = (input, option) =>
 	option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
