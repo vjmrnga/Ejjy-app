@@ -1,21 +1,16 @@
-import { IS_APP_LIVE } from 'global';
 import { useMutation } from 'react-query';
 import { XReadReportsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 export const useXReadReportCreate = () =>
-	useMutation(({ branchMachineId, date, serverUrl, userId }: any) => {
-		let baseURL = IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl();
-		if (serverUrl) {
-			baseURL = serverUrl;
-		}
-
-		return XReadReportsService.create(
+	useMutation(({ branchMachineId, date, cashieringSessionId, userId }: any) =>
+		XReadReportsService.create(
 			{
 				branch_machine_id: branchMachineId,
+				cashiering_session_id: cashieringSessionId,
 				date,
 				user_id: userId,
 			},
-			baseURL,
-		);
-	});
+			getLocalApiUrl(),
+		),
+	);

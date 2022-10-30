@@ -1,21 +1,28 @@
 import { Button, Calendar, message, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	RequestErrors,
 	TableHeader,
 	ViewXReadReportModal,
 	ViewZReadReportModal,
 } from 'components';
 import { Box, FieldError } from 'components/elements';
-import dayjs from 'dayjs';
+import { EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchMachines,
+	useCashieringSessions,
 	useXReadReportCreate,
 	useZReadReportCreate,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
-import { getBranchId } from 'utils';
+import React, { useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatDateTime,
+	getBranchId,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Machines', dataIndex: 'machines' },
@@ -33,10 +40,11 @@ export const ReportsPerMachine = () => {
 	const [zReadReport, setZReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
 
-	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [selectedDate, setSelectedDate] = useState(moment());
-	const [dateError, setDateError] = useState(null);
+
+	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
+	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
+		useState(false);
 
 	// CUSTOM HOOKS
 	const {
@@ -64,15 +72,20 @@ export const ReportsPerMachine = () => {
 			),
 			actions: (
 				<Space>
-					<Button type="primary" onClick={() => viewXReadReport(branchMachine)}>
-						View XRead (Today)
+					<Button
+						type="primary"
+						onClick={() => {
+							setSelectedBranchMachine(branchMachine);
+							setSessionPickerModalVisible(true);
+						}}
+					>
+						View XRead (Session)
 					</Button>
 					<Button
 						type="primary"
 						onClick={() => {
 							setSelectedBranchMachine(branchMachine);
 							setDatePickerModalVisible(true);
-							setSelectedDate(moment());
 						}}
 					>
 						View XRead (Date)
@@ -87,10 +100,14 @@ export const ReportsPerMachine = () => {
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
 
-	const viewXReadReport = async (branchMachine, date = undefined) => {
+	const viewXReadReport = async (
+		branchMachine,
+		{ date = undefined, cashieringSessionId = undefined },
+	) => {
 		const { data, status } = await createXReadReport({
 			branchMachineId: branchMachine.id,
-			date: date || dayjs().format('YYYY-MM-DD'),
+			date,
+			cashieringSessionId,
 			userId: user.id,
 		});
 
@@ -99,12 +116,7 @@ export const ReportsPerMachine = () => {
 		}
 
 		setXReadReport(data);
-
-		// NOTE: Reset the states used for datepicker
-		setDatePickerModalVisible(false);
 		setSelectedBranchMachine(null);
-		setSelectedDate(null);
-		setDateError(null);
 	};
 
 	const viewZReadReport = async (branchMachine) => {
@@ -115,18 +127,20 @@ export const ReportsPerMachine = () => {
 		setZReadReport(data);
 	};
 
-	const handleSubmitDateSelection = useCallback(() => {
-		if (!selectedDate) {
-			setDateError('No selected date yet.');
-			return;
-		}
-		if (selectedDate.isAfter(moment(), 'day')) {
-			setDateError("Date must not be after today's date.");
-			return;
-		}
+	const handleSubmitDateSelection = (date) => {
+		viewXReadReport(selectedBranchMachine, {
+			date: date.format('YYYY-MM-DD'),
+		});
 
-		viewXReadReport(selectedBranchMachine, selectedDate.format('YYYY-MM-DD'));
-	}, [selectedDate]);
+		setDatePickerModalVisible(false);
+	};
+
+	const handleSessionSelection = (cashieringSessionId) => {
+		viewXReadReport(selectedBranchMachine, {
+			cashieringSessionId,
+		});
+		setSessionPickerModalVisible(false);
+	};
 
 	return (
 		<Box>
@@ -158,30 +172,134 @@ export const ReportsPerMachine = () => {
 				/>
 			)}
 
-			{datePickerModalVisible && (
-				<Modal
-					className="Modal__hasFooter"
-					title="Select Date"
-					visible
-					onCancel={() => {
-						setSelectedBranchMachine(null);
-						setDatePickerModalVisible(false);
-						setDateError(null);
-					}}
-					onOk={handleSubmitDateSelection}
-				>
-					<Calendar
-						defaultValue={moment()}
-						disabledDate={(current) => current.isAfter(moment(), 'date')}
-						fullscreen={false}
-						onSelect={(value) => {
-							setSelectedDate(value);
-							setDateError(null);
-						}}
-					/>
-					{dateError && <FieldError error={dateError} />}
-				</Modal>
+			{datePickerModalVisible && selectedBranchMachine && (
+				<DatePickerModal
+					onClose={() => setDatePickerModalVisible(false)}
+					onSubmit={handleSubmitDateSelection}
+				/>
+			)}
+
+			{sessionPickerModalVisible && selectedBranchMachine && (
+				<SessionPickerModal
+					branchMachine={selectedBranchMachine}
+					onClose={() => setSessionPickerModalVisible(false)}
+					onSubmit={handleSessionSelection}
+				/>
 			)}
 		</Box>
+	);
+};
+
+const DatePickerModal = ({ onSubmit, onClose }) => {
+	// STATES
+	const [selectedDate, setSelectedDate] = useState(moment());
+	const [dateError, setDateError] = useState(null);
+
+	// METHODS
+	const handleOk = () => {
+		if (selectedDate.isAfter(moment(), 'day')) {
+			setDateError("Date must not be after today's date.");
+			return;
+		}
+
+		onSubmit(selectedDate);
+	};
+
+	return (
+		<Modal
+			className="Modal__hasFooter"
+			okButtonProps={{
+				disabled: !selectedDate || !!dateError,
+			}}
+			title="Select Date"
+			visible
+			onCancel={onClose}
+			onOk={handleOk}
+		>
+			<Calendar
+				defaultValue={moment()}
+				disabledDate={(current) => current.isAfter(moment(), 'date')}
+				fullscreen={false}
+				onSelect={(value) => {
+					setSelectedDate(value);
+					setDateError(null);
+				}}
+			/>
+			{dateError && <FieldError error={dateError} />}
+		</Modal>
+	);
+};
+
+const cashieringSessionColumns = [
+	{ title: 'Session', dataIndex: 'session' },
+	{ title: 'User', dataIndex: 'user' },
+];
+
+const SessionPickerModal = ({ branchMachine, onSubmit, onClose }) => {
+	// STATES
+	const [dataSource, setDataSource] = useState([]);
+	const [selectedRowKey, setSelectedRowKey] = useState(null);
+
+	// CUSTOM HOOKS
+	const {
+		data: { cashieringSessions },
+		isFetching,
+		error,
+	} = useCashieringSessions({
+		params: {
+			timeRange: 'daily',
+			branchMachineId: branchMachine.id,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
+
+	// METHODS
+	useEffect(() => {
+		if (cashieringSessions) {
+			const formattedCashieringSessions = cashieringSessions.map((cs) => {
+				const { id, datetime_started, datetime_ended, user } = cs;
+
+				return {
+					key: id,
+					session: `${
+						datetime_started ? formatDateTime(datetime_started) : ''
+					} - ${datetime_ended ? formatDateTime(datetime_ended) : ''}`,
+					user: user ? getFullName(user) : EMPTY_CELL,
+				};
+			});
+
+			setDataSource(formattedCashieringSessions);
+		}
+	}, [cashieringSessions]);
+
+	return (
+		<Modal
+			className="Modal__hasFooter"
+			okButtonProps={{
+				disabled: !selectedRowKey,
+			}}
+			title="Select Cashiering Session"
+			visible
+			onCancel={onClose}
+			onOk={() => {
+				onSubmit(selectedRowKey);
+			}}
+		>
+			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+
+			<Table
+				columns={cashieringSessionColumns}
+				dataSource={dataSource}
+				loading={isFetching}
+				pagination={false}
+				rowSelection={{
+					type: 'radio',
+					selectedRowKeys: [selectedRowKey],
+					onSelect: ({ key }) => {
+						setSelectedRowKey(key);
+					},
+				}}
+			/>
+		</Modal>
 	);
 };
