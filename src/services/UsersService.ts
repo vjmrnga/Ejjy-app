@@ -43,6 +43,9 @@ const service = {
 		axios.post('/users/authenticate/', body, { baseURL }),
 
 	delete: async (id, baseURL) => axios.delete(`/users/${id}/`, { baseURL }),
+
+	approve: async (id, body, baseURL) =>
+		axios.post(`/online-users/${id}/approve/`, body, { baseURL }),
 };
 
 const serviceOnline = {
@@ -60,9 +63,6 @@ const serviceOnline = {
 
 	removeOnline: async (id, baseURL) =>
 		axios.delete(`/online-users/${id}/`, { baseURL }),
-
-	approveOnline: async (id, body, baseURL) =>
-		axios.post(`/online-users/${id}/approve/`, body, { baseURL }),
 
 	requestUserTypeChange: async (id, body, baseURL) =>
 		axios.post(`/online-users/${id}/request-user-type-change/`, body, {
