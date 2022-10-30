@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchesService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
 const useBranches = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -61,7 +61,7 @@ export const useBranchCreate = () => {
 					name,
 					online_url: onlineUrl,
 				},
-				getOnlineApiUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -82,7 +82,7 @@ export const useBranchEdit = () => {
 					name,
 					online_url: onlineUrl,
 				},
-				getOnlineApiUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -96,7 +96,7 @@ export const useBranchDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => BranchesService.delete(id, getOnlineApiUrl()),
+		(id: number) => BranchesService.delete(id, getGoogleApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useBranches');
