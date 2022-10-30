@@ -81,7 +81,7 @@ export const ModifyBranchForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: branch?.id || undefined,
+				id: branch?.online_id || undefined,
 				name: branch?.name || '',
 				onlineUrl: branch?.online_url || '',
 			},
