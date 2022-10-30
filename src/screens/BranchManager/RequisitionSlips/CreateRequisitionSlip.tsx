@@ -288,7 +288,7 @@ export const CreateRequisitionSlip = () => {
 			createRequisitionSlip(
 				{
 					requestor_id: user?.branch?.id,
-					requesting_user_id: user?.id,
+					requesting_user_username: user?.username,
 					type: requisitionSlipTypes.MANUAL,
 					products,
 				},
