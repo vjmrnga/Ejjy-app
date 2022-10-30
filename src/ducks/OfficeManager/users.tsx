@@ -52,7 +52,6 @@ export const actions = {
 	createOnlineUser: createAction(types.CREATE_ONLINE_USER),
 	editUser: createAction(types.EDIT_USER),
 	removeUser: createAction(types.REMOVE_USER),
-	approveUser: createAction(types.APPROVE_USER),
 	requestUserTypeChange: createAction(types.REQUEST_USER_TYPE_CHANGE),
 };
 

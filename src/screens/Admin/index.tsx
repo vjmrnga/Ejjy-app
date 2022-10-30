@@ -13,7 +13,7 @@ import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { Sales } from './Sales/Sales';
-import { Users } from './Users/Users';
+import { Users } from './Users';
 
 const POLL_INTERVAL_MS = 10000;
 

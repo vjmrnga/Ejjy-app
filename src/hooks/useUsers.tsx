@@ -60,7 +60,6 @@ export const useUsers = () => {
 	const createOnlineUserAction = useActionDispatch(actions.createOnlineUser);
 	const editUserAction = useActionDispatch(actions.editUser);
 	const removeUserAction = useActionDispatch(actions.removeUser);
-	const approveUserAction = useActionDispatch(actions.approveUser);
 	const requestUserTypeChangeAction = useActionDispatch(
 		actions.requestUserTypeChange,
 	);
@@ -220,14 +219,6 @@ export const useUsers = () => {
 		});
 	};
 
-	const approveUser = (data, extraCallback = null) => {
-		setRecentRequest(types.APPROVE_USER);
-		approveUserAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
 	const requestUserTypeChange = (data, extraCallback = null) => {
 		setRecentRequest(types.APPROVE_USER);
 		requestUserTypeChangeAction({
@@ -254,7 +245,6 @@ export const useUsers = () => {
 		createOnlineUser,
 		editUser,
 		removeUser,
-		approveUser,
 		requestUserTypeChange,
 		status,
 		errors,
@@ -346,6 +336,26 @@ export const useUserCreate = () => {
 					password,
 					user_type: userType,
 					username,
+				},
+				getOnlineApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useUsers');
+			},
+		},
+	);
+};
+
+export const useUserApprove = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, pendingApprovalType }: any) =>
+			UsersService.approve(
+				id,
+				{
+					pending_approval_type: pendingApprovalType,
 				},
 				getOnlineApiUrl(),
 			),

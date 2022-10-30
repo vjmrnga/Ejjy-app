@@ -207,26 +207,6 @@ function* remove({ payload }: any) {
 	}
 }
 
-function* approve({ payload }: any) {
-	const { id, pendingApprovalType, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(
-			UsersService.approveOnline,
-			id,
-			{
-				pending_approval_type: pendingApprovalType,
-			},
-			getOnlineApiUrl(),
-		);
-
-		callback({ status: request.SUCCESS, response: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 function* requestUserTypeChange({ payload }: any) {
 	const { id, newUserType, callback } = payload;
 	callback({ status: request.REQUESTING });
@@ -278,10 +258,6 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 	yield takeLatest(types.REMOVE_USER, remove);
 };
 
-const approveWatcherSaga = function* approveWatcherSaga() {
-	yield takeLatest(types.APPROVE_USER, approve);
-};
-
 const requestUserTypeChangeWatcherSaga =
 	function* requestUserTypeChangeWatcherSaga() {
 		yield takeLatest(types.REQUEST_USER_TYPE_CHANGE, requestUserTypeChange);
@@ -296,6 +272,5 @@ export default [
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),
 	removeWatcherSaga(),
-	approveWatcherSaga(),
 	requestUserTypeChangeWatcherSaga(),
 ];
