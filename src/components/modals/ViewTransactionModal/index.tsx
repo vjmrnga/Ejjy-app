@@ -7,7 +7,12 @@ import { EMPTY_CELL, saleTypes, taxTypes, vatTypes } from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime, formatInPeso, getFullName } from 'utils';
+import {
+	formatDateTime,
+	formatInPeso,
+	formatQuantity,
+	getFullName,
+} from 'utils';
 
 interface Props {
 	transaction: any | number;
@@ -54,7 +59,12 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					? vatTypes.VAT_EMPTY
 					: vatTypes.VATABLE
 			}`,
-			qty: item.original_quantity,
+			qty:
+				item.original_quantity ||
+				formatQuantity({
+					unitOfMeasurement: item.branch_product.product.unit_of_measurement,
+					quantity: item.quantity,
+				}),
 			rate: formatInPeso(item.price_per_piece),
 			subtotal: formatInPeso(item.quantity * item.price_per_piece),
 		}));

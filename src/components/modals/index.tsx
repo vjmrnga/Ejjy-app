@@ -21,6 +21,7 @@ export * from './ViewBackOrderModal';
 export * from './ViewCashBreakdownModal';
 export * from './ViewProductModal';
 export * from './ViewReceivingVoucherModal';
+export * from './ViewRequisitionSlipModal';
 export * from './ViewReturnItemSlipModal';
 export * from './ViewTransactionModal';
 export * from './ViewXReadReportModal';
