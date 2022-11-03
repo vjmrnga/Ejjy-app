@@ -219,3 +219,8 @@ export const cashBreakdownCategories = {
 	CASH_IN: 'cash_in',
 	CASH_OUT: 'cash_out',
 };
+
+export const appTypes = {
+	BACK_OFFICE: 'back_office',
+	HEAD_OFFICE: 'head_office',
+};

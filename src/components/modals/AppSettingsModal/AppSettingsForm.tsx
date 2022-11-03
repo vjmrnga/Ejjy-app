@@ -1,5 +1,6 @@
-import { Col, Input, Row, Select } from 'antd';
+import { Alert, Col, Input, Radio, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { appTypes } from 'global';
 import { useBranches } from 'hooks';
 import qz from 'qz-tray';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -8,6 +9,7 @@ import * as Yup from 'yup';
 import { Button, FieldError, Label } from '../../elements';
 
 interface Props {
+	appType: string;
 	branchId: string;
 	localApiUrl: string;
 	onlineApiUrl: string;
@@ -17,6 +19,7 @@ interface Props {
 }
 
 export const AppSettingsForm = ({
+	appType,
 	branchId,
 	localApiUrl,
 	onlineApiUrl,
@@ -79,19 +82,21 @@ export const AppSettingsForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
+				appType: appType || appTypes.BACK_OFFICE,
 				branchId: branchId || '',
 				localApiUrl: localApiUrl || '',
 				onlineApiUrl: onlineApiUrl || '',
 				printerName: printerName || '',
 			},
 			Schema: Yup.object().shape({
-				branchId: Yup.string().required().label('Branch'),
+				appType: Yup.string().label('App Type'),
+				branchId: Yup.string().label('Branch'),
 				localApiUrl: Yup.string().required().label('Local API URL'),
 				onlineApiUrl: Yup.string().required().label('Online API URL'),
 				printerName: Yup.string().label('Printer Name'),
 			}),
 		}),
-		[localApiUrl, onlineApiUrl, printerName],
+		[appType, branchId, localApiUrl, onlineApiUrl, printerName],
 	);
 
 	return (
@@ -201,6 +206,41 @@ export const AppSettingsForm = ({
 							{status?.error?.printerName && (
 								<FieldError error={status.error.printerName} />
 							)}
+						</Col>
+
+						<Col span={24}>
+							<Label id="appType" label="App Type" spacing />
+
+							<Radio.Group
+								buttonStyle="solid"
+								options={[
+									{ label: 'Back Office', value: appTypes.BACK_OFFICE },
+									{
+										label: 'Head Office',
+										value: appTypes.HEAD_OFFICE,
+									},
+								]}
+								optionType="button"
+								size="large"
+								value={values.appType}
+								onChange={(e) => {
+									setFieldValue('appType', e.target.value);
+								}}
+							/>
+
+							{values.appType !== appType && (
+								<Alert
+									className="mt-1"
+									message="App will relaunch after saving app settings."
+									type="info"
+									showIcon
+								/>
+							)}
+
+							<ErrorMessage
+								name="appType"
+								render={(error) => <FieldError error={error} />}
+							/>
 						</Col>
 					</Row>
 

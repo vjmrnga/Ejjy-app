@@ -1,10 +1,16 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const kill = require('tree-kill');
 const isDev = require('electron-is-dev');
 const log = require('electron-log');
 const path = require('path');
 const { spawn } = require('child_process');
+const Store = require('electron-store');
+
+const appTypes = {
+	BACK_OFFICE: 'back_office',
+	HEAD_OFFICE: 'head_office',
+};
 
 //-------------------------------------------------------------------
 // Auto Updater
@@ -42,6 +48,10 @@ function createWindow() {
 		width: 800,
 		height: 600,
 		show: false,
+		webPreferences: {
+			nodeIntegration: true,
+			contextIsolation: false,
+		},
 	});
 
 	mainWindow.webContents.on('new-window', (event, url) => {
@@ -74,8 +84,11 @@ function createWindow() {
 		mainWindow = null;
 	});
 
-	// Migrate and run API
-	startServer();
+	// Initialize Store
+	const store = initStore();
+
+	// Migrate and Run API
+	initServer(store);
 
 	// Set Menu
 	const menu = Menu.getApplicationMenu().items;
@@ -86,9 +99,7 @@ function createWindow() {
 				label: 'Reset Clean',
 				click: () => {
 					mainWindow.setProgressBar(1);
-					if (spawnRun) {
-						kill(spawnRun.pid);
-					}
+					killSpawns();
 
 					setTimeout(() => {
 						const result = resetDB.resetClean();
@@ -105,8 +116,7 @@ function createWindow() {
 							});
 
 							if (choice === 0) {
-								app.relaunch();
-								app.exit();
+								relaunchApp();
 							}
 						}
 					}, 1000);
@@ -116,9 +126,7 @@ function createWindow() {
 				label: 'Reset Standalone',
 				click: () => {
 					mainWindow.setProgressBar(1);
-					if (spawnRun) {
-						kill(spawnRun.pid);
-					}
+					killSpawns();
 
 					setTimeout(() => {
 						const result = resetDB.resetStandalone();
@@ -135,8 +143,7 @@ function createWindow() {
 							});
 
 							if (choice === 0) {
-								app.relaunch();
-								app.exit();
+								relaunchApp();
 							}
 						}
 					}, 1000);
@@ -148,26 +155,86 @@ function createWindow() {
 }
 
 //-------------------------------------------------------------------
+// Store
+//-------------------------------------------------------------------
+
+function initStore() {
+	Store.initRenderer();
+
+	const schema = {
+		appType: {
+			type: 'string',
+			default: appTypes.BACK_OFFICE,
+		},
+	};
+
+	const store = new Store({ schema });
+
+	ipcMain.handle('getStoreValue', (event, key) => {
+		console.log('key', key);
+		return store.get(key);
+	});
+
+	ipcMain.handle('setStoreValue', (event, { key, value, relaunch = false }) => {
+		console.log('key', key);
+		console.log('value', value);
+
+		store.set(key, value);
+
+		if (relaunch) {
+			relaunchApp();
+		}
+	});
+
+	return store;
+}
+
+//-------------------------------------------------------------------
 // Server
 //-------------------------------------------------------------------
-let spawnRun = null;
-function startServer() {
+let spawnApi = null;
+let spawnLocalhostRun = null;
+function initServer(store) {
 	if (!isDev) {
+		logStatus('Server: Starting');
+		appType = store.get('appType');
 		const apiPath = path.join(process.resourcesPath, 'api');
+
 		spawn('python', ['manage.py', 'migrate'], {
 			cwd: apiPath,
-			detached: false,
+			stdio: 'ignore',
 		});
-		spawnRun = spawn('python', ['manage.py', 'runserver', '0.0.0.0:8000'], {
+
+		let apiPort = '0.0.0.0:8000';
+		if (appType === appTypes.HEAD_OFFICE) {
+			apiPort = '[::]:8000';
+		}
+
+		logStatus('Server: Starting API');
+		const apiCommand = `manage.py runserver ${apiPort}`;
+		spawnApi = spawn('python', apiCommand.split(' '), {
 			cwd: apiPath,
 			detached: true,
 			stdio: 'ignore',
 		});
+		logSpawn('API', spawnApi);
+		logStatus('Server: Started API');
 
-		logStatus('API: Started');
+		if (appType === appTypes.HEAD_OFFICE) {
+			logStatus('Server: Starting LocalhostRun');
+			const localhostRunCommand =
+				'ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header';
+			spawnLocalhostRun = spawn('cmd.exe', localhostRunCommand.split(' '), {
+				detached: true,
+			});
+			logSpawn('LocalhostRun', spawnLocalhostRun);
+			logStatus('Server: Starded LocalhostRun');
+		}
 
-		mainWindow.once('closed', () => {
-			kill(spawnRun.pid);
+		logStatus('Server: Started');
+
+		mainWindow.once('closed', function () {
+			killSpawns();
 		});
 	}
 }
@@ -260,4 +327,38 @@ if (process.platform === 'win32') {
 	app.on('ready', function () {
 		autoUpdater.checkForUpdates();
 	});
+}
+
+//-------------------------------------------------------------------
+// Helper functions
+//-------------------------------------------------------------------
+function relaunchApp() {
+	app.relaunch();
+	app.exit();
+}
+
+function killSpawns() {
+	if (spawnApi) {
+		kill(spawnApi.pid);
+	}
+
+	if (spawnLocalhostRun) {
+		kill(spawnLocalhostRun.pid);
+	}
+}
+
+function logSpawn(key, spawn) {
+	if (spawn) {
+		if (spawn.stdout) {
+			spawn.stdout.on('data', (data) => {
+				logStatus(`[Spawn] ${key}: ${data}`);
+			});
+		}
+
+		if (spawn.stderr) {
+			spawn.stderr.on('data', (data) => {
+				logStatus(`[Spawn] ${key} err: ${data}`);
+			});
+		}
+	}
 }
