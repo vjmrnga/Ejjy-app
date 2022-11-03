@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 interface Initialize {
-	branch_id: number;
+	branch_id?: number;
 }
 
 interface Upload {
