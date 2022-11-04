@@ -1,7 +1,7 @@
 {
-	"name": "ejjy",
+	"name": "ejjy-inventory-app",
 	"productName": "EJJY Inventory",
-	"version": "0.1.196",
+	"version": "0.1.245",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -38,6 +38,7 @@
 		"dayjs": "^1.10.4",
 		"electron-is-dev": "^2.0.0",
 		"electron-log": "^4.4.1",
+		"electron-store": "^8.1.0",
 		"electron-updater": "4.3.9",
 		"focus-formik-error": "^1.1.0",
 		"formik": "^2.2.6",
@@ -124,7 +125,7 @@
 		"wait-on": "^5.2.1"
 	},
 	"build": {
-		"appId": "com.ejjy.inventory",
+		"appId": "com.ejjy.inventory.app",
 		"extraResources": [
 			"api/**",
 			"gcs-service-key.json",
