@@ -1,6 +1,6 @@
 import { Button, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { RequestErrors } from 'components';
+import { RequestErrors, ViewUserModal } from 'components';
 import { MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -29,6 +29,7 @@ export const BranchUsers = ({
 }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
 	const {
@@ -53,7 +54,15 @@ export const BranchUsers = ({
 			.filter((user) => user.username !== 'dev')
 			.map((user) => ({
 				key: user.id,
-				id: user.employee_id,
+				id: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => setSelectedUser(user)}
+					>
+						{user.employee_id}
+					</Button>
+				),
 				name: getFullName(user),
 				type: getUserTypeName(user.user_type),
 				actions: (
@@ -116,8 +125,15 @@ export const BranchUsers = ({
 				dataSource={dataSource}
 				loading={isFetchingUsers || isDeletingUser}
 				pagination={false}
-				scroll={{ x: 650 }}
+				scroll={{ x: 1000 }}
 			/>
+
+			{selectedUser && (
+				<ViewUserModal
+					user={selectedUser}
+					onClose={() => setSelectedUser(null)}
+				/>
+			)}
 		</>
 	);
 };

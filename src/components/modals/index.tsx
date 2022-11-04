@@ -24,5 +24,6 @@ export * from './ViewReceivingVoucherModal';
 export * from './ViewRequisitionSlipModal';
 export * from './ViewReturnItemSlipModal';
 export * from './ViewTransactionModal';
+export * from './ViewUserModal';
 export * from './ViewXReadReportModal';
 export * from './ViewZReadReportModal';
