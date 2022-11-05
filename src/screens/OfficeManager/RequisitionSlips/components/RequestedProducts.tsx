@@ -1,14 +1,11 @@
 import { Divider, Table } from 'antd';
+import { QuantitySelect } from 'components';
+import { Box, Label } from 'components/elements';
+import { quantityTypes, requisitionSlipDetailsType } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertToBulk, formatQuantity } from 'utils';
-import { QuantitySelect } from '../../../../components';
-import { Box, Label } from '../../../../components/elements';
-import { quantityTypes } from '../../../../global/types';
 import '../style.scss';
-import {
-	RequisitionSlipDetails,
-	requisitionSlipDetailsType,
-} from './RequisitionSlipDetails';
+import { RequisitionSlipDetails } from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;

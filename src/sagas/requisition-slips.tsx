@@ -4,56 +4,9 @@ import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches'
 import { actions, types } from '../ducks/requisition-slips';
 import { MAX_RETRY, RETRY_INTERVAL_MS } from '../global/constants';
 import { request } from '../global/types';
-import { service } from '../services/requisition-slips';
+import service from '../services/RequisitionSlipsService';
 
 /* WORKERS */
-function* list({ payload }: any) {
-	const { page, pageSize, branchId, status, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield retry(
-			MAX_RETRY,
-			RETRY_INTERVAL_MS,
-			service.list,
-			{
-				page,
-				page_size: pageSize,
-				branch_id: branchId,
-				status,
-			},
-			getGoogleApiUrl(),
-		);
-
-		callback({ status: request.SUCCESS, data: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* listExtended({ payload }: any) {
-	const { page, pageSize, branchId, status, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield retry(
-			MAX_RETRY,
-			RETRY_INTERVAL_MS,
-			service.listExtended,
-			{
-				page,
-				page_size: pageSize,
-				branch_id: branchId,
-				status,
-			},
-			getGoogleApiUrl(),
-		);
-
-		callback({ status: request.SUCCESS, data: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
 
 function* getByIdAndBranch({ payload }: any) {
 	const { id, branchId, isForOutOfStock, callback } = payload;
@@ -121,42 +74,6 @@ function* getById({ payload }: any) {
 	}
 }
 
-function* getPendingCount({ payload }: any) {
-	const { userId, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(
-			service.getPendingCount,
-			{ user_id: userId },
-			getGoogleApiUrl(),
-		);
-
-		callback({ status: request.SUCCESS, data: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
-function* create({ payload }: any) {
-	const { callback, ...data } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(service.create, data, getGoogleApiUrl());
-
-		yield put(
-			actions.save({
-				type: types.CREATE_REQUISITION_SLIP,
-				requisitionSlip: response.data,
-			}),
-		);
-		callback({ status: request.SUCCESS });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 function* edit({ payload }: any) {
 	const { callback, ...data } = payload;
 	callback({ status: request.REQUESTING });
@@ -190,14 +107,6 @@ function* setOutOfStock({ payload }: any) {
 }
 
 /* WATCHERS */
-const listWatcherSaga = function* listWatcherSaga() {
-	yield takeLatest(types.GET_REQUISITION_SLIPS, list);
-};
-
-const listExtendedWatcherSaga = function* listExtendedWatcherSaga() {
-	yield takeLatest(types.GET_REQUISITION_SLIPS_EXTENDED, listExtended);
-};
-
 const getByIdWatcherSaga = function* getByIdWatcherSaga() {
 	yield takeLatest(types.GET_REQUISITION_SLIP_BY_ID, getById);
 };
@@ -209,14 +118,6 @@ const getByIdAndBranchWatcherSaga = function* getByIdAndBranchWatcherSaga() {
 	);
 };
 
-const getPendingCountWatcherSaga = function* getPendingCountWatcherSaga() {
-	yield takeLatest(types.GET_PENDING_COUNT, getPendingCount);
-};
-
-const createWatcherSaga = function* createWatcherSaga() {
-	yield takeLatest(types.CREATE_REQUISITION_SLIP, create);
-};
-
 const editWatcherSaga = function* editWatcherSaga() {
 	yield takeLatest(types.EDIT_REQUISITION_SLIP, edit);
 };
@@ -226,12 +127,8 @@ const setOutOfStockWatcherSaga = function* setOutOfStockWatcherSaga() {
 };
 
 export default [
-	listWatcherSaga(),
-	listExtendedWatcherSaga(),
 	getByIdWatcherSaga(),
 	getByIdAndBranchWatcherSaga(),
-	getPendingCountWatcherSaga(),
-	createWatcherSaga(),
 	editWatcherSaga(),
 	setOutOfStockWatcherSaga(),
 ];

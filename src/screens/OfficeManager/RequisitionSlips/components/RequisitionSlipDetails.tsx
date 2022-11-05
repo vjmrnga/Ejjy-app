@@ -2,17 +2,16 @@ import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions } from 'antd';
 import { ViewRequisitionSlipModal } from 'components';
 import { Select } from 'components/elements';
-import { request, requisitionSlipActionsOptions } from 'global';
+import {
+	request,
+	requisitionSlipActionsOptions,
+	requisitionSlipDetailsType,
+} from 'global';
 import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import { upperFirst } from 'lodash';
 import React, { useState } from 'react';
 import { formatDateTime, getRequestor } from 'utils';
 import '../style.scss';
-
-export const requisitionSlipDetailsType = {
-	SINGLE_VIEW: 'single_view',
-	CREATE_EDIT: 'create_edit',
-};
 
 interface Props {
 	requisitionSlip: any;

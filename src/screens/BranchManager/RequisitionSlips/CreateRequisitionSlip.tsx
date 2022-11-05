@@ -1,41 +1,36 @@
 /* eslint-disable react/no-this-in-sfc */
-/* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isEmpty, isInteger } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import * as Yup from 'yup';
-import {
-	convertIntoArray,
-	convertToPieces,
-	getBranchProductStatus,
-	sleep,
-} from 'utils';
-import { Content, RequestErrors, TableHeader } from '../../../components';
+import { Content, RequestErrors, TableHeader } from 'components';
 import {
 	Box,
 	Button,
 	FieldError,
 	FormCheckbox,
 	FormInput,
-	FormSelect,
-} from '../../../components/elements';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	branchProductStatusOptionsWithAll,
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
-	quantityTypeOptions,
-} from '../../../global/options';
-import {
 	quantityTypes,
-	request,
 	requisitionSlipTypes,
+	SEARCH_DEBOUNCE_TIME,
 	unitOfMeasurementTypes,
-} from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
+} from 'global';
+import {
+	useAuth,
+	useBranchProducts,
+	useQueryParams,
+	useRequisitionSlipCreate,
+} from 'hooks';
+import _, { isEmpty, isInteger } from 'lodash';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { convertIntoArray, getBranchProductStatus } from 'utils';
+import * as Yup from 'yup';
 
 const tabs = {
 	ALL: 'ALL',
@@ -43,48 +38,41 @@ const tabs = {
 };
 
 const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
-	{ title: 'Quantity', dataIndex: 'quantity', key: 'quantity', width: 200 },
-	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Quantity', dataIndex: 'quantity', width: 200 },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
-// TODO: Once the RS endpoints sorted out, remove this `useGoogleApiUrl`
 export const CreateRequisitionSlip = () => {
 	// STATES
-	const [searchedKeyword, setSeachedKeyword] = useState('');
-	const [selectedStatus, setSelectedStatus] = useState('all');
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
-	const [isSubmitting, setSubmitting] = useState(false);
 
 	// REFS
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
 	const history = useHistory();
+	const { params, setQueryParams } = useQueryParams();
 	const { user } = useAuth();
 	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProducts,
-		status: branchProductsStatus,
-		errors: branchProductsErrors,
-	} = useBranchProducts();
+		data: { branchProducts, total },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsError,
+	} = useBranchProducts({
+		params: {
+			...params,
+			//! branchId: getBranchId(), Implemeent an online branch id and local branch id
+			productStatus: params.status === 'all' ? null : params.status,
+			isSoldInBranch: true,
+			useGoogleApiUrl: true,
+		},
+	});
 	const {
-		createRequisitionSlip,
-		status: requisitionSlipsStatus,
-		errors: requisitionSlipsErrors,
-	} = useRequisitionSlips();
-
-	// VARIABLES
-	const branchId = user?.branch?.id;
-
-	// METHODS
-	useEffect(() => {
-		getBranchProducts({ branchId, page: 1, useGoogleApiUrl: true });
-	}, []);
+		mutateAsync: createRequisitionSlip,
+		isLoading: isCreating,
+		error: createError,
+	} = useRequisitionSlipCreate();
 
 	// METHODS: Form methods
 	const getFormDetails = useCallback(
@@ -93,19 +81,16 @@ export const CreateRequisitionSlip = () => {
 				branchProducts:
 					activeTab === tabs.ALL
 						? branchProducts.map((branchProduct) => {
-								const key = branchProduct.product.id;
-								const product = productsRef.current?.[key];
+								const { key } = branchProduct.product;
+								const quantity = productsRef.current?.[key]?.quantity || '';
 
 								return {
 									selected: key in productsRef.current,
-									product_id: key,
-									product_name: branchProduct.product.name,
-									quantity: product?.quantity || '',
-									quantity_type: product?.quantityType || quantityTypes.PIECE,
-									pieces_in_bulk: branchProduct.product.pieces_in_bulk,
+									key,
+									name: branchProduct.product.name,
+									quantity,
 									status: branchProduct.product_status,
-									unit_of_measurement:
-										branchProduct.product.unit_of_measurement,
+									unitOfMeasurement: branchProduct.product.unit_of_measurement,
 								};
 						  })
 						: Object.keys(productsRef.current).map((key) => {
@@ -113,13 +98,11 @@ export const CreateRequisitionSlip = () => {
 
 								return {
 									selected: true,
-									product_id: key,
-									product_name: product.name,
+									key,
+									name: product.name,
 									quantity: product.quantity || '',
-									quantity_type: product.quantityType,
-									pieces_in_bulk: product.piecesInBulk,
 									status: product.status,
-									unit_of_measurement: product.unitOfMeasurement,
+									unitOfMeasurement: product.unitOfMeasurement,
 								};
 						  }),
 			},
@@ -146,11 +129,9 @@ export const CreateRequisitionSlip = () => {
 											// NW  	WHOLE	  WHOLE
 
 											const unitOfMeasurement = this.parent.unit_of_measurement;
-											const quantityType = this.parent.quantity_type;
 
 											const isWeighingPiece =
-												unitOfMeasurement === unitOfMeasurementTypes.WEIGHING &&
-												quantityType === quantityTypes.PIECE;
+												unitOfMeasurement === unitOfMeasurementTypes.WEIGHING;
 
 											if (!isWeighingPiece) {
 												return isInteger(Number(value));
@@ -170,12 +151,7 @@ export const CreateRequisitionSlip = () => {
 	);
 
 	const renderQuantity = (fieldKey, product) => {
-		const {
-			selected = null,
-			product_id: productId = null,
-			quantity_type,
-			unit_of_measurement,
-		} = product;
+		const { key, selected = null, unitOfMeasurement } = product;
 
 		return (
 			<>
@@ -184,22 +160,11 @@ export const CreateRequisitionSlip = () => {
 						disabled={!selected}
 						id={`${fieldKey}.quantity`}
 						isWholeNumber={
-							!(
-								quantity_type === quantityTypes.PIECE &&
-								unit_of_measurement === unitOfMeasurementTypes.WEIGHING
-							)
+							unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
 						}
 						type="number"
 						onChange={(value) => {
-							onChangeQuantity(productId, value);
-						}}
-					/>
-					<FormSelect
-						disabled={!selected}
-						id={`${fieldKey}.quantity_type`}
-						options={quantityTypeOptions}
-						onChange={(value) => {
-							onChangeQuantityType(productId, value);
+							handleChangeQuantity(key, value);
 						}}
 					/>
 				</div>
@@ -212,98 +177,54 @@ export const CreateRequisitionSlip = () => {
 	};
 
 	// METHODS: Change listeners
-	const onChangeCheckbox = (productId, value, data = {}) => {
+	const handleChangeCheckbox = (key, value, data = {}) => {
 		if (value) {
-			productsRef.current[productId] = data;
+			productsRef.current[key] = data;
 		} else {
-			delete productsRef.current[productId];
+			delete productsRef.current[key];
 		}
 
 		setCount(Object.keys(productsRef.current).length);
 	};
 
-	const onChangeQuantity = (productId, value) => {
-		if (productId in productsRef.current) {
-			productsRef.current[productId].quantity = value;
-		}
-	};
-
-	const onChangeQuantityType = (productId, value) => {
-		if (productId in productsRef.current) {
-			productsRef.current[productId].quantityType = value;
+	const handleChangeQuantity = (key, value) => {
+		if (key in productsRef.current) {
+			productsRef.current[key].quantity = value;
 		}
 	};
 
 	// METHODS: Filters
-	const onPageChange = (page, newPageSize) => {
-		getBranchProducts(
-			{
-				branchId,
-				search: searchedKeyword,
-				productStatus: selectedStatus === 'all' ? null : selectedStatus,
-				isSoldInBranch: true,
-				page,
-				pageSize: newPageSize,
-				useGoogleApiUrl: true,
-			},
-			newPageSize !== pageSize,
-		);
-	};
+	const onSearchDebounced = useCallback(
+		_.debounce((search) => {
+			setQueryParams({ search }, { shouldResetPage: true });
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
 
-	const onSearch = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
+	const handleCreate = async () => {
+		const productKeys = Object.keys(productsRef.current);
 
-		getBranchProducts(
-			{
-				branchId,
-				search: lowerCaseKeyword,
-				productStatus: selectedStatus === 'all' ? null : selectedStatus,
-				isSoldInBranch: true,
-				page: 1,
-				useGoogleApiUrl: true,
-			},
-			true,
-		);
-
-		setSeachedKeyword(lowerCaseKeyword);
-	};
-
-	const onCreate = () => {
-		const productIds = Object.keys(productsRef.current);
-
-		if (productIds.length > 0) {
-			const products = productIds.map((id) => {
-				const { piecesInBulk, quantityType, quantity } =
-					productsRef.current[id];
+		if (productKeys.length > 0) {
+			const products = productKeys.map((key) => {
+				const { quantity } = productsRef.current[key];
 
 				return {
-					product_id: id,
-					quantity_piece:
-						quantityType === quantityTypes.PIECE
-							? quantity
-							: convertToPieces(quantity, piecesInBulk),
+					key,
+					quantity_piece: quantity,
 				};
 			});
 
-			createRequisitionSlip(
-				{
-					requestor_id: user?.branch?.id,
-					requesting_user_username: user?.username,
-					type: requisitionSlipTypes.MANUAL,
-					products,
-				},
-				({ status }) => {
-					if (status === request.SUCCESS) {
-						history.push('/branch-manager/requisition-slips');
-					}
-				},
-			);
+			await createRequisitionSlip({
+				requestingUserUsername: user.username,
+				type: requisitionSlipTypes.MANUAL,
+				products,
+			});
+
+			history.push('/branch-manager/requisition-slips');
 		}
 	};
 
-	const loading = [requisitionSlipsStatus, branchProductsStatus].includes(
-		request.REQUESTING,
-	);
+	const loading = isCreating || isFetchingBranchProducts;
 
 	return (
 		<Content className="CreateRequisitionSlip" title="Requisition Slips">
@@ -313,28 +234,17 @@ export const CreateRequisitionSlip = () => {
 					statusDisabled={activeTab === tabs.SELECTED}
 					statuses={branchProductStatusOptionsWithAll}
 					title="Create Requisition Slip"
-					onSearch={onSearch}
+					onSearch={onSearchDebounced}
 					onStatusSelect={(status) => {
-						getBranchProducts(
-							{
-								branchId: user?.branch?.id,
-								search: searchedKeyword,
-								productStatus: status === 'all' ? null : status,
-								isSoldInBranch: true,
-								page: 1,
-								useGoogleApiUrl: true,
-							},
-							true,
-						);
-						setSelectedStatus(status);
+						setQueryParams({ status }, { shouldResetPage: true });
 					}}
 				/>
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
-						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(requisitionSlipsErrors, 'Requisition Slip'),
+						...convertIntoArray(createError?.errors, 'Requisition Slip'),
+						...convertIntoArray(branchProductsError, 'Branch Products'),
 					]}
 					withSpaceBottom
 				/>
@@ -343,17 +253,11 @@ export const CreateRequisitionSlip = () => {
 					initialValues={getFormDetails().DefaultValues}
 					validationSchema={getFormDetails().Schema}
 					enableReinitialize
-					onSubmit={async () => {
-						setSubmitting(true);
-						await sleep(500);
-						setSubmitting(false);
-
-						onCreate();
-					}}
+					onSubmit={handleCreate}
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
-							<div className="PaddingHorizontal">
+							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
 									type="card"
@@ -373,26 +277,28 @@ export const CreateRequisitionSlip = () => {
 										values,
 										setFieldValue,
 										renderQuantity,
-										onChangeCheckbox,
+										onChangeCheckbox: handleChangeCheckbox,
 									}}
-									loading={loading || isSubmitting}
+									loading={loading}
 									paginationProps={{
-										currentPage,
-										pageCount,
-										pageSize,
-										onPageChange,
+										currentPage: Number(params.page) || DEFAULT_PAGE,
+										pageCount: total,
+										pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+										onPageChange: (page, newPageSize) => {
+											setQueryParams({
+												page,
+												pageSize: newPageSize,
+											});
+										},
 									}}
 								/>
 							</div>
 
 							<Divider dashed />
 
-							<div className="CreateRequisitionSlip_createContainer">
+							<div className="px-6 pb-6 d-flex flex-row-reverse">
 								<Button
-									classNames="CreateRequisitionSlip_btnCreate"
-									disabled={
-										loading || isSubmitting || isEmpty(productsRef.current)
-									}
+									disabled={loading || isEmpty(productsRef.current)}
 									text="Create"
 									type="submit"
 									variant="primary"
@@ -413,58 +319,61 @@ const ProductsTable = ({
 	loading,
 }: any) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// VARIABLES
 	const { values, setFieldValue, renderQuantity, onChangeCheckbox } = formProps;
 	const { currentPage, pageCount, pageSize, onPageChange } = paginationProps;
 
 	useEffect(() => {
-		setData(
-			values.branchProducts.map((product, index) => {
-				const fieldKey = `branchProducts.${index}`;
+		const tableData = values.branchProducts.map((branchProduct, index) => {
+			const fieldKey = `branchProducts.${index}`;
 
-				return {
-					name: (
-						<FormCheckbox
-							id={`${fieldKey}.selected`}
-							label={product.product_name}
-							onChange={(value) => {
-								if (!value && activeTab === tabs.ALL) {
+			return {
+				key: branchProduct.key,
+				name: (
+					<FormCheckbox
+						id={`${fieldKey}.selected`}
+						label={branchProduct.name}
+						onChange={(value) => {
+							if (!value) {
+								if (activeTab === tabs.ALL) {
 									setFieldValue(`${fieldKey}.quantity`, '');
 									setFieldValue(
 										`${fieldKey}.quantity_type`,
 										quantityTypes.PIECE,
 									);
-								} else if (!value && activeTab === tabs.SELECTED) {
+								}
+
+								if (activeTab === tabs.SELECTED) {
 									const newValues = values.branchProducts.filter(
-										({ product_id }) => product_id !== product.product_id,
+										({ key }) => key !== branchProduct.key,
 									);
 									setFieldValue('branchProducts', newValues);
 								}
+							}
 
-								onChangeCheckbox(product.product_id, value, {
-									name: product.product_name,
-									status: product.status,
-									quantityType: quantityTypes.PIECE,
-									piecesInBulk: product.pieces_in_bulk,
-									unitOfMeasurement: product.unit_of_measurement,
-								});
-							}}
-						/>
-					),
-					quantity: renderQuantity(fieldKey, product),
-					status: getBranchProductStatus(product.status),
-				};
-			}),
-		);
+							onChangeCheckbox(branchProduct.key, value, {
+								name: branchProduct.name,
+								status: branchProduct.status,
+								unitOfMeasurement: branchProduct.unitOfMeasurement,
+							});
+						}}
+					/>
+				),
+				quantity: renderQuantity(fieldKey, branchProduct),
+				status: getBranchProductStatus(branchProduct.status),
+			};
+		});
+
+		setDataSource(tableData);
 	}, [values]);
 
 	return (
 		<>
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				loading={loading}
 				pagination={
 					activeTab === tabs.ALL

@@ -230,3 +230,8 @@ export const serviceTypes = {
 	ONLINE: 'online',
 	OFFLINE: 'offline',
 };
+
+export const requisitionSlipDetailsType = {
+	SINGLE_VIEW: 'single_view',
+	CREATE_EDIT: 'create_edit',
+};

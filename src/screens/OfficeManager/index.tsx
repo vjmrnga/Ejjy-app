@@ -21,7 +21,7 @@ import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
 import { Reports } from './Reports/Reports';
-import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
+import { RequisitionSlips } from './RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';

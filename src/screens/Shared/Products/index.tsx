@@ -28,7 +28,7 @@ import {
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { debounce } from 'lodash';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
@@ -243,7 +243,7 @@ const Filter = () => {
 
 	// METHODS
 	const onSearchDebounced = useCallback(
-		debounce((search) => {
+		_.debounce((search) => {
 			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
 		[],

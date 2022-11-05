@@ -1,22 +1,18 @@
-import { useEffect, useState } from 'react';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
+import { Query } from 'hooks/inteface';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from 'utils';
+import { RequisitionSlipsService } from 'services';
+import {
+	getGoogleApiUrl,
+	modifiedCallback,
+	modifiedExtraCallback,
+} from 'utils';
 import { actions, selectors, types } from '../ducks/requisition-slips';
 import { request } from '../global/types';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from '../utils/pagination';
 import { useActionDispatch } from './useActionDispatch';
-
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching requisition slips';
-
-const CREATE_SUCCESS_MESSAGE = 'Requisition slip was created successfully';
-const CREATE_ERROR_MESSAGE =
-	'An error occurred while creating the requisition slip';
 
 const EDIT_SUCCESS_MESSAGE = 'Requisition slip was edited successfully';
 const EDIT_ERROR_MESSAGE =
@@ -33,13 +29,6 @@ export const useRequisitionSlips = () => {
 	const [errors, setErrors] = useState<any>([]);
 	const [recentRequest, setRecentRequest] = useState<any>();
 
-	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(5);
-
 	// SELECTORS
 	const requisitionSlip = useSelector(selectors.selectRequisitionSlip());
 	const requisitionSlipsByBranch = useSelector(
@@ -50,23 +39,13 @@ export const useRequisitionSlips = () => {
 	);
 
 	// ACTIONS
-	const getRequisitionSlipsAction = useActionDispatch(
-		actions.getRequisitionSlips,
-	);
-	const getRequisitionSlipsExtendedAction = useActionDispatch(
-		actions.getRequisitionSlipsExtended,
-	);
-
 	const getRequisitionSlipsByIdAction = useActionDispatch(
 		actions.getRequisitionSlipById,
 	);
 	const getRequisitionSlipsByIdAndBranch = useActionDispatch(
 		actions.getRequisitionSlipByIdAndBranch,
 	);
-	const getPendingCountAction = useActionDispatch(actions.getPendingCount);
-	const createRequisitionSlip = useActionDispatch(
-		actions.createRequisitionSlip,
-	);
+
 	const editRequisitionSlip = useActionDispatch(actions.editRequisitionSlip);
 	const removeRequisitionSlipByBranch = useActionDispatch(
 		actions.removeRequisitionSlipByBranch,
@@ -83,77 +62,12 @@ export const useRequisitionSlips = () => {
 		resetStatus();
 	};
 
-	const executeRequest = (data, requestCallback, action, type) => {
-		setRecentRequest(type);
-		action({
-			...data,
-			callback: onCallback(
-				callback,
-				requestCallback?.onSuccess,
-				requestCallback?.onError,
-			),
-		});
-	};
-
 	const callback = ({ status: requestStatus, errors: requestErrors = [] }) => {
 		setStatus(requestStatus);
 		setErrors(requestErrors);
 	};
 
-	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
-			}),
-		);
-	}, [allData, currentPage, pageSize]);
-
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
-
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
-
 	// REQUEST METHODS
-	const getRequisitionSlips = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: getRequisitionSlipsAction,
-			requestType: types.GET_REQUISITION_SLIPS,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
-	const getRequisitionSlipsExtended = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: getRequisitionSlipsExtendedAction,
-			requestType: types.GET_REQUISITION_SLIPS_EXTENDED,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
 	const getRequisitionSlipsById = (data, extraCallback = null) => {
 		setRecentRequest(types.GET_REQUISITION_SLIP_BY_ID);
 		getRequisitionSlipsByIdAction({
@@ -193,29 +107,6 @@ export const useRequisitionSlips = () => {
 		}
 	};
 
-	const getPendingCount = (data, extraCallback = null) => {
-		setRecentRequest(types.GET_PENDING_COUNT);
-		getPendingCountAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	const createRequisitionSlipRequest = (data, extraCallback = null) => {
-		setRecentRequest(types.CREATE_REQUISITION_SLIP);
-		createRequisitionSlip({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
 	const editRequisitionSlipRequest = (id, action) => {
 		setRecentRequest(types.EDIT_REQUISITION_SLIP);
 		editRequisitionSlip({
@@ -246,20 +137,8 @@ export const useRequisitionSlips = () => {
 		requisitionSlipsByBranch,
 		requisitionSlipForOutOfStock,
 
-		requisitionSlips: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
-		getRequisitionSlips,
-		getRequisitionSlipsExtended,
 		getRequisitionSlipsById,
 		getRequisitionSlipsByIdAndBranch: getRequisitionSlipsByIdAndBranchRequest,
-		getPendingCount,
-		createRequisitionSlip: createRequisitionSlipRequest,
 		editRequisitionSlip: editRequisitionSlipRequest,
 		setOutOfStock: setOutOfStockRequest,
 		removeRequisitionSlipByBranch,
@@ -271,3 +150,74 @@ export const useRequisitionSlips = () => {
 		resetError,
 	};
 };
+
+const useRequisitionSlipsNew = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useRequisitionSlips',
+			params?.branchId,
+			params?.page,
+			params?.pageSize,
+			params?.status,
+		],
+		() =>
+			wrapServiceWithCatch(
+				RequisitionSlipsService.list(
+					{
+						branch_id: params?.branchId,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						status: params?.status,
+					},
+					getGoogleApiUrl(),
+				),
+			),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				requisitionSlips: query.data.results,
+				total: query.data.count,
+			}),
+		},
+	);
+
+export const useRequisitionSlipsRetrievePendingCount = ({ params }: Query) =>
+	useQuery<any>(
+		['useRequisitionSlipsRetrievePendingCount', params.userId],
+		() =>
+			wrapServiceWithCatch(
+				RequisitionSlipsService.retrievePendingCount(
+					{
+						user_id: params.userId,
+					},
+					getGoogleApiUrl(),
+				),
+			),
+		{
+			initialData: { data: 0 },
+			select: (query) => query.data,
+		},
+	);
+
+export const useRequisitionSlipCreate = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ requestingUserUsername, type, products }: any) =>
+			RequisitionSlipsService.create(
+				{
+					requesting_user_username: requestingUserUsername,
+					type,
+					products,
+				},
+				getGoogleApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useRequisitionSlips');
+			},
+		},
+	);
+};
+
+export default useRequisitionSlipsNew;

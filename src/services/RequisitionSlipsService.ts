@@ -1,19 +1,27 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
+interface List extends IListRequest {
+	branch_id?: number;
+	status?: string;
+}
+
+interface ListBranchId {
+	preparing_branch_id?: number;
+}
+
 type Product = {
-	product_id: number;
+	key: number;
 	quantity_piece: number;
-	quantity_bulk: number;
 };
 
-interface ICreateRequisitionSlip {
-	requestor_id: number;
+interface Create {
+	requesting_user_username: number;
 	type: 'manual' | 'automatic';
 	products: Product[];
 }
 
-interface IEditRequisitionSlip {
+interface Edit {
 	id: number;
 	action:
 		| 'new'
@@ -25,23 +33,11 @@ interface IEditRequisitionSlip {
 		| 'f_ds1_error';
 }
 
-interface IListRequisitionSlip extends IListRequest {
-	branch_id?: number;
-	status?: string;
-}
-
-interface IGetRequestRequisitionSlipBranchId {
-	preparing_branch_id?: number;
-}
-
-export const service = {
-	list: async (params: IListRequisitionSlip, baseURL) =>
-		axios.get('/requisition-slips/', { baseURL, params }),
-
-	listExtended: async (params: IListRequisitionSlip, baseURL) =>
+const service = {
+	list: async (params: List, baseURL) =>
 		axios.get('/requisition-slips/extended/', { baseURL, params }),
 
-	getPendingCount: async (params, baseURL) =>
+	retrievePendingCount: async (params, baseURL) =>
 		axios.get('/requisition-slips/pending-count/', { baseURL, params }),
 
 	getById: async (id, requestingUserType, baseURL) =>
@@ -50,19 +46,17 @@ export const service = {
 			{ baseURL },
 		),
 
-	getByIdAndBranch: async (
-		params: IGetRequestRequisitionSlipBranchId,
-		id: number,
-		baseURL,
-	) =>
+	getByIdAndBranch: async (params: ListBranchId, id: number, baseURL) =>
 		axios.get(`/requisition-slips/${id}/with-preparing-branch-details/`, {
 			baseURL,
 			params,
 		}),
 
-	create: async (body: ICreateRequisitionSlip, baseURL) =>
+	create: async (body: Create, baseURL) =>
 		axios.post('/requisition-slips/', body, { baseURL }),
 
-	edit: async (body: IEditRequisitionSlip, baseURL) =>
+	edit: async (body: Edit, baseURL) =>
 		axios.patch(`/requisition-slips/${body.id}/`, body, { baseURL }),
 };
+
+export default service;

@@ -527,13 +527,18 @@ export const getProductCode = (product) =>
 	EMPTY_CELL;
 
 export const getRequestor = (requisitionSlip) => {
-	const {
-		first_name = '',
-		last_name = '',
-		branch = {},
-	} = requisitionSlip?.requesting_user || {};
+	const user = requisitionSlip?.requesting_user || {};
 
-	return `${first_name} ${last_name} - ${branch?.name || ''}`;
+	const data = [];
+	if (user) {
+		data.push(getFullName(user));
+	}
+
+	if (user.branch) {
+		data.push(user.branch.name);
+	}
+
+	return data.join(' - ');
 };
 
 export const filterOption = (input, option) =>

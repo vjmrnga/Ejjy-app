@@ -1,39 +1,35 @@
 import { Divider, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Box, Label } from 'components/elements';
+import { requisitionSlipDetailsType } from 'global';
 import React, { useEffect, useState } from 'react';
-import { Box, Label } from '../../../../components/elements';
-import '../style.scss';
-import {
-	RequisitionSlipDetails,
-	requisitionSlipDetailsType,
-} from './RequisitionSlipDetails';
+import { getProductCode } from 'utils';
+import { RequisitionSlipDetails } from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;
 }
 
 const columns: ColumnsType = [
-	{ title: 'Barcode', dataIndex: 'barcode', key: 'barcode' },
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Code', dataIndex: 'code' },
+	{ title: 'Name', dataIndex: 'name' },
 ];
 
 export const RequestedProducts = ({ requisitionSlip }: Props) => {
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	useEffect(() => {
-		if (requisitionSlip) {
-			setData(
-				requisitionSlip?.products?.map((requestedProduct) => {
-					const { product } = requestedProduct;
-					const { barcode, textcode, name } = product;
+		const formattedProducts = requisitionSlip?.products?.map(
+			(requestedProduct) => {
+				const { product } = requestedProduct;
 
-					return {
-						barcode: barcode || textcode,
-						name,
-					};
-				}),
-			);
-		}
+				return {
+					code: getProductCode(product),
+					name: product.name,
+				};
+			},
+		);
+		setDataSource(formattedProducts);
 	}, [requisitionSlip]);
 
 	return (
@@ -43,14 +39,14 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 				type={requisitionSlipDetailsType.SINGLE_VIEW}
 			/>
 
-			<div className="ViewRequisitionSlip_requestedProducts">
+			<div className="px-6 pb-3">
 				<Divider dashed />
 				<Label label="Requested Products" />
 			</div>
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				pagination={false}
 				scroll={{ y: 250 }}
 			/>

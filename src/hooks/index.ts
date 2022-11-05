@@ -47,6 +47,8 @@ export { default as useProducts } from './useProducts';
 export { default as useQueryParams } from './useQueryParams';
 export * from './useReceivingVouchers';
 export { default as useReceivingVouchers } from './useReceivingVouchers';
+export * from './useRequisitionSlips';
+export { default as useRequisitionSlips } from './useRequisitionSlips';
 export { default as useSalesTracker } from './useSalesTracker';
 export { default as useSessions } from './useSessions';
 export * from './useSiteSettings';

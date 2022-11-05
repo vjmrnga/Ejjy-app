@@ -1,20 +1,20 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
+import { RequestErrors, RequestWarnings } from 'components';
+import { Label, Select } from 'components/elements';
+import { selectors as authSelectors } from 'ducks/auth';
+import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
+import { types } from 'ducks/order-slips';
+import {
+	IS_APP_LIVE,
+	quantityTypes,
+	request,
+	requisitionSlipDetailsType,
+} from 'global';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { convertIntoArray, convertToPieces } from 'utils';
-import { RequestWarnings } from '../../../../../components';
-import { Label, Select } from '../../../../../components/elements';
-import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
-import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
-import { types } from '../../../../../ducks/order-slips';
-import { IS_APP_LIVE } from '../../../../../global/constants';
-import { quantityTypes, request } from '../../../../../global/types';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import {
-	RequisitionSlipDetails,
-	requisitionSlipDetailsType,
-} from '../RequisitionSlipDetails';
+import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
 

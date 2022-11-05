@@ -1,13 +1,12 @@
 import { Spin } from 'antd';
+import { Breadcrumb, Content } from 'components';
+import { request } from 'global';
+import { useAuth } from 'hooks';
+import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Content } from '../../../components';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
 import { OrderSlips } from './components/OrderSlips/OrderSlips';
 import { RequestedProducts } from './components/RequestedProducts';
-import './style.scss';
 
 interface Props {
 	match: any;
@@ -63,9 +62,13 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 				spinning={requisitionSlipsStatus === request.REQUESTING}
 				tip="Fetching requisition slip..."
 			>
-				<RequestedProducts requisitionSlip={requisitionSlip} />
+				{requisitionSlip && (
+					<>
+						<RequestedProducts requisitionSlip={requisitionSlip} />
 
-				<OrderSlips requisitionSlipId={requisitionSlipId} />
+						<OrderSlips requisitionSlipId={requisitionSlipId} />
+					</>
+				)}
 			</Spin>
 		</Content>
 	);

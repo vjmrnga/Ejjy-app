@@ -1,20 +1,18 @@
 import { Divider, Modal } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { convertIntoArray } from 'utils';
-import { RequestErrors } from '../../../../../components';
-import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { types } from '../../../../../ducks/BranchManager/delivery-receipts';
+import { RequestErrors } from 'components';
+import { selectors as authSelectors } from 'ducks/auth';
+import { types } from 'ducks/BranchManager/delivery-receipts';
 import {
 	orderSlipStatus,
 	request,
 	requisitionSlipActions,
-} from '../../../../../global/types';
-import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
-import {
-	RequisitionSlipDetails,
 	requisitionSlipDetailsType,
-} from '../RequisitionSlipDetails';
+} from 'global';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { convertIntoArray } from 'utils';
+import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
+import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
 import { ReceiveDeliveryReceiptForm } from './ReceiveDeliveryReceiptForm';
 
 interface Props {

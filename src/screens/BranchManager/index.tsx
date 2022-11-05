@@ -38,7 +38,7 @@ import { Dashboard } from './Dashboard';
 import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
 import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
-import { RequisitionSlips } from './RequisitionSlips/RequisitionSlips';
+import { RequisitionSlips } from './RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
