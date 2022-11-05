@@ -224,3 +224,9 @@ export const appTypes = {
 	BACK_OFFICE: 'back_office',
 	HEAD_OFFICE: 'head_office',
 };
+
+export const serviceTypes = {
+	NORMAL: 'normal',
+	ONLINE: 'online',
+	OFFLINE: 'offline',
+};

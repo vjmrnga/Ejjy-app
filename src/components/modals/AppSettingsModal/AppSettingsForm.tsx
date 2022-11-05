@@ -1,6 +1,6 @@
 import { Alert, Col, Input, Radio, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { appTypes } from 'global';
+import { appTypes, serviceTypes } from 'global';
 import { useBranches } from 'hooks';
 import qz from 'qz-tray';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -41,7 +41,10 @@ export const AppSettingsForm = ({
 		data: { branches },
 		isFetching: isFetchingBranches,
 	} = useBranches({
-		params: { baseURL },
+		params: {
+			baseURL,
+			serviceType: serviceTypes.NORMAL,
+		},
 	});
 
 	// METHODS

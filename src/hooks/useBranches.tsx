@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -7,11 +7,25 @@ import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
 const useBranches = ({ params, options }: Query = {}) =>
 	useQuery<any>(
-		['useBranches', params?.baseURL, params?.page, params?.pageSize],
+		[
+			'useBranches',
+			params?.baseURL,
+			params?.page,
+			params?.pageSize,
+			params?.serviceType,
+		],
 		() => {
-			const service = isStandAlone()
+			let service = isStandAlone()
 				? BranchesService.list
 				: BranchesService.listOffline;
+
+			if (serviceTypes.NORMAL === params?.serviceType) {
+				service = BranchesService.list;
+			}
+
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = BranchesService.listOffline;
+			}
 
 			return wrapServiceWithCatch(
 				service(
