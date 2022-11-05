@@ -1,14 +1,17 @@
-/* eslint-disable no-console */
+import { actions, types } from 'ducks/auth';
+import {
+	appTypes,
+	AUTH_CHECKING_INTERVAL_MS,
+	IS_APP_LIVE,
+	request,
+} from 'global';
 import { call, delay, put, takeLatest } from 'redux-saga/effects';
 import { AuthService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
-import { actions, types } from '../ducks/auth';
-import { AUTH_CHECKING_INTERVAL_MS, IS_APP_LIVE } from '../global';
-import { request } from '../global/types';
+import { getLocalApiUrl, getOnlineApiUrl, isUserFromBranch } from 'utils';
 
 /* WORKERS */
 function* login({ payload }: any) {
-	const { username, password, callback } = payload;
+	const { username, password, appType, callback } = payload;
 	callback({ status: request.REQUESTING });
 
 	try {
@@ -34,6 +37,27 @@ function* login({ payload }: any) {
 		// }
 
 		if (loginResponse) {
+			const user = loginResponse.data;
+
+			const userType = user.user_type;
+			if (appType === appTypes.HEAD_OFFICE && isUserFromBranch(userType)) {
+				callback({
+					status: request.ERROR,
+					errors: ['Admin and office manager can only use this app.'],
+				});
+
+				return;
+			}
+
+			if (appType === appTypes.BACK_OFFICE && !isUserFromBranch(userType)) {
+				callback({
+					status: request.ERROR,
+					errors: ['Branch managers and personnels can only use this app.'],
+				});
+
+				return;
+			}
+
 			// let tokenBaseURL = IS_APP_LIVE ? getOnlineApiUrl() : localURL;
 			// const tokenResponse = yield call(
 			// 	AuthService.acquireToken,
