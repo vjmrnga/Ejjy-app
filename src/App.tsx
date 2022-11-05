@@ -11,7 +11,7 @@ import BranchPersonnel from 'screens/BranchPersonnel';
 import Login from 'screens/Common/Login/Login';
 import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
-import { getBranchId } from 'utils';
+import { getBranchId, getLocalApiUrl, getOnlineApiUrl } from 'utils';
 import npmPackage from '../package.json';
 
 const NETWORK_RETRY = 10;
@@ -25,6 +25,7 @@ const App = () => {
 			options: {
 				retry: NETWORK_RETRY,
 				retryDelay: NETWORK_RETRY_DELAY_MS,
+				enabled: !!getLocalApiUrl() && !!getOnlineApiUrl(),
 				onError: () => {
 					history.replace({
 						pathname: '/error',
@@ -63,7 +64,7 @@ const App = () => {
 			<Spin
 				className="GlobalSpinner"
 				size="large"
-				spinning={isConnectingNetwork || isInitializingData}
+				spinning={isLoading}
 				style={{ width: '100vw', height: '100vh' }}
 				tip={getLoadingMessage()}
 			>
