@@ -1,2 +1,40 @@
 Table Header inside a Tab - set wrapperClassName="pt-2 px-0"
 Add list errors - turn off API and start app
+
+// ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
+
+http://localhost:8000/v1
+https://office.ej-jy.com/v1
+https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1
+
+
+{
+  "count": 7,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 5,
+      "name": "Main"
+    },
+    {
+      "id": 17,
+      "name": "N1"
+    },
+    {
+      "id": 18,
+      "name": "N2"
+    },
+    {
+      "id": 19,
+      "name": "B1"
+    },
+    {
+      "id": 20,
+      "name": "B2"
+    }
+  ]
+}
+
+
+https://localhost:8000/v1/bulk-initialize/?branch_id=5

@@ -37,7 +37,6 @@ export const Products = () => {
 	const [productCategory, setProductCategory] = useState(null);
 
 	// CUSTOM HOOKS
-
 	const { user } = useAuth();
 	const {
 		branchProducts,
