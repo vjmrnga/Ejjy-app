@@ -77,56 +77,56 @@ const print = ({
 		const { isPrinterConnected } =
 			useUserInterfaceStore.getState().userInterface;
 
-		if (isPrinterConnected) {
-			qz.printers
-				.find(getAppPrinterName())
-				.then((printer) => {
-					const config = qz.configs.create(printer, {
-						margins: {
-							top: 0,
-							right: PAPER_MARGIN_INCHES,
-							bottom: 0,
-							left: PAPER_MARGIN_INCHES,
-						},
-					});
-
-					const data = [
-						{
-							type: 'pixel',
-							format: 'html',
-							flavor: 'plain',
-							options: { pageWidth: PAPER_WIDTH_INCHES },
-							data: printData,
-						},
-					];
-
-					return qz.print(config, data);
-				})
-				.then(() => {
-					message.success({
-						content: successMessage,
-						key: PRINT_MESSAGE_KEY,
-					});
-				})
-				.catch((err) => {
-					message.error({
-						content: errorMessage,
-						key: PRINT_MESSAGE_KEY,
-					});
-					console.error(err);
-				})
-				.finally(() => {
-					if (onComplete) {
-						onComplete();
-					}
+		// if (isPrinterConnected) {
+		qz.printers
+			.find(getAppPrinterName())
+			.then((printer) => {
+				const config = qz.configs.create(printer, {
+					margins: {
+						top: 0,
+						right: PAPER_MARGIN_INCHES,
+						bottom: 0,
+						left: PAPER_MARGIN_INCHES,
+					},
 				});
-		} else {
-			message.error({
-				key: PRINT_MESSAGE_KEY,
-				content:
-					'Printer is not detected. Please check the printer connection first and try printing again.',
+
+				const data = [
+					{
+						type: 'pixel',
+						format: 'html',
+						flavor: 'plain',
+						options: { pageWidth: PAPER_WIDTH_INCHES },
+						data: printData,
+					},
+				];
+
+				return qz.print(config, data);
+			})
+			.then(() => {
+				message.success({
+					content: successMessage,
+					key: PRINT_MESSAGE_KEY,
+				});
+			})
+			.catch((err) => {
+				message.error({
+					content: errorMessage,
+					key: PRINT_MESSAGE_KEY,
+				});
+				console.error(err);
+			})
+			.finally(() => {
+				if (onComplete) {
+					onComplete();
+				}
 			});
-		}
+		// } else {
+		// 	message.error({
+		// 		key: PRINT_MESSAGE_KEY,
+		// 		content:
+		// 			'Printer is not detected. Please check the printer connection first and try printing again.',
+		// 	});
+		// }
 	} else {
 		message.error({
 			content: 'Printer is not connected or QZTray is not open.',
@@ -152,6 +152,16 @@ const getHeader = (headerData) => {
 	} = branchMachine || {};
 
 	return `
+  <style>
+      table {
+        font-size: inherit;
+      }
+
+      td {
+        padding: 0;
+      }
+    </style>
+
     <div style="text-align: center; display: flex; flex-direction: column">
       <span style="white-space: pre-line">${storeName}</span>
       <span style="white-space: pre-line">${location}</span>
@@ -161,7 +171,7 @@ const getHeader = (headerData) => {
       <span>${machineID}</span>
       <span>${ptuNumber}</span>
       <span>${posTerminal}</span>
-      ${title ? '</br>' : ''}
+      ${title ? '<br/>' : ''}
       ${title ? `<span>[${title}]</span>` : ''}
     </div>
   `;
@@ -188,7 +198,7 @@ const getFooter = (footerData) => {
 };
 
 const getPageStyle = (extraStyle = '') =>
-	`width: 100%; font-size: 12.5px; font-family: 'Arial', 'Courier New', monospace; line-height: 125%; position: relative;${extraStyle}`;
+	`width: 100%; font-size: 10pt; font-family: Arial, monospace; line-height: 100%; position: relative; ${extraStyle}`;
 
 export const printRequisitionSlip = ({
 	requisitionSlip,
@@ -220,40 +230,64 @@ export const printRequisitionSlip = ({
 
     <br />
 
-    <table style="width: 100%;">
-      <thead>
-        <tr>
-          <th style="text-align: left; font-weight: normal">NAME</th>
-          <th style="text-align: center; font-weight: normal">QTY ORDERED</th>
-          <th style="text-align: right; font-weight: normal">QTY PREPARED</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${requisitionSlip.products
-					.map(
-						({ quantity_piece, product }) => `
+    ${
+			isPdf
+				? `
+        <table style="width: 100%;">
+          <thead>
             <tr>
-              <td>
-                <span style="display:block">${product.name}</span>
-                <small>CODE: ${getProductCode(product)}</small>
-              </td>
+              <th style="text-align: left; font-weight: normal">NAME</th>
+              <th style="text-align: center; font-weight: normal">QTY ORDERED</th>
+              <th style="text-align: right; font-weight: normal">QTY SERVED</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${requisitionSlip.products
+							.map(
+								({ quantity_piece, product }) => `
+                <tr>
+                  <td>
+                    <span style="display:block">${product.name}</span>
+                    <small>CODE: ${getProductCode(product)}</small>
+                  </td>
 
-              <td style="text-align: center">
+                  <td style="text-align: center">
+                    ${formatQuantity({
+											unitOfMeasurement: product.unit_of_measurement,
+											quantity: quantity_piece,
+										})}
+                  </td>
+
+                  <td style="text-align: left">-</td>
+                </tr>
+              `,
+							)
+							.join('')}
+          </tbody>
+        </table>
+      `
+				: `
+        <table style="width: 100%;">
+          ${requisitionSlip.products
+						.map(
+							({ quantity_piece, product }) => `
+              <tr>
+                <td colspan="2">${product.name}</td>
+              </tr>
+              <tr>
+                <td style="padding-left: 4ch; width: 50%">
                 ${formatQuantity({
 									unitOfMeasurement: product.unit_of_measurement,
 									quantity: quantity_piece,
-								})}
-              </td>
+								})}</td>
+                <td style="width: 50%">-</td>
+              </tr>`,
+						)
+						.join('')}
+        </table>
+        `
+		}
 
-              <td style="text-align: right">___</td>
-            </tr>
-          `,
-					)
-					.join('')}
-      </tbody>
-    </table>
-
-    <br/>
     <br/>
 
     <table style="width: 100%;">
@@ -285,7 +319,12 @@ export const printRequisitionSlip = ({
     </html>`;
 	}
 
-	return data;
+	print({
+		data,
+		loadingMessage: 'Printing requisition slip...',
+		successMessage: 'Successfully printed requisition slip.',
+		errorMessage: 'Error occurred while trying to print requisition slip.',
+	});
 };
 
 export const printOrderSlip = (user, orderSlip, products, quantityType) => {
