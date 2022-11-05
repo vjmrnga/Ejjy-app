@@ -9,7 +9,7 @@ import {
 	useProductEdit,
 } from 'hooks';
 import React, { useState } from 'react';
-import { convertIntoArray, getId } from 'utils';
+import { convertIntoArray, getId, isStandAlone } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
 interface Props {
@@ -54,14 +54,17 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (product) {
-			await editProduct({
-				id: getId(product),
-				...formData,
-			});
-			await editBranchProduct({
-				id: getId(branchProduct),
-				...formData,
-			});
+			if (isStandAlone()) {
+				await editBranchProduct({
+					id: getId(branchProduct),
+					...formData,
+				});
+			} else {
+				await editProduct({
+					id: getId(product),
+					...formData,
+				});
+			}
 			message.success('Product was edited successfully');
 		} else {
 			await createProduct(formData);
