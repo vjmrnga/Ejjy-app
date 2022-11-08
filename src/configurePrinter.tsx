@@ -21,6 +21,7 @@ import {
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getProductCode,
+	getRequestor,
 	getTransactionStatusDescription,
 } from 'utils';
 import authenticateQZTray from 'utils/qztray';
@@ -225,6 +226,10 @@ export const printRequisitionSlip = ({
       <tr>
         <td>F-RS1:</td>
         <td style="text-align: right">${requisitionSlip.id}</td>
+      </tr>
+      <tr>
+        <td>Requestor:</td>
+        <td style="text-align: right">${getRequestor(requisitionSlip)}</td>
       </tr>
     </table>
 
