@@ -44,6 +44,7 @@ export const PENDING_EDIT_USERS_BRANCH_ID = -3;
 export const MAIN_BRANCH_ID = 1;
 export const SALES_TRACKER_NOTIFICATION_THRESHOLD = 1_000;
 export const DATE_FORMAT = 'MM/DD/YY';
+export const DEV_USERNAME = 'dev';
 
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);
