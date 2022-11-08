@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors, ViewUserModal } from 'components';
-import { MAX_PAGE_SIZE, userTypes } from 'global';
+import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -51,7 +51,7 @@ export const BranchUsers = ({
 	// METHODS
 	useEffect(() => {
 		const formattedUsers = users
-			.filter((user) => user.username !== 'dev')
+			.filter((user) => user.username !== DEV_USERNAME)
 			.map((user) => ({
 				key: user.id,
 				id: (

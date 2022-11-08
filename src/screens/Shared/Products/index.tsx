@@ -33,8 +33,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	filterOption,
-	getBranchId,
 	getId,
+	getLocalBranchId,
 	isCUDShown,
 } from 'utils';
 
@@ -68,15 +68,19 @@ export const Products = () => {
 	const { user } = useAuth();
 	const {
 		data: { products, total },
-		isFetching: isProductsFetching,
+		isFetching: isFetchingProducts,
 		error: productsError,
 	} = useProducts({
 		params: {
 			...params,
-			branchId: getBranchId(),
+			branchId: getLocalBranchId(),
 		},
 	});
-	const { mutate: deleteProduct, error: deleteError } = useProductDelete();
+	const {
+		mutate: deleteProduct,
+		isLoading: isDeletingProduct,
+		error: deleteError,
+	} = useProductDelete();
 
 	// METHODS
 	useEffect(() => {
@@ -174,7 +178,7 @@ export const Products = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					loading={isProductsFetching}
+					loading={isFetchingProducts || isDeletingProduct}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,

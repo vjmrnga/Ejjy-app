@@ -1,8 +1,8 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute } from 'components';
-import { APP_TITLE, userTypes } from 'global';
-import { useInitializeData, useNetwork } from 'hooks';
-import React, { useCallback } from 'react';
+import { APP_LOCAL_BRANCH_ID_KEY, APP_TITLE, userTypes } from 'global';
+import { useBranches, useInitializeData, useNetwork } from 'hooks';
+import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Switch, useHistory } from 'react-router-dom';
 import Admin from 'screens/Admin';
@@ -11,7 +11,7 @@ import BranchPersonnel from 'screens/BranchPersonnel';
 import Login from 'screens/Common/Login/Login';
 import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
-import { getBranchId, getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, getOnlineBranchId } from 'utils';
 import npmPackage from '../package.json';
 
 const NETWORK_RETRY = 10;
@@ -35,27 +35,53 @@ const App = () => {
 			},
 		});
 
-	const { isLoading: isInitializingData } = useInitializeData({
-		params: {
-			branchId: getBranchId(),
-		},
+	const { isLoading: isInitializingData, isSuccess: isInitializationSuccess } =
+		useInitializeData({
+			params: {
+				branchId: getOnlineBranchId(),
+			},
+			options: {
+				enabled: isNetworkSuccess,
+			},
+		});
+
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+	} = useBranches({
 		options: {
-			enabled: isNetworkSuccess,
+			enabled: isInitializationSuccess,
 		},
 	});
 
+	useEffect(() => {
+		if (branches.length > 0) {
+			const onlineBranchId = Number(getOnlineBranchId());
+			const localBranch = branches.find(
+				(branch) => branch.online_id === onlineBranchId,
+			);
+
+			if (localBranch) {
+				localStorage.setItem(APP_LOCAL_BRANCH_ID_KEY, localBranch.id);
+			}
+		}
+	}, [branches]);
+
 	const getLoadingMessage = useCallback(() => {
 		let message = '';
-		if (isInitializingData) {
-			message = 'Please wait while we set things up for you!';
-		} else if (isConnectingNetwork) {
+		if (isConnectingNetwork) {
 			message = 'Connecting to server...';
+		} else if (isInitializingData) {
+			message = 'Please wait while we set things up for you!';
+		} else if (isFetchingBranches) {
+			message = 'Updating app data...';
 		}
 
 		return message;
-	}, [isConnectingNetwork, isInitializingData]);
+	}, [isConnectingNetwork, isInitializingData, isFetchingBranches]);
 
-	const isLoading = isConnectingNetwork || isInitializingData;
+	const isLoading =
+		isConnectingNetwork || isInitializingData || isFetchingBranches;
 
 	return (
 		<>

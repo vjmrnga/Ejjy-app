@@ -1,22 +1,22 @@
 import { Button, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
+	BranchManagerUsersInfo,
 	Content,
 	ModifyUserModal,
 	RequestErrors,
 	TableHeader,
-	BranchManagerUsersInfo,
 } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE, userTypes } from 'global';
+import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useAuth, useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import {
 	convertIntoArray,
-	getBranchId,
 	getFullName,
+	getLocalBranchId,
 	getUserTypeName,
 	isCUDShown,
 	isStandAlone,
@@ -38,7 +38,7 @@ export const Users = () => {
 		isFetching: isUsersFetching,
 	} = useUsers({
 		params: {
-			branchId: isStandAlone() ? undefined : getBranchId(),
+			branchId: isStandAlone() ? undefined : getLocalBranchId(),
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -52,7 +52,7 @@ export const Users = () => {
 	useEffect(() => {
 		const data = users
 			.filter((user) => {
-				const isDev = user.username === 'dev';
+				const isDev = user.username === DEV_USERNAME;
 
 				const isAdminAndNotStandalone =
 					user.user_type === userTypes.ADMIN && !isStandAlone();

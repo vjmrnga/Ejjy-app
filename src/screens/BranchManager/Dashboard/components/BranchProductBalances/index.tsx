@@ -19,8 +19,8 @@ import {
 	convertIntoArray,
 	filterOption,
 	formatQuantity,
-	getBranchId,
 	getBranchProductStatus,
+	getLocalBranchId,
 	getProductCode,
 } from 'utils';
 
@@ -59,7 +59,7 @@ export const BranchProductBalances = () => {
 	} = useBranchProducts({
 		params: {
 			...params,
-			branchId: getBranchId(),
+			branchId: getLocalBranchId(),
 			hasBoBalance: params.hasBoBalance === 'true',
 		},
 		options: refetchOptions,

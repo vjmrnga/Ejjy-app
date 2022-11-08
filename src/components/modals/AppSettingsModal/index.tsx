@@ -1,7 +1,7 @@
 import { message, Modal } from 'antd';
 
 import {
-	APP_BRANCH_ID_KEY,
+	APP_ONLINE_BRANCH_ID_KEY,
 	APP_LOCAL_API_URL_KEY,
 	APP_ONLINE_API_URL_KEY,
 	APP_PRINTER_NAME,
@@ -10,7 +10,7 @@ import { useAppType } from 'hooks';
 import React from 'react';
 import {
 	getAppPrinterName,
-	getBranchId,
+	getOnlineBranchId,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 } from 'utils';
@@ -27,7 +27,7 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 
 	// METHODS
 	const handleSubmit = (formData) => {
-		localStorage.setItem(APP_BRANCH_ID_KEY, formData.branchId);
+		localStorage.setItem(APP_ONLINE_BRANCH_ID_KEY, formData.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, formData.localApiUrl);
 		localStorage.setItem(APP_ONLINE_API_URL_KEY, formData.onlineApiUrl);
 		localStorage.setItem(APP_PRINTER_NAME, formData.printerName);
@@ -53,7 +53,7 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 		>
 			<AppSettingsForm
 				appType={appType}
-				branchId={getBranchId()}
+				branchId={getOnlineBranchId()}
 				localApiUrl={getLocalApiUrl()}
 				onlineApiUrl={getOnlineApiUrl()}
 				printerName={getAppPrinterName()}

@@ -7,7 +7,8 @@ export const IS_APP_LIVE = process.env.REACT_APP_IS_LIVE === 'true';
 export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
 // Local Storage
-export const APP_BRANCH_ID_KEY = 'EJJY_BRANCH_ID';
+export const APP_ONLINE_BRANCH_ID_KEY = 'EJJY_BRANCH_ID';
+export const APP_LOCAL_BRANCH_ID_KEY = 'EJJY_LOCAL_BRANCH_ID';
 export const APP_LOCAL_API_URL_KEY = 'EJJY_LOCAL_API_URL';
 export const APP_ONLINE_API_URL_KEY = 'EJJY_ONLINE_API_URL';
 export const APP_PRINTER_NAME = 'EJJY_PRINTER_NAME';

@@ -12,7 +12,7 @@ import { Box } from 'components/elements';
 import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getBranchId, isCUDShown } from 'utils';
+import { convertIntoArray, getLocalBranchId, isCUDShown } from 'utils';
 
 export const BranchMachines = () => {
 	// STATES
@@ -21,6 +21,9 @@ export const BranchMachines = () => {
 	const [modifyBranchMachineModalVisible, setModifyBranchMachineModalVisible] =
 		useState(false);
 
+	// VARIABLES
+	const branchId = getLocalBranchId();
+
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
@@ -28,7 +31,7 @@ export const BranchMachines = () => {
 		isFetching,
 		error: listError,
 	} = useBranchMachines({
-		params: { branchId: getBranchId() },
+		params: { branchId },
 	});
 	const {
 		mutate: deleteBranchMachine,
@@ -119,7 +122,7 @@ export const BranchMachines = () => {
 
 			{modifyBranchMachineModalVisible && (
 				<ModifyBranchMachineModal
-					branchId={getBranchId()}
+					branchId={branchId}
 					branchMachine={selectedBranchMachine}
 					onClose={() => setModifyBranchMachineModalVisible(false)}
 				/>

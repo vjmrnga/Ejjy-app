@@ -5,7 +5,7 @@ import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE, refetchOptions, timeRangeTypes } from 'global';
 import { useBranchMachines, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getBranchId } from 'utils';
+import { convertIntoArray, formatInPeso, getLocalBranchId } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Machine Name', dataIndex: 'machineName' },
@@ -39,7 +39,7 @@ export const Sales = () => {
 		isFetched: isBranchMachinesFetched,
 	} = useBranchMachines({
 		params: {
-			branchId: getBranchId(),
+			branchId: getLocalBranchId(),
 			pageSize: MAX_PAGE_SIZE,
 			salesTimeRange: params.timeRange || timeRangeTypes.DAILY,
 		},

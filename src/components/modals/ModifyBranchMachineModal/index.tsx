@@ -1,8 +1,8 @@
 import { Col, message, Modal } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
-import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getBranchId, sleep } from 'utils';
+import React, { useCallback } from 'react';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import { DetailsRow, RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel } from '../../elements';
@@ -21,18 +21,17 @@ export const ModifyBranchMachineModal = ({
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createBranchMachine,
-		isLoading: isCreateLoading,
+		isLoading: isCreating,
 		error: createError,
 	} = useBranchMachineCreate();
 	const {
 		mutateAsync: editBranchMachine,
-		isLoading: isEditLoading,
+		isLoading: isEditing,
 		error: editError,
 	} = useBranchMachineEdit();
 
 	// METHODS
-
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		if (branchMachine) {
 			await editBranchMachine(formData);
 			message.success('Branch machine was edited successfully');
@@ -64,9 +63,9 @@ export const ModifyBranchMachineModal = ({
 			<ModifyBranchMachineForm
 				branchId={branchId}
 				branchMachine={branchMachine}
-				loading={isCreateLoading || isEditLoading}
+				loading={isCreating || isEditing}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -87,13 +86,11 @@ export const ModifyBranchMachineForm = ({
 	onSubmit,
 	onClose,
 }: FormProps) => {
-	const [isSubmitting, setSubmitting] = useState(false);
-
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
 				id: branchMachine?.id || null,
-				branchId: branchMachine?.branch?.id || branchId || getBranchId(),
+				branchId: branchMachine?.branch?.id || branchId,
 				machineIdentificationNumber:
 					branchMachine?.machine_identification_number || '',
 				name: branchMachine?.name || '',
@@ -121,12 +118,8 @@ export const ModifyBranchMachineForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			enableReinitialize
-			onSubmit={async (formData) => {
-				setSubmitting(true);
-				await sleep(500);
-
+			onSubmit={(formData) => {
 				onSubmit(formData);
-				setSubmitting(false);
 			}}
 		>
 			<Form className="form">
@@ -177,13 +170,13 @@ export const ModifyBranchMachineForm = ({
 
 				<div className="ModalCustomFooter">
 					<Button
-						disabled={loading || isSubmitting}
+						disabled={loading}
 						text="Cancel"
 						type="button"
 						onClick={onClose}
 					/>
 					<Button
-						loading={loading || isSubmitting}
+						loading={loading}
 						text={branchMachine ? 'Edit' : 'Create'}
 						type="submit"
 						variant="primary"

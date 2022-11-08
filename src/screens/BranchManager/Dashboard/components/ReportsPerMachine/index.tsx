@@ -20,8 +20,8 @@ import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDateTime,
-	getBranchId,
 	getFullName,
+	getLocalBranchId,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -33,6 +33,8 @@ const columns: ColumnsType = [
 	},
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
+
+const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
 export const ReportsPerMachine = () => {
 	// STATES
@@ -51,8 +53,11 @@ export const ReportsPerMachine = () => {
 		data: { branchMachines },
 		isLoading: isLoadingBranchMachines,
 	} = useBranchMachines({
-		params: { branchId: getBranchId() },
-		options: { refetchInterval: 2500 },
+		params: {
+			branchId: getLocalBranchId(),
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: { refetchInterval: BRANCH_MACHINES_REFETCH_INTERVAL_MS },
 	});
 	const { mutateAsync: createXReadReport, isLoading: isCreatingXReadReport } =
 		useXReadReportCreate();

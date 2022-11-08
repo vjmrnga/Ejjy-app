@@ -44,7 +44,7 @@ import {
 	convertIntoArray,
 	convertToPieces,
 	filterOption,
-	getBranchId,
+	getLocalBranchId,
 } from 'utils';
 import * as Yup from 'yup';
 
@@ -81,8 +81,8 @@ export const CreateStockOut = () => {
 	} = useBranchProducts({
 		params: {
 			...params,
+			branchId: getLocalBranchId(),
 			isSoldInBranch: true,
-			branchId: getBranchId(),
 		},
 	});
 	const {
