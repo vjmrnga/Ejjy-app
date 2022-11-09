@@ -1,15 +1,18 @@
-import { IS_APP_LIVE } from 'global';
 import { useMutation } from 'react-query';
 import { PriceMarkdownsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
-export const usePriceMarkdownsCreate = () =>
-	useMutation<any, any, any>(({ branchProductId, type }: any) =>
+export const usePriceMarkdownCreate = () =>
+	useMutation<any, any, any>(({ productId, data }: any) =>
 		PriceMarkdownsService.create(
 			{
-				branch_product_id: branchProductId,
-				type,
+				product_id: productId,
+				data:
+					data?.map((d) => ({
+						branch_id: d?.branchId || undefined,
+						type: d?.type || undefined,
+					})) || undefined,
 			},
-			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			getLocalApiUrl(),
 		),
 	);

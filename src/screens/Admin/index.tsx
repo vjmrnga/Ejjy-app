@@ -3,7 +3,7 @@ import { useBranches } from 'hooks';
 import { usePendingTransactions } from 'hooks/usePendingTransactions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Branches } from '../Shared/Branches/Branches';
+import { Branches } from '../Shared/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { ProductCategories } from '../Shared/ProductCategories';
 import { Products } from '../Shared/Products';

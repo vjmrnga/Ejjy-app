@@ -10,6 +10,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
 import { useBranchDelete, useBranches, usePingOnlineServer } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -35,7 +36,11 @@ export const Branches = () => {
 		data: { branches },
 		isFetching: isFetchingBranches,
 		error: listError,
-	} = useBranches();
+	} = useBranches({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 	const {
 		mutate: deleteBranch,
 		isLoading: isDeletingBranch,

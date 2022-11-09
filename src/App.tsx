@@ -1,6 +1,11 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute } from 'components';
-import { APP_LOCAL_BRANCH_ID_KEY, APP_TITLE, userTypes } from 'global';
+import {
+	APP_LOCAL_BRANCH_ID_KEY,
+	APP_TITLE,
+	MAX_PAGE_SIZE,
+	userTypes,
+} from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -11,7 +16,12 @@ import BranchPersonnel from 'screens/BranchPersonnel';
 import Login from 'screens/Common/Login/Login';
 import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
-import { getLocalApiUrl, getOnlineApiUrl, getOnlineBranchId } from 'utils';
+import {
+	getLocalApiUrl,
+	getLocalBranchId,
+	getOnlineApiUrl,
+	getOnlineBranchId,
+} from 'utils';
 import npmPackage from '../package.json';
 
 const NETWORK_RETRY = 10;
@@ -49,8 +59,12 @@ const App = () => {
 		data: { branches },
 		isFetching: isFetchingBranches,
 	} = useBranches({
+		params: {
+			page: 1,
+			pageSize: MAX_PAGE_SIZE,
+		},
 		options: {
-			enabled: isInitializationSuccess,
+			enabled: isInitializationSuccess && !getLocalBranchId(),
 		},
 	});
 

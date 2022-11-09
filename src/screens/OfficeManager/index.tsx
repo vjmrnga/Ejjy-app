@@ -5,7 +5,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Assignments } from 'screens/Shared/Assignments';
 import { Accounts } from 'screens/Shared/Accounts';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
-import { Branches } from 'screens/Shared/Branches/Branches';
+import { Branches } from 'screens/Shared/Branches';
 import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';

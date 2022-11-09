@@ -1,11 +1,12 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
+import { MAX_PAGE_SIZE } from 'global';
 import {
+	useBranches,
 	useBranchProductEditPriceCost,
-	useBranchProductRetrieve,
-	usePriceMarkdownsCreate,
+	useBranchProducts,
+	usePriceMarkdownCreate,
 } from 'hooks';
-import _, { memoize } from 'lodash';
 import React from 'react';
 import { convertIntoArray } from 'utils';
 import { PricesForm } from './PricesForm';
@@ -17,18 +18,31 @@ interface Props {
 
 export const PricesModal = ({ product, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { data: branchProduct } = useBranchProductRetrieve({
-		id: product?.id,
+	const {
+		data: { branchProducts },
+		isFetching: isFetchingBranchProducts,
+	} = useBranchProducts({
+		params: {
+			productIds: product.id,
+		},
 		options: {
 			enabled: product !== null,
-			refetchOnMount: 'always',
+		},
+	});
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+	} = useBranches({
+		key: 'PricesModalBranch',
+		params: {
+			pageSize: MAX_PAGE_SIZE,
 		},
 	});
 	const {
 		mutateAsync: createPriceMarkdown,
-		isLoading: isCreatePriceMarkdownLoading,
+		isLoading: isCreatingPriceMarkdown,
 		error: createPriceMarkdownError,
-	} = usePriceMarkdownsCreate();
+	} = usePriceMarkdownCreate();
 	const {
 		mutateAsync: editBranchProductPriceCost,
 		isLoading: isEditingBranchProductPriceCost,
@@ -36,38 +50,27 @@ export const PricesModal = ({ product, onClose }: Props) => {
 	} = useBranchProductEditPriceCost();
 
 	// METHODS
-	const onSubmit = async (formData) => {
-		if (branchProduct.price_markdown?.type !== formData.type) {
-			await createPriceMarkdown({
-				branchProductId: branchProduct.id,
-				type: formData.type,
+	const handleSubmit = async ({
+		branchProductFormData,
+		priceMarkdownFormData,
+	}) => {
+		if (branchProductFormData.length > 0) {
+			await editBranchProductPriceCost({
+				productId: product.id,
+				data: branchProductFormData,
 			});
 		}
 
-		if (isValid(formData)) {
-			await editBranchProductPriceCost({
+		if (priceMarkdownFormData.length > 0) {
+			await createPriceMarkdown({
 				productId: product.id,
-				costPerPiece: getValue(formData.costPerPiece),
-				costPerBulk: getValue(formData.costPerBulk),
-				pricePerPiece: getValue(formData.pricePerPiece),
-				pricePerBulk: getValue(formData.pricePerBulk),
+				data: priceMarkdownFormData,
 			});
 		}
 
 		message.success(`Prices for ${product.name} was set successfully`);
 		onClose();
 	};
-
-	const isValid = (formData) =>
-		_.toString(formData.costPerPiece) ||
-		_.toString(formData.costPerBulk) ||
-		_.toString(formData.pricePerPiece) ||
-		_.toString(formData.pricePerBulk);
-
-	const getValue = memoize((value) => {
-		const valueString = _.toString(value);
-		return valueString.length ? valueString : undefined;
-	});
 
 	return (
 		<Modal
@@ -99,12 +102,16 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			/>
 
 			<PricesForm
-				branchProduct={branchProduct}
+				branches={branches}
+				branchProducts={branchProducts}
 				loading={
-					isCreatePriceMarkdownLoading || isEditingBranchProductPriceCost
+					isFetchingBranches ||
+					isFetchingBranchProducts ||
+					isCreatingPriceMarkdown ||
+					isEditingBranchProductPriceCost
 				}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

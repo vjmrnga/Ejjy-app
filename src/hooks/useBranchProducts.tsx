@@ -366,22 +366,20 @@ export const useBranchProductEditPriceCost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({
-			productId,
-			costPerPiece,
-			costPerBulk,
-			pricePerPiece,
-			pricePerBulk,
-		}: any) =>
+		({ productId, data }: any) =>
 			BranchProductsService.editPriceCost(
 				{
 					product_id: productId,
-					cost_per_piece: costPerPiece,
-					cost_per_bulk: costPerBulk,
-					price_per_piece: pricePerPiece,
-					price_per_bulk: pricePerBulk,
+					data:
+						data?.map((d) => ({
+							branch_id: d?.branchId || undefined,
+							cost_per_piece: d?.costPerPiece || undefined,
+							cost_per_bulk: d?.costPerBulk || undefined,
+							price_per_piece: d?.pricePerPiece || undefined,
+							price_per_bulk: d?.pricePerBulk || undefined,
+						})) || undefined,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

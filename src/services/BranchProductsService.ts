@@ -33,11 +33,16 @@ interface Edit {
 	reorder_point: number;
 }
 
-interface EditPriceCost {
+type EditPriceCostData = {
+	branch_id: number;
 	cost_per_bulk: string;
 	cost_per_piece: string;
 	price_per_bulk: string;
 	price_per_piece: string;
+};
+
+interface EditPriceCost {
+	data: EditPriceCostData[];
 	product_id: number;
 }
 

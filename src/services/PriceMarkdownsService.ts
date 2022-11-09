@@ -1,8 +1,13 @@
 import axios from 'axios';
 
-interface Create {
-	branch_product_id: string;
+type CreateData = {
+	branch_id: number;
 	type: string;
+};
+
+interface Create {
+	data: CreateData[];
+	product_id: number;
 }
 
 const service = {

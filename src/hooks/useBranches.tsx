@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchesService } from 'services';
 import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
-const useBranches = ({ params, options }: Query = {}) =>
+const useBranches = ({ key, params, options }: Query = {}) =>
 	useQuery<any>(
 		[
 			'useBranches',
@@ -13,6 +13,7 @@ const useBranches = ({ params, options }: Query = {}) =>
 			params?.page,
 			params?.pageSize,
 			params?.serviceType,
+			key,
 		],
 		() => {
 			let service = isStandAlone()
