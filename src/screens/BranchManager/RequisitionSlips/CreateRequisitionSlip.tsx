@@ -1,15 +1,9 @@
 /* eslint-disable react/no-this-in-sfc */
-import { Divider, Table, Tabs } from 'antd';
+import { Button, Divider, InputNumber, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
-import {
-	Box,
-	Button,
-	FieldError,
-	FormCheckbox,
-	FormInput,
-} from 'components/elements';
-import { ErrorMessage, Form, Formik } from 'formik';
+import { Box, FieldError, FormCheckbox } from 'components/elements';
+import { ErrorMessage, Formik } from 'formik';
 import {
 	branchProductStatusOptionsWithAll,
 	DEFAULT_PAGE,
@@ -27,10 +21,24 @@ import {
 	useRequisitionSlipCreate,
 } from 'hooks';
 import _, { isEmpty, isInteger } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+	forwardRef,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, getBranchProductStatus } from 'utils';
+import {
+	convertIntoArray,
+	getBranchProductStatus,
+	getLocalBranchId,
+} from 'utils';
 import * as Yup from 'yup';
+import './style.scss';
+
+const FOCUS_TIMEOUT_MS = 500;
 
 const tabs = {
 	ALL: 'ALL',
@@ -39,7 +47,7 @@ const tabs = {
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Quantity', dataIndex: 'quantity', width: 200 },
+	{ title: 'Quantity', dataIndex: 'quantity', width: 125 },
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
@@ -62,7 +70,7 @@ export const CreateRequisitionSlip = () => {
 	} = useBranchProducts({
 		params: {
 			...params,
-			//! branchId: getBranchId(), Implemeent an online branch id and local branch id
+			branchId: getLocalBranchId(),
 			productStatus: params.status === 'all' ? null : params.status,
 			isSoldInBranch: true,
 			useGoogleApiUrl: true,
@@ -150,32 +158,6 @@ export const CreateRequisitionSlip = () => {
 		[branchProducts, activeTab],
 	);
 
-	const renderQuantity = (fieldKey, product) => {
-		const { key, selected = null, unitOfMeasurement } = product;
-
-		return (
-			<>
-				<div className="QuantityContainer">
-					<FormInput
-						disabled={!selected}
-						id={`${fieldKey}.quantity`}
-						isWholeNumber={
-							unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING
-						}
-						type="number"
-						onChange={(value) => {
-							handleChangeQuantity(key, value);
-						}}
-					/>
-				</div>
-				<ErrorMessage
-					name={`${fieldKey}.quantity`}
-					render={(error) => <FieldError error={error} />}
-				/>
-			</>
-		);
-	};
-
 	// METHODS: Change listeners
 	const handleChangeCheckbox = (key, value, data = {}) => {
 		if (value) {
@@ -194,7 +176,7 @@ export const CreateRequisitionSlip = () => {
 	};
 
 	// METHODS: Filters
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
@@ -234,7 +216,7 @@ export const CreateRequisitionSlip = () => {
 					statusDisabled={activeTab === tabs.SELECTED}
 					statuses={branchProductStatusOptionsWithAll}
 					title="Create Requisition Slip"
-					onSearch={onSearchDebounced}
+					onSearch={handleSearchDebounced}
 					onStatusSelect={(status) => {
 						setQueryParams({ status }, { shouldResetPage: true });
 					}}
@@ -255,8 +237,8 @@ export const CreateRequisitionSlip = () => {
 					enableReinitialize
 					onSubmit={handleCreate}
 				>
-					{({ values, setFieldValue }) => (
-						<Form>
+					{({ values, setFieldValue, submitForm }) => (
+						<>
 							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
@@ -276,7 +258,7 @@ export const CreateRequisitionSlip = () => {
 									formProps={{
 										values,
 										setFieldValue,
-										renderQuantity,
+										onChangeQuantity: handleChangeQuantity,
 										onChangeCheckbox: handleChangeCheckbox,
 									}}
 									loading={loading}
@@ -299,12 +281,14 @@ export const CreateRequisitionSlip = () => {
 							<div className="px-6 pb-6 d-flex flex-row-reverse">
 								<Button
 									disabled={loading || isEmpty(productsRef.current)}
-									text="Create"
-									type="submit"
-									variant="primary"
-								/>
+									size="large"
+									type="primary"
+									onClick={submitForm}
+								>
+									Submit
+								</Button>
 							</div>
-						</Form>
+						</>
 					)}
 				</Formik>
 			</Box>
@@ -321,8 +305,12 @@ const ProductsTable = ({
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
+	// REFS
+	const inputsRef = useRef([]);
+
 	// VARIABLES
-	const { values, setFieldValue, renderQuantity, onChangeCheckbox } = formProps;
+	const { values, setFieldValue, onChangeQuantity, onChangeCheckbox } =
+		formProps;
 	const { currentPage, pageCount, pageSize, onPageChange } = paginationProps;
 
 	useEffect(() => {
@@ -330,6 +318,7 @@ const ProductsTable = ({
 			const fieldKey = `branchProducts.${index}`;
 
 			return {
+				selected: branchProduct.selected,
 				key: branchProduct.key,
 				name: (
 					<FormCheckbox
@@ -351,6 +340,8 @@ const ProductsTable = ({
 									);
 									setFieldValue('branchProducts', newValues);
 								}
+							} else {
+								inputsRef?.current[index]?.focusInput();
 							}
 
 							onChangeCheckbox(branchProduct.key, value, {
@@ -361,7 +352,19 @@ const ProductsTable = ({
 						}}
 					/>
 				),
-				quantity: renderQuantity(fieldKey, branchProduct),
+				quantity: (
+					<QuantityInput
+						ref={(componentRef) => {
+							inputsRef.current[index] = componentRef;
+						}}
+						fieldKey={fieldKey}
+						product={branchProduct}
+						onChange={(value) => {
+							onChangeQuantity(branchProduct.key, value);
+							setFieldValue(`${fieldKey}.quantity`, value);
+						}}
+					/>
+				),
 				status: getBranchProductStatus(branchProduct.status),
 			};
 		});
@@ -372,6 +375,7 @@ const ProductsTable = ({
 	return (
 		<>
 			<Table
+				className="ProductsTable"
 				columns={columns}
 				dataSource={dataSource}
 				loading={loading}
@@ -388,7 +392,47 @@ const ProductsTable = ({
 						  }
 						: false
 				}
+				rowClassName={(record: any) =>
+					record.selected ? 'row--selected' : ';'
+				}
 			/>
 		</>
 	);
 };
+
+const QuantityInputComponent = ({ fieldKey, product, onChange }, ref) => {
+	const { selected = null, unitOfMeasurement } = product;
+
+	const inputRef = useRef(null);
+
+	useImperativeHandle(
+		ref,
+		() => ({
+			focusInput: () => {
+				setTimeout(() => {
+					inputRef.current.focus();
+				}, FOCUS_TIMEOUT_MS);
+			},
+		}),
+		[inputRef.current],
+	);
+
+	return (
+		<>
+			<InputNumber
+				ref={inputRef}
+				disabled={!selected}
+				precision={
+					unitOfMeasurement === unitOfMeasurementTypes.NON_WEIGHING ? 0 : 2
+				}
+				onChange={onChange}
+			/>
+			<ErrorMessage
+				name={`${fieldKey}.quantity`}
+				render={(error) => <FieldError error={error} />}
+			/>
+		</>
+	);
+};
+
+const QuantityInput = forwardRef(QuantityInputComponent);

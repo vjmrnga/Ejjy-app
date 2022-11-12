@@ -1,0 +1,11 @@
+$bgColor: #e6f7ff;
+
+.ProductsTable {
+	.row--selected {
+		background-color: $bgColor;
+
+		&:hover > td {
+			background-color: $bgColor !important;
+		}
+	}
+}
