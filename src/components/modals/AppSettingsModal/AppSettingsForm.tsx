@@ -1,4 +1,14 @@
-import { Alert, Col, Input, Radio, Row, Select } from 'antd';
+import {
+	Alert,
+	Col,
+	Divider,
+	Input,
+	InputNumber,
+	Radio,
+	Row,
+	Select,
+	Slider,
+} from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { appTypes, serviceTypes } from 'global';
 import { useBranches } from 'hooks';
@@ -12,20 +22,24 @@ interface Props {
 	appType: string;
 	branchId: string;
 	localApiUrl: string;
-	onlineApiUrl: string;
-	printerName: string;
-	onSubmit: any;
 	onClose: any;
+	onlineApiUrl: string;
+	onSubmit: any;
+	printerFontFamily: string;
+	printerFontSize: string;
+	printerName: string;
 }
 
 export const AppSettingsForm = ({
 	appType,
 	branchId,
 	localApiUrl,
-	onlineApiUrl,
-	printerName,
-	onSubmit,
 	onClose,
+	onlineApiUrl,
+	onSubmit,
+	printerFontFamily,
+	printerFontSize,
+	printerName,
 }: Props) => {
 	// STATES
 	const [baseURL, setBaseURL] = useState(onlineApiUrl || localApiUrl);
@@ -89,6 +103,8 @@ export const AppSettingsForm = ({
 				branchId: branchId || '',
 				localApiUrl: localApiUrl || '',
 				onlineApiUrl: onlineApiUrl || '',
+				printerFontFamily,
+				printerFontSize,
 				printerName: printerName || '',
 			},
 			Schema: Yup.object().shape({
@@ -97,9 +113,19 @@ export const AppSettingsForm = ({
 				localApiUrl: Yup.string().required().label('Local API URL'),
 				onlineApiUrl: Yup.string().required().label('Online API URL'),
 				printerName: Yup.string().label('Printer Name'),
+				printerFontFamily: Yup.string().required().label('Printer Font Family'),
+				printerFontSize: Yup.string().required().label('Printer Font Sie'),
 			}),
 		}),
-		[appType, branchId, localApiUrl, onlineApiUrl, printerName],
+		[
+			appType,
+			branchId,
+			localApiUrl,
+			onlineApiUrl,
+			printerFontFamily,
+			printerFontSize,
+			printerName,
+		],
 	);
 
 	return (
@@ -115,6 +141,41 @@ export const AppSettingsForm = ({
 			{({ status, values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
+						<Col span={24}>
+							<Label id="appType" label="App Type" spacing />
+
+							<Radio.Group
+								buttonStyle="solid"
+								options={[
+									{ label: 'Back Office', value: appTypes.BACK_OFFICE },
+									{
+										label: 'Head Office',
+										value: appTypes.HEAD_OFFICE,
+									},
+								]}
+								optionType="button"
+								size="large"
+								value={values.appType}
+								onChange={(e) => {
+									setFieldValue('appType', e.target.value);
+								}}
+							/>
+
+							{values.appType !== appType && (
+								<Alert
+									className="mt-1"
+									message="App will relaunch after saving app settings."
+									type="info"
+									showIcon
+								/>
+							)}
+
+							<ErrorMessage
+								name="appType"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
 						<Col span={24}>
 							<Label label="Local API URL" spacing />
 							<Input
@@ -180,6 +241,8 @@ export const AppSettingsForm = ({
 							/>
 						</Col>
 
+						<Divider />
+
 						<Col span={24}>
 							<Label id="printerName" label="Printer Name" spacing />
 							<Select
@@ -212,36 +275,48 @@ export const AppSettingsForm = ({
 						</Col>
 
 						<Col span={24}>
-							<Label id="appType" label="App Type" spacing />
-
-							<Radio.Group
-								buttonStyle="solid"
-								options={[
-									{ label: 'Back Office', value: appTypes.BACK_OFFICE },
-									{
-										label: 'Head Office',
-										value: appTypes.HEAD_OFFICE,
-									},
-								]}
-								optionType="button"
+							<Label label="Printer Font Family" spacing />
+							<Input
+								name="printerFontFamily"
 								size="large"
-								value={values.appType}
+								value={values['printerFontFamily']}
 								onChange={(e) => {
-									setFieldValue('appType', e.target.value);
+									setFieldValue('printerFontFamily', e.target.value);
 								}}
 							/>
+							<ErrorMessage
+								name="printerFontFamily"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-							{values.appType !== appType && (
-								<Alert
-									className="mt-1"
-									message="App will relaunch after saving app settings."
-									type="info"
-									showIcon
-								/>
-							)}
+						<Col span={24}>
+							<Label label="Printer Font Size" spacing />
+							<Row gutter={[16, 16]}>
+								<Col span={19}>
+									<Slider
+										max={100}
+										min={1}
+										value={Number(values['printerFontSize'])}
+										onChange={(value) => {
+											setFieldValue('printerFontSize', value);
+										}}
+									/>
+								</Col>
+								<Col span={5}>
+									<InputNumber
+										max={100}
+										min={1}
+										value={Number(values['printerFontSize'])}
+										onChange={(value) => {
+											setFieldValue('printerFontSize', value);
+										}}
+									/>
+								</Col>
+							</Row>
 
 							<ErrorMessage
-								name="appType"
+								name="printerFontSize"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

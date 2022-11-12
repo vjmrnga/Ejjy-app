@@ -16,6 +16,8 @@ import {
 	formatDateTime,
 	formatInPeso,
 	formatQuantity,
+	getAppPrinterFontFamily,
+	getAppPrinterFontSize,
 	getAppPrinterName,
 	getCashBreakdownTypeDescription,
 	getFullName,
@@ -198,8 +200,9 @@ const getFooter = (footerData) => {
 		</div>`;
 };
 
-const getPageStyle = (extraStyle = '') =>
-	`width: 100%; font-size: 10pt; font-family: Arial, monospace; line-height: 100%; position: relative; ${extraStyle}`;
+const getPageStyle = (extraStyle = '') => {
+	return `width: 100%; font-size: ${getAppPrinterFontSize()}pt; font-family: ${getAppPrinterFontFamily()}, monospace; line-height: 100%; position: relative; ${extraStyle}`;
+};
 
 export const printRequisitionSlip = ({
 	requisitionSlip,

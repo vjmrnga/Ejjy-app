@@ -12,6 +12,8 @@ export const APP_LOCAL_BRANCH_ID_KEY = 'EJJY_LOCAL_BRANCH_ID';
 export const APP_LOCAL_API_URL_KEY = 'EJJY_LOCAL_API_URL';
 export const APP_ONLINE_API_URL_KEY = 'EJJY_ONLINE_API_URL';
 export const APP_PRINTER_NAME = 'EJJY_PRINTER_NAME';
+export const APP_PRINTER_FONT_FAMILY = 'EJJY_PRINTER_FONT_FAMILY';
+export const APP_PRINTER_FONT_SIZE = 'EJJY_PRINTER_FONT_SIZE';
 
 // Request
 export const AUTH_CHECKING_INTERVAL_MS = 10000;
@@ -45,6 +47,8 @@ export const MAIN_BRANCH_ID = 1;
 export const SALES_TRACKER_NOTIFICATION_THRESHOLD = 1_000;
 export const DATE_FORMAT = 'MM/DD/YY';
 export const DEV_USERNAME = 'dev';
+export const DEFAULT_FONT_FAMILY = 'Arial';
+export const DEFAULT_FONT_SIZE = '10';
 
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);
