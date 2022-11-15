@@ -57,12 +57,12 @@ export const ModifyCashieringAssignmentModal = ({
 	} = useBranchMachines();
 	const {
 		mutateAsync: createCashieringAssignment,
-		isLoading: isCreateLoading,
+		isLoading: isCreatingCashieringAssignment,
 		error: createError,
 	} = useCashieringAssignmentCreate();
 	const {
 		mutateAsync: editCashieringAssignment,
-		isLoading: isEditLoading,
+		isLoading: isEditingCashieringAssignment,
 		error: editError,
 	} = useCashieringAssignmentEdit();
 
@@ -120,7 +120,9 @@ export const ModifyCashieringAssignmentModal = ({
 				assignments={assignments}
 				branchMachines={branchMachines}
 				date={date}
-				loading={isCreateLoading || isEditLoading}
+				loading={
+					isCreatingCashieringAssignment || isEditingCashieringAssignment
+				}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>
@@ -242,6 +244,7 @@ export const ModifyCashieringAssignmentForm = ({
 								<Select
 									className="w-100"
 									filterOption={filterOption}
+									loading={loading}
 									optionFilterProp="children"
 									size="large"
 									value={values.branchMachineId}
@@ -251,9 +254,9 @@ export const ModifyCashieringAssignmentForm = ({
 										setFieldValue('branchMachineId', value);
 									}}
 								>
-									{branchMachines.map(({ id, name }) => (
+									{branchMachines.map(({ id, name, branch }) => (
 										<Select.Option key={id} value={id}>
-											{name}
+											[{branch.name}] {name}
 										</Select.Option>
 									))}
 								</Select>
