@@ -19,6 +19,7 @@ export * from './PendingCount/PendingCount';
 export * from './PendingTransactionsSection/PendingTransactionsSection';
 export * from './PreparationSlipDetails';
 export * from './QuantitySelect';
+export * from './ReportsPerMachine';
 export * from './RequestErrors/RequestErrors';
 export * from './RequestWarnings/RequestWarnings';
 export * from './RestrictedAccessState';

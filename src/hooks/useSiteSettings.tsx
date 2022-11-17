@@ -14,7 +14,6 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
 
 			return wrapServiceWithCatch(service(getLocalApiUrl()));
 		},
-
 		{
 			select: (query) => query.data,
 			refetchOnMount: 'always',

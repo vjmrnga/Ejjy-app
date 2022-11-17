@@ -1,14 +1,23 @@
-import { CashieringCard, Content, DashboardInfo } from 'components';
+import {
+	CashieringCard,
+	Content,
+	DashboardInfo,
+	ReportsPerMachine,
+} from 'components';
+import { Box } from 'components/elements';
 import React from 'react';
+import { getLocalBranchId } from 'utils';
 import { BranchProductBalances } from './components/BranchProductBalances';
-import { ReportsPerMachine } from './components/ReportsPerMachine';
 
 export const Dashboard = () => (
 	<Content title="Dashboard">
 		<DashboardInfo />
+
 		<CashieringCard />
 
-		<ReportsPerMachine />
+		<Box>
+			<ReportsPerMachine branchId={getLocalBranchId()} />
+		</Box>
 
 		<BranchProductBalances />
 	</Content>

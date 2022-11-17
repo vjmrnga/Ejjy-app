@@ -6,7 +6,7 @@ import {
 	ViewXReadReportModal,
 	ViewZReadReportModal,
 } from 'components';
-import { Box, FieldError } from 'components/elements';
+import { FieldError } from 'components/elements';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchMachines,
@@ -17,12 +17,7 @@ import {
 import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getFullName,
-	getLocalBranchId,
-} from 'utils';
+import { convertIntoArray, formatDateTime, getFullName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Machines', dataIndex: 'machines' },
@@ -34,9 +29,17 @@ const columns: ColumnsType = [
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
+interface Props {
+	branchId: string | number;
+	tableHeaderClassName?: string;
+}
+
 const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
-export const ReportsPerMachine = () => {
+export const ReportsPerMachine = ({
+	branchId,
+	tableHeaderClassName,
+}: Props) => {
 	// STATES
 	const [xReadReport, setXReadReport] = useState(null);
 	const [zReadReport, setZReadReport] = useState(null);
@@ -54,7 +57,7 @@ export const ReportsPerMachine = () => {
 		isLoading: isLoadingBranchMachines,
 	} = useBranchMachines({
 		params: {
-			branchId: getLocalBranchId(),
+			branchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		options: { refetchInterval: BRANCH_MACHINES_REFETCH_INTERVAL_MS },
@@ -148,8 +151,11 @@ export const ReportsPerMachine = () => {
 	};
 
 	return (
-		<Box>
-			<TableHeader title="Reports per Machine" />
+		<>
+			<TableHeader
+				title="Reports per Machine"
+				wrapperClassName={tableHeaderClassName}
+			/>
 
 			<Table
 				columns={columns}
@@ -161,6 +167,7 @@ export const ReportsPerMachine = () => {
 				}
 				pagination={false}
 				scroll={{ x: 650 }}
+				bordered
 			/>
 
 			{xReadReport && (
@@ -191,7 +198,7 @@ export const ReportsPerMachine = () => {
 					onSubmit={handleSessionSelection}
 				/>
 			)}
-		</Box>
+		</>
 	);
 };
 

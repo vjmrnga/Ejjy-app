@@ -1,5 +1,5 @@
-import { Spin, Tabs } from 'antd';
-import { Content, RequestErrors } from 'components';
+import { Divider, Spin, Tabs } from 'antd';
+import { Content, ReportsPerMachine, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
 import { useBranches, useProductCategories, useQueryParams } from 'hooks';
@@ -12,6 +12,8 @@ export const Dashboard = () => {
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchesErrors,
 	} = useBranches();
 	const {
 		data: { productCategories },
@@ -31,11 +33,11 @@ export const Dashboard = () => {
 
 	useEffect(() => {
 		if (branches && !currentBranchId) {
-			onTabClick(branches?.[0]?.id);
+			handleTabClick(branches?.[0]?.id);
 		}
 	}, [branches, currentBranchId]);
 
-	const onTabClick = (branchId) => {
+	const handleTabClick = (branchId) => {
 		setQueryParams({
 			branchId,
 			page: DEFAULT_PAGE,
@@ -46,9 +48,15 @@ export const Dashboard = () => {
 	return (
 		<Content title="Dashboard">
 			<Box>
-				<Spin spinning={isFetchingProductCategories}>
+				<Spin spinning={isFetchingBranches || isFetchingProductCategories}>
 					<RequestErrors
-						errors={convertIntoArray(productCategoriesErrors)}
+						errors={[
+							...convertIntoArray(branchesErrors, 'Branches'),
+							...convertIntoArray(
+								productCategoriesErrors,
+								'Product Categories',
+							),
+						]}
 						withSpaceBottom
 					/>
 
@@ -57,13 +65,20 @@ export const Dashboard = () => {
 						className="pa-6"
 						type="card"
 						destroyInactiveTabPane
-						onTabClick={onTabClick}
+						onTabClick={handleTabClick}
 					>
 						{branches.map(({ name, id }) => (
 							<Tabs.TabPane key={id} tab={name}>
 								<BranchProductBalances
 									branchId={id}
 									productCategories={productCategories}
+								/>
+
+								<Divider />
+
+								<ReportsPerMachine
+									branchId={id}
+									tableHeaderClassName="pl-0 pt-0"
 								/>
 							</Tabs.TabPane>
 						))}

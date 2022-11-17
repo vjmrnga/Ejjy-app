@@ -114,6 +114,7 @@ export const BranchProductBalances = () => {
 			/>
 
 			<RequestErrors
+				className="px-6"
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
 				withSpaceBottom
 				withSpaceTop

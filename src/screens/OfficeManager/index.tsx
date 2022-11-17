@@ -1,10 +1,10 @@
 import { Container } from 'components';
-import { useBranches } from 'hooks';
+import { useBranches, useSiteSettingsRetrieve } from 'hooks';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Assignments } from 'screens/Shared/Assignments';
 import { Accounts } from 'screens/Shared/Accounts';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
+import { Assignments } from 'screens/Shared/Assignments';
 import { Branches } from 'screens/Shared/Branches';
 import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
@@ -16,7 +16,7 @@ import { BackOrders } from './BackOrders/BackOrders';
 import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
 import { ViewChecking } from './Checkings/ViewChecking';
-import { Dashboard } from './Dashboard/Dashboard';
+import { Dashboard } from './Dashboard';
 import { Notifications } from './Notifications/Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
@@ -153,7 +153,6 @@ const sidebarItems = [
 ];
 
 const OfficeManager = () => {
-	// CUSTOM HOOKS
 	useBranches({
 		options: {
 			staleTime: 0,
@@ -161,6 +160,7 @@ const OfficeManager = () => {
 			notifyOnChangeProps: ['data'],
 		},
 	});
+	useSiteSettingsRetrieve();
 
 	return (
 		<Container sidebarItems={sidebarItems}>

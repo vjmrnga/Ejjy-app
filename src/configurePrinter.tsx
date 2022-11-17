@@ -91,6 +91,7 @@ const print = ({
 						bottom: 0,
 						left: PAPER_MARGIN_INCHES,
 					},
+					density: 'draft',
 				});
 
 				const data = [
