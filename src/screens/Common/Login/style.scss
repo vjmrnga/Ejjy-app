@@ -1,4 +1,4 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .Login {
 	height: 100vh;
@@ -16,15 +16,6 @@
 		.logo {
 			width: 200px;
 			margin-bottom: 40px;
-		}
-
-		.input-field {
-			width: 100%;
-			margin-bottom: 30px;
-		}
-
-		.errors {
-			width: 100%;
 		}
 	}
 }

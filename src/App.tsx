@@ -13,7 +13,7 @@ import { Redirect, Switch, useHistory } from 'react-router-dom';
 import Admin from 'screens/Admin';
 import BranchManager from 'screens/BranchManager';
 import BranchPersonnel from 'screens/BranchPersonnel';
-import Login from 'screens/Common/Login/Login';
+import Login from 'screens/Common/Login';
 import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
 import {

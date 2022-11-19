@@ -1,6 +1,7 @@
+import { Button, Col, Input, Row } from 'antd';
 import { RequestErrors } from 'components';
-import { Button, FieldError, FormInputLabel } from 'components/elements';
-import { Form, Formik } from 'formik';
+import { FieldError, Label } from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import React from 'react';
 import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
@@ -12,8 +13,8 @@ const FormDetails = {
 		password: '',
 	},
 	Schema: Yup.object().shape({
-		username: Yup.string().required('Username is required'),
-		password: Yup.string().required('Password is required'),
+		username: Yup.string().required().label('Username'),
+		password: Yup.string().required().label('Password'),
 	}),
 };
 
@@ -34,29 +35,52 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 				onSubmit(formData);
 			}}
 		>
-			{({ errors: formErrors, touched }) => (
+			{({ values, setFieldValue }) => (
 				<Form className="form">
-					<div className="input-field">
-						<FormInputLabel id="username" label="Username" />
-						{formErrors.username && touched.username ? (
-							<FieldError error={formErrors.username} />
-						) : null}
-					</div>
+					<Row gutter={[16, 16]}>
+						<Col span={24}>
+							<Label label="Username" spacing />
+							<Input
+								size="large"
+								value={values['username']}
+								onChange={(e) => {
+									setFieldValue('username', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="username"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<div className="input-field">
-						<FormInputLabel id="password" label="Password" type="password" />
-						{formErrors.password && touched.password ? (
-							<FieldError error={formErrors.password} />
-						) : null}
-					</div>
+						<Col span={24}>
+							<Label label="Password" spacing />
+							<Input.Password
+								size="large"
+								type="password"
+								value={values['password']}
+								onChange={(e) => {
+									setFieldValue('password', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="password"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<Button
-						loading={loading}
-						text="Login"
-						type="submit"
-						variant="secondary"
-						block
-					/>
+						<Col span={24}>
+							<Button
+								htmlType="submit"
+								loading={loading}
+								size="large"
+								type="primary"
+								block
+							>
+								Login
+							</Button>
+						</Col>
+					</Row>
 				</Form>
 			)}
 		</Formik>

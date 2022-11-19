@@ -1,5 +1,6 @@
 import {
 	Alert,
+	Button,
 	Col,
 	Divider,
 	Input,
@@ -16,7 +17,7 @@ import qz from 'qz-tray';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { filterOption } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface Props {
 	appType: string;
@@ -323,8 +324,12 @@ export const AppSettingsForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button text="Cancel" type="button" onClick={onClose} />
-						<Button text="Submit" type="submit" variant="primary" />
+						<Button htmlType="button" size="large" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" size="large" type="primary">
+							Submit
+						</Button>
 					</div>
 				</Form>
 			)}

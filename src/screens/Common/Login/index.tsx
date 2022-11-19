@@ -1,6 +1,6 @@
-import { Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import { AppSettingsModal } from 'components';
-import { Box, Button } from 'components/elements';
+import { Box } from 'components/elements';
 import { IS_APP_LIVE, request } from 'global';
 import { useAppType, useAuth } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -55,7 +55,7 @@ const Login = () => {
 				<img
 					alt="logo"
 					className="logo"
-					src={require('../../../assets/images/logo.jpg')}
+					src={require('assets/images/logo.jpg')}
 				/>
 
 				<LoginForm
@@ -69,12 +69,12 @@ const Login = () => {
 						<Divider />
 
 						<Button
-							text="Set App Settings"
-							type="button"
-							variant="default"
+							size="large"
 							block
 							onClick={() => setAppSettingsModalVisible(true)}
-						/>
+						>
+							Configure App Settings
+						</Button>
 
 						{appSettingsModalVisible && (
 							<AppSettingsModal
