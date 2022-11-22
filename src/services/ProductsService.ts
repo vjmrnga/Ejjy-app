@@ -27,6 +27,7 @@ interface Modify {
 	price_per_bulk: number;
 	price_per_piece: number;
 	print_details: string;
+	price_tag_print_details: string;
 	product_category: string;
 	reorder_point: number;
 	selling_barcode_unit_of_measurement?: 'Weighing' | 'Non-Weighing';

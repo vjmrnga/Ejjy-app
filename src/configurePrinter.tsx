@@ -16,9 +16,13 @@ import {
 	formatDateTime,
 	formatInPeso,
 	formatQuantity,
-	getAppPrinterFontFamily,
-	getAppPrinterFontSize,
-	getAppPrinterName,
+	getAppReceiptPrinterFontFamily,
+	getAppReceiptPrinterFontSize,
+	getAppReceiptPrinterName,
+	getAppTagPrinterFontFamily,
+	getAppTagPrinterFontSize,
+	getAppTagPrinterPaperHeight,
+	getAppTagPrinterPaperWidth,
 	getCashBreakdownTypeDescription,
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
@@ -82,7 +86,7 @@ const print = ({
 
 		// if (isPrinterConnected) {
 		qz.printers
-			.find(getAppPrinterName())
+			.find(getAppReceiptPrinterName())
 			.then((printer) => {
 				const config = qz.configs.create(printer, {
 					margins: {
@@ -202,7 +206,7 @@ const getFooter = (footerData) => {
 };
 
 const getPageStyle = (extraStyle = '') => {
-	return `width: 100%; font-size: ${getAppPrinterFontSize()}pt; font-family: ${getAppPrinterFontFamily()}, monospace; line-height: 100%; position: relative; ${extraStyle}`;
+	return `width: 100%; font-size: ${getAppReceiptPrinterFontSize()}pt; font-family: ${getAppReceiptPrinterFontFamily()}, monospace; line-height: 100%; position: relative; ${extraStyle}`;
 };
 
 export const printRequisitionSlip = ({
@@ -1887,6 +1891,32 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 		successMessage: 'Successfully printed cash out receipt.',
 		errorMessage: 'Error occurred while trying to print cash out receipt.',
 	});
+};
+
+export const printProductPriceTag = (product) => {
+	const name =
+		product.price_tag_print_details?.replace('\n', '<br/>') || EMPTY_CELL;
+	const price = formatInPeso(product.price_per_piece, 'P');
+
+	return `
+	<div style="
+    width: ${getAppTagPrinterPaperWidth()}mm;
+    height: ${Number(getAppTagPrinterPaperHeight()) - 0.5}mm;
+    padding: 1mm 1mm;
+    display: flex;
+    flex-direction: column;
+    font-size: ${getAppTagPrinterFontSize()}px;
+    font-family: ${getAppTagPrinterFontFamily()};
+    line-height: 100%;
+    color: black;
+    overflow:hidden;
+  ">
+    <div style="height: 2.2em; overflow: hidden; font-size: 1em; line-height: 1.1em;">${name}</div>
+    <div style="width: 100%; margin: 6px 0; border-bottom: 0.25px solid black;"></div>
+    <div style="font-size: 1.23em; text-align: right;">${price}</div>
+    <div style="margin-top: auto; font-size: 0.46em; text-align: center; line-height: 100%;">EJ & JY  Wet Market and Enterprises</div>
+	</div>
+	`;
 };
 
 export default configurePrinter;

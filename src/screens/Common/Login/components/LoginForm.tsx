@@ -71,6 +71,7 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 
 						<Col span={24}>
 							<Button
+								className="mt-2"
 								htmlType="submit"
 								loading={loading}
 								size="large"

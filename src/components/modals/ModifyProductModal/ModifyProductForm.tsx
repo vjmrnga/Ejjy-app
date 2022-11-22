@@ -126,6 +126,7 @@ export const ModifyProductForm = ({
 				pricePerBulk: product?.price_per_bulk || '',
 				pricePerPiece: product?.price_per_piece || '',
 				printDetails: product?.print_details || '',
+				priceTagPrintDetails: product?.price_tag_print_details || '',
 				productCategory: product?.product_category,
 				reorderPoint: product?.reorder_point
 					? formatQuantity({
@@ -176,7 +177,12 @@ export const ModifyProductForm = ({
 					type: Yup.string().label('TT-001'),
 					unitOfMeasurement: Yup.string().label('TT-002'),
 					productCategory: Yup.string().label('Product Category'),
-					printDetails: Yup.string().required().label('Print Details'),
+					printDetails: Yup.string()
+						.required()
+						.label('Print Details (Receipt)'),
+					priceTagPrintDetails: Yup.string()
+						.required()
+						.label('Print Details (Price Tag)'),
 					description: Yup.string().required().label('Description'),
 					piecesInBulk: Yup.number()
 						.required()
@@ -299,11 +305,22 @@ export const ModifyProductForm = ({
 					{...options}
 				/>
 			)}
+			{type === inputTypes.TEXTAREA && (
+				<Input.TextArea
+					name={name}
+					size="large"
+					value={values[name]}
+					onChange={(e) => {
+						setFieldValue(name, e.target.value);
+					}}
+					{...options}
+				/>
+			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
+					className="w-100"
 					controls={false}
 					size="large"
-					style={{ width: '100%' }}
 					value={values[name]}
 					onChange={(value) => {
 						setFieldValue(name, value);
@@ -444,9 +461,22 @@ export const ModifyProductForm = ({
 						<Col span={24}>
 							{renderInputField({
 								name: 'printDetails',
-								label: 'Print Details',
+								label: 'Print Details (Receipt)',
 								setFieldValue,
 								values,
+							})}
+						</Col>
+
+						<Col span={24}>
+							{renderInputField({
+								name: 'priceTagPrintDetails',
+								label: 'Print Details (Price Tag)',
+								setFieldValue,
+								values,
+								type: inputTypes.TEXTAREA,
+								options: {
+									autoSize: { minRows: 1, maxRows: 2 },
+								},
 							})}
 						</Col>
 

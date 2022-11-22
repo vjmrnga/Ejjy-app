@@ -1,5 +1,21 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Select, Table } from 'antd';
+import {
+	DeleteOutlined,
+	DollarOutlined,
+	EditOutlined,
+	PrinterOutlined,
+	SearchOutlined,
+} from '@ant-design/icons';
+import {
+	Button,
+	Col,
+	Input,
+	Popconfirm,
+	Row,
+	Select,
+	Space,
+	Table,
+	Tooltip,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import {
 	ConnectionAlert,
@@ -8,11 +24,11 @@ import {
 	PricesModal,
 	ProductsInfo,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 	ViewProductModal,
 } from 'components';
 import { Box, ButtonLink, Label } from 'components/elements';
+import { printProductPriceTag } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -28,6 +44,7 @@ import {
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
+import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -61,6 +78,8 @@ export const Products = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [hasPendingTransactions] = useState(false);
+	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
+	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -93,41 +112,96 @@ export const Products = () => {
 					barcode: (
 						<ButtonLink
 							text={barcode || textcode}
-							onClick={() => onOpenModal(product, modals.VIEW)}
+							onClick={() => handleOpenModal(product, modals.VIEW)}
 						/>
 					),
 					name,
 					actions: hasPendingTransactions ? null : (
-						<TableActions
-							areButtonsDisabled={isConnected === false}
-							onAdd={() => onOpenModal(product, modals.EDIT_PRICE_COST)}
-							onAddIcon={require('assets/images/icon-money.svg')}
-							onAddName="Set Prices"
-							onEdit={
-								isCUDShown(user.user_type)
-									? () => onOpenModal(product, modals.MODIFY)
-									: undefined
-							}
-							onRemove={
-								isCUDShown(user.user_type)
-									? () =>
-											deleteProduct({
-												id: getId(product),
-												actingUserId: getId(user),
-											})
-									: undefined
-							}
-						/>
+						<Space>
+							<Tooltip title="Set Prices">
+								<Button
+									disabled={isConnected === false}
+									icon={<DollarOutlined />}
+									type="primary"
+									onClick={() =>
+										handleOpenModal(product, modals.EDIT_PRICE_COST)
+									}
+								/>
+							</Tooltip>
+							<Tooltip title="Edit">
+								{isCUDShown(user.user_type) && (
+									<Button
+										disabled={isConnected === false}
+										icon={<EditOutlined />}
+										type="primary"
+										onClick={() => handleOpenModal(product, modals.MODIFY)}
+									/>
+								)}
+							</Tooltip>
+							<Tooltip title="Print Price Tag">
+								<Button
+									disabled={isConnected === false}
+									icon={<PrinterOutlined />}
+									loading={isCreatingPdf === product.id}
+									type="primary"
+									onClick={() => {
+										handleCreatePdf(product);
+									}}
+								/>
+							</Tooltip>
+							{isCUDShown(user.user_type) && (
+								<Popconfirm
+									cancelText="No"
+									disabled={isConnected === false}
+									okText="Yes"
+									placement="left"
+									title="Are you sure to remove this?"
+									onConfirm={() =>
+										deleteProduct({
+											id: getId(product),
+											actingUserId: getId(user),
+										})
+									}
+								>
+									<Tooltip title="Remove">
+										<Button icon={<DeleteOutlined />} type="primary" danger />
+									</Tooltip>
+								</Popconfirm>
+							)}
+						</Space>
 					),
 				};
 			}) || [];
 
 		setDataSource(formattedProducts);
-	}, [products, user, hasPendingTransactions, isConnected]);
+	}, [products, user, hasPendingTransactions, isConnected, isCreatingPdf]);
 
-	const onOpenModal = (product, type) => {
+	const handleOpenModal = (product, type) => {
 		setModalType(type);
 		setSelectedProduct(product);
+	};
+
+	const handleCreatePdf = (product) => {
+		setIsCreatingPdf(product.id);
+
+		// eslint-disable-next-line new-cap
+		const pdf = new jsPDF('l', 'px', [113.38582677, 75.590551181]);
+
+		const dataHtml = printProductPriceTag(product);
+
+		setHtml(dataHtml);
+
+		setTimeout(() => {
+			pdf.html(dataHtml, {
+				margin: 0,
+				filename: `ProductPriceTag_${product.print_details}`,
+				callback: (instance) => {
+					window.open(instance.output('bloburl').toString());
+					setIsCreatingPdf(false);
+					setHtml('');
+				},
+			});
+		}, 500);
 	};
 
 	// NOTE: Temporarily disable the initial deletion of data
@@ -160,7 +234,7 @@ export const Products = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Product"
-						onCreate={() => onOpenModal(null, modals.MODIFY)}
+						onCreate={() => handleOpenModal(null, modals.MODIFY)}
 						onCreateDisabled={isConnected === false}
 					/>
 				)}
@@ -199,24 +273,30 @@ export const Products = () => {
 				{modalType === modals.VIEW && selectedProduct && (
 					<ViewProductModal
 						product={selectedProduct}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
 
 				{modalType === modals.MODIFY && (
 					<ModifyProductModal
 						product={selectedProduct}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
 
 				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
 					<PricesModal
 						product={selectedProduct}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
 			</Box>
+
+			<div
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
+				style={{ display: 'none' }}
+			/>
 
 			{/* TODO: Temporarily hid the Pending Transactions section. Need to be revisited if this is still needed */}
 			{/* {!isUserFromBranch(user.user_type) && (
