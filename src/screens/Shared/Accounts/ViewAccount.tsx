@@ -44,20 +44,20 @@ export const ViewAccount = ({ match }: Props) => {
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 			title="[VIEW] Account"
 		>
-			<Box>
-				<Spin spinning={isFetchingAccount}>
+			<Spin spinning={isFetchingAccount}>
+				<Box padding>
 					<RequestErrors
 						errors={convertIntoArray(accountErrors)}
 						withSpaceBottom
 					/>
 
 					{account && <AccountDetails account={account} />}
-				</Spin>
-			</Box>
+				</Box>
 
-			{account?.is_point_system_eligible && (
-				<PointTransactions account={account} />
-			)}
+				{account?.is_point_system_eligible && (
+					<PointTransactions account={account} />
+				)}
+			</Spin>
 		</Content>
 	);
 };

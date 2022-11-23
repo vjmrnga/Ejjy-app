@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { AccountsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 const useAccounts = ({ params }: Query) =>
 	useQuery<any>(
@@ -79,7 +79,7 @@ export const useAccountCreate = () =>
 					tin,
 					type,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
 			),
 	);
 
@@ -116,7 +116,7 @@ export const useAccountEdit = () =>
 					tin,
 					type,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
 			),
 	);
 
@@ -130,7 +130,7 @@ export const useAccountRedeemPoints = () =>
 					redeem_remarks: redeemRemarks,
 					redeemed_points: redeemedPoints,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
 			),
 	);
 

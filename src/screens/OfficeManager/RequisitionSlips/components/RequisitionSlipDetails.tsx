@@ -79,7 +79,6 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 				<Descriptions.Item label="Actions" span={2}>
 					<Button
 						icon={<PrinterOutlined />}
-						size="large"
 						type="primary"
 						onClick={() => {
 							setIsPrintPreviewVisible(true);

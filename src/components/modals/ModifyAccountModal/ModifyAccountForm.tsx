@@ -1,16 +1,11 @@
-import { Col, DatePicker, Divider, Radio, Row, Select } from 'antd';
+import { Col, DatePicker, Divider, Input, Radio, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { accountTypes } from 'global';
 import moment from 'moment';
 import React, { useCallback } from 'react';
+import { filterOption } from 'utils';
 import * as Yup from 'yup';
-import { accountTypes } from '../../../global/types';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-	FormRadioButton,
-	Label,
-} from '../../elements';
+import { Button, FieldError, Label } from '../../elements';
 
 interface Props {
 	account?: any;
@@ -99,12 +94,7 @@ export const ModifyAccountForm = ({
 							<Select
 								className="w-100"
 								disabled={account !== null}
-								filterOption={(input, option) =>
-									option.children
-										.toString()
-										.toLowerCase()
-										.indexOf(input.toLowerCase()) >= 0
-								}
+								filterOption={filterOption}
 								optionFilterProp="children"
 								value={values.type}
 								showSearch
@@ -146,7 +136,6 @@ export const ModifyAccountForm = ({
 									Government
 								</Select.Option>
 							</Select>
-
 							<ErrorMessage
 								name="type"
 								render={(error) => <FieldError error={error} />}
@@ -156,7 +145,13 @@ export const ModifyAccountForm = ({
 						<Divider />
 
 						<Col md={8}>
-							<FormInputLabel id="firstName" label="First Name" />
+							<Label label="First Name" spacing />
+							<Input
+								value={values.firstName}
+								onChange={(e) => {
+									setFieldValue('firstName', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="firstName"
 								render={(error) => <FieldError error={error} />}
@@ -164,7 +159,13 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col md={8}>
-							<FormInputLabel id="middleName" label="Middle Name" />
+							<Label label="Middle Name" spacing />
+							<Input
+								value={values.middleName}
+								onChange={(e) => {
+									setFieldValue('middleName', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="middleName"
 								render={(error) => <FieldError error={error} />}
@@ -172,7 +173,13 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col md={8}>
-							<FormInputLabel id="lastName" label="Last Name" />
+							<Label label="Last Name" spacing />
+							<Input
+								value={values.lastName}
+								onChange={(e) => {
+									setFieldValue('lastName', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="lastName"
 								render={(error) => <FieldError error={error} />}
@@ -180,21 +187,17 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col md={12} span={24}>
-							<Label id="gender" label="Gender" spacing />
-							<FormRadioButton
-								id="gender"
-								items={[
-									{
-										id: 'm',
-										label: 'Male',
-										value: 'm',
-									},
-									{
-										id: 'f',
-										label: 'Female',
-										value: 'f',
-									},
+							<Label label="Gender" spacing />
+							<Radio.Group
+								options={[
+									{ label: 'Male', value: 'm' },
+									{ label: 'Female', value: 'f' },
 								]}
+								optionType="button"
+								value={values.gender}
+								onChange={(e) => {
+									setFieldValue('gender', e.target.value);
+								}}
 							/>
 							<ErrorMessage
 								name="gender"
@@ -208,7 +211,6 @@ export const ModifyAccountForm = ({
 								allowClear={false}
 								className="w-100"
 								format="MMMM DD, YYYY"
-								size="large"
 								value={values.birthday}
 								onSelect={(value) => setFieldValue('birthday', value)}
 							/>
@@ -219,7 +221,13 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel id="tin" label="TIN" />
+							<Label label="TIN" spacing />
+							<Input
+								value={values.tin}
+								onChange={(e) => {
+									setFieldValue('tin', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="tin"
 								render={(error) => <FieldError error={error} />}
@@ -231,13 +239,19 @@ export const ModifyAccountForm = ({
 						) && (
 							<>
 								<Col md={12} span={24}>
-									<FormInputLabel
-										id="businessName"
+									<Label
 										label={
 											values.type === accountTypes.CORPORATE
 												? 'Business Name'
 												: 'Agency Name'
 										}
+										spacing
+									/>
+									<Input
+										value={values.businessName}
+										onChange={(e) => {
+											setFieldValue('businessName', e.target.value);
+										}}
 									/>
 									<ErrorMessage
 										name="businessName"
@@ -245,13 +259,19 @@ export const ModifyAccountForm = ({
 									/>
 								</Col>
 								<Col md={12} span={24}>
-									<FormInputLabel
-										id="businessAddress"
+									<Label
 										label={
 											values.type === accountTypes.CORPORATE
 												? 'Address (Business)'
 												: 'Address (Agency)'
 										}
+										spacing
+									/>
+									<Input
+										value={values.businessAddress}
+										onChange={(e) => {
+											setFieldValue('businessAddress', e.target.value);
+										}}
 									/>
 									<ErrorMessage
 										name="businessAddress"
@@ -262,7 +282,13 @@ export const ModifyAccountForm = ({
 						)}
 
 						<Col span={24}>
-							<FormInputLabel id="homeAddress" label="Address (Home)" />
+							<Label label="Address (Home)" spacing />
+							<Input
+								value={values.homeAddress}
+								onChange={(e) => {
+									setFieldValue('homeAddress', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="homeAddress"
 								render={(error) => <FieldError error={error} />}
@@ -270,7 +296,13 @@ export const ModifyAccountForm = ({
 						</Col>
 
 						<Col span={24}>
-							<FormInputLabel id="contactNumber" label="Contact Number" />
+							<Label label="Contact Number" spacing />
+							<Input
+								value={values.contactNumber}
+								onChange={(e) => {
+									setFieldValue('contactNumber', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="contactNumber"
 								render={(error) => <FieldError error={error} />}

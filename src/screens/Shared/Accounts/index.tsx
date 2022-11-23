@@ -23,11 +23,11 @@ export const Accounts = () => {
 	// METHODS
 	useEffect(() => {
 		if (!currentTab) {
-			onTabClick(accountTabs.ACCOUNTS);
+			handleTabClick(accountTabs.ACCOUNTS);
 		}
 	}, [currentTab]);
 
-	const onTabClick = (tab) => {
+	const handleTabClick = (tab) => {
 		setQueryParams(
 			{ tab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
@@ -46,7 +46,7 @@ export const Accounts = () => {
 					className="PaddingHorizontal PaddingVertical"
 					type="card"
 					destroyInactiveTabPane
-					onTabClick={onTabClick}
+					onTabClick={handleTabClick}
 				>
 					<Tabs.TabPane key={accountTabs.ACCOUNTS} tab={accountTabs.ACCOUNTS}>
 						<TabAccounts disabled={isConnected === false} />

@@ -48,7 +48,14 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 					label="Product Category"
 					value={upperFirst(product.product_category) || 'None'}
 				/>
-				<DetailsSingle label="Print Details" value={product.print_details} />
+				<DetailsSingle
+					label="Print Details (Receipt)"
+					value={product.print_details}
+				/>
+				<DetailsSingle
+					label="Print Details (Price Tag)"
+					value={product.price_tag_print_details}
+				/>
 				<DetailsSingle label="Description" value={product.description} />
 
 				<Divider dashed>
