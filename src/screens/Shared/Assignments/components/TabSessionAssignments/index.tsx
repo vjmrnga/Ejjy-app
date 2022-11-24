@@ -101,25 +101,28 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branches },
-		isFetching: isBranchesFetching,
-		error: branchError,
+		isFetching: isFetchingBranches,
+		error: branchErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
-		error: userError,
+		isFetching: isFetchingUsers,
+		error: userErrors,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
 
 	return (
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(userError, 'Users'),
-					...convertIntoArray(branchError, 'Branches'),
+					...convertIntoArray(userErrors, 'Users'),
+					...convertIntoArray(branchErrors, 'Branches'),
 				]}
 				withSpaceBottom
 			/>
@@ -129,8 +132,8 @@ const Filter = () => {
 					<Label label="Branch" spacing />
 					<Select
 						className="w-100"
-						disabled={isBranchesFetching}
 						filterOption={filterOption}
+						loading={isFetchingBranches}
 						optionFilterProp="children"
 						value={params.branchId ? Number(params.branchId) : null}
 						allowClear
@@ -151,8 +154,8 @@ const Filter = () => {
 					<Label label="User" spacing />
 					<Select
 						className="w-100"
-						disabled={isUsersFetching}
 						filterOption={filterOption}
+						loading={isFetchingUsers}
 						optionFilterProp="children"
 						value={params.userId ? Number(params.userId) : null}
 						allowClear
@@ -168,7 +171,6 @@ const Filter = () => {
 						))}
 					</Select>
 				</Col>
-
 				<Col lg={12} span={24}>
 					<TimeRangeFilter />
 				</Col>

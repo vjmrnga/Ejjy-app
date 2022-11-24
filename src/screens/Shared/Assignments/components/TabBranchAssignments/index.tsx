@@ -98,17 +98,20 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branches },
-		isFetching: isBranchesFetching,
+		isFetching: isFetchingBranches,
 		error: branchErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 		error: userErrors,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
 
 	return (
@@ -126,8 +129,8 @@ const Filter = () => {
 					<Label label="Branch" spacing />
 					<Select
 						className="w-100"
-						disabled={isBranchesFetching}
 						filterOption={filterOption}
+						loading={isFetchingBranches}
 						optionFilterProp="children"
 						value={params.branchId ? Number(params.branchId) : null}
 						allowClear
@@ -148,8 +151,8 @@ const Filter = () => {
 					<Label label="User" spacing />
 					<Select
 						className="w-100"
-						disabled={isUsersFetching}
 						filterOption={filterOption}
+						loading={isFetchingUsers}
 						optionFilterProp="children"
 						value={params.userId ? Number(params.userId) : null}
 						allowClear

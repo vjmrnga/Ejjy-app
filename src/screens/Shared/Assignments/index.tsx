@@ -22,11 +22,11 @@ export const Assignments = () => {
 	// METHODS
 	useEffect(() => {
 		if (!currentTab) {
-			onTabClick(assignmentTabs.BRANCH);
+			handleTabClick(assignmentTabs.BRANCH);
 		}
 	}, [currentTab]);
 
-	const onTabClick = (tab) => {
+	const handleTabClick = (tab) => {
 		setQueryParams(
 			{ tab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
@@ -41,7 +41,7 @@ export const Assignments = () => {
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane
-					onTabClick={onTabClick}
+					onTabClick={handleTabClick}
 				>
 					<Tabs.TabPane key={assignmentTabs.BRANCH} tab={assignmentTabs.BRANCH}>
 						<TabBranchAssignments />
