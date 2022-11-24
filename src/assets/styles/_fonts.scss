@@ -1,103 +1,77 @@
 @font-face {
-	font-family: 'Nunito Sans';
-	font-weight: 200;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-ExtraLight.ttf) format('truetype');
-}
-
-@font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 300;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-Light.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Light.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 400;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-Regular.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Regular.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
+	font-weight: 500;
+	src: local('Roboto'), url(../fonts/Roboto-Medium.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: 'Roboto';
 	font-weight: 600;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-SemiBold.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Medium.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 700;
-	src: local('Nunito Sans'), url(../fonts/NunitoSans-Bold.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Bold.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
-	font-weight: 800;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-ExtraBold.ttf) format('truetype');
-}
-
-@font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 900;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-Black.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Black.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
-	font-weight: 200;
-	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-ExtraLightItalic.ttf) format('truetype');
-}
-
-@font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 300;
 	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-LightItalic.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-LightItalic.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 400;
 	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-Italic.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-Italic.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
+	font-weight: 500;
+	font-style: italic;
+	src: local('Roboto'), url(../fonts/Roboto-MediumItalic.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: 'Roboto';
 	font-weight: 600;
 	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-SemiBoldItalic.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-MediumItalic.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 700;
 	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-BoldItalic.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-BoldItalic.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Nunito Sans';
-	font-weight: 800;
-	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-ExtraBoldItalic.ttf) format('truetype');
-}
-
-@font-face {
-	font-family: 'Nunito Sans';
+	font-family: 'Roboto';
 	font-weight: 900;
 	font-style: italic;
-	src: local('Nunito Sans'),
-		url(../fonts/NunitoSans-BlackItalic.ttf) format('truetype');
+	src: local('Roboto'), url(../fonts/Roboto-BlackItalic.ttf) format('truetype');
 }
