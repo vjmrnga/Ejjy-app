@@ -43,6 +43,7 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { Users } from './Users';
+import { DTR } from 'screens/Shared/DTR';
 
 const refetchOptions: any = {
 	refetchInterval: 60000,
@@ -203,6 +204,13 @@ const BranchManager = () => {
 				link: '/branch-manager/users',
 			},
 			{
+				key: 'dtr',
+				name: 'DTR',
+				activeIcon: require('../../assets/images/icon-users-active.svg'),
+				defaultIcon: require('../../assets/images/icon-users.svg'),
+				link: '/branch-manager/dtr',
+			},
+			{
 				key: 'requisition-slips',
 				name: 'Requisition Slips',
 				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
@@ -322,6 +330,8 @@ const BranchManager = () => {
 						path="/branch-manager/users/assign/:id"
 						exact
 					/>
+
+					<Route component={DTR} path="/branch-manager/dtr" />
 
 					<Route
 						component={BranchMachines}

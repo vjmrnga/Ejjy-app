@@ -148,7 +148,7 @@ export const TabOrderOfPayments = () => {
 
 	return (
 		<div>
-			<TableHeader title="Order of Payments" />
+			<TableHeader wrapperClassName="px-0 pt-0" title="Order of Payments" />
 
 			<Filter isLoading={isOrderOfPaymentsFetching} />
 

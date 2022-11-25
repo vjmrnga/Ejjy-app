@@ -5,8 +5,8 @@
 	@include flex(center, center);
 
 	.container {
-		width: 400px;
-		padding: 50px 40px;
+		width: 450px;
+		padding: 2.5rem;
 		@include flex(center, center, column);
 
 		.form {
@@ -14,8 +14,8 @@
 		}
 
 		.logo {
-			width: 200px;
-			margin-bottom: 40px;
+			width: 80%;
+			margin-bottom: 2.5rem;
 		}
 	}
 }

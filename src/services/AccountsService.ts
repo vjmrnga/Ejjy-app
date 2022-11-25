@@ -7,16 +7,24 @@ interface List extends IListRequest {
 }
 
 interface Modify {
+	biodata_image?: string;
 	birthday: string;
 	business_address?: string;
 	business_name?: string;
+	civil_status?: string;
 	contact_number: string;
+	email_address?: string;
+	father_name?: string;
 	first_name: string;
 	gender: string;
 	home_address: string;
 	is_point_system_eligible: boolean;
 	last_name: string;
 	middle_name?: string;
+	mother_maiden_name?: string;
+	nationality?: string;
+	place_of_birth?: string;
+	religion?: string;
 	tin: string;
 	type: string;
 }

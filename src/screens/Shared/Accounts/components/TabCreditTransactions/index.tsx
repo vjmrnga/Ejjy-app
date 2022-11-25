@@ -137,7 +137,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	return (
 		<div>
-			<TableHeader title="Credit Transactions" />
+			<TableHeader wrapperClassName="px-0 pt-0" title="Credit Transactions" />
 
 			{payor && (
 				<AccountTotalBalance

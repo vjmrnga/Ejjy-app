@@ -1,11 +1,23 @@
-import { Col, DatePicker, Divider, Input, Radio, Row, Select } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+	Button,
+	Col,
+	DatePicker,
+	Divider,
+	Input,
+	Radio,
+	Row,
+	Select,
+	Upload,
+} from 'antd';
+import type { RcFile } from 'antd/es/upload/interface';
+import { ErrorMessage, Form, Formik, useFormikContext } from 'formik';
 import { accountTypes } from 'global';
 import moment from 'moment';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { filterOption } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface Props {
 	account?: any;
@@ -13,6 +25,23 @@ interface Props {
 	onSubmit: any;
 	onClose: any;
 }
+
+const getEmployeeSchema = (label) =>
+	Yup.string()
+		.trim()
+		.when('type', {
+			is: accountTypes.EMPLOYEE,
+			then: Yup.string().trim().required().label(label),
+		});
+
+const getCorporateGovernmentSchema = (label) =>
+	Yup.string()
+		.nullable()
+		.when('type', {
+			is: (type) =>
+				[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
+			then: Yup.string().trim().required().label(label),
+		});
 
 export const ModifyAccountForm = ({
 	account,
@@ -36,6 +65,15 @@ export const ModifyAccountForm = ({
 				contactNumber: account?.contact_number || '',
 				gender: account?.gender || '',
 				isPointSystemEligible: account?.is_point_system_eligible || false,
+
+				civilStatus: account?.civil_status || undefined,
+				nationality: account?.nationality || undefined,
+				placeOfBirth: account?.place_of_birth || undefined,
+				fatherName: account?.father_name || undefined,
+				motherMaidenName: account?.mother_maiden_name || undefined,
+				religion: account?.religion || undefined,
+				emailAddress: account?.email_address || undefined,
+				biodataImage: account?.biodata_image || undefined,
 			},
 			schema: Yup.object().shape({
 				type: Yup.string().required().label('Type'),
@@ -44,26 +82,24 @@ export const ModifyAccountForm = ({
 				lastName: Yup.string().trim().required().label('Last Name'),
 				birthday: Yup.date().nullable().required().label('Birthday'),
 				tin: Yup.string().trim().required().label('TIN'),
-				businessName: Yup.string()
-					.nullable()
-					.when('type', {
-						is: (type) =>
-							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-						then: Yup.string().trim().required().label('Business Name'),
-					}),
 				homeAddress: Yup.string().trim().required().label('Address (Home)'),
-				businessAddress: Yup.string()
-					.nullable()
-					.when('type', {
-						is: (type) =>
-							[accountTypes.CORPORATE, accountTypes.GOVERNMENT].includes(type),
-						then: Yup.string().trim().required().label('Address (Business)'),
-					}),
+				businessName: getCorporateGovernmentSchema('Business Name'),
+				businessAddress: getCorporateGovernmentSchema('Address (Business)'),
+
 				contactNumber: Yup.string().trim().required().label('Contact Number'),
 				gender: Yup.string().required().label('Gender'),
 				isPointSystemEligible: Yup.boolean()
 					.required()
 					.label('Loyalty Membership'),
+
+				civilStatus: getEmployeeSchema('Civil Status'),
+				nationality: getEmployeeSchema('Nationality'),
+				placeOfBirth: getEmployeeSchema('Place of Birth'),
+				fatherName: getEmployeeSchema("Father's Name"),
+				motherMaidenName: getEmployeeSchema("Mother's Maiden Name"),
+				religion: getEmployeeSchema('Religion'),
+				emailAddress: getEmployeeSchema('Email Address').email(),
+				biodataImage: getEmployeeSchema('Biodata Image'),
 			}),
 		}),
 		[account],
@@ -141,9 +177,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
 						<Divider />
-
 						<Col md={8}>
 							<Label label="First Name" spacing />
 							<Input
@@ -157,7 +191,6 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
 						<Col md={8}>
 							<Label label="Middle Name" spacing />
 							<Input
@@ -171,7 +204,6 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
 						<Col md={8}>
 							<Label label="Last Name" spacing />
 							<Input
@@ -185,8 +217,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
-						<Col md={12} span={24}>
+						<Col md={12}>
 							<Label label="Gender" spacing />
 							<Radio.Group
 								options={[
@@ -204,8 +235,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
-						<Col md={12} span={24}>
+						<Col md={12}>
 							<Label id="birthday" label="Birthday" spacing />
 							<DatePicker
 								allowClear={false}
@@ -219,6 +249,119 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
+
+						{accountTypes.EMPLOYEE === values.type && (
+							<>
+								<Col span={24}>
+									<Label label="Place of Birth" spacing />
+									<Input
+										value={values.placeOfBirth}
+										onChange={(e) => {
+											setFieldValue('placeOfBirth', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="placeOfBirth"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col span={24}>
+									<Label label="Civil Status" spacing />
+									<Radio.Group
+										options={[
+											{ label: 'Single', value: 'single' },
+											{ label: 'Married', value: 'married' },
+											{ label: 'Divorced', value: 'divorced' },
+											{ label: 'Separated', value: 'separated' },
+											{ label: 'Widowed', value: 'widowed' },
+										]}
+										optionType="button"
+										value={values.civilStatus}
+										onChange={(e) => {
+											setFieldValue('civilStatus', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="civilStatus"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col md={12}>
+									<Label label="Nationality" spacing />
+									<Input
+										value={values.nationality}
+										onChange={(e) => {
+											setFieldValue('nationality', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="nationality"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col md={12}>
+									<Label label="Religion" spacing />
+									<Input
+										value={values.religion}
+										onChange={(e) => {
+											setFieldValue('religion', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="religion"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col md={12}>
+									<Label label="Father's Name" spacing />
+									<Input
+										value={values.fatherName}
+										onChange={(e) => {
+											setFieldValue('fatherName', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="fatherName"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col md={12}>
+									<Label label="Mother's Maiden Name" spacing />
+									<Input
+										value={values.motherMaidenName}
+										onChange={(e) => {
+											setFieldValue('motherMaidenName', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="motherMaidenName"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col span={24}>
+									<Label label="Email Address" spacing />
+									<Input
+										type="email"
+										value={values.emailAddress}
+										onChange={(e) => {
+											setFieldValue('emailAddress', e.target.value);
+										}}
+									/>
+									<ErrorMessage
+										name="emailAddress"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+								<Col md={12}>
+									<Label label="Biodata Image" spacing />
+									<ImageUploadField />
+									<ErrorMessage
+										name="biodataImage"
+										render={(error) => <FieldError error={error} />}
+									/>
+								</Col>
+							</>
+						)}
 
 						<Col span={24}>
 							<Label label="TIN" spacing />
@@ -280,7 +423,6 @@ export const ModifyAccountForm = ({
 								</Col>
 							</>
 						)}
-
 						<Col span={24}>
 							<Label label="Address (Home)" spacing />
 							<Input
@@ -294,7 +436,6 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
 						<Col span={24}>
 							<Label label="Contact Number" spacing />
 							<Input
@@ -308,7 +449,6 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
 						<Col span={24}>
 							<Label label="Loyalty Membership" spacing />
 							<Radio.Group
@@ -326,21 +466,86 @@ export const ModifyAccountForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={loading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={loading}
-							text={account ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={loading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={loading} type="primary">
+							{account ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}
 		</Formik>
+	);
+};
+
+export const ImageUploadField = () => {
+	// STATES
+	const [isUploading, setIsUploading] = useState(false);
+
+	// CUSTOM HOOKS
+	const { values, setFieldValue, setFieldError, setFieldTouched } =
+		useFormikContext();
+
+	// METHODS
+	const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+		const reader = new FileReader();
+		reader.addEventListener('load', () => callback(reader.result as string));
+		reader.readAsDataURL(img);
+	};
+
+	const handleBeforeUpload = (file: RcFile) => {
+		setIsUploading(true);
+
+		const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+		if (!isJpgOrPng) {
+			setFieldTouched('biodataImage', true, false);
+			setFieldError('biodataImage', 'Please only upload JPG orPNG file.');
+
+			setIsUploading(false);
+			return false;
+		}
+
+		const isLt2M = file.size / 1024 / 1024 < 2;
+		if (!isLt2M) {
+			setFieldTouched('biodataImage', true, false);
+			setFieldError('biodataImage', 'Image must smaller than 2MB.');
+
+			setIsUploading(false);
+			return false;
+		}
+
+		getBase64(file, (url) => {
+			setFieldValue('biodataImage', url);
+			setIsUploading(false);
+		});
+
+		return false;
+	};
+
+	return (
+		<Upload
+			beforeUpload={handleBeforeUpload}
+			className="avatar-uploader"
+			listType="picture-card"
+			name="avatar"
+			showUploadList={false}
+		>
+			{values['biodataImage'] ? (
+				<img
+					alt="avatar"
+					className="w-100"
+					height={102}
+					src={values['biodataImage']}
+					style={{ objectFit: 'contain' }}
+					width={102}
+				/>
+			) : (
+				<div>
+					{isUploading ? <LoadingOutlined /> : <PlusOutlined />}
+					<div style={{ marginTop: 8 }}>Upload</div>
+				</div>
+			)}
+		</Upload>
 	);
 };

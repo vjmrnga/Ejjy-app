@@ -8,6 +8,7 @@ import { Assignments } from 'screens/Shared/Assignments';
 import { Branches } from 'screens/Shared/Branches';
 import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
+import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
@@ -17,7 +18,7 @@ import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
 import { ViewChecking } from './Checkings/ViewChecking';
 import { Dashboard } from './Dashboard';
-import { Notifications } from './Notifications/Notifications';
+import { Notifications } from './Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
 import { Reports } from './Reports/Reports';
@@ -87,6 +88,13 @@ const sidebarItems = [
 		link: '/office-manager/assignments',
 	},
 	{
+		key: 'dtr',
+		name: 'DTR',
+		activeIcon: require('../../assets/images/icon-users-active.svg'),
+		defaultIcon: require('../../assets/images/icon-users.svg'),
+		link: '/office-manager/dtr',
+	},
+	{
 		key: 'discount-options',
 		name: 'Discount Options',
 		activeIcon: require('../../assets/images/icon-product-active.svg'),
@@ -143,13 +151,13 @@ const sidebarItems = [
 	// 	defaultIcon: require('../../assets/images/icon-failed-transfers.svg'),
 	// 	link: '/office-manager/pending-transactions',
 	// },
-	// {
-	// 	key: 'notifications',
-	// 	name: 'Notifications',
-	// 	activeIcon: require('../../assets/images/icon-notifications-active.svg'),
-	// 	defaultIcon: require('../../assets/images/icon-notifications.svg'),
-	// 	link: '/office-manager/notifications',
-	// },
+	{
+		key: 'notifications',
+		name: 'Notifications',
+		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
+		defaultIcon: require('../../assets/images/icon-notifications.svg'),
+		link: '/office-manager/notifications',
+	},
 ];
 
 const OfficeManager = () => {
@@ -204,6 +212,8 @@ const OfficeManager = () => {
 						path="/office-manager/assignments"
 						exact
 					/>
+
+					<Route component={DTR} path="/office-manager/dtr" />
 
 					<Route
 						component={DiscountOptions}

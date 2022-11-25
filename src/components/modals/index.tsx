@@ -5,6 +5,7 @@ export * from './CreateStockInModal';
 export * from './CreateStockOutModal';
 export * from './FulfillCheckModal';
 export * from './ModifyAccountModal';
+export * from './ModifyAttendanceScheduleModal';
 export * from './ModifyBranchMachineModal';
 export * from './ModifyBranchModal';
 export * from './ModifyCashieringAssignmentModal';

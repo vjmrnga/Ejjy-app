@@ -235,3 +235,17 @@ export const requisitionSlipDetailsType = {
 	SINGLE_VIEW: 'single_view',
 	CREATE_EDIT: 'create_edit',
 };
+
+export const dtrTypes = {
+	ATTENDANCE: 'attendance',
+	TRACKER: 'tracker',
+};
+
+export const attendanceSchedulePeriods = {
+	MORNING: 'morning',
+	AFTERNOON: 'afternoon',
+};
+export const attendanceScheduleTypes = {
+	CLOCK_IN: 'clock_in',
+	CLOCK_OUT: 'clock_out',
+};

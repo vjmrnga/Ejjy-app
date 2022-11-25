@@ -1,8 +1,8 @@
 import {
 	DeleteOutlined,
-	DollarOutlined,
-	EditOutlined,
-	PrinterOutlined,
+	DollarCircleOutlined,
+	EditFilled,
+	PrinterFilled,
 	SearchOutlined,
 } from '@ant-design/icons';
 import {
@@ -27,7 +27,7 @@ import {
 	TableHeader,
 	ViewProductModal,
 } from 'components';
-import { Box, ButtonLink, Label } from 'components/elements';
+import { Box, Label } from 'components/elements';
 import { printProductPriceTag } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
@@ -52,6 +52,7 @@ import {
 	filterOption,
 	getId,
 	getLocalBranchId,
+	getProductCode,
 	isCUDShown,
 } from 'utils';
 
@@ -105,24 +106,40 @@ export const Products = () => {
 	useEffect(() => {
 		const formattedProducts =
 			products?.map((product) => {
-				const { id, barcode, name, textcode } = product;
+				const { id, name } = product;
 
 				return {
 					key: id,
 					barcode: (
-						<ButtonLink
-							text={barcode || textcode}
+						<Button
+							className="pa-0"
+							type="link"
 							onClick={() => handleOpenModal(product, modals.VIEW)}
-						/>
+						>
+							{getProductCode(product)}
+						</Button>
 					),
 					name,
 					actions: hasPendingTransactions ? null : (
 						<Space>
+							<Tooltip title="Print Price Tag">
+								<Button
+									disabled={isConnected === false}
+									icon={<PrinterFilled />}
+									loading={isCreatingPdf === product.id}
+									type="primary"
+									ghost
+									onClick={() => {
+										handleCreatePdf(product);
+									}}
+								/>
+							</Tooltip>
 							<Tooltip title="Set Prices">
 								<Button
 									disabled={isConnected === false}
-									icon={<DollarOutlined />}
+									icon={<DollarCircleOutlined />}
 									type="primary"
+									ghost
 									onClick={() =>
 										handleOpenModal(product, modals.EDIT_PRICE_COST)
 									}
@@ -132,23 +149,14 @@ export const Products = () => {
 								{isCUDShown(user.user_type) && (
 									<Button
 										disabled={isConnected === false}
-										icon={<EditOutlined />}
+										icon={<EditFilled />}
 										type="primary"
+										ghost
 										onClick={() => handleOpenModal(product, modals.MODIFY)}
 									/>
 								)}
 							</Tooltip>
-							<Tooltip title="Print Price Tag">
-								<Button
-									disabled={isConnected === false}
-									icon={<PrinterOutlined />}
-									loading={isCreatingPdf === product.id}
-									type="primary"
-									onClick={() => {
-										handleCreatePdf(product);
-									}}
-								/>
-							</Tooltip>
+
 							{isCUDShown(user.user_type) && (
 								<Popconfirm
 									cancelText="No"
@@ -268,6 +276,7 @@ export const Products = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 
 				{modalType === modals.VIEW && selectedProduct && (
@@ -335,11 +344,16 @@ const Filter = () => {
 
 	return (
 		<Row className="pa-6 pt-0" gutter={[16, 16]}>
-			<Col span={24}>
-				<RequestErrors
-					errors={convertIntoArray(productCategoriesErrors, 'Product Category')}
-				/>
-			</Col>
+			{productCategoriesErrors && (
+				<Col span={24}>
+					<RequestErrors
+						errors={convertIntoArray(
+							productCategoriesErrors,
+							'Product Category',
+						)}
+					/>
+				</Col>
+			)}
 
 			<Col lg={12} span={24}>
 				<Label label="Search" spacing />

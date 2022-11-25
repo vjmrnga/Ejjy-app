@@ -48,7 +48,7 @@ export const Sidebar = ({ items }: Props) => {
 			<img
 				alt="logo"
 				className="Sidebar_logo"
-				src={require('../../../assets/images/logo.jpg')}
+				src={require('../../../assets/images/logo.png')}
 			/>
 			<div className="Sidebar_sidebarList">
 				{items.map((item) => (

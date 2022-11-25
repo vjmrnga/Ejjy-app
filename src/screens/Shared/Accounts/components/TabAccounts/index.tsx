@@ -1,4 +1,8 @@
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+	ClockCircleFilled,
+	EditFilled,
+	SearchOutlined,
+} from '@ant-design/icons';
 import {
 	Button,
 	Col,
@@ -12,10 +16,10 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
+	ModifyAttendanceScheduleModal,
 	ModifyAccountModal,
 	RequestErrors,
 	TableHeader,
-	ViewAccountModal,
 } from 'components';
 import { Label } from 'components/elements';
 import {
@@ -41,12 +45,17 @@ interface Props {
 	disabled: boolean;
 }
 
+const modals = {
+	CREATE: 1,
+	EDIT: 2,
+	ATTENDANCE: 3,
+};
+
 export const TabAccounts = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
-	const [selectedAccountEdit, setSelectedAccountEdit] = useState(null);
-	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+	const [modalVisible, setModalVisible] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -80,9 +89,25 @@ export const TabAccounts = ({ disabled }: Props) => {
 					<Tooltip title="Edit">
 						<Button
 							disabled={disabled}
-							icon={<EditOutlined />}
+							icon={<EditFilled />}
 							type="primary"
-							onClick={() => setSelectedAccountEdit(account)}
+							ghost
+							onClick={() => {
+								setModalVisible(modals.EDIT);
+								setSelectedAccount(account);
+							}}
+						/>
+					</Tooltip>
+					<Tooltip title="Set Attendance">
+						<Button
+							disabled={disabled}
+							icon={<ClockCircleFilled />}
+							type="primary"
+							ghost
+							onClick={() => {
+								setModalVisible(modals.ATTENDANCE);
+								setSelectedAccount(account);
+							}}
 						/>
 					</Tooltip>
 				</Space>
@@ -108,7 +133,12 @@ export const TabAccounts = ({ disabled }: Props) => {
 		];
 
 		if (isCUDShown(user.user_type)) {
-			columns.push({ title: 'Actions', dataIndex: 'actions' });
+			columns.push({
+				title: 'Actions',
+				dataIndex: 'actions',
+				width: 100,
+				fixed: 'right',
+			});
 		}
 
 		return columns;
@@ -120,8 +150,8 @@ export const TabAccounts = ({ disabled }: Props) => {
 				<TableHeader
 					buttonName="Create Account"
 					title="Accounts"
-					wrapperClassName="px-0"
-					onCreate={() => setIsCreateModalVisible(true)}
+					wrapperClassName="px-0 pt-0"
+					onCreate={() => setModalVisible(modals.CREATE)}
 					onCreateDisabled={disabled}
 				/>
 			)}
@@ -151,21 +181,25 @@ export const TabAccounts = ({ disabled }: Props) => {
 				scroll={{ x: 1000 }}
 			/>
 
-			{selectedAccount && (
-				<ViewAccountModal
+			{(modalVisible === modals.CREATE ||
+				(modalVisible === modals.EDIT && selectedAccount)) && (
+				<ModifyAccountModal
 					account={selectedAccount}
-					onClose={() => setSelectedAccount(null)}
+					onClose={() => {
+						setModalVisible(null);
+						setSelectedAccount(null);
+					}}
+					onSuccess={refetchAccounts}
 				/>
 			)}
 
-			{(isCreateModalVisible || selectedAccountEdit) && (
-				<ModifyAccountModal
-					account={selectedAccountEdit}
+			{modalVisible === modals.ATTENDANCE && selectedAccount && (
+				<ModifyAttendanceScheduleModal
+					account={selectedAccount}
 					onClose={() => {
-						setIsCreateModalVisible(false);
-						setSelectedAccountEdit(null);
+						setModalVisible(null);
+						setSelectedAccount(null);
 					}}
-					onSuccess={refetchAccounts}
 				/>
 			)}
 		</div>

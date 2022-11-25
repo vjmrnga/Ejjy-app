@@ -15,17 +15,17 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createAccount,
-		isLoading: isCreateLoading,
+		isLoading: isCreating,
 		error: createError,
 	} = useAccountCreate();
 	const {
 		mutateAsync: editAccount,
-		isLoading: isEditLoading,
+		isLoading: isEditing,
 		error: editError,
 	} = useAccountEdit();
 
 	// METHODS
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		if (account) {
 			await editAccount({
 				id: account.id,
@@ -61,9 +61,9 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 
 			<ModifyAccountForm
 				account={account}
-				loading={isCreateLoading || isEditLoading}
+				loading={isCreating || isEditing}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

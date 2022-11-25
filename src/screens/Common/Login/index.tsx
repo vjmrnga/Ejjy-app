@@ -55,7 +55,7 @@ const Login = () => {
 				<img
 					alt="logo"
 					className="logo"
-					src={require('assets/images/logo.jpg')}
+					src={require('assets/images/logo.png')}
 				/>
 
 				<LoginForm

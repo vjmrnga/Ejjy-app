@@ -110,6 +110,7 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 		<div>
 			{isCUDShown(user.user_type) && (
 				<TableHeader
+					wrapperClassName="px-0 pt-0"
 					buttonName="Create Credit Account"
 					title="Credit Account"
 					onCreate={() => setIsCreateModalVisible(true)}
