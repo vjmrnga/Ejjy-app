@@ -776,7 +776,16 @@ export const printBirReport = ({ birReports, siteSettings }) => {
       <td>${formatInPeso(report.total_vat_adjusted, PESO_SIGN)}</td>
 
       <td>${formatInPeso(report.vat_payable, PESO_SIGN)}</td>
-      <td>${formatInPeso(report.net_sales, PESO_SIGN)}</td>
+      <td>${
+				report.is_non_vat
+					? EMPTY_CELL
+					: formatInPeso(report.net_sales, PESO_SIGN)
+			}</td>
+      <td>${
+				report.is_non_vat
+					? formatInPeso(report.net_sales, PESO_SIGN)
+					: EMPTY_CELL
+			}</td>
       <td>${formatInPeso(report.other_income, PESO_SIGN)}</td>
       <td>${formatInPeso(report.sales_overrun_or_overflow, PESO_SIGN)}</td>
       <td>${formatInPeso(report.total_net_sales, PESO_SIGN)}</td>
@@ -861,7 +870,8 @@ export const printBirReport = ({ birReports, siteSettings }) => {
           <th colspan="5">Deductions</th>
           <th colspan="4">Adjustments on VAT</th>
           <th rowspan="2">VAT Payable</th>
-          <th rowspan="2">Net Sales</th>
+          <th rowspan="2">Net Sales VAT</th>
+          <th rowspan="2">Net Sales NVAT</th>
           <th rowspan="2">Other Income</th>
           <th rowspan="2">Sales Overrun/ Overflow</th>
           <th rowspan="2">Total Net Sales</th>

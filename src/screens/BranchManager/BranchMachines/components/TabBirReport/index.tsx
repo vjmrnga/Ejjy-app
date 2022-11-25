@@ -57,7 +57,8 @@ const columns: ColumnsType = [
 		],
 	},
 	{ title: 'VAT Payable', dataIndex: 'vatPayable' },
-	{ title: 'Net Sales', dataIndex: 'netSales' },
+	{ title: 'Net Sales VAT', dataIndex: 'netSalesVat' },
+	{ title: 'Net Sales NVAT', dataIndex: 'netSalesNVat' },
 	{ title: 'Other Income', dataIndex: 'otherIncome' },
 	{ title: 'Sales Overrun/Overflow', dataIndex: 'salesOverrunOrOverflow' },
 	{ title: 'Total Net Sales', dataIndex: 'totalNetSales' },
@@ -126,7 +127,12 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			others: formatInPeso(report.others),
 			totalVatAdjusted: formatInPeso(report.total_vat_adjusted),
 			vatPayable: formatInPeso(report.vat_payable),
-			netSales: formatInPeso(report.net_sales),
+			netSalesVat: report.is_non_vat
+				? EMPTY_CELL
+				: formatInPeso(report.net_sales),
+			netSalesNVat: report.is_non_vat
+				? formatInPeso(report.net_sales)
+				: EMPTY_CELL,
 			otherIncome: formatInPeso(report.other_income),
 			salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
 			totalNetSales: formatInPeso(report.total_net_sales),
