@@ -1,3 +1,4 @@
+import { ConfigProvider } from 'antd';
 import { ConnectedRouter } from 'connected-react-router';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -36,6 +37,13 @@ const queryClient = new QueryClient({
 			refetchOnWindowFocus: false,
 			retry: false,
 		},
+	},
+});
+
+ConfigProvider.config({
+	theme: {
+		primaryColor: '#20bf6b',
+		errorColor: '#fc5c65',
 	},
 });
 

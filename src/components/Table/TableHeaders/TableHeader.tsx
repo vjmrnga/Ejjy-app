@@ -1,8 +1,9 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
 import cn from 'classnames';
 import { debounce } from 'lodash';
 import React, { useCallback } from 'react';
-import { AddIcon } from '../..';
-import { Button, SearchInput, Select } from '../../elements';
+import { SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
 import { PendingCount } from '../../PendingCount/PendingCount';
 import './style.scss';
@@ -81,15 +82,16 @@ export const TableHeader = ({
 					{pending >= 0 && <PendingCount value={pending} />}
 
 					{onCreate && (
-						<Button
-							disabled={onCreateDisabled}
-							icon={<AddIcon />}
-							iconDirection="left"
-							text={buttonName}
-							tooltip={onCreateTooltip}
-							variant="primary"
-							onClick={onCreate}
-						/>
+						<Tooltip title={onCreateTooltip}>
+							<Button
+								disabled={onCreateDisabled}
+								icon={<PlusOutlined />}
+								type="primary"
+								onClick={onCreate}
+							>
+								{buttonName}
+							</Button>
+						</Tooltip>
 					)}
 				</div>
 			</div>

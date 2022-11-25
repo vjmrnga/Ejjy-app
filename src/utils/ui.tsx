@@ -565,7 +565,6 @@ export const confirmPassword = ({
 		content: (
 			<Input.Password
 				placeholder="Input Password"
-				size="large"
 				onChange={(e) => {
 					password = e.target.value;
 				}}

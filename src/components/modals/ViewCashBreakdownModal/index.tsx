@@ -159,34 +159,32 @@ const CashOutDetails = ({ cashBreakdown }) => {
 	const cashOut = cashBreakdown.cash_out_metadata;
 
 	return (
-		<>
-			<Descriptions
-				className="w-100"
-				column={1}
-				labelStyle={{ width: 200 }}
-				bordered
-			>
-				<Descriptions.Item label="Datetime">
-					{formatDateTime(cashBreakdown.datetime_created)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Payee">{cashOut.payee}</Descriptions.Item>
-				<Descriptions.Item label="Particulars">
-					{cashOut.particulars}
-				</Descriptions.Item>
-				<Descriptions.Item label="Amount">
-					{formatInPeso(cashOut.amount)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Prepared By">
-					{getFullName(cashOut.prepared_by_user)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Approved By">
-					{getFullName(cashOut.approved_by_user)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Received By">
-					{cashOut.received_by}
-				</Descriptions.Item>
-			</Descriptions>
-		</>
+		<Descriptions
+			className="w-100"
+			column={1}
+			labelStyle={{ width: 200 }}
+			bordered
+		>
+			<Descriptions.Item label="Datetime">
+				{formatDateTime(cashBreakdown.datetime_created)}
+			</Descriptions.Item>
+			<Descriptions.Item label="Payee">{cashOut.payee}</Descriptions.Item>
+			<Descriptions.Item label="Particulars">
+				{cashOut.particulars}
+			</Descriptions.Item>
+			<Descriptions.Item label="Amount">
+				{formatInPeso(cashOut.amount)}
+			</Descriptions.Item>
+			<Descriptions.Item label="Prepared By">
+				{getFullName(cashOut.prepared_by_user)}
+			</Descriptions.Item>
+			<Descriptions.Item label="Approved By">
+				{getFullName(cashOut.approved_by_user)}
+			</Descriptions.Item>
+			<Descriptions.Item label="Received By">
+				{cashOut.received_by}
+			</Descriptions.Item>
+		</Descriptions>
 	);
 };
 

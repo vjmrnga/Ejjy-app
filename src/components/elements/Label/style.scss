@@ -3,7 +3,7 @@
 .Label {
 	display: block;
 	color: $color-dark-gray;
-	@include font(0.875rem, bold);
+	@include font(0.875rem, 600);
 
 	&___spacing {
 		margin-bottom: 6px;
