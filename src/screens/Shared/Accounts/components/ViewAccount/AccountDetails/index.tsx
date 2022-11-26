@@ -56,8 +56,8 @@ export const AccountDetails = ({ account }: Props) => {
 	const handlePrintEmployeeCode = async (employee) => {
 		setIsPrinting(true);
 
-		const id = _.toString(employee.id);
-		console.log(id, 'id');
+		const id = _.toString(employee.account_code);
+
 		const dataHtml = printEmployeeCode({
 			name: getFullName(employee),
 			barcode: await getBarcode(id),

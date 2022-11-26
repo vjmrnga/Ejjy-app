@@ -6,7 +6,7 @@ import {
 	accountTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	dtrTypes,
+	attendanceCategories,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 } from 'global';
@@ -23,6 +23,7 @@ import {
 	convertIntoArray,
 	filterOption,
 	formatDateTime,
+	getAttendanceLogDescription,
 	getFullName,
 	getLocalBranchId,
 	isUserFromBranch,
@@ -80,7 +81,7 @@ export const DTR = () => {
 			scheduledDateTime: formatDateTime(log.scheduled_time),
 			realDateTime: formatDateTime(log.real_time),
 			type: _.upperFirst(log.attendance_category),
-			description: getLogDescription(
+			description: getAttendanceLogDescription(
 				log.attendance_category,
 				log.attendance_type,
 			),
@@ -88,18 +89,6 @@ export const DTR = () => {
 
 		setDataSource(data);
 	}, [attendanceLogs]);
-
-	const getLogDescription = (category, type) => {
-		let description = '';
-
-		if (category === dtrTypes.ATTENDANCE) {
-			description = 'Clock';
-		} else if (category === dtrTypes.TRACKER) {
-			description = 'Time';
-		}
-
-		return description + _.upperFirst(type);
-	};
 
 	return (
 		<Content title="Daily Time Record">
@@ -223,10 +212,10 @@ const Filter = () => {
 						defaultValue={null}
 						options={[
 							{ label: 'All', value: null },
-							{ label: 'Attendance', value: dtrTypes.ATTENDANCE },
+							{ label: 'Attendance', value: attendanceCategories.ATTENDANCE },
 							{
 								label: 'Tracker',
-								value: dtrTypes.TRACKER,
+								value: attendanceCategories.TRACKER,
 							},
 						]}
 						optionType="button"

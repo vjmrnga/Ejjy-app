@@ -71,7 +71,7 @@ export const PricesForm = ({
 			<FormattedInputNumber
 				className="w-100"
 				controls={false}
-				placeholder={placeholder.toFixed(2)}
+				placeholder={placeholder ? placeholder.toFixed(2) : undefined}
 				size="large"
 				value={value}
 				onChange={(newValue) => {

@@ -236,7 +236,7 @@ export const requisitionSlipDetailsType = {
 	CREATE_EDIT: 'create_edit',
 };
 
-export const dtrTypes = {
+export const attendanceCategories = {
 	ATTENDANCE: 'attendance',
 	TRACKER: 'tracker',
 };

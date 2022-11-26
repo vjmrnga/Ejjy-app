@@ -14,8 +14,8 @@ import {
 } from 'components';
 import { BadgePill } from 'components/elements';
 import {
+	attendanceCategories,
 	backOrdersStatuses,
-	productStatus,
 	cashBreakdownCategories,
 	cashBreakdownTypes,
 	deliveryReceiptStatus,
@@ -23,6 +23,7 @@ import {
 	orderSlipStatus,
 	OSDRStatus,
 	preparationSlipStatus,
+	productStatus,
 	productTypes,
 	request,
 	requisitionSlipActions,
@@ -539,6 +540,18 @@ export const getRequestor = (requisitionSlip) => {
 	}
 
 	return data.join(' - ');
+};
+
+export const getAttendanceLogDescription = (category, type) => {
+	let description = '';
+
+	if (category === attendanceCategories.ATTENDANCE) {
+		description = 'Clock';
+	} else if (category === attendanceCategories.TRACKER) {
+		description = 'Time';
+	}
+
+	return `${description} ${_.upperFirst(type)}`;
 };
 
 export const filterOption = (input, option) =>

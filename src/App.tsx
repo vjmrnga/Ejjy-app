@@ -59,8 +59,8 @@ const App = () => {
 		data: { branches },
 		isFetching: isFetchingBranches,
 	} = useBranches({
+		key: 'App',
 		params: {
-			page: 1,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		options: {
