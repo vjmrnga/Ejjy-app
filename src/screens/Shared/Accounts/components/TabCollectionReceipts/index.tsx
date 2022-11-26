@@ -98,7 +98,7 @@ export const TabCollectionReceipts = () => {
 
 	return (
 		<>
-			<TableHeader wrapperClassName="px-0 pt-0" title="Collection Receipts" />
+			<TableHeader title="Collection Receipts" wrapperClassName="px-0 pt-0" />
 
 			<RequestErrors
 				errors={[

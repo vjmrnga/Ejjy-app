@@ -34,9 +34,9 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 			onCancel={onClose}
 		>
 			<Descriptions
-				labelStyle={{ width: 200 }}
 				className="w-100"
 				column={2}
+				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
 			>
@@ -74,9 +74,9 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 			<Divider orientation="left">Tags</Divider>
 
 			<Descriptions
-				labelStyle={{ width: 200 }}
 				className="w-100"
 				column={1}
+				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
 			>
@@ -110,9 +110,9 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 			<Divider orientation="left">Quantity</Divider>
 
 			<Descriptions
-				labelStyle={{ width: 200 }}
 				className="w-100"
 				column={2}
+				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
 			>
@@ -136,9 +136,9 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 			<Divider orientation="left">Money</Divider>
 
 			<Descriptions
-				labelStyle={{ width: 200 }}
 				className="w-100"
 				column={1}
+				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
 			>

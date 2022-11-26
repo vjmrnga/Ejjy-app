@@ -29,6 +29,7 @@ import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { isStandAlone } from 'utils';
+import { DTR } from 'screens/Shared/DTR';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
@@ -43,7 +44,6 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { Users } from './Users';
-import { DTR } from 'screens/Shared/DTR';
 
 const refetchOptions: any = {
 	refetchInterval: 60000,
