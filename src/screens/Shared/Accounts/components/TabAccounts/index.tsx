@@ -28,6 +28,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	serviceTypes,
 } from 'global';
 import { useAccounts, useAuth, useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -39,6 +40,7 @@ import {
 	formatDate,
 	getFullName,
 	isCUDShown,
+	isUserFromBranch,
 } from 'utils';
 
 interface Props {
@@ -65,7 +67,14 @@ export const TabAccounts = ({ disabled }: Props) => {
 		isFetching: isFetchingAccounts,
 		error: accountError,
 		refetch: refetchAccounts,
-	} = useAccounts({ params });
+	} = useAccounts({
+		params: {
+			...params,
+			serviceType: isUserFromBranch(user.user_type)
+				? serviceTypes.OFFLINE
+				: serviceTypes.NORMAL,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -146,15 +155,17 @@ export const TabAccounts = ({ disabled }: Props) => {
 
 	return (
 		<div>
-			{isCUDShown(user.user_type) && (
-				<TableHeader
-					buttonName="Create Account"
-					title="Accounts"
-					wrapperClassName="px-0 pt-0"
-					onCreate={() => setModalVisible(modals.CREATE)}
-					onCreateDisabled={disabled}
-				/>
-			)}
+			<TableHeader
+				buttonName="Create Account"
+				title="Accounts"
+				wrapperClassName="px-0 pt-0"
+				onCreate={
+					isCUDShown(user.user_type)
+						? () => setModalVisible(modals.CREATE)
+						: null
+				}
+				onCreateDisabled={disabled}
+			/>
 
 			<Filter />
 

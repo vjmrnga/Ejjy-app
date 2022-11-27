@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
@@ -12,13 +12,19 @@ const useAccounts = ({ params }: Query) =>
 			params?.page,
 			params?.pageSize,
 			params?.search,
+			params?.serviceType,
 			params?.type,
 			params?.withCreditRegistration,
 		],
 
-		() =>
-			wrapServiceWithCatch(
-				AccountsService.list(
+		() => {
+			let service = AccountsService.list;
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = AccountsService.listOffline;
+			}
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
@@ -28,7 +34,8 @@ const useAccounts = ({ params }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

@@ -64,18 +64,20 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 				format="MMMM YYYY"
 				picker="month"
 				onChange={(date) => {
-					const firstDate = date.clone().startOf('month');
-					const lastDate = date.clone().endOf('month');
+					if (date) {
+						const firstDate = date.clone().startOf('month');
+						const lastDate = date.clone().endOf('month');
 
-					setQueryParams(
-						{
-							timeRange: [
-								firstDate.format(DATE_FORMAT),
-								lastDate.format(DATE_FORMAT),
-							].join(','),
-						},
-						{ shouldResetPage: true },
-					);
+						setQueryParams(
+							{
+								timeRange: [
+									firstDate.format(DATE_FORMAT),
+									lastDate.format(DATE_FORMAT),
+								].join(','),
+							},
+							{ shouldResetPage: true },
+						);
+					}
 				}}
 			/>
 		);

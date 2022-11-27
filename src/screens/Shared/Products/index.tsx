@@ -17,6 +17,7 @@ import {
 	Tooltip,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
+import classNames from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
@@ -122,18 +123,6 @@ export const Products = () => {
 					name,
 					actions: hasPendingTransactions ? null : (
 						<Space>
-							<Tooltip title="Print Price Tag">
-								<Button
-									disabled={isConnected === false}
-									icon={<PrinterFilled />}
-									loading={isCreatingPdf === product.id}
-									type="primary"
-									ghost
-									onClick={() => {
-										handleCreatePdf(product);
-									}}
-								/>
-							</Tooltip>
 							<Tooltip title="Set Prices">
 								<Button
 									disabled={isConnected === false}
@@ -156,7 +145,18 @@ export const Products = () => {
 									/>
 								)}
 							</Tooltip>
-
+							<Tooltip title="Print Price Tag">
+								<Button
+									disabled={isConnected === false}
+									icon={<PrinterFilled />}
+									loading={isCreatingPdf === product.id}
+									type="primary"
+									ghost
+									onClick={() => {
+										handleCreatePdf(product);
+									}}
+								/>
+							</Tooltip>
 							{isCUDShown(user.user_type) && (
 								<Popconfirm
 									cancelText="No"
@@ -324,6 +324,7 @@ export const Products = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
@@ -343,7 +344,12 @@ const Filter = () => {
 	);
 
 	return (
-		<Row className="pa-6 pt-0" gutter={[16, 16]}>
+		<Row
+			className={classNames('pa-6', {
+				'pt-0': isCUDShown(user.user_type),
+			})}
+			gutter={[16, 16]}
+		>
 			{productCategoriesErrors && (
 				<Col span={24}>
 					<RequestErrors

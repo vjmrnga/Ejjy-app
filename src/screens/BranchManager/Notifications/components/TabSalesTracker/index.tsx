@@ -1,4 +1,4 @@
-import { Alert, Spin } from 'antd';
+import { Alert, Empty, Spin } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
@@ -71,7 +71,7 @@ export const TabSalesTracker = () => {
 
 	return (
 		<Spin spinning={isSalesTrackerFetching || isSiteSettingsFetching}>
-			<TableHeader title="Sales Tracker" wrapperClassName="pt-2 px-0" />
+			<TableHeader title="Sales Tracker" wrapperClassName="pt-0 px-0" />
 
 			<RequestErrors
 				errors={[
@@ -81,7 +81,11 @@ export const TabSalesTracker = () => {
 				withSpaceBottom
 			/>
 
-			{salesTrackerNotifications}
+			{salesTrackerNotifications.length > 0 ? (
+				salesTrackerNotifications
+			) : (
+				<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+			)}
 		</Spin>
 	);
 };

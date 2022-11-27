@@ -17,6 +17,7 @@ export * from './ModifyProductModal';
 export * from './ModifyUserModal';
 export * from './PricesModal';
 export * from './RedeemPointsModal';
+export * from './ResolveProblematicAttendanceLogModal';
 export * from './ViewAccountModal';
 export * from './ViewBackOrderModal';
 export * from './ViewCashBreakdownModal';

@@ -9,6 +9,7 @@ import {
 	attendanceCategories,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	EMPTY_CELL,
 } from 'global';
 import {
 	useAccounts,
@@ -78,8 +79,10 @@ export const DTR = () => {
 		const data = attendanceLogs.map((log) => ({
 			key: log.id,
 			name: getFullName(log.employee),
-			scheduledDateTime: formatDateTime(log.scheduled_time),
-			realDateTime: formatDateTime(log.real_time),
+			scheduledDateTime: log.scheduled_time
+				? formatDateTime(log.scheduled_time)
+				: EMPTY_CELL,
+			realDateTime: log.real_time ? formatDateTime(log.real_time) : EMPTY_CELL,
 			type: _.upperFirst(log.attendance_category),
 			description: getAttendanceLogDescription(
 				log.attendance_category,
@@ -93,12 +96,13 @@ export const DTR = () => {
 	return (
 		<Content title="Daily Time Record">
 			<Box>
-				<Filter />
-
 				<RequestErrors
-					errors={convertIntoArray(attendanceLogsError)}
+					className="px-6"
+					errors={convertIntoArray(attendanceLogsError, 'Logs')}
 					withSpaceBottom
 				/>
+
+				<Filter />
 
 				<Table
 					columns={columns}

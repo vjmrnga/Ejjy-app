@@ -2,11 +2,11 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
+	ModifyCreditRegistrationModal,
 	RequestErrors,
 	TableActions,
 	TableHeader,
 	ViewAccountModal,
-	ModifyCreditRegistrationModal,
 } from 'components';
 import { Label } from 'components/elements';
 import {
@@ -108,15 +108,17 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 
 	return (
 		<div>
-			{isCUDShown(user.user_type) && (
-				<TableHeader
-					buttonName="Create Credit Account"
-					title="Credit Account"
-					wrapperClassName="px-0 pt-0"
-					onCreate={() => setIsCreateModalVisible(true)}
-					onCreateDisabled={disabled}
-				/>
-			)}
+			<TableHeader
+				buttonName="Create Credit Account"
+				title="Credit Account"
+				wrapperClassName="px-0 pt-0"
+				onCreate={
+					isCUDShown(user.user_type)
+						? () => setIsCreateModalVisible(true)
+						: null
+				}
+				onCreateDisabled={disabled}
+			/>
 
 			<Filter
 				params={queryParams}

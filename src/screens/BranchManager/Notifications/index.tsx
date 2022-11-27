@@ -1,9 +1,11 @@
 import { Badge, Space, Tabs } from 'antd';
 import { Content, NotificationsInfo } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE } from 'global';
+import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
+	useAttendanceLogs,
 	useBranchProducts,
+	useProblematicAttendanceLogs,
 	useQueryParams,
 	useSalesTracker,
 	useSiteSettingsRetrieve,
@@ -11,20 +13,19 @@ import {
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TabBranchProducts } from './components/TabBranchProducts';
+import { TabDTR } from './components/TabDTR';
 import { TabSalesTracker } from './components/TabSalesTracker';
 
 const tabs = {
 	BRANCH_PRODUCTS: 'Branch Products',
+	DTR: 'DTR',
 	SALES_TRACKER: 'Sales Tracker',
 };
 
 export const Notifications = () => {
-	// STATES
-	const [salesTrackerCount, setSalesTrackerCount] = useState(0);
-
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 	const {
@@ -36,6 +37,106 @@ export const Notifications = () => {
 		},
 		options: { notifyOnChangeProps: ['data'] },
 	});
+
+	const dtrCount = useDtrHooks();
+	const salesTrackerCount = useSalesTrackerCount();
+
+	// METHODS
+	const handleTabClick = (selectedTab) => {
+		setQueryParams(
+			{ tab: selectedTab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
+
+	return (
+		<Content title="Notifications">
+			<NotificationsInfo />
+
+			<Box>
+				<Tabs
+					activeKey={tab ? _.toString(tab) : tabs.BRANCH_PRODUCTS}
+					className="pa-6"
+					type="card"
+					destroyInactiveTabPane
+					onTabClick={handleTabClick}
+				>
+					<Tabs.TabPane
+						key={tabs.BRANCH_PRODUCTS}
+						tab={
+							<Space align="center">
+								<span>{tabs.BRANCH_PRODUCTS}</span>
+								{branchProductsCount > 0 && (
+									<Badge count={branchProductsCount} overflowCount={999} />
+								)}
+							</Space>
+						}
+					>
+						<TabBranchProducts />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.DTR}
+						tab={
+							<Space align="center">
+								<span>{tabs.DTR}</span>
+								{dtrCount > 0 && <Badge count={dtrCount} overflowCount={999} />}
+							</Space>
+						}
+					>
+						<TabDTR />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.SALES_TRACKER}
+						tab={
+							<Space align="center">
+								<span>{tabs.SALES_TRACKER}</span>
+								{salesTrackerCount > 0 && (
+									<Badge count={salesTrackerCount} overflowCount={999} />
+								)}
+							</Space>
+						}
+					>
+						<TabSalesTracker />
+					</Tabs.TabPane>
+				</Tabs>
+			</Box>
+		</Content>
+	);
+};
+
+const useDtrHooks = () => {
+	const params = {
+		attendanceCategory: attendanceCategories.ATTENDANCE,
+		pageSize: MAX_PAGE_SIZE,
+	};
+
+	const { isSuccess: isAttendanceLogsSuccess } = useAttendanceLogs({
+		params: {
+			...params,
+			serviceType: serviceTypes.OFFLINE,
+		},
+		options: { notifyOnChangeProps: ['isSuccess'] },
+	});
+	const {
+		data: { total: problematicAttendanceLogsCount },
+	} = useProblematicAttendanceLogs({
+		params,
+		options: {
+			enabled: isAttendanceLogsSuccess,
+			notifyOnChangeProps: ['data'],
+		},
+	});
+
+	return problematicAttendanceLogsCount;
+};
+
+const useSalesTrackerCount = () => {
+	// STATES
+	const [salesTrackerCount, setSalesTrackerCount] = useState(0);
+
+	// CUSTOM HOOKS
 	const { data: siteSettings } = useSiteSettingsRetrieve({
 		options: { notifyOnChangeProps: ['data'] },
 	});
@@ -45,13 +146,6 @@ export const Notifications = () => {
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: { notifyOnChangeProps: ['data'] },
 	});
-
-	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			onTabClick(tabs.BRANCH_PRODUCTS);
-		}
-	}, []);
 
 	useEffect(() => {
 		if (siteSettings) {
@@ -81,50 +175,5 @@ export const Notifications = () => {
 		}
 	}, [salesTrackers, siteSettings]);
 
-	const onTabClick = (tab) => {
-		setQueryParams(
-			{ tab },
-			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
-		);
-	};
-
-	return (
-		<Content title="Notifications">
-			<NotificationsInfo />
-
-			<Box>
-				<Tabs
-					activeKey={_.toString(currentTab)}
-					className="PaddingHorizontal PaddingVertical"
-					type="card"
-					destroyInactiveTabPane
-					onTabClick={onTabClick}
-				>
-					<Tabs.TabPane
-						key={tabs.BRANCH_PRODUCTS}
-						tab={
-							<Space align="center">
-								<span>{tabs.BRANCH_PRODUCTS}</span>
-								<Badge count={branchProductsCount} overflowCount={999} />
-							</Space>
-						}
-					>
-						<TabBranchProducts />
-					</Tabs.TabPane>
-
-					<Tabs.TabPane
-						key={tabs.SALES_TRACKER}
-						tab={
-							<Space align="center">
-								<span>{tabs.SALES_TRACKER}</span>
-								<Badge count={salesTrackerCount} overflowCount={999} />
-							</Space>
-						}
-					>
-						<TabSalesTracker />
-					</Tabs.TabPane>
-				</Tabs>
-			</Box>
-		</Content>
-	);
+	return salesTrackerCount;
 };

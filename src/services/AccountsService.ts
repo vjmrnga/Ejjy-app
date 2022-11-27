@@ -52,4 +52,12 @@ const service = {
 		axios.post(`/accounts/${id}/redeem-points/`, body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: List, baseURL: string) =>
+		axios.get('/offline-accounts/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

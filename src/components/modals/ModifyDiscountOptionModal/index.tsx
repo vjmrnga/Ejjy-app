@@ -35,13 +35,13 @@ export const ModifyDiscountOptionModal = ({
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createDiscountOption,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingDiscountOption,
+		error: createDiscountOptionError,
 	} = useDiscountOptionCreate();
 	const {
 		mutateAsync: editDiscountOption,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingDiscountOption,
+		error: editDiscountOptionError,
 	} = useDiscountOptionEdit();
 
 	// METHODS
@@ -68,15 +68,15 @@ export const ModifyDiscountOptionModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createDiscountOptionError?.errors),
+					...convertIntoArray(editDiscountOptionError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyDiscountOptionForm
 				discountOption={discountOption}
-				isLoading={isCreating || isEditing}
+				isLoading={isCreatingDiscountOption || isEditingDiscountOption}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>

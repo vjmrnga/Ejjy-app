@@ -73,7 +73,7 @@ export const TabBranchProducts = () => {
 
 	return (
 		<>
-			<TableHeader title="Branch Products" wrapperClassName="pt-2 px-0" />
+			<TableHeader title="Branch Products" wrapperClassName="pt-0 px-0" />
 
 			<Filter />
 

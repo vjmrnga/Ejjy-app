@@ -1,7 +1,7 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AttendanceLogsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
@@ -15,11 +15,17 @@ const useAttendanceLogs = ({ params }: Query) =>
 			params?.employeeId,
 			params?.page,
 			params?.pageSize,
+			params?.serviceType,
 			params?.timeRange,
 		],
-		() =>
-			wrapServiceWithCatch(
-				AttendanceLogsService.list(
+		() => {
+			let service = AttendanceLogsService.list;
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = AttendanceLogsService.listOffline;
+			}
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						attendance_category: params?.attendanceCategory,
 						attendance_type: params?.attendanceType,
@@ -31,7 +37,8 @@ const useAttendanceLogs = ({ params }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -68,5 +75,43 @@ export const useProblematicAttendanceLogs = ({ params }: Query) =>
 			}),
 		},
 	);
+
+export const useProblematicAttendanceLogResolve = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, suggestedResolvedClockOutTime }: any) =>
+			AttendanceLogsService.resolve(
+				id,
+				{ suggested_resolved_clock_out_time: suggestedResolvedClockOutTime },
+				getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useAttendanceLogs');
+				queryClient.invalidateQueries('useProblematicAttendanceLogs');
+			},
+		},
+	);
+};
+
+export const useProblematicAttendanceLogApproveDecline = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, isApproved }: any) =>
+			AttendanceLogsService.approveOrDecline(
+				id,
+				{ is_approved: isApproved },
+				getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useAttendanceLogs');
+				queryClient.invalidateQueries('useProblematicAttendanceLogs');
+			},
+		},
+	);
+};
 
 export default useAttendanceLogs;

@@ -9,18 +9,37 @@ interface List extends IListRequest {
 	time_range?: string;
 }
 
-interface Create {
-	attendance_category: 'attendance' | 'tracker';
-	branch_id: number;
-	employee_id: number;
+interface Resolve {
+	suggested_resolved_clock_out_time: string;
+}
+
+interface ApproveOrDecline {
+	is_approved: boolean;
 }
 
 const service = {
 	list: async (params: List, baseURL: string) =>
 		axios.get('/attendance-logs/', { baseURL, params }),
 
-	create: async (body: Create, baseURL: string) =>
-		axios.post('/attendance-logs/', body, { baseURL }),
+	resolve: async (id: number, body: Resolve, baseURL: string) =>
+		axios.post(`attendance-logs/${id}/resolve-problematic/`, body, { baseURL }),
+
+	approveOrDecline: async (
+		id: number,
+		body: ApproveOrDecline,
+		baseURL: string,
+	) =>
+		axios.post(`attendance-logs/${id}/approve-or-decline-problematic/`, body, {
+			baseURL,
+		}),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: List, baseURL: string) =>
+		axios.get('/offline-attendance-logs/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};
