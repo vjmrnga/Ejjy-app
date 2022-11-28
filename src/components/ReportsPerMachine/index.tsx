@@ -16,18 +16,13 @@ import {
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, getFullName } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Machines', dataIndex: 'machines' },
-	{
-		title: 'Connectivity Status',
-		dataIndex: 'connectivityStatus',
-		align: 'center',
-	},
-	{ title: 'Actions', dataIndex: 'actions' },
-];
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+	convertIntoArray,
+	formatDateTime,
+	getFullName,
+	isUserFromBranch,
+} from 'utils';
 
 interface Props {
 	branchId: string | number;
@@ -44,14 +39,13 @@ export const ReportsPerMachine = ({
 	const [xReadReport, setXReadReport] = useState(null);
 	const [zReadReport, setZReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
-
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-
 	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
 	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
 		useState(false);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		data: { branchMachines },
 		isLoading: isLoadingBranchMachines,
@@ -66,7 +60,6 @@ export const ReportsPerMachine = ({
 		useXReadReportCreate();
 	const { mutateAsync: createZReadReport, isLoading: isCreatingZReadReport } =
 		useZReadReportCreate();
-	const { user } = useAuth();
 
 	// METHODS
 	useEffect(() => {
@@ -107,6 +100,23 @@ export const ReportsPerMachine = ({
 
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Machines', dataIndex: 'machines' },
+			{ title: 'Actions', dataIndex: 'actions' },
+		];
+
+		if (isUserFromBranch(user.user_type)) {
+			columns.splice(1, 0, {
+				title: 'Connectivity Status',
+				dataIndex: 'connectivityStatus',
+				align: 'center',
+			});
+		}
+
+		return columns;
+	}, [user]);
 
 	const viewXReadReport = async (
 		branchMachine,
@@ -158,7 +168,7 @@ export const ReportsPerMachine = ({
 			/>
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
 				loading={
 					isCreatingXReadReport ||

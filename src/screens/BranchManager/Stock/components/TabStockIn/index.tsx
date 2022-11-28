@@ -9,7 +9,6 @@ import {
 	EMPTY_CELL,
 	JSPDF_SETTINGS,
 	pageSizeOptions,
-	PDF_RECEIPT_FORMAT,
 } from 'global';
 import {
 	useQueryParams,
