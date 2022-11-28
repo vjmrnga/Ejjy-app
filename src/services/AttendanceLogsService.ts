@@ -21,6 +21,9 @@ const service = {
 	list: async (params: List, baseURL: string) =>
 		axios.get('/attendance-logs/', { baseURL, params }),
 
+	listProblematics: async (params: List, baseURL: string) =>
+		axios.get('/attendance-logs/problematic/', { baseURL, params }),
+
 	resolve: async (id: number, body: Resolve, baseURL: string) =>
 		axios.post(`attendance-logs/${id}/resolve-problematic/`, body, { baseURL }),
 

@@ -58,7 +58,7 @@ export const useProblematicAttendanceLogs = ({ params }: Query) =>
 		],
 		() =>
 			wrapServiceWithCatch(
-				AttendanceLogsService.list(
+				AttendanceLogsService.listProblematics(
 					{
 						attendance_category: params?.attendanceCategory,
 						page: params?.page || DEFAULT_PAGE,
@@ -68,10 +68,11 @@ export const useProblematicAttendanceLogs = ({ params }: Query) =>
 				),
 			),
 		{
-			initialData: { data: { results: [], count: 0 } },
+			// NOTE: Different shape of response as it is not paginated
+			initialData: { data: [] },
 			select: (query) => ({
-				problematicAttendanceLogs: query.data.results,
-				total: query.data.count,
+				problematicAttendanceLogs: query.data,
+				total: query.data.length,
 			}),
 		},
 	);

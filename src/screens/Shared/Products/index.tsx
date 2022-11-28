@@ -172,7 +172,12 @@ export const Products = () => {
 									}
 								>
 									<Tooltip title="Remove">
-										<Button icon={<DeleteOutlined />} type="primary" danger />
+										<Button
+											icon={<DeleteOutlined />}
+											type="primary"
+											danger
+											ghost
+										/>
 									</Tooltip>
 								</Popconfirm>
 							)}

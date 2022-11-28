@@ -72,16 +72,17 @@ const pendingTableColumns: ColumnsType = [
 	{ title: 'Description', dataIndex: 'description' },
 ];
 
-const params = {
-	attendanceCategory: attendanceCategories.ATTENDANCE,
-	pageSize: MAX_PAGE_SIZE,
-};
-
 export const TabDTR = () => {
 	// STATES
 	const [selectedAttendanceLog, setSelectedAttendanceLog] = useState(null);
 	const [ongoingDataSource, setOngoingDataSource] = useState([]);
 	const [pendingDataSource, setPendingDataSource] = useState([]);
+
+	// VARIABLES
+	const params = {
+		attendanceCategory: attendanceCategories.ATTENDANCE,
+		pageSize: MAX_PAGE_SIZE,
+	};
 
 	// CUSTOM HOOKS
 	const { user } = useAuth();
@@ -107,6 +108,10 @@ export const TabDTR = () => {
 		const pendingLogs = [];
 
 		problematicAttendanceLogs.forEach((log) => {
+			if (!log.is_resolved_by_head_office) {
+				return;
+			}
+
 			const data = {
 				key: log.id,
 				name: getFullName(log.employee),
@@ -145,10 +150,10 @@ export const TabDTR = () => {
 			} else {
 				pendingLogs.push(data);
 			}
-
-			setOngoingDataSource(ongoingLogs);
-			setPendingDataSource(pendingLogs);
 		});
+
+		setOngoingDataSource(ongoingLogs);
+		setPendingDataSource(pendingLogs);
 	}, [problematicAttendanceLogs]);
 
 	return (
@@ -165,7 +170,11 @@ export const TabDTR = () => {
 				loading={isFetchingProblematicAttendanceLogs}
 				pagination={false}
 				scroll={{ x: 800 }}
-				title={() => <Typography.Title level={5}>Ongoing</Typography.Title>}
+				title={() => (
+					<Typography.Title className="ma-0" level={5}>
+						Ongoing
+					</Typography.Title>
+				)}
 				bordered
 			/>
 
@@ -177,7 +186,9 @@ export const TabDTR = () => {
 				pagination={false}
 				scroll={{ x: 800 }}
 				title={() => (
-					<Typography.Title level={5}>Pending Approval</Typography.Title>
+					<Typography.Title className="ma-0" level={5}>
+						Pending Approval
+					</Typography.Title>
 				)}
 				bordered
 			/>

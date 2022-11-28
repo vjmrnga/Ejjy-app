@@ -1,13 +1,11 @@
-import { CheckOutlined } from '@ant-design/icons';
-import { Button, Col, Radio, Row, Space, Table, Tag, Tooltip } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
-import { Label } from 'components/elements';
 import { attendanceCategories, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useProblematicAttendanceLogApproveDecline,
 	useProblematicAttendanceLogs,
-	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -18,7 +16,7 @@ import {
 	getFullName,
 } from 'utils';
 
-const columns: ColumnsType = [
+const attendanceTableColumns: ColumnsType = [
 	{ title: 'Employee Name', dataIndex: 'name' },
 	{
 		title: 'Date & Time',
@@ -37,25 +35,53 @@ const columns: ColumnsType = [
 			},
 		],
 	},
-	{ title: 'Type', dataIndex: 'type' },
+	{ title: 'Description', dataIndex: 'description' },
+	{ title: 'Actions', dataIndex: 'actions' },
+];
+
+const trackerTableColumns: ColumnsType = [
+	{ title: 'Employee Name', dataIndex: 'name' },
+	{
+		title: 'Date & Time',
+		children: [
+			{
+				title: 'Scheduled',
+				dataIndex: 'scheduledDateTime',
+			},
+			{
+				title: 'Real',
+				dataIndex: 'realDateTime',
+			},
+		],
+	},
 	{ title: 'Description', dataIndex: 'description' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const TabDTR = () => {
 	// STATES
-
-	const [dataSource, setDataSource] = useState([]);
+	const [attendanceSource, setAttendanceSource] = useState([]);
+	const [trackerDataSource, setTrackerDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const { params } = useQueryParams();
+
 	const {
 		data: { problematicAttendanceLogs },
 		isFetching: isFetchingProblematicAttendanceLogs,
 		error: problematicAttendanceLogsError,
 	} = useProblematicAttendanceLogs({
 		params: {
-			...params,
+			attendanceCategory: attendanceCategories.ATTENDANCE,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
+	const {
+		data: { problematicAttendanceLogs: problematicTrackerLogs },
+		isFetching: isFetchingProblematicTrackerLogs,
+		error: problematicTrackerLogsError,
+	} = useProblematicAttendanceLogs({
+		params: {
+			attendanceCategory: attendanceCategories.TRACKER,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -68,80 +94,82 @@ export const TabDTR = () => {
 	// METHODS
 	useEffect(() => {
 		const data = problematicAttendanceLogs
-			.filter(
-				(log) =>
-					(log.attendance_category === attendanceCategories.ATTENDANCE &&
-						log.suggested_resolved_clock_out_time) ||
-					log.attendance_category === attendanceCategories.TRACKER,
-			)
-			.map((log) => ({
-				key: log.id,
-				name: getFullName(log.employee),
-				scheduledDateTime: log.scheduled_time
-					? formatDateTime(log.scheduled_time)
-					: EMPTY_CELL,
-				suggestedDateTime: log.suggested_resolved_clock_out_time ? (
-					<Tag color="orange">
-						{formatDateTime(log.suggested_resolved_clock_out_time)}
-					</Tag>
-				) : (
-					EMPTY_CELL
-				),
-				realDateTime: log.real_time
-					? formatDateTime(log.real_time)
-					: EMPTY_CELL,
-				type: _.upperFirst(log.attendance_category),
-				description: getAttendanceLogDescription(
-					log.attendance_category,
-					log.attendance_type,
-				),
-				actions: (
-					<Space>
-						{}
-						<Tooltip title="Approve">
-							<Button
-								icon={<CheckOutlined />}
-								type="primary"
-								ghost
-								onClick={() =>
-									approveDeclineProblematicAttendanceLog({
-										id: log.id,
-										isApproved: true,
-									})
-								}
-							/>
-						</Tooltip>
-						{log.attendance_category === attendanceCategories.ATTENDANCE && (
-							<Tooltip title="Decline">
-								<Button
-									icon={<CheckOutlined />}
-									type="primary"
-									ghost
-									onClick={() =>
-										approveDeclineProblematicAttendanceLog({
-											id: log.id,
-											isApproved: false,
-										})
-									}
-								/>
-							</Tooltip>
-						)}
-					</Space>
-				),
-			}));
+			.filter((log) => !log.suggested_resolved_clock_out_time)
+			.map(getRowDetails);
 
-		setDataSource(data);
+		setAttendanceSource(data);
 	}, [problematicAttendanceLogs]);
+
+	useEffect(() => {
+		const data = problematicAttendanceLogs
+			.filter((log) => !log.is_resolved_by_head_office)
+			.map(getRowDetails);
+
+		setTrackerDataSource(data);
+	}, [problematicTrackerLogs]);
+
+	const getRowDetails = (log) => ({
+		key: log.id,
+		name: getFullName(log.employee),
+		scheduledDateTime: log.scheduled_time
+			? formatDateTime(log.scheduled_time)
+			: EMPTY_CELL,
+		suggestedDateTime: log.suggested_resolved_clock_out_time ? (
+			<Tag color="orange">
+				{formatDateTime(log.suggested_resolved_clock_out_time)}
+			</Tag>
+		) : (
+			EMPTY_CELL
+		),
+		realDateTime: log.real_time ? formatDateTime(log.real_time) : EMPTY_CELL,
+		type: _.upperFirst(log.attendance_category),
+		description: getAttendanceLogDescription(
+			log.attendance_category,
+			log.attendance_type,
+		),
+		actions: (
+			<Space>
+				<Tooltip title="Approve">
+					<Button
+						icon={<CheckOutlined />}
+						type="primary"
+						ghost
+						onClick={() =>
+							approveDeclineProblematicAttendanceLog({
+								id: log.id,
+								isApproved: true,
+							})
+						}
+					/>
+				</Tooltip>
+				{log.attendance_category === attendanceCategories.ATTENDANCE && (
+					<Tooltip title="Decline">
+						<Button
+							icon={<CloseOutlined />}
+							type="primary"
+							danger
+							ghost
+							onClick={() =>
+								approveDeclineProblematicAttendanceLog({
+									id: log.id,
+									isApproved: false,
+								})
+							}
+						/>
+					</Tooltip>
+				)}
+			</Space>
+		),
+	});
 
 	return (
 		<>
 			<TableHeader title="Daily Time Record" wrapperClassName="px-0 pt-0" />
 
-			<Filter />
-
 			<RequestErrors
 				errors={[
-					...convertIntoArray(problematicAttendanceLogsError, 'List'),
+					...convertIntoArray(problematicAttendanceLogsError, 'Attendance'),
+					...convertIntoArray(problematicTrackerLogsError, 'Tracker'),
 					...convertIntoArray(
 						approveDeclineProblematicAttendanceLogError?.errors,
 						'Create',
@@ -150,47 +178,38 @@ export const TabDTR = () => {
 			/>
 
 			<Table
-				columns={columns}
-				dataSource={dataSource}
+				columns={attendanceTableColumns}
+				dataSource={attendanceSource}
 				loading={
 					isFetchingProblematicAttendanceLogs ||
 					isApprovingOrDecliningProblematicAttendanceLog
 				}
 				pagination={false}
 				scroll={{ x: 800 }}
+				title={() => (
+					<Typography.Title className="ma-0" level={5}>
+						Attendance
+					</Typography.Title>
+				)}
+				bordered
+			/>
+			<Table
+				className="mt-6"
+				columns={trackerTableColumns}
+				dataSource={trackerDataSource}
+				loading={
+					isFetchingProblematicTrackerLogs ||
+					isApprovingOrDecliningProblematicAttendanceLog
+				}
+				pagination={false}
+				scroll={{ x: 800 }}
+				title={() => (
+					<Typography.Title className="ma-0" level={5}>
+						Tracker
+					</Typography.Title>
+				)}
 				bordered
 			/>
 		</>
-	);
-};
-
-const Filter = () => {
-	const { params, setQueryParams } = useQueryParams();
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col md={12}>
-				<Label label="Type" spacing />
-				<Radio.Group
-					defaultValue={null}
-					options={[
-						{ label: 'All', value: null },
-						{ label: 'Attendance', value: attendanceCategories.ATTENDANCE },
-						{
-							label: 'Tracker',
-							value: attendanceCategories.TRACKER,
-						},
-					]}
-					optionType="button"
-					value={params.attendanceCategory}
-					onChange={(e) => {
-						setQueryParams(
-							{ attendanceCategory: e.target.value },
-							{ shouldResetPage: true },
-						);
-					}}
-				/>
-			</Col>
-		</Row>
 	);
 };
