@@ -1,4 +1,4 @@
-// eslint-disable-next-line eqeqeq
+import { jsPDFOptions } from 'jspdf';
 
 // App
 export const APP_KEY = process.env.REACT_APP_KEY;
@@ -58,6 +58,12 @@ export const TAG_DEFAULT_PAPER_WIDTH = '30';
 export const TAG_DEFAULT_PAPER_HEIGHT = '20';
 export const TAG_DEFAULT_FONT_FAMILY = 'Arial';
 export const TAG_DEFAULT_FONT_SIZE = '13';
+export const JSPDF_SETTINGS: jsPDFOptions = {
+	orientation: 'p',
+	unit: 'px',
+	format: [400, 841.89],
+	hotfixes: ['px_scaling'],
+};
 
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

@@ -7,7 +7,9 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
+	JSPDF_SETTINGS,
 	pageSizeOptions,
+	PDF_RECEIPT_FORMAT,
 } from 'global';
 import {
 	useQueryParams,
@@ -89,12 +91,7 @@ export const TabStockIn = () => {
 			siteSettings,
 		});
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: [400, 841.89],
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		setHtml(dataHtml);
 

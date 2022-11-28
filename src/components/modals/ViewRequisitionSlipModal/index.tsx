@@ -3,6 +3,7 @@ import { Button, Col, Descriptions, Modal, Row } from 'antd';
 import { ReceiptHeader } from 'components/Receipt';
 import { printRequisitionSlip } from 'configurePrinter';
 import dayjs from 'dayjs';
+import { JSPDF_SETTINGS } from 'global';
 import { useAuth, useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
@@ -39,12 +40,7 @@ export const ViewRequisitionSlipModal = ({
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		const dataHtml = printRequisitionSlip({
 			requisitionSlip,

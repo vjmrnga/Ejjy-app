@@ -12,6 +12,7 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
+	JSPDF_SETTINGS,
 	orderOfPaymentPurposes,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
@@ -128,12 +129,7 @@ export const TabOrderOfPayments = () => {
 
 		const html = printOrderOfPayment(orderOfPayment);
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		setTimeout(() => {
 			pdf.html(html, {

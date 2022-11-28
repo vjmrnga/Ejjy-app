@@ -8,7 +8,7 @@ import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
 import { printZReadReport } from 'configurePrinter';
 import { createZReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, taxTypes } from 'global';
+import { EMPTY_CELL, JSPDF_SETTINGS, taxTypes } from 'global';
 import { useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
@@ -39,12 +39,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		const dataHtml = printZReadReport({ report, siteSettings, isPdf: true });
 

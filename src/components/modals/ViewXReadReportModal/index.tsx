@@ -8,7 +8,7 @@ import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
 import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, taxTypes } from 'global';
+import { EMPTY_CELL, JSPDF_SETTINGS, taxTypes } from 'global';
 import { useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
@@ -40,12 +40,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		const dataHtml = printXReadReport({ report, siteSettings, isPdf: true });
 

@@ -5,6 +5,7 @@ import { printCollectionReceipt } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
+	JSPDF_SETTINGS,
 	pageSizeOptions,
 	refetchOptions,
 } from 'global';
@@ -78,12 +79,7 @@ export const TabCollectionReceipts = () => {
 
 		const html = printCollectionReceipt({ collectionReceipt, siteSettings });
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		setTimeout(() => {
 			pdf.html(html, {

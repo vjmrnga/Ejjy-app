@@ -69,16 +69,16 @@ export const Dashboard = () => {
 					>
 						{branches.map(({ name, id }) => (
 							<Tabs.TabPane key={id} tab={name}>
-								<BranchProductBalances
+								<ReportsPerMachine
 									branchId={id}
-									productCategories={productCategories}
+									tableHeaderClassName="pl-0 pt-0"
 								/>
 
 								<Divider />
 
-								<ReportsPerMachine
+								<BranchProductBalances
 									branchId={id}
-									tableHeaderClassName="pl-0 pt-0"
+									productCategories={productCategories}
 								/>
 							</Tabs.TabPane>
 						))}

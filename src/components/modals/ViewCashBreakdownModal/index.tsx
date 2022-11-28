@@ -3,7 +3,7 @@ import { FilePdfOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { printCashBreakdown, printCashOut } from 'configurePrinter';
-import { cashBreakdownCategories } from 'global';
+import { cashBreakdownCategories, JSPDF_SETTINGS } from 'global';
 import { useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
@@ -67,12 +67,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'p',
-			unit: 'px',
-			format: 'legal',
-			hotfixes: ['px_scaling'],
-		});
+		const pdf = new jsPDF(JSPDF_SETTINGS);
 
 		let dataHtml;
 		if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
