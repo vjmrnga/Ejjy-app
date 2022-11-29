@@ -2,6 +2,7 @@ import { ConfigProvider } from 'antd';
 import { ConnectedRouter } from 'connected-react-router';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import isBetween from 'dayjs/plugin/isBetween';
 import isToday from 'dayjs/plugin/isToday';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
@@ -24,6 +25,7 @@ dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isToday);
+dayjs.extend(isBetween);
 dayjs.tz.setDefault('Asia/Manila');
 
 // Start Interceptor

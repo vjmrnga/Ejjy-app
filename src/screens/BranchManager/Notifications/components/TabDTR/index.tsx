@@ -9,6 +9,7 @@ import {
 import { Label } from 'components/elements';
 import {
 	attendanceCategories,
+	attendanceTypes,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	serviceTypes,
@@ -108,10 +109,6 @@ export const TabDTR = () => {
 		const pendingLogs = [];
 
 		problematicAttendanceLogs.forEach((log) => {
-			if (!log.is_resolved_by_head_office) {
-				return;
-			}
-
 			const data = {
 				key: log.id,
 				name: getFullName(log.employee),
@@ -131,7 +128,7 @@ export const TabDTR = () => {
 				type: _.upperFirst(log.attendance_category),
 				description: getAttendanceLogDescription(
 					log.attendance_category,
-					log.attendance_type,
+					attendanceTypes.OUT,
 				),
 				actions: (
 					<Tooltip title="Resolve">

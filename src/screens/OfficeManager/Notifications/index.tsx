@@ -1,8 +1,12 @@
 import { Badge, Space, Tabs } from 'antd';
 import { Content, NotificationsInfo } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE } from 'global';
-import { useProblematicAttendanceLogs, useQueryParams } from 'hooks';
+import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
+import {
+	useAttendanceLogs,
+	useProblematicAttendanceLogs,
+	useQueryParams,
+} from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import { TabDTR } from './components/TabDTR';
@@ -17,16 +21,7 @@ export const Notifications = () => {
 		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
-	const {
-		data: { total: problematicAttendanceLogsCount },
-	} = useProblematicAttendanceLogs({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			notifyOnChangeProps: ['data'],
-		},
-	});
+	const problematicAttendanceLogsCount = useDtrHooks();
 
 	// METHODS
 	const handleTabClick = (selectedTab) => {
@@ -68,4 +63,40 @@ export const Notifications = () => {
 			</Box>
 		</Content>
 	);
+};
+
+const useDtrHooks = () => {
+	const { isSuccess: isAttendanceLogsSuccess } = useAttendanceLogs({
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+			serviceType: serviceTypes.OFFLINE,
+		},
+		options: { notifyOnChangeProps: ['isSuccess'] },
+	});
+	const {
+		data: { total: problematicAttendanceLogsCount },
+	} = useProblematicAttendanceLogs({
+		params: {
+			attendanceCategory: attendanceCategories.ATTENDANCE,
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			enabled: isAttendanceLogsSuccess,
+			notifyOnChangeProps: ['data'],
+		},
+	});
+	const {
+		data: { total: problematicTrackerLogsCount },
+	} = useProblematicAttendanceLogs({
+		params: {
+			attendanceCategory: attendanceCategories.TRACKER,
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			enabled: isAttendanceLogsSuccess,
+			notifyOnChangeProps: ['data'],
+		},
+	});
+
+	return problematicAttendanceLogsCount + problematicTrackerLogsCount;
 };

@@ -241,6 +241,11 @@ export const attendanceCategories = {
 	TRACKER: 'tracker',
 };
 
+export const attendanceTypes = {
+	IN: 'in',
+	OUT: 'out',
+};
+
 export const attendanceSchedulePeriods = {
 	MORNING: 'morning',
 	AFTERNOON: 'afternoon',

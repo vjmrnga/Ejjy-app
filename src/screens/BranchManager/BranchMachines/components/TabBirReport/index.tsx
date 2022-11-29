@@ -8,63 +8,13 @@ import {
 	EMPTY_CELL,
 	pageSizeOptions,
 	refetchOptions,
+	taxTypes,
 	timeRangeTypes,
 } from 'global';
 import { useBirReports, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Date', dataIndex: 'date' },
-	{ title: 'Beginning SI/OR No.', dataIndex: 'beginningOrNumber' },
-	{ title: 'Ending SI/OR No.', dataIndex: 'endingOrNumber' },
-	{
-		title: 'Grand Accum. Sales Ending Balance',
-		dataIndex: 'grandAccumulatedSalesEndingBalance',
-	},
-	{
-		title: 'Grand Accum. Sales Beginning Balance',
-		dataIndex: 'grandAccumulatedSalesBeginningBalance',
-	},
-	{ title: 'Gross Sales For The Day', dataIndex: 'grossSalesForTheDay' },
-	{
-		title: 'Sales Issued with Manual SI/OR (per RR16-2018)',
-		dataIndex: 'salesIssueWithManual',
-	},
-	{ title: 'Gross Sales From POS', dataIndex: 'grossSalesFromPos' },
-	{ title: 'VATable Sales', dataIndex: 'vatableSales' },
-	{ title: 'VAT Amount', dataIndex: 'vatAmount' },
-	{ title: 'VAT-Exempt Sales', dataIndex: 'vatExemptSales' },
-	{ title: 'Zero Rated Sales', dataIndex: 'zeroRatedSales' },
-	{
-		title: 'Deductions',
-		children: [
-			{ title: 'Regular Discount', dataIndex: 'regularDiscount' },
-			{ title: 'Special Discount (SC/PWD)', dataIndex: 'specialDiscount' },
-			{ title: 'Returns', dataIndex: 'returns' },
-			{ title: 'Void', dataIndex: 'void' },
-			{ title: 'Total Deductions', dataIndex: 'totalDeductions' },
-		],
-	},
-	{
-		title: 'Adjustments on VAT',
-		children: [
-			{ title: 'VAT On Special Discounts', dataIndex: 'vatOnSpecialDiscounts' },
-			{ title: 'VAT On Returns', dataIndex: 'vatOnReturns' },
-			{ title: 'Others', dataIndex: 'others' },
-			{ title: 'Total VAT Adjusted', dataIndex: 'totalVatAdjusted' },
-		],
-	},
-	{ title: 'VAT Payable', dataIndex: 'vatPayable' },
-	{ title: 'Net Sales VAT', dataIndex: 'netSalesVat' },
-	{ title: 'Net Sales NVAT', dataIndex: 'netSalesNVat' },
-	{ title: 'Other Income', dataIndex: 'otherIncome' },
-	{ title: 'Sales Overrun/Overflow', dataIndex: 'salesOverrunOrOverflow' },
-	{ title: 'Total Net Sales', dataIndex: 'totalNetSales' },
-	{ title: 'Reset Counter', dataIndex: 'resetCounter' },
-	{ title: 'Remarks', dataIndex: 'remarks' },
-];
 
 interface Props {
 	branchMachineId: number;
@@ -127,12 +77,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			others: formatInPeso(report.others),
 			totalVatAdjusted: formatInPeso(report.total_vat_adjusted),
 			vatPayable: formatInPeso(report.vat_payable),
-			netSalesVat: report.is_non_vat
-				? EMPTY_CELL
-				: formatInPeso(report.net_sales),
-			netSalesNVat: report.is_non_vat
-				? formatInPeso(report.net_sales)
-				: EMPTY_CELL,
+			netSales: formatInPeso(report.net_sales),
 			otherIncome: formatInPeso(report.other_income),
 			salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
 			totalNetSales: formatInPeso(report.total_net_sales),
@@ -144,7 +89,69 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 		}));
 
 		setDataSource(data);
-	}, [birReports]);
+	}, [birReports, siteSettings]);
+
+	const getColumns = useCallback(
+		(): ColumnsType => [
+			{ title: 'Date', dataIndex: 'date' },
+			{ title: 'Beginning SI/OR No.', dataIndex: 'beginningOrNumber' },
+			{ title: 'Ending SI/OR No.', dataIndex: 'endingOrNumber' },
+			{
+				title: 'Grand Accum. Sales Ending Balance',
+				dataIndex: 'grandAccumulatedSalesEndingBalance',
+			},
+			{
+				title: 'Grand Accum. Sales Beginning Balance',
+				dataIndex: 'grandAccumulatedSalesBeginningBalance',
+			},
+			{ title: 'Gross Sales For The Day', dataIndex: 'grossSalesForTheDay' },
+			{
+				title: 'Sales Issued with Manual SI/OR (per RR16-2018)',
+				dataIndex: 'salesIssueWithManual',
+			},
+			{ title: 'Gross Sales From POS', dataIndex: 'grossSalesFromPos' },
+			{ title: 'VATable Sales', dataIndex: 'vatableSales' },
+			{ title: 'VAT Amount', dataIndex: 'vatAmount' },
+			{ title: 'VAT-Exempt Sales', dataIndex: 'vatExemptSales' },
+			{ title: 'Zero Rated Sales', dataIndex: 'zeroRatedSales' },
+			{
+				title: 'Deductions',
+				children: [
+					{ title: 'Regular Discount', dataIndex: 'regularDiscount' },
+					{ title: 'Special Discount (SC/PWD)', dataIndex: 'specialDiscount' },
+					{ title: 'Returns', dataIndex: 'returns' },
+					{ title: 'Void', dataIndex: 'void' },
+					{ title: 'Total Deductions', dataIndex: 'totalDeductions' },
+				],
+			},
+			{
+				title: 'Adjustments on VAT',
+				children: [
+					{
+						title: 'VAT On Special Discounts',
+						dataIndex: 'vatOnSpecialDiscounts',
+					},
+					{ title: 'VAT On Returns', dataIndex: 'vatOnReturns' },
+					{ title: 'Others', dataIndex: 'others' },
+					{ title: 'Total VAT Adjusted', dataIndex: 'totalVatAdjusted' },
+				],
+			},
+			{ title: 'VAT Payable', dataIndex: 'vatPayable' },
+			{
+				title:
+					siteSettings.tax_type === taxTypes.VAT
+						? 'Net Sales VAT'
+						: 'Net Sales NVAT',
+				dataIndex: 'netSales',
+			},
+			{ title: 'Other Income', dataIndex: 'otherIncome' },
+			{ title: 'Sales Overrun/Overflow', dataIndex: 'salesOverrunOrOverflow' },
+			{ title: 'Total Net Sales', dataIndex: 'totalNetSales' },
+			{ title: 'Reset Counter', dataIndex: 'resetCounter' },
+			{ title: 'Remarks', dataIndex: 'remarks' },
+		],
+		[siteSettings],
+	);
 
 	const onPrintPDF = () => {
 		setIsPrinting(true);
@@ -203,7 +210,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			/>
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
 				loading={
 					(isBirReportsFetching && !isBirReportsFetched) ||

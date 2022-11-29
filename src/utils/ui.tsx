@@ -14,6 +14,7 @@ import {
 } from 'components';
 import { BadgePill } from 'components/elements';
 import {
+	accountTypes,
 	attendanceCategories,
 	backOrdersStatuses,
 	cashBreakdownCategories,
@@ -552,6 +553,29 @@ export const getAttendanceLogDescription = (category, type) => {
 	}
 
 	return `${description} ${_.upperFirst(type)}`;
+};
+
+export const getAccountTypeName = (type) => {
+	let typeName = '';
+
+	switch (type) {
+		case accountTypes.PERSONAL:
+			typeName = 'Personal';
+			break;
+		case accountTypes.CORPORATE:
+			typeName = 'Corporate';
+			break;
+		case accountTypes.EMPLOYEE:
+			typeName = 'Employee';
+			break;
+		case accountTypes.GOVERNMENT:
+			typeName = 'Government';
+			break;
+		default:
+			typeName = '';
+	}
+
+	return typeName;
 };
 
 export const filterOption = (input, option) =>

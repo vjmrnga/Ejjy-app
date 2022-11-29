@@ -38,6 +38,7 @@ import {
 	convertIntoArray,
 	filterOption,
 	formatDate,
+	getAccountTypeName,
 	getFullName,
 	isCUDShown,
 	isUserFromBranch,
@@ -84,6 +85,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 				<Link to={`accounts/${account.id}`}>{account.account_code}</Link>
 			),
 			name: getFullName(account),
+			type: getAccountTypeName(account.type),
 			homeAddress: account.home_address,
 			businessAddress: account.business_address,
 			contactNumber: account.contact_number,
@@ -107,18 +109,20 @@ export const TabAccounts = ({ disabled }: Props) => {
 							}}
 						/>
 					</Tooltip>
-					<Tooltip title="Set Attendance">
-						<Button
-							disabled={disabled}
-							icon={<ClockCircleFilled />}
-							type="primary"
-							ghost
-							onClick={() => {
-								setModalVisible(modals.ATTENDANCE);
-								setSelectedAccount(account);
-							}}
-						/>
-					</Tooltip>
+					{account.type === accountTypes.EMPLOYEE && (
+						<Tooltip title="Set Attendance">
+							<Button
+								disabled={disabled}
+								icon={<ClockCircleFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setModalVisible(modals.ATTENDANCE);
+									setSelectedAccount(account);
+								}}
+							/>
+						</Tooltip>
+					)}
 				</Space>
 			),
 		}));
@@ -130,6 +134,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 		const columns: ColumnsType = [
 			{ title: 'Client Code', dataIndex: 'clientCode' },
 			{ title: 'Name', dataIndex: 'name' },
+			{ title: 'Type', dataIndex: 'type' },
 			{ title: 'Address (Home)', dataIndex: 'homeAddress' },
 			{ title: 'Address (Business)', dataIndex: 'businessAddress' },
 			{ title: 'Contact #', dataIndex: 'contactNumber' },

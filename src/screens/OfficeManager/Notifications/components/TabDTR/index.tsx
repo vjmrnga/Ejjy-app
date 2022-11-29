@@ -1,8 +1,13 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Space, Table, Tag, Tooltip, Typography } from 'antd';
+import { Button, message, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
-import { attendanceCategories, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
+import {
+	attendanceCategories,
+	attendanceTypes,
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+} from 'global';
 import {
 	useProblematicAttendanceLogApproveDecline,
 	useProblematicAttendanceLogs,
@@ -94,14 +99,14 @@ export const TabDTR = () => {
 	// METHODS
 	useEffect(() => {
 		const data = problematicAttendanceLogs
-			.filter((log) => !log.suggested_resolved_clock_out_time)
+			.filter((log) => log.suggested_resolved_clock_out_time)
 			.map(getRowDetails);
 
 		setAttendanceSource(data);
 	}, [problematicAttendanceLogs]);
 
 	useEffect(() => {
-		const data = problematicAttendanceLogs
+		const data = problematicTrackerLogs
 			.filter((log) => !log.is_resolved_by_head_office)
 			.map(getRowDetails);
 
@@ -125,7 +130,9 @@ export const TabDTR = () => {
 		type: _.upperFirst(log.attendance_category),
 		description: getAttendanceLogDescription(
 			log.attendance_category,
-			log.attendance_type,
+			log.attendance_category === attendanceCategories.ATTENDANCE
+				? attendanceTypes.IN
+				: log.attendance_type,
 		),
 		actions: (
 			<Space>
@@ -134,12 +141,16 @@ export const TabDTR = () => {
 						icon={<CheckOutlined />}
 						type="primary"
 						ghost
-						onClick={() =>
-							approveDeclineProblematicAttendanceLog({
+						onClick={async () => {
+							await approveDeclineProblematicAttendanceLog({
 								id: log.id,
 								isApproved: true,
-							})
-						}
+							});
+
+							message.success(
+								`${log.employee.first_name}'s attendance log was approved successfully`,
+							);
+						}}
 					/>
 				</Tooltip>
 				{log.attendance_category === attendanceCategories.ATTENDANCE && (
@@ -149,12 +160,16 @@ export const TabDTR = () => {
 							type="primary"
 							danger
 							ghost
-							onClick={() =>
-								approveDeclineProblematicAttendanceLog({
+							onClick={async () => {
+								await approveDeclineProblematicAttendanceLog({
 									id: log.id,
 									isApproved: false,
-								})
-							}
+								});
+
+								message.success(
+									`${log.employee.first_name}'s attendance log was declined successfully`,
+								);
+							}}
 						/>
 					</Tooltip>
 				)}

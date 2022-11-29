@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import _ from 'lodash';
 import QRCode from 'qrcode';
 import React, { useState } from 'react';
-import { formatDate, getFullName } from 'utils';
+import { formatDate, getAccountTypeName, getFullName } from 'utils';
 
 interface Props {
 	account: any;
@@ -22,29 +22,6 @@ export const AccountDetails = ({ account }: Props) => {
 	const employers = [accountTypes.CORPORATE, accountTypes.GOVERNMENT];
 
 	// METHODS
-	const getTypeName = (type) => {
-		let typeName = '';
-
-		switch (type) {
-			case accountTypes.PERSONAL:
-				typeName = 'Personal';
-				break;
-			case accountTypes.CORPORATE:
-				typeName = 'Corporate';
-				break;
-			case accountTypes.EMPLOYEE:
-				typeName = 'Employee';
-				break;
-			case accountTypes.GOVERNMENT:
-				typeName = 'Government';
-				break;
-			default:
-				typeName = '';
-		}
-
-		return typeName;
-	};
-
 	const getBarcode = async (id) => {
 		const barcodeCanvas = document.createElement('canvas');
 		JsBarcode(barcodeCanvas, id, { format: 'CODE39' });
@@ -106,7 +83,7 @@ export const AccountDetails = ({ account }: Props) => {
 				</Descriptions.Item>
 
 				<Descriptions.Item label="Type">
-					{getTypeName(account.type)}
+					{getAccountTypeName(account.type)}
 				</Descriptions.Item>
 
 				<Descriptions.Item label="Date of Registration">
