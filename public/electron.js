@@ -207,7 +207,7 @@ function initServer(store) {
 
 		let apiPort = '0.0.0.0:8000';
 		if (appType === appTypes.HEAD_OFFICE) {
-			apiPort = '[::]:8000';
+			apiPort = '[::]:8001';
 		}
 
 		logStatus('Server: Starting API');
@@ -225,7 +225,7 @@ function initServer(store) {
 			logStatus('Server: Starting LocalhostRun');
 			setInterval(() => {
 				exec(
-					'ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header',
+					'ssh -R office.ej-jy.com:80:localhost:8001 localhost.run -- --no-inject-proxy-protocol-header',
 					(error, stdout, stderr) => {
 						if (error) {
 							logStatus(`LocalhostRun error: ${error.message}`);
