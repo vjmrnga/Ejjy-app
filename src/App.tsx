@@ -1,12 +1,12 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute } from 'components';
 import {
+	appTypes,
 	APP_LOCAL_BRANCH_ID_KEY,
-	APP_TITLE,
 	MAX_PAGE_SIZE,
 	userTypes,
 } from 'global';
-import { useBranches, useInitializeData, useNetwork } from 'hooks';
+import { useAppType, useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Switch, useHistory } from 'react-router-dom';
@@ -28,6 +28,7 @@ const NETWORK_RETRY = 10;
 const NETWORK_RETRY_DELAY_MS = 1000;
 
 const App = () => {
+	const { appType } = useAppType();
 	const history = useHistory();
 
 	const { isFetching: isConnectingNetwork, isSuccess: isNetworkSuccess } =
@@ -99,7 +100,13 @@ const App = () => {
 
 	return (
 		<>
-			<Helmet title={`${APP_TITLE} (v${npmPackage.version})`} />
+			<Helmet
+				title={`${
+					appType === appTypes.BACK_OFFICE
+						? 'EJJY Back Office'
+						: 'EJJY Head Office'
+				} (v${npmPackage.version})`}
+			/>
 
 			<Spin
 				className="GlobalSpinner"

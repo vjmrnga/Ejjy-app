@@ -1,7 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"productName": "EJJY Inventory",
-	"version": "0.1.284",
+	"version": "0.1.293",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -24,8 +23,9 @@
 		"postinstall": "electron-builder install-app-deps",
 		"build:online": "env-cmd -f .env.online react-scripts build",
 		"build:local": "env-cmd -f .env.local react-scripts build",
-		"build:electron": "electron-builder -w --x64 -p always",
-		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron"
+		"build:electron": "electron-builder -w --x64 -p always --config electron-builder.json",
+		"build:electron:headoffice": "electron-builder -w --x64 -p always --config electron-builder-headoffice.json",
+		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron && npm run build:electron:headoffice"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
@@ -125,23 +125,5 @@
 		"prettier": "^2.2.1",
 		"sass": "^1.49.9",
 		"wait-on": "^5.2.1"
-	},
-	"build": {
-		"appId": "com.ejjy.inventory.app",
-		"extraResources": [
-			"api/**",
-			"gcs-service-key.json",
-			"!api/.venv",
-			"!api/db.sqlite3",
-			"!api/backend/.env"
-		],
-		"publish": [
-			{
-				"provider": "github",
-				"owner": "EJJY-Devs",
-				"repo": "ejjy-app",
-				"releaseType": "release"
-			}
-		]
 	}
 }
