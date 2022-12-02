@@ -1,0 +1,56 @@
+@use 'assets/styles' as *;
+
+.TableProducts {
+	width: 100%;
+	overflow-y: auto;
+	position: relative;
+	border-radius: 10px;
+	min-height: 426px;
+	border: 1px solid $color-gray;
+	background-color: white;
+	@include flex(center, center);
+
+	.placeholder {
+		width: 50%;
+		position: absolute;
+		z-index: 2;
+		opacity: 0.2;
+	}
+
+	table {
+		align-self: flex-start;
+		width: 100%;
+
+		thead {
+			th {
+				position: sticky;
+				top: 0;
+				padding: 25px 15px;
+				@include font(18px, bold);
+				color: $color-dark;
+				background-color: $color-main-background;
+			}
+		}
+
+		tbody {
+			tr {
+				border-bottom: 1px solid $color-gray;
+				cursor: pointer;
+
+				&.active {
+					background-color: $color-primary-02;
+				}
+
+				td {
+					padding: 10px 15px;
+
+					* {
+						font-size: 1.15rem !important;
+						font-weight: 500;
+						color: $color-dark-gray;
+					}
+				}
+			}
+		}
+	}
+}

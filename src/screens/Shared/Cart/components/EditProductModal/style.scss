@@ -1,0 +1,12 @@
+@use 'assets/styles' as *;
+
+.EditProductForm {
+	&_inputQuantity {
+		input {
+			height: 75px !important;
+			font-size: 3rem;
+			font-weight: bold;
+			text-align: center;
+		}
+	}
+}

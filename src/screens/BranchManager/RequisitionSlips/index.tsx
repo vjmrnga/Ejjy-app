@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { Col, Row, Select, Table } from 'antd';
+import { Col, message, Row, Select, Table } from 'antd';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, Label } from 'components/elements';
 import {
@@ -8,12 +8,18 @@ import {
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	requisitionSlipActionsOptionsWithAll,
+	requisitionSlipTypes,
 	userTypes,
 } from 'global';
-import { useQueryParams, useRequisitionSlips } from 'hooks';
+import {
+	useQueryParams,
+	useRequisitionSlipCreate,
+	useRequisitionSlips,
+} from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import { upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
+
 import { Link, useHistory } from 'react-router-dom';
 import {
 	convertIntoArray,
@@ -52,6 +58,8 @@ export const RequisitionSlips = () => {
 			status: params.status === ALL_OPTION_KEY ? null : params.status,
 		},
 	});
+	const { mutateAsync: createRequisitionSlip } = useRequisitionSlipCreate();
+
 	// TODO: Temporarily remove pending count until we figure out to pass the online id of user
 	// const {
 	// 	data: pendingCount,
@@ -104,7 +112,27 @@ export const RequisitionSlips = () => {
 				<TableHeader
 					buttonName="Create Requisition Slip"
 					onCreate={() => {
-						history.push('/branch-manager/requisition-slips/create');
+						history.push({
+							pathname: '/branch-manager/requisition-slips/create',
+							state: {
+								title: 'Requisition Slip',
+								onSubmit: async (products) => {
+									const response = await createRequisitionSlip({
+										requestingUserUsername: user.username,
+										type: requisitionSlipTypes.MANUAL,
+										products: products.map((product) => ({
+											key: product.key,
+											quantity_piece: product.quantity,
+										})),
+									});
+
+									message.success('Requisition slip was created successfully.');
+									history.push('/branch-manager/requisition-slips');
+
+									return response;
+								},
+							},
+						});
 					}}
 				/>
 

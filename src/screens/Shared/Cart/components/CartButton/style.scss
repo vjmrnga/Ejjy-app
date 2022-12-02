@@ -1,0 +1,119 @@
+@use 'assets/styles' as *;
+
+.button-tooltip {
+	.ant-tooltip-inner {
+		text-align: center;
+	}
+}
+
+.CartButton {
+	@include font(1rem, 700);
+	min-width: 100px;
+	padding: 10px 16px;
+	display: inline-block;
+	color: white;
+	background-color: white;
+	border-radius: $border-radius;
+	cursor: pointer;
+	transition: 300ms;
+
+	&.lg {
+		@include font(2rem, 700);
+		padding: 15px 30px;
+
+		&.hasShortcutKey {
+			@include font(1.75rem, 700);
+			padding: 10px 25px;
+		}
+	}
+
+	&.flex {
+		@include flex(center, center);
+	}
+
+	&.block {
+		display: block;
+		width: 100%;
+	}
+
+	&.loading {
+		opacity: 0.8;
+		pointer-events: none;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		background-color: $color-dark-gray !important;
+		border: 0 !important;
+		box-shadow: none !important;
+		cursor: default;
+		color: white !important;
+		pointer-events: none;
+	}
+
+	&.default {
+		color: #23252e;
+		border: 1px solid;
+	}
+
+	&.dark-gray {
+		color: $color-dark-gray;
+		border: 1px solid $color-dark-gray;
+	}
+
+	&.primary {
+		background-color: $color-primary;
+		border: 1px solid $color-primary;
+		box-shadow: 0px 2px 10px 2px $color-primary-05;
+
+		&:hover {
+			transition: 300ms;
+			box-shadow: 0px 2px 10px 2px $color-primary-08;
+		}
+	}
+
+	&.secondary {
+		background-color: $color-secondary;
+		border: 1px solid $color-secondary;
+		box-shadow: 0px 2px 10px 2px $color-secondary-05;
+
+		&:hover {
+			transition: 300ms;
+			box-shadow: 0px 2px 10px 2px $color-secondary-08;
+		}
+	}
+
+	&.hasShortcutKey {
+		@include font(0.8rem, 700);
+		padding: 8px 15px;
+	}
+
+	.icon-left {
+		margin-right: 5px;
+	}
+
+	.icon-right {
+		margin-left: 5px;
+	}
+
+	.spinner {
+		line-height: 100%;
+	}
+}
+
+.shortcut-key {
+	display: block;
+	font-size: 1rem;
+
+	&.text-lg {
+		font-size: 1.15rem;
+	}
+
+	&.position-right {
+		@include flex(center, center);
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 15px;
+	}
+}

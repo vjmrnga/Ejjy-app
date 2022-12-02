@@ -1,47 +1,63 @@
+import cn from 'classnames';
 import * as React from 'react';
 import './style.scss';
-import cn from 'classnames';
 
 interface Props {
-	id?: string;
-	value: any;
-	type?: string;
-	placeholder?: string;
+	autoFocus?: boolean;
+	className?: any;
 	disabled?: boolean;
+	id?: string;
 	max?: number;
 	min?: number;
 	onChange: any;
-	autoFocus?: boolean;
-	classNames?: any;
+	onClick?: any;
+	onFocus?: any;
+	placeholder?: string;
+	type?: string;
+	value: any;
+	// eslint-disable-next-line react/no-unused-prop-types
+	ref?: any;
 }
 
-const ControlledInput = ({
-	classNames,
-	type,
-	id,
-	max,
-	min,
-	placeholder,
-	onChange,
-	disabled,
-	autoFocus,
-	value,
-}: Props) => (
-	<input
-		// eslint-disable-next-line jsx-a11y/no-autofocus
-		autoFocus={autoFocus}
-		className={cn('Input', classNames)}
-		disabled={disabled}
-		id={id}
-		max={max}
-		min={min}
-		name={id}
-		placeholder={placeholder}
-		type={type}
-		// eslint-disable-next-line jsx-a11y/no-autofocus
-		value={value}
-		onChange={(event) => onChange(event.target.value)}
-	/>
+// eslint-disable-next-line react/display-name
+const ControlledInput = React.forwardRef<HTMLInputElement, Props>(
+	(
+		{
+			autoFocus,
+			className,
+			disabled,
+			id,
+			max,
+			min,
+			onChange,
+			onClick,
+			onFocus,
+			placeholder,
+			type,
+			value,
+		}: Props,
+		ref,
+	) => (
+		<input
+			ref={ref}
+			// eslint-disable-next-line jsx-a11y/no-autofocus
+			autoFocus={autoFocus}
+			className={cn('Input', className)}
+			disabled={disabled}
+			id={id}
+			max={max}
+			min={min}
+			name={id}
+			placeholder={placeholder}
+			type={type}
+			value={value}
+			onChange={(event) => onChange(event.target.value)}
+			onClick={onClick}
+			onFocus={(event) => {
+				if (onFocus) onFocus(event.target.value);
+			}}
+		/>
+	),
 );
 
 ControlledInput.defaultProps = {

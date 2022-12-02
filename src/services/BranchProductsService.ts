@@ -5,6 +5,7 @@ interface List extends IListRequest {
 	branch_id: number;
 	has_bo_balance?: boolean;
 	has_negative_balance?: boolean;
+	identifier?: string;
 	is_sold_in_branch?: boolean;
 	product_category?: string;
 	product_ids?: number[] | number | string;

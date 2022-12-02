@@ -1,4 +1,4 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles' as *;
 
 .Input {
 	@include font(1rem);

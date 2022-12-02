@@ -23,13 +23,14 @@ import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
 import { AssignUser } from 'screens/BranchManager/Users/AssignUser';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
+import { Cart } from 'screens/Shared/Cart';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
+import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { isStandAlone } from 'utils';
-import { DTR } from 'screens/Shared/DTR';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
@@ -38,7 +39,6 @@ import { ViewBranchMachine } from './BranchMachines/ViewBranchMachine';
 import { Dashboard } from './Dashboard';
 import { Notifications } from './Notifications';
 import { OrderSlips } from './OrderSlips/OrderSlips';
-import { CreateRequisitionSlip } from './RequisitionSlips/CreateRequisitionSlip';
 import { RequisitionSlips } from './RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
@@ -350,7 +350,7 @@ const BranchManager = () => {
 						exact
 					/>
 					<Route
-						component={CreateRequisitionSlip}
+						component={Cart}
 						path="/branch-manager/requisition-slips/create"
 						exact
 					/>
@@ -402,6 +402,8 @@ const BranchManager = () => {
 						component={SiteSettings}
 						path="/branch-manager/site-settings"
 					/>
+
+					<Route component={Cart} path="/branch-manager/cart" />
 
 					<Redirect to="/branch-manager/branch-machines" />
 				</Switch>
