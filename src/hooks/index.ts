@@ -56,6 +56,8 @@ export { default as useRequisitionSlips } from './useRequisitionSlips';
 export { default as useSalesTracker } from './useSalesTracker';
 export { default as useSessions } from './useSessions';
 export * from './useSiteSettings';
+export * from './useSupplierRegistrations';
+export { default as useSupplierRegistrations } from './useSupplierRegistrations';
 export { default as useTimeRange } from './useTimeRange';
 export * from './useTransactionProducts';
 export { default as useTransactionProducts } from './useTransactionProducts';

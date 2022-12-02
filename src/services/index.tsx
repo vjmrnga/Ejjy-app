@@ -40,6 +40,7 @@ export { default as RequisitionSlipsService } from './RequisitionSlipsService';
 export { default as SalesTrackerService } from './SalesTrackerService';
 export { default as SessionsService } from './SessionsService';
 export { default as SiteSettingsService } from './SiteSettingsService';
+export { default as SupplierRegistrationsService } from './SupplierRegistrationsService';
 export { default as TransactionProductsService } from './TransactionProductsService';
 export { default as TransactionsService } from './TransactionsService';
 export { default as UserLogsService } from './UserLogsService';

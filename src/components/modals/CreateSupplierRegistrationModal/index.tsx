@@ -1,56 +1,30 @@
 import { Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
-import {
-	Button,
-	FieldError,
-	FormattedInputNumber,
-	Label,
-} from 'components/elements';
+import { Button, FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE, SEARCH_DEBOUNCE_TIME } from 'global';
-import {
-	useAccounts,
-	useCreditRegistrationCreate,
-	useCreditRegistrationEdit,
-} from 'hooks';
+import { useAccounts, useSupplierRegistrationCreate } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { convertIntoArray, getFullName } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {
-	creditRegistration?: any;
 	onClose: any;
 }
 
-export const ModifyCreditRegistrationModal = ({
-	creditRegistration,
-	onClose,
-}: ModalProps) => {
+export const CreateSupplierRegistrationModal = ({ onClose }: ModalProps) => {
 	// CUSTOM HOOKS
 	const {
-		mutateAsync: createCreditRegistration,
-		isLoading: isCreatingCreditRegistration,
-		error: createCreditRegistrationError,
-	} = useCreditRegistrationCreate();
-	const {
-		mutateAsync: editCreditRegistration,
-		isLoading: isEditingCreditRegistration,
-		error: editCreditRegistrationError,
-	} = useCreditRegistrationEdit();
+		mutateAsync: createSupplierRegistration,
+		isLoading: isCreatingSupplierRegistration,
+		error: createSupplierRegistrationError,
+	} = useSupplierRegistrationCreate();
 
 	// METHODS
 	const handleSubmit = async (formData) => {
-		if (creditRegistration) {
-			await editCreditRegistration({
-				id: creditRegistration.id,
-				...formData,
-			});
-			message.success('Credit account was edited sucessfully.');
-		} else {
-			await createCreditRegistration(formData);
-			message.success('Credit account was created sucessfully.');
-		}
+		await createSupplierRegistration(formData);
+		message.success('Supplier account was created sucessfully.');
 
 		onClose();
 	};
@@ -58,23 +32,19 @@ export const ModifyCreditRegistrationModal = ({
 	return (
 		<Modal
 			footer={null}
-			title={`${creditRegistration ? '[Edit]' : '[Create]'} Credit Account`}
+			title="[Create] Supplier Account"
 			centered
 			closable
 			visible
 			onCancel={onClose}
 		>
 			<RequestErrors
-				errors={[
-					...convertIntoArray(createCreditRegistrationError?.errors),
-					...convertIntoArray(editCreditRegistrationError?.errors),
-				]}
+				errors={convertIntoArray(createSupplierRegistrationError?.errors)}
 				withSpaceBottom
 			/>
 
-			<ModifyCreditRegistrationForm
-				creditRegistration={creditRegistration}
-				loading={isCreatingCreditRegistration || isEditingCreditRegistration}
+			<CreateSupplierRegistrationForm
+				loading={isCreatingSupplierRegistration}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>
@@ -83,14 +53,21 @@ export const ModifyCreditRegistrationModal = ({
 };
 
 interface FormProps {
-	creditRegistration?: any;
 	loading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
-export const ModifyCreditRegistrationForm = ({
-	creditRegistration,
+const formDetails = {
+	defaultValues: {
+		accountId: '',
+	},
+	schema: Yup.object().shape({
+		accountId: Yup.number().required().label('Account'),
+	}),
+};
+
+export const CreateSupplierRegistrationForm = ({
 	loading,
 	onSubmit,
 	onClose,
@@ -106,25 +83,11 @@ export const ModifyCreditRegistrationForm = ({
 		params: {
 			pageSize: MAX_PAGE_SIZE,
 			search: accountSearch,
-			withCreditRegistration: false,
+			withSupplierRegistration: false,
 		},
 	});
 
 	// METHODS
-	const getFormDetails = useCallback(
-		() => ({
-			defaultValues: {
-				accountId: creditRegistration?.account?.id || '',
-				creditLimit: creditRegistration?.credit_limit || '',
-			},
-			schema: Yup.object().shape({
-				accountId: Yup.number().required().label('Account'),
-				creditLimit: Yup.number().required().label('Credit Limit'),
-			}),
-		}),
-		[creditRegistration],
-	);
-
 	const handleSearchDebounced = useCallback(
 		debounce((search) => {
 			setAccountSearch(search);
@@ -134,8 +97,8 @@ export const ModifyCreditRegistrationForm = ({
 
 	return (
 		<Formik
-			initialValues={getFormDetails().defaultValues}
-			validationSchema={getFormDetails().schema}
+			initialValues={formDetails.defaultValues}
+			validationSchema={formDetails.schema}
 			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit(formData);
@@ -149,7 +112,6 @@ export const ModifyCreditRegistrationForm = ({
 							<Select
 								className="w-100"
 								defaultActiveFirstOption={false}
-								disabled={creditRegistration !== null}
 								filterOption={false}
 								notFoundContent={
 									isFetchingAccounts ? <Spin size="small" /> : null
@@ -172,23 +134,6 @@ export const ModifyCreditRegistrationForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-
-						<Col span={24}>
-							<Label label="Credit Limit" spacing />
-							<FormattedInputNumber
-								className="w-100"
-								controls={false}
-								size="large"
-								value={values['creditLimit']}
-								onChange={(value) => {
-									setFieldValue('creditLimit', value);
-								}}
-							/>
-							<ErrorMessage
-								name="creditLimit"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
 					</Row>
 
 					<div className="ModalCustomFooter">
@@ -200,7 +145,7 @@ export const ModifyCreditRegistrationForm = ({
 						/>
 						<Button
 							loading={loading}
-							text={creditRegistration ? 'Edit' : 'Create'}
+							text="Create"
 							type="submit"
 							variant="primary"
 						/>

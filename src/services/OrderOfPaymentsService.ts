@@ -7,7 +7,7 @@ interface IList extends IListRequest {
 	time_range?: string;
 }
 
-interface IModify {
+interface Modify {
 	created_by_id: number;
 	payor_id: number;
 	amount: string;
@@ -20,7 +20,7 @@ const service = {
 	list: async (params: IList, baseURL: string) =>
 		axios.get('/order-of-payments/', { baseURL, params }),
 
-	create: async (body: IModify, baseURL: string) =>
+	create: async (body: Modify, baseURL: string) =>
 		axios.post('/order-of-payments/', body, { baseURL }),
 };
 

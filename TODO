@@ -40,7 +40,7 @@ https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1
 ]
 
 
-https://localhost:8000/v1/bulk-initialize/?branch_id=5
+https://localhost:8001/v1/bulk-initialize/?branch_id=5
 
 
 

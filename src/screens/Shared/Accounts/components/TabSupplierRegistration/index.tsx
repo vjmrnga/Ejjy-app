@@ -1,10 +1,9 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table } from 'antd';
+import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Popconfirm, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
-	ModifyCreditRegistrationModal,
+	CreateSupplierRegistrationModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 	ViewAccountModal,
 } from 'components';
@@ -15,23 +14,19 @@ import {
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useAuth, useCreditRegistrations, useQueryParams } from 'hooks';
+import {
+	useAuth,
+	useQueryParams,
+	useSupplierRegistrationDelete,
+	useSupplierRegistrations,
+} from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { accountTabs } from 'screens/Shared/Accounts/data';
-import {
-	convertIntoArray,
-	formatDate,
-	formatInPeso,
-	getFullName,
-	isCUDShown,
-} from 'utils';
+import { convertIntoArray, formatDate, getFullName, isCUDShown } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },
 	{ title: 'Client Name', dataIndex: 'clientName' },
-	{ title: 'Credit Limit', dataIndex: 'creditLimit' },
-	{ title: 'Total Balance', dataIndex: 'totalBalance' },
 	{ title: 'Date of Registration', dataIndex: 'datetimeCreated' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
@@ -40,27 +35,30 @@ interface Props {
 	disabled: boolean;
 }
 
-export const TabCreditRegistrations = ({ disabled }: Props) => {
+export const TabSupplierRegistrations = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
-	const [selectedCreditRegistration, setSelectedCreditRegistration] =
-		useState(null);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const { user } = useAuth();
 	const {
-		isFetching: isFetchingCreditRegistrations,
-		data: { creditRegistrations, total },
-		error: creditRegistrationsError,
-	} = useCreditRegistrations({ params });
+		data: { supplierRegistrations, total },
+		isFetching: isFetchingSupplierRegistrations,
+		error: supplierRegistrationsError,
+	} = useSupplierRegistrations({ params });
+	const {
+		mutate: deleteSupplierRegistration,
+		isLoading: isDeletingSupplierRegistration,
+		error: deleteSupplierRegistrationError,
+	} = useSupplierRegistrationDelete();
 
 	// METHODS
 	useEffect(() => {
-		const data = creditRegistrations.map((creditRegistration) => {
-			const { id, account, credit_limit, total_balance } = creditRegistration;
+		const data = supplierRegistrations.map((supplierRegistration) => {
+			const { id, account } = supplierRegistration;
 
 			return {
 				key: id,
@@ -74,42 +72,41 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 					</Button>
 				),
 				clientName: getFullName(account),
-				creditLimit: formatInPeso(credit_limit),
-				totalBalance: formatInPeso(total_balance),
 				datetimeCreated: formatDate(account.datetime_created),
 				actions: (
-					<TableActions
-						areButtonsDisabled={disabled}
-						onEdit={
-							isCUDShown(user.user_type)
-								? () => {
-										setSelectedCreditRegistration(creditRegistration);
-								  }
-								: null
-						}
-						onView={() =>
-							setQueryParams(
-								{
-									tab: accountTabs.CREDIT_TRANSACTIONS,
-									payor: JSON.stringify(creditRegistration),
-								},
-								{ shouldResetPage: true },
-							)
-						}
-						onViewName="View Credit Transactions"
-					/>
+					<>
+						{isCUDShown(user.user_type) && (
+							<Popconfirm
+								cancelText="No"
+								disabled={disabled}
+								okText="Yes"
+								placement="left"
+								title="Are you sure to remove this?"
+								onConfirm={() => deleteSupplierRegistration(id)}
+							>
+								<Tooltip title="Remove">
+									<Button
+										icon={<DeleteOutlined />}
+										type="primary"
+										danger
+										ghost
+									/>
+								</Tooltip>
+							</Popconfirm>
+						)}
+					</>
 				),
 			};
 		});
 
 		setDataSource(data);
-	}, [creditRegistrations, disabled]);
+	}, [supplierRegistrations, disabled]);
 
 	return (
 		<div>
 			<TableHeader
-				buttonName="Create Credit Account"
-				title="Credit Accounts"
+				buttonName="Create Supplier Account"
+				title="Supplier Accounts"
 				wrapperClassName="px-0 pt-0"
 				onCreate={
 					isCUDShown(user.user_type)
@@ -122,14 +119,19 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 			<Filter />
 
 			<RequestErrors
-				errors={convertIntoArray(creditRegistrationsError)}
+				errors={[
+					...convertIntoArray(supplierRegistrationsError),
+					...convertIntoArray(deleteSupplierRegistrationError?.errors),
+				]}
 				withSpaceBottom
 			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingCreditRegistrations}
+				loading={
+					isFetchingSupplierRegistrations || isDeletingSupplierRegistration
+				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -154,12 +156,10 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 				/>
 			)}
 
-			{(isCreateModalVisible || selectedCreditRegistration) && (
-				<ModifyCreditRegistrationModal
-					creditRegistration={selectedCreditRegistration}
+			{isCreateModalVisible && (
+				<CreateSupplierRegistrationModal
 					onClose={() => {
 						setIsCreateModalVisible(false);
-						setSelectedCreditRegistration(null);
 					}}
 				/>
 			)}

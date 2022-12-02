@@ -2,15 +2,20 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { CreditRegistrationsService } from 'services';
+import { SupplierRegistrationsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
-const useCreditRegistrations = ({ params }: Query = {}) =>
+const useSupplierRegistrations = ({ params }: Query = {}) =>
 	useQuery<any>(
-		['useCreditRegistrations', params?.page, params?.pageSize, params?.search],
+		[
+			'useSupplierRegistrations',
+			params?.page,
+			params?.pageSize,
+			params?.search,
+		],
 		() =>
 			wrapServiceWithCatch(
-				CreditRegistrationsService.list(
+				SupplierRegistrationsService.list(
 					{
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
@@ -22,48 +27,40 @@ const useCreditRegistrations = ({ params }: Query = {}) =>
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
-				creditRegistrations: query.data.results,
+				supplierRegistrations: query.data.results,
 				total: query.data.count,
 			}),
 		},
 	);
 
-export const useCreditRegistrationCreate = () => {
+export const useSupplierRegistrationCreate = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ accountId, creditLimit }: any) =>
-			CreditRegistrationsService.create(
-				{
-					account_id: accountId,
-					credit_limit: creditLimit,
-				},
+		({ accountId }: any) =>
+			SupplierRegistrationsService.create(
+				{ account_id: accountId },
 				getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries('useCreditRegistrations');
+				queryClient.invalidateQueries('useSupplierRegistrations');
 			},
 		},
 	);
 };
 
-export const useCreditRegistrationEdit = () => {
+export const useSupplierRegistrationDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ id, creditLimit }: any) =>
-			CreditRegistrationsService.edit(
-				id,
-				{ credit_limit: creditLimit },
-				getLocalApiUrl(),
-			),
+		(id) => SupplierRegistrationsService.delete(id, getLocalApiUrl()),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries('useCreditRegistrations');
+				queryClient.invalidateQueries('useSupplierRegistrations');
 			},
 		},
 	);
 };
 
-export default useCreditRegistrations;
+export default useSupplierRegistrations;

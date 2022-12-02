@@ -2,13 +2,14 @@ import { Tabs } from 'antd';
 import { AccountsInfo, ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
 import { usePingOnlineServer, useQueryParams } from 'hooks';
-import { toString } from 'lodash';
-import React, { useEffect } from 'react';
+import _ from 'lodash';
+import React from 'react';
 import { TabAccounts } from './components/TabAccounts';
 import { TabCollectionReceipts } from './components/TabCollectionReceipts';
 import { TabCreditRegistrations } from './components/TabCreditRegistration';
 import { TabCreditTransactions } from './components/TabCreditTransactions';
 import { TabOrderOfPayments } from './components/TabOrderOfPayments';
+import { TabSupplierRegistrations } from './components/TabSupplierRegistration';
 import { accountTabs } from './data';
 import './style.scss';
 
@@ -21,12 +22,6 @@ export const Accounts = () => {
 	const { isConnected } = usePingOnlineServer();
 
 	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			handleTabClick(accountTabs.ACCOUNTS);
-		}
-	}, [currentTab]);
-
 	const handleTabClick = (tab) => {
 		setQueryParams(
 			{ tab },
@@ -42,8 +37,8 @@ export const Accounts = () => {
 
 			<Box className="ViewBranchMachine">
 				<Tabs
-					activeKey={toString(currentTab)}
-					className="PaddingHorizontal PaddingVertical"
+					activeKey={_.toString(currentTab) || accountTabs.ACCOUNTS}
+					className="pa-6"
 					type="card"
 					destroyInactiveTabPane
 					onTabClick={handleTabClick}
@@ -57,6 +52,13 @@ export const Accounts = () => {
 						tab={accountTabs.CREDIT_ACCOUNTS}
 					>
 						<TabCreditRegistrations disabled={isConnected === false} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={accountTabs.SUPPLIER_ACCOUNTS}
+						tab={accountTabs.SUPPLIER_ACCOUNTS}
+					>
+						<TabSupplierRegistrations disabled={isConnected === false} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
