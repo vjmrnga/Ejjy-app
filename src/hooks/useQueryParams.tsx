@@ -26,7 +26,7 @@ const useQueryParams = ({
 		const newParams = onParamsCheck?.(params);
 
 		if (!isEmpty(newParams)) {
-			history.push(
+			history.replace(
 				queryString.stringifyUrl({
 					url: '',
 					query: {
@@ -61,11 +61,13 @@ const useQueryParams = ({
 		param,
 		{ shouldResetPage = false, shouldIncludeCurrentParams = true } = {},
 	) => {
+		const currentParams = queryString.parse(history.location.search);
+
 		history.push(
 			queryString.stringifyUrl({
 				url: '',
 				query: {
-					...(shouldIncludeCurrentParams ? params : {}),
+					...(shouldIncludeCurrentParams ? currentParams : {}),
 					...(shouldResetPage ? { page: 1 } : {}),
 					...param,
 				},

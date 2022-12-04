@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import cn from 'classnames';
 import { debounce } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { SearchInput, Select } from '../../elements';
 import { Option } from '../../elements/Select/Select';
 import { PendingCount } from '../../PendingCount/PendingCount';
@@ -14,6 +14,8 @@ interface Props {
 	buttonName?: string;
 	onCreate?: any;
 	onCreateDisabled?: boolean;
+	onCreateIcon?: ReactNode;
+	onCreateLoading?: boolean;
 	onCreateTooltip?: string;
 	onSearch?: any;
 	onStatusSelect?: any;
@@ -30,6 +32,8 @@ export const TableHeader = ({
 	buttonName,
 	onCreate,
 	onCreateDisabled,
+	onCreateIcon,
+	onCreateLoading,
 	onCreateTooltip,
 	onSearch,
 	onStatusSelect,
@@ -85,7 +89,8 @@ export const TableHeader = ({
 						<Tooltip title={onCreateTooltip}>
 							<Button
 								disabled={onCreateDisabled}
-								icon={<PlusOutlined />}
+								icon={onCreateIcon || <PlusOutlined />}
+								loading={onCreateLoading}
 								type="primary"
 								onClick={onCreate}
 							>

@@ -10,10 +10,17 @@ import { Label } from '../elements';
 
 interface Props {
 	disabled?: boolean;
-	isRangeOnly?: boolean;
+	fields?: any;
 }
 
-export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
+export const TimeRangeFilter = ({
+	disabled,
+	fields = [
+		timeRangeTypes.DAILY,
+		timeRangeTypes.MONTHLY,
+		timeRangeTypes.DATE_RANGE,
+	],
+}: Props) => {
 	// STATES
 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
 
@@ -22,7 +29,7 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 		onParamsCheck: ({ timeRange }) => {
 			const newParams = {};
 
-			if (!_.toString(timeRange)) {
+			if (!_.toString(timeRange) && fields?.includes(timeRangeTypes.DAILY)) {
 				newParams['timeRange'] = timeRangeTypes.DAILY;
 			}
 
@@ -111,39 +118,48 @@ export const TimeRangeFilter = ({ disabled, isRangeOnly = false }: Props) => {
 		);
 	}, [params.timeRange, disabled]);
 
+	const getOptions = useCallback(() => {
+		const options = [];
+
+		if (fields?.includes(timeRangeTypes.DAILY)) {
+			options.push({ label: 'Daily', value: timeRangeTypes.DAILY });
+		}
+
+		if (fields?.includes(timeRangeTypes.MONTHLY)) {
+			options.push({ label: 'Monthly', value: timeRangeTypes.MONTHLY });
+		}
+
+		if (fields?.includes(timeRangeTypes.DATE_RANGE)) {
+			options.push({
+				label: 'Select Date Range',
+				value: timeRangeTypes.DATE_RANGE,
+			});
+		}
+
+		return options;
+	}, [fields]);
+
 	return (
 		<>
 			<Label label="Time Range" spacing />
+			<Space direction="vertical" size={10}>
+				<Radio.Group
+					disabled={disabled}
+					options={getOptions()}
+					optionType="button"
+					value={timeRangeType}
+					onChange={(e) => {
+						const { value } = e.target;
+						setTimeRangeType(value);
 
-			{isRangeOnly ? (
-				renderRangePicker()
-			) : (
-				<Space direction="vertical" size={10}>
-					<Radio.Group
-						disabled={disabled}
-						options={[
-							{ label: 'Daily', value: timeRangeTypes.DAILY },
-							{ label: 'Monthly', value: timeRangeTypes.MONTHLY },
-							{
-								label: 'Select Date Range',
-								value: timeRangeTypes.DATE_RANGE,
-							},
-						]}
-						optionType="button"
-						value={timeRangeType}
-						onChange={(e) => {
-							const { value } = e.target;
-							setTimeRangeType(value);
-
-							if (value === timeRangeTypes.DAILY) {
-								setQueryParams({ timeRange: value }, { shouldResetPage: true });
-							}
-						}}
-					/>
-					{timeRangeType === timeRangeTypes.MONTHLY && renderMonthPicker()}
-					{timeRangeType === timeRangeTypes.DATE_RANGE && renderRangePicker()}
-				</Space>
-			)}
+						if (value === timeRangeTypes.DAILY) {
+							setQueryParams({ timeRange: value }, { shouldResetPage: true });
+						}
+					}}
+				/>
+				{timeRangeType === timeRangeTypes.MONTHLY && renderMonthPicker()}
+				{timeRangeType === timeRangeTypes.DATE_RANGE && renderRangePicker()}
+			</Space>
 		</>
 	);
 };

@@ -11,7 +11,6 @@ import { TabCreditTransactions } from './components/TabCreditTransactions';
 import { TabOrderOfPayments } from './components/TabOrderOfPayments';
 import { TabSupplierRegistrations } from './components/TabSupplierRegistration';
 import { accountTabs } from './data';
-import './style.scss';
 
 export const Accounts = () => {
 	// CUSTOM HOOKS
@@ -35,7 +34,7 @@ export const Accounts = () => {
 
 			<AccountsInfo />
 
-			<Box className="ViewBranchMachine">
+			<Box>
 				<Tabs
 					activeKey={_.toString(currentTab) || accountTabs.ACCOUNTS}
 					className="pa-6"

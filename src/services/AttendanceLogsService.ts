@@ -9,6 +9,11 @@ interface List extends IListRequest {
 	time_range?: string;
 }
 
+interface ListForPrinting extends IListRequest {
+	employee_id?: number;
+	time_range?: string;
+}
+
 interface Resolve {
 	suggested_resolved_clock_out_time: string;
 }
@@ -23,6 +28,9 @@ const service = {
 
 	listProblematics: async (params: List, baseURL: string) =>
 		axios.get('/attendance-logs/problematic/', { baseURL, params }),
+
+	listForPrinting: async (params: ListForPrinting, baseURL: string) =>
+		axios.get('/attendance-logs/for-printing/', { baseURL, params }),
 
 	resolve: async (id: number, body: Resolve, baseURL: string) =>
 		axios.post(`attendance-logs/${id}/resolve-problematic/`, body, { baseURL }),

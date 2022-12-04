@@ -1,238 +1,55 @@
-import { Col, Radio, Row, Select, Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import { Content, RequestErrors, TimeRangeFilter } from 'components';
-import { Box, Label } from 'components/elements';
-import {
-	accountTypes,
-	DEFAULT_PAGE,
-	DEFAULT_PAGE_SIZE,
-	attendanceCategories,
-	MAX_PAGE_SIZE,
-	pageSizeOptions,
-	EMPTY_CELL,
-} from 'global';
-import {
-	useAccounts,
-	useAttendanceLogs,
-	useAuth,
-	useBranches,
-	useQueryParams,
-} from 'hooks';
+import { Tabs } from 'antd';
+import { Content } from 'components';
+import { Box } from 'components/elements';
+import { useAuth, useQueryParams } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	formatDateTime,
-	getAttendanceLogDescription,
-	getFullName,
-	getLocalBranchId,
-	isUserFromBranch,
-} from 'utils';
+import React from 'react';
+import { isUserFromBranch } from 'utils';
+import { TabDTR } from './components/TabDTR';
+import { TabDTRPrinting } from './components/TabDTRPrinting';
 
-export const tabs = {
-	ATTENDANCE: 'Attendance',
-	TRACKER: 'Tracker',
+const tabs = {
+	DTR: 'All',
+	DTR_PRINTING: 'DTR Printing',
 };
 
-const columns: ColumnsType = [
-	{ title: 'Employee Name', dataIndex: 'name' },
-	{
-		title: 'Date & Time',
-		children: [
-			{
-				title: 'Scheduled',
-				dataIndex: 'scheduledDateTime',
-			},
-			{
-				title: 'Real',
-				dataIndex: 'realDateTime',
-			},
-		],
-	},
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Description', dataIndex: 'description' },
-];
-
 export const DTR = () => {
-	// STATES
-	const [dataSource, setDataSource] = useState([]);
-
 	// CUSTOM HOOKS
-	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
 	const {
-		data: { attendanceLogs, total },
-		isFetching: isFetchingAttendanceLogs,
-		error: attendanceLogsError,
-	} = useAttendanceLogs({
-		params: {
-			...params,
-			branchId: isUserFromBranch(user.user_type)
-				? getLocalBranchId()
-				: params?.branchId,
-		},
-	});
+		params: { tab },
+		setQueryParams,
+	} = useQueryParams();
+	const { user } = useAuth();
 
 	// METHODS
-	useEffect(() => {
-		const data = attendanceLogs.map((log) => ({
-			key: log.id,
-			name: getFullName(log.employee),
-			scheduledDateTime: log.scheduled_time
-				? formatDateTime(log.scheduled_time)
-				: EMPTY_CELL,
-			realDateTime: log.real_time ? formatDateTime(log.real_time) : EMPTY_CELL,
-			type: _.upperFirst(log.attendance_category),
-			description: getAttendanceLogDescription(
-				log.attendance_category,
-				log.attendance_type,
-			),
-		}));
-
-		setDataSource(data);
-	}, [attendanceLogs]);
+	const handleTabClick = (selectedTab) => {
+		setQueryParams(
+			{ tab: selectedTab },
+			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
+		);
+	};
 
 	return (
 		<Content title="Daily Time Record">
 			<Box>
-				<RequestErrors
-					className="px-6"
-					errors={convertIntoArray(attendanceLogsError, 'Logs')}
-					withSpaceBottom
-				/>
+				<Tabs
+					activeKey={_.toString(tab) || tabs.DTR}
+					className="pa-6"
+					type="card"
+					destroyInactiveTabPane
+					onTabClick={handleTabClick}
+				>
+					<Tabs.TabPane key={tabs.DTR} tab={tabs.DTR}>
+						<TabDTR />
+					</Tabs.TabPane>
 
-				<Filter />
-
-				<Table
-					columns={columns}
-					dataSource={dataSource}
-					loading={isFetchingAttendanceLogs}
-					pagination={{
-						current: Number(params.page) || DEFAULT_PAGE,
-						total,
-						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-						onChange: (page, newPageSize) => {
-							setQueryParams({
-								page,
-								pageSize: newPageSize,
-							});
-						},
-						disabled: !dataSource,
-						position: ['bottomCenter'],
-						pageSizeOptions,
-					}}
-					scroll={{ x: 800 }}
-					bordered
-				/>
+					{!isUserFromBranch(user.user_type) && (
+						<Tabs.TabPane key={tabs.DTR_PRINTING} tab={tabs.DTR_PRINTING}>
+							<TabDTRPrinting />
+						</Tabs.TabPane>
+					)}
+				</Tabs>
 			</Box>
 		</Content>
-	);
-};
-
-const Filter = () => {
-	// CUSTOM HOOKS
-	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
-	const {
-		data: { branches },
-		isFetching: isFetchingBranches,
-		error: branchErrors,
-	} = useBranches({
-		params: { pageSize: MAX_PAGE_SIZE },
-	});
-	const {
-		data: { accounts },
-		isFetching: isFetchingAccounts,
-		error: accountErrors,
-	} = useAccounts({
-		params: { type: accountTypes.EMPLOYEE, pageSize: MAX_PAGE_SIZE },
-	});
-
-	return (
-		<div className="pa-6">
-			<RequestErrors
-				errors={[
-					...convertIntoArray(accountErrors, 'Users'),
-					...convertIntoArray(branchErrors, 'Branches'),
-				]}
-				withSpaceBottom
-			/>
-
-			<Row gutter={[16, 16]}>
-				{!isUserFromBranch(user.user_type) && (
-					<Col md={12}>
-						<Label label="Branch" spacing />
-						<Select
-							className="w-100"
-							filterOption={filterOption}
-							loading={isFetchingBranches}
-							optionFilterProp="children"
-							value={params.branchId ? Number(params.branchId) : null}
-							allowClear
-							showSearch
-							onChange={(value) => {
-								setQueryParams({ branchId: value }, { shouldResetPage: true });
-							}}
-						>
-							{branches.map((branch) => (
-								<Select.Option key={branch.id} value={branch.id}>
-									{branch.name}
-								</Select.Option>
-							))}
-						</Select>
-					</Col>
-				)}
-
-				<Col md={12}>
-					<Label label="Employee" spacing />
-					<Select
-						className="w-100"
-						filterOption={filterOption}
-						loading={isFetchingAccounts}
-						optionFilterProp="children"
-						value={params.employeeId ? Number(params.employeeId) : null}
-						allowClear
-						showSearch
-						onChange={(value) => {
-							setQueryParams({ employeeId: value }, { shouldResetPage: true });
-						}}
-					>
-						{accounts.map((employee) => (
-							<Select.Option key={employee.id} value={employee.id}>
-								{getFullName(employee)}
-							</Select.Option>
-						))}
-					</Select>
-				</Col>
-
-				<Col md={12}>
-					<TimeRangeFilter />
-				</Col>
-
-				<Col md={12}>
-					<Label label="Type" spacing />
-					<Radio.Group
-						defaultValue={null}
-						options={[
-							{ label: 'All', value: null },
-							{ label: 'Attendance', value: attendanceCategories.ATTENDANCE },
-							{
-								label: 'Tracker',
-								value: attendanceCategories.TRACKER,
-							},
-						]}
-						optionType="button"
-						value={params.attendanceCategory}
-						onChange={(e) => {
-							setQueryParams(
-								{ attendanceCategory: e.target.value },
-								{ shouldResetPage: true },
-							);
-						}}
-					/>
-				</Col>
-			</Row>
-		</div>
 	);
 };

@@ -13,6 +13,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	refetchOptions,
+	timeRangeTypes,
 } from 'global';
 import { useConnectivityLogs, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -102,7 +103,10 @@ const Filter = ({ isLoading }: FilterProps) => {
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
 			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isLoading} isRangeOnly />
+				<TimeRangeFilter
+					disabled={isLoading}
+					fields={[timeRangeTypes.DATE_RANGE]}
+				/>
 			</Col>
 			<Col lg={12} span={24}>
 				<Label label="Type" spacing />

@@ -24,6 +24,8 @@ export const formatDate = _.memoize((date) =>
 
 export const formatTime = _.memoize((time) => dayjs.tz(time).format('h:mmA'));
 
+export const formatTimeOnly = (time) => dayjs(time, 'HH:mm:ss').format('h:mmA');
+
 export const formatNumberWithCommas = (x) =>
 	x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 

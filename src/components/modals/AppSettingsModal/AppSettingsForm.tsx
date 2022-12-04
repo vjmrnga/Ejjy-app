@@ -136,7 +136,6 @@ export const AppSettingsForm = ({
 		>
 			{({ values, setFieldValue }) => (
 				<Form>
-					{/* {console.log('errors', errors)} */}
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label id="appType" label="App Type" spacing />

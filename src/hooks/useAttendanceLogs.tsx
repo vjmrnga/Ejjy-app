@@ -1,4 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	serviceTypes,
+} from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -74,6 +79,31 @@ export const useProblematicAttendanceLogs = ({ params }: Query) =>
 				problematicAttendanceLogs: query.data,
 				total: query.data.length,
 			}),
+		},
+	);
+
+export const useAttendanceLogsForPrinting = ({ params, options }: Query) =>
+	useQuery<any>(
+		['useAttendanceLogsForPrinting', params?.employeeId, params?.timeRange],
+		() => {
+			return wrapServiceWithCatch(
+				AttendanceLogsService.listForPrinting(
+					{
+						employee_id: params?.employeeId,
+						page_size: MAX_PAGE_SIZE,
+						page: DEFAULT_PAGE,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			);
+		},
+		{
+			initialData: { data: {} },
+			select: (query) => ({
+				dtr: query.data,
+			}),
+			...options,
 		},
 	);
 

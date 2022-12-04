@@ -16,8 +16,8 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
-	ModifyAttendanceScheduleModal,
 	ModifyAccountModal,
+	ModifyAttendanceScheduleModal,
 	RequestErrors,
 	TableHeader,
 } from 'components';
