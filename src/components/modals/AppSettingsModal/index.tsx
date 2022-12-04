@@ -1,6 +1,7 @@
 import { message, Modal } from 'antd';
 
 import {
+	APP_APP_TYPE_KEY,
 	APP_LOCAL_API_URL_KEY,
 	APP_ONLINE_API_URL_KEY,
 	APP_ONLINE_BRANCH_ID_KEY,
@@ -39,6 +40,7 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 
 	// METHODS
 	const handleSubmit = (formData) => {
+		localStorage.setItem(APP_APP_TYPE_KEY, formData.appType);
 		localStorage.setItem(APP_ONLINE_BRANCH_ID_KEY, formData.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, formData.localApiUrl);
 		localStorage.setItem(APP_ONLINE_API_URL_KEY, formData.onlineApiUrl);

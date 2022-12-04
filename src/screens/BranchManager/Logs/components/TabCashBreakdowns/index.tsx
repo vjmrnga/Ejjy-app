@@ -73,8 +73,8 @@ export const TabCashBreakdowns = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { cashBreakdowns, total },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingCashBreakdowns,
+		error: cashBreakdownsError,
 	} = useCashBreakdowns({
 		params: {
 			...params,
@@ -109,18 +109,17 @@ export const TabCashBreakdowns = () => {
 		<>
 			<TableHeader title="Cash Breakdowns" wrapperClassName="pt-2 px-0" />
 
+			<Filter />
+
 			<RequestErrors
-				className="px-6"
-				errors={convertIntoArray(listError)}
+				errors={convertIntoArray(cashBreakdownsError)}
 				withSpaceBottom
 			/>
-
-			<Filter isLoading={isFetching} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetching}
+				loading={isFetchingCashBreakdowns}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -150,130 +149,137 @@ export const TabCashBreakdowns = () => {
 	);
 };
 
-interface FilterProps {
-	isLoading: boolean;
-}
-
-const Filter = ({ isLoading }: FilterProps) => {
+const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
 	} = useBranchMachines();
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,
+		error: usersError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isLoading} />
-			</Col>
+		<>
+			<RequestErrors
+				errors={[
+					...convertIntoArray(branchMachinesError, 'Branch Machines'),
+					...convertIntoArray(usersError, 'Users'),
+				]}
+				withSpaceBottom
+			/>
 
-			<Col lg={12} span={24}>
-				<Label label="Type" spacing />
-				<Select
-					className="w-100"
-					disabled={isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					value={params.cbType}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						const selectedType = _.toString(value);
-						let type = '';
-						let category = '';
-						if (
-							[
-								cashBreakdownCategories.CASH_IN,
-								cashBreakdownCategories.CASH_OUT,
-								cashBreakdownTypes.MID_SESSION,
-							].includes(selectedType)
-						) {
-							type = cashBreakdownTypes.MID_SESSION;
-							category =
-								selectedType === cashBreakdownTypes.MID_SESSION
-									? cashBreakdownCategories.CASH_BREAKDOWN
-									: selectedType;
-						}
+			<Row className="mb-4" gutter={[16, 16]}>
+				<Col md={12}>
+					<TimeRangeFilter />
+				</Col>
 
-						if (
-							[
-								cashBreakdownTypes.START_SESSION,
-								cashBreakdownTypes.END_SESSION,
-							].includes(selectedType)
-						) {
-							type = selectedType;
-							category = cashBreakdownCategories.CASH_BREAKDOWN;
-						}
+				<Col md={12}>
+					<Label label="Type" spacing />
+					<Select
+						className="w-100"
+						filterOption={filterOption}
+						optionFilterProp="children"
+						value={params.cbType}
+						allowClear
+						showSearch
+						onChange={(value) => {
+							const selectedType = _.toString(value);
+							let type = '';
+							let category = '';
+							if (
+								[
+									cashBreakdownCategories.CASH_IN,
+									cashBreakdownCategories.CASH_OUT,
+									cashBreakdownTypes.MID_SESSION,
+								].includes(selectedType)
+							) {
+								type = cashBreakdownTypes.MID_SESSION;
+								category =
+									selectedType === cashBreakdownTypes.MID_SESSION
+										? cashBreakdownCategories.CASH_BREAKDOWN
+										: selectedType;
+							}
 
-						setQueryParams(
-							{ cbType: selectedType, type, category },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{cashBreakdownOptions.map((option) => (
-						<Select.Option key={option.value} value={option.value}>
-							{option.label}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+							if (
+								[
+									cashBreakdownTypes.START_SESSION,
+									cashBreakdownTypes.END_SESSION,
+								].includes(selectedType)
+							) {
+								type = selectedType;
+								category = cashBreakdownCategories.CASH_BREAKDOWN;
+							}
 
-			<Col lg={12} span={24}>
-				<Label label="Branch Machine" spacing />
-				<Select
-					className="w-100"
-					defaultValue={params.branchMachineId}
-					disabled={isFetchingBranchMachines || isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ branchMachineId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{branchMachines.map(({ id, name }) => (
-						<Select.Option key={id} value={id}>
-							{name}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+							setQueryParams(
+								{ cbType: selectedType, type, category },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{cashBreakdownOptions.map((option) => (
+							<Select.Option key={option.value} value={option.value}>
+								{option.label}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
 
-			<Col lg={12} span={24}>
-				<Label label="User" spacing />
-				<Select
-					className="w-100"
-					defaultValue={params.creatingUserId}
-					disabled={isFetchingUsers || isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ creatingUserId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{users.map((user) => (
-						<Select.Option key={user.id} value={user.id}>
-							{getFullName(user)}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-		</Row>
+				<Col md={12}>
+					<Label label="Branch Machine" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.branchMachineId}
+						disabled={isFetchingBranchMachines}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ branchMachineId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{branchMachines.map(({ id, name }) => (
+							<Select.Option key={id} value={id}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col md={12}>
+					<Label label="User" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.creatingUserId}
+						disabled={isFetchingUsers}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ creatingUserId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{users.map((user) => (
+							<Select.Option key={user.id} value={user.id}>
+								{getFullName(user)}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+			</Row>
+		</>
 	);
 };

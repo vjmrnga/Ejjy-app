@@ -183,7 +183,7 @@ export const CreateOrderOfPaymentForm = ({
 		[maxAmount, transaction],
 	);
 
-	const onSearchDebounced = useCallback(
+	const handleDebouncedSearch = useCallback(
 		debounce((search) => {
 			setAccountSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
@@ -208,19 +208,17 @@ export const CreateOrderOfPaymentForm = ({
 						<Col span={24}>
 							<Label label="Payor" spacing />
 							<Select
+								className="w-100"
 								defaultActiveFirstOption={false}
 								disabled={payor !== null}
 								filterOption={false}
-								notFoundContent={
-									isFetchingAccount ? <Spin size="small" /> : null
-								}
-								style={{ width: '100%' }}
+								notFoundContent={isFetchingAccount ? <Spin /> : null}
 								value={values.payorId}
 								showSearch
 								onChange={(value) => {
 									setFieldValue('payorId', value);
 								}}
-								onSearch={onSearchDebounced}
+								onSearch={handleDebouncedSearch}
 							>
 								{accounts.map((account) => (
 									<Select.Option key={account.id} value={account.id}>

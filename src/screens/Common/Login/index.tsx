@@ -2,9 +2,14 @@ import { Button, Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box } from 'components/elements';
 import { IS_APP_LIVE, request } from 'global';
-import { useAppType, useAuth } from 'hooks';
+import { useAuth } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { getKeyDownCombination, getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import {
+	getAppType,
+	getKeyDownCombination,
+	getLocalApiUrl,
+	getOnlineApiUrl,
+} from 'utils';
 import { LoginForm } from './components/LoginForm';
 import './style.scss';
 
@@ -14,7 +19,6 @@ const Login = () => {
 	const [isSetupButtonsVisible, setSetupButtonsVisible] = useState(false);
 
 	// CUSTOM HOOKS
-	const { appType } = useAppType();
 	const { login, status, errors } = useAuth();
 
 	// METHODS
@@ -45,7 +49,7 @@ const Login = () => {
 	const handleSubmit = (formData) => {
 		login({
 			...formData,
-			appType,
+			appType: getAppType(),
 		});
 	};
 

@@ -1,4 +1,5 @@
 import {
+	AreaChartOutlined,
 	DeleteOutlined,
 	DollarCircleOutlined,
 	EditFilled,
@@ -26,6 +27,7 @@ import {
 	ProductsInfo,
 	RequestErrors,
 	TableHeader,
+	ViewBranchProductChartModal,
 	ViewProductModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
@@ -72,6 +74,7 @@ const modals = {
 	VIEW: 0,
 	MODIFY: 1,
 	EDIT_PRICE_COST: 2,
+	CHART: 4,
 };
 
 export const Products = () => {
@@ -105,86 +108,91 @@ export const Products = () => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedProducts =
-			products?.map((product) => {
-				const { id, name } = product;
+		const formattedProducts = products.map((product) => {
+			const { id, name } = product;
 
-				return {
-					key: id,
-					barcode: (
-						<Button
-							className="pa-0"
-							type="link"
-							onClick={() => handleOpenModal(product, modals.VIEW)}
-						>
-							{getProductCode(product)}
-						</Button>
-					),
-					name,
-					actions: hasPendingTransactions ? null : (
-						<Space>
-							<Tooltip title="Set Prices">
-								<Button
-									disabled={isConnected === false}
-									icon={<DollarCircleOutlined />}
-									type="primary"
-									ghost
-									onClick={() =>
-										handleOpenModal(product, modals.EDIT_PRICE_COST)
-									}
-								/>
-							</Tooltip>
+			return {
+				key: id,
+				barcode: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => handleOpenModal(product, modals.VIEW)}
+					>
+						{getProductCode(product)}
+					</Button>
+				),
+				name,
+				actions: hasPendingTransactions ? null : (
+					<Space>
+						<Tooltip title="Set Prices">
+							<Button
+								disabled={isConnected === false}
+								icon={<DollarCircleOutlined />}
+								type="primary"
+								ghost
+								onClick={() => handleOpenModal(product, modals.EDIT_PRICE_COST)}
+							/>
+						</Tooltip>
+						{isCUDShown(user.user_type) && (
 							<Tooltip title="Edit">
-								{isCUDShown(user.user_type) && (
-									<Button
-										disabled={isConnected === false}
-										icon={<EditFilled />}
-										type="primary"
-										ghost
-										onClick={() => handleOpenModal(product, modals.MODIFY)}
-									/>
-								)}
-							</Tooltip>
-							<Tooltip title="Print Price Tag">
 								<Button
 									disabled={isConnected === false}
-									icon={<PrinterFilled />}
-									loading={isCreatingPdf === product.id}
+									icon={<EditFilled />}
 									type="primary"
 									ghost
-									onClick={() => {
-										handleCreatePdf(product);
-									}}
+									onClick={() => handleOpenModal(product, modals.MODIFY)}
 								/>
 							</Tooltip>
-							{isCUDShown(user.user_type) && (
-								<Popconfirm
-									cancelText="No"
-									disabled={isConnected === false}
-									okText="Yes"
-									placement="left"
-									title="Are you sure to remove this?"
-									onConfirm={() =>
-										deleteProduct({
-											id: getId(product),
-											actingUserId: getId(user),
-										})
-									}
-								>
-									<Tooltip title="Remove">
-										<Button
-											icon={<DeleteOutlined />}
-											type="primary"
-											danger
-											ghost
-										/>
-									</Tooltip>
-								</Popconfirm>
-							)}
-						</Space>
-					),
-				};
-			}) || [];
+						)}
+						<Tooltip title="Print Price Tag">
+							<Button
+								disabled={isConnected === false}
+								icon={<PrinterFilled />}
+								loading={isCreatingPdf === product.id}
+								type="primary"
+								ghost
+								onClick={() => {
+									handleCreatePdf(product);
+								}}
+							/>
+						</Tooltip>
+						<Tooltip title="Show Chart">
+							<Button
+								icon={<AreaChartOutlined />}
+								type="primary"
+								ghost
+								onClick={() => handleOpenModal(product, modals.CHART)}
+							/>
+						</Tooltip>
+						{isCUDShown(user.user_type) && (
+							<Popconfirm
+								cancelText="No"
+								disabled={isConnected === false}
+								okText="Yes"
+								placement="left"
+								title="Are you sure to remove this?"
+								onConfirm={() =>
+									deleteProduct({
+										id: getId(product),
+										actingUserId: getId(user),
+									})
+								}
+							>
+								<Tooltip title="Remove">
+									<Button
+										icon={<DeleteOutlined />}
+										type="primary"
+										danger
+										ghost
+									/>
+								</Tooltip>
+							</Popconfirm>
+						)}
+					</Space>
+				),
+			};
+		});
 
 		setDataSource(formattedProducts);
 	}, [products, user, hasPendingTransactions, isConnected, isCreatingPdf]);
@@ -300,6 +308,13 @@ export const Products = () => {
 
 				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
 					<PricesModal
+						product={selectedProduct}
+						onClose={() => handleOpenModal(null, null)}
+					/>
+				)}
+
+				{modalType === modals.CHART && selectedProduct && (
+					<ViewBranchProductChartModal
 						product={selectedProduct}
 						onClose={() => handleOpenModal(null, null)}
 					/>

@@ -21,10 +21,9 @@ import {
 	unitOfMeasurementTypes,
 } from 'global';
 import { useProductCategories, useSiteSettingsRetrieve } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
-import { formatQuantity, getId } from 'utils';
+import { filterOption, formatQuantity, getId } from 'utils';
 import * as Yup from 'yup';
 
 const { Text } = Typography;
@@ -84,7 +83,6 @@ export const ModifyProductForm = ({
 	product,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { user } = useAuth();
 	const { data: siteSettings } = useSiteSettingsRetrieve();
 	const {
 		data: { productCategories },
@@ -98,7 +96,6 @@ export const ModifyProductForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				actingUserId: getId(user),
 				allowableSpoilage: product?.allowable_spoilage * 100 || '',
 				barcode: product?.barcode || '',
 				sellingBarcode: product?.selling_barcode || '',
@@ -271,7 +268,7 @@ export const ModifyProductForm = ({
 				[['barcode', 'textcode']],
 			),
 		}),
-		[product, user, siteSettings],
+		[product, siteSettings],
 	);
 
 	const getProductCategoriesOptions = useCallback(
@@ -296,7 +293,6 @@ export const ModifyProductForm = ({
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
 					name={name}
-					size="large"
 					type={type}
 					value={values[name]}
 					onChange={(e) => {
@@ -308,7 +304,6 @@ export const ModifyProductForm = ({
 			{type === inputTypes.TEXTAREA && (
 				<Input.TextArea
 					name={name}
-					size="large"
 					value={values[name]}
 					onChange={(e) => {
 						setFieldValue(name, e.target.value);
@@ -320,7 +315,6 @@ export const ModifyProductForm = ({
 				<FormattedInputNumber
 					className="w-100"
 					controls={false}
-					size="large"
 					value={values[name]}
 					onChange={(value) => {
 						setFieldValue(name, value);
@@ -557,14 +551,8 @@ export const ModifyProductForm = ({
 							<Label id="pointSystemTagId" label="Point System Tag" spacing />
 							<Select
 								className="w-100"
-								filterOption={(input, option) =>
-									option.children
-										.toString()
-										.toLowerCase()
-										.indexOf(input.toLowerCase()) >= 0
-								}
+								filterOption={filterOption}
 								optionFilterProp="children"
-								size="large"
 								value={values.pointSystemTagId}
 								allowClear
 								showSearch

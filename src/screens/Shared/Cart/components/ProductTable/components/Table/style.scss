@@ -4,7 +4,7 @@
 	width: 100%;
 	overflow-y: auto;
 	position: relative;
-	border-radius: 10px;
+	border-radius: $border-radius;
 	min-height: 426px;
 	border: 1px solid $color-gray;
 	background-color: white;

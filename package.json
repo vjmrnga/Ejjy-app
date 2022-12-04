@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.296",
+	"version": "0.1.297",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -68,6 +68,7 @@
 		"react-scripts": "3.4.3",
 		"react-sortable-hoc": "^2.0.0",
 		"react-window": "^1.8.5",
+		"recharts": "^2.1.16",
 		"redux": "^4.1.0",
 		"redux-actions": "^2.6.5",
 		"redux-persist": "^6.0.0",

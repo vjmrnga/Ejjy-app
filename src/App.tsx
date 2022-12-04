@@ -6,7 +6,7 @@ import {
 	MAX_PAGE_SIZE,
 	userTypes,
 } from 'global';
-import { useAppType, useBranches, useInitializeData, useNetwork } from 'hooks';
+import { useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Switch, useHistory } from 'react-router-dom';
@@ -17,6 +17,7 @@ import Login from 'screens/Common/Login';
 import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
 import {
+	getAppType,
 	getLocalApiUrl,
 	getLocalBranchId,
 	getOnlineApiUrl,
@@ -28,7 +29,6 @@ const NETWORK_RETRY = 10;
 const NETWORK_RETRY_DELAY_MS = 1000;
 
 const App = () => {
-	const { appType } = useAppType();
 	const history = useHistory();
 
 	const { isFetching: isConnectingNetwork, isSuccess: isNetworkSuccess } =
@@ -69,6 +69,7 @@ const App = () => {
 		},
 	});
 
+	// METHODS
 	useEffect(() => {
 		if (branches.length > 0) {
 			const onlineBranchId = Number(getOnlineBranchId());
@@ -102,7 +103,7 @@ const App = () => {
 		<>
 			<Helmet
 				title={`${
-					appType === appTypes.BACK_OFFICE
+					getAppType() === appTypes.BACK_OFFICE
 						? 'EJJY Back Office'
 						: 'EJJY Head Office'
 				} (v${npmPackage.version})`}

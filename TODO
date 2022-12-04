@@ -1,46 +1,33 @@
-Table Header inside a Tab - set wrapperClassName="pt-2 px-0"
-Add list errors - turn off API and start app
+TODO on sprint break:
+
+- Table Header inside a Tab - set wrapperClassName="pt-2 px-0"
+- Add list errors - turn off API and start app
+- Use getBaseURL for CUD services and add the online IDs
+- Rename onEvent to handleEvent
+- Tabs: Remove useEffect that will set a default tab
+- Replace filterOption
+- Remove size="large" in antd fields
+- Replace style={{width:100%}} with className="w-100"
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 
-http://localhost:8000/v1
-https://office.ej-jy.com/v1
-https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1
-
-
-[
-  {
-    "id": 5,
-    "name": "Main"
-  },
-  {
-    "id": 17,
-    "name": "N1"
-  },
-  {
-    "id": 18,
-    "name": "N2"
-  },
-  {
-    "id": 19,
-    "name": "B1"
-  },
-  {
-    "id": 20,
-    "name": "B2"
-  },
-  {
-    "id": 25,
-    "name": "Test Branch (Andrew)"
-  },
-  {
-    "id": 26,
-    "name": "Test Branch (Home)"
-  }
-]
-
+Local: http://localhost:8000/v1
+Office: https://office.ej-jy.com/v1
+Google: https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1
 
 https://localhost:8001/v1/bulk-initialize/?branch_id=5
 
-
-
+- "id": 5,
+- "name": "Main"
+- "id": 17,
+- "name": "N1"
+- "id": 18,
+- "name": "N2"
+- "id": 19,
+- "name": "B1"
+- "id": 20,
+- "name": "B2"
+- "id": 25,
+- "name": "Test Branch (Andrew)"
+- "id": 26,
+- "name": "Test Branch (Home)"

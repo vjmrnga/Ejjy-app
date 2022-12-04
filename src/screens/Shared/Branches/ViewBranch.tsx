@@ -8,8 +8,8 @@ import {
 import { Box } from 'components/elements';
 import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { toString } from 'lodash';
-import React, { useCallback, useEffect } from 'react';
+import _ from 'lodash';
+import React, { useCallback } from 'react';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
@@ -39,7 +39,7 @@ export const ViewBranch = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 	const { user } = useAuth();
@@ -51,12 +51,6 @@ export const ViewBranch = ({ match }: Props) => {
 	});
 
 	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			onTabClick(tabs.PRODUCTS);
-		}
-	}, []);
-
 	const getBreadcrumbItems = useCallback(
 		() => [
 			{ name: 'Branches', link: `${getUrlPrefix(user.user_type)}/branches` },
@@ -65,9 +59,9 @@ export const ViewBranch = ({ match }: Props) => {
 		[branch, user],
 	);
 
-	const onTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -86,11 +80,11 @@ export const ViewBranch = ({ match }: Props) => {
 				{branch && (
 					<Box className="ViewBranchMachine">
 						<Tabs
-							activeKey={toString(currentTab)}
-							className="PaddingHorizontal PaddingVertical"
+							activeKey={_.toString(tab) || tabs.PRODUCTS}
+							className="pa-6"
 							type="card"
 							destroyInactiveTabPane
-							onTabClick={onTabClick}
+							onTabClick={handleTabClick}
 						>
 							<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
 								<TabBranchProducts

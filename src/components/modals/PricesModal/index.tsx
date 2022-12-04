@@ -2,13 +2,14 @@ import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import {
+	useAuth,
 	useBranches,
 	useBranchProductEditPriceCost,
 	useBranchProducts,
 	usePriceMarkdownCreate,
 } from 'hooks';
 import React from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { PricesForm } from './PricesForm';
 
 interface Props {
@@ -29,6 +30,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			enabled: product !== null,
 		},
 	});
+	const { user } = useAuth();
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
@@ -56,14 +58,15 @@ export const PricesModal = ({ product, onClose }: Props) => {
 	}) => {
 		if (branchProductFormData.length > 0) {
 			await editBranchProductPriceCost({
-				productId: product.id,
+				actingUserId: getId(user),
+				productId: getId(product),
 				data: branchProductFormData,
 			});
 		}
 
 		if (priceMarkdownFormData.length > 0) {
 			await createPriceMarkdown({
-				productId: product.id,
+				productId: getId(product),
 				data: priceMarkdownFormData,
 			});
 		}

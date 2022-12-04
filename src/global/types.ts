@@ -250,7 +250,18 @@ export const attendanceSchedulePeriods = {
 	MORNING: 'morning',
 	AFTERNOON: 'afternoon',
 };
+
 export const attendanceScheduleTypes = {
 	CLOCK_IN: 'clock_in',
 	CLOCK_OUT: 'clock_out',
+};
+
+export const userLogTypes = {
+	LOGIN: 'login',
+	AUTHENTICATION: 'authentication',
+	TRANSACTION: 'transaction',
+	SESSIONS: 'sessions',
+	ASSIGNMENTS: 'assignments',
+	PRODUCTS: 'products',
+	BRANCH_PRODUCTS: 'branch_products',
 };

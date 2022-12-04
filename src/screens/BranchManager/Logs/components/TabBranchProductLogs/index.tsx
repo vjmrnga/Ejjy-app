@@ -1,56 +1,56 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	SEARCH_DEBOUNCE_TIME,
+	userLogTypes,
 } from 'global';
 import {
-	useBranchMachines,
+	useBranchProducts,
 	useQueryParams,
 	useUserLogs,
 	useUsers,
 } from 'hooks';
-
-import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	filterOption,
 	formatDateTimeExtended,
 	getFullName,
+	getLocalBranchId,
 } from 'utils';
 
 const columns: ColumnsType = [
-	{
-		title: 'Branch Machine',
-		dataIndex: 'branchMachine',
-	},
 	{ title: 'User', dataIndex: 'user' },
 	{ title: 'Description', dataIndex: 'description' },
 	{ title: 'Date & Time', dataIndex: 'datetimeCreated' },
 ];
 
-export const TabUserLogs = () => {
+export const TabBranchProductLogs = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
 		error: logsError,
-	} = useUserLogs({ params });
+	} = useUserLogs({
+		params: { ...params, type: userLogTypes.BRANCH_PRODUCTS },
+	});
 
 	// METHODS
 	useEffect(() => {
 		const data = logs.map((log) => ({
 			key: log.id,
-			branchMachine: log?.branch_machine?.name || EMPTY_CELL,
 			user: getFullName(log.acting_user),
 			description: log.description,
 			datetimeCreated: formatDateTimeExtended(log.datetime_created),
@@ -61,7 +61,7 @@ export const TabUserLogs = () => {
 
 	return (
 		<div>
-			<TableHeader title="User Logs" wrapperClassName="pt-2 px-0" />
+			<TableHeader title="Branch Product Logs" wrapperClassName="pt-2 px-0" />
 
 			<Filter />
 
@@ -95,27 +95,45 @@ export const TabUserLogs = () => {
 };
 
 const Filter = () => {
+	// STATES
+	const [productSearch, setProductSearch] = useState('');
+
+	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const {
-		data: { branchMachines },
-		isFetching: isFetchingBranchMachines,
-		error: branchMachinesError,
-	} = useBranchMachines({
-		params: { pageSize: MAX_PAGE_SIZE },
-	});
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: getLocalBranchId(),
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
+	const {
+		data: { branchProducts },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsError,
+	} = useBranchProducts({
+		params: {
+			ids: productSearch ? undefined : _.toString(params?.branchProductId),
+			search: productSearch,
+		},
+	});
+
+	// METHODS
+	const handleDebouncedSearch = useCallback(
+		_.debounce((search) => {
+			setProductSearch(search);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
 
 	return (
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(branchMachinesError, 'Branch Machines'),
+					...convertIntoArray(branchProductsError, 'Branch Product'),
 					...convertIntoArray(usersError, 'Users'),
 				]}
 				withSpaceBottom
@@ -123,27 +141,28 @@ const Filter = () => {
 
 			<Row className="mb-4" gutter={[16, 16]}>
 				<Col md={12}>
-					<Label label="Branch Machine" spacing />
+					<Label label="Product" spacing />
 					<Select
 						className="w-100"
+						defaultActiveFirstOption={false}
 						defaultValue={
-							params.branchMachineId ? Number(params.branchMachineId) : null
+							params.branchProductId ? Number(params.branchProductId) : null
 						}
-						filterOption={filterOption}
-						loading={isFetchingBranchMachines}
-						optionFilterProp="children"
+						filterOption={false}
+						notFoundContent={isFetchingBranchProducts ? <Spin /> : null}
 						allowClear
 						showSearch
 						onChange={(value) => {
 							setQueryParams(
-								{ branchMachineId: value },
+								{ branchProductId: value },
 								{ shouldResetPage: true },
 							);
 						}}
+						onSearch={handleDebouncedSearch}
 					>
-						{branchMachines.map(({ id, name }) => (
-							<Select.Option key={id} value={id}>
-								{name}
+						{branchProducts.map((branchProduct) => (
+							<Select.Option key={branchProduct.id} value={branchProduct.id}>
+								{branchProduct.product.name}
 							</Select.Option>
 						))}
 					</Select>

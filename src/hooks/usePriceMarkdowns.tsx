@@ -1,6 +1,6 @@
+import { getBaseUrl } from 'hooks/helper';
 import { useMutation } from 'react-query';
 import { PriceMarkdownsService } from 'services';
-import { getLocalApiUrl } from 'utils';
 
 export const usePriceMarkdownCreate = () =>
 	useMutation<any, any, any>(({ productId, data }: any) =>
@@ -13,6 +13,6 @@ export const usePriceMarkdownCreate = () =>
 						type: d?.type || undefined,
 					})) || undefined,
 			},
-			getLocalApiUrl(),
+			getBaseUrl(),
 		),
 	);

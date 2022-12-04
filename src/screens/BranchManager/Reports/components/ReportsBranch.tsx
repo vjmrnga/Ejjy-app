@@ -360,7 +360,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 
 	return (
 		<Row className="pa-6" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
+			<Col md={12}>
 				<Label label="Product Name" spacing />
 				<Select
 					className="w-100"
@@ -384,7 +384,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 					onSearch={onSearchDebounced}
 				/>
 			</Col>
-			<Col lg={12} span={24}>
+			<Col md={12}>
 				<Label label="Product Category" spacing />
 				<Select
 					className="w-100"
@@ -408,7 +408,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 				</Select>
 			</Col>
 
-			<Col lg={12} span={24}>
+			<Col md={12}>
 				<Label label="Product Status" spacing />
 				<Select
 					className="w-100"
@@ -430,11 +430,11 @@ const Filter = ({ productCategories }: FilterProps) => {
 				</Select>
 			</Col>
 
-			<Col lg={12} span={24}>
+			<Col md={12}>
 				<TimeRangeFilter />
 			</Col>
 
-			<Col lg={12} span={24}>
+			<Col md={12}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
 					defaultValue={params.isSoldInBranch}

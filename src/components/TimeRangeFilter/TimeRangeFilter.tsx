@@ -11,6 +11,7 @@ import { Label } from '../elements';
 interface Props {
 	disabled?: boolean;
 	fields?: any;
+	onChange?: any;
 }
 
 export const TimeRangeFilter = ({
@@ -20,6 +21,7 @@ export const TimeRangeFilter = ({
 		timeRangeTypes.MONTHLY,
 		timeRangeTypes.DATE_RANGE,
 	],
+	onChange,
 }: Props) => {
 	// STATES
 	const [timeRangeType, setTimeRangeType] = useState(timeRangeTypes.DAILY);
@@ -38,6 +40,14 @@ export const TimeRangeFilter = ({
 	});
 
 	// METHODS
+	const handleChange = (value) => {
+		if (onChange) {
+			onChange(value);
+		} else {
+			setQueryParams({ timeRange: value }, { shouldResetPage: true });
+		}
+	};
+
 	const renderMonthPicker = useCallback(() => {
 		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
 
@@ -75,14 +85,11 @@ export const TimeRangeFilter = ({
 						const firstDate = date.clone().startOf('month');
 						const lastDate = date.clone().endOf('month');
 
-						setQueryParams(
-							{
-								timeRange: [
-									firstDate.format(DATE_FORMAT),
-									lastDate.format(DATE_FORMAT),
-								].join(','),
-							},
-							{ shouldResetPage: true },
+						handleChange(
+							[
+								firstDate.format(DATE_FORMAT),
+								lastDate.format(DATE_FORMAT),
+							].join(','),
 						);
 					}
 				}}
@@ -108,10 +115,7 @@ export const TimeRangeFilter = ({
 				format={DATE_FORMAT}
 				onCalendarChange={(dates, dateStrings) => {
 					if (dates?.[0] && dates?.[1]) {
-						setQueryParams(
-							{ timeRange: dateStrings.join(',') },
-							{ shouldResetPage: true },
-						);
+						handleChange(dateStrings.join(','));
 					}
 				}}
 			/>
@@ -153,7 +157,7 @@ export const TimeRangeFilter = ({
 						setTimeRangeType(value);
 
 						if (value === timeRangeTypes.DAILY) {
-							setQueryParams({ timeRange: value }, { shouldResetPage: true });
+							handleChange(value);
 						}
 					}}
 				/>

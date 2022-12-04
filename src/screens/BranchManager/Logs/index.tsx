@@ -2,38 +2,34 @@ import { Tabs } from 'antd';
 import { Content, LogsInfo } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
-import { toString } from 'lodash';
-import React, { useEffect } from 'react';
+import _ from 'lodash';
+import React from 'react';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
 import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
 import { isStandAlone } from 'utils';
+import { TabBranchProductLogs } from './components/TabBranchProductLogs';
 import { TabCashBreakdowns } from './components/TabCashBreakdowns';
 import { TabUserLogs } from './components/TabUserLogs';
 
-export const logsTabs = {
+export const tabs = {
 	USER: 'User',
-	BRANCH: 'Branch',
-	SESSION: 'Session',
+	BRANCH: 'Branch Assignment',
+	SESSION: 'Cashiering Session',
 	CASH_BREAKDOWN: 'Cash Breakdown',
+	BRANCH_PRODUCTS: 'Branch Products',
 };
 
 export const Logs = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 
 	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			onTabClick(logsTabs.USER);
-		}
-	}, [currentTab]);
-
-	const onTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -44,31 +40,32 @@ export const Logs = () => {
 
 			<Box>
 				<Tabs
-					activeKey={toString(currentTab)}
+					activeKey={_.toString(tab) || tabs.USER}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane
-					onTabClick={onTabClick}
+					onTabClick={handleTabClick}
 				>
-					<Tabs.TabPane key={logsTabs.USER} tab={logsTabs.USER}>
+					<Tabs.TabPane key={tabs.USER} tab={tabs.USER}>
 						<TabUserLogs />
 					</Tabs.TabPane>
 
 					{!isStandAlone() && (
-						<Tabs.TabPane key={logsTabs.BRANCH} tab={logsTabs.BRANCH}>
+						<Tabs.TabPane key={tabs.BRANCH} tab={tabs.BRANCH}>
 							<TabBranchAssignments />
 						</Tabs.TabPane>
 					)}
 
-					<Tabs.TabPane key={logsTabs.SESSION} tab={logsTabs.SESSION}>
+					<Tabs.TabPane key={tabs.SESSION} tab={tabs.SESSION}>
 						<TabSessionAssignments />
 					</Tabs.TabPane>
 
-					<Tabs.TabPane
-						key={logsTabs.CASH_BREAKDOWN}
-						tab={logsTabs.CASH_BREAKDOWN}
-					>
+					<Tabs.TabPane key={tabs.CASH_BREAKDOWN} tab={tabs.CASH_BREAKDOWN}>
 						<TabCashBreakdowns />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.BRANCH_PRODUCTS} tab={tabs.BRANCH_PRODUCTS}>
+						<TabBranchProductLogs />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

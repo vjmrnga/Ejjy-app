@@ -1,8 +1,9 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const useProducts = ({ params }: Query) =>
 	useQuery<any>(
@@ -20,17 +21,19 @@ const useProducts = ({ params }: Query) =>
 				? ProductsService.list
 				: ProductsService.listOffline;
 
-			return service(
-				{
-					branch_id: params?.branchId,
-					ids: params?.ids,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					product_category: params?.productCategory,
-					search: params?.search,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						branch_id: params?.branchId,
+						ids: params?.ids,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						product_category: params?.productCategory,
+						search: params?.search,
+					},
+					getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -104,7 +107,7 @@ export const useProductCreate = () => {
 					type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -179,7 +182,7 @@ export const useProductEdit = () => {
 					type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -197,7 +200,7 @@ export const useProductDelete = () => {
 			ProductsService.delete(
 				id,
 				{ acting_user_id: actingUserId },
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {

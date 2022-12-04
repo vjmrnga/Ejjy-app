@@ -18,6 +18,7 @@ import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
 import { ViewChecking } from './Checkings/ViewChecking';
 import { Dashboard } from './Dashboard';
+import { Logs } from './Logs';
 import { Notifications } from './Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
@@ -152,6 +153,13 @@ const sidebarItems = [
 	// 	link: '/office-manager/pending-transactions',
 	// },
 	{
+		key: 'logs',
+		name: 'Logs',
+		activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+		defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+		link: '/office-manager/logs',
+	},
+	{
 		key: 'notifications',
 		name: 'Notifications',
 		activeIcon: require('../../assets/images/icon-notifications-active.svg'),
@@ -271,6 +279,8 @@ const OfficeManager = () => {
 						path="/office-manager/back-orders/:id"
 						exact
 					/>
+
+					<Route component={Logs} path="/office-manager/logs" />
 
 					<Route
 						component={Notifications}

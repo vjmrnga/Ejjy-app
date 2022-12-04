@@ -5,7 +5,7 @@
 
 	&_input {
 		height: 100%;
-		border-radius: 10px;
+		border-radius: $border-radius;
 		padding: 20px 30px;
 		font-size: 30px;
 		background-color: $color-main-background;
@@ -26,7 +26,7 @@
 		background-color: white;
 		border: 1px solid $color-gray;
 		box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.02);
-		border-radius: 10px;
+		border-radius: $border-radius;
 		position: absolute;
 		width: 100%;
 		z-index: 999;

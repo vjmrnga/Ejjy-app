@@ -1,12 +1,11 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
-import { wrapServiceWithCatch } from 'hooks/helper';
+import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchProductsService } from 'services';
 import {
 	getLocalApiUrl,
-	getOnlineApiUrl,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -200,6 +199,7 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchProducts',
+			params?.ids,
 			params?.branchId,
 			params?.hasBoBalance,
 			params?.hasNegativeBalance,
@@ -220,6 +220,7 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 						has_bo_balance: params?.hasBoBalance,
 						has_negative_balance: params?.hasNegativeBalance,
 						identifier: params?.identifier,
+						ids: params?.ids,
 						is_sold_in_branch: params?.isSoldInBranch,
 						ordering: '-product__textcode',
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
@@ -254,6 +255,8 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchProducts',
+			params?.branchId,
+			params?.ids,
 			params?.isSoldInBranch,
 			params?.ordering,
 			params?.page,
@@ -262,7 +265,6 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 			params?.productIds,
 			params?.productStatus,
 			params?.timeRange,
-			params?.branchId,
 		],
 		() =>
 			wrapServiceWithCatch(
@@ -277,6 +279,7 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 						product_ids: params?.productIds,
 						product_status: params?.productStatus,
 						time_range: params?.timeRange,
+						ids: params?.ids,
 					},
 					getLocalApiUrl(),
 				),
@@ -295,10 +298,12 @@ export const useBranchProductRetrieve = ({ id, params, options }: Query = {}) =>
 	useQuery<any>(
 		['useBranchProductRetrieve', id],
 		() =>
-			BranchProductsService.list(
-				{ branch_id: params?.branchId, product_ids: id },
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+			wrapServiceWithCatch(
+				BranchProductsService.list(
+					{ branch_id: params?.branchId, product_ids: id },
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => query.data.results?.[0],
@@ -353,7 +358,7 @@ export const useBranchProductEdit = () => {
 					price_per_piece: pricePerPiece,
 					reorder_point: reorderPoint,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -368,9 +373,10 @@ export const useBranchProductEditPriceCost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ productId, data }: any) =>
+		({ actingUserId, productId, data }: any) =>
 			BranchProductsService.editPriceCost(
 				{
+					acting_user_id: actingUserId,
 					product_id: productId,
 					data:
 						data?.map((d) => ({
@@ -381,10 +387,11 @@ export const useBranchProductEditPriceCost = () => {
 							price_per_bulk: d?.pricePerBulk || undefined,
 						})) || undefined,
 				},
-				getLocalApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
+				queryClient.invalidateQueries('useBranchProducts');
 				queryClient.invalidateQueries('useBranchProductRetrieve');
 			},
 		},

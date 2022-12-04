@@ -11,6 +11,7 @@ interface List extends IListRequest {
 	product_ids?: number[] | number | string;
 	product_status?: string;
 	time_range?: string;
+	ids?: string;
 }
 
 interface Edit {
@@ -43,6 +44,7 @@ type EditPriceCostData = {
 };
 
 interface EditPriceCost {
+	acting_user_id: number;
 	data: EditPriceCostData[];
 	product_id: number;
 }

@@ -1,7 +1,12 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { MAX_PAGE_SIZE } from 'global';
-import { usePointSystemTags, useProductCreate, useProductEdit } from 'hooks';
+import {
+	useAuth,
+	usePointSystemTags,
+	useProductCreate,
+	useProductEdit,
+} from 'hooks';
 import React from 'react';
 import { convertIntoArray, getId } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
@@ -19,6 +24,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	} = usePointSystemTags({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
+	const { user } = useAuth();
 	const {
 		mutateAsync: createProduct,
 		isLoading: isCreating,
@@ -34,12 +40,16 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	const handleSubmit = async (formData) => {
 		if (product) {
 			await editProduct({
-				id: getId(product),
 				...formData,
+				id: getId(product),
+				actingUserId: getId(user),
 			});
 			message.success('Product was edited successfully');
 		} else {
-			await createProduct(formData);
+			await createProduct({
+				...formData,
+				actingUserId: getId(user),
+			});
 			message.success('Product was created successfully');
 		}
 

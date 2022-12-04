@@ -11,13 +11,21 @@ import {
 	timeRangeTypes,
 } from 'global';
 import {
+	useAuth,
 	useBranches,
 	useCashieringAssignments,
 	useQueryParams,
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, filterOption, formatTime, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatTime,
+	getFullName,
+	getLocalBranchId,
+	isUserFromBranch,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Branch Machine', dataIndex: 'branchMachine' },
@@ -34,7 +42,7 @@ export const TabSessionAssignments = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { cashieringAssignments, total },
-		isFetching: isCashieringAssignmentsFetching,
+		isFetching: isFetchingCashieringAssignments,
 		error: cashieringAssignmentsError,
 	} = useCashieringAssignments({
 		params: {
@@ -75,7 +83,7 @@ export const TabSessionAssignments = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isCashieringAssignmentsFetching}
+				loading={isFetchingCashieringAssignments}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -99,6 +107,7 @@ export const TabSessionAssignments = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
@@ -112,7 +121,9 @@ const Filter = () => {
 		error: userErrors,
 	} = useUsers({
 		params: {
-			branchId: params.branchId,
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params.branchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -128,29 +139,31 @@ const Filter = () => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
-				<Col sm={12} xs={24}>
-					<Label label="Branch" spacing />
-					<Select
-						className="w-100"
-						filterOption={filterOption}
-						loading={isFetchingBranches}
-						optionFilterProp="children"
-						value={params.branchId ? Number(params.branchId) : null}
-						allowClear
-						showSearch
-						onChange={(value) => {
-							setQueryParams({ branchId: value }, { shouldResetPage: true });
-						}}
-					>
-						{branches.map((branch) => (
-							<Select.Option key={branch.id} value={branch.id}>
-								{branch.name}
-							</Select.Option>
-						))}
-					</Select>
-				</Col>
+				{!isUserFromBranch(user.user_type) && (
+					<Col md={12}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((branch) => (
+								<Select.Option key={branch.id} value={branch.id}>
+									{branch.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
 
-				<Col sm={12} xs={24}>
+				<Col md={12}>
 					<Label label="User" spacing />
 					<Select
 						className="w-100"
@@ -164,9 +177,9 @@ const Filter = () => {
 							setQueryParams({ userId: value }, { shouldResetPage: true });
 						}}
 					>
-						{users.map((user) => (
-							<Select.Option key={user.id} value={user.id}>
-								{getFullName(user)}
+						{users.map((u) => (
+							<Select.Option key={u.id} value={u.id}>
+								{getFullName(u)}
 							</Select.Option>
 						))}
 					</Select>

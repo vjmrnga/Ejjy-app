@@ -15,6 +15,7 @@ import {
 import { BadgePill } from 'components/elements';
 import {
 	accountTypes,
+	appTypes,
 	attendanceCategories,
 	backOrdersStatuses,
 	cashBreakdownCategories,
@@ -36,7 +37,11 @@ import {
 } from 'global';
 import _ from 'lodash';
 import React from 'react';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils/localStorage';
+import {
+	getAppType,
+	getLocalApiUrl,
+	getOnlineApiUrl,
+} from 'utils/localStorage';
 
 // Getters
 export const getColoredText = (
@@ -519,8 +524,24 @@ export const getCashBreakdownTypeDescription = (category, type) => {
 	return description;
 };
 
-export const getId = (object) =>
-	isStandAlone() ? object?.id : object?.online_id;
+export const getId = (object) => {
+	const onlineApiUrl = getOnlineApiUrl();
+	const localApiUrl = getLocalApiUrl();
+	const appType = getAppType();
+
+	/* Condition on what API to use for CUD services:
+	 *       BO    HO
+	 *  NSA  ON    OF
+	 *  SA   OF    OF
+	 */
+
+	let id = object?.id;
+	if (appType === appTypes.BACK_OFFICE && localApiUrl !== onlineApiUrl) {
+		id = object?.online_id;
+	}
+
+	return id;
+};
 
 export const getProductCode = (product) =>
 	product?.barcode ||

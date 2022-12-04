@@ -1,4 +1,5 @@
 import {
+	APP_APP_TYPE_KEY,
 	APP_LOCAL_API_URL_KEY,
 	APP_LOCAL_BRANCH_ID_KEY,
 	APP_ONLINE_API_URL_KEY,
@@ -17,6 +18,8 @@ import {
 	TAG_DEFAULT_PAPER_HEIGHT,
 	TAG_DEFAULT_PAPER_WIDTH,
 } from 'global';
+
+export const getAppType = () => localStorage.getItem(APP_APP_TYPE_KEY);
 
 export const getOnlineBranchId = () =>
 	localStorage.getItem(APP_ONLINE_BRANCH_ID_KEY);

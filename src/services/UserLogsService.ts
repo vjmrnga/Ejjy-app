@@ -5,6 +5,9 @@ interface List extends IListRequest {
 	acting_user_id: number;
 	branch_machine_id: number;
 	time_range: string;
+	branch_product_id: number;
+	product_id: number;
+	type: string;
 }
 
 const service = {

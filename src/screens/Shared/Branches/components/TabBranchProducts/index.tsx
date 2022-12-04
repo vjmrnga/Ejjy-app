@@ -1,9 +1,9 @@
 /* eslint-disable dot-notation */
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
+import { Button, Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { TableActions, TableHeader } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import {
 	DEFAULT_PAGE,
@@ -15,7 +15,13 @@ import {
 import { useBranchProducts, useProductCategories, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, filterOption, formatQuantity, getId } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatQuantity,
+	getId,
+	getProductCode,
+} from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './components/EditBranchProductsModal';
 import { ViewBranchProductModal } from './components/ViewBranchProductModal';
@@ -36,7 +42,7 @@ const columns: ColumnsType = [
 	{ title: 'Barcode', dataIndex: 'barcode' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Balance', dataIndex: 'balance' },
-	{ title: 'Actions', dataIndex: 'actions' },
+	// { title: 'Actions', dataIndex: 'actions' }, // NOTE: Removed for the meantime as we don't know yet if this is needed in HeadOffice
 ];
 
 interface Props {
@@ -103,14 +109,7 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 		const formattedBranchProducts = branchProducts.map((branchProduct) => {
 			const {
 				id,
-				product: {
-					barcode,
-					selling_barcode,
-					packing_barcode,
-					name,
-					textcode,
-					unit_of_measurement,
-				},
+				product: { name, unit_of_measurement },
 				current_balance,
 				max_balance,
 			} = branchProduct;
@@ -139,13 +138,16 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 			return {
 				key: id,
 				barcode: (
-					<ButtonLink
-						text={barcode || selling_barcode || packing_barcode || textcode}
+					<Button
+						className="pa-0"
+						type="link"
 						onClick={() => {
 							setSelectedBranchProduct(branchProduct);
 							setModalType(modals.VIEW);
 						}}
-					/>
+					>
+						{getProductCode(branchProduct.product)}
+					</Button>
 				),
 				name,
 				balance: (
@@ -195,7 +197,7 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 			<TableHeader
 				buttonName="Create Branch Product"
 				title="Products"
-				wrapperClassName="pt-0"
+				wrapperClassName="pt-2 px-0"
 			/>
 
 			<Filter />

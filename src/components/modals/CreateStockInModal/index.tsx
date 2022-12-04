@@ -3,10 +3,27 @@ import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';
-import React, { useCallback } from 'react';
-import { convertIntoArray, getFullName } from 'utils';
+import React from 'react';
+import { convertIntoArray, filterOption, getFullName } from 'utils';
 import * as Yup from 'yup';
 import { Button, FieldError, FormInputLabel, Label } from '../../elements';
+
+const formDetails = {
+	defaultValues: {
+		supplierName: '',
+		supplierAddress: '',
+		supplierTin: '',
+		encodedById: null,
+		checkedById: null,
+	},
+	schema: Yup.object().shape({
+		supplierName: Yup.string().required().label('Supplier Name'),
+		supplierAddress: Yup.string().required().label('Supplier Address'),
+		supplierTin: Yup.string().required().label('Supplier TIN'),
+		encodedById: Yup.number().nullable().required().label('Encoded By Id'),
+		checkedById: Yup.number().nullable().required().label('Checked By Id'),
+	}),
+};
 
 interface Props {
 	onSubmit: any;
@@ -17,32 +34,13 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// METHODS
-	const getFormDetails = useCallback(
-		() => ({
-			defaultValues: {
-				supplierName: '',
-				supplierAddress: '',
-				supplierTin: '',
-				encodedById: null,
-				checkedById: null,
-			},
-			schema: Yup.object().shape({
-				supplierName: Yup.string().required().label('Supplier Name'),
-				supplierAddress: Yup.string().required().label('Supplier Address'),
-				supplierTin: Yup.string().required().label('Supplier TIN'),
-				encodedById: Yup.number().nullable().required().label('Encoded By Id'),
-				checkedById: Yup.number().nullable().required().label('Checked By Id'),
-			}),
-		}),
-		[],
-	);
 
 	return (
 		<Modal
@@ -57,8 +55,8 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 			<RequestErrors errors={convertIntoArray(userError)} withSpaceBottom />
 
 			<Formik
-				initialValues={getFormDetails().defaultValues}
-				validationSchema={getFormDetails().schema}
+				initialValues={formDetails.defaultValues}
+				validationSchema={formDetails.schema}
 				onSubmit={(formData) => {
 					onSubmit(formData);
 				}}
@@ -90,7 +88,7 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 							<Col span={24}>
 								<Label id="encodedById" label="Encoded By" spacing />
 								<Select
-									disabled={isUsersFetching}
+									disabled={isFetchingUsers}
 									filterOption={(input, option) =>
 										option.children
 											.toString()
@@ -98,7 +96,6 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 											.indexOf(input.toLowerCase()) >= 0
 									}
 									optionFilterProp="children"
-									size="large"
 									style={{ width: '100%' }}
 									value={values.encodedById}
 									showSearch
@@ -120,16 +117,10 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 							<Col span={24}>
 								<Label id="checkedById" label="Checked By" spacing />
 								<Select
-									disabled={isUsersFetching}
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									className="w-100"
+									disabled={isFetchingUsers}
+									filterOption={filterOption}
 									optionFilterProp="children"
-									size="large"
-									style={{ width: '100%' }}
 									value={values.checkedById}
 									showSearch
 									onChange={(value) => {

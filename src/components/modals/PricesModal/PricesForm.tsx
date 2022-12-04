@@ -9,7 +9,7 @@ import {
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import React, { useCallback } from 'react';
-import { filterOption } from 'utils';
+import { filterOption, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
@@ -105,6 +105,18 @@ export const PricesForm = ({
 		[branches],
 	);
 
+	const getBranchId = useCallback(
+		(branchId) => {
+			const branch = branches.find(({ id }) => id === branchId);
+			if (branch) {
+				return getId(branch);
+			}
+
+			return branchId;
+		},
+		[branches],
+	);
+
 	return (
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
@@ -115,7 +127,7 @@ export const PricesForm = ({
 
 				const priceMarkdownFormData = values
 					.map((value) => {
-						const data = { branchId: value.branchId };
+						const data = { branchId: getBranchId(value.branchId) };
 
 						if (value.initialMarkdownType !== value.markdownType) {
 							data['type'] = value.markdownType;
@@ -127,7 +139,7 @@ export const PricesForm = ({
 
 				const branchProductFormData = values
 					.map((value) => {
-						const data = { branchId: value.branchId };
+						const data = { branchId: getBranchId(value.branchId) };
 
 						if (value.initialCostPerPiece !== value.costPerPiece) {
 							data['costPerPiece'] = value.costPerPiece;
