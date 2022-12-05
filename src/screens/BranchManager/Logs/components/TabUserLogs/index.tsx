@@ -8,6 +8,7 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	userLogTypes,
 } from 'global';
 import {
 	useBranchMachines,

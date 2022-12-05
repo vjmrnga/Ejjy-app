@@ -31,6 +31,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		},
 	});
 	const { user } = useAuth();
+	console.log('user', user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

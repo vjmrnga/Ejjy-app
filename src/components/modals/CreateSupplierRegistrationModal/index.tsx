@@ -4,7 +4,7 @@ import { Button, FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE, SEARCH_DEBOUNCE_TIME } from 'global';
 import { useAccounts, useSupplierRegistrationCreate } from 'hooks';
-import { debounce } from 'lodash';
+import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { convertIntoArray, getFullName } from 'utils';
 import * as Yup from 'yup';
@@ -89,7 +89,7 @@ export const CreateSupplierRegistrationForm = ({
 
 	// METHODS
 	const handleSearchDebounced = useCallback(
-		debounce((search) => {
+		_.debounce((search) => {
 			setAccountSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
 		[],

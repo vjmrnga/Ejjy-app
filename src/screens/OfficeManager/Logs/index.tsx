@@ -4,10 +4,12 @@ import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
+import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { TabProductLogs } from './components/TabProductLogs';
 
 export const tabs = {
 	PRODUCTS: 'Products',
+	BRANCH_PRODUCTS: 'Branch Products',
 };
 
 export const Logs = () => {
@@ -39,6 +41,10 @@ export const Logs = () => {
 				>
 					<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
 						<TabProductLogs />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.BRANCH_PRODUCTS} tab={tabs.BRANCH_PRODUCTS}>
+						<TabBranchProductLogs />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

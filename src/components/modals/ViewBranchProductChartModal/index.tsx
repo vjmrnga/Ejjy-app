@@ -126,7 +126,7 @@ const Chart = ({ dataKey, logs }) => {
 	// METHODS
 	useEffect(() => {
 		const data = [];
-		logs.forEach((log) => {
+		logs.reverse().forEach((log) => {
 			const dataChanges = JSON.parse(log?.product_metadata?.data_changes);
 
 			if (dataKey in dataChanges) {

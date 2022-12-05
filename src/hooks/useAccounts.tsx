@@ -15,6 +15,7 @@ const useAccounts = ({ params }: Query) =>
 			params?.serviceType,
 			params?.type,
 			params?.withCreditRegistration,
+			params?.withSupplierRegistration,
 		],
 
 		() => {
@@ -31,6 +32,7 @@ const useAccounts = ({ params }: Query) =>
 						search: params?.search,
 						type: params?.type,
 						with_credit_registration: params?.withCreditRegistration,
+						with_supplier_registration: params?.withSupplierRegistration,
 					},
 					getLocalApiUrl(),
 				),

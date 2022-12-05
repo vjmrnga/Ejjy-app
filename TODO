@@ -8,6 +8,11 @@ TODO on sprint break:
 - Replace filterOption
 - Remove size="large" in antd fields
 - Replace style={{width:100%}} with className="w-100"
+- CHange the modal button into antd
+- HeadOffice Users:
+  - Update action buttons
+  - [Assign] User modal: add the name of the user
+
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 
@@ -31,3 +36,6 @@ https://localhost:8001/v1/bulk-initialize/?branch_id=5
 - "name": "Test Branch (Andrew)"
 - "id": 26,
 - "name": "Test Branch (Home)"
+
+
+http://localhost:8000/v1/bulk-initialize/?branch_id=5

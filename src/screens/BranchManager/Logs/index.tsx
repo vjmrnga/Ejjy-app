@@ -6,8 +6,8 @@ import _ from 'lodash';
 import React from 'react';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
 import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
+import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { isStandAlone } from 'utils';
-import { TabBranchProductLogs } from './components/TabBranchProductLogs';
 import { TabCashBreakdowns } from './components/TabCashBreakdowns';
 import { TabUserLogs } from './components/TabUserLogs';
 

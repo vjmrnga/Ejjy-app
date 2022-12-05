@@ -1,5 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
-import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -358,7 +358,7 @@ export const useBranchProductEdit = () => {
 					price_per_piece: pricePerPiece,
 					reorder_point: reorderPoint,
 				},
-				getBaseUrl(),
+				getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -387,7 +387,7 @@ export const useBranchProductEditPriceCost = () => {
 							price_per_bulk: d?.pricePerBulk || undefined,
 						})) || undefined,
 				},
-				getBaseUrl(),
+				getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {

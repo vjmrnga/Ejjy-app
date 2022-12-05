@@ -1951,16 +1951,12 @@ export const printDtr = (dtr) => {
           width: 380px !important;
         }
 
-        .container table {
+        .container table,
+        .container th,
+        .container td {
+          font-size: 0.9em;
+          border: 1px solid black;
           border-collapse: collapse;
-          border-style: hidden;
-          border-top: 1px solid black;
-          border-bottom: 1px solid black;
-        }
-
-        .container table td,
-        .container table th {
-          border: 0.5px solid black;
         }
       </style>
     </head>
@@ -1988,9 +1984,7 @@ export const printDtr = (dtr) => {
           <div style="flex: 1; border-bottom: 1px solid black"></div>
         </div>
 
-        <br />
-
-        <table>
+        <table style="margin-top: 8px">
           <thead style="font-size: 0.8em">
             <tr>
               <th rowspan="2">Day</th>
@@ -2060,7 +2054,6 @@ export const printDtr = (dtr) => {
             hours of work performed, record of which was made daily at the time of
             arrival and departure from the office.
           </span>
-          <br />
           <br />
           <div style="width: 100%; border-bottom: 1px solid black"></div>
           <span>(Signature)</span>
