@@ -1,8 +1,7 @@
 /* eslint-disable react/no-this-in-sfc */
-import { Col, Divider, Input, Row, Select, Typography } from 'antd';
+import { Col, Divider, Button, Input, Row, Select, Typography } from 'antd';
 import { ScrollToFieldError } from 'components';
 import {
-	Button,
 	FieldError,
 	FieldWarning,
 	FormattedInputNumber,
@@ -702,16 +701,20 @@ export const ModifyProductForm = ({
 					<div className="ModalCustomFooter">
 						<Button
 							disabled={loading}
-							text="Cancel"
-							type="button"
+							htmlType="button"
+							size="large"
 							onClick={onClose}
-						/>
+						>
+							Cancel
+						</Button>
 						<Button
+							htmlType="submit"
 							loading={loading}
-							text={product ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+							size="large"
+							type="primary"
+						>
+							{product ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

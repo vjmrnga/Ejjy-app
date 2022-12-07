@@ -35,13 +35,13 @@ export const PointSystemTags = () => {
 	const { user } = useAuth();
 	const {
 		data: { pointSystemTags, total },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingPointSystemTags,
+		error: pointSystemTagsError,
 	} = usePointSystemTags({ params });
 	const {
 		mutate: deletePointSystemTag,
-		isLoading,
-		error: deleteError,
+		isLoading: isDeletingPointSystemTag,
+		error: deletePointSystemTagError,
 	} = usePointSystemTagDelete();
 
 	// METHODS
@@ -97,8 +97,8 @@ export const PointSystemTags = () => {
 				<RequestErrors
 					className="px-4"
 					errors={[
-						...convertIntoArray(listError),
-						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(pointSystemTagsError),
+						...convertIntoArray(deletePointSystemTagError?.errors),
 					]}
 					withSpaceBottom
 				/>
@@ -106,7 +106,7 @@ export const PointSystemTags = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					loading={isFetching || isLoading}
+					loading={isFetchingPointSystemTags || isDeletingPointSystemTag}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,

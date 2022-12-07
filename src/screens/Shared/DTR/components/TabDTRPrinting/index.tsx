@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import { printDtr } from 'configurePrinter';
+import dayjs from 'dayjs';
 import {
 	accountTypes,
 	EMPTY_CELL,
@@ -17,6 +18,7 @@ import {
 	useQueryParams,
 } from 'hooks';
 import jsPDF from 'jspdf';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
@@ -121,9 +123,20 @@ export const TabDTRPrinting = () => {
 	const handleCreatePdf = () => {
 		setIsCreatingPdf(true);
 
+		let month;
+		const timeRange = _.toString(params?.timeRange).split(',');
+		const dateStart = dayjs(timeRange[0]);
+		const dateEnd = dayjs(timeRange[1]);
+
+		if (dateStart.month() === dateEnd.month()) {
+			month = dateStart.format('MMMM');
+		} else {
+			month = `${dateStart.format('MMMM')} - ${dateEnd.format('MMMM')}`;
+		}
+
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF(JSPDF_SETTINGS);
-		const dataHtml = printDtr(dtr);
+		const dataHtml = printDtr({ dtr, month });
 
 		setHtml(dataHtml);
 

@@ -1940,7 +1940,7 @@ export const printEmployeeCode = ({ name, barcode, qrCode }) => `
     </div>
   `;
 
-export const printDtr = (dtr) => {
+export const printDtr = ({ dtr, month }) => {
 	const { employee, logs } = dtr;
 
 	return `
@@ -1981,7 +1981,7 @@ export const printDtr = (dtr) => {
 
         <div style="display: flex; column-gap: 1ch">
           <span>For the month of</span>
-          <div style="flex: 1; border-bottom: 1px solid black"></div>
+          <div style="flex: 1; border-bottom: 1px solid black; text-align: center">${month}</div>
         </div>
 
         <table style="margin-top: 8px">

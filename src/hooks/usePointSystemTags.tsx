@@ -1,25 +1,27 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { PointSystemTagsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const usePointSystemTags = ({ params }: Query) =>
 	useQuery<any>(
 		['usePointSystemTags', params?.page, params?.pageSize],
-		async () => {
-			let service = PointSystemTagsService.list;
-			if (!isStandAlone()) {
-				service = PointSystemTagsService.listOffline;
-			}
+		() => {
+			const service = isStandAlone()
+				? PointSystemTagsService.list
+				: PointSystemTagsService.listOffline;
 
-			return service(
-				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+					},
+					getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },
@@ -40,7 +42,7 @@ export const usePointSystemTagCreate = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -61,7 +63,7 @@ export const usePointSystemTagEdit = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -75,7 +77,7 @@ export const usePointSystemTagDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => PointSystemTagsService.delete(id, getOnlineApiUrl()),
+		(id: number) => PointSystemTagsService.delete(id, getBaseUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('usePointSystemTags');

@@ -1,9 +1,9 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
-import { wrapServiceWithCatch } from 'hooks/helper';
+import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductCategoriesService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const useProductCategories = ({ params }: Query) =>
 	useQuery<any>(
@@ -42,7 +42,7 @@ export const useProductCategoryCreate = () => {
 					name,
 					priority_level: priorityLevel,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -53,24 +53,22 @@ export const useProductCategoryCreate = () => {
 };
 
 export const useProductCategoryEdit = () =>
-	useMutation<any, any, any>(
-		({ id, name, priorityLevel }: any) =>
-			ProductCategoriesService.edit(
-				id,
-				{
-					name,
-					priority_level: priorityLevel,
-				},
-				getOnlineApiUrl(),
-			),
-		{},
+	useMutation<any, any, any>(({ id, name, priorityLevel }: any) =>
+		ProductCategoriesService.edit(
+			id,
+			{
+				name,
+				priority_level: priorityLevel,
+			},
+			getBaseUrl(),
+		),
 	);
 
 export const useProductCategoryDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => ProductCategoriesService.delete(id, getOnlineApiUrl()),
+		(id: number) => ProductCategoriesService.delete(id, getBaseUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useProductCategories');

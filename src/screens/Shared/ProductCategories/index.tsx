@@ -1,5 +1,10 @@
-import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
-import { Table } from 'antd';
+import {
+	DeleteOutlined,
+	EditFilled,
+	LoadingOutlined,
+	MenuOutlined,
+} from '@ant-design/icons';
+import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
 import {
@@ -8,7 +13,6 @@ import {
 	ModifyProductCategoryModal,
 	ProductCategoriesInfo,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
@@ -59,23 +63,22 @@ export const ProductCategories = () => {
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
-		error: listError,
+		error: productCategoriesError,
 	} = useProductCategories({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		mutate: editProductCategory,
 		isLoading: isEditingProductCategory,
-		error: editError,
+		error: editProductCategoryError,
 	} = useProductCategoryEdit();
 	const {
 		mutate: deleteProductCategory,
 		isLoading: isDeletingProductCategory,
-		error: deleteError,
+		error: deleteProductCategoryError,
 	} = useProductCategoryDelete();
 
-	// EFFECTS
-
+	// METHODS
 	useEffect(() => {
 		const sortedProductCategories = cloneDeep(productCategories);
 		sortedProductCategories.sort((a, b) => a.priority_level - b.priority_level);
@@ -85,14 +88,32 @@ export const ProductCategories = () => {
 			name: productCategory.name,
 			priorityLevel: productCategory.priority_level,
 			actions: (
-				<TableActions
-					areButtonsDisabled={isConnected === false}
-					onEdit={() => {
-						setSelectedProductCategory(productCategory);
-						setModifyProductCategoryModalVisible(true);
-					}}
-					onRemove={() => deleteProductCategory(productCategory.id)}
-				/>
+				<Space>
+					<Tooltip title="Edit">
+						<Button
+							disabled={isConnected === false}
+							icon={<EditFilled />}
+							type="primary"
+							ghost
+							onClick={() => {
+								setSelectedProductCategory(productCategory);
+								setModifyProductCategoryModalVisible(true);
+							}}
+						/>
+					</Tooltip>
+					<Popconfirm
+						cancelText="No"
+						disabled={isConnected === false}
+						okText="Yes"
+						placement="left"
+						title="Are you sure to remove this?"
+						onConfirm={() => deleteProductCategory(productCategory.id)}
+					>
+						<Tooltip title="Remove">
+							<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+						</Tooltip>
+					</Popconfirm>
+				</Space>
 			),
 			index,
 		}));
@@ -134,7 +155,7 @@ export const ProductCategories = () => {
 		return columns;
 	}, [user, isEditingProductCategory]);
 
-	const onSortEnd = ({ oldIndex, newIndex }) => {
+	const handleSortEnd = ({ oldIndex, newIndex }) => {
 		if (oldIndex !== newIndex) {
 			const newData = arrayMoveImmutable(
 				dataSource.slice(),
@@ -152,7 +173,7 @@ export const ProductCategories = () => {
 			helperClass="row-dragging"
 			disableAutoscroll
 			useDragHandle
-			onSortEnd={onSortEnd}
+			onSortEnd={handleSortEnd}
 			{...props}
 		/>
 	);
@@ -187,9 +208,9 @@ export const ProductCategories = () => {
 				<RequestErrors
 					className="px-4"
 					errors={[
-						...convertIntoArray(listError),
-						...convertIntoArray(deleteError?.errors),
-						...convertIntoArray(editError?.errors),
+						...convertIntoArray(productCategoriesError),
+						...convertIntoArray(deleteProductCategoryError?.errors),
+						...convertIntoArray(editProductCategoryError?.errors),
 					]}
 					withSpaceBottom
 				/>

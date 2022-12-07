@@ -1,9 +1,10 @@
-import { Col, Input, message, Modal, Row } from 'antd';
+import { Button, Col, Input, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components';
-import { Button, FieldError, Label } from 'components/elements';
+import { FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useProductCategoryCreate, useProductCategoryEdit } from 'hooks';
 import React, { useCallback } from 'react';
+import { useQueryClient } from 'react-query';
 import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 
@@ -17,21 +18,23 @@ export const ModifyProductCategoryModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const {
 		mutateAsync: createProductCategory,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingProductCategory,
+		error: createProductCategoryError,
 	} = useProductCategoryCreate();
 	const {
 		mutateAsync: editProductCategory,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingProductCategory,
+		error: editProductCategoryError,
 	} = useProductCategoryEdit();
 
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (productCategory) {
 			await editProductCategory(formData);
+			queryClient.invalidateQueries('useProductCategories');
 			message.success('Product category was edited successfully');
 		} else {
 			await createProductCategory(formData);
@@ -52,14 +55,14 @@ export const ModifyProductCategoryModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createProductCategoryError?.errors),
+					...convertIntoArray(editProductCategoryError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyProductCategoryForm
-				isLoading={isCreating || isEditing}
+				isLoading={isCreatingProductCategory || isEditingProductCategory}
 				productCategory={productCategory}
 				onClose={onClose}
 				onSubmit={handleSubmit}
@@ -90,7 +93,7 @@ export const ModifyProductCategoryForm = ({
 				priorityLevel: productCategory?.priority_level || 1000,
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().max(50).label('Name'),
+				name: Yup.string().required().label('Name'),
 			}),
 		}),
 		[productCategory],
@@ -108,7 +111,7 @@ export const ModifyProductCategoryForm = ({
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
-						<Col xs={24}>
+						<Col span={24}>
 							<Label label="Name" spacing />
 							<Input
 								name="name"
@@ -127,16 +130,20 @@ export const ModifyProductCategoryForm = ({
 					<div className="ModalCustomFooter">
 						<Button
 							disabled={isLoading}
-							text="Cancel"
-							type="button"
+							htmlType="button"
+							size="large"
 							onClick={onClose}
-						/>
+						>
+							Cancel
+						</Button>
 						<Button
+							htmlType="submit"
 							loading={isLoading}
-							text={productCategory ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+							size="large"
+							type="primary"
+						>
+							{productCategory ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}
