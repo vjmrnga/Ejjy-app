@@ -5,7 +5,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { useProductCategoryCreate, useProductCategoryEdit } from 'hooks';
 import React, { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
@@ -33,7 +33,10 @@ export const ModifyProductCategoryModal = ({
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (productCategory) {
-			await editProductCategory(formData);
+			await editProductCategory({
+				...formData,
+				id: getId(productCategory),
+			});
 			queryClient.invalidateQueries('useProductCategories');
 			message.success('Product category was edited successfully');
 		} else {
@@ -88,7 +91,6 @@ export const ModifyProductCategoryForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: productCategory?.id || null,
 				name: productCategory?.name || '',
 				priorityLevel: productCategory?.priority_level || 1000,
 			},

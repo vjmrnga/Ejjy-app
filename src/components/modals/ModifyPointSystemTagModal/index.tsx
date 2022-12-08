@@ -1,12 +1,11 @@
-import { Col, message, Modal, Row } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { Button, Col, message, Modal, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { usePointSystemTagCreate, usePointSystemTagEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
+import { RequestErrors } from '../..';
 import {
-	Button,
 	FieldError,
 	FormattedInputNumber,
 	FormInputLabel,
@@ -25,19 +24,22 @@ export const ModifyPointSystemTagModal = ({
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createPointSystemTag,
-		isLoading: isCreateLoading,
-		error: createError,
+		isLoading: isCreatingPointSystemTag,
+		error: createPointSystemTagError,
 	} = usePointSystemTagCreate();
 	const {
 		mutateAsync: editPointSystemTag,
-		isLoading: isEditLoading,
-		error: editError,
+		isLoading: isEditingPointSystemTag,
+		error: editPointSystemTagError,
 	} = usePointSystemTagEdit();
 
 	// METHODS
 	const onSubmit = async (formData) => {
 		if (pointSystemTag) {
-			await editPointSystemTag(formData);
+			await editPointSystemTag({
+				...formData,
+				id: getId(pointSystemTag),
+			});
 			message.success('Point system tag was edited successfully');
 		} else {
 			await createPointSystemTag(formData);
@@ -58,14 +60,14 @@ export const ModifyPointSystemTagModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createPointSystemTagError?.errors),
+					...convertIntoArray(editPointSystemTagError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyPointSystemTagForm
-				isLoading={isCreateLoading || isEditLoading}
+				isLoading={isCreatingPointSystemTag || isEditingPointSystemTag}
 				pointSystemTag={pointSystemTag}
 				onClose={onClose}
 				onSubmit={onSubmit}
@@ -90,7 +92,6 @@ export const ModifyPointSystemTagForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: pointSystemTag?.id || undefined,
 				name: pointSystemTag?.name || '',
 				divisorAmount: pointSystemTag?.divisor_amount || '',
 			},
@@ -143,16 +144,20 @@ export const ModifyPointSystemTagForm = ({
 					<div className="ModalCustomFooter">
 						<Button
 							disabled={isLoading}
-							text="Cancel"
-							type="button"
+							htmlType="button"
+							size="large"
 							onClick={onClose}
-						/>
+						>
+							Cancel
+						</Button>
 						<Button
+							htmlType="submit"
 							loading={isLoading}
-							text={pointSystemTag ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+							size="large"
+							type="primary"
+						>
+							{pointSystemTag ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

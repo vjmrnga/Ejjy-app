@@ -531,12 +531,15 @@ export const getId = (object) => {
 
 	/* Condition on what API to use for CUD services:
 	 *       BO    HO
-	 *  NSA  ON    OF
-	 *  SA   OF    OF
+	 *  NSA  ON    ON
+	 *  SA   OF    X
 	 */
 
 	let id = object?.id;
-	if (appType === appTypes.BACK_OFFICE && localApiUrl !== onlineApiUrl) {
+	if (
+		(appType === appTypes.BACK_OFFICE && localApiUrl !== onlineApiUrl) ||
+		appType === appTypes.HEAD_OFFICE
+	) {
 		id = object?.online_id;
 	}
 

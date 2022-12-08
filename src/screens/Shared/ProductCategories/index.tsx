@@ -33,7 +33,7 @@ import {
 	SortableHandle,
 } from 'react-sortable-hoc';
 import { useDebouncedCallback } from 'use-debounce';
-import { convertIntoArray, isCUDShown } from 'utils';
+import { convertIntoArray, getId, isCUDShown } from 'utils';
 
 const DragHandle = SortableHandle(() => (
 	<MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -107,7 +107,7 @@ export const ProductCategories = () => {
 						okText="Yes"
 						placement="left"
 						title="Are you sure to remove this?"
-						onConfirm={() => deleteProductCategory(productCategory.id)}
+						onConfirm={() => deleteProductCategory(getId(productCategory))}
 					>
 						<Tooltip title="Remove">
 							<Button icon={<DeleteOutlined />} type="primary" danger ghost />
@@ -125,7 +125,7 @@ export const ProductCategories = () => {
 		sortedProductCategories.forEach((productCategory, index) => {
 			if (productCategory.priorityLevel !== index) {
 				editProductCategory({
-					id: productCategory.id,
+					id: getId(productCategory),
 					name: productCategory.name,
 					priorityLevel: index,
 				});
