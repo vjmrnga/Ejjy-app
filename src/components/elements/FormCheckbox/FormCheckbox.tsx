@@ -12,14 +12,14 @@ interface Props {
 const FormCheckbox = ({ id, label, onChange }: Props) => {
 	const [field, , helpers] = useField(id);
 
-	const onChangeField = (e) => {
+	const handleChangeField = (e) => {
 		helpers.setValue(e.target.checked);
 
 		onChange?.(e.target.checked);
 	};
 
 	return (
-		<Checkbox checked={field.value} onChange={onChangeField}>
+		<Checkbox checked={field.value} onChange={handleChangeField}>
 			{label}
 		</Checkbox>
 	);

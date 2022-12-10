@@ -124,8 +124,8 @@ const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 	}, [returnItemSlip]);
 
 	return (
-		<Spin size="large" spinning={returnItemSlipsStatus === request.REQUESTING}>
-			<Box className="PaddingHorizontal PaddingVertical">
+		<Spin spinning={returnItemSlipsStatus === request.REQUESTING}>
+			<Box className="pa-6">
 				<DetailsRow>
 					<Col span={24}>
 						<DetailsHalf label="ID" value={returnItemSlip?.id} />

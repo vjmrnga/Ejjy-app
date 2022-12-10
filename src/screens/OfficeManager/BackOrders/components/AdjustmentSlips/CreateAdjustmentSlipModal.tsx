@@ -61,7 +61,7 @@ export const CreateAdjustmentSlipModal = ({
 		}
 	}, [backOrder]);
 
-	const onCreateAdjustmentSlipSubmit = (data) => {
+	const handleSubmit = (data) => {
 		const { length } = data.filter((item) => item.selected);
 		if (!length) {
 			message.error('Must have at least one (1) adjusted product');
@@ -118,7 +118,7 @@ export const CreateAdjustmentSlipModal = ({
 				backOrderProducts={backOrderProducts}
 				loading={adjustmentSlipsStatus === request.REQUESTING}
 				onClose={onClose}
-				onSubmit={onCreateAdjustmentSlipSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

@@ -163,7 +163,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 			<TableHeader
 				buttonName="Create Account"
 				title="Accounts"
-				wrapperClassName="px-0 pt-0"
+				wrapperClassName="pt-2 px-0"
 				onCreate={
 					isCUDShown(user.user_type)
 						? () => setModalVisible(modals.CREATE)
@@ -172,9 +172,9 @@ export const TabAccounts = ({ disabled }: Props) => {
 				onCreateDisabled={disabled}
 			/>
 
-			<Filter />
-
 			<RequestErrors errors={convertIntoArray(accountError)} withSpaceBottom />
+
+			<Filter />
 
 			<Table
 				columns={getColumns()}
@@ -225,7 +225,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
@@ -240,7 +240,7 @@ const Filter = () => {
 					defaultValue={params.search}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 

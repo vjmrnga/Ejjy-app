@@ -158,16 +158,15 @@ export const BranchProductBalances = ({
 
 	return (
 		<>
+			<RequestErrors
+				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
+				withSpaceBottom
+			/>
+
 			<Filter
 				hasBoBalanceFilter={branchId === MAIN_BRANCH_ID}
 				isLoading={isFetchingBranchProducts && !isBranchProductsFetched}
 				productCategories={productCategories}
-			/>
-
-			<RequestErrors
-				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
-				withSpaceBottom
-				withSpaceTop
 			/>
 
 			<Table
@@ -210,7 +209,7 @@ const Filter = ({
 	const { params, setQueryParams } = useQueryParams();
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((keyword) => {
 			setQueryParams(
 				{ search: keyword?.toLowerCase() },
@@ -228,7 +227,7 @@ const Filter = ({
 					defaultValue={params.search}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 

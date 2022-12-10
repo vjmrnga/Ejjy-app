@@ -49,6 +49,7 @@ export const ReportsPerMachine = ({
 	const {
 		data: { branchMachines },
 		isLoading: isLoadingBranchMachines,
+		error: branchMachinesError,
 	} = useBranchMachines({
 		params: {
 			branchId,
@@ -56,10 +57,16 @@ export const ReportsPerMachine = ({
 		},
 		options: { refetchInterval: BRANCH_MACHINES_REFETCH_INTERVAL_MS },
 	});
-	const { mutateAsync: createXReadReport, isLoading: isCreatingXReadReport } =
-		useXReadReportCreate();
-	const { mutateAsync: createZReadReport, isLoading: isCreatingZReadReport } =
-		useZReadReportCreate();
+	const {
+		mutateAsync: createXReadReport,
+		isLoading: isCreatingXReadReport,
+		error: createXReadReportError,
+	} = useXReadReportCreate();
+	const {
+		mutateAsync: createZReadReport,
+		isLoading: isCreatingZReadReport,
+		error: createZReadReportError,
+	} = useZReadReportCreate();
 
 	// METHODS
 	useEffect(() => {
@@ -165,6 +172,16 @@ export const ReportsPerMachine = ({
 			<TableHeader
 				title="Reports per Machine"
 				wrapperClassName={tableHeaderClassName}
+			/>
+
+			<RequestErrors
+				className="px-6"
+				errors={[
+					...convertIntoArray(branchMachinesError),
+					...convertIntoArray(createXReadReportError?.errors),
+					...convertIntoArray(createZReadReportError?.errors),
+				]}
+				withSpaceBottom
 			/>
 
 			<Table

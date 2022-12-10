@@ -39,7 +39,7 @@ export const PendingTransactions = () => {
 
 	// Effect: Format pending transactions to be rendered in Table
 	useEffect(() => {
-		const onCallbackSuccess = ({ status, error, requestModel }) => {
+		const handleCallbackSuccess = ({ status, error, requestModel }) => {
 			if (status === request.SUCCESS) {
 				fetchPendingTransactions();
 
@@ -69,7 +69,7 @@ export const PendingTransactions = () => {
 								removePendingTransaction(
 									{ id },
 									(response) =>
-										onCallbackSuccess({
+										handleCallbackSuccess({
 											requestModel: request_model,
 											...response,
 										}),
@@ -80,7 +80,7 @@ export const PendingTransactions = () => {
 								editPendingTransaction(
 									{ id, is_pending_approval: false },
 									(response) =>
-										onCallbackSuccess({
+										handleCallbackSuccess({
 											requestModel: request_model,
 											...response,
 										}),

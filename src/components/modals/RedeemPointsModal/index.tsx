@@ -1,5 +1,5 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useAccountRedeemPoints } from 'hooks';
 import { useUserAuthenticate } from 'hooks/useUsers';
@@ -21,10 +21,9 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 		isLoading: isRedeemingPoints,
 		error: redeemPointsError,
 	} = useAccountRedeemPoints();
-
 	const {
 		mutateAsync: authenticateUser,
-		isLoading: isAuthenticating,
+		isLoading: isAuthenticatingUser,
 		error: authenticateUserError,
 	} = useUserAuthenticate();
 
@@ -51,7 +50,7 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 		[account],
 	);
 
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		const { data } = await authenticateUser({
 			login: formData.username,
 			password: formData.password,
@@ -92,7 +91,7 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 				initialValues={getFormDetails().defaultValues}
 				validationSchema={getFormDetails().schema}
 				onSubmit={(formData) => {
-					onSubmit(formData);
+					handleSubmit(formData);
 				}}
 			>
 				<Form>
@@ -142,13 +141,13 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 
 					<div className="ModalCustomFooter">
 						<Button
-							disabled={isRedeemingPoints || isAuthenticating}
+							disabled={isRedeemingPoints || isAuthenticatingUser}
 							text="Cancel"
 							type="button"
 							onClick={onClose}
 						/>
 						<Button
-							loading={isRedeemingPoints || isAuthenticating}
+							loading={isRedeemingPoints || isAuthenticatingUser}
 							text="Redeem"
 							type="submit"
 							variant="primary"

@@ -178,7 +178,6 @@ export const ModifyCreditRegistrationForm = ({
 							<FormattedInputNumber
 								className="w-100"
 								controls={false}
-								size="large"
 								value={values['creditLimit']}
 								onChange={(value) => {
 									setFieldValue('creditLimit', value);

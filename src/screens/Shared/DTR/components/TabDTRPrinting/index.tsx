@@ -155,7 +155,7 @@ export const TabDTRPrinting = () => {
 			<TableHeader
 				buttonName="Print DTR"
 				title="DTR Printing"
-				wrapperClassName="px-0 pt-0"
+				wrapperClassName="pt-2 px-0"
 				onCreate={handleCreatePdf}
 				onCreateDisabled={dataSource.length === 0}
 				onCreateIcon={<FilePdfOutlined />}

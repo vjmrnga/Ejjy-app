@@ -35,7 +35,7 @@ export const Branches = () => {
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
-		error: listError,
+		error: branchesError,
 	} = useBranches({
 		params: {
 			pageSize: MAX_PAGE_SIZE,
@@ -44,7 +44,7 @@ export const Branches = () => {
 	const {
 		mutate: deleteBranch,
 		isLoading: isDeletingBranch,
-		error: deleteError,
+		error: deleteBranchError,
 	} = useBranchDelete();
 
 	// METHODS
@@ -84,10 +84,12 @@ export const Branches = () => {
 				/>
 
 				<RequestErrors
+					className="px-6"
 					errors={[
-						...convertIntoArray(listError),
-						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(branchesError),
+						...convertIntoArray(deleteBranchError?.errors),
 					]}
+					withSpaceBottom
 				/>
 
 				<Table

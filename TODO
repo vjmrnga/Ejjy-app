@@ -14,6 +14,8 @@ TODO on sprint break:
   - [Assign] User modal: add the name of the user
 - Use online API for head office CUD
 - Add border to tables
+- Refactor debounce method
+- Use navlink instead of history for button
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 

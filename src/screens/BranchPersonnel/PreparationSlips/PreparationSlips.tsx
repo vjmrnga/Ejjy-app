@@ -85,7 +85,7 @@ export const PreparationSlips = () => {
 		setData(formattedPreparationSlips);
 	}, [preparationSlips]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getPreparationSlips(
 			{
 				assignedPersonnelId: user.id,
@@ -110,7 +110,7 @@ export const PreparationSlips = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: handlePageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions,

@@ -32,7 +32,7 @@ export const FulfillReturnItemSlipModal = ({
 	} = useReturnItemSlips();
 
 	// METHODS
-	const onFulfill = (formData) => {
+	const handleFulfill = (formData) => {
 		const products = formData.map((product) => ({
 			product_id: product.product_id,
 			quantity_received:
@@ -110,7 +110,7 @@ export const FulfillReturnItemSlipModal = ({
 				loading={returnItemSlipsStatus === request.REQUESTING}
 				returnItemSlip={returnItemSlip}
 				onClose={onClose}
-				onSubmit={onFulfill}
+				onSubmit={handleFulfill}
 			/>
 		</Modal>
 	);

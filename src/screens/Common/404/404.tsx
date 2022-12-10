@@ -6,14 +6,14 @@ import { useHistory } from 'react-router-dom';
 const Error404 = () => {
 	const history = useHistory();
 
-	const onBackHome = () => {
+	const handleBackHome = () => {
 		history.replace('dashboard');
 	};
 
 	return (
 		<Result
 			extra={
-				<Button type="primary" onClick={onBackHome}>
+				<Button type="primary" onClick={handleBackHome}>
 					Back Home
 				</Button>
 			}

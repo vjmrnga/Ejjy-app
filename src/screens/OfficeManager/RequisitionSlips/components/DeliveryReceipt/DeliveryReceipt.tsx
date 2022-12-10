@@ -57,7 +57,7 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 						<ViewButtonIcon
 							tooltip="View Adjustment Slips"
 							onClick={() => {
-								onViewAdjustmentSlips({
+								handleViewAdjustmentSlips({
 									id,
 									barcode: product?.barcode,
 									name: product?.name,
@@ -124,7 +124,7 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 		);
 	};
 
-	const onViewAdjustmentSlips = (deliveryReceiptProduct) => {
+	const handleViewAdjustmentSlips = (deliveryReceiptProduct) => {
 		setSelectedDeliveryReceiptProduct(deliveryReceiptProduct);
 		setViewProductAdjustmentsSlipVisible(true);
 	};

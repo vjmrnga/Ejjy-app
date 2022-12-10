@@ -90,8 +90,6 @@ export const RequisitionSlips = () => {
 			<Box>
 				<TableHeaderRequisitionSlip />
 
-				<Filter />
-
 				<RequestErrors
 					className="px-6"
 					errors={[
@@ -100,6 +98,8 @@ export const RequisitionSlips = () => {
 					]}
 					withSpaceBottom
 				/>
+
+				<Filter />
 
 				<Table
 					columns={columns}

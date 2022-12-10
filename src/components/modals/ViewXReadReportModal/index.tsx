@@ -65,7 +65,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 		}, 2000);
 	};
 
-	const onCreateTxt = () => {
+	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
 		createXReadTxt({ report, siteSettings });
 		setIsCreatingTxt(false);
@@ -79,7 +79,6 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					key="print"
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<PrinterOutlined />}
-					size="large"
 					type="primary"
 					onClick={handlePrint}
 				>
@@ -90,7 +89,6 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<FilePdfOutlined />}
 					loading={isCreatingPdf}
-					size="large"
 					type="primary"
 					onClick={handleCreatePdf}
 				>
@@ -101,9 +99,8 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<FileTextOutlined />}
 					loading={isCreatingTxt}
-					size="large"
 					type="primary"
-					onClick={onCreateTxt}
+					onClick={handleCreateTxt}
 				>
 					Create TXT
 				</Button>,

@@ -91,7 +91,7 @@ export const ReceiveDeliveryReceiptModal = ({
 		[deliveryReceiptStatus, recentRequest],
 	);
 
-	const onReceiveDeliveryReceiptSubmit = (data) => {
+	const handleReceiveDeliveryReceiptSubmit = (data) => {
 		const deliveredOrderSlips = orderSlips
 			.filter(({ id }) => id !== orderSlip.id)
 			.map(({ status }) => status.value === orderSlipStatus.DELIVERED);
@@ -134,7 +134,7 @@ export const ReceiveDeliveryReceiptModal = ({
 				loading={isReceiving()}
 				products={products}
 				onClose={onClose}
-				onSubmit={onReceiveDeliveryReceiptSubmit}
+				onSubmit={handleReceiveDeliveryReceiptSubmit}
 			/>
 		</Modal>
 	);

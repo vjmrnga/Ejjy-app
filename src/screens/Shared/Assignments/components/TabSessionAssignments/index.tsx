@@ -73,12 +73,12 @@ export const TabSessionAssignments = () => {
 				wrapperClassName="pt-2 px-0"
 			/>
 
-			<Filter />
-
 			<RequestErrors
 				errors={convertIntoArray(cashieringAssignmentsError)}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

@@ -4,7 +4,7 @@ import { Button, Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { TableActions, TableHeader } from 'components';
 import { Label } from 'components/elements';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -268,7 +268,7 @@ const Filter = () => {
 	});
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		debounce((keyword) => {
 			setQueryParams({ search: keyword }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
@@ -283,17 +283,17 @@ const Filter = () => {
 					defaultValue={params.search}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Product Category" spacing />
 				<Select
+					className="w-100"
 					filterOption={filterOption}
 					loading={isFetchingProductCategories}
 					optionFilterProp="children"
-					style={{ width: '100%' }}
 					value={params.productCategory}
 					allowClear
 					showSearch

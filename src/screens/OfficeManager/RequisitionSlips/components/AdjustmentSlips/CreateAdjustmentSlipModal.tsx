@@ -101,8 +101,8 @@ export const CreateAdjustmentSlipModal = ({
 		return false;
 	};
 
-	const onCreateAdjustmentSlipSubmit = (values) => {
-		if (hasErrors(values)) {
+	const handleSubmit = (formData) => {
+		if (hasErrors(formData)) {
 			return;
 		}
 
@@ -111,11 +111,11 @@ export const CreateAdjustmentSlipModal = ({
 				delivery_receipt_id: deliveryReceipt?.id,
 				creating_user_id: user.id,
 				remarks,
-				adjustment_slip_products: getProducts(values),
+				adjustment_slip_products: getProducts(formData),
 			});
 		};
 
-		const requiresPassword = values.deliveryReceiptProducts.some(
+		const requiresPassword = formData.deliveryReceiptProducts.some(
 			({ is_adjusted }) => is_adjusted,
 		);
 		if (requiresPassword) {
@@ -168,7 +168,7 @@ export const CreateAdjustmentSlipModal = ({
 				deliveryReceiptProducts={deliveryReceiptProducts}
 				loading={adjustmentSlipsStatus === request.REQUESTING}
 				onClose={onClose}
-				onSubmit={onCreateAdjustmentSlipSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

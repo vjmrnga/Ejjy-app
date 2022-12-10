@@ -18,7 +18,8 @@ export const BasePageInfo = ({ markdown }: Props) => {
 	useEffect(() => {
 		fetch(markdown)
 			.then((res) => res.text())
-			.then((text) => setContent(text));
+			.then((text) => setContent(text))
+			.catch((err) => console.error(err));
 	});
 
 	return (
@@ -28,7 +29,6 @@ export const BasePageInfo = ({ markdown }: Props) => {
 					className="BaseInfo__button"
 					icon={<QuestionOutlined />}
 					shape="circle"
-					size="large"
 					onClick={() => setIsInfoVisible(true)}
 				/>
 			</Tooltip>

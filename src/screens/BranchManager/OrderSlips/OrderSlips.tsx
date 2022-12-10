@@ -75,7 +75,7 @@ export const OrderSlips = () => {
 		}
 	}, [orderSlips]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getOrderSlipsExtended(
 			{
 				assigned_store_id: user?.branch?.id,
@@ -100,7 +100,7 @@ export const OrderSlips = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: handlePageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions,

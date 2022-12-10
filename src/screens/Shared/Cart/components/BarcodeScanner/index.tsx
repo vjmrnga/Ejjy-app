@@ -89,7 +89,7 @@ const Component = (props, ref) => {
 		<>
 			{branchProductsError && (
 				<RequestErrors
-					className="px-4"
+					className="px-6"
 					errors={convertIntoArray(branchProductsError)}
 					withSpaceBottom
 				/>

@@ -2,8 +2,8 @@ import { Tabs } from 'antd';
 import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
-import { toString } from 'lodash';
-import React, { useEffect } from 'react';
+import _ from 'lodash';
+import React from 'react';
 import { TabBranchAssignments } from './components/TabBranchAssignments';
 import { TabSessionAssignments } from './components/TabSessionAssignments';
 
@@ -15,20 +15,14 @@ export const assignmentTabs = {
 export const Assignments = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 
 	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			handleTabClick(assignmentTabs.BRANCH);
-		}
-	}, [currentTab]);
-
-	const handleTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -37,7 +31,7 @@ export const Assignments = () => {
 		<Content title="Assignments">
 			<Box>
 				<Tabs
-					activeKey={toString(currentTab)}
+					activeKey={_.toString(tab) || assignmentTabs.BRANCH}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane

@@ -78,9 +78,9 @@ export const AssignBackOrderForm = ({
 					<Form>
 						<Label label="Receiver (User)" spacing />
 						<Select
+							className="w-100"
 							disabled={usersStatus === request.REQUESTING}
 							loading={usersStatus === request.REQUESTING}
-							style={{ width: '100%' }}
 							value={values.receiver_id}
 							onChange={(value) => setFieldValue('receiver_id', value)}
 						>

@@ -84,7 +84,7 @@ export const SetOutOfStockModal = ({
 		[requisitionSlipsStatus, recentRequest],
 	);
 
-	const onSetOutOfStockSubmit = (values) => {
+	const handleSubmit = (values) => {
 		const requisition_slip_products = values.products
 			.filter(({ selected }) => selected)
 			.map(({ requisition_slip_product_id }) => ({
@@ -125,7 +125,7 @@ export const SetOutOfStockModal = ({
 					loading={isFetching() || isSettingOutOfStock()}
 					products={products}
 					onClose={onClose}
-					onSubmit={onSetOutOfStockSubmit}
+					onSubmit={handleSubmit}
 				/>
 			</Space>
 		</Modal>

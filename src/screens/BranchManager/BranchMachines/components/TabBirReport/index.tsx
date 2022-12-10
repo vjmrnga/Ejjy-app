@@ -153,7 +153,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 		[siteSettings],
 	);
 
-	const onPrintPDF = () => {
+	const handlePrintPDF = () => {
 		setIsPrinting(true);
 
 		const dataHtml = printBirReport({
@@ -190,7 +190,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				buttonName="Print PDF"
 				title="BIR Report"
 				wrapperClassName="pt-2 px-0"
-				onCreate={onPrintPDF}
+				onCreate={handlePrintPDF}
 				onCreateDisabled={isPrinting}
 			/>
 

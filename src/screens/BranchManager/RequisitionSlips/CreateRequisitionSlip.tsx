@@ -281,7 +281,6 @@ export const CreateRequisitionSlip = () => {
 							<div className="px-6 pb-6 d-flex flex-row-reverse">
 								<Button
 									disabled={loading || isEmpty(productsRef.current)}
-									size="large"
 									type="primary"
 									onClick={submitForm}
 								>

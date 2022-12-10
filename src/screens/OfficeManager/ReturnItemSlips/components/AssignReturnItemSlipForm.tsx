@@ -1,14 +1,14 @@
 import { Col, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
 import { useBranches } from 'hooks';
-import { convertIntoArray, sleep } from 'utils';
+import React, { useCallback, useState } from 'react';
+import { convertIntoArray, filterOption, sleep } from 'utils';
+import * as Yup from 'yup';
 import { Button, FieldError, Label } from '../../../../components/elements';
+import { RequestErrors } from '../../../../components/RequestErrors';
 import { MAX_PAGE_SIZE } from '../../../../global/constants';
 import { request, userTypes } from '../../../../global/types';
 import { useUsers } from '../../../../hooks/useUsers';
-import { RequestErrors } from '../../../../components/RequestErrors/RequestErrors';
 
 interface Props {
 	returnItemSlip: any;
@@ -73,14 +73,9 @@ export const AssignReturnItemSlipForm = ({
 							<Col span={24}>
 								<Label label="Branches" spacing />
 								<Select
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									className="w-100"
+									filterOption={filterOption}
 									optionFilterProp="children"
-									style={{ width: '100%' }}
 									showSearch
 									onChange={(value) => {
 										getOnlineUsers(
@@ -113,16 +108,11 @@ export const AssignReturnItemSlipForm = ({
 							<Col span={24}>
 								<Label label="Receiver (User)" spacing />
 								<Select
+									className="w-100"
 									disabled={usersStatus === request.REQUESTING}
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									filterOption={filterOption}
 									loading={usersStatus === request.REQUESTING}
 									optionFilterProp="children"
-									style={{ width: '100%' }}
 									value={values.receiver_id}
 									showSearch
 									onChange={(value) => setFieldValue('receiver_id', value)}

@@ -58,7 +58,6 @@ export const ViewDeliveryReceipt = ({ match }: Props) => {
 			title="[VIEW] F-DS1"
 		>
 			<Spin
-				size="large"
 				spinning={deliveryReceiptStatus === request.REQUESTING}
 				tip="Fetching delivery receipt..."
 			>

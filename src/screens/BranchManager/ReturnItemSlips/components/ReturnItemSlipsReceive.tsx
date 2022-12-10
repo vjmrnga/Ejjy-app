@@ -79,7 +79,7 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 		);
 	}, [returnItemSlips]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getReturnItemSlips(
 			{
 				receiverId: user?.id,
@@ -112,7 +112,7 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 				current: currentPage,
 				total: pageCount,
 				pageSize,
-				onChange: onPageChange,
+				onChange: handlePageChange,
 				disabled: !data,
 				position: ['bottomCenter'],
 				pageSizeOptions,

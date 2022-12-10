@@ -350,7 +350,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 		setSelectedProducts(options);
 	}, [paramProducts]);
 
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((keyword) => {
 			setProductOptions([]);
 			setSearchKeyword(keyword.toLowerCase());
@@ -381,7 +381,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 							{ shouldResetPage: true },
 						);
 					}}
-					onSearch={onSearchDebounced}
+					onSearch={handleSearchDebounced}
 				/>
 			</Col>
 			<Col md={12}>

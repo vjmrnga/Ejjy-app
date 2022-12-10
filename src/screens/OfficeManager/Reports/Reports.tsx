@@ -41,7 +41,7 @@ export const Reports = () => {
 	// return (
 	// 	<Content className="Reports" title="Reports">
 	// 		<Box>
-	// 			<Spin size="large" spinning={isFetchingProductCategories}>
+	// 			<Spin spinning={isFetchingProductCategories}>
 	// 				<RequestErrors
 	// 					errors={convertIntoArray(productCategoriesErrors)}
 	// 					withSpaceBottom

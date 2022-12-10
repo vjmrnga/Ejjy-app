@@ -8,7 +8,6 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
-	userLogTypes,
 } from 'global';
 import {
 	useBranchMachines,
@@ -64,12 +63,12 @@ export const TabUserLogs = () => {
 		<div>
 			<TableHeader title="User Logs" wrapperClassName="pt-2 px-0" />
 
-			<Filter />
-
 			<RequestErrors
 				errors={convertIntoArray(logsError, 'Logs')}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

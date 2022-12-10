@@ -1,5 +1,6 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { RequestErrors } from 'components';
 import { ButtonLink } from 'components/elements';
 import {
 	backOrderTypes,
@@ -10,7 +11,12 @@ import {
 } from 'global';
 import { useBackOrders, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { formatDateTime, getBackOrderStatus, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	getBackOrderStatus,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -36,7 +42,8 @@ export const BackOrdersTable = ({
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: { backOrders, total },
-		isFetching: isBackOrdersFetching,
+		isFetching: isFetchingBackOrders,
+		error: backOrdersError,
 	} = useBackOrders({
 		params: {
 			...queryParams,
@@ -45,7 +52,6 @@ export const BackOrdersTable = ({
 	});
 
 	// METHODS
-
 	useEffect(() => {
 		const formattedBackOrders = backOrders.map((backOrder) => ({
 			key: backOrder.id,
@@ -74,24 +80,32 @@ export const BackOrdersTable = ({
 	}, [backOrders]);
 
 	return (
-		<Table
-			columns={columns}
-			dataSource={dataSource}
-			loading={isBackOrdersFetching}
-			pagination={{
-				current: Number(queryParams.page) || DEFAULT_PAGE,
-				total,
-				pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
-				onChange: (page, newPageSize) => {
-					setQueryParams({
-						page,
-						pageSize: newPageSize,
-					});
-				},
-				disabled: !dataSource,
-				position: ['bottomCenter'],
-				pageSizeOptions,
-			}}
-		/>
+		<>
+			<RequestErrors
+				className="px-6 pt-6"
+				errors={convertIntoArray(backOrdersError)}
+				withSpaceBottom
+			/>
+
+			<Table
+				columns={columns}
+				dataSource={dataSource}
+				loading={isFetchingBackOrders}
+				pagination={{
+					current: Number(queryParams.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
+					disabled: !dataSource,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+			/>
+		</>
 	);
 };

@@ -28,7 +28,7 @@ export const AssignReturnItemSlipModal = ({
 		useReturnItemSlips();
 
 	// METHODS
-	const onAssignReturnItemSlip = (data) => {
+	const handleSubmit = (data) => {
 		editReturnItemSlip(
 			{
 				id: returnItemSlip.id,
@@ -56,7 +56,7 @@ export const AssignReturnItemSlipModal = ({
 				loading={returnItemSlipsStatus === request.REQUESTING}
 				returnItemSlip={returnItemSlip}
 				onClose={onClose}
-				onSubmit={onAssignReturnItemSlip}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

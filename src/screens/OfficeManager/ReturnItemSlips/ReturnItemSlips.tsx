@@ -69,7 +69,7 @@ export const ReturnItemSlips = () => {
 		);
 	}, [returnItemSlips]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getReturnItemSlips(
 			{
 				page,
@@ -90,7 +90,7 @@ export const ReturnItemSlips = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: handlePageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions,

@@ -208,7 +208,7 @@ export const CreateStockOut = () => {
 						}
 						type="number"
 						onChange={(value) => {
-							onChangeQuantity(productId, value);
+							handleChangeQuantity(productId, value);
 						}}
 					/>
 					<FormSelect
@@ -216,7 +216,7 @@ export const CreateStockOut = () => {
 						options={quantityTypeOptions}
 						disabled
 						onChange={(value) => {
-							onChangeQuantityType(productId, value);
+							handleChangeQuantityType(productId, value);
 						}}
 					/>
 				</div>
@@ -237,7 +237,7 @@ export const CreateStockOut = () => {
 					disabled={!selected}
 					id={`${fieldKey}.remarks`}
 					onChange={(value) => {
-						onChangeRemarks(productId, value);
+						handleChangeRemarks(productId, value);
 					}}
 				/>
 				<ErrorMessage
@@ -249,7 +249,7 @@ export const CreateStockOut = () => {
 	};
 
 	// METHODS: Change listeners
-	const onChangeCheckbox = (productId, value, data = {}) => {
+	const handleChangeCheckbox = (productId, value, data = {}) => {
 		if (value) {
 			productsRef.current[productId] = data;
 		} else {
@@ -259,19 +259,19 @@ export const CreateStockOut = () => {
 		setCount(Object.keys(productsRef.current).length);
 	};
 
-	const onChangeQuantity = (productId, value) => {
+	const handleChangeQuantity = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantity = value;
 		}
 	};
 
-	const onChangeQuantityType = (productId, value) => {
+	const handleChangeQuantityType = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantityType = value;
 		}
 	};
 
-	const onChangeRemarks = (productId, value) => {
+	const handleChangeRemarks = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].remarks = value;
 		}
@@ -322,7 +322,7 @@ export const CreateStockOut = () => {
 				<Filter isLoading={isLoading} />
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
 						...convertIntoArray(createBackOrderError?.errors, 'Back Orders'),
@@ -340,7 +340,7 @@ export const CreateStockOut = () => {
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
-							<div className="PaddingHorizontal">
+							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
 									type="card"
@@ -361,7 +361,7 @@ export const CreateStockOut = () => {
 										setFieldValue,
 										renderQuantity,
 										renderRemarks,
-										onChangeCheckbox,
+										onChangeCheckbox: handleChangeCheckbox,
 									}}
 									isLoading={isLoading}
 									paginationProps={{
@@ -517,7 +517,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	});
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((keyword) => {
 			setQueryParams(
 				{ search: keyword?.toLowerCase() },
@@ -536,7 +536,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					disabled={isLoading}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 

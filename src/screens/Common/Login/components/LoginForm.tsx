@@ -41,7 +41,6 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 						<Col span={24}>
 							<Label label="Username" spacing />
 							<Input
-								size="large"
 								value={values['username']}
 								onChange={(e) => {
 									setFieldValue('username', e.target.value);
@@ -56,7 +55,6 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 						<Col span={24}>
 							<Label label="Password" spacing />
 							<Input.Password
-								size="large"
 								type="password"
 								value={values['password']}
 								onChange={(e) => {
@@ -74,7 +72,6 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 								className="mt-2"
 								htmlType="submit"
 								loading={loading}
-								size="large"
 								type="primary"
 								block
 							>

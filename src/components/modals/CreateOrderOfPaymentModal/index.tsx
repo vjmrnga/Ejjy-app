@@ -45,17 +45,17 @@ export const CreateOrderOfPaymentModal = ({
 	const { user } = useAuth();
 	const {
 		mutateAsync: createOrderOfPayment,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingOrderOfPayment,
+		error: createOrderOfPaymentError,
 	} = useOrderOfPaymentsCreate();
 	const {
 		mutateAsync: checkInvoiceValidity,
-		isLoading: isChecking,
+		isLoading: isCheckingInvoiceValidity,
 		error: checkInvoiceValidityError,
 	} = useCheckInvoiceValidity();
 
 	// METHODS
-	const onCreate = async (formData) => {
+	const handleCreate = async (formData) => {
 		if (invoiceValidityError) {
 			setInvoiceValidityError(null);
 		}
@@ -102,7 +102,7 @@ export const CreateOrderOfPaymentModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors, 'Create'),
+					...convertIntoArray(createOrderOfPaymentError?.errors, 'Create'),
 					...convertIntoArray(
 						checkInvoiceValidityError?.errors,
 						'Invoice Validity',
@@ -113,11 +113,11 @@ export const CreateOrderOfPaymentModal = ({
 			/>
 
 			<CreateOrderOfPaymentForm
-				loading={isCreating || isChecking}
+				loading={isCreatingOrderOfPayment || isCheckingInvoiceValidity}
 				payor={payor}
 				transaction={transaction}
 				onClose={onClose}
-				onSubmit={onCreate}
+				onSubmit={handleCreate}
 			/>
 		</Modal>
 	);

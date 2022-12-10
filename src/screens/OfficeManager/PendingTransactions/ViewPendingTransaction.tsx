@@ -151,7 +151,7 @@ const Details = ({
 	}, [pendingTransaction]);
 
 	return (
-		<Spin size="large" spinning={preparationSlipsStatus === request.REQUESTING}>
+		<Spin spinning={preparationSlipsStatus === request.REQUESTING}>
 			<Box className="PaddingHorizontal PaddingVertical">
 				<DetailsRow>
 					<DetailsHalf label="ID" value={pendingTransaction?.id} />

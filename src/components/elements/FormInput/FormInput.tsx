@@ -35,7 +35,7 @@ const FormInput = ({
 	const [field, , helpers] = useField(id);
 	const inputRe = /^[0-9/.\b]+\.?$/g;
 
-	const onChangeField = (event) => {
+	const handleChangeField = (event) => {
 		let { value } = event.target;
 
 		if (isMoney) {
@@ -49,7 +49,7 @@ const FormInput = ({
 		onChange?.(value);
 	};
 
-	const onBlur = (event) => {
+	const handleBlur = (event) => {
 		let { value } = event.target;
 
 		if (isMoney) {
@@ -61,7 +61,7 @@ const FormInput = ({
 		helpers.setValue(value);
 	};
 
-	const onKeyDown = (event) => {
+	const handleKeyDown = (event) => {
 		const { key } = event;
 
 		const isNumber = type === 'number' || isMoney;
@@ -119,9 +119,9 @@ const FormInput = ({
 				placeholder={placeholder}
 				step={step}
 				type={type}
-				onBlur={onBlur}
-				onChange={onChangeField}
-				onKeyDown={onKeyDown}
+				onBlur={handleBlur}
+				onChange={handleChangeField}
+				onKeyDown={handleKeyDown}
 			/>
 		</div>
 	);

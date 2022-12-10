@@ -180,7 +180,7 @@ export const CreateBackOrder = () => {
 						}
 						type="number"
 						onChange={(value) => {
-							onChangeQuantity(productId, value);
+							handleChangeQuantity(productId, value);
 						}}
 					/>
 					<FormSelect
@@ -188,7 +188,7 @@ export const CreateBackOrder = () => {
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
 						onChange={(value) => {
-							onChangeQuantityType(productId, value);
+							handleChangeQuantityType(productId, value);
 						}}
 					/>
 				</div>
@@ -201,7 +201,7 @@ export const CreateBackOrder = () => {
 	};
 
 	// METHODS: Change listeners
-	const onChangeCheckbox = (productId, value, data = {}) => {
+	const handleChangeCheckbox = (productId, value, data = {}) => {
 		if (value) {
 			productsRef.current[productId] = data;
 		} else {
@@ -211,20 +211,20 @@ export const CreateBackOrder = () => {
 		setCount(Object.keys(productsRef.current).length);
 	};
 
-	const onChangeQuantity = (productId, value) => {
+	const handleChangeQuantity = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantity = value;
 		}
 	};
 
-	const onChangeQuantityType = (productId, value) => {
+	const handleChangeQuantityType = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantityType = value;
 		}
 	};
 
 	// METHODS: Filters
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getBranchProducts(
 			{
 				branchId,
@@ -238,7 +238,7 @@ export const CreateBackOrder = () => {
 		);
 	};
 
-	const onSearch = (keyword) => {
+	const handleSearch = (keyword) => {
 		const lowerCaseKeyword = keyword?.toLowerCase();
 
 		getBranchProducts(
@@ -255,7 +255,7 @@ export const CreateBackOrder = () => {
 		setSeachedKeyword(lowerCaseKeyword);
 	};
 
-	const onCreate = () => {
+	const handleCreate = () => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -290,7 +290,7 @@ export const CreateBackOrder = () => {
 					statusDisabled={activeTab === tabs.SELECTED}
 					statuses={branchProductStatusOptionsWithAll}
 					title="Create Back Order"
-					onSearch={onSearch}
+					onSearch={handleSearch}
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
@@ -324,7 +324,7 @@ export const CreateBackOrder = () => {
 						await sleep(500);
 						setSubmitting(false);
 
-						onCreate();
+						handleCreate();
 					}}
 				>
 					{({ values, setFieldValue }) => (
@@ -349,14 +349,14 @@ export const CreateBackOrder = () => {
 										values,
 										setFieldValue,
 										renderQuantity,
-										onChangeCheckbox,
+										onChangeCheckbox: handleChangeCheckbox,
 									}}
 									loading={loading || isSubmitting}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
-										onPageChange,
+										onPageChange: handlePageChange,
 									}}
 								/>
 							</div>

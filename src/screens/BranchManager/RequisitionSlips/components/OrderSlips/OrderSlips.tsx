@@ -74,17 +74,17 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 		}
 	}, [orderSlipRequestStatus, orderSlipRecentRequest]);
 
-	const onViewOrderSlip = (orderSlip) => {
+	const handleViewOrderSlip = (orderSlip) => {
 		setSelectedOrderSlip(orderSlip);
 		setViewOrderSlipVisible(true);
 	};
 
-	const onReceiveDeliveryReceipt = (orderSlip) => {
+	const handleReceiveDeliveryReceipt = (orderSlip) => {
 		setSelectedOrderSlip(orderSlip);
 		setReceiveDeliveryReceiptVisible(true);
 	};
 
-	const onReceiveDeliveryReceiptSuccess = () => {
+	const handleReceiveDeliveryReceiptSuccess = () => {
 		getOrderSlipsExtended(
 			{
 				assigned_store_id: null,
@@ -111,8 +111,8 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 			<OrderSlipsTable
 				orderSlips={orderSlips}
 				orderSlipStatus={orderSlipRequestStatus}
-				onReceiveDeliveryReceipt={onReceiveDeliveryReceipt}
-				onViewOrderSlip={onViewOrderSlip}
+				onReceiveDeliveryReceipt={handleReceiveDeliveryReceipt}
+				onViewOrderSlip={handleViewOrderSlip}
 			/>
 
 			<ViewOrderSlipModal
@@ -127,7 +127,7 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 				requisitionSlip={requisitionSlip}
 				visible={receiveDeliveryReceiptVisible}
 				onClose={() => setReceiveDeliveryReceiptVisible(false)}
-				onSuccess={onReceiveDeliveryReceiptSuccess}
+				onSuccess={handleReceiveDeliveryReceiptSuccess}
 			/>
 		</Box>
 	);

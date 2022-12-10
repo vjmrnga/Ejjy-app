@@ -1,5 +1,6 @@
 import { List, message, Tag, Typography } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
+import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
@@ -136,7 +137,9 @@ export const DiscountOptions = () => {
 				)}
 
 				<RequestErrors
-					className="px-4"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
 						...convertIntoArray(listError),
 						...convertIntoArray(deleteError?.errors),

@@ -38,7 +38,7 @@ const useQueryParams = ({
 		}
 	}, []);
 
-	const onChange = () => {
+	const handleChange = () => {
 		const pageSize = params.pageSize || currentPageSize;
 		const page = params.page || currentPage;
 
@@ -47,7 +47,7 @@ const useQueryParams = ({
 		}
 	};
 
-	const debouncedOnChange = useDebouncedCallback(onChange, debounceTime);
+	const debouncedOnChange = useDebouncedCallback(handleChange, debounceTime);
 
 	useEffect(() => {
 		debouncedOnChange();
@@ -75,7 +75,7 @@ const useQueryParams = ({
 		);
 	};
 
-	return { params, setQueryParams, refreshList: onChange };
+	return { params, setQueryParams, refreshList: handleChange };
 };
 
 export default useQueryParams;

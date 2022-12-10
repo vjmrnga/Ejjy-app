@@ -1,12 +1,11 @@
 import { CheckOutlined } from '@ant-design/icons';
-import { Button, Col, Radio, Row, Table, Tag, Tooltip, Typography } from 'antd';
+import { Button, Table, Tag, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
 	ResolveProblematicAttendanceLogModal,
 	TableHeader,
 } from 'components';
-import { Label } from 'components/elements';
 import {
 	attendanceCategories,
 	attendanceTypes,
@@ -14,12 +13,7 @@ import {
 	MAX_PAGE_SIZE,
 	serviceTypes,
 } from 'global';
-import {
-	useAttendanceLogs,
-	useAuth,
-	useProblematicAttendanceLogs,
-	useQueryParams,
-} from 'hooks';
+import { useAttendanceLogs, useProblematicAttendanceLogs } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -27,7 +21,6 @@ import {
 	formatDateTime,
 	getAttendanceLogDescription,
 	getFullName,
-	isUserFromBranch,
 } from 'utils';
 
 const ongoingTableColumns: ColumnsType = [
@@ -73,20 +66,18 @@ const pendingTableColumns: ColumnsType = [
 	{ title: 'Description', dataIndex: 'description' },
 ];
 
+const params = {
+	attendanceCategory: attendanceCategories.ATTENDANCE,
+	pageSize: MAX_PAGE_SIZE,
+};
+
 export const TabDTR = () => {
 	// STATES
 	const [selectedAttendanceLog, setSelectedAttendanceLog] = useState(null);
 	const [ongoingDataSource, setOngoingDataSource] = useState([]);
 	const [pendingDataSource, setPendingDataSource] = useState([]);
 
-	// VARIABLES
-	const params = {
-		attendanceCategory: attendanceCategories.ATTENDANCE,
-		pageSize: MAX_PAGE_SIZE,
-	};
-
 	// CUSTOM HOOKS
-	const { user } = useAuth();
 	const { isSuccess: isAttendanceLogsSuccess } = useAttendanceLogs({
 		params: {
 			...params,
@@ -155,10 +146,11 @@ export const TabDTR = () => {
 
 	return (
 		<>
-			<TableHeader title="Daily Time Record" wrapperClassName="px-0 pt-0" />
-			{!isUserFromBranch(user.user_type) && <Filter />}
+			<TableHeader title="Daily Time Record" wrapperClassName="pt-2 px-0" />
+
 			<RequestErrors
 				errors={convertIntoArray(problematicAttendanceLogsError)}
+				withSpaceBottom
 			/>
 
 			<Table
@@ -197,36 +189,5 @@ export const TabDTR = () => {
 				/>
 			)}
 		</>
-	);
-};
-
-const Filter = () => {
-	const { params, setQueryParams } = useQueryParams();
-
-	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col md={12}>
-				<Label label="Type" spacing />
-				<Radio.Group
-					defaultValue={null}
-					options={[
-						{ label: 'All', value: null },
-						{ label: 'Attendance', value: attendanceCategories.ATTENDANCE },
-						{
-							label: 'Tracker',
-							value: attendanceCategories.TRACKER,
-						},
-					]}
-					optionType="button"
-					value={params.attendanceCategory}
-					onChange={(e) => {
-						setQueryParams(
-							{ attendanceCategory: e.target.value },
-							{ shouldResetPage: true },
-						);
-					}}
-				/>
-			</Col>
-		</Row>
 	);
 };

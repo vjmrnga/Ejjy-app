@@ -36,7 +36,7 @@ export const ReturnItemSlips = () => {
 	const history = useHistory();
 
 	// METHODS
-	const onOpenModal = (returnItemSlip, type) => {
+	const handleOpenModal = (returnItemSlip, type) => {
 		setModalType(type);
 		setSelectedReturnItemSlip(returnItemSlip);
 	};
@@ -61,17 +61,17 @@ export const ReturnItemSlips = () => {
 						<ReturnItemSlipsReceive
 							ref={returnItemSlipsReceiveRef}
 							selectReturnItemSlip={(returnItemSlip) => {
-								onOpenModal(returnItemSlip, modals.VIEW);
+								handleOpenModal(returnItemSlip, modals.VIEW);
 							}}
 							onFulfill={(returnItemSlip) => {
-								onOpenModal(returnItemSlip, modals.FULFILL);
+								handleOpenModal(returnItemSlip, modals.FULFILL);
 							}}
 						/>
 					</Tabs.TabPane>
 					<Tabs.TabPane key={tabs.SENT} tab="Sent">
 						<ReturnItemSlipsSent
 							selectReturnItemSlip={(returnItemSlip) => {
-								onOpenModal(returnItemSlip, modals.VIEW);
+								handleOpenModal(returnItemSlip, modals.VIEW);
 							}}
 						/>
 					</Tabs.TabPane>
@@ -80,14 +80,14 @@ export const ReturnItemSlips = () => {
 				{modalType === modals.VIEW && selectedReturnItemSlip && (
 					<ViewReturnItemSlipModal
 						returnItemSlip={selectedReturnItemSlip}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
 
 				{modalType === modals.FULFILL && selectedReturnItemSlip && (
 					<FulfillReturnItemSlipModal
 						returnItemSlip={selectedReturnItemSlip}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 						onSuccess={() => returnItemSlipsReceiveRef.current?.refreshList()}
 					/>
 				)}

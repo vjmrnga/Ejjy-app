@@ -8,7 +8,12 @@ import { quantityTypes } from 'global';
 import { useAuth } from 'hooks/useAuth';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import { convertToBulk, formatQuantity, getColoredText } from 'utils';
+import {
+	convertToBulk,
+	filterOption,
+	formatQuantity,
+	getColoredText,
+} from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [
@@ -109,7 +114,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 		}
 	}, [orderSlip, quantityType, personnel]);
 
-	const onPrint = () => {
+	const handlePrint = () => {
 		setPrintingDisabled(true);
 
 		const html = printOrderSlip(user, orderSlip, data, quantityType);
@@ -136,7 +141,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 						loading={printingDisabled}
 						text="Print"
 						variant="primary"
-						onClick={onPrint}
+						onClick={handlePrint}
 					/>
 				</Space>,
 			]}
@@ -170,14 +175,9 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 				<Col sm={12} span={24}>
 					<Label label="Assigned Personnel" spacing />
 					<Select
-						filterOption={(input, option) =>
-							option.children
-								.toString()
-								.toLowerCase()
-								.indexOf(input.toLowerCase()) >= 0
-						}
+						className="w-100"
+						filterOption={filterOption}
 						optionFilterProp="children"
-						style={{ width: '100%' }}
 						allowClear
 						showSearch
 						onChange={(value) => {

@@ -109,12 +109,12 @@ export const TabCashBreakdowns = () => {
 		<>
 			<TableHeader title="Cash Breakdowns" wrapperClassName="pt-2 px-0" />
 
-			<Filter />
-
 			<RequestErrors
-				errors={convertIntoArray(cashBreakdownsError)}
+				errors={convertIntoArray(cashBreakdownsError, 'Cash Breakdowns')}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

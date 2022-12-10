@@ -630,16 +630,16 @@ export const confirmPassword = ({
 					password = e.target.value;
 				}}
 				onPressEnter={() => {
-					onSubmit();
+					handleSubmit();
 				}}
 			/>
 		),
 		onOk: () => {
-			onSubmit();
+			handleSubmit();
 		},
 	});
 
-	const onSubmit = () => {
+	const handleSubmit = () => {
 		if (password === 'generic123') {
 			onSuccess();
 			modal.destroy();

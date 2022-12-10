@@ -19,7 +19,7 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getId } from 'utils';
+import { convertIntoArray, filterOption, formatInPeso, getId } from 'utils';
 import { TransactionsCancelled } from './components/TransactionsCancelled';
 
 const columns: ColumnsType = [
@@ -168,15 +168,10 @@ const Filter = ({ isLoading }: FilterProps) => {
 			<Col lg={12} span={24}>
 				<Label label="Status" spacing />
 				<Select
+					className="w-100"
 					disabled={isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
-					style={{ width: '100%' }}
 					value={params.statuses}
 					allowClear
 					showSearch

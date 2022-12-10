@@ -51,12 +51,12 @@ export const OrderSlipsTable = ({
 							</Link>
 						) : null;
 
-					const onEdit =
+					const handleEdit =
 						status.value === osStatus.PREPARING
 							? () => onEditOrderSlip(orderSlip)
 							: null;
 
-					const onCreateDR =
+					const handleCreateDR =
 						status.value === osStatus.PREPARED
 							? () => onCreateDeliveryReceipt(id)
 							: null;
@@ -76,7 +76,10 @@ export const OrderSlipsTable = ({
 						),
 						dr: deliveryReceipt,
 						actions: (
-							<OrderSlipActions onCreateDR={onCreateDR} onEdit={onEdit} />
+							<OrderSlipActions
+								onCreateDR={handleCreateDR}
+								onEdit={handleEdit}
+							/>
 						),
 					};
 				}),

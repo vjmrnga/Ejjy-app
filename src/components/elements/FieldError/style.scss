@@ -3,16 +3,6 @@
 
 .FieldError {
 	@include flex($align-items: center);
-	margin-top: 8px;
-	margin-bottom: 5px;
-
-	&__spaceTop {
-		margin-top: 8px;
-	}
-
-	&__spaceBottom {
-		margin-bottom: 8px;
-	}
 
 	&_icon {
 		color: $color-red !important;

@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import Table from 'antd/lib/table';
+import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
@@ -95,7 +96,9 @@ export const PointSystemTags = () => {
 				)}
 
 				<RequestErrors
-					className="px-4"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
 						...convertIntoArray(pointSystemTagsError),
 						...convertIntoArray(deletePointSystemTagError?.errors),

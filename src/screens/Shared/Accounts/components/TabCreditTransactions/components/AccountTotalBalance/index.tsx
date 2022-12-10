@@ -22,10 +22,10 @@ export const AccountTotalBalance = ({
 	return (
 		<div className="AccountTotalBalance mb-4">
 			<Row gutter={[16, 16]}>
-				<Col span={12}>
+				<Col md={12}>
 					<Statistic title="Client" value={getFullName(account)} />
 				</Col>
-				<Col span={12}>
+				<Col md={12}>
 					<Statistic title="Total Balance" value={formatInPeso(totalBalance)} />
 					{isCUDShown(user.user_type) && (
 						<Button

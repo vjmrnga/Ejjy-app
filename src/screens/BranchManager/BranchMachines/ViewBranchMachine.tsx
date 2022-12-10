@@ -9,7 +9,6 @@ import { Box } from 'components/elements';
 import { GENERIC_ERROR_MESSAGE } from 'global';
 import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
-import { toString } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
@@ -44,16 +43,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 	const { user } = useAuth();
 	const history = useHistory();
 	const {
 		data: branchMachine,
-		isLoading,
-		isFetched,
-		error,
+		isLoading: isLoadingBranchMachine,
+		isFetched: isBranchMachineFetched,
+		error: branchMachineError,
 	} = useBranchMachineRetrieve({
 		id: branchMachineId,
 		options: {
@@ -64,17 +63,11 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		if (!currentTab) {
-			onTabClick(tabs.TRANSACTIONS);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (isFetched && !branchMachine) {
+		if (isBranchMachineFetched && !branchMachine) {
 			history.replace(`/branch-manager/branch-machines`);
 			message.error(GENERIC_ERROR_MESSAGE);
 		}
-	}, [branchMachine, isFetched]);
+	}, [branchMachine, isBranchMachineFetched]);
 
 	const getBreadcrumbItems = useCallback(
 		() => [
@@ -87,9 +80,9 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		[branchMachine, user],
 	);
 
-	const onTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -101,7 +94,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 			title="[VIEW] Branch Machine"
 		>
 			<ViewBranchMachineInfo />
-			<Spin spinning={isLoading}>
+			<Spin spinning={isLoadingBranchMachine}>
 				{branchMachine?.is_online === false && (
 					<Alert
 						className="mb-4"
@@ -113,19 +106,19 @@ export const ViewBranchMachine = ({ match }: Props) => {
 				)}
 
 				<Box className="ViewBranchMachine">
-					{error && (
-						<div className="PaddingVertical PaddingHorizontal pb-0">
-							<RequestErrors errors={convertIntoArray(error)} />
+					{branchMachineError && (
+						<div className="pa-6 pb-0">
+							<RequestErrors errors={convertIntoArray(branchMachineError)} />
 						</div>
 					)}
 
 					{branchMachine?.server_url && (
 						<Tabs
-							activeKey={toString(currentTab)}
-							className="PaddingHorizontal PaddingVertical"
+							activeKey={_.toString(tab) || tabs.TRANSACTIONS}
+							className="pa-6"
 							type="card"
 							destroyInactiveTabPane
-							onTabClick={onTabClick}
+							onTabClick={handleTabClick}
 						>
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
 								<TabTransactions branchMachineId={branchMachine.id} />

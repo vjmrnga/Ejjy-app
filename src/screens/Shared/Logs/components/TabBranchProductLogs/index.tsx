@@ -76,12 +76,12 @@ export const TabBranchProductLogs = () => {
 		<div>
 			<TableHeader title="Branch Product Logs" wrapperClassName="pt-2 px-0" />
 
-			<Filter />
-
 			<RequestErrors
 				errors={convertIntoArray(logsError, 'Logs')}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={getColumns()}
@@ -160,7 +160,7 @@ const Filter = () => {
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(branchProductsError, 'Branch Product'),
+					...convertIntoArray(branchProductsError, 'Branch Products'),
 					...convertIntoArray(usersError, 'Users'),
 					...convertIntoArray(branchError, 'Branches'),
 				]}

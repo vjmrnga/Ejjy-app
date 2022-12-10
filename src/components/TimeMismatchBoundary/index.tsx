@@ -52,19 +52,22 @@ export const TimeMismatchBoundary = () => {
 		}
 	};
 
-	const onSuccessCheck = (response) => {
-		let retrievedDate = null;
+	const handleSuccessCheck = (response) => {
+		if (response) {
+			let retrievedDate = null;
 
-		if (response.config.baseURL === TIME_API_BASE_URL) {
-			retrievedDate = dayjs(response.data.datetime);
-		} else {
-			retrievedDate = dayjs.tz(response.data);
+			if (response.config.baseURL === TIME_API_BASE_URL) {
+				retrievedDate = dayjs(response.data.datetime);
+			} else {
+				retrievedDate = dayjs.tz(response.data);
+			}
+
+			setHasMismatch(
+				retrievedDate?.isValid() &&
+					Math.abs(dayjs().diff(retrievedDate, 'minutes')) >=
+						MINUTES_DIFFERENCE,
+			);
 		}
-
-		setHasMismatch(
-			retrievedDate?.isValid() &&
-				Math.abs(dayjs().diff(retrievedDate, 'minutes')) >= MINUTES_DIFFERENCE,
-		);
 	};
 
 	useQuery<any>(
@@ -79,7 +82,7 @@ export const TimeMismatchBoundary = () => {
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
 			notifyOnChangeProps: ['data'],
-			onSuccess: onSuccessCheck,
+			onSuccess: handleSuccessCheck,
 		},
 	);
 
@@ -90,12 +93,11 @@ export const TimeMismatchBoundary = () => {
 					<Button
 						key="btn"
 						loading={isCheckingAgain}
-						size="large"
 						type="primary"
 						onClick={() => {
 							setIsCheckingAgain(true);
 							serviceFn()
-								.then(onSuccessCheck)
+								.then(handleSuccessCheck)
 								.finally(() => {
 									setIsCheckingAgain(false);
 								});

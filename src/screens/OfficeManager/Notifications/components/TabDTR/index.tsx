@@ -179,17 +179,21 @@ export const TabDTR = () => {
 
 	return (
 		<>
-			<TableHeader title="Daily Time Record" wrapperClassName="px-0 pt-0" />
+			<TableHeader title="Daily Time Record" wrapperClassName="pt-2 px-0" />
 
 			<RequestErrors
 				errors={[
-					...convertIntoArray(problematicAttendanceLogsError, 'Attendance'),
-					...convertIntoArray(problematicTrackerLogsError, 'Tracker'),
+					...convertIntoArray(
+						problematicAttendanceLogsError,
+						'Attendance Logs',
+					),
+					...convertIntoArray(problematicTrackerLogsError, 'Tracker Logs'),
 					...convertIntoArray(
 						approveDeclineProblematicAttendanceLogError?.errors,
-						'Create',
+						'Approve or Decline',
 					),
 				]}
+				withSpaceBottom
 			/>
 
 			<Table

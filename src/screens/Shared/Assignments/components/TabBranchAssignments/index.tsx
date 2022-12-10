@@ -65,12 +65,12 @@ export const TabBranchAssignments = () => {
 		<div>
 			<TableHeader title="Branch Assignments" wrapperClassName="pt-2 px-0" />
 
-			<Filter />
-
 			<RequestErrors
 				errors={convertIntoArray(branchAssignmentsError)}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

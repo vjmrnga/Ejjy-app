@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import { useBranches, useQueryParams } from 'hooks';
-import { toString } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { Content } from '../../../components';
 import { Box } from '../../../components/elements';
@@ -20,11 +20,11 @@ export const Checkings = () => {
 	// METHODS
 	useEffect(() => {
 		if (branches && !currentBranchId) {
-			onTabClick(branches?.[0]?.id);
+			handleTabClick(branches?.[0]?.id);
 		}
 	}, [branches, currentBranchId]);
 
-	const onTabClick = (branchId) => {
+	const handleTabClick = (branchId) => {
 		setQueryParams({
 			branchId,
 			page: 1,
@@ -36,10 +36,10 @@ export const Checkings = () => {
 		<Content className="Checkings" title="Checkings">
 			<Box padding>
 				<Tabs
-					activeKey={toString(currentBranchId)}
+					activeKey={_.toString(currentBranchId)}
 					type="card"
 					destroyInactiveTabPane
-					onTabClick={onTabClick}
+					onTabClick={handleTabClick}
 				>
 					{branches.map(({ name, id, online_url }) => (
 						<Tabs.TabPane key={id} disabled={!online_url} tab={name}>

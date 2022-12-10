@@ -6,7 +6,7 @@ import {
 	convertIntoArray,
 	getKeyDownCombination,
 } from 'utils';
-import { RequestErrors } from '../../../../../components/RequestErrors/RequestErrors';
+import { RequestErrors } from '../../../../../components/RequestErrors';
 import { SHOW_HIDE_SHORTCUT } from '../../../../../global/constants';
 import { request } from '../../../../../global/types';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
@@ -52,7 +52,7 @@ export const EditBranchProductsModal = ({
 		};
 	});
 
-	const onEditBranchProduct = (product, resetForm) => {
+	const handleEditBranchProduct = (product, resetForm) => {
 		editBranchProduct({ ...product, branchId }, ({ status }) => {
 			if (status === request.SUCCESS) {
 				onSuccess();
@@ -101,7 +101,7 @@ export const EditBranchProductsModal = ({
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
 				loading={branchProductsStatus === request.REQUESTING}
 				onClose={handleClose}
-				onSubmit={onEditBranchProduct}
+				onSubmit={handleEditBranchProduct}
 			/>
 		</Modal>
 	);

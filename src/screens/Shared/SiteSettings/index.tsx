@@ -61,13 +61,13 @@ export const SiteSettings = () => {
 	const { user } = useAuth();
 	const {
 		data: siteSettings,
-		isFetching,
-		error: retrieveError,
+		isFetching: isFetchingSiteSettings,
+		error: siteSettingsError,
 	} = useSiteSettingsRetrieve();
 	const {
 		mutateAsync: editSiteSettings,
-		isLoading,
-		error: editError,
+		isLoading: isEditingSiteSettings,
+		error: editSiteSettingsError,
 	} = useSiteSettingsEdit();
 
 	// METHODS
@@ -222,9 +222,8 @@ export const SiteSettings = () => {
 			<Label id={name} label={label} spacing />
 			<DatePicker
 				allowClear={false}
+				className="w-100"
 				format="YYYY-MM-DD"
-				size="large"
-				style={{ width: '100%' }}
 				value={values[name]}
 				onSelect={(value) => setFieldValue(name, value)}
 			/>
@@ -243,7 +242,6 @@ export const SiteSettings = () => {
 				className="w-100"
 				format="h:mm A"
 				name={name}
-				size="large"
 				value={values[name]}
 				hideDisabledOptions
 				use12Hours
@@ -268,7 +266,6 @@ export const SiteSettings = () => {
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
 					name={name}
-					size="large"
 					type={type}
 					value={values[name]}
 					onChange={(e) => {
@@ -280,7 +277,6 @@ export const SiteSettings = () => {
 				<Input.TextArea
 					name={name}
 					rows={3}
-					size="large"
 					value={values[name]}
 					onChange={(e) => {
 						setFieldValue(name, e.target.value);
@@ -289,10 +285,9 @@ export const SiteSettings = () => {
 			)}
 			{type === inputTypes.MONEY && (
 				<FormattedInputNumber
+					className="w-100"
 					controls={false}
 					name={name}
-					size="large"
-					style={{ width: '100%' }}
 					value={values[name]}
 					onChange={(value) => {
 						setFieldValue(name, value);
@@ -306,7 +301,7 @@ export const SiteSettings = () => {
 		</>
 	);
 
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		await editSiteSettings({
 			...formData,
 			closeSessionDeadline: formData.closeSessionDeadline.format('HH:mm:ss'),
@@ -328,11 +323,11 @@ export const SiteSettings = () => {
 			<SiteSettingsInfo />
 
 			<Box padding>
-				<Spin spinning={isFetching}>
+				<Spin spinning={isFetchingSiteSettings}>
 					<RequestErrors
 						errors={[
-							...convertIntoArray(retrieveError),
-							...convertIntoArray(editError?.errors),
+							...convertIntoArray(siteSettingsError),
+							...convertIntoArray(editSiteSettingsError?.errors),
 						]}
 						withSpaceBottom
 					/>
@@ -342,7 +337,7 @@ export const SiteSettings = () => {
 						validationSchema={getFormDetails().Schema}
 						enableReinitialize
 						onSubmit={(formData) => {
-							onSubmit(formData);
+							handleSubmit(formData);
 						}}
 					>
 						{({ values, setFieldValue }) => (
@@ -654,8 +649,7 @@ export const SiteSettings = () => {
 										<Button
 											disabled={isConnected === false}
 											htmlType="submit"
-											loading={isLoading}
-											size="large"
+											loading={isEditingSiteSettings}
 											type="primary"
 											block
 										>

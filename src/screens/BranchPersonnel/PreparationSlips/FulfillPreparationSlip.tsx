@@ -203,7 +203,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		}
 	};
 
-	const onSearch = useCallback(
+	const handleSearch = useCallback(
 		debounce((keyword) => {
 			const lowerCaseKeyword = keyword.toLowerCase();
 
@@ -228,7 +228,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		[psProducts],
 	);
 
-	const onShowFulfillSlipModal = (type) => {
+	const handleShowFulfillSlipModal = (type) => {
 		const product = data?.[selectedIndex]?.[0]?.product;
 
 		if (product) {
@@ -239,7 +239,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		}
 	};
 
-	const onUpdate = (id, quantity) => {
+	const handleUpdate = (id, quantity) => {
 		const newProducts = {
 			...psProducts,
 			[id]: {
@@ -255,7 +255,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		}
 	};
 
-	const onFulfill = (isPrepared) => {
+	const handleFulfill = (isPrepared) => {
 		if (!isEdited && !isPrepared) {
 			message.warning('You have not made any adjustments yet.');
 			return;
@@ -343,7 +343,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			});
 
 			// Update
-			onUpdate(foundKey, newQuantity);
+			handleUpdate(foundKey, newQuantity);
 		} else {
 			// Product not found
 			message.error({
@@ -383,12 +383,12 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		}
 
 		if (key === 'f1') {
-			onShowFulfillSlipModal(FULFILL_TYPES.ADD);
+			handleShowFulfillSlipModal(FULFILL_TYPES.ADD);
 			return;
 		}
 
 		if (key === 'f2') {
-			onShowFulfillSlipModal(FULFILL_TYPES.DEDUCT);
+			handleShowFulfillSlipModal(FULFILL_TYPES.DEDUCT);
 		}
 	}, 500);
 
@@ -413,7 +413,6 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		>
 			<BarcodeReader onError={handleError} onScan={handleScan} />
 			<Spin
-				size="large"
 				spinning={[
 					prepSlipStatus,
 					fulfillPrepSlipStatus,
@@ -440,12 +439,12 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 						<KeyboardButton
 							keyboardKey="F1"
 							label="Add Quantity"
-							onClick={() => onShowFulfillSlipModal(FULFILL_TYPES.ADD)}
+							onClick={() => handleShowFulfillSlipModal(FULFILL_TYPES.ADD)}
 						/>
 						<KeyboardButton
 							keyboardKey="F2"
 							label="Deduct Quantity"
-							onClick={() => onShowFulfillSlipModal(FULFILL_TYPES.DEDUCT)}
+							onClick={() => handleShowFulfillSlipModal(FULFILL_TYPES.DEDUCT)}
 						/>
 					</div>
 
@@ -453,7 +452,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 						<Label label="Search" spacing />
 						<Input
 							prefix={<SearchOutlined />}
-							onChange={(event) => onSearch(event.target.value.trim())}
+							onChange={(event) => handleSearch(event.target.value.trim())}
 						/>
 					</div>
 
@@ -469,14 +468,14 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 							<Button
 								text="Save"
 								variant="secondary"
-								onClick={() => onFulfill(false)}
+								onClick={() => handleFulfill(false)}
 							/>
 
 							<Button
 								classNames="FulfillPreparationSlip_btnActions_btnFulfill"
 								text="Fulfill"
 								variant="primary"
-								onClick={() => onFulfill(true)}
+								onClick={() => handleFulfill(true)}
 							/>
 						</div>
 					)}
@@ -488,7 +487,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					product={selectedProduct}
 					type={fulfillType}
 					onClose={() => setFulfillType(false)}
-					onSubmit={onUpdate}
+					onSubmit={handleUpdate}
 				/>
 			)}
 		</Content>

@@ -36,8 +36,8 @@ export const TabBranchProducts = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchProducts, total },
-		isFetching,
-		error,
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsError,
 	} = useBranchProducts({
 		params: {
 			hasNegativeBalance: true,
@@ -73,16 +73,19 @@ export const TabBranchProducts = () => {
 
 	return (
 		<>
-			<TableHeader title="Branch Products" wrapperClassName="pt-0 px-0" />
+			<TableHeader title="Branch Products" wrapperClassName="pt-2 px-0" />
+
+			<RequestErrors
+				errors={convertIntoArray(branchProductsError)}
+				withSpaceBottom
+			/>
 
 			<Filter />
-
-			<RequestErrors errors={convertIntoArray(error)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetching}
+				loading={isFetchingBranchProducts}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -118,7 +121,7 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
@@ -127,13 +130,13 @@ const Filter = () => {
 
 	return (
 		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
+			<Col lg={12}>
 				<Label label="Search" spacing />
 				<Input
 					defaultValue={params.search}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 		</Row>

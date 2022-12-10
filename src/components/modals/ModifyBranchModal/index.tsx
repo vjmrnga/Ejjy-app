@@ -109,7 +109,6 @@ export const ModifyBranchForm = ({
 							<Label label="Name" spacing />
 							<Input
 								name="name"
-								size="large"
 								value={values['name']}
 								onChange={(e) => {
 									setFieldValue('name', e.target.value);
@@ -125,7 +124,6 @@ export const ModifyBranchForm = ({
 							<Label label="Online URL" spacing />
 							<Input
 								name="onlineUrl"
-								size="large"
 								value={values['onlineUrl']}
 								onChange={(e) => {
 									setFieldValue('onlineUrl', e.target.value);

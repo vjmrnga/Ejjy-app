@@ -49,12 +49,12 @@ export const AdjustmentSlips = ({
 		[deliveryReceipt],
 	);
 
-	const onCreateAdjustmentSlip = () => {
+	const handleCreateAdjustmentSlip = () => {
 		setSelectedAdjustmentSlip(null);
 		setCreateAdjustmentSlipVisible(true);
 	};
 
-	const onViewAdjustmentSlip = (orderSlip) => {
+	const handleViewAdjustmentSlip = (orderSlip) => {
 		setSelectedAdjustmentSlip(orderSlip);
 		setViewAdjustmentSlipVisible(true);
 	};
@@ -64,14 +64,14 @@ export const AdjustmentSlips = ({
 			<TableHeader
 				buttonName="Create Adjustment Slip"
 				title="Adjustment Slips"
-				onCreate={onCreateAdjustmentSlip}
+				onCreate={handleCreateAdjustmentSlip}
 				onCreateDisabled={!hasProductUnderInvestigation()}
 			/>
 
 			<AdjustmentSlipsTable
 				adjustmentSlips={adjustmentSlips}
 				loading={adjustmentSlipStatus === request.REQUESTING}
-				onViewAdjustmentSlip={onViewAdjustmentSlip}
+				onViewAdjustmentSlip={handleViewAdjustmentSlip}
 			/>
 
 			<ViewAdjustmentSlipModal

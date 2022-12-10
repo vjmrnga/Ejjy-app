@@ -109,15 +109,14 @@ export const BranchProductBalances = () => {
 		<Box>
 			<TableHeader title="Branch Products Balances" />
 
-			<Filter
-				isLoading={isFetchingBranchProducts && !isBranchProductsFetched}
-			/>
-
 			<RequestErrors
 				className="px-6"
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
 				withSpaceBottom
-				withSpaceTop
+			/>
+
+			<Filter
+				isLoading={isFetchingBranchProducts && !isBranchProductsFetched}
 			/>
 
 			<Table
@@ -155,12 +154,13 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
+		error: productCategoriesErrors,
 	} = useProductCategories({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((keyword) => {
 			setQueryParams(
 				{ search: keyword?.toLowerCase() },
@@ -171,84 +171,97 @@ const Filter = ({ isLoading }: FilterProps) => {
 	);
 
 	return (
-		<Row className="pa-6 pt-0" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="Search" spacing />
-				<Input
-					defaultValue={params.search}
-					prefix={<SearchOutlined />}
-					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
-				/>
-			</Col>
+		<>
+			<RequestErrors
+				className="px-6"
+				errors={convertIntoArray(productCategoriesErrors, 'ProductCategories')}
+				withSpaceBottom
+			/>
 
-			<Col lg={12} span={24}>
-				<Label label="Category" spacing />
-				<Select
-					className="w-100"
-					disabled={isLoading}
-					filterOption={filterOption}
-					loading={isFetchingProductCategories}
-					optionFilterProp="children"
-					value={params.productCategory}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ productCategory: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{productCategories.map(({ name }) => (
-						<Select.Option key={name} value={name}>
-							{name}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+			<Row className="pa-6 pt-0" gutter={[16, 16]}>
+				<Col lg={12} span={24}>
+					<Label label="Search" spacing />
+					<Input
+						defaultValue={params.search}
+						prefix={<SearchOutlined />}
+						allowClear
+						onChange={(event) =>
+							handleSearchDebounced(event.target.value.trim())
+						}
+					/>
+				</Col>
 
-			<Col lg={12} span={24}>
-				<Label label="Status" spacing />
-				<Select
-					className="w-100"
-					disabled={isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					value={params.productStatus}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams({ productStatus: value }, { shouldResetPage: true });
-					}}
-				>
-					{branchProductStatusOptions.map(({ name, value }) => (
-						<Select.Option key={value} value={value}>
-							{name}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+				<Col lg={12} span={24}>
+					<Label label="Category" spacing />
+					<Select
+						className="w-100"
+						disabled={isLoading}
+						filterOption={filterOption}
+						loading={isFetchingProductCategories}
+						optionFilterProp="children"
+						value={params.productCategory}
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ productCategory: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{productCategories.map(({ name }) => (
+							<Select.Option key={name} value={name}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
 
-			<Col lg={12} span={24}>
-				<Label label="Show has BO Balance" spacing />
-				<Radio.Group
-					defaultValue={null}
-					disabled={isLoading}
-					options={[
-						{ label: 'Show All', value: null },
-						{ label: 'Has BO Balance', value: true },
-					]}
-					optionType="button"
-					value={params.hasBoBalance}
-					onChange={(e) => {
-						setQueryParams(
-							{ hasBoBalance: e.target.value },
-							{ shouldResetPage: true },
-						);
-					}}
-				/>
-			</Col>
-		</Row>
+				<Col lg={12} span={24}>
+					<Label label="Status" spacing />
+					<Select
+						className="w-100"
+						disabled={isLoading}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						value={params.productStatus}
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ productStatus: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{branchProductStatusOptions.map(({ name, value }) => (
+							<Select.Option key={value} value={value}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Show has BO Balance" spacing />
+					<Radio.Group
+						defaultValue={null}
+						disabled={isLoading}
+						options={[
+							{ label: 'Show All', value: null },
+							{ label: 'Has BO Balance', value: true },
+						]}
+						optionType="button"
+						value={params.hasBoBalance}
+						onChange={(e) => {
+							setQueryParams(
+								{ hasBoBalance: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+			</Row>
+		</>
 	);
 };

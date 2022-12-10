@@ -102,7 +102,7 @@ export const CreateEditOrderSlipModal = ({
 		[branchPersonnels],
 	);
 
-	const onCreateOrderSlipSubmit = (values) => {
+	const handleCreateOrderSlipSubmit = (values) => {
 		const products = values.requestedProducts
 			.filter(({ selected }) => selected)
 			.map((product) => ({
@@ -125,7 +125,7 @@ export const CreateEditOrderSlipModal = ({
 		createOrderSlip(data);
 	};
 
-	const onEditOrderSlipSubmit = (values) => {
+	const handleEditOrderSlipSubmit = (values) => {
 		const products = values.requestedProducts
 			.filter(({ selected }) => selected)
 			.map((product) => ({
@@ -203,7 +203,9 @@ export const CreateEditOrderSlipModal = ({
 				orderSlip={orderSlip}
 				requestedProducts={requestedProducts}
 				onClose={onClose}
-				onSubmit={orderSlip ? onEditOrderSlipSubmit : onCreateOrderSlipSubmit}
+				onSubmit={
+					orderSlip ? handleEditOrderSlipSubmit : handleCreateOrderSlipSubmit
+				}
 			/>
 		</Modal>
 	);

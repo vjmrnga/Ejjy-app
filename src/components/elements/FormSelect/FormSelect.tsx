@@ -26,7 +26,7 @@ const FormSelect = ({
 }: ISelectProps) => {
 	const [field, , helpers] = useField(id);
 
-	const onChangeField = (event) => {
+	const handleChangeField = (event) => {
 		const { value } = event.target;
 		helpers.setValue(value);
 		onChange?.(value);
@@ -39,7 +39,7 @@ const FormSelect = ({
 			disabled={disabled}
 			id={id}
 			name={id}
-			onChange={onChangeField}
+			onChange={handleChangeField}
 		>
 			{placeholder && (
 				<option value="" disabled selected>

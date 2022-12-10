@@ -53,7 +53,7 @@ export const PendingTransactions = () => {
 		);
 	}, [preparationSlips]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		list(
 			{ isPsForApproval: true, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
@@ -71,7 +71,7 @@ export const PendingTransactions = () => {
 						current: currentPage,
 						total: pageCount,
 						pageSize,
-						onChange: onPageChange,
+						onChange: handlePageChange,
 						disabled: !data,
 						position: ['bottomCenter'],
 						pageSizeOptions,

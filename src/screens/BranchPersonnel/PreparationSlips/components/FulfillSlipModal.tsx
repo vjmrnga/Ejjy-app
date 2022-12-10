@@ -30,7 +30,7 @@ export const FulfillSlipModal = ({
 	const [error, setError] = useState(null);
 
 	// METHODS
-	const onFulfill = () => {
+	const handleFulfill = () => {
 		const quantityValue = Number(quantity);
 
 		// Check if not empty
@@ -66,7 +66,7 @@ export const FulfillSlipModal = ({
 		if (key === 'esc') {
 			close();
 		} else if (key === 'enter') {
-			onFulfill();
+			handleFulfill();
 		}
 	};
 
@@ -93,7 +93,7 @@ export const FulfillSlipModal = ({
 					<KeyboardButton
 						keyboardKey="Enter"
 						label="Submit"
-						onClick={onFulfill}
+						onClick={handleFulfill}
 					/>
 					<KeyboardButton keyboardKey="Esc" label="Exit" onClick={close} />
 				</div>

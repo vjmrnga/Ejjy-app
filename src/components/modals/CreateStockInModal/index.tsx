@@ -1,5 +1,5 @@
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';

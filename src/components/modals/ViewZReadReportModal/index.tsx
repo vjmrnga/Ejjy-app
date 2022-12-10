@@ -72,7 +72,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					key="print"
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<PrinterOutlined />}
-					size="large"
 					type="primary"
 					onClick={handlePrint}
 				>
@@ -83,7 +82,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<FilePdfOutlined />}
 					loading={isCreatingPdf}
-					size="large"
 					type="primary"
 					onClick={handleCreatePdf}
 				>
@@ -94,7 +92,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					disabled={isCreatingPdf || isCreatingTxt}
 					icon={<FileTextOutlined />}
 					loading={isCreatingTxt}
-					size="large"
 					type="primary"
 					onClick={handleCreateTxt}
 				>

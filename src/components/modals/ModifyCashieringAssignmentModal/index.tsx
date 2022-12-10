@@ -246,7 +246,6 @@ export const ModifyCashieringAssignmentForm = ({
 									filterOption={filterOption}
 									loading={loading}
 									optionFilterProp="children"
-									size="large"
 									value={values.branchMachineId}
 									allowClear
 									showSearch
@@ -272,7 +271,6 @@ export const ModifyCashieringAssignmentForm = ({
 							<TimePicker.RangePicker
 								className="w-100"
 								format="h:mm A"
-								size="large"
 								value={values.times}
 								hideDisabledOptions
 								use12Hours

@@ -90,7 +90,7 @@ export const TabDTR = () => {
 
 	return (
 		<>
-			<TableHeader title="Daily Time Record" wrapperClassName="px-0 pt-0" />
+			<TableHeader title="Daily Time Record" wrapperClassName="pt-2 px-0" />
 
 			<RequestErrors
 				errors={convertIntoArray(attendanceLogsError, 'Logs')}

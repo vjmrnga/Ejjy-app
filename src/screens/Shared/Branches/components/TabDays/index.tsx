@@ -11,7 +11,12 @@ import {
 } from 'global';
 import { useBranchDays, useQueryParams, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTimeShortMonth, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	formatDateTimeShortMonth,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -228,12 +233,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					defaultValue={params.openedByUserId}
 					disabled={isFetching || isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
 					showSearch
@@ -258,12 +258,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					defaultValue={params.closedByUserId}
 					disabled={isFetching || isLoading}
-					filterOption={(input, option) =>
-						option.children
-							.toString()
-							.toLowerCase()
-							.indexOf(input.toLowerCase()) >= 0
-					}
+					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
 					showSearch

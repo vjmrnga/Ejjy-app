@@ -107,7 +107,7 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 			<TableHeader
 				buttonName="Create Supplier Account"
 				title="Supplier Accounts"
-				wrapperClassName="px-0 pt-0"
+				wrapperClassName="pt-2 px-0"
 				onCreate={
 					isCUDShown(user.user_type)
 						? () => setIsCreateModalVisible(true)
@@ -116,8 +116,6 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 				onCreateDisabled={disabled}
 			/>
 
-			<Filter />
-
 			<RequestErrors
 				errors={[
 					...convertIntoArray(supplierRegistrationsError),
@@ -125,6 +123,8 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 				]}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

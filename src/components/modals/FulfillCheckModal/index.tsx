@@ -36,7 +36,7 @@ export const FulfillCheckModal = ({ productCheck, onClose }: Props) => {
 		setProducts(formattedProductCheckProducts);
 	}, [productCheck]);
 
-	const onFulfill = async (formData) => {
+	const handleFulfill = async (formData) => {
 		const fulfilledProducts = formData.products.map((product) => {
 			const quantity =
 				product.quantityType === quantityTypes.PIECE
@@ -83,7 +83,7 @@ export const FulfillCheckModal = ({ productCheck, onClose }: Props) => {
 				isLoading={isFulfilling}
 				products={products}
 				onClose={onClose}
-				onSubmit={onFulfill}
+				onSubmit={handleFulfill}
 			/>
 		</Modal>
 	);

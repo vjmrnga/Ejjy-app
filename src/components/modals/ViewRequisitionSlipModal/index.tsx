@@ -72,7 +72,6 @@ export const ViewRequisitionSlipModal = ({
 					key="print"
 					disabled={isCreatingPdf}
 					icon={<PrinterOutlined />}
-					size="large"
 					type="primary"
 					onClick={handlePrint}
 				>
@@ -83,7 +82,6 @@ export const ViewRequisitionSlipModal = ({
 					disabled={isCreatingPdf}
 					icon={<FilePdfOutlined />}
 					loading={isCreatingPdf}
-					size="large"
 					type="primary"
 					onClick={handleCreatePdf}
 				>

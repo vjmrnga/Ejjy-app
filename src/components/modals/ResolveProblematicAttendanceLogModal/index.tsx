@@ -1,5 +1,5 @@
 import { Button, Col, message, Modal, Row, TimePicker } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useProblematicAttendanceLogResolve } from 'hooks';

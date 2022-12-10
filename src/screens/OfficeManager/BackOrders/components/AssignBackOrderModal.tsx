@@ -27,7 +27,7 @@ export const AssignBackOrderModal = ({
 	const { editBackOrder, status: backOrdersStatus } = useBackOrders();
 
 	// METHODS
-	const onAssignBackOrder = (data) => {
+	const handleSubmit = (data) => {
 		editBackOrder(
 			{
 				id: backOrder.id,
@@ -55,7 +55,7 @@ export const AssignBackOrderModal = ({
 				backOrder={backOrder}
 				loading={backOrdersStatus === request.REQUESTING}
 				onClose={onClose}
-				onSubmit={onAssignBackOrder}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

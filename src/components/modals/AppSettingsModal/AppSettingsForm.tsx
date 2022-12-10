@@ -150,7 +150,6 @@ export const AppSettingsForm = ({
 									},
 								]}
 								optionType="button"
-								size="large"
 								value={values.appType}
 								onChange={(e) => {
 									setFieldValue('appType', e.target.value);
@@ -176,7 +175,6 @@ export const AppSettingsForm = ({
 							<Label label="Local API URL" spacing />
 							<Input
 								name="localApiUrl"
-								size="large"
 								value={values['localApiUrl']}
 								onChange={(e) => {
 									setFieldValue('localApiUrl', e.target.value);
@@ -192,7 +190,6 @@ export const AppSettingsForm = ({
 							<Label label="Online API URL" spacing />
 							<Input
 								name="onlineApiUrl"
-								size="large"
 								value={values['onlineApiUrl']}
 								onBlur={(e) => {
 									setBaseURL(e.target.value);
@@ -218,7 +215,6 @@ export const AppSettingsForm = ({
 								filterOption={filterOption}
 								loading={isFetchingBranches}
 								optionFilterProp="children"
-								size="large"
 								value={values.branchId ? Number(values.branchId) : undefined}
 								showSearch
 								onChange={(value) => {
@@ -258,10 +254,10 @@ export const AppSettingsForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button htmlType="button" size="large" onClick={onClose}>
+						<Button htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button htmlType="submit" size="large" type="primary">
+						<Button htmlType="submit" type="primary">
 							Submit
 						</Button>
 					</div>
@@ -325,7 +321,6 @@ const ReceiptPrinter = () => {
 					filterOption={filterOption}
 					loading={isFetchingPrinters}
 					optionFilterProp="children"
-					size="large"
 					value={values['printerName']}
 					allowClear
 					showSearch
@@ -352,7 +347,6 @@ const ReceiptPrinter = () => {
 				<Label label="Printer Font Family" spacing />
 				<Input
 					name="printerFontFamily"
-					size="large"
 					value={values['printerFontFamily']}
 					onChange={(e) => {
 						setFieldValue('printerFontFamily', e.target.value);
@@ -381,7 +375,6 @@ const ReceiptPrinter = () => {
 						<InputNumber
 							max={100}
 							min={1}
-							size="large"
 							value={Number(values['printerFontSize'])}
 							onChange={(value) => {
 								setFieldValue('printerFontSize', value);
@@ -410,7 +403,6 @@ const TagPrinter = () => {
 					<InputNumber
 						max={100}
 						min={1}
-						size="large"
 						value={Number(values['tagPrinterPaperWidth'])}
 						onChange={(value) => {
 							setFieldValue('tagPrinterPaperWidth', value);
@@ -420,7 +412,6 @@ const TagPrinter = () => {
 					<InputNumber
 						max={100}
 						min={1}
-						size="large"
 						value={Number(values['tagPrinterPaperHeight'])}
 						onChange={(value) => {
 							setFieldValue('tagPrinterPaperHeight', value);
@@ -442,7 +433,6 @@ const TagPrinter = () => {
 				<Label label="Tag Printer Font Family" spacing />
 				<Input
 					name="tagPrinterFontFamily"
-					size="large"
 					value={values['tagPrinterFontFamily']}
 					onChange={(e) => {
 						setFieldValue('tagPrinterFontFamily', e.target.value);
@@ -471,7 +461,6 @@ const TagPrinter = () => {
 						<InputNumber
 							max={100}
 							min={1}
-							size="large"
 							value={Number(values['tagPrinterFontSize'])}
 							onChange={(value) => {
 								setFieldValue('tagPrinterFontSize', value);

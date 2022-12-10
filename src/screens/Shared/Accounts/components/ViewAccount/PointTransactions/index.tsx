@@ -52,11 +52,9 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { pointTransactions, total },
-		isFetching,
+		isFetching: isFetchingPointTransactions,
 	} = usePointTransactions({
-		params: {
-			accountId: account.id,
-		},
+		params: { accountId: account.id },
 	});
 
 	// METHODS
@@ -99,7 +97,7 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 
 	return (
 		<Box>
-			<Spin spinning={isFetching}>
+			<Spin spinning={isFetchingPointTransactions}>
 				<TableHeader
 					buttonName="Redeem Points"
 					title="Points Transactions"

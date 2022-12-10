@@ -1,5 +1,5 @@
 import { Button, Modal, Spin, Tabs } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter/TimeRangeFilter';
 import { MAX_PAGE_SIZE, timeRangeTypes, userLogTypes } from 'global';
 import { useBranchProductRetrieve, useUserLogs } from 'hooks';

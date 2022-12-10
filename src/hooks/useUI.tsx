@@ -7,10 +7,10 @@ export const useUI = () => {
 	const isSidebarCollapsed = useSelector(selectors.selectIsSidebarCollapsed());
 
 	// ACTIONS
-	const onCollapseSidebar = useActionDispatch(actions.onCollapseSidebar);
+	const handleCollapseSidebar = useActionDispatch(actions.onCollapseSidebar);
 
 	return {
 		isSidebarCollapsed,
-		onCollapseSidebar,
+		onCollapseSidebar: handleCollapseSidebar,
 	};
 };

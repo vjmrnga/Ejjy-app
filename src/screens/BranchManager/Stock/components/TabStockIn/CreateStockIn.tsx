@@ -206,7 +206,7 @@ export const CreateStockIn = () => {
 						}
 						type="number"
 						onChange={(value) => {
-							onChangeQuantity(productId, value);
+							handleChangeQuantity(productId, value);
 						}}
 					/>
 					<FormSelect
@@ -214,7 +214,7 @@ export const CreateStockIn = () => {
 						options={quantityTypeOptions}
 						disabled
 						onChange={(value) => {
-							onChangeQuantityType(productId, value);
+							handleChangeQuantityType(productId, value);
 						}}
 					/>
 				</div>
@@ -232,13 +232,12 @@ export const CreateStockIn = () => {
 		return (
 			<>
 				<FormattedInputNumber
+					className="w-100"
 					controls={false}
 					defaultValue={productsRef?.current?.[productId]?.costPerPiece || ''}
 					disabled={!selected}
-					size="large"
-					style={{ width: '100%' }}
 					onChange={(value) => {
-						onChangeCostPerPiece(productId, value);
+						handleChangeCostPerPiece(productId, value);
 						setFieldValue(`${fieldKey}.costPerPiece`, value);
 					}}
 				/>
@@ -251,7 +250,7 @@ export const CreateStockIn = () => {
 	};
 
 	// METHODS: Change listeners
-	const onChangeCheckbox = (productId, value, data = {}) => {
+	const handleChangeCheckbox = (productId, value, data = {}) => {
 		if (value) {
 			productsRef.current[productId] = data;
 		} else {
@@ -261,19 +260,19 @@ export const CreateStockIn = () => {
 		setCount(Object.keys(productsRef.current).length);
 	};
 
-	const onChangeQuantity = (productId, value) => {
+	const handleChangeQuantity = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantity = value;
 		}
 	};
 
-	const onChangeQuantityType = (productId, value) => {
+	const handleChangeQuantityType = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantityType = value;
 		}
 	};
 
-	const onChangeCostPerPiece = (productId, value) => {
+	const handleChangeCostPerPiece = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].costPerPiece = value;
 		}
@@ -325,7 +324,7 @@ export const CreateStockIn = () => {
 				<Filter isLoading={isLoading} />
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
 						...convertIntoArray(receivingVoucherError?.errors, 'Stock In'),
@@ -343,7 +342,7 @@ export const CreateStockIn = () => {
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
-							<div className="PaddingHorizontal">
+							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
 									type="card"
@@ -364,7 +363,7 @@ export const CreateStockIn = () => {
 										setFieldValue,
 										renderQuantity,
 										renderCostPerPiece,
-										onChangeCheckbox,
+										onChangeCheckbox: handleChangeCheckbox,
 									}}
 									isLoading={isLoading}
 									paginationProps={{
@@ -523,7 +522,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	});
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((keyword) => {
 			setQueryParams(
 				{ search: keyword?.toLowerCase() },
@@ -542,7 +541,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					disabled={isLoading}
 					prefix={<SearchOutlined />}
 					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
 				/>
 			</Col>
 

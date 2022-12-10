@@ -72,11 +72,7 @@ const Login = () => {
 					<>
 						<Divider />
 
-						<Button
-							size="large"
-							block
-							onClick={() => setAppSettingsModalVisible(true)}
-						>
+						<Button block onClick={() => setAppSettingsModalVisible(true)}>
 							Configure App Settings
 						</Button>
 

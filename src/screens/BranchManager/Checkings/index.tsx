@@ -39,7 +39,7 @@ export const Checkings = () => {
 	const {
 		data: { productChecks, total },
 		isFetching: isFetchingProductChecks,
-		error: productChecksErrors,
+		error: productChecksError,
 	} = useProductChecks({
 		params: {
 			isFilledUp:
@@ -114,13 +114,13 @@ export const Checkings = () => {
 			<Box>
 				<TableHeader title="Checkings" />
 
-				<Filter />
-
 				<RequestErrors
 					className="px-6"
-					errors={convertIntoArray(productChecksErrors)}
+					errors={convertIntoArray(productChecksError)}
 					withSpaceBottom
 				/>
+
+				<Filter />
 
 				<Table
 					columns={columns}

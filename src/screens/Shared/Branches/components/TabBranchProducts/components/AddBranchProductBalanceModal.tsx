@@ -47,7 +47,7 @@ export const AddBranchProductBalanceModal = ({
 		};
 	});
 
-	const onAddBranchProductBalance = (data) => {
+	const handleSubmit = (data) => {
 		editBranchProductBalance(
 			{
 				branchId,
@@ -132,7 +132,7 @@ export const AddBranchProductBalanceModal = ({
 				branchProduct={branchProduct}
 				loading={branchProductsStatus === request.REQUESTING}
 				onClose={handleClose}
-				onSubmit={onAddBranchProductBalance}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

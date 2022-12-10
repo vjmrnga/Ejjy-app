@@ -52,9 +52,9 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	const { user } = useAuth();
 	const {
 		data: { transactions, total },
-		isFetching: isTransactionsFetching,
+		isFetching: isFetchingTransactions,
 		isFetched: isTransactionsFetched,
-		error,
+		error: transactionsError,
 	} = useTransactions({
 		params: {
 			modeOfPayment: paymentTypes.CREDIT,
@@ -128,7 +128,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 		return columns;
 	}, [payor]);
 
-	const onCreateOrderOfPaymentsSuccess = () => {
+	const handleCreateOrderOfPaymentsSuccess = () => {
 		setQueryParams(
 			{ tab: accountTabs.ORDER_OF_PAYMENTS },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
@@ -137,7 +137,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	return (
 		<div>
-			<TableHeader title="Credit Transactions" wrapperClassName="px-0 pt-0" />
+			<TableHeader title="Credit Transactions" wrapperClassName="pt-2 px-0" />
 
 			{payor && (
 				<AccountTotalBalance
@@ -148,14 +148,17 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				/>
 			)}
 
-			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
+			<RequestErrors
+				errors={convertIntoArray(transactionsError)}
+				withSpaceBottom
+			/>
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<Filter isLoading={isFetchingTransactions && !isTransactionsFetched} />
 
 			<Table
 				columns={getColumns()}
 				dataSource={dataSource}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				loading={isFetchingTransactions && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -195,7 +198,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 						setSelectedCreditTransaction(null);
 						setIsCreateOrderOfPaymentModalVisible(false);
 					}}
-					onSuccess={onCreateOrderOfPaymentsSuccess}
+					onSuccess={handleCreateOrderOfPaymentsSuccess}
 				/>
 			)}
 		</div>

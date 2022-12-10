@@ -18,7 +18,7 @@ import {
 	Tooltip,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import classNames from 'classnames';
+import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
@@ -61,8 +61,8 @@ import {
 
 const columns: ColumnsType = [
 	{
-		title: 'Barcode',
-		dataIndex: 'barcode',
+		title: 'Code',
+		dataIndex: 'code',
 		width: 150,
 		fixed: 'left',
 	},
@@ -103,7 +103,7 @@ export const Products = () => {
 	const {
 		mutate: deleteProduct,
 		isLoading: isDeletingProduct,
-		error: deleteError,
+		error: deleteProductError,
 	} = useProductDelete();
 
 	// METHODS
@@ -113,7 +113,7 @@ export const Products = () => {
 
 			return {
 				key: id,
-				barcode: (
+				code: (
 					<Button
 						className="pa-0"
 						type="link"
@@ -261,10 +261,12 @@ export const Products = () => {
 				)}
 
 				<RequestErrors
-					className="px-6"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
 						...convertIntoArray(productsError, 'Product'),
-						...convertIntoArray(deleteError?.errors, 'Product Delete'),
+						...convertIntoArray(deleteProductError?.errors, 'Product Delete'),
 					]}
 				/>
 
@@ -350,13 +352,11 @@ const Filter = () => {
 		isFetching: isFetchingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setQueryParams({ search }, { shouldResetPage: true });
 		}, SEARCH_DEBOUNCE_TIME),
@@ -364,57 +364,55 @@ const Filter = () => {
 	);
 
 	return (
-		<Row
-			className={classNames('pa-6', {
-				'pt-0': isCUDShown(user.user_type),
-			})}
-			gutter={[16, 16]}
-		>
-			{productCategoriesErrors && (
-				<Col span={24}>
-					<RequestErrors
-						errors={convertIntoArray(
-							productCategoriesErrors,
-							'Product Category',
-						)}
+		<>
+			<RequestErrors
+				className="px-6"
+				errors={convertIntoArray(productCategoriesErrors, 'Product Category')}
+			/>
+
+			<Row
+				className={cn('pa-6', {
+					'pt-0': isCUDShown(user.user_type),
+				})}
+				gutter={[16, 16]}
+			>
+				<Col lg={12} span={24}>
+					<Label label="Search" spacing />
+					<Input
+						defaultValue={params.search}
+						prefix={<SearchOutlined />}
+						allowClear
+						onChange={(event) =>
+							handleSearchDebounced(event.target.value.trim())
+						}
 					/>
 				</Col>
-			)}
 
-			<Col lg={12} span={24}>
-				<Label label="Search" spacing />
-				<Input
-					defaultValue={params.search}
-					prefix={<SearchOutlined />}
-					allowClear
-					onChange={(event) => onSearchDebounced(event.target.value.trim())}
-				/>
-			</Col>
-
-			<Col lg={12} span={24}>
-				<Label label="Category" spacing />
-				<Select
-					defaultValue={params.productCategory}
-					filterOption={filterOption}
-					loading={isFetchingProductCategories}
-					optionFilterProp="children"
-					style={{ width: '100%' }}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ productCategory: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{productCategories.map(({ id, name }) => (
-						<Select.Option key={id} value={name}>
-							{name}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-		</Row>
+				<Col lg={12} span={24}>
+					<Label label="Category" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.productCategory}
+						filterOption={filterOption}
+						loading={isFetchingProductCategories}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ productCategory: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{productCategories.map(({ id, name }) => (
+							<Select.Option key={id} value={name}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+			</Row>
+		</>
 	);
 };

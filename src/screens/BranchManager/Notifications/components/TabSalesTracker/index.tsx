@@ -14,21 +14,17 @@ export const TabSalesTracker = () => {
 	// CUSTOM HOOKS
 	const {
 		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
+		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve({
-		options: {
-			notifyOnChangeProps: ['data', 'isFetching'],
-		},
+		options: { notifyOnChangeProps: ['data', 'isFetching'] },
 	});
 	const {
 		data: { salesTrackers },
-		isFetching: isSalesTrackerFetching,
-		error: salesTrackerError,
+		isFetching: isFetchingSalesTracker,
+		error: salesTrackersError,
 	} = useSalesTracker({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// METHODS
@@ -70,12 +66,12 @@ export const TabSalesTracker = () => {
 	}, [salesTrackers, siteSettings]);
 
 	return (
-		<Spin spinning={isSalesTrackerFetching || isSiteSettingsFetching}>
-			<TableHeader title="Sales Tracker" wrapperClassName="pt-0 px-0" />
+		<Spin spinning={isFetchingSalesTracker || isFetchingSiteSettings}>
+			<TableHeader title="Sales Tracker" wrapperClassName="pt-2 px-0" />
 
 			<RequestErrors
 				errors={[
-					...convertIntoArray(salesTrackerError, 'Sales Tracker'),
+					...convertIntoArray(salesTrackersError, 'Sales Tracker'),
 					...convertIntoArray(siteSettingsError, 'Site Settings'),
 				]}
 				withSpaceBottom

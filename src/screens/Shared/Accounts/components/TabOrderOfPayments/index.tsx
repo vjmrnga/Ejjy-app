@@ -52,7 +52,7 @@ export const TabOrderOfPayments = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { orderOfPayments, total },
-		isFetching: isOrderOfPaymentsFetching,
+		isFetching: isFetchingOrderOfPayments,
 		error: orderOfPaymentsError,
 	} = useOrderOfPayments({
 		params: {
@@ -144,19 +144,19 @@ export const TabOrderOfPayments = () => {
 
 	return (
 		<div>
-			<TableHeader title="Order of Payments" wrapperClassName="px-0 pt-0" />
-
-			<Filter isLoading={isOrderOfPaymentsFetching} />
+			<TableHeader title="Order of Payments" wrapperClassName="pt-2 px-0" />
 
 			<RequestErrors
 				errors={convertIntoArray(orderOfPaymentsError)}
 				withSpaceBottom
 			/>
 
+			<Filter isLoading={isFetchingOrderOfPayments} />
+
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isOrderOfPaymentsFetching}
+				loading={isFetchingOrderOfPayments}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -196,11 +196,11 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { accounts },
-		isFetching: isAccountsFetching,
+		isFetching: isFetchingAccounts,
 	} = useAccounts({ params: { search: accountSearch } });
 
 	// METHODS
-	const onSearchDebounced = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setAccountSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
@@ -215,14 +215,14 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					defaultActiveFirstOption={false}
 					filterOption={false}
-					notFoundContent={isAccountsFetching ? <Spin size="small" /> : null}
+					notFoundContent={isFetchingAccounts ? <Spin size="small" /> : null}
 					value={params.payorId ? Number(params.payorId) : null}
 					allowClear
 					showSearch
 					onChange={(value) => {
 						setQueryParams({ payorId: value }, { shouldResetPage: true });
 					}}
-					onSearch={onSearchDebounced}
+					onSearch={handleSearchDebounced}
 				>
 					{accounts.map((account) => (
 						<Select.Option key={account.id} value={account.id}>

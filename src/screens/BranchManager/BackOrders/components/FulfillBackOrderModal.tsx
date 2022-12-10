@@ -32,7 +32,7 @@ export const FulfillBackOrderModal = ({
 	} = useBackOrders();
 
 	// METHODS
-	const onFulfill = (formData) => {
+	const handleSubmit = (formData) => {
 		const products = formData.map((product) => ({
 			product_id: product.product_id,
 			quantity_received:
@@ -110,7 +110,7 @@ export const FulfillBackOrderModal = ({
 				backOrder={backOrder}
 				loading={backOrdersStatus === request.REQUESTING}
 				onClose={onClose}
-				onSubmit={onFulfill}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

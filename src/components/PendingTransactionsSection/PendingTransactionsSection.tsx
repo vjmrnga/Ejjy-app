@@ -63,10 +63,10 @@ const PendingTransactionsSectionComponent = (
 				) : (
 					<TableActions
 						onExecutePendingTransaction={() => {
-							onExecutePendingTransaction(pendingTransaction);
+							handleExecutePendingTransaction(pendingTransaction);
 						}}
 						onRemove={() => {
-							onAskApprovalPendingTransaction(pendingTransaction.id);
+							handleAskApprovalPendingTransaction(pendingTransaction.id);
 						}}
 					/>
 				);
@@ -107,7 +107,7 @@ const PendingTransactionsSectionComponent = (
 		);
 	};
 
-	const onExecutePendingTransaction = (pendingTransaction) => {
+	const handleExecutePendingTransaction = (pendingTransaction) => {
 		// Note: We added 2 so we can skip the 'v1'
 		const urlIndex = pendingTransaction.url.indexOf('v1');
 		const urlPathName = pendingTransaction.url.slice(urlIndex + 3);
@@ -124,7 +124,7 @@ const PendingTransactionsSectionComponent = (
 			},
 			({ status, error }) => {
 				if (status === request.SUCCESS) {
-					onRemovePendingTransaction(pendingTransaction.id, false);
+					handleRemovePendingTransaction(pendingTransaction.id, false);
 				} else if (status === request.ERROR) {
 					showErrorMessages(error);
 				}
@@ -133,7 +133,7 @@ const PendingTransactionsSectionComponent = (
 		);
 	};
 
-	const onAskApprovalPendingTransaction = (pendingTransactionId) => {
+	const handleAskApprovalPendingTransaction = (pendingTransactionId) => {
 		editPendingTransaction(
 			{ id: pendingTransactionId, is_pending_approval: true },
 			({ status, error }) => {
@@ -146,7 +146,7 @@ const PendingTransactionsSectionComponent = (
 		);
 	};
 
-	const onRemovePendingTransaction = (
+	const handleRemovePendingTransaction = (
 		pendingTransactionId,
 		showFeedbackMessage,
 	) => {

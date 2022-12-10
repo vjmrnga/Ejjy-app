@@ -64,7 +64,6 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 			title="[VIEW] F-RS01"
 		>
 			<Spin
-				size="large"
 				spinning={requisitionSlipsStatus === request.REQUESTING}
 				tip="Fetching requisition slip..."
 			>

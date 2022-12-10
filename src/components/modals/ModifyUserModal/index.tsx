@@ -1,5 +1,5 @@
 import { message, Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { useUserCreate, useUserEdit } from 'hooks';
 import React from 'react';
 import { convertIntoArray, getId } from 'utils';

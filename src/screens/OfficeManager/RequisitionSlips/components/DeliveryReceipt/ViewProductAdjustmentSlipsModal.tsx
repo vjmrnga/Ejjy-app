@@ -69,7 +69,7 @@ export const ViewProductAdjustmentSlipsModal = ({
 		}
 	}, [visible, deliveryReceiptProduct, status]);
 
-	const onModalClose = () => {
+	const handleModalClose = () => {
 		reset();
 		onClose();
 	};
@@ -77,14 +77,14 @@ export const ViewProductAdjustmentSlipsModal = ({
 	return (
 		<Modal
 			className="Modal__large Modal__hasFooter"
-			footer={[<Button key="close" text="Close" onClick={onModalClose} />]}
-			title="View Product’s Adjustment Slip"
+			footer={[<Button key="close" text="Close" onClick={handleModalClose} />]}
+			title="View Product's Adjustment Slip"
 			visible={visible}
 			centered
 			closable
 			onCancel={onClose}
 		>
-			<Spin size="large" spinning={status === request.REQUESTING}>
+			<Spin spinning={status === request.REQUESTING}>
 				<DetailsRow>
 					<DetailsSingle label="Barcode" value={barcode} />
 					<DetailsSingle label="Name" value={name} />

@@ -1,5 +1,5 @@
 import { message, Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { MAX_PAGE_SIZE } from 'global';
 import {
 	useAuth,

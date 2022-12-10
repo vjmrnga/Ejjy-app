@@ -189,7 +189,7 @@ export const CreateReturnItemSlip = () => {
 						}
 						type="number"
 						onChange={(value) => {
-							onChangeQuantity(productId, value);
+							handleChangeQuantity(productId, value);
 						}}
 					/>
 					<FormSelect
@@ -197,7 +197,7 @@ export const CreateReturnItemSlip = () => {
 						id={`${fieldKey}.quantity_type`}
 						options={quantityTypeOptions}
 						onChange={(value) => {
-							onChangeQuantityType(productId, value);
+							handleChangeQuantityType(productId, value);
 						}}
 					/>
 				</div>
@@ -210,7 +210,7 @@ export const CreateReturnItemSlip = () => {
 	};
 
 	// METHODS: Change listeners
-	const onChangeCheckbox = (productId, value, data = {}) => {
+	const handleChangeCheckbox = (productId, value, data = {}) => {
 		if (value) {
 			productsRef.current[productId] = data;
 		} else {
@@ -220,20 +220,20 @@ export const CreateReturnItemSlip = () => {
 		setCount(Object.keys(productsRef.current).length);
 	};
 
-	const onChangeQuantity = (productId, value) => {
+	const handleChangeQuantity = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantity = value;
 		}
 	};
 
-	const onChangeQuantityType = (productId, value) => {
+	const handleChangeQuantityType = (productId, value) => {
 		if (productId in productsRef.current) {
 			productsRef.current[productId].quantityType = value;
 		}
 	};
 
 	// METHODS: Filters
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		getBranchProducts(
 			{
 				branchId,
@@ -247,7 +247,7 @@ export const CreateReturnItemSlip = () => {
 		);
 	};
 
-	const onSearch = (keyword) => {
+	const handleSearch = (keyword) => {
 		const lowerCaseKeyword = keyword?.toLowerCase();
 
 		getBranchProducts(
@@ -264,7 +264,7 @@ export const CreateReturnItemSlip = () => {
 		setSeachedKeyword(lowerCaseKeyword);
 	};
 
-	const onCreate = () => {
+	const handleCreate = () => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -301,7 +301,7 @@ export const CreateReturnItemSlip = () => {
 					statusDisabled={activeTab === tabs.SELECTED}
 					statuses={branchProductStatusOptionsWithAll}
 					title="Create Return Item Slip"
-					onSearch={onSearch}
+					onSearch={handleSearch}
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
@@ -318,7 +318,7 @@ export const CreateReturnItemSlip = () => {
 				/>
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
 						...convertIntoArray(returnItemSlipsErrors, 'Return Item Slip'),
@@ -335,12 +335,12 @@ export const CreateReturnItemSlip = () => {
 						await sleep(500);
 						setSubmitting(false);
 
-						onCreate();
+						handleCreate();
 					}}
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
-							<div className="PaddingHorizontal">
+							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
 									type="card"
@@ -360,14 +360,14 @@ export const CreateReturnItemSlip = () => {
 										values,
 										setFieldValue,
 										renderQuantity,
-										onChangeCheckbox,
+										onChangeCheckbox: handleChangeCheckbox,
 									}}
 									loading={loading || isSubmitting}
 									paginationProps={{
 										currentPage,
 										pageCount,
 										pageSize,
-										onPageChange,
+										onPageChange: handlePageChange,
 									}}
 								/>
 							</div>

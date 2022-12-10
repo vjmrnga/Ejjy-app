@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
+import cn from 'classnames';
 import {
 	BranchMachinesInfo,
 	Content,
@@ -28,15 +29,15 @@ export const BranchMachines = () => {
 	const { user } = useAuth();
 	const {
 		data: { branchMachines },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
 	} = useBranchMachines({
 		params: { branchId },
 	});
 	const {
 		mutate: deleteBranchMachine,
-		isLoading,
-		error: deleteError,
+		isLoading: isDeletingBranchMachine,
+		error: deleteBranchMachineError,
 	} = useBranchMachineDelete();
 
 	// METHODS
@@ -103,10 +104,12 @@ export const BranchMachines = () => {
 				)}
 
 				<RequestErrors
-					className="px-4"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
-						...convertIntoArray(listError),
-						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(branchMachinesError),
+						...convertIntoArray(deleteBranchMachineError?.errors),
 					]}
 					withSpaceBottom
 				/>
@@ -114,7 +117,7 @@ export const BranchMachines = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					loading={isFetching || isLoading}
+					loading={isFetchingBranchMachines || isDeletingBranchMachine}
 					pagination={false}
 					scroll={{ x: 800 }}
 				/>

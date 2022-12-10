@@ -20,7 +20,7 @@ export * from './PendingTransactionsSection/PendingTransactionsSection';
 export * from './PreparationSlipDetails';
 export * from './QuantitySelect';
 export * from './ReportsPerMachine';
-export * from './RequestErrors/RequestErrors';
+export * from './RequestErrors';
 export * from './RequestWarnings/RequestWarnings';
 export * from './RestrictedAccessState';
 export * from './Route/CommonRoute';

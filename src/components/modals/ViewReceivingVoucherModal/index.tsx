@@ -91,7 +91,6 @@ export const ViewReceivingVoucherModal = ({
 					key="print"
 					disabled={isCreatingPdf}
 					icon={<PrinterOutlined />}
-					size="large"
 					type="primary"
 					onClick={handlePrint}
 				>
@@ -102,7 +101,6 @@ export const ViewReceivingVoucherModal = ({
 					disabled={isCreatingPdf}
 					icon={<FilePdfOutlined />}
 					loading={isCreatingPdf}
-					size="large"
 					type="primary"
 					onClick={handleCreatePdf}
 				>

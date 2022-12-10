@@ -26,7 +26,7 @@ export const BackOrders = () => {
 	const backOrdersReceiveRef = useRef(null);
 
 	// METHODS
-	const onOpenModal = (backOrder, type) => {
+	const handleOpenModal = (backOrder, type) => {
 		setModalType(type);
 		setSelectedBackOrder(backOrder);
 	};
@@ -38,7 +38,7 @@ export const BackOrders = () => {
 			<Box>
 				<BackOrdersTable
 					onSelectBackOrder={(backOrder) => {
-						onOpenModal(backOrder, modals.VIEW);
+						handleOpenModal(backOrder, modals.VIEW);
 					}}
 					onSelectTransaction={setSelectedTransaction}
 				/>
@@ -91,14 +91,14 @@ export const BackOrders = () => {
 				{modalType === modals.VIEW && selectedBackOrder && (
 					<ViewBackOrderModal
 						backOrder={selectedBackOrder}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
 
 				{modalType === modals.FULFILL && selectedBackOrder && (
 					<FulfillBackOrderModal
 						backOrder={selectedBackOrder}
-						onClose={() => onOpenModal(null, null)}
+						onClose={() => handleOpenModal(null, null)}
 						onSuccess={() => backOrdersReceiveRef.current?.refreshList()}
 					/>
 				)}

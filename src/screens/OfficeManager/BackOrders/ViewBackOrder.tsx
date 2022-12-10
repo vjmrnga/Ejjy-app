@@ -118,7 +118,7 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 	}, [backOrder]);
 
 	return (
-		<Spin size="large" spinning={backOrdersStatus === request.REQUESTING}>
+		<Spin spinning={backOrdersStatus === request.REQUESTING}>
 			<Box className="PaddingHorizontal PaddingVertical">
 				<DetailsRow>
 					<Col span={24}>

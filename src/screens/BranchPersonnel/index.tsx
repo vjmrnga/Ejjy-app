@@ -41,9 +41,7 @@ const BranchPersonnel = () => {
 	});
 
 	if (isFetchingBranches) {
-		return (
-			<Spin className="GlobalSpinner" size="large" tip="Fetching data..." />
-		);
+		return <Spin className="GlobalSpinner" tip="Fetching data..." />;
 	}
 
 	return (

@@ -34,9 +34,9 @@ export const Sales = () => {
 	const { params } = useQueryParams();
 	const {
 		data: { branchMachines },
-		error: branchMachinesError,
-		isFetching: isBranchMachinesFetching,
+		isFetching: isFetchingBranchMachines,
 		isFetched: isBranchMachinesFetched,
+		error: branchMachinesError,
 	} = useBranchMachines({
 		params: {
 			branchId: getLocalBranchId(),
@@ -82,21 +82,22 @@ export const Sales = () => {
 	return (
 		<Content title="Sales">
 			<SalesInfo />
+
 			<Box padding>
 				<Row gutter={[16, 16]}>
 					<Col span={24}>
-						<TimeRangeFilter />
-
 						<RequestErrors
 							errors={convertIntoArray(branchMachinesError)}
-							withSpaceTop
+							withSpaceBottom
 						/>
+
+						<TimeRangeFilter />
 					</Col>
 
 					<Col span={24}>
 						<div className="Summary">
 							<Row gutter={[16, 16]}>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="TOTAL SALES"
 										value={formatInPeso(
@@ -104,13 +105,13 @@ export const Sales = () => {
 										)}
 									/>
 								</Col>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="Cash Sales"
 										value={formatInPeso(summary.cashSales)}
 									/>
 								</Col>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="Credit Sales"
 										value={formatInPeso(summary.creditSales)}
@@ -123,7 +124,7 @@ export const Sales = () => {
 					<Col span={24}>
 						<div className="Summary">
 							<Row gutter={[16, 16]}>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="TOTAL CASH ON HAND"
 										value={formatInPeso(
@@ -131,13 +132,13 @@ export const Sales = () => {
 										)}
 									/>
 								</Col>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="Cash Sales"
 										value={formatInPeso(summary.cashSales)}
 									/>
 								</Col>
-								<Col md={8} sm={8} xs={24}>
+								<Col md={8}>
 									<Statistic
 										title="Credit Payment"
 										value={formatInPeso(summary.creditPayment)}
@@ -151,7 +152,7 @@ export const Sales = () => {
 						<Table
 							columns={columns}
 							dataSource={dataSource}
-							loading={isBranchMachinesFetching && !isBranchMachinesFetched}
+							loading={isFetchingBranchMachines && !isBranchMachinesFetched}
 							pagination={false}
 							scroll={{ x: 1200 }}
 						/>

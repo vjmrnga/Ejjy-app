@@ -85,7 +85,7 @@ export const ViewBranchPendingPriceUpdates = ({ branchId }: Props) => {
 		);
 	}, [pendingPriceUpdates]);
 
-	const onPageChange = (page, newPageSize) => {
+	const handlePageChange = (page, newPageSize) => {
 		listBranchProductPendingPriceUpdates(
 			{ branchId, page, pageSize: newPageSize },
 			newPageSize !== pageSize,
@@ -108,7 +108,7 @@ export const ViewBranchPendingPriceUpdates = ({ branchId }: Props) => {
 					current: currentPage,
 					total: pageCount,
 					pageSize,
-					onChange: onPageChange,
+					onChange: handlePageChange,
 					disabled: !data,
 					position: ['bottomCenter'],
 					pageSizeOptions,

@@ -21,8 +21,8 @@ const FieldError = ({
 		className={cn(
 			'FieldError',
 			{
-				FieldError__spaceTop: withSpaceTop,
-				FieldError__spaceBottom: withSpaceBottom,
+				'mt-2': withSpaceTop,
+				'mb-4': withSpaceBottom,
 			},
 			classNames,
 		)}

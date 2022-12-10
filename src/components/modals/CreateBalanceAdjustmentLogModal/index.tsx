@@ -1,5 +1,5 @@
 import { message, Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { RequestErrors } from 'components/RequestErrors';
 import { useBalanceAdjustmentLogCreate } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import React from 'react';
@@ -17,24 +17,16 @@ export const CreateBalanceAdjustmentLogModal = ({
 	onSuccess,
 	onClose,
 }: Props) => {
-	// VARIABLES
-	const title = (
-		<>
-			<span>Bal Adjustment</span>
-			<span className="ModalTitleMainInfo">{branchProduct?.product?.name}</span>
-		</>
-	);
-
 	// CUSTOM HOOKS
 	const { user } = useAuth();
 	const {
 		mutateAsync: createBalanceAdjustmentLog,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingBalanceAdjustmentLog,
+		error: createBalanceAdjustmentLogError,
 	} = useBalanceAdjustmentLogCreate();
 
 	// METHODS
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		await createBalanceAdjustmentLog({
 			branchProductId: branchProduct.id,
 			creatingUserId: user.id,
@@ -49,22 +41,29 @@ export const CreateBalanceAdjustmentLogModal = ({
 	return (
 		<Modal
 			footer={null}
-			title={title}
+			title={
+				<>
+					<span>Bal Adjustment</span>
+					<span className="ModalTitleMainInfo">
+						{branchProduct.product.name}
+					</span>
+				</>
+			}
 			centered
 			closable
 			visible
 			onCancel={onClose}
 		>
 			<RequestErrors
-				errors={convertIntoArray(createError?.errors)}
+				errors={convertIntoArray(createBalanceAdjustmentLogError?.errors)}
 				withSpaceBottom
 			/>
 
 			<CreateBalanceAdjustmentLogForm
 				branchProduct={branchProduct}
-				loading={isCreating}
+				loading={isCreatingBalanceAdjustmentLog}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);

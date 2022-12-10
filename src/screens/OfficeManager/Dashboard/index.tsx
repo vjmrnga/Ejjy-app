@@ -50,6 +50,7 @@ export const Dashboard = () => {
 			<Box>
 				<Spin spinning={isFetchingBranches || isFetchingProductCategories}>
 					<RequestErrors
+						className="px-6 pt-6"
 						errors={[
 							...convertIntoArray(branchesErrors, 'Branches'),
 							...convertIntoArray(
@@ -57,7 +58,6 @@ export const Dashboard = () => {
 								'Product Categories',
 							),
 						]}
-						withSpaceBottom
 					/>
 
 					<Tabs
@@ -71,7 +71,7 @@ export const Dashboard = () => {
 							<Tabs.TabPane key={id} tab={name}>
 								<ReportsPerMachine
 									branchId={id}
-									tableHeaderClassName="pl-0 pt-0"
+									tableHeaderClassName="pt-2 px-0"
 								/>
 
 								<Divider />

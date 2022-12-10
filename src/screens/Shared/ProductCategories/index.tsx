@@ -7,6 +7,7 @@ import {
 import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
+import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
@@ -206,7 +207,9 @@ export const ProductCategories = () => {
 				)}
 
 				<RequestErrors
-					className="px-4"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
 						...convertIntoArray(productCategoriesError),
 						...convertIntoArray(deleteProductCategoryError?.errors),

@@ -1,5 +1,7 @@
-import { Button, Popconfirm, Space, Table } from 'antd';
+import { DeleteOutlined, DesktopOutlined, EditFilled } from '@ant-design/icons';
+import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import cn from 'classnames';
 import {
 	BranchManagerUsersInfo,
 	Content,
@@ -12,7 +14,7 @@ import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useAuth, useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
 	convertIntoArray,
 	getFullName,
@@ -30,12 +32,11 @@ export const Users = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
-	const history = useHistory();
-	const { user: currentUser } = useAuth();
+	const { user } = useAuth();
 	const {
 		data: { users },
+		isFetching: isFetchingUsers,
 		error: usersError,
-		isFetching: isUsersFetching,
 	} = useUsers({
 		params: {
 			branchId: isStandAlone() ? undefined : getLocalBranchId(),
@@ -45,57 +46,56 @@ export const Users = () => {
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
-		error: deleteError,
+		error: deleteUserError,
 	} = useUserDelete();
 
 	// METHODS
 	useEffect(() => {
 		const data = users
-			.filter((user) => {
-				const isDev = user.username === DEV_USERNAME;
+			.filter((u) => {
+				const isDev = u.username === DEV_USERNAME;
 
 				const isAdminAndNotStandalone =
-					user.user_type === userTypes.ADMIN && !isStandAlone();
+					u.user_type === userTypes.ADMIN && !isStandAlone();
 
 				return !(isDev || isAdminAndNotStandalone);
 			})
-			.map((user) => ({
-				key: user.id,
-				id: user.employee_id,
-				name: getFullName(user),
-				type: getUserTypeName(user.user_type),
+			.map((u) => ({
+				key: u.id,
+				id: u.employee_id,
+				name: getFullName(u),
+				type: getUserTypeName(u.user_type),
 				actions: (
 					<Space>
-						{user.user_type !== userTypes.ADMIN && (
-							<Button
-								type="primary"
-								onClick={() =>
-									history.push(`/branch-manager/users/assign/${user.id}`)
-								}
-							>
-								Cashiering Assignments
-							</Button>
+						{u.user_type !== userTypes.ADMIN && (
+							<Tooltip title="Cashiering Assignment">
+								<Link to={`/branch-manager/users/assign/${u.id}`}>
+									<Button icon={<DesktopOutlined />} type="primary" ghost />
+								</Link>
+							</Tooltip>
 						)}
-						<Button
-							type="primary"
-							onClick={() => {
-								setSelectedUser(user);
-								setModifyUserModalVisible(true);
-							}}
-						>
-							Edit
-						</Button>
-						{user.user_type !== userTypes.ADMIN && (
+						<Tooltip title="Edit">
+							<Button
+								icon={<EditFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setSelectedUser(u);
+									setModifyUserModalVisible(true);
+								}}
+							>
+								Edit
+							</Button>
+						</Tooltip>
+						{u.user_type !== userTypes.ADMIN && (
 							<Popconfirm
 								cancelText="No"
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this user?"
-								onConfirm={() => deleteUser(user.id)}
+								onConfirm={() => deleteUser(u.id)}
 							>
-								<Button type="primary" danger>
-									Delete
-								</Button>
+								<Button icon={<DeleteOutlined />} type="primary" danger ghost />
 							</Popconfirm>
 						)}
 					</Space>
@@ -112,12 +112,12 @@ export const Users = () => {
 			{ title: 'Type', dataIndex: 'type' },
 		];
 
-		if (isCUDShown(currentUser.user_type)) {
+		if (isCUDShown(user.user_type)) {
 			columns.push({ title: 'Actions', dataIndex: 'actions' });
 		}
 
 		return columns;
-	}, [currentUser]);
+	}, [user]);
 
 	const handleSuccess = (addedUser) => {
 		queryClient.setQueriesData<any>('useUsers', (cachedData) => {
@@ -131,7 +131,7 @@ export const Users = () => {
 			<BranchManagerUsersInfo />
 
 			<Box>
-				{isCUDShown(currentUser.user_type) && (
+				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create User"
 						onCreate={() => setModifyUserModalVisible(true)}
@@ -139,10 +139,12 @@ export const Users = () => {
 				)}
 
 				<RequestErrors
-					className="px-4"
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
 					errors={[
 						...convertIntoArray(usersError),
-						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(deleteUserError?.errors),
 					]}
 					withSpaceBottom
 				/>
@@ -150,7 +152,7 @@ export const Users = () => {
 				<Table
 					columns={getColumns()}
 					dataSource={dataSource}
-					loading={isUsersFetching || isDeletingUser}
+					loading={isFetchingUsers || isDeletingUser}
 					pagination={false}
 					scroll={{ x: 650 }}
 				/>

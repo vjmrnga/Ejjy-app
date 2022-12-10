@@ -3,7 +3,7 @@ import { DetailsRow, RequestErrors } from 'components';
 import { Button, FieldError, FormInputLabel } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { SHOW_HIDE_SHORTCUT, unitOfMeasurementTypes } from 'global';
-import { useBranchProductEdit } from 'hooks/useBranchProducts';
+import { useBranchProductEdit } from 'hooks';
 import { isInteger } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -19,22 +19,14 @@ interface Props {
 }
 
 export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
-	// VARIABLES
-	const title = (
-		<>
-			<span>[Edit] Branch Product</span>
-			<span className="ModalTitleMainInfo">{branchProduct?.product?.name}</span>
-		</>
-	);
-
 	// STATES
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: editBranchProduct,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingBranchProduct,
+		error: editBranchProductError,
 	} = useBranchProductEdit();
 
 	// METHODS
@@ -82,21 +74,28 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 	return (
 		<Modal
 			footer={null}
-			title={title}
+			title={
+				<>
+					<span>[Edit] Branch Product</span>
+					<span className="ModalTitleMainInfo">
+						{branchProduct.product.name}
+					</span>
+				</>
+			}
 			centered
 			closable
 			visible
 			onCancel={handleClose}
 		>
 			<RequestErrors
-				errors={convertIntoArray(editError?.errors)}
+				errors={convertIntoArray(editBranchProductError?.errors)}
 				withSpaceBottom
 			/>
 
 			<EditBranchProductsForm
 				branchProduct={branchProduct}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
-				isLoading={isEditing}
+				isLoading={isEditingBranchProduct}
 				onClose={handleClose}
 				onSubmit={handleSubmit}
 			/>

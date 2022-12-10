@@ -34,7 +34,7 @@ export const ModifyPointSystemTagModal = ({
 	} = usePointSystemTagEdit();
 
 	// METHODS
-	const onSubmit = async (formData) => {
+	const handleSubmit = async (formData) => {
 		if (pointSystemTag) {
 			await editPointSystemTag({
 				...formData,
@@ -70,7 +70,7 @@ export const ModifyPointSystemTagModal = ({
 				isLoading={isCreatingPointSystemTag || isEditingPointSystemTag}
 				pointSystemTag={pointSystemTag}
 				onClose={onClose}
-				onSubmit={onSubmit}
+				onSubmit={handleSubmit}
 			/>
 		</Modal>
 	);
@@ -128,7 +128,6 @@ export const ModifyPointSystemTagForm = ({
 							<FormattedInputNumber
 								className="w-100"
 								controls={false}
-								size="large"
 								value={values.divisorAmount}
 								onChange={(value) => {
 									setFieldValue('divisorAmount', value);
@@ -142,20 +141,10 @@ export const ModifyPointSystemTagForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							htmlType="button"
-							size="large"
-							onClick={onClose}
-						>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button
-							htmlType="submit"
-							loading={isLoading}
-							size="large"
-							type="primary"
-						>
+						<Button htmlType="submit" loading={isLoading} type="primary">
 							{pointSystemTag ? 'Edit' : 'Create'}
 						</Button>
 					</div>

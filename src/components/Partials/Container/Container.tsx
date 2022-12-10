@@ -54,7 +54,6 @@ export const Container = ({
 	return (
 		<Layout className="Container">
 			<Spin
-				size="large"
 				spinning={loading}
 				tip={loadingText}
 				wrapperClassName="Container_spinner"

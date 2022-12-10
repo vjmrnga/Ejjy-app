@@ -39,7 +39,6 @@ export const TabProductLogs = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
@@ -64,12 +63,12 @@ export const TabProductLogs = () => {
 		<div>
 			<TableHeader title="Product Logs" wrapperClassName="pt-2 px-0" />
 
-			<Filter />
-
 			<RequestErrors
 				errors={convertIntoArray(logsError, 'Logs')}
 				withSpaceBottom
 			/>
+
+			<Filter />
 
 			<Table
 				columns={columns}

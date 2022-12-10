@@ -147,7 +147,6 @@ export const CashieringCard = ({ className, bordered }: Props) => {
 						>
 							<Button
 								disabled={isPastCloseDayDeadline()}
-								size="large"
 								type="primary"
 								onClick={handleClick}
 							>

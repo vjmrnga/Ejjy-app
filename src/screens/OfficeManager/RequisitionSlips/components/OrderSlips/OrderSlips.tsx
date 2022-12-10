@@ -267,7 +267,7 @@ export const OrderSlips = ({
 		};
 	};
 
-	const onChangePreparingBranch = (branchId) => {
+	const handleChangePreparingBranch = (branchId) => {
 		if (selectedBranchId !== branchId) {
 			setSelectedBranchId(branchId);
 			userReset();
@@ -294,29 +294,29 @@ export const OrderSlips = ({
 		}
 	};
 
-	const onCreateOrderSlip = () => {
+	const handleCreateOrderSlip = () => {
 		setSelectedOrderSlip(null);
-		onChangePreparingBranch(getFirstBranchOptionId());
+		handleChangePreparingBranch(getFirstBranchOptionId());
 		setCreateEditOrderSlipVisible(true);
 	};
 
-	const onCreateOutOfStock = () => {
+	const handleCreateOutOfStock = () => {
 		setSelectedOrderSlip(null);
 		setCreateOutOfStockVisible(true);
 	};
 
-	const onViewOrderSlip = (orderSlip) => {
+	const handleViewOrderSlip = (orderSlip) => {
 		setSelectedOrderSlip(orderSlip);
 		setViewOrderSlipVisible(true);
 	};
 
-	const onEditOrderSlip = (orderSlip) => {
-		onChangePreparingBranch(orderSlip?.assigned_store?.id);
+	const handleEditOrderSlip = (orderSlip) => {
+		handleChangePreparingBranch(orderSlip?.assigned_store?.id);
 		setSelectedOrderSlip(orderSlip);
 		setCreateEditOrderSlipVisible(true);
 	};
 
-	const onCreateDeliveryReceipt = (id) => {
+	const handleCreateDeliveryReceipt = (id) => {
 		createDeliveryReceipt(id);
 	};
 
@@ -334,14 +334,14 @@ export const OrderSlips = ({
 				buttonName="Create Order Slip"
 				pending={getPendingCount()}
 				title="F-OS1"
-				onCreate={onCreateOrderSlip}
+				onCreate={handleCreateOrderSlip}
 				onCreateDisabled={
 					![
 						requisitionSlipActions.SEEN,
 						requisitionSlipActions.F_OS1_CREATING,
 					].includes(requisitionSlip?.action?.action) || !hasAvailableProducts()
 				}
-				onOutOfStock={onCreateOutOfStock}
+				onOutOfStock={handleCreateOutOfStock}
 				onOutOfStockDisabled={!hasAvailableProducts()}
 			/>
 
@@ -350,9 +350,9 @@ export const OrderSlips = ({
 					request.REQUESTING,
 				)}
 				orderSlips={orderSlips}
-				onCreateDeliveryReceipt={onCreateDeliveryReceipt}
-				onEditOrderSlip={onEditOrderSlip}
-				onViewOrderSlip={onViewOrderSlip}
+				onCreateDeliveryReceipt={handleCreateDeliveryReceipt}
+				onEditOrderSlip={handleEditOrderSlip}
+				onViewOrderSlip={handleViewOrderSlip}
 			/>
 
 			{viewOrderSlipVisible && (
@@ -381,7 +381,7 @@ export const OrderSlips = ({
 					...convertIntoArray(branchProductsWarnings, 'Branch Products'),
 					...convertIntoArray(userWarnings, 'Users'),
 				]}
-				onChangePreparingBranch={onChangePreparingBranch}
+				onChangePreparingBranch={handleChangePreparingBranch}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
 			/>
 

@@ -9,7 +9,7 @@ import {
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import React, { useCallback } from 'react';
-import { filterOption, getId } from 'utils';
+import { filterOption } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
@@ -72,7 +72,6 @@ export const PricesForm = ({
 				className="w-100"
 				controls={false}
 				placeholder={placeholder ? placeholder.toFixed(2) : undefined}
-				size="large"
 				value={value}
 				onChange={(newValue) => {
 					setFieldValue(name, newValue);
@@ -229,7 +228,6 @@ export const PricesForm = ({
 												className="w-100"
 												filterOption={filterOption}
 												optionFilterProp="children"
-												size="large"
 												value={branchProduct.markdownType}
 												showSearch
 												onChange={(value) => {
