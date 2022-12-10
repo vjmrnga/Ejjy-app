@@ -1,5 +1,5 @@
-import { Descriptions, Modal } from 'antd';
-import { Button } from 'components/elements';
+import { Descriptions, Button, Modal } from 'antd';
+import {} from 'components/elements';
 import React from 'react';
 import { getUserTypeName } from 'utils';
 
@@ -11,7 +11,11 @@ interface Props {
 export const ViewUserModal = ({ user, onClose }: Props) => (
 	<Modal
 		className="Modal__hasFooter"
-		footer={[<Button key="button" text="Close" onClick={onClose} />]}
+		footer={
+			<Button htmlType="button" onClick={onClose}>
+				Close
+			</Button>
+		}
 		title="User"
 		centered
 		closable

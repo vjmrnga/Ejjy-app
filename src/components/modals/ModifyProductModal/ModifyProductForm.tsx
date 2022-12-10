@@ -67,7 +67,7 @@ const isVatExemptedOptions = [
 ];
 
 interface Props {
-	loading: boolean;
+	isLoading: boolean;
 	onClose: any;
 	onSubmit: any;
 	pointSystemTags: any;
@@ -75,7 +75,7 @@ interface Props {
 }
 
 export const ModifyProductForm = ({
-	loading,
+	isLoading,
 	onClose,
 	onSubmit,
 	pointSystemTags,
@@ -355,7 +355,7 @@ export const ModifyProductForm = ({
 					<ScrollToFieldError />
 
 					<Row gutter={[16, 16]}>
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'barcode',
 								label: 'Barcode',
@@ -364,7 +364,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								id="unitOfMeasurement"
@@ -384,7 +384,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'sellingBarcode',
 								label: 'Scale Barcode',
@@ -398,7 +398,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								id="sellingBarcodeUnitOfMeasurement"
@@ -411,7 +411,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'packingBarcode',
 								label: 'Packing Barcode',
@@ -420,7 +420,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								disabled={!values.packingBarcode}
@@ -433,7 +433,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'textcode',
 								label: 'Textcode',
@@ -442,7 +442,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'name',
 								label: 'Name',
@@ -482,7 +482,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="Product Category" spacing />
 							<FormSelect
 								id="productCategory"
@@ -494,7 +494,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="Include In Scale" spacing />
 							<FormRadioButton id="isShownInScaleList" items={booleanOptions} />
 							<ErrorMessage
@@ -505,7 +505,7 @@ export const ModifyProductForm = ({
 
 						<Divider dashed>TAGS</Divider>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="TT-001" spacing />
 							<FormRadioButton id="type" items={productTypeOptions} />
 							<ErrorMessage
@@ -514,7 +514,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
 								disabled={siteSettings?.tax_type === taxTypes.NVAT}
@@ -527,7 +527,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="Qty Allowance" spacing />
 							<FormRadioButton
 								disabled={
@@ -546,7 +546,7 @@ export const ModifyProductForm = ({
 							)}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label id="pointSystemTagId" label="Point System Tag" spacing />
 							<Select
 								className="w-100"
@@ -576,7 +576,7 @@ export const ModifyProductForm = ({
 
 						<Divider dashed>QUANTITY</Divider>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="Reorder Point" spacing />
 							<FormInput
 								id="reorderPoint"
@@ -592,7 +592,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="Max Balance" spacing />
 							<FormInput
 								id="maxBalance"
@@ -608,7 +608,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'piecesInBulk',
 								label: 'Pieces in Bulk',
@@ -619,7 +619,7 @@ export const ModifyProductForm = ({
 						</Col>
 
 						{(values.barcode || values.sellingBarcode) && (
-							<Col sm={12} xs={24}>
+							<Col sm={12}>
 								{renderInputField({
 									name: 'conversionAmount',
 									label: 'Conversion (Grams)',
@@ -630,7 +630,7 @@ export const ModifyProductForm = ({
 							</Col>
 						)}
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							<Label label="" spacing />
 							{renderInputField({
 								name: 'allowableSpoilage',
@@ -657,7 +657,7 @@ export const ModifyProductForm = ({
 							<Text mark>(must be in 2 decimal places)</Text>
 						</Divider>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'costPerPiece',
 								label: 'Cost (Piece)',
@@ -667,7 +667,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'costPerBulk',
 								label: 'Cost (Bulk)',
@@ -677,7 +677,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'pricePerPiece',
 								label: 'Regular Price (Piece)',
@@ -687,7 +687,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col sm={12}>
 							{renderInputField({
 								name: 'pricePerBulk',
 								label: 'Regular Price (Bulk)',
@@ -699,20 +699,10 @@ export const ModifyProductForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={loading}
-							htmlType="button"
-							size="large"
-							onClick={onClose}
-						>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button
-							htmlType="submit"
-							loading={loading}
-							size="large"
-							type="primary"
-						>
+						<Button htmlType="submit" loading={isLoading} type="primary">
 							{product ? 'Edit' : 'Create'}
 						</Button>
 					</div>

@@ -210,6 +210,20 @@ const getPageStyle = (extraStyle = '') => {
 	return `width: 100%; font-size: ${getAppReceiptPrinterFontSize()}pt; font-family: ${getAppReceiptPrinterFontFamily()}, monospace; line-height: 100%; position: relative; ${extraStyle}`;
 };
 
+const appendHtmlElement = (data) => `
+		<html lang="en">
+    <head>
+      <style>
+        .container, .container > div, .container > table {
+          width: 380px !important;
+        }
+      </style>
+    </head>
+		<body>
+				${data}
+    </body>
+  </html>`;
+
 export const printRequisitionSlip = ({
 	requisitionSlip,
 	siteSettings,
@@ -318,19 +332,7 @@ export const printRequisitionSlip = ({
 `;
 
 	if (isPdf) {
-		return `
-      <html lang="en">
-      <head>
-        <style>
-          .container, .container > div, .container > table {
-            width: 795px !important;
-          }
-        </style>
-      </head>
-      <body>
-          ${data}
-      </body>
-    </html>`;
+		return appendHtmlElement(data);
 	}
 
 	print({
@@ -895,6 +897,7 @@ export const printBirReport = ({ birReports, siteSettings }) => {
 export const printReceivingVoucherForm = ({
 	receivingVoucher,
 	siteSettings,
+	isPdf = false,
 }) => {
 	/**
 	 * * The following details are hidden as it is not implemented yet (per Emman):
@@ -904,7 +907,7 @@ export const printReceivingVoucherForm = ({
 	const products = receivingVoucher.products;
 
 	const data = `
-	<div style="${getPageStyle('padding: 24px; width: 380px;')}">
+	<div class="container" style="${getPageStyle()}">
 		${getHeader({
 			title: 'RECEIVING VOUCHER',
 			siteSettings,
@@ -963,7 +966,16 @@ export const printReceivingVoucherForm = ({
 	</div>
 	`;
 
-	return data;
+	if (isPdf) {
+		return appendHtmlElement(data);
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing receiving voucher...',
+		successMessage: 'Successfully printed receiving voucher.',
+		errorMessage: 'Error occurred while trying to print receiving voucher.',
+	});
 };
 
 export const printStockOutForm = ({ backOrder, siteSettings }) => {
@@ -1309,19 +1321,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 	`;
 
 	if (isPdf) {
-		return `
-		<html lang="en">
-    <head>
-      <style>
-        .container, .container > div, .container > table {
-          width: 795px !important;
-        }
-      </style>
-    </head>
-		<body>
-				${data}
-    </body>
-  </html>`;
+		return appendHtmlElement(data);
 	}
 
 	print({
@@ -1540,19 +1540,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 	`;
 
 	if (isPdf) {
-		return `
-		<html lang="en">
-    <head>
-      <style>
-        .container, .container > div, .container > table {
-          width: 795px !important;
-        }
-      </style>
-    </head>
-		<body>
-				${data}
-    </body>
-  </html>`;
+		return appendHtmlElement(data);
 	}
 
 	print({
@@ -1771,19 +1759,7 @@ export const printCashBreakdown = ({
 	`;
 
 	if (isPdf) {
-		return `
-		<html lang="en">
-    <head>
-      <style>
-        .container, .container > div, .container > table {
-          width: 795px !important;
-        }
-      </style>
-    </head>
-		<body>
-				${data}
-    </body>
-  </html>`;
+		return appendHtmlElement(data);
 	}
 
 	print({
@@ -1810,7 +1786,7 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 	const branchMachine = cashOut.branch_machine;
 
 	const data = `
-	<div style="${getPageStyle()}">
+	<div class="container" style="${getPageStyle()}">
 		<div style="text-align: center; display: flex; flex-direction: column">
       <span style="white-space: pre-line">${siteSettings.store_name}</span>
       <span style="white-space: pre-line">${
@@ -1875,19 +1851,7 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 	`;
 
 	if (isPdf) {
-		return `
-		<html lang="en">
-    <head>
-      <style>
-        .container {
-          width: 795px !important;
-        }
-      </style>
-    </head>
-		<body>
-				${data}
-    </body>
-  </html>`;
+		return appendHtmlElement(data);
 	}
 
 	print({

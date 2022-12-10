@@ -1,11 +1,12 @@
-import { Tabs } from 'antd';
-import { AddIcon, ConnectionAlert, Content, ModifyUserModal } from 'components';
-import { Box, Button } from 'components/elements';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Tabs } from 'antd';
+import { ConnectionAlert, Content, ModifyUserModal } from 'components';
+import { Box } from 'components/elements';
 import { OfficeManagerUsersInfo } from 'components/info/OfficeManagerUsersInfo';
 import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
-import { toString } from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
+import _ from 'lodash';
+import React, { useState } from 'react';
+import { getId } from 'utils';
 import { BranchAssignmentUserModal } from './components/BranchAssignmentUserModal';
 import { BranchUsers } from './components/BranchUsers';
 
@@ -19,7 +20,7 @@ export const Users = () => {
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
-	const queryClient = useQueryClient();
+
 	const { isConnected } = usePingOnlineServer();
 	const {
 		params: { branchId: currentBranchId },
@@ -30,12 +31,6 @@ export const Users = () => {
 	} = useBranches();
 
 	// METHODS
-	useEffect(() => {
-		if (branches && !currentBranchId) {
-			handleTabClick(NO_BRANCH_ID);
-		}
-	}, [branches, currentBranchId]);
-
 	const handleTabClick = (branchId) => {
 		setQueryParams(
 			{ branchId },
@@ -51,24 +46,24 @@ export const Users = () => {
 
 			<Box>
 				<Tabs
-					activeKey={toString(currentBranchId)}
+					activeKey={_.toString(currentBranchId) || _.toString(NO_BRANCH_ID)}
 					className="pa-6"
 					tabBarExtraContent={
 						<Button
 							disabled={isConnected === false}
-							icon={<AddIcon />}
-							iconDirection="left"
-							text="Create User"
-							variant="primary"
+							icon={<PlusOutlined />}
+							type="primary"
 							onClick={() => setModifyUserModalVisible(true)}
-						/>
+						>
+							Create User
+						</Button>
 					}
 					type="card"
 					onTabClick={handleTabClick}
 				>
 					<Tabs.TabPane key={NO_BRANCH_ID} tab="User List">
 						<BranchUsers
-							branchId={NO_BRANCH_ID}
+							branch={{ id: NO_BRANCH_ID, online_id: NO_BRANCH_ID }}
 							disabled={isConnected === false}
 							onEditUser={(user) => {
 								setModifyUserModalVisible(true);
@@ -81,10 +76,10 @@ export const Users = () => {
 						/>
 					</Tabs.TabPane>
 
-					{branches.map(({ name, id }) => (
-						<Tabs.TabPane key={id} tab={name}>
+					{branches.map((branch) => (
+						<Tabs.TabPane key={getId(branch)} tab={branch.name}>
 							<BranchUsers
-								branchId={id}
+								branch={branch}
 								disabled={isConnected === false}
 								onEditUser={(user) => {
 									setModifyUserModalVisible(true);
@@ -115,9 +110,6 @@ export const Users = () => {
 						onClose={() => {
 							setReassignUserModalVisible(false);
 							setSelectedUser(null);
-						}}
-						onSuccess={() => {
-							queryClient.invalidateQueries('useUsers');
 						}}
 					/>
 				)}

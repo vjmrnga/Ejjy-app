@@ -75,7 +75,7 @@ export const CreateStockIn = () => {
 	const history = useHistory();
 	const {
 		data: { branchProducts, total },
-		isFetching: isBranchProductsFetching,
+		isFetching: isFetchingBranchProducts,
 		error: branchProductsErrors,
 	} = useBranchProducts({
 		params: {
@@ -86,8 +86,8 @@ export const CreateStockIn = () => {
 	});
 	const {
 		mutateAsync: createReceivingVoucher,
-		isLoading: isReceivingVouchersLoading,
-		error: receivingVouchersError,
+		isLoading: isCreatingReceivingVoucher,
+		error: receivingVoucherError,
 	} = useReceivingVoucherCreate();
 
 	// METHODS: Form methods
@@ -280,7 +280,7 @@ export const CreateStockIn = () => {
 	};
 
 	// METHODS: Filters
-	const onCreate = async (formData) => {
+	const handleCreate = async (formData) => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -312,7 +312,7 @@ export const CreateStockIn = () => {
 		}
 	};
 
-	const isLoading = isBranchProductsFetching || isReceivingVouchersLoading;
+	const isLoading = isFetchingBranchProducts || isCreatingReceivingVoucher;
 
 	return (
 		<Content className="CreateBackOrder" title="Stocks">
@@ -328,7 +328,7 @@ export const CreateStockIn = () => {
 					className="PaddingHorizontal"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(receivingVouchersError?.errors, 'Stock In'),
+						...convertIntoArray(receivingVoucherError?.errors, 'Stock In'),
 					]}
 					withSpaceBottom
 				/>
@@ -401,11 +401,12 @@ export const CreateStockIn = () => {
 
 				{createStockInModalVisible && (
 					<CreateStockInModal
+						isLoading={isCreatingReceivingVoucher}
 						onClose={() => {
 							setCreateStockInModalVisible(false);
 						}}
 						onSubmit={(formData) => {
-							onCreate(formData);
+							handleCreate(formData);
 							setCreateStockInModalVisible(false);
 						}}
 					/>

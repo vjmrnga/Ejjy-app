@@ -1,10 +1,10 @@
-import { Button as AntdButton, Col, Divider, Input, Row, Select } from 'antd';
+import { Button, Col, Divider, Input, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { userTypeBranchOptions, userTypeOptions, userTypes } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
 import { filterOption } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface Props {
 	user?: any;
@@ -33,7 +33,6 @@ export const ModifyUserForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: user?.id || null,
 				firstName: user?.first_name || '',
 				lastName: user?.last_name || '',
 				email: user?.email || '',
@@ -86,7 +85,6 @@ export const ModifyUserForm = ({
 								<Col span={24}>
 									<Label label="First Name" spacing />
 									<Input
-										name="firstName"
 										value={values['firstName']}
 										onChange={(e) => {
 											setFieldValue('firstName', e.target.value);
@@ -101,7 +99,6 @@ export const ModifyUserForm = ({
 								<Col span={24}>
 									<Label label="Last Name" spacing />
 									<Input
-										name="lastName"
 										value={values['lastName']}
 										onChange={(e) => {
 											setFieldValue('lastName', e.target.value);
@@ -116,7 +113,6 @@ export const ModifyUserForm = ({
 								<Col span={24}>
 									<Label label="Email Address" spacing />
 									<Input
-										name="email"
 										type="email"
 										value={values['email']}
 										onChange={(e) => {
@@ -166,7 +162,7 @@ export const ModifyUserForm = ({
 							<>
 								{user ? (
 									<Col span={24}>
-										<AntdButton
+										<Button
 											className="d-block mx-auto"
 											danger={passwordFieldsVisible}
 											type="link"
@@ -175,7 +171,7 @@ export const ModifyUserForm = ({
 											}}
 										>
 											{passwordFieldsVisible ? 'Cancel Edit' : 'Edit'} Password
-										</AntdButton>
+										</Button>
 									</Col>
 								) : (
 									<>
@@ -201,7 +197,7 @@ export const ModifyUserForm = ({
 
 						{passwordFieldsVisible && (
 							<>
-								<Col sm={12} xs={24}>
+								<Col lg={12}>
 									<Label label="Password" spacing />
 									<Input.Password
 										name="password"
@@ -216,7 +212,7 @@ export const ModifyUserForm = ({
 									/>
 								</Col>
 
-								<Col sm={12} xs={24}>
+								<Col lg={12}>
 									<Label label="Confirm Password" spacing />
 									<Input.Password
 										name="confirmPassword"
@@ -235,18 +231,12 @@ export const ModifyUserForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={isLoading}
-							text={user ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							{user ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

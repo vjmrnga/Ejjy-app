@@ -1,35 +1,32 @@
-import { Col, message, Modal, Select } from 'antd';
+import { Button, Col, message, Modal, Select } from 'antd';
 import { RequestErrors } from 'components';
-import { Button, FieldError, Label } from 'components/elements';
+import { FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchAssignmentCreate, useBranches } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { useQueryClient } from 'react-query';
+import { convertIntoArray, filterOption, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
 	user: any;
-	onSuccess: any;
 	onClose: any;
 }
 
-export const BranchAssignmentUserModal = ({
-	user,
-	onSuccess,
-	onClose,
-}: Props) => {
+export const BranchAssignmentUserModal = ({ user, onClose }: Props) => {
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const {
 		mutateAsync: createBranchAssignment,
 		isLoading: isCreatingBranchAssignment,
-		error: createError,
+		error: createBranchAssignmentError,
 	} = useBranchAssignmentCreate();
 
 	const handleSubmit = async (formData) => {
 		await createBranchAssignment(formData);
-		message.success('User was reassigned to a branch successfully');
+		queryClient.invalidateQueries('useUsers');
 
-		onSuccess();
+		message.success('User was reassigned to a branch successfully');
 		onClose();
 	};
 
@@ -43,7 +40,7 @@ export const BranchAssignmentUserModal = ({
 			onCancel={onClose}
 		>
 			<RequestErrors
-				errors={convertIntoArray(createError?.errors)}
+				errors={convertIntoArray(createBranchAssignmentError?.errors)}
 				withSpaceBottom
 			/>
 
@@ -80,7 +77,7 @@ export const BranchAssignmentUserForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				userId: user.id,
+				userId: getId(user),
 				branchId: user.branchId > 0 ? user.branchId : null, // NOTE: We want to display the valid branch IDs
 			},
 			Schema: Yup.object().shape({
@@ -106,23 +103,17 @@ export const BranchAssignmentUserForm = ({
 						<Select
 							allowClear={false}
 							className="w-100"
-							filterOption={(input, option) =>
-								option.children
-									.toString()
-									.toLowerCase()
-									.indexOf(input.toLowerCase()) >= 0
-							}
+							filterOption={filterOption}
 							loading={isFetchingBranches}
 							optionFilterProp="children"
-							size="large"
-							value={values.branchId}
+							value={values['branchId']}
 							showSearch
 							onChange={(value) => {
 								setFieldValue('branchId', value);
 							}}
 						>
 							{branches.map((branch) => (
-								<Select.Option key={branch.id} value={branch.id}>
+								<Select.Option key={getId(branch)} value={getId(branch)}>
 									{branch.name}
 								</Select.Option>
 							))}
@@ -134,13 +125,12 @@ export const BranchAssignmentUserForm = ({
 					</Col>
 
 					<div className="ModalCustomFooter">
-						<Button text="Cancel" type="button" onClick={onClose} />
-						<Button
-							loading={isLoading}
-							text="Submit"
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							Submit
+						</Button>
 					</div>
 				</Form>
 			)}

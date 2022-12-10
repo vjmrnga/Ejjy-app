@@ -76,7 +76,7 @@ export const CreateStockOut = () => {
 	const { user } = useAuth();
 	const {
 		data: { branchProducts, total },
-		isFetching: isBranchProductsFetching,
+		isFetching: isFetchingBranchProducts,
 		error: branchProductsErrors,
 	} = useBranchProducts({
 		params: {
@@ -87,7 +87,7 @@ export const CreateStockOut = () => {
 	});
 	const {
 		mutateAsync: createBackOrder,
-		isLoading: isCreateBackOrderLoading,
+		isLoading: isCreatingBackOrder,
 		error: createBackOrderError,
 	} = useBackOrderCreate();
 
@@ -278,7 +278,7 @@ export const CreateStockOut = () => {
 	};
 
 	// METHODS: Filters
-	const onCreate = async (formData) => {
+	const handleCreate = async (formData) => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -309,7 +309,7 @@ export const CreateStockOut = () => {
 		}
 	};
 
-	const isLoading = isBranchProductsFetching || isCreateBackOrderLoading;
+	const isLoading = isFetchingBranchProducts || isCreatingBackOrder;
 
 	return (
 		<Content className="CreateBackOrder" title="Stocks">
@@ -398,11 +398,12 @@ export const CreateStockOut = () => {
 
 				{createStockOutModalVisible && (
 					<CreateStockOutModal
+						isLoading={isCreatingBackOrder}
 						onClose={() => {
 							setCreateStockOutModalVisible(false);
 						}}
 						onSubmit={(formData) => {
-							onCreate(formData);
+							handleCreate(formData);
 							setCreateStockOutModalVisible(false);
 						}}
 					/>

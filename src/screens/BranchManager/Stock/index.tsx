@@ -3,7 +3,7 @@ import { Content, StocksInfo } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { TabStockIn } from './components/TabStockIn';
 import { TabStockOut } from './components/TabStockOut';
@@ -16,20 +16,14 @@ const tabs = {
 export const Stocks = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
 
 	// METHODS
-	useEffect(() => {
-		if (!currentTab) {
-			onTabClick(tabs.STOCK_IN);
-		}
-	}, [currentTab]);
-
-	const onTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -40,22 +34,20 @@ export const Stocks = () => {
 
 			<Box>
 				<Tabs
-					activeKey={_.toString(currentTab)}
+					activeKey={_.toString(tab) || tabs.STOCK_IN}
 					className="PaddingHorizontal PaddingVertical"
 					tabBarExtraContent={
 						<Link
 							to={`stocks/stock-${
-								_.toString(currentTab) === tabs.STOCK_IN ? 'in' : 'out'
+								_.toString(tab) === tabs.STOCK_IN ? 'in' : 'out'
 							}/create`}
 						>
-							<Button size="large" type="primary">
-								Create {_.toString(currentTab)}
-							</Button>
+							<Button type="primary">Create {_.toString(tab)}</Button>
 						</Link>
 					}
 					type="card"
 					destroyInactiveTabPane
-					onTabClick={onTabClick}
+					onTabClick={handleTabClick}
 				>
 					<Tabs.TabPane key={tabs.STOCK_IN} tab={tabs.STOCK_IN}>
 						<TabStockIn />

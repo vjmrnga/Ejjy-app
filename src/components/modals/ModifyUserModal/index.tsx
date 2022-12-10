@@ -2,38 +2,41 @@ import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { useUserCreate, useUserEdit } from 'hooks';
 import React from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { ModifyUserForm } from './ModifyUserForm';
 
 interface Props {
-	user?: any;
-	onSuccess?: any;
 	branchUsersOnly?: boolean;
 	onClose: any;
+	onSuccess?: any;
+	user?: any;
 }
 
 export const ModifyUserModal = ({
-	user,
 	branchUsersOnly,
-	onSuccess,
 	onClose,
+	onSuccess,
+	user,
 }: Props) => {
 	// METHODS
 	const {
 		mutateAsync: createUser,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingUser,
+		error: createUserError,
 	} = useUserCreate();
 	const {
 		mutateAsync: editUser,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingUser,
+		error: editUserError,
 	} = useUserEdit();
 
 	const handleSubmit = async (formData) => {
 		let response = null;
 		if (user) {
-			response = await editUser(formData);
+			response = await editUser({
+				...formData,
+				id: getId(user),
+			});
 			message.success('User was edited successfully');
 		} else {
 			response = await createUser(formData);
@@ -55,15 +58,15 @@ export const ModifyUserModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createUserError?.errors),
+					...convertIntoArray(editUserError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyUserForm
 				branchUsersOnly={branchUsersOnly}
-				isLoading={isCreating || isEditing}
+				isLoading={isCreatingUser || isEditingUser}
 				user={user}
 				onClose={onClose}
 				onSubmit={handleSubmit}

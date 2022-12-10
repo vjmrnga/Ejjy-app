@@ -1,49 +1,47 @@
-import { Col, Modal, Row, Select } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import { RequestErrors } from 'components/RequestErrors/RequestErrors';
+import { Button, Col, Input, Modal, Row, Select } from 'antd';
+import { RequestErrors } from 'components';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';
-import React, { useCallback } from 'react';
-import { convertIntoArray, getFullName } from 'utils';
+import React from 'react';
+import { convertIntoArray, filterOption, getFullName } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
+
+const formDetails = {
+	defaultValues: {
+		encodedById: null,
+		overallRemarks: '',
+	},
+	schema: Yup.object().shape({
+		encodedById: Yup.number().nullable().required().label('Encoded By Id'),
+		overallRemarks: Yup.string().required().label('Overall Remarks'),
+	}),
+};
 
 interface Props {
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
-export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
-	// CUSTOM HOOKS
+export const CreateStockOutModal = ({
+	isLoading,
+	onSubmit,
+	onClose,
+}: Props) => {
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
-	// METHODS
-	const getFormDetails = useCallback(
-		() => ({
-			defaultValues: {
-				encodedById: null,
-				overallRemarks: '',
-			},
-			schema: Yup.object().shape({
-				encodedById: Yup.number().nullable().required().label('Encoded By Id'),
-				overallRemarks: Yup.string().required().label('Overall Remarks'),
-			}),
-		}),
-		[],
-	);
-
 	return (
 		<Modal
 			footer={null}
 			title="Stock Out Details"
-			width={600}
 			centered
 			closable
 			visible
@@ -52,8 +50,8 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 			<RequestErrors errors={convertIntoArray(usersError)} withSpaceBottom />
 
 			<Formik
-				initialValues={getFormDetails().defaultValues}
-				validationSchema={getFormDetails().schema}
+				initialValues={formDetails.defaultValues}
+				validationSchema={formDetails.schema}
 				onSubmit={(formData) => {
 					onSubmit(formData);
 				}}
@@ -62,19 +60,13 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 					<Form>
 						<Row gutter={[16, 16]}>
 							<Col span={24}>
-								<Label id="encodedById" label="Encoded By" spacing />
+								<Label label="Encoded By" spacing />
 								<Select
-									disabled={isUsersFetching}
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									className="w-100"
+									disabled={isFetchingUsers}
+									filterOption={filterOption}
 									optionFilterProp="children"
-									size="large"
-									style={{ width: '100%' }}
-									value={values.encodedById}
+									value={values['encodedById']}
 									showSearch
 									onChange={(value) => {
 										setFieldValue('encodedById', value);
@@ -91,9 +83,10 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 									render={(error) => <FieldError error={error} />}
 								/>
 							</Col>
+
 							<Col span={24}>
-								<Label id="overallRemarks" label="Overall Remarks" spacing />
-								<TextArea
+								<Label label="Overall Remarks" spacing />
+								<Input.TextArea
 									rows={2}
 									onChange={(e) => {
 										setFieldValue('overallRemarks', e.target.value);
@@ -107,8 +100,12 @@ export const CreateStockOutModal = ({ onSubmit, onClose }: Props) => {
 						</Row>
 
 						<div className="ModalCustomFooter">
-							<Button text="Cancel" type="button" onClick={onClose} />
-							<Button text="Submit" type="submit" variant="primary" />
+							<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+								Cancel
+							</Button>
+							<Button htmlType="submit" loading={isLoading} type="primary">
+								Submit
+							</Button>
 						</div>
 					</Form>
 				)}

@@ -1,6 +1,6 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
-import { wrapServiceWithCatch } from 'hooks/helper';
+import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { UsersService } from 'services';
 import {
 	getLocalApiUrl,
-	getOnlineApiUrl,
 	isStandAlone,
 	modifiedCallback,
 	modifiedExtraCallback,
@@ -337,7 +336,7 @@ export const useUserCreate = () => {
 					user_type: userType,
 					username,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -357,7 +356,7 @@ export const useUserApprove = () => {
 				{
 					pending_approval_type: pendingApprovalType,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -392,7 +391,7 @@ export const useUserEdit = () => {
 					password,
 					user_type: userType,
 				},
-				getOnlineApiUrl(),
+				getBaseUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -406,7 +405,7 @@ export const useUserDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => UsersService.delete(id, getOnlineApiUrl()),
+		(id: number) => UsersService.delete(id, getBaseUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('useUsers');

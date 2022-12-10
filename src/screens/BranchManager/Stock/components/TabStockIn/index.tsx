@@ -1,21 +1,14 @@
-import { Button, Table } from 'antd';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewReceivingVoucherModal } from 'components';
 import { ButtonLink } from 'components/elements';
-import { printReceivingVoucherForm } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
-	JSPDF_SETTINGS,
 	pageSizeOptions,
 } from 'global';
-import {
-	useQueryParams,
-	useReceivingVouchers,
-	useSiteSettingsRetrieve,
-} from 'hooks';
-import jsPDF from 'jspdf';
+import { useQueryParams, useReceivingVouchers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 
@@ -32,23 +25,15 @@ export const TabStockIn = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedReceivingVoucher, setSelectedReceivingVoucher] =
 		useState(null);
-	const [html, setHtml] = useState('');
-	// NOTE: Will store the ID of the collection of receipt that is about to be printed.
-	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
-	const { params: queryParams, setQueryParams } = useQueryParams();
-	const {
-		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
-		error: siteSettingsError,
-	} = useSiteSettingsRetrieve();
+	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { receivingVouchers, total },
-		isFetching: isReceivingVouchersFetching,
+		isFetching: isFetchingReceivingVouchers,
 		error: receivingVouchersError,
 	} = useReceivingVouchers({
-		params: queryParams,
+		params,
 	});
 
 	// METHODS
@@ -66,64 +51,26 @@ export const TabStockIn = () => {
 				: EMPTY_CELL,
 			supplierName: receivingVoucher.supplier_name,
 			amountPaid: formatInPeso(receivingVoucher.amount_paid),
-			actions: (
-				<Button
-					loading={isPrinting === receivingVoucher.id}
-					type="link"
-					onClick={() => {
-						handlePrintPDF(receivingVoucher);
-					}}
-				>
-					Print PDF
-				</Button>
-			),
 		}));
 
 		setDataSource(data);
-	}, [receivingVouchers, siteSettings, isPrinting]);
-
-	const handlePrintPDF = (receivingVoucher) => {
-		setIsPrinting(receivingVoucher.id);
-
-		const dataHtml = printReceivingVoucherForm({
-			receivingVoucher,
-			siteSettings,
-		});
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsPrinting(null);
-					setHtml('');
-				},
-			});
-		}, 500);
-	};
+	}, [receivingVouchers]);
 
 	return (
 		<>
 			<RequestErrors
-				errors={[
-					...convertIntoArray(siteSettingsError, 'Site Settings'),
-					...convertIntoArray(receivingVouchersError, 'Receiving Vouchers'),
-				]}
+				errors={convertIntoArray(receivingVouchersError)}
 				withSpaceBottom
 			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isReceivingVouchersFetching || isSiteSettingsFetching}
+				loading={isFetchingReceivingVouchers}
 				pagination={{
-					current: Number(queryParams.page) || DEFAULT_PAGE,
+					current: Number(params.page) || DEFAULT_PAGE,
 					total,
-					pageSize: Number(queryParams.pageSize) || DEFAULT_PAGE_SIZE,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({
 							page,
@@ -143,12 +90,6 @@ export const TabStockIn = () => {
 					onClose={() => setSelectedReceivingVoucher(null)}
 				/>
 			)}
-
-			<div
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
-				style={{ display: 'none' }}
-			/>
 		</>
 	);
 };

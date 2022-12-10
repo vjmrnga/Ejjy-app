@@ -80,7 +80,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 			/>
 
 			<ModifyProductForm
-				loading={isCreating || isEditing || isFetchingPointSystemTags}
+				isLoading={isCreating || isEditing || isFetchingPointSystemTags}
 				pointSystemTags={pointSystemTags}
 				product={product}
 				onClose={onClose}

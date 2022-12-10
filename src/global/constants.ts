@@ -35,6 +35,7 @@ export const GENERIC_BRANCH_ERROR_MESSAGE =
 	'An error occurred while requesting on a local branch';
 
 // UI
+export const VIEW_PRINTING_MODAL_WIDTH = 425;
 export const NOT_FOUND_INDEX = -1;
 export const EMPTY_CELL = '—';
 export const SEARCH_DEBOUNCE_TIME = 500;

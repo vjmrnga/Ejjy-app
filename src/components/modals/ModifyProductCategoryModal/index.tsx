@@ -130,20 +130,10 @@ export const ModifyProductCategoryForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							htmlType="button"
-							size="large"
-							onClick={onClose}
-						>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button
-							htmlType="submit"
-							loading={isLoading}
-							size="large"
-							type="primary"
-						>
+						<Button htmlType="submit" loading={isLoading} type="primary">
 							{productCategory ? 'Edit' : 'Create'}
 						</Button>
 					</div>

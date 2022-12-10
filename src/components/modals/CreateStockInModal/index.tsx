@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Select } from 'antd';
+import { Button, Col, Input, Modal, Row, Select } from 'antd';
 import { RequestErrors } from 'components/RequestErrors/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
@@ -6,7 +6,7 @@ import { useUsers } from 'hooks';
 import React from 'react';
 import { convertIntoArray, filterOption, getFullName } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 const formDetails = {
 	defaultValues: {
@@ -26,11 +26,12 @@ const formDetails = {
 };
 
 interface Props {
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
-export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
+export const CreateStockInModal = ({ isLoading, onSubmit, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const {
 		data: { users },
@@ -40,13 +41,10 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
-	// METHODS
-
 	return (
 		<Modal
 			footer={null}
 			title="Stock In Details"
-			width={600}
 			centered
 			closable
 			visible
@@ -65,21 +63,43 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 					<Form>
 						<Row gutter={[16, 16]}>
 							<Col span={24}>
-								<FormInputLabel id="supplierName" label="Supplier Name" />
+								<Label label="Supplier Name" spacing />
+								<Input
+									name="supplierName"
+									value={values['supplierName']}
+									onChange={(e) => {
+										setFieldValue('supplierName', e.target.value);
+									}}
+								/>
 								<ErrorMessage
 									name="supplierName"
 									render={(error) => <FieldError error={error} />}
 								/>
 							</Col>
+
 							<Col span={24}>
-								<FormInputLabel id="supplierAddress" label="Supplier Address" />
+								<Label label="Supplier Address" spacing />
+								<Input
+									name="supplierAddress"
+									value={values['supplierAddress']}
+									onChange={(e) => {
+										setFieldValue('supplierAddress', e.target.value);
+									}}
+								/>
 								<ErrorMessage
 									name="supplierAddress"
 									render={(error) => <FieldError error={error} />}
 								/>
 							</Col>
 							<Col span={24}>
-								<FormInputLabel id="supplierTin" label="Supplier TIN" />
+								<Label label="Supplier TIN" spacing />
+								<Input
+									name="supplierTin"
+									value={values['supplierTin']}
+									onChange={(e) => {
+										setFieldValue('supplierTin', e.target.value);
+									}}
+								/>
 								<ErrorMessage
 									name="supplierTin"
 									render={(error) => <FieldError error={error} />}
@@ -88,16 +108,11 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 							<Col span={24}>
 								<Label id="encodedById" label="Encoded By" spacing />
 								<Select
+									className="w-100"
 									disabled={isFetchingUsers}
-									filterOption={(input, option) =>
-										option.children
-											.toString()
-											.toLowerCase()
-											.indexOf(input.toLowerCase()) >= 0
-									}
+									filterOption={filterOption}
 									optionFilterProp="children"
-									style={{ width: '100%' }}
-									value={values.encodedById}
+									value={values['encodedById']}
 									showSearch
 									onChange={(value) => {
 										setFieldValue('encodedById', value);
@@ -121,7 +136,7 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 									disabled={isFetchingUsers}
 									filterOption={filterOption}
 									optionFilterProp="children"
-									value={values.checkedById}
+									value={values['checkedById']}
 									showSearch
 									onChange={(value) => {
 										setFieldValue('checkedById', value);
@@ -141,8 +156,12 @@ export const CreateStockInModal = ({ onSubmit, onClose }: Props) => {
 						</Row>
 
 						<div className="ModalCustomFooter">
-							<Button text="Cancel" type="button" onClick={onClose} />
-							<Button text="Submit" type="submit" variant="primary" />
+							<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+								Cancel
+							</Button>
+							<Button htmlType="submit" loading={isLoading} type="primary">
+								Submit
+							</Button>
 						</div>
 					</Form>
 				)}

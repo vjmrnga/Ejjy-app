@@ -1,11 +1,17 @@
-import { Button, Popconfirm, Space, Table } from 'antd';
+import {
+	DeleteOutlined,
+	DesktopOutlined,
+	EditFilled,
+	SelectOutlined,
+} from '@ant-design/icons';
+import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors, ViewUserModal } from 'components';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
+import { convertIntoArray, getFullName, getId, getUserTypeName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -15,14 +21,14 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	branchId: any;
+	branch: any;
 	disabled: boolean;
 	onEditUser: any;
 	onReassignUser: any;
 }
 
 export const BranchUsers = ({
-	branchId,
+	branch,
 	disabled,
 	onEditUser,
 	onReassignUser,
@@ -33,19 +39,19 @@ export const BranchUsers = ({
 
 	// CUSTOM HOOKS
 	const {
-		isFetching: isFetchingUsers,
 		data: { users },
-		error: listError,
+		isFetching: isFetchingUsers,
+		error: usersError,
 	} = useUsers({
 		params: {
-			branchId,
+			branchId: getId(branch),
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
-		error: deleteError,
+		error: deleteUserError,
 	} = useUserDelete();
 
 	// METHODS
@@ -69,38 +75,66 @@ export const BranchUsers = ({
 					<Space>
 						{user.user_type !== userTypes.ADMIN && (
 							<>
-								<Button disabled={disabled} type="primary">
+								<Tooltip title="Cashiering Assignment">
 									<Link to={`/office-manager/users/assign/${user.id}`}>
-										Cashiering Assignments
+										<Button
+											disabled={disabled}
+											icon={<DesktopOutlined />}
+											type="primary"
+											ghost
+										/>
 									</Link>
-								</Button>
-								<Button
-									disabled={disabled}
-									type="primary"
-									onClick={() => onReassignUser({ ...user, branchId })}
-								>
-									Assign Branch
-								</Button>
+								</Tooltip>
+
+								<Tooltip title="Assign Branch">
+									<Button
+										disabled={disabled}
+										icon={<SelectOutlined />}
+										type="primary"
+										ghost
+										onClick={() =>
+											onReassignUser({
+												...user,
+												branchId: getId(branch),
+											})
+										}
+									/>
+								</Tooltip>
 							</>
 						)}
-						<Button
-							disabled={disabled}
-							type="primary"
-							onClick={() => onEditUser({ ...user, branchId })}
-						>
-							Edit
-						</Button>
+
+						<Tooltip title="Edit">
+							<Button
+								disabled={disabled}
+								icon={<EditFilled />}
+								type="primary"
+								ghost
+								onClick={() =>
+									onEditUser({
+										...user,
+										branchId: getId(branch),
+									})
+								}
+							/>
+						</Tooltip>
+
 						{user.user_type !== userTypes.ADMIN && (
 							<Popconfirm
 								cancelText="No"
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this user?"
-								onConfirm={() => deleteUser(user.id)}
+								onConfirm={() => deleteUser(getId(user))}
 							>
-								<Button disabled={disabled} type="primary" danger>
-									Delete
-								</Button>
+								<Tooltip title="Remove">
+									<Button
+										disabled={disabled}
+										icon={<DeleteOutlined />}
+										type="primary"
+										danger
+										ghost
+									/>
+								</Tooltip>
 							</Popconfirm>
 						)}
 					</Space>
@@ -114,8 +148,8 @@ export const BranchUsers = ({
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(listError),
-					...convertIntoArray(deleteError?.errors),
+					...convertIntoArray(usersError),
+					...convertIntoArray(deleteUserError?.errors),
 				]}
 				withSpaceBottom
 			/>
