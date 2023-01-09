@@ -26,7 +26,7 @@ const PendingUserCreation = () => {
 	// CUSTOM HOOKS
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
@@ -85,7 +85,7 @@ const PendingUserCreation = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isUsersFetching || isApproving || isDeletingUser}
+				loading={isFetchingUsers || isApproving || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered
@@ -101,7 +101,7 @@ const PendingEditUserType = () => {
 	// CUSTOM HOOKS
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
 		params: { isPendingUpdateUserTypeApproval: true, pageSize: MAX_PAGE_SIZE },
@@ -160,7 +160,7 @@ const PendingEditUserType = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isUsersFetching || isApproving || isDeletingUser}
+				loading={isFetchingUsers || isApproving || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered

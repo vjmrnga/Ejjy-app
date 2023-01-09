@@ -30,12 +30,12 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
+		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve();
 	const {
 		data: { birReports, total },
-		isFetching: isBirReportsFetching,
+		isFetching: isFetchingBirReports,
 		isFetched: isBirReportsFetched,
 		error: birReportsError,
 	} = useBirReports({
@@ -196,8 +196,8 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 
 			<Filter
 				isLoading={
-					(isBirReportsFetching && !isBirReportsFetched) ||
-					isSiteSettingsFetching ||
+					(isFetchingBirReports && !isBirReportsFetched) ||
+					isFetchingSiteSettings ||
 					isPrinting
 				}
 			/>
@@ -213,8 +213,8 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				columns={getColumns()}
 				dataSource={dataSource}
 				loading={
-					(isBirReportsFetching && !isBirReportsFetched) ||
-					isSiteSettingsFetching ||
+					(isFetchingBirReports && !isBirReportsFetched) ||
+					isFetchingSiteSettings ||
 					isPrinting
 				}
 				pagination={{

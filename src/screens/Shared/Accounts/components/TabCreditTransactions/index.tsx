@@ -6,7 +6,6 @@ import {
 	TableActions,
 	TableHeader,
 	TimeRangeFilter,
-	ViewAccountModal,
 	ViewTransactionModal,
 } from 'components';
 import {
@@ -38,7 +37,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
-	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [selectedCreditTransaction, setSelectedCreditTransaction] =
 		useState(null);
 	const [
@@ -176,13 +174,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				scroll={{ x: 1000 }}
 				bordered
 			/>
-
-			{selectedAccount && (
-				<ViewAccountModal
-					account={selectedAccount}
-					onClose={() => setSelectedAccount(null)}
-				/>
-			)}
 
 			{selectedTransaction && (
 				<ViewTransactionModal

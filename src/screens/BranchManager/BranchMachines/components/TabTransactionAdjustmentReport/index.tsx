@@ -49,7 +49,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	const {
 		data: { transactions, total },
 		error: transactionsError,
-		isFetching: isTransactionsFetching,
+		isFetching: isFetchingTransactions,
 		isFetched: isTransactionsFetched,
 	} = useTransactions({
 		params: {
@@ -140,14 +140,14 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 				wrapperClassName="pt-2 px-0"
 			/>
 
-			<Filter isLoading={isTransactionsFetching && !isTransactionsFetched} />
+			<Filter isLoading={isFetchingTransactions && !isTransactionsFetched} />
 
 			<RequestErrors errors={convertIntoArray(transactionsError)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isTransactionsFetching && !isTransactionsFetched}
+				loading={isFetchingTransactions && !isTransactionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

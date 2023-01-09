@@ -282,8 +282,8 @@ const SessionPickerModal = ({ branchMachine, onSubmit, onClose }) => {
 	// CUSTOM HOOKS
 	const {
 		data: { cashieringSessions },
-		isFetching,
-		error,
+		isFetching: isFetchingCashieringSessions,
+		error: cashieringSessionErrors,
 	} = useCashieringSessions({
 		params: {
 			timeRange: 'daily',
@@ -324,12 +324,15 @@ const SessionPickerModal = ({ branchMachine, onSubmit, onClose }) => {
 				onSubmit(selectedRowKey);
 			}}
 		>
-			<RequestErrors errors={convertIntoArray(error)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(cashieringSessionErrors)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={cashieringSessionColumns}
 				dataSource={dataSource}
-				loading={isFetching}
+				loading={isFetchingCashieringSessions}
 				pagination={false}
 				rowSelection={{
 					type: 'radio',

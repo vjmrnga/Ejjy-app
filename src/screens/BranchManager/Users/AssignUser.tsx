@@ -52,7 +52,7 @@ export const AssignUser = ({ match }: Props) => {
 	const { user: actingUser } = useAuth();
 	const {
 		data: user,
-		isFetching: isUserFetching,
+		isFetching: isFetchingUser,
 		isSuccess: isUserSuccess,
 		error: userErrors,
 	} = useUserRetrieve({
@@ -70,7 +70,7 @@ export const AssignUser = ({ match }: Props) => {
 	});
 	const {
 		data: { cashieringAssignments },
-		isFetching: isCashieringAssignmentsFetching,
+		isFetching: isFetchingCashieringAssignments,
 		error: cashieringAssignmentsError,
 	} = useCashieringAssignments({
 		params: {
@@ -196,7 +196,7 @@ export const AssignUser = ({ match }: Props) => {
 						<Table
 							columns={columns}
 							dataSource={dataSource}
-							loading={isUserFetching || isCashieringAssignmentsFetching}
+							loading={isFetchingUser || isFetchingCashieringAssignments}
 							pagination={false}
 							scroll={{ x: 1000 }}
 							bordered

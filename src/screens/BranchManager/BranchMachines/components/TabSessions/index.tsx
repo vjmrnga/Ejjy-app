@@ -52,7 +52,7 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 	const {
 		data: { sessions, total },
 		error: sessionsError,
-		isFetching: isSessionsFetching,
+		isFetching: isFetchingSessions,
 		isFetched: isSessionsFetched,
 	} = useSessions({
 		params: {
@@ -156,14 +156,14 @@ export const TabSessions = ({ branchMachineId }: Props) => {
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isSessionsFetching && !isSessionsFetched} />
+			<Filter isLoading={isFetchingSessions && !isSessionsFetched} />
 
 			<RequestErrors errors={convertIntoArray(sessionsError)} withSpaceBottom />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isSessionsFetching && !isSessionsFetched}
+				loading={isFetchingSessions && !isSessionsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -193,7 +193,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { users },
-		isFetching: isUsersFetching,
+		isFetching: isFetchingUsers,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
@@ -205,7 +205,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.userId}
-					disabled={isUsersFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
@@ -223,14 +223,14 @@ const Filter = ({ isLoading }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isUsersFetching || isLoading} />
+				<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Closing Type" spacing />
 				<Radio.Group
 					defaultValue={params.closingType || closingTypes.ALL}
-					disabled={isUsersFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					options={[
 						{ label: 'All', value: closingTypes.ALL },
 						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
@@ -250,7 +250,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Label label="Authorization" spacing />
 				<Radio.Group
 					defaultValue={params.type || sessionTypes.ALL}
-					disabled={isUsersFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					options={[
 						{ label: 'All', value: sessionTypes.ALL },
 						{ label: 'Authorized', value: sessionTypes.AUTHORIZED },

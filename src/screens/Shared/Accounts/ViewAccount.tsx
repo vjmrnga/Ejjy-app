@@ -22,9 +22,7 @@ export const ViewAccount = ({ match }: Props) => {
 		error: accountErrors,
 	} = useAccountRetrieve({
 		id: accountId,
-		options: {
-			enabled: !!accountId,
-		},
+		options: { enabled: !!accountId },
 	});
 
 	// METHODS

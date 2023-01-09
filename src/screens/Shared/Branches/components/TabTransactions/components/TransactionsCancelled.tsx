@@ -30,7 +30,7 @@ export const TransactionsCancelled = ({
 	const { user } = useAuth();
 	const {
 		data: { transactions },
-		isFetching: isTransactionsFetching,
+		isFetching: isFetchingTransactions,
 		error: transactionsError,
 	} = useTransactions({
 		params: {
@@ -43,7 +43,7 @@ export const TransactionsCancelled = ({
 	});
 	const {
 		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
+		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve({
 		params: { branchId },
@@ -76,7 +76,7 @@ export const TransactionsCancelled = ({
 
 	return (
 		<Box className="TransactionsCancelled">
-			<Spin spinning={isTransactionsFetching || isSiteSettingsFetching}>
+			<Spin spinning={isFetchingTransactions || isFetchingSiteSettings}>
 				<div className="TransactionsCancelled_container">
 					<RequestErrors
 						errors={[

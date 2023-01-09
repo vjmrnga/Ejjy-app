@@ -27,8 +27,8 @@ export const SalesBranch = () => {
 	// const currentParams = queryString.parse(history.location.search);
 	// const {
 	// 	data: { branchMachines },
-	// 	isFetching,
-	// 	error,
+	// 	isFetching: isFetchingBranchMachines,
+	// 	error: branchMachinesError,
 	// } = useBranchMachines({
 	// 	params: {
 	// 		pageSize: MAX_PAGE_SIZE,

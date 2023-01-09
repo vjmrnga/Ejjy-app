@@ -1,9 +1,7 @@
-import { Modal, Tag } from 'antd';
+import { Avatar, Descriptions, Modal, Tag } from 'antd';
+import { accountTypes } from 'global';
 import React from 'react';
-import { formatDate } from 'utils';
-import { accountTypes } from '../../../global/types';
-import { DetailsRow } from '../../Details/DetailsRow';
-import { DetailsSingle } from '../../Details/DetailsSingle';
+import { formatDate, getAccountTypeName } from 'utils';
 import { Button } from '../../elements';
 
 const employers = [accountTypes.CORPORATE, accountTypes.GOVERNMENT];
@@ -14,27 +12,6 @@ interface Props {
 }
 
 export const ViewAccountModal = ({ account, onClose }: Props) => {
-	const getTypeName = (type) => {
-		let typeName = '';
-		switch (type) {
-			case accountTypes.PERSONAL:
-				typeName = 'Personal';
-				break;
-			case accountTypes.CORPORATE:
-				typeName = 'Corporate';
-				break;
-			case accountTypes.EMPLOYEE:
-				typeName = 'Employee';
-				break;
-			case accountTypes.GOVERNMENT:
-				typeName = 'Government';
-				break;
-			default:
-				typeName = '';
-		}
-
-		return typeName;
-	};
 	return (
 		<Modal
 			className="Modal__hasFooter"
@@ -45,56 +22,102 @@ export const ViewAccountModal = ({ account, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
-			<DetailsRow>
-				<DetailsSingle label="Type" value={getTypeName(account.type)} />
-				<DetailsSingle label="First Name" value={account.first_name} />
-				<DetailsSingle label="Middle Name" value={account.middle_name} />
-				<DetailsSingle label="Last Name" value={account.last_name} />
-				<DetailsSingle
-					label="Gender"
-					value={account.gender === 'm' ? 'Male' : 'Female'}
-				/>
-				<DetailsSingle label="Birthday" value={formatDate(account.birthday)} />
-				<DetailsSingle label="TIN" value={account.tin} />
+			<Descriptions column={2} bordered>
+				<Descriptions.Item label="First Name">
+					{account.first_name}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Last Name">
+					{account.last_name}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Middle Name">
+					{account.middle_name}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Code">
+					{account.account_code}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Gender">
+					{account.gender === 'm' ? 'Male' : 'Female'}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Type">
+					{getAccountTypeName(account.type)}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Date of Registration">
+					{formatDate(account.datetime_created)}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Birthday">
+					{formatDate(account.birthday)}
+				</Descriptions.Item>
+
+				{account.type === accountTypes.EMPLOYEE && (
+					<>
+						<Descriptions.Item label="Nationality">
+							{account.nationality}
+						</Descriptions.Item>
+						<Descriptions.Item label="Religion">
+							{account.religion}
+						</Descriptions.Item>
+						<Descriptions.Item label="Father's Name">
+							{account.father_name}
+						</Descriptions.Item>
+						<Descriptions.Item label="Mother's Maiden Name">
+							{account.mother_maiden_name}
+						</Descriptions.Item>
+						<Descriptions.Item label="Email Address">
+							{account.email_address}
+						</Descriptions.Item>
+						<Descriptions.Item label="Biodata Image">
+							<Avatar src={account.biodata_image} />
+						</Descriptions.Item>
+					</>
+				)}
+
+				<Descriptions.Item label="TIN">{account.tin}</Descriptions.Item>
 
 				{employers.includes(account.type) && (
 					<>
-						<DetailsSingle
+						<Descriptions.Item
 							label={
 								account.type === accountTypes.CORPORATE
 									? 'Business Name'
 									: 'Agency Name'
 							}
-							value={account.business_name}
-						/>
-						<DetailsSingle
+						>
+							{account.business_name}
+						</Descriptions.Item>
+						<Descriptions.Item
 							label={
 								account.type === accountTypes.CORPORATE
 									? 'Address (Business)'
 									: 'Address (Agency)'
 							}
-							value={account.business_address}
-						/>
+						>
+							{account.business_address}
+						</Descriptions.Item>
 					</>
 				)}
 
-				<DetailsSingle label="Address (Home)" value={account.home_address} />
-				<DetailsSingle label="Contact Number" value={account.contact_number} />
-				<DetailsSingle
-					label="Date of Registration"
-					value={formatDate(account.datetime_created)}
-				/>
-				<DetailsSingle
-					label="Loyalty Membership"
-					value={
-						account.is_point_system_eligible ? (
-							<Tag color="green">Yes</Tag>
-						) : (
-							<Tag color="red">No</Tag>
-						)
-					}
-				/>
-			</DetailsRow>
+				<Descriptions.Item label="Contact Number">
+					{account.contact_number}
+				</Descriptions.Item>
+				<Descriptions.Item label="Address (Home)" span={2}>
+					{account.home_address}
+				</Descriptions.Item>
+
+				<Descriptions.Item label="Loyalty Membership">
+					{account.is_point_system_eligible ? (
+						<Tag color="green">Yes</Tag>
+					) : (
+						<Tag color="red">No</Tag>
+					)}
+				</Descriptions.Item>
+			</Descriptions>
 		</Modal>
 	);
 };

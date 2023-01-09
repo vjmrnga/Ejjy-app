@@ -36,7 +36,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings, isFetching: isSiteSettingsFetching } =
+	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
 		useSiteSettingsRetrieve();
 	const { data: transactionRetrieved, isFetching: isTransactionFetching } =
 		useTransactionRetrieve({
@@ -142,7 +142,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
-			<Spin spinning={isTransactionFetching || isSiteSettingsFetching}>
+			<Spin spinning={isTransactionFetching || isFetchingSiteSettings}>
 				{transactionData?.id && (
 					<>
 						{transactionData?.branch_machine && (

@@ -49,8 +49,8 @@ export const TabDays = ({ branch }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchDays, total },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingBranchDays,
+		error: branchDaysError,
 	} = useBranchDays({
 		params: {
 			...params,
@@ -182,14 +182,17 @@ export const TabDays = ({ branch }: Props) => {
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" wrapperClassName="pt-0" />
 
-			<Filter isLoading={isFetching} />
+			<Filter isLoading={isFetchingBranchDays} />
 
-			<RequestErrors errors={convertIntoArray(listError)} withSpaceBottom />
+			<RequestErrors
+				errors={convertIntoArray(branchDaysError)}
+				withSpaceBottom
+			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetching}
+				loading={isFetchingBranchDays}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -220,7 +223,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { users },
-		isFetching,
+		isFetching: isFetchingUsers,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
@@ -232,7 +235,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.openedByUserId}
-					disabled={isFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
@@ -257,7 +260,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 				<Select
 					className="w-100"
 					defaultValue={params.closedByUserId}
-					disabled={isFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					filterOption={filterOption}
 					optionFilterProp="children"
 					allowClear
@@ -278,14 +281,14 @@ const Filter = ({ isLoading }: FilterProps) => {
 			</Col>
 
 			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isFetching || isLoading} />
+				<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
 			</Col>
 
 			<Col lg={12} span={24}>
 				<Label label="Closing Type" spacing />
 				<Radio.Group
 					defaultValue={params.closingType || closingTypes.ALL}
-					disabled={isFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					options={[
 						{ label: 'All', value: closingTypes.ALL },
 						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
@@ -306,7 +309,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 
 				<Radio.Group
 					defaultValue={params.type || branchDayTypes.ALL}
-					disabled={isFetching || isLoading}
+					disabled={isFetchingUsers || isLoading}
 					options={[
 						{ label: 'All', value: branchDayTypes.ALL },
 						{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },

@@ -1,11 +1,11 @@
-import { Col, message, Modal } from 'antd';
+import { Button, Col, Input, message, Modal, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
-import { DetailsRow, RequestErrors } from '../..';
-import { Button, FieldError, FormInputLabel } from '../../elements';
+import { RequestErrors } from '../..';
+import { FieldError, Label } from '../../elements';
 
 interface ModalProps {
 	branchId?: any;
@@ -63,7 +63,7 @@ export const ModifyBranchMachineModal = ({
 			<ModifyBranchMachineForm
 				branchId={branchId}
 				branchMachine={branchMachine}
-				loading={isCreating || isEditing}
+				isLoading={isCreating || isEditing}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>
@@ -74,7 +74,7 @@ export const ModifyBranchMachineModal = ({
 interface FormProps {
 	branchId?: any;
 	branchMachine?: any;
-	loading: boolean;
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
@@ -82,7 +82,7 @@ interface FormProps {
 export const ModifyBranchMachineForm = ({
 	branchId,
 	branchMachine,
-	loading,
+	isLoading,
 	onSubmit,
 	onClose,
 }: FormProps) => {
@@ -122,67 +122,95 @@ export const ModifyBranchMachineForm = ({
 				onSubmit(formData);
 			}}
 		>
-			<Form className="form">
-				<DetailsRow>
-					<Col xs={24}>
-						<FormInputLabel id="name" label="Name" />
-						<ErrorMessage
-							name="name"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
+			{({ values, setFieldValue }) => (
+				<Form>
+					<Row gutter={[16, 16]}>
+						<Col span={24}>
+							<Label label="Name" spacing />
+							<Input
+								name="name"
+								value={values['name']}
+								onChange={(e) => {
+									setFieldValue('name', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="name"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<Col xs={24}>
-						<FormInputLabel id="serverUrl" label="Server URL" />
-						<ErrorMessage
-							name="serverUrl"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
+						<Col span={24}>
+							<Label label="Server URL" spacing />
+							<Input
+								name="serverUrl"
+								value={values['serverUrl']}
+								onChange={(e) => {
+									setFieldValue('serverUrl', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="serverUrl"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<Col xs={24}>
-						<FormInputLabel
-							id="machineIdentificationNumber"
-							label="Machine Identification Number"
-						/>
-						<ErrorMessage
-							name="machineIdentificationNumber"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
+						<Col span={24}>
+							<Label label="Machine Identification Number" spacing />
+							<Input
+								name="machineIdentificationNumber"
+								value={values['machineIdentificationNumber']}
+								onChange={(e) => {
+									setFieldValue('machineIdentificationNumber', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="machineIdentificationNumber"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<Col xs={24}>
-						<FormInputLabel id="permitToUse" label="Permit To Use" />
-						<ErrorMessage
-							name="permitToUse"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
+						<Col span={24}>
+							<Label label="Permit To Use" spacing />
+							<Input
+								name="permitToUse"
+								value={values['permitToUse']}
+								onChange={(e) => {
+									setFieldValue('permitToUse', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="permitToUse"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
 
-					<Col xs={24}>
-						<FormInputLabel id="posTerminal" label="Serial #" />
-						<ErrorMessage
-							name="posTerminal"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
-				</DetailsRow>
+						<Col span={24}>
+							<Label label="Serial #" spacing />
+							<Input
+								name="posTerminal"
+								value={values['posTerminal']}
+								onChange={(e) => {
+									setFieldValue('posTerminal', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="posTerminal"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+					</Row>
 
-				<div className="ModalCustomFooter">
-					<Button
-						disabled={loading}
-						text="Cancel"
-						type="button"
-						onClick={onClose}
-					/>
-					<Button
-						loading={loading}
-						text={branchMachine ? 'Edit' : 'Create'}
-						type="submit"
-						variant="primary"
-					/>
-				</div>
-			</Form>
+					<div className="ModalCustomFooter">
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							{branchMachine ? 'Edit' : 'Create'}
+						</Button>
+					</div>
+				</Form>
+			)}
 		</Formik>
 	);
 };

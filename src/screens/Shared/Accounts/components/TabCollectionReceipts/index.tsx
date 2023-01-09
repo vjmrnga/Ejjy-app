@@ -37,12 +37,12 @@ export const TabCollectionReceipts = () => {
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
+		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve();
 	const {
 		data: { collectionReceipts, total },
-		isFetching: isCollectionReceiptsFetching,
+		isFetching: isFetchingCollectionReceipts,
 		isFetched: isCollectionReceiptsFetched,
 		error: collectionReceiptsError,
 	} = useCollectionReceipts({ options: refetchOptions });
@@ -108,8 +108,8 @@ export const TabCollectionReceipts = () => {
 				columns={columns}
 				dataSource={dataSource}
 				loading={
-					(isCollectionReceiptsFetching && !isCollectionReceiptsFetched) ||
-					isSiteSettingsFetching
+					(isFetchingCollectionReceipts && !isCollectionReceiptsFetched) ||
+					isFetchingSiteSettings
 				}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,

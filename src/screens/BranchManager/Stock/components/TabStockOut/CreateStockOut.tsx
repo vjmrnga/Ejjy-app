@@ -512,7 +512,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { productCategories },
-		isFetching: isProductCategoriesFetching,
+		isFetching: isFetchingProductCategories,
 	} = useProductCategories({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
@@ -547,7 +547,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 					className="w-100"
 					disabled={isLoading}
 					filterOption={filterOption}
-					loading={isLoading || isProductCategoriesFetching}
+					loading={isLoading || isFetchingProductCategories}
 					optionFilterProp="children"
 					allowClear
 					showSearch

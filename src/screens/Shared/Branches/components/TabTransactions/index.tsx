@@ -65,8 +65,8 @@ export const TabTransactions = ({ branch }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total, warning },
-		isFetching,
-		error,
+		isFetching: isFetchingTransactions,
+		error: transactionsError,
 	} = useTransactions({
 		params: {
 			...params,
@@ -106,9 +106,9 @@ export const TabTransactions = ({ branch }: Props) => {
 		<>
 			<TableHeader title="Transactions" wrapperClassName="pt-0" />
 
-			<Filter isLoading={isFetching} />
+			<Filter isLoading={isFetchingTransactions} />
 
-			<RequestErrors errors={convertIntoArray(error)} />
+			<RequestErrors errors={convertIntoArray(transactionsError)} />
 			<RequestWarnings warnings={convertIntoArray(warning)} />
 
 			{[
@@ -125,7 +125,7 @@ export const TabTransactions = ({ branch }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetching}
+				loading={isFetchingTransactions}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

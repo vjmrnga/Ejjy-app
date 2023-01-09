@@ -1,8 +1,7 @@
-import { Divider, Modal } from 'antd';
-import { DetailsSingle, RequestErrors } from 'components';
-import { DetailsRow } from 'components/Details/DetailsRow';
+import { Descriptions, Divider, Modal } from 'antd';
+import { RequestErrors } from 'components';
 import { request, SHOW_HIDE_SHORTCUT } from 'global';
-import { useAuth } from 'hooks/useAuth';
+import { useAuth } from 'hooks';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import React, { useEffect, useState } from 'react';
 import {
@@ -101,30 +100,31 @@ export const AddBranchProductBalanceModal = ({
 				withSpaceBottom
 			/>
 
-			<DetailsRow>
-				<DetailsSingle label="Barcode" value={branchProduct.product.barcode} />
-				<DetailsSingle
-					label="Textcode"
-					value={branchProduct.product.textcode}
-				/>
-				<DetailsSingle label="Name" value={branchProduct.product.name} />
-				<DetailsSingle
-					label="Max Balance"
-					value={formatQuantity({
+			<Descriptions bordered>
+				<Descriptions.Item label="Barcode">
+					{branchProduct.product.barcode}
+				</Descriptions.Item>
+				<Descriptions.Item label="Textcode">
+					{branchProduct.product.textcode}
+				</Descriptions.Item>
+				<Descriptions.Item label="Name">
+					{branchProduct.product.name}
+				</Descriptions.Item>
+				<Descriptions.Item label="Max Balance">
+					{formatQuantity({
 						unitOfMeasurement: branchProduct.product.unit_of_measurement,
 						quantity: branchProduct.max_balance,
 					})}
-				/>
+				</Descriptions.Item>
 				{isCurrentBalanceVisible && (
-					<DetailsSingle
-						label="Current Balance"
-						value={formatQuantity({
+					<Descriptions.Item label="Current Balance">
+						{formatQuantity({
 							unitOfMeasurement: branchProduct.product.unit_of_measurement,
 							quantity: branchProduct.current_balance,
 						})}
-					/>
+					</Descriptions.Item>
 				)}
-			</DetailsRow>
+			</Descriptions>
 
 			<Divider dashed />
 

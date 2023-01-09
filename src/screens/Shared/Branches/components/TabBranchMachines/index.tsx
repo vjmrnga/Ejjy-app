@@ -33,18 +33,15 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	// CUSTOM HOOKS
 	const {
 		data: { branchMachines },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
 	} = useBranchMachines({
-		params: {
-			branchId: branch?.id,
-		},
+		params: { branchId: branch?.id },
 	});
-
 	const {
 		mutate: deleteBranchMachine,
-		isLoading,
-		error: deleteError,
+		isLoading: isDeletingBranchMachine,
+		error: deleteBranchMachineError,
 	} = useBranchMachineDelete();
 
 	// METHODS
@@ -92,8 +89,8 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 
 			<RequestErrors
 				errors={[
-					...convertIntoArray(listError),
-					...convertIntoArray(deleteError?.errors),
+					...convertIntoArray(branchMachinesError),
+					...convertIntoArray(deleteBranchMachineError?.errors),
 				]}
 				withSpaceBottom
 			/>
@@ -101,7 +98,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetching || isLoading}
+				loading={isFetchingBranchMachines || isDeletingBranchMachine}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered

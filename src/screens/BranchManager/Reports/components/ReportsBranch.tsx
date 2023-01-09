@@ -139,7 +139,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchProducts, total },
-		isFetching: isBranchProductsFetching,
+		isFetching: isFetchingBranchProducts,
 		isFetched: isisBranchProductsFetched,
 		error: branchProductsError,
 	} = useBranchProductsWithAnalytics({
@@ -257,7 +257,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isBranchProductsFetching && !isisBranchProductsFetched}
+				loading={isFetchingBranchProducts && !isisBranchProductsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

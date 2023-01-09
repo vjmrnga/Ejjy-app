@@ -35,12 +35,12 @@ export const TabStockOut = () => {
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
 		data: siteSettings,
-		isFetching: isSiteSettingsFetching,
+		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
 	} = useSiteSettingsRetrieve();
 	const {
 		data: { backOrders, total },
-		isFetching: isBackOrdersFetching,
+		isFetching: isFetchingBackOrders,
 		error: backOrdersError,
 	} = useBackOrders({
 		params: {
@@ -116,7 +116,7 @@ export const TabStockOut = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isBackOrdersFetching || isSiteSettingsFetching}
+				loading={isFetchingBackOrders || isFetchingSiteSettings}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,

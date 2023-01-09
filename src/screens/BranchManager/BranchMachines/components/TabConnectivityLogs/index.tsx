@@ -37,7 +37,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 	const {
 		data: { connectivityLogs, total },
 		error: connectivityLogsError,
-		isFetching: isConnectivityLogsFetching,
+		isFetching: isFetchingConnectivityLogs,
 		isFetched: isConnectivityLogsFetched,
 	} = useConnectivityLogs({
 		params: {
@@ -65,7 +65,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 			<TableHeader title="Connectivity Logs" wrapperClassName="pt-2 px-0" />
 
 			<Filter
-				isLoading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
+				isLoading={isFetchingConnectivityLogs && !isConnectivityLogsFetched}
 			/>
 
 			<RequestErrors errors={convertIntoArray(connectivityLogsError)} />
@@ -73,7 +73,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isConnectivityLogsFetching && !isConnectivityLogsFetched}
+				loading={isFetchingConnectivityLogs && !isConnectivityLogsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

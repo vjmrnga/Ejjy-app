@@ -59,7 +59,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactionProducts, total },
-		isFetching: isTransactionProductsFetching,
+		isFetching: isFetchingTransactionProducts,
 		isFetched: isTransactionProductsFetched,
 		error: transactionProductsError,
 	} = useTransactionProducts({
@@ -143,7 +143,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 			<Filter
 				isLoading={
-					isTransactionProductsFetching && !isTransactionProductsFetched
+					isFetchingTransactionProducts && !isTransactionProductsFetched
 				}
 			/>
 
@@ -152,7 +152,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isTransactionProductsFetching && !isTransactionProductsFetched}
+				loading={isFetchingTransactionProducts && !isTransactionProductsFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

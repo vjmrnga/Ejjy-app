@@ -54,13 +54,13 @@ export const DiscountOptions = () => {
 	const { user } = useAuth();
 	const {
 		data: { discountOptions, total },
-		isFetching,
-		error: listError,
+		isFetching: isFetchingDiscountOptions,
+		error: discountOptionsError,
 	} = useDiscountOptions({ params });
 	const {
 		mutate: deleteDiscountOption,
-		isLoading,
-		error: deleteError,
+		isLoading: isDeletingDiscountOption,
+		error: deleteDiscountOptionError,
 	} = useDiscountOptionDelete();
 
 	// METHODS
@@ -141,8 +141,8 @@ export const DiscountOptions = () => {
 						'mt-6': !isCUDShown(user.user_type),
 					})}
 					errors={[
-						...convertIntoArray(listError),
-						...convertIntoArray(deleteError?.errors),
+						...convertIntoArray(discountOptionsError),
+						...convertIntoArray(deleteDiscountOptionError?.errors),
 					]}
 					withSpaceBottom
 				/>
@@ -162,7 +162,7 @@ export const DiscountOptions = () => {
 						),
 						rowExpandable: (item) => !_.isEmpty(item.fields),
 					}}
-					loading={isFetching || isLoading}
+					loading={isFetchingDiscountOptions || isDeletingDiscountOption}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
