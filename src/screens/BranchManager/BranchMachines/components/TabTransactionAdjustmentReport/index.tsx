@@ -163,6 +163,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1200 }}
+				bordered
 			/>
 
 			{selectedTransaction && (

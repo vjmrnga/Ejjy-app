@@ -455,6 +455,7 @@ const ProductsTable = ({
 						  }
 						: false
 				}
+				bordered
 			/>
 		</>
 	);

@@ -167,6 +167,7 @@ const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 					dataSource={requestedProducts}
 					pagination={false}
 					scroll={{ x: 800 }}
+					bordered
 				/>
 			</Box>
 		</Spin>

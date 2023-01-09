@@ -120,6 +120,7 @@ export const BranchMachines = () => {
 					loading={isFetchingBranchMachines || isDeletingBranchMachine}
 					pagination={false}
 					scroll={{ x: 800 }}
+					bordered
 				/>
 			</Box>
 

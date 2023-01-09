@@ -85,6 +85,7 @@ export const ReturnItemSlipsSent = ({ selectReturnItemSlip }: Props) => {
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}
+			bordered
 		/>
 	);
 };

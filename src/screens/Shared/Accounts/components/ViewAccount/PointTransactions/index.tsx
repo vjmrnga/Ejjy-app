@@ -148,7 +148,6 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 1000 }}
-					size="small"
 					bordered
 				/>
 

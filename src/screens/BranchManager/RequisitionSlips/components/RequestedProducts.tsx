@@ -49,6 +49,7 @@ export const RequestedProducts = ({ requisitionSlip }: Props) => {
 				dataSource={dataSource}
 				pagination={false}
 				scroll={{ y: 250 }}
+				bordered
 			/>
 		</Box>
 	);

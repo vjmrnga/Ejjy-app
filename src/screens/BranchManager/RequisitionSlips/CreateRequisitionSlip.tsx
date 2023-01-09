@@ -394,6 +394,7 @@ const ProductsTable = ({
 				rowClassName={(record: any) =>
 					record.selected ? 'row--selected' : ';'
 				}
+				bordered
 			/>
 		</>
 	);

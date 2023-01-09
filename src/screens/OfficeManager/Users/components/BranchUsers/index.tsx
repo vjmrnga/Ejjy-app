@@ -160,6 +160,7 @@ export const BranchUsers = ({
 				loading={isFetchingUsers || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 1000 }}
+				bordered
 			/>
 
 			{selectedUser && (

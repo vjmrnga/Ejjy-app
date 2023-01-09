@@ -148,6 +148,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 
 			{selectedTransaction && (

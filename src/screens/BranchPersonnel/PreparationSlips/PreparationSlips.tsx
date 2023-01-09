@@ -116,6 +116,7 @@ export const PreparationSlips = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 
 				{selectedPreparationSlip && (

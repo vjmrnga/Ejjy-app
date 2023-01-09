@@ -99,6 +99,7 @@ export const TabSessionAssignments = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</div>
 	);

@@ -174,6 +174,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1000 }}
+				bordered
 			/>
 
 			{selectedAccount && (

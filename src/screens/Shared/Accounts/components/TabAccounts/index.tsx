@@ -195,6 +195,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1000 }}
+				bordered
 			/>
 
 			{(modalVisible === modals.CREATE ||

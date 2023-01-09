@@ -114,6 +114,7 @@ export const ViewBranchPendingPriceUpdates = ({ branchId }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 650 }}
+				bordered
 			/>
 		</div>
 	);

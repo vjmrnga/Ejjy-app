@@ -74,6 +74,7 @@ export const OrderSlipsTable = ({
 			loading={orderSlipStatus === request.REQUESTING}
 			pagination={false}
 			scroll={{ x: 650 }}
+			bordered
 		/>
 	);
 };

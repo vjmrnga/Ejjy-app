@@ -115,6 +115,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 						dataSource={data}
 						pagination={false}
 						scroll={{ x: 650, y: 250 }}
+						bordered
 					/>
 				</Col>
 			</Row>

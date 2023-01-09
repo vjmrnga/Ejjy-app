@@ -147,6 +147,7 @@ export const CreateAdjustmentSlipForm = ({
 						loading={loading}
 						pagination={false}
 						scroll={{ x: 800 }}
+						bordered
 					/>
 
 					<div className="ModalCustomFooter">

@@ -98,6 +98,7 @@ export const Branches = () => {
 					loading={isFetchingBranches || isDeletingBranch}
 					pagination={false}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 
 				{modifyBranchModalVisible && (

@@ -69,6 +69,7 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 			}))}
 			pagination={false}
 			scroll={{ x: 800 }}
+			bordered
 		/>
 	</Modal>
 );

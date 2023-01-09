@@ -95,6 +95,7 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 				dataSource={data}
 				pagination={false}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</Modal>
 	);

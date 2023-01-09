@@ -168,6 +168,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1400 }}
+				bordered
 			/>
 
 			{selectedTransaction && (

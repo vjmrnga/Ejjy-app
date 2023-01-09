@@ -77,6 +77,7 @@ export const PendingTransactions = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 			</Box>
 		</Content>

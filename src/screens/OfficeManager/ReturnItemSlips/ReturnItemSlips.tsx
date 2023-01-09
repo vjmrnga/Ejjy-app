@@ -96,6 +96,7 @@ export const ReturnItemSlips = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 800 }}
+					bordered
 				/>
 			</Box>
 

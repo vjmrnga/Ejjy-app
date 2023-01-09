@@ -135,6 +135,7 @@ export const TabCashBreakdowns = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 
 			{selectedCashBreakdown && (

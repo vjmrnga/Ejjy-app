@@ -92,6 +92,7 @@ const Component = () => {
 	// return (
 	// 	<Table
 	// 		columns={columns}
+	//    bordered
 	// 		dataSource={data}
 	// 		pagination={{
 	// 			current: currentPage,

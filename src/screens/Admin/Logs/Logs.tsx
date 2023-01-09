@@ -87,6 +87,7 @@ export const Logs = () => {
 	// 						position: ['bottomCenter'],
 	// 						pageSizeOptions,
 	// 					}}
+	//          bordered
 	// 					loading={logsStatus === request.REQUESTING}
 	// 				/>
 	// 			</Box>

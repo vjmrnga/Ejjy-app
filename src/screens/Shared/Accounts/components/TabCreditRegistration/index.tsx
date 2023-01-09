@@ -145,6 +145,7 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 
 			{selectedAccount && (

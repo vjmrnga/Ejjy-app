@@ -117,6 +117,7 @@ export const PendingTransactions = () => {
 					loading={pendingTransactionsStatus === request.REQUESTING}
 					pagination={false}
 					scroll={{ x: 800 }}
+					bordered
 				/>
 			</Box>
 

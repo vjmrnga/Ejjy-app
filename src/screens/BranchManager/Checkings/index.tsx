@@ -141,6 +141,7 @@ export const Checkings = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 			</Box>
 		</Content>

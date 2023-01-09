@@ -117,6 +117,7 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 				position: ['bottomCenter'],
 				pageSizeOptions,
 			}}
+			bordered
 		/>
 	);
 };

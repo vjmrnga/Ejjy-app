@@ -149,8 +149,8 @@ export const RequisitionSlips = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					// loading={isFetchingPendingCount || isFetchingRequisitionSlips}
 					loading={isFetchingRequisitionSlips}
+					// loading={isFetchingPendingCount || isFetchingRequisitionSlips}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -166,6 +166,7 @@ export const RequisitionSlips = () => {
 						pageSizeOptions: ['5', '10', '15'],
 					}}
 					scroll={{ x: 1000 }}
+					bordered
 				/>
 			</Box>
 		</Content>

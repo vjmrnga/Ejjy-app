@@ -172,6 +172,7 @@ export const Products = () => {
 				</div>
 
 				<Table
+					bordered
 					columns={columns}
 					dataSource={dataSource}
 					loading={branchProductsStatus === request.REQUESTING}

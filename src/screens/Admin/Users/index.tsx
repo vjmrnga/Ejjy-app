@@ -88,6 +88,7 @@ const PendingUserCreation = () => {
 				loading={isUsersFetching || isApproving || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</Box>
 	);
@@ -162,6 +163,7 @@ const PendingEditUserType = () => {
 				loading={isUsersFetching || isApproving || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</Box>
 	);

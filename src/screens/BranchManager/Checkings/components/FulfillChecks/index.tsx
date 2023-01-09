@@ -119,6 +119,7 @@ export const FulfillChecking = () => {
 							pageSizeOptions,
 						}}
 						scroll={{ x: 650 }}
+						bordered
 					/>
 				</Box>
 			)}

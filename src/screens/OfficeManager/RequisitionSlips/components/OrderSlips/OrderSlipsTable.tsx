@@ -94,6 +94,7 @@ export const OrderSlipsTable = ({
 			loading={loading}
 			pagination={false}
 			scroll={{ x: 650 }}
+			bordered
 		/>
 	);
 };

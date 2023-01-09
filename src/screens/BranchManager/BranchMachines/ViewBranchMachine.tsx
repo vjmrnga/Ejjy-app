@@ -9,6 +9,7 @@ import { Box } from 'components/elements';
 import { GENERIC_ERROR_MESSAGE } from 'global';
 import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
+import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';

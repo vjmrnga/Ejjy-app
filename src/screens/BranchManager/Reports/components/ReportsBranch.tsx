@@ -273,6 +273,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1400 }}
+				bordered
 				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
 					if (extra.action === 'sort') {
 						columns[2].sortOrder = null;

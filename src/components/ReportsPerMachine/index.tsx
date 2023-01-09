@@ -338,6 +338,7 @@ const SessionPickerModal = ({ branchMachine, onSubmit, onClose }) => {
 						setSelectedRowKey(key);
 					},
 				}}
+				bordered
 			/>
 		</Modal>
 	);

@@ -67,6 +67,7 @@ export const BackOrdersSent = () => {
 	// 	<Table
 	// 		columns={columns}
 	// 		dataSource={data}
+	//    bordered
 	// 		pagination={{
 	// 			current: currentPage,
 	// 			total: pageCount,

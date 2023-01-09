@@ -104,6 +104,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 				loading={isFetching || isLoading}
 				pagination={false}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 
 			{modifyBranchMachineModalVisible && (

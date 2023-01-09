@@ -102,6 +102,7 @@ export const TabBranchProductLogs = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1000 }}
+				bordered
 			/>
 		</div>
 	);

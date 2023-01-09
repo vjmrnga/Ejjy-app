@@ -105,6 +105,7 @@ export const BackOrdersTable = ({
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				bordered
 			/>
 		</>
 	);

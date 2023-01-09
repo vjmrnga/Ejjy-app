@@ -105,6 +105,7 @@ export const ViewPreparationSlipModal = ({
 				dataSource={data}
 				pagination={false}
 				scroll={{ x: 650, y: 250 }}
+				bordered
 			/>
 		</Modal>
 	);

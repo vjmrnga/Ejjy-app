@@ -52,6 +52,7 @@ export const AdjustmentSlipsTable = ({
 			dataSource={data}
 			loading={loading}
 			pagination={false}
+			bordered
 		/>
 	);
 };

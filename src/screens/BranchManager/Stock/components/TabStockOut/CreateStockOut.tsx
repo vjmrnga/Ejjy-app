@@ -497,6 +497,7 @@ const ProductsTable = ({
 						: false
 				}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</>
 	);

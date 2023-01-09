@@ -173,6 +173,7 @@ const Details = ({
 					dataSource={requestedProducts}
 					pagination={false}
 					scroll={{ x: 1200 }}
+					bordered
 				/>
 			</Box>
 		</Spin>

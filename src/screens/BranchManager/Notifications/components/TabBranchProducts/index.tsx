@@ -101,6 +101,7 @@ export const TabBranchProducts = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 
 			{selectedBranchProduct && (

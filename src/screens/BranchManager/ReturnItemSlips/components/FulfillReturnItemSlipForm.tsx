@@ -142,6 +142,7 @@ export const FulfillReturnItemSlipForm = ({
 						}))}
 						loading={loading || isSubmitting}
 						pagination={false}
+						bordered
 					/>
 
 					<div className="ModalCustomFooter">

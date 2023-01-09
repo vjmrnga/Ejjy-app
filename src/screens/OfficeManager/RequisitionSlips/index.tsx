@@ -105,7 +105,6 @@ export const RequisitionSlips = () => {
 					columns={columns}
 					dataSource={dataSource}
 					loading={isFetchingRequisitionSlips}
-					// loading={isFetchingPendingCount || isFetchingRequisitionSlips}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,
@@ -120,6 +119,8 @@ export const RequisitionSlips = () => {
 						position: ['bottomCenter'],
 						pageSizeOptions: ['5', '10', '15'],
 					}}
+					// loading={isFetchingPendingCount || isFetchingRequisitionSlips}
+					bordered
 				/>
 			</Box>
 		</Content>

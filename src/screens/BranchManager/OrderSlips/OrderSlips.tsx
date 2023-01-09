@@ -106,6 +106,7 @@ export const OrderSlips = () => {
 						pageSizeOptions,
 					}}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 
 				{selectedOrderSlip && (

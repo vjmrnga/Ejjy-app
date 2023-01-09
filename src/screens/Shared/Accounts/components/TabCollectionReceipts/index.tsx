@@ -126,6 +126,7 @@ export const TabCollectionReceipts = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</>
 	);

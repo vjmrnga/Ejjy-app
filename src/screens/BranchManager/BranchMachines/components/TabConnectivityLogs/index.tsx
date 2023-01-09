@@ -88,6 +88,7 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				bordered
 			/>
 		</>
 	);

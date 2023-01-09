@@ -89,6 +89,7 @@ export const TabUserLogs = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1000 }}
+				bordered
 			/>
 		</div>
 	);

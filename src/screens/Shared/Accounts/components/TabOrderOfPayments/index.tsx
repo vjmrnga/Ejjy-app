@@ -172,6 +172,7 @@ export const TabOrderOfPayments = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 1200 }}
+				bordered
 			/>
 
 			{selectedTransaction && (

@@ -155,6 +155,7 @@ export const Sales = () => {
 							loading={isFetchingBranchMachines && !isBranchMachinesFetched}
 							pagination={false}
 							scroll={{ x: 1200 }}
+							bordered
 						/>
 					</Col>
 				</Row>

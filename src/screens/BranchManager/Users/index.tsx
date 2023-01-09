@@ -155,6 +155,7 @@ export const Users = () => {
 					loading={isFetchingUsers || isDeletingUser}
 					pagination={false}
 					scroll={{ x: 650 }}
+					bordered
 				/>
 			</Box>
 

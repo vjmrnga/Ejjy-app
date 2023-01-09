@@ -141,6 +141,7 @@ export const FulfillBackOrderForm = ({
 						}))}
 						loading={loading || isSubmitting}
 						pagination={false}
+						bordered
 					/>
 
 					<div className="ModalCustomFooter">

@@ -161,6 +161,7 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 					dataSource={requestedProducts}
 					pagination={false}
 					scroll={{ x: 800 }}
+					bordered
 				/>
 			</Box>
 		</Spin>

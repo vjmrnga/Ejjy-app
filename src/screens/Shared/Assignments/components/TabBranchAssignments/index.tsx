@@ -91,6 +91,7 @@ export const TabBranchAssignments = () => {
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				bordered
 			/>
 		</div>
 	);

@@ -199,6 +199,7 @@ export const AssignUser = ({ match }: Props) => {
 							loading={isUserFetching || isCashieringAssignmentsFetching}
 							pagination={false}
 							scroll={{ x: 1000 }}
+							bordered
 						/>
 
 						{(selectedDate || selectedCashieringAssignment) && (
