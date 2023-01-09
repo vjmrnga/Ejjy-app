@@ -1,4 +1,7 @@
-import { Col, Divider, Modal } from 'antd';
+import { Descriptions, Divider, Modal } from 'antd';
+import { RequestErrors } from 'components';
+import { EMPTY_CELL, quantityTypes, request } from 'global';
+import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
 import React from 'react';
 import {
 	convertIntoArray,
@@ -6,11 +9,6 @@ import {
 	formatDateTime,
 	getReturnItemSlipStatus,
 } from 'utils';
-import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { quantityTypes, request } from '../../../../global/types';
-import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
 import { FulfillReturnItemSlipForm } from './FulfillReturnItemSlipForm';
 
 interface Props {
@@ -65,41 +63,27 @@ export const FulfillReturnItemSlipModal = ({
 			visible
 			onCancel={onClose}
 		>
-			<DetailsRow>
-				<Col span={24}>
-					<DetailsHalf label="ID" value={returnItemSlip.id} />
-				</Col>
+			<Descriptions column={2} bordered>
+				<Descriptions.Item label="ID">{returnItemSlip.id}</Descriptions.Item>
+				<Descriptions.Item label="Datetime Returned">
+					{returnItemSlip.datetime_sent
+						? formatDateTime(returnItemSlip.datetime_sent)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Datetime Received">
+					{returnItemSlip.datetime_received
+						? formatDateTime(returnItemSlip.datetime_received)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Returned By (branch)">
+					{returnItemSlip.sender.branch.name}
+				</Descriptions.Item>
+				<Descriptions.Item label="Status">
+					{getReturnItemSlipStatus(returnItemSlip.status)}
+				</Descriptions.Item>
+			</Descriptions>
 
-				<DetailsHalf
-					label="Datetime Returned"
-					value={
-						returnItemSlip.datetime_sent
-							? formatDateTime(returnItemSlip.datetime_sent)
-							: EMPTY_CELL
-					}
-				/>
-				<DetailsHalf
-					label="Datetime Received"
-					value={
-						returnItemSlip.datetime_received
-							? formatDateTime(returnItemSlip.datetime_received)
-							: EMPTY_CELL
-					}
-				/>
-
-				<DetailsHalf
-					label="Returned By (branch)"
-					value={returnItemSlip.sender.branch.name}
-				/>
-				<DetailsHalf
-					label="Status"
-					value={getReturnItemSlipStatus(returnItemSlip.status)}
-				/>
-			</DetailsRow>
-
-			<Divider dashed />
-
-			<Label label="Products" spacing />
+			<Divider>Products</Divider>
 
 			<RequestErrors
 				errors={convertIntoArray(returnItemSlipsErrors)}

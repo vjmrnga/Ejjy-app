@@ -1,13 +1,9 @@
-import { Divider, Modal } from 'antd';
+import { Descriptions, Divider, Modal } from 'antd';
+import { TableNormal } from 'components';
+import { Button } from 'components/elements';
+import { EMPTY_CELL } from 'global';
 import React, { useEffect, useState } from 'react';
 import { formatDateTime } from 'utils';
-import {
-	DetailsRow,
-	DetailsSingle,
-	TableNormal,
-} from '../../../../../components';
-import { Button } from '../../../../../components/elements';
-import { EMPTY_CELL } from '../../../../../global/constants';
 
 interface Props {
 	visible: boolean;
@@ -71,19 +67,16 @@ export const ViewAdjustmentSlipModal = ({
 			closable
 			onCancel={onClose}
 		>
-			<DetailsRow>
-				<DetailsSingle
-					label="Date & Time Created"
-					value={formatDateTime(adjustmentSlip?.datetime_created)}
-				/>
-				<DetailsSingle label="Remark" value={adjustmentSlip?.remarks} />
-			</DetailsRow>
+			<Descriptions column={1} bordered>
+				<Descriptions.Item label="Date & Time Created">
+					{formatDateTime(adjustmentSlip?.datetime_created)}
+				</Descriptions.Item>
+				<Descriptions.Item label="Remark">
+					{adjustmentSlip?.remarks}
+				</Descriptions.Item>
+			</Descriptions>
 
-			<Divider dashed />
-
-			<DetailsRow>
-				<DetailsSingle label="Products" value="" />
-			</DetailsRow>
+			<Divider>Products</Divider>
 
 			<TableNormal columns={columns} data={adjustmentProducts} />
 		</Modal>

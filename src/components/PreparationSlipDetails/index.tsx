@@ -1,24 +1,24 @@
-import { Divider } from 'antd';
+import { Descriptions, Divider } from 'antd';
 import React from 'react';
 import { formatDateTime } from 'utils';
-import { DetailsRow, DetailsSingle } from '..';
 
 interface Props {
-	preparationSlip: any;
 	className?: string;
+	preparationSlip: any;
 }
 
 export const PreparationSlipDetails = ({
-	preparationSlip,
 	className,
+	preparationSlip,
 }: Props) => (
-	<DetailsRow className={className}>
-		<DetailsSingle label="ID" value={preparationSlip?.id} />
-		<DetailsSingle
-			label="Date & Time Created"
-			value={formatDateTime(preparationSlip?.datetime_created)}
-		/>
+	<>
+		<Descriptions className={className} column={1} bordered>
+			<Descriptions.Item label="ID">{preparationSlip?.id}</Descriptions.Item>
+			<Descriptions.Item label="Date & Time Created">
+				{formatDateTime(preparationSlip?.datetime_created)}
+			</Descriptions.Item>
+		</Descriptions>
 
 		<Divider style={{ marginTop: '12px', marginBottom: '17px' }} dashed />
-	</DetailsRow>
+	</>
 );

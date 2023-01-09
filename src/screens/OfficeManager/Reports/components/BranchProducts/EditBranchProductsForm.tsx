@@ -1,17 +1,12 @@
 /* eslint-disable no-confusing-arrow */
-import { Col, Divider } from 'antd';
+import { Col, Divider, Row } from 'antd';
+import { Button, FieldError, FormInputLabel } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { unitOfMeasurementTypes } from 'global';
 import { isInteger } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
 import { sleep } from 'utils';
-import { DetailsRow } from '../../../../../components';
-import {
-	Button,
-	FieldError,
-	FormInputLabel,
-} from '../../../../../components/elements';
-import { unitOfMeasurementTypes } from '../../../../../global/types';
+import * as Yup from 'yup';
 
 interface Props {
 	branchProduct: any;
@@ -97,8 +92,8 @@ export const EditBranchProductsForm = ({
 				);
 			}}
 		>
-			<Form className="form">
-				<DetailsRow>
+			<Form>
+				<Row>
 					<Col span={24}>
 						<FormInputLabel
 							id="max_balance"
@@ -132,7 +127,7 @@ export const EditBranchProductsForm = ({
 							</Col>
 						</>
 					)}
-				</DetailsRow>
+				</Row>
 
 				<div className="ModalCustomFooter">
 					<Button

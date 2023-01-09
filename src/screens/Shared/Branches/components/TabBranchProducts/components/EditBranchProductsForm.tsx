@@ -1,26 +1,23 @@
 /* eslint-disable no-confusing-arrow */
-import { Col, Divider, Typography } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isInteger } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import * as Yup from 'yup';
-import { sleep } from 'utils';
-import { DetailsRow, DetailsSingle } from '../../../../../../components';
+import { Col, Descriptions, Divider, Row, Typography } from 'antd';
 import {
 	Button,
 	FieldError,
 	FormInputLabel,
 	FormRadioButton,
 	Label,
-} from '../../../../../../components/elements';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	booleanOptions,
 	checkingTypesOptions,
-} from '../../../../../../global/options';
-import {
 	productCheckingTypes,
 	unitOfMeasurementTypes,
-} from '../../../../../../global/types';
+} from 'global';
+import { isInteger } from 'lodash';
+import React, { useCallback, useState } from 'react';
+import { getProductCode, sleep } from 'utils';
+import * as Yup from 'yup';
 
 const { Text } = Typography;
 
@@ -154,20 +151,21 @@ export const EditBranchProductsForm = ({
 			}}
 		>
 			{({ values }) => (
-				<Form className="form">
-					<DetailsRow>
-						<DetailsSingle
-							label="Barcode"
-							value={branchProduct?.product?.barcode}
-						/>
+				<Form>
+					<Descriptions column={1} bordered>
+						<Descriptions.Item label="Code">
+							{getProductCode(branchProduct?.product)}
+						</Descriptions.Item>
+						<Descriptions.Item label="Textcode">
+							{branchProduct?.product?.textcode}
+						</Descriptions.Item>
 
-						<DetailsSingle
-							label="Textcode"
-							value={branchProduct?.product?.textcode}
-						/>
+						<Descriptions.Item label="Name">
+							{branchProduct?.product?.name}
+						</Descriptions.Item>
+					</Descriptions>
 
-						<DetailsSingle label="Name" value={branchProduct?.product?.name} />
-
+					<Row className="mt-4" gutter={[16, 16]}>
 						<Col sm={12} xs={24}>
 							<Label label="Checking" spacing />
 							<FormRadioButton
@@ -327,7 +325,7 @@ export const EditBranchProductsForm = ({
 								</Col>
 							</>
 						)}
-					</DetailsRow>
+					</Row>
 
 					<div className="ModalCustomFooter">
 						<Button

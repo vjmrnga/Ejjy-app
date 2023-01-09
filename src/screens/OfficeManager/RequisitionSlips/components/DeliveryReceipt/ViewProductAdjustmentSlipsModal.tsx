@@ -1,13 +1,9 @@
-import { Divider, Modal, Spin } from 'antd';
+import { Descriptions, Divider, Modal, Spin } from 'antd';
+import { TableNormal } from 'components';
+import { Button } from 'components/elements';
+import { request } from 'global';
 import React, { useEffect, useState } from 'react';
 import { formatDate } from 'utils';
-import {
-	DetailsRow,
-	DetailsSingle,
-	TableNormal,
-} from '../../../../../components';
-import { Button } from '../../../../../components/elements';
-import { request } from '../../../../../global/types';
 import { useDeliveryReceiptProducts } from '../../../hooks/useDeliveryReceiptProducts';
 
 interface Props {
@@ -85,16 +81,12 @@ export const ViewProductAdjustmentSlipsModal = ({
 			onCancel={onClose}
 		>
 			<Spin spinning={status === request.REQUESTING}>
-				<DetailsRow>
-					<DetailsSingle label="Barcode" value={barcode} />
-					<DetailsSingle label="Name" value={name} />
-				</DetailsRow>
+				<Descriptions column={1} bordered>
+					<Descriptions.Item label="Barcode">{barcode}</Descriptions.Item>
+					<Descriptions.Item label="Name">{name}</Descriptions.Item>
+				</Descriptions>
 
-				<Divider dashed />
-
-				<DetailsRow>
-					<DetailsSingle label="Products" value="" />
-				</DetailsRow>
+				<Divider>Products</Divider>
 
 				<TableNormal columns={columns} data={adjustmentProducts} />
 			</Spin>

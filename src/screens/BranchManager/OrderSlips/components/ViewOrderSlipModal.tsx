@@ -88,7 +88,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
-			<OrderSlipDetails orderSlip={orderSlip} />
+			{orderSlip && <OrderSlipDetails orderSlip={orderSlip} />}
 
 			<Divider dashed />
 

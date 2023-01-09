@@ -1,14 +1,10 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Modal, Table } from 'antd';
+import { Descriptions, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { ColoredText } from 'components';
+import { Button } from 'components/elements';
 import React from 'react';
 import { formatDateTime, formatQuantity } from 'utils';
-import {
-	ColoredText,
-	DetailsRow,
-	DetailsSingle,
-} from '../../../../../components';
-import { Button, Label } from '../../../../../components/elements';
 import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 
 const columns: ColumnsType = [
@@ -32,17 +28,17 @@ export const ViewAdjustmentSlipModal = ({ adjustmentSlip, onClose }: Props) => (
 		visible
 		onCancel={onClose}
 	>
-		<DetailsRow>
-			<DetailsSingle
-				label="Date & Time Created"
-				value={formatDateTime(adjustmentSlip?.datetime_created)}
-			/>
-			<DetailsSingle label="Remark" value={adjustmentSlip?.remarks} />
-		</DetailsRow>
+		<Descriptions column={1} bordered>
+			<Descriptions.Item label="Date & Time Created">
+				{formatDateTime(adjustmentSlip?.datetime_created)}
+			</Descriptions.Item>
+			<Descriptions.Item label="Remark">
+				{adjustmentSlip?.remarks}
+			</Descriptions.Item>
+		</Descriptions>
 
-		<Divider dashed />
+		<Divider>Products</Divider>
 
-		<Label label="Products" spacing />
 		<Table
 			columns={columns}
 			dataSource={adjustmentSlip.adjustment_slip_products.map((item) => ({

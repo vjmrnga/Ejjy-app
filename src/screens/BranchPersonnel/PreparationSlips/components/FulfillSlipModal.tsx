@@ -1,15 +1,10 @@
-import { Divider, Modal } from 'antd';
+import { Descriptions, Divider, Modal } from 'antd';
+import { KeyboardButton } from 'components';
+import { ControlledInput, FieldError, Label } from 'components/elements';
+import { unitOfMeasurementTypes } from 'global';
 import { isInteger } from 'lodash';
 import React, { useState } from 'react';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
-import { DetailsRow, DetailsSingle } from '../../../../components';
-import {
-	ControlledInput,
-	FieldError,
-	Label,
-} from '../../../../components/elements';
-import { KeyboardButton } from '../../../../components/KeyboardButton/KeyboardButton';
-import { unitOfMeasurementTypes } from '../../../../global/types';
 import { FULFILL_TYPES } from './constants';
 
 interface Props {
@@ -100,10 +95,14 @@ export const FulfillSlipModal = ({
 
 				<Divider dashed />
 
-				<DetailsRow>
-					<DetailsSingle label="Ordered quantity" value={product?.ordered} />
-					<DetailsSingle label="Current quantity" value={product?.fulfilled} />
-				</DetailsRow>
+				<Descriptions column={1} bordered>
+					<Descriptions.Item label="Ordered quantity">
+						{product?.ordered}
+					</Descriptions.Item>
+					<Descriptions.Item label="Current quantity">
+						{product?.fulfilled}
+					</Descriptions.Item>
+				</Descriptions>
 
 				<div className="FulfillSlipModal_inputQuantity">
 					<Label

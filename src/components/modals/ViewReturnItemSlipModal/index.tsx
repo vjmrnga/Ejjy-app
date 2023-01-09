@@ -1,16 +1,14 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Divider, Modal, Table } from 'antd';
+import { Descriptions, Divider, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { EMPTY_CELL } from 'global';
 import React, { useEffect, useState } from 'react';
 import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
-import { DetailsHalf, DetailsRow } from '../..';
-import { EMPTY_CELL } from '../../../global/constants';
 import { Button, Label } from '../../elements';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Qty Returned', dataIndex: 'qty_returned' },
-	{ title: 'Qty Received', dataIndex: 'qty_received' },
+	{ title: 'Qty Returned', dataIndex: 'qtyReturned' },
+	{ title: 'Qty Received', dataIndex: 'qtyReceived' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
@@ -21,27 +19,27 @@ interface Props {
 
 export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// METHODS
 	useEffect(() => {
-		setData(
-			returnItemSlip.products.map((item) => ({
-				key: item.id,
-				name: item.product.name,
-				qty_returned: formatQuantity({
-					unitOfMeasurement: item.product.unit_of_measurement,
-					quantity: item.quantity_returned,
-				}),
-				qty_received: item?.quantity_received
-					? formatQuantity({
-							unitOfMeasurement: item.product.unit_of_measurement,
-							quantity: item.quantity_received,
-					  })
-					: EMPTY_CELL,
-				status: getReturnItemSlipStatus(returnItemSlip.status),
-			})),
-		);
+		const data = returnItemSlip.products.map((item) => ({
+			key: item.id,
+			name: item.product.name,
+			qtyReturned: formatQuantity({
+				unitOfMeasurement: item.product.unit_of_measurement,
+				quantity: item.quantity_returned,
+			}),
+			qtyReceived: item?.quantity_received
+				? formatQuantity({
+						unitOfMeasurement: item.product.unit_of_measurement,
+						quantity: item.quantity_received,
+				  })
+				: EMPTY_CELL,
+			status: getReturnItemSlipStatus(returnItemSlip.status),
+		}));
+
+		setDataSource(data);
 	}, [returnItemSlip]);
 
 	return (
@@ -54,37 +52,27 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
-			<DetailsRow>
-				<Col span={24}>
-					<DetailsHalf label="ID" value={returnItemSlip.id} />
-				</Col>
-
-				<DetailsHalf
-					label="Datetime Returned"
-					value={
-						returnItemSlip.datetime_sent
-							? formatDateTime(returnItemSlip.datetime_sent)
-							: EMPTY_CELL
-					}
-				/>
-				<DetailsHalf
-					label="Datetime Received"
-					value={
-						returnItemSlip.datetime_received
-							? formatDateTime(returnItemSlip.datetime_received)
-							: EMPTY_CELL
-					}
-				/>
-
-				<DetailsHalf
-					label="Returned By (branch)"
-					value={returnItemSlip.sender.branch.name}
-				/>
-				<DetailsHalf
-					label="Status"
-					value={getReturnItemSlipStatus(returnItemSlip.status)}
-				/>
-			</DetailsRow>
+			<Descriptions column={2} bordered>
+				<Descriptions.Item label="ID" span={2}>
+					{returnItemSlip.id}
+				</Descriptions.Item>
+				<Descriptions.Item label="Datetime Returned">
+					{returnItemSlip.datetime_sent
+						? formatDateTime(returnItemSlip.datetime_sent)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Datetime Received">
+					{returnItemSlip.datetime_received
+						? formatDateTime(returnItemSlip.datetime_received)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Returned By (branch)">
+					{returnItemSlip.sender.branch.name}
+				</Descriptions.Item>
+				<Descriptions.Item label="Status">
+					{getReturnItemSlipStatus(returnItemSlip.status)}
+				</Descriptions.Item>
+			</Descriptions>
 
 			<Divider dashed />
 
@@ -92,7 +80,7 @@ export const ViewReturnItemSlipModal = ({ returnItemSlip, onClose }: Props) => {
 
 			<Table
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered

@@ -1,13 +1,10 @@
-import { Divider } from 'antd';
+import { Descriptions, Divider } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { formatDateTime, getDeliveryReceiptStatus } from 'utils';
+import { formatDateTime, getDeliveryReceiptStatus, getFullName } from 'utils';
 import {
 	CheckIcon,
 	ColoredText,
 	ColoredTextVariant,
-	DetailsHalf,
-	DetailsRow,
-	DetailsSingle,
 	ErrorIcon,
 	TableNormal,
 	ViewButtonIcon,
@@ -93,7 +90,9 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 
 	const getReceivedBy = useCallback(
 		() =>
-			`${deliveryReceipt?.receiving_user?.first_name} ${deliveryReceipt?.receiving_user?.last_name} - ${deliveryReceipt?.receiving_user?.branch?.name}`,
+			`${getFullName(deliveryReceipt?.receiving_user)} - ${
+				deliveryReceipt?.receiving_user?.branch?.name
+			}`,
 		[deliveryReceipt],
 	);
 
@@ -131,27 +130,23 @@ export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 
 	return (
 		<Box>
-			<div className="details">
-				<DetailsRow>
-					<DetailsHalf
-						label="Date & Time Received"
-						value={formatDateTime(deliveryReceipt?.datetime_received)}
-					/>
-					<DetailsHalf label="F-OS1" value={12} />
+			<Descriptions className="mx-6 mt-6" column={2} bordered>
+				<Descriptions.Item label="Date & Time Received">
+					{formatDateTime(deliveryReceipt?.datetime_received)}
+				</Descriptions.Item>
 
-					<DetailsHalf label="Received By" value={getReceivedBy()} />
+				<Descriptions.Item label="F-OS1">{0}</Descriptions.Item>
 
-					<DetailsHalf label="F-DS1" value={deliveryReceipt?.id} />
-				</DetailsRow>
-			</div>
+				<Descriptions.Item label="Received By">
+					{getReceivedBy()}
+				</Descriptions.Item>
 
-			<div className="received-products">
-				<Divider dashed />
+				<Descriptions.Item label="F-DS1">
+					{deliveryReceipt?.id}
+				</Descriptions.Item>
+			</Descriptions>
 
-				<DetailsRow>
-					<DetailsSingle label="Received Products" value="" />
-				</DetailsRow>
-			</div>
+			<Divider className="mx-6 mb-2">Received Products</Divider>
 
 			<TableNormal columns={columns} data={receivedProducts} displayInPage />
 

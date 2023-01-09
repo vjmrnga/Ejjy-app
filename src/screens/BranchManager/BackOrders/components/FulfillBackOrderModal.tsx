@@ -1,4 +1,7 @@
-import { Col, Divider, Modal } from 'antd';
+import { Descriptions, Divider, Modal } from 'antd';
+import { RequestErrors } from 'components';
+import { EMPTY_CELL, quantityTypes, request } from 'global';
+import { useBackOrders } from 'hooks/useBackOrders';
 import React from 'react';
 import {
 	convertIntoArray,
@@ -6,11 +9,6 @@ import {
 	formatDateTime,
 	getBackOrderStatus,
 } from 'utils';
-import { DetailsHalf, DetailsRow, RequestErrors } from '../../../../components';
-import { Label } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { quantityTypes, request } from '../../../../global/types';
-import { useBackOrders } from '../../../../hooks/useBackOrders';
 import { FulfillBackOrderForm } from './FulfillBackOrderForm';
 
 interface Props {
@@ -65,41 +63,29 @@ export const FulfillBackOrderModal = ({
 			visible
 			onCancel={onClose}
 		>
-			<DetailsRow>
-				<Col span={24}>
-					<DetailsHalf label="ID" value={backOrder.id} />
-				</Col>
+			<Descriptions column={2} bordered>
+				<Descriptions.Item label="ID" span={2}>
+					{backOrder.id}
+				</Descriptions.Item>
+				<Descriptions.Item label="Datetime Returned">
+					{backOrder.datetime_sent
+						? formatDateTime(backOrder.datetime_sent)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Datetime Received">
+					{backOrder.datetime_received
+						? formatDateTime(backOrder.datetime_received)
+						: EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Returned By (branch)">
+					{backOrder.sender.branch.name}
+				</Descriptions.Item>
+				<Descriptions.Item label="Status">
+					{getBackOrderStatus(backOrder.status)}
+				</Descriptions.Item>
+			</Descriptions>
 
-				<DetailsHalf
-					label="Datetime Returned"
-					value={
-						backOrder.datetime_sent
-							? formatDateTime(backOrder.datetime_sent)
-							: EMPTY_CELL
-					}
-				/>
-				<DetailsHalf
-					label="Datetime Received"
-					value={
-						backOrder.datetime_received
-							? formatDateTime(backOrder.datetime_received)
-							: EMPTY_CELL
-					}
-				/>
-
-				<DetailsHalf
-					label="Returned By (branch)"
-					value={backOrder.sender.branch.name}
-				/>
-				<DetailsHalf
-					label="Status"
-					value={getBackOrderStatus(backOrder.status)}
-				/>
-			</DetailsRow>
-
-			<Divider dashed />
-
-			<Label label="Products" spacing />
+			<Divider>Products</Divider>
 
 			<RequestErrors
 				errors={convertIntoArray(backOrdersErrors)}

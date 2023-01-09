@@ -1,5 +1,5 @@
-import { Col, Divider, message, Modal } from 'antd';
-import { DetailsRow, RequestErrors } from 'components';
+import { Col, Divider, message, Modal, Row } from 'antd';
+import { RequestErrors } from 'components';
 import { Button, FieldError, FormInputLabel } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { SHOW_HIDE_SHORTCUT, unitOfMeasurementTypes } from 'global';
@@ -174,7 +174,7 @@ export const EditBranchProductsForm = ({
 			}}
 		>
 			<Form>
-				<DetailsRow>
+				<Row gutter={[16, 16]}>
 					<Col span={24}>
 						<FormInputLabel id="maxBalance" label="Max Balance" type="number" />
 						<ErrorMessage
@@ -204,7 +204,7 @@ export const EditBranchProductsForm = ({
 							</Col>
 						</>
 					)}
-				</DetailsRow>
+				</Row>
 
 				<div className="ModalCustomFooter">
 					<Button

@@ -1,5 +1,4 @@
-import { Divider, Modal } from 'antd';
-import { DetailsRow, DetailsSingle } from 'components';
+import { Descriptions, Divider, Modal } from 'antd';
 import { Button, Label } from 'components/elements';
 import { SHOW_HIDE_SHORTCUT } from 'global';
 import React, { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import {
 	formatInPeso,
 	formatQuantity,
 	getKeyDownCombination,
+	getProductCode,
 } from 'utils';
 
 interface Props {
@@ -16,14 +16,6 @@ interface Props {
 }
 
 export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
-	// VARIABLES
-	const title = (
-		<>
-			<span>[View] Branch Product</span>
-			<span className="ModalTitleMainInfo">{branchProduct.product.name}</span>
-		</>
-	);
-
 	// STATES
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
@@ -51,109 +43,92 @@ export const ViewBranchProductModal = ({ branchProduct, onClose }: Props) => {
 		}
 	};
 
-	const handleClose = () => {
-		setIsCurrentBalanceVisible(false);
-		onClose();
-	};
-
 	return (
 		<Modal
 			className="ViewBranchProductModal Modal__large Modal__hasFooter"
-			footer={[<Button key="button" text="Close" onClick={handleClose} />]}
-			title={title}
+			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			title={
+				<>
+					<span>[View] Branch Product</span>
+					<span className="ModalTitleMainInfo">
+						{branchProduct.product.name}
+					</span>
+				</>
+			}
 			centered
 			closable
 			visible
-			onCancel={handleClose}
+			onCancel={onClose}
 		>
 			{branchProduct && (
-				<DetailsRow>
-					<DetailsSingle
-						label="Barcode"
-						value={branchProduct.product.barcode}
-					/>
-					<DetailsSingle
-						label="Textcode"
-						value={branchProduct.product.textcode}
-					/>
-					<DetailsSingle label="Name" value={branchProduct.product.name} />
-
-					<DetailsSingle
-						label="Checking"
-						value={branchProduct.is_daily_checked ? 'Daily' : 'Random'}
-					/>
-
-					<DetailsSingle
-						label="Include In Scale"
-						value={branchProduct.is_shown_in_scale_list ? 'Yes' : 'No'}
-					/>
-
-					<DetailsSingle
-						label="In Stock"
-						value={branchProduct.is_sold_in_branch ? 'Yes' : 'No'}
-					/>
+				<Descriptions column={1} bordered>
+					<Descriptions.Item label="Code">
+						{getProductCode(branchProduct.product)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Textcode">
+						{branchProduct.product.textcode}
+					</Descriptions.Item>
+					<Descriptions.Item label="Name">
+						{branchProduct.product.name}
+					</Descriptions.Item>
+					<Descriptions.Item label="Checking">
+						{branchProduct.is_daily_checked ? 'Daily' : 'Random'}
+					</Descriptions.Item>
+					<Descriptions.Item label="Include In Scale">
+						{branchProduct.is_shown_in_scale_list ? 'Yes' : 'No'}
+					</Descriptions.Item>
+					<Descriptions.Item label="In Stock">
+						{branchProduct.is_sold_in_branch ? 'Yes' : 'No'}
+					</Descriptions.Item>
 
 					<Divider dashed>
 						<Label label="Quantity" />
 					</Divider>
 
-					<DetailsSingle
-						label="Reorder Point"
-						value={branchProduct.reorder_point}
-					/>
-					<DetailsSingle
-						label="Max Balance"
-						value={formatQuantity({
+					<Descriptions.Item label="Reorder Point">
+						{branchProduct.reorder_point}
+					</Descriptions.Item>
+					<Descriptions.Item label="Max Balance">
+						{formatQuantity({
 							unitOfMeasurement: branchProduct.product.unit_of_measurement,
 							quantity: branchProduct.max_balance,
 						})}
-					/>
-
-					<DetailsSingle
-						label="Allowable Spoilage (%)"
-						value={branchProduct.allowable_spoilage * 100}
-					/>
-
+					</Descriptions.Item>
+					<Descriptions.Item label="Allowable Spoilage (%)">
+						{branchProduct.allowable_spoilage * 100}
+					</Descriptions.Item>
 					{isCurrentBalanceVisible && (
-						<DetailsSingle
-							label="Current Balance"
-							value={formatQuantity({
+						<Descriptions.Item label="Current Balance">
+							{formatQuantity({
 								unitOfMeasurement: branchProduct.product.unit_of_measurement,
 								quantity: branchProduct.current_balance,
 							})}
-						/>
+						</Descriptions.Item>
 					)}
 
 					<Divider dashed>
 						<Label label="MONEY" />
 					</Divider>
 
-					<DetailsSingle
-						label="Price (Piece)"
-						value={formatInPeso(branchProduct.price_per_piece)}
-					/>
-					<DetailsSingle
-						label="Wholesale Price (piece)"
-						value={formatInPeso(branchProduct.markdown_price_per_piece1)}
-					/>
-					<DetailsSingle
-						label="Special Price (piece)"
-						value={formatInPeso(branchProduct.markdown_price_per_piece2)}
-					/>
-
-					<DetailsSingle
-						label="Price (Bulk)"
-						value={formatInPeso(branchProduct.price_per_bulk)}
-					/>
-					<DetailsSingle
-						label="Wholesale Price (bulk)"
-						value={formatInPeso(branchProduct.markdown_price_per_bulk1)}
-					/>
-					<DetailsSingle
-						label="Special Price (Bulk)"
-						value={formatInPeso(branchProduct.markdown_price_per_bulk2)}
-					/>
-				</DetailsRow>
+					<Descriptions.Item label="Price (Piece)">
+						{formatInPeso(branchProduct.price_per_piece)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Wholesale Price (piece)">
+						{formatInPeso(branchProduct.markdown_price_per_piece1)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Special Price (piece)">
+						{formatInPeso(branchProduct.markdown_price_per_piece2)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Price (Bulk)">
+						{formatInPeso(branchProduct.price_per_bulk)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Wholesale Price (bulk)">
+						{formatInPeso(branchProduct.markdown_price_per_bulk1)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Special Price (Bulk)">
+						{formatInPeso(branchProduct.markdown_price_per_bulk2)}
+					</Descriptions.Item>
+				</Descriptions>
 			)}
 		</Modal>
 	);

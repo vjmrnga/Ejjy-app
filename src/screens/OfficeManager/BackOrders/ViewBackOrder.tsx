@@ -1,18 +1,11 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Divider, Spin, Table } from 'antd';
+import { Descriptions, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { formatDateTime, formatQuantity, getBackOrderStatus } from 'utils';
-import {
-	Breadcrumb,
-	Content,
-	DetailsHalf,
-	DetailsRow,
-	TableHeader,
-} from '../../../components';
+import { Breadcrumb, Content, TableHeader } from '../../../components';
 import { Box } from '../../../components/elements';
-import Label from '../../../components/elements/Label/Label';
 import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
 import { backOrdersStatuses, request } from '../../../global/types';
 import { useBackOrders } from '../../../hooks/useBackOrders';
@@ -119,42 +112,34 @@ const Details = ({ backOrder, backOrdersStatus }: DetailsProps) => {
 
 	return (
 		<Spin spinning={backOrdersStatus === request.REQUESTING}>
-			<Box className="PaddingHorizontal PaddingVertical">
-				<DetailsRow>
-					<Col span={24}>
-						<DetailsHalf label="ID" value={backOrder?.id} />
-					</Col>
+			<Box className="pa-6">
+				<Descriptions column={2} bordered>
+					<Descriptions.Item label="ID" span={2}>
+						{backOrder?.id}
+					</Descriptions.Item>
 
-					<DetailsHalf
-						label="Datetime Returned"
-						value={
-							backOrder?.datetime_sent
-								? formatDateTime(backOrder?.datetime_sent)
-								: EMPTY_CELL
-						}
-					/>
-					<DetailsHalf
-						label="Datetime Received"
-						value={
-							backOrder?.datetime_received
-								? formatDateTime(backOrder?.datetime_received)
-								: EMPTY_CELL
-						}
-					/>
+					<Descriptions.Item label="Datetime Returned">
+						{backOrder?.datetime_sent
+							? formatDateTime(backOrder?.datetime_sent)
+							: EMPTY_CELL}
+					</Descriptions.Item>
 
-					<DetailsHalf
-						label="Returned By (branch)"
-						value={backOrder?.sender.branch.name}
-					/>
-					<DetailsHalf
-						label="Status"
-						value={getBackOrderStatus(backOrder?.status)}
-					/>
-				</DetailsRow>
+					<Descriptions.Item label="Datetime Received">
+						{backOrder?.datetime_received
+							? formatDateTime(backOrder?.datetime_received)
+							: EMPTY_CELL}
+					</Descriptions.Item>
 
-				<Divider dashed />
+					<Descriptions.Item label="Returned By (branch)">
+						{backOrder?.sender.branch.name}
+					</Descriptions.Item>
 
-				<Label label="Products" spacing />
+					<Descriptions.Item label="Status">
+						{getBackOrderStatus(backOrder?.status)}
+					</Descriptions.Item>
+				</Descriptions>
+
+				<Divider>Products</Divider>
 
 				<Table
 					columns={columns}

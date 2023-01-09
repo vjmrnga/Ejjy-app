@@ -6,8 +6,9 @@
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"search.exclude": {
-    "**/public": true,
-    "**/api": true,
-	  },
+		"**/public": true,
+		"**/api": true,
+		"**/archive": true
+	},
 	"typescript.preferences.importModuleSpecifier": "non-relative"
 }

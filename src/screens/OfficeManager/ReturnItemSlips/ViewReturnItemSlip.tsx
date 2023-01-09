@@ -1,21 +1,18 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Col, Divider, Spin, Table } from 'antd';
+import { Descriptions, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Breadcrumb, Content, TableHeader } from 'components';
+import { Box, Label } from 'components/elements';
+import {
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	request,
+	returnItemSlipsStatuses,
+} from 'global';
+import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
-import {
-	Breadcrumb,
-	Content,
-	DetailsHalf,
-	DetailsRow,
-	TableHeader,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import Label from '../../../components/elements/Label/Label';
-import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
-import { request, returnItemSlipsStatuses } from '../../../global/types';
-import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
 import { useReturnItemSlipAdjustmentSlips } from '../hooks/useReturnItemSlipAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
@@ -126,37 +123,31 @@ const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
 	return (
 		<Spin spinning={returnItemSlipsStatus === request.REQUESTING}>
 			<Box className="pa-6">
-				<DetailsRow>
-					<Col span={24}>
-						<DetailsHalf label="ID" value={returnItemSlip?.id} />
-					</Col>
+				<Descriptions column={2} bordered>
+					<Descriptions.Item label="ID" span={2}>
+						{returnItemSlip.id}
+					</Descriptions.Item>
 
-					<DetailsHalf
-						label="Datetime Returned"
-						value={
-							returnItemSlip?.datetime_sent
-								? formatDateTime(returnItemSlip?.datetime_sent)
-								: EMPTY_CELL
-						}
-					/>
-					<DetailsHalf
-						label="Datetime Received"
-						value={
-							returnItemSlip?.datetime_received
-								? formatDateTime(returnItemSlip?.datetime_received)
-								: EMPTY_CELL
-						}
-					/>
+					<Descriptions.Item label="Datetime Returned">
+						{returnItemSlip.datetime_sent
+							? formatDateTime(returnItemSlip.datetime_sent)
+							: EMPTY_CELL}
+					</Descriptions.Item>
 
-					<DetailsHalf
-						label="Returned By (branch)"
-						value={returnItemSlip?.sender.branch.name}
-					/>
-					<DetailsHalf
-						label="Status"
-						value={getReturnItemSlipStatus(returnItemSlip?.status)}
-					/>
-				</DetailsRow>
+					<Descriptions.Item label="Datetime Received">
+						{returnItemSlip.datetime_received
+							? formatDateTime(returnItemSlip.datetime_received)
+							: EMPTY_CELL}
+					</Descriptions.Item>
+
+					<Descriptions.Item label="Returned By (branch)">
+						{returnItemSlip.sender.branch.name}
+					</Descriptions.Item>
+
+					<Descriptions.Item label="Status">
+						{getReturnItemSlipStatus(returnItemSlip.status)}
+					</Descriptions.Item>
+				</Descriptions>
 
 				<Divider dashed />
 

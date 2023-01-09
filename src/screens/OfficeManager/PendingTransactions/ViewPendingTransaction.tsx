@@ -1,6 +1,15 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Spin, Table } from 'antd';
+import { Descriptions, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Breadcrumb, ColoredText, Content, TableHeader } from 'components';
+import { Box, Label } from 'components/elements';
+import {
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	preparationSlipStatus,
+	request,
+} from 'global';
+import { useAuth } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
@@ -8,25 +17,12 @@ import {
 	formatQuantity,
 	getPreparationSlipStatus,
 } from 'utils';
-import {
-	Breadcrumb,
-	ColoredText,
-	Content,
-	DetailsHalf,
-	DetailsRow,
-	TableHeader,
-} from '../../../components';
-import { Box } from '../../../components/elements';
-import Label from '../../../components/elements/Label/Label';
-import { EMPTY_CELL, MAX_PAGE_SIZE } from '../../../global/constants';
-import { request, preparationSlipStatus } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
+import { useOrderSlipAdjustmentSlips } from '../hooks/useOrderSlipAdjustmentSlips';
 import { usePreparationSlips } from '../hooks/usePreparationSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
-import './style.scss';
-import { useOrderSlipAdjustmentSlips } from '../hooks/useOrderSlipAdjustmentSlips';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
 import { ViewAdjustmentSlipModal } from './components/AdjustmentSlips/ViewAdjustmentSlipModal';
+import './style.scss';
 
 const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },
@@ -152,18 +148,18 @@ const Details = ({
 
 	return (
 		<Spin spinning={preparationSlipsStatus === request.REQUESTING}>
-			<Box className="PaddingHorizontal PaddingVertical">
-				<DetailsRow>
-					<DetailsHalf label="ID" value={pendingTransaction?.id} />
-					<DetailsHalf
-						label="Date & Time Created"
-						value={formatDateTime(pendingTransaction?.datetime_created)}
-					/>
-					<DetailsHalf
-						label="Status"
-						value={getPreparationSlipStatus(pendingTransaction?.status)}
-					/>
-				</DetailsRow>
+			<Box className="pa-6">
+				<Descriptions column={2} bordered>
+					<Descriptions.Item label="ID">
+						{pendingTransaction?.id}
+					</Descriptions.Item>
+					<Descriptions.Item label="Date & Time Created">
+						{formatDateTime(pendingTransaction?.datetime_created)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Status">
+						{getPreparationSlipStatus(pendingTransaction?.status)}
+					</Descriptions.Item>
+				</Descriptions>
 
 				<Divider dashed />
 

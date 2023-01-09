@@ -1,5 +1,5 @@
 import { Divider, message, Modal } from 'antd';
-import { DetailsRow, DetailsSingle, RequestErrors } from 'components';
+import { RequestErrors } from 'components';
 import { Label, Textarea } from 'components/elements';
 import { selectors as authSelectors } from 'ducks/auth';
 import { types } from 'ducks/OfficeManager/adjustment-slips';
@@ -158,11 +158,7 @@ export const CreateAdjustmentSlipModal = ({
 				<Textarea onChange={(value) => setRemarks(value)} />
 			</div>
 
-			<Divider dashed />
-
-			<DetailsRow>
-				<DetailsSingle label="Products" value="" />
-			</DetailsRow>
+			<Divider>Products</Divider>
 
 			<CreateAdjustmentSlipForm
 				deliveryReceiptProducts={deliveryReceiptProducts}

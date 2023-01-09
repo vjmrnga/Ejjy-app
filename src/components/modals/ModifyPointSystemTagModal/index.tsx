@@ -113,7 +113,7 @@ export const ModifyPointSystemTagForm = ({
 			}}
 		>
 			{({ values, setFieldValue }) => (
-				<Form className="form">
+				<Form>
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<FormInputLabel id="name" label="Name" />
