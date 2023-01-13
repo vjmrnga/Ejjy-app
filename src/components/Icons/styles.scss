@@ -1,4 +1,4 @@
-@import '../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .Icon {
 	@include flex(center, center);

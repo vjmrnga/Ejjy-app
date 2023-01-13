@@ -1,4 +1,4 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .Textarea {
 	@include font(1rem);

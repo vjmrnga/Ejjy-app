@@ -1,9 +1,9 @@
 import { Spin } from 'antd';
 import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { useAccountRetrieve } from 'hooks';
+import { useAccountRetrieve, useAuth } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray, getFullName } from 'utils';
+import { convertIntoArray, getFullName, getUrlPrefix } from 'utils';
 import { AccountDetails } from './components/ViewAccount/AccountDetails';
 import { PointTransactions } from './components/ViewAccount/PointTransactions';
 
@@ -16,6 +16,7 @@ export const ViewAccount = ({ match }: Props) => {
 	const accountId = match?.params?.id;
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		data: account,
 		isFetching: isFetchingAccount,
@@ -30,7 +31,7 @@ export const ViewAccount = ({ match }: Props) => {
 		() => [
 			{
 				name: 'Accounts',
-				link: '/branch-manager/accounts',
+				link: `${getUrlPrefix(user.user_type)}/accounts`,
 			},
 			{ name: getFullName(account) },
 		],

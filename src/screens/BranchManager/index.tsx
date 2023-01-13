@@ -17,7 +17,7 @@ import { Checkings } from 'screens/BranchManager/Checkings';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { Logs } from 'screens/BranchManager/Logs';
 import { Reports } from 'screens/BranchManager/Reports';
-import { Sales } from 'screens/BranchManager/Sales';
+import { Sales } from 'screens/Shared/Sales';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';

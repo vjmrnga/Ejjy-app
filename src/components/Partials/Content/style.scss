@@ -1,4 +1,4 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .ContentLayout {
 	min-height: 100vh !important;

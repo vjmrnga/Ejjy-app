@@ -1,4 +1,4 @@
-@import '../../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .BadgePill {
 	@include font(0.75rem, 600);

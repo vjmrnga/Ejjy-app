@@ -7,7 +7,7 @@ import { Branches } from '../Shared/Branches';
 import { ViewBranch } from '../Shared/Branches/ViewBranch';
 import { ProductCategories } from '../Shared/ProductCategories';
 import { Products } from '../Shared/Products';
-import { Dashboard } from './Dashboard/Dashboard';
+import { Dashboard } from './Dashboard';
 import { useFailedTransfers } from './hooks/useFailedTransfers';
 import { Logs } from './Logs/Logs';
 import { Notifications } from './Notifications/Notifications';

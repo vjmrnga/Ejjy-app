@@ -12,6 +12,7 @@ import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
+import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { BackOrders } from './BackOrders/BackOrders';
 import { ViewBackOrder } from './BackOrders/ViewBackOrder';
@@ -38,6 +39,13 @@ const sidebarItems = [
 		activeIcon: require('../../assets/images/icon-dashboard-active.svg'),
 		defaultIcon: require('../../assets/images/icon-dashboard.svg'),
 		link: '/office-manager/dashboard',
+	},
+	{
+		key: 'sales',
+		name: 'Sales',
+		activeIcon: require('../../assets/images/icon-sales-active.svg'),
+		defaultIcon: require('../../assets/images/icon-sales.svg'),
+		link: '/office-manager/sales',
 	},
 	{
 		key: 'products',
@@ -232,6 +240,8 @@ const OfficeManager = () => {
 						component={SiteSettings}
 						path="/office-manager/site-settings"
 					/>
+
+					<Route component={Sales} path="/office-manager/sales" />
 
 					{/* Disabled as of the moment */}
 					<Route component={Dashboard} path="/office-manager/dashboard" />

@@ -1,4 +1,4 @@
-@import '../../assets/styles/main';
+@use 'assets/styles/' as *;
 
 .RestrictedAccessState {
 	padding: 12px 24px;

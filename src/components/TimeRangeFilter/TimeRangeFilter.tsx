@@ -35,6 +35,24 @@ export const TimeRangeFilter = ({
 				newParams['timeRange'] = timeRangeTypes.DAILY;
 			}
 
+			if (_.toString(timeRange)) {
+				const validatedTimeRange = validateTimeRange(timeRange);
+
+				if (validatedTimeRange) {
+					const { areValid, areSameMonth, isStartOfTheMonth, isEndOfTheMonth } =
+						validatedTimeRange;
+
+					if (
+						areValid &&
+						areSameMonth &&
+						isStartOfTheMonth &&
+						isEndOfTheMonth
+					) {
+						setTimeRangeType(timeRangeTypes.MONTHLY);
+					}
+				}
+			}
+
 			return newParams;
 		},
 	});
@@ -49,28 +67,11 @@ export const TimeRangeFilter = ({
 	};
 
 	const renderMonthPicker = useCallback(() => {
-		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
+		const validatedTimeRange = validateTimeRange(params.timeRange);
 
 		let defaultValue;
-		if (timeRangeValues.length === 2) {
-			// Get dates
-			const startDate = moment(timeRangeValues[0]);
-			const endDate = moment(timeRangeValues[1]);
-
-			// Validate time ranges
-			const areValid = startDate.isValid() && endDate.isValid();
-			const areSameMonth =
-				startDate.isSame(endDate, 'month') && startDate.isSame(endDate, 'year');
-			const isStartOfTheMonth = startDate.isSame(
-				startDate.clone().startOf('month').format(DATE_FORMAT),
-			);
-			const isEndOfTheMonth = endDate.isSame(
-				endDate.clone().endOf('month').format(DATE_FORMAT),
-			);
-
-			if (areValid && areSameMonth && isStartOfTheMonth && isEndOfTheMonth) {
-				defaultValue = startDate;
-			}
+		if (validatedTimeRange) {
+			defaultValue = validatedTimeRange.defaultValue;
 		}
 
 		return (
@@ -142,6 +143,44 @@ export const TimeRangeFilter = ({
 
 		return options;
 	}, [fields]);
+
+	const validateTimeRange = (timeRange) => {
+		const timeRangeValues = _.toString(timeRange)?.split(',') || [];
+
+		let defaultValue;
+		if (timeRangeValues.length === 2) {
+			// Get dates
+			const startDate = moment(timeRangeValues[0]);
+			const endDate = moment(timeRangeValues[1]);
+
+			// Validate time ranges
+			const areValid = startDate.isValid() && endDate.isValid();
+			const areSameMonth =
+				startDate.isSame(endDate, 'month') && startDate.isSame(endDate, 'year');
+			const isStartOfTheMonth = startDate.isSame(
+				startDate.clone().startOf('month').format(DATE_FORMAT),
+			);
+			const isEndOfTheMonth = endDate.isSame(
+				endDate.clone().endOf('month').format(DATE_FORMAT),
+			);
+
+			if (areValid && areSameMonth && isStartOfTheMonth && isEndOfTheMonth) {
+				defaultValue = startDate;
+			}
+
+			return {
+				defaultValue,
+				startDate,
+				endDate,
+				areValid,
+				areSameMonth,
+				isStartOfTheMonth,
+				isEndOfTheMonth,
+			};
+		}
+
+		return null;
+	};
 
 	return (
 		<>
