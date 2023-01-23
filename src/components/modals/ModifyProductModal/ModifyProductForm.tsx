@@ -140,6 +140,12 @@ export const ModifyProductForm = ({
 				packingBarcodeUnitOfMeasurement:
 					product?.packing_barcode_unit_of_measurement ||
 					unitOfMeasurementTypes.NON_WEIGHING,
+
+				// NOTE: Branch product settings
+				markdownPricePerPiece1: '',
+				markdownPricePerPiece2: '',
+				markdownPricePerBulk1: '',
+				markdownPricePerBulk2: '',
 			},
 			Schema: Yup.object().shape(
 				{
@@ -263,6 +269,19 @@ export const ModifyProductForm = ({
 						.nullable()
 						.label('Regular Price (Bulk)'),
 					pointSystemTagId: Yup.string().nullable().label('Point System Tag'),
+
+					markdownPricePerPiece1: Yup.number()
+						.nullable()
+						.label('Wholesale Price (Piece)'),
+					markdownPricePerPiece2: Yup.number()
+						.nullable()
+						.label('Special Price (Piece)'),
+					markdownPricePerBulk1: Yup.number()
+						.nullable()
+						.label('Wholesale Price (Bulk)'),
+					markdownPricePerBulk2: Yup.number()
+						.nullable()
+						.label('Special Price (Bulk)'),
 				},
 				[['barcode', 'textcode']],
 			),
@@ -345,6 +364,10 @@ export const ModifyProductForm = ({
 					allowableSpoilage: isWeighing
 						? Number(formData.allowableSpoilage) / 100
 						: undefined,
+					markdownPricePerPiece1: formData.markdownPricePerPiece1 || undefined,
+					markdownPricePerPiece2: formData.markdownPricePerPiece2 || undefined,
+					markdownPricePerBulk1: formData.markdownPricePerBulk1 || undefined,
+					markdownPricePerBulk2: formData.markdownPricePerBulk2 || undefined,
 				};
 
 				onSubmit(data);
@@ -355,7 +378,7 @@ export const ModifyProductForm = ({
 					<ScrollToFieldError />
 
 					<Row gutter={[16, 16]}>
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'barcode',
 								label: 'Barcode',
@@ -364,7 +387,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								id="unitOfMeasurement"
@@ -384,7 +407,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'sellingBarcode',
 								label: 'Scale Barcode',
@@ -398,7 +421,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								id="sellingBarcodeUnitOfMeasurement"
@@ -411,7 +434,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'packingBarcode',
 								label: 'Packing Barcode',
@@ -420,7 +443,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="&nbsp;" spacing />
 							<FormRadioButton
 								disabled={!values.packingBarcode}
@@ -433,7 +456,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'textcode',
 								label: 'Textcode',
@@ -442,7 +465,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'name',
 								label: 'Name',
@@ -482,7 +505,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="Product Category" spacing />
 							<FormSelect
 								id="productCategory"
@@ -494,7 +517,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="Include In Scale" spacing />
 							<FormRadioButton id="isShownInScaleList" items={booleanOptions} />
 							<ErrorMessage
@@ -505,7 +528,7 @@ export const ModifyProductForm = ({
 
 						<Divider dashed>TAGS</Divider>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="TT-001" spacing />
 							<FormRadioButton id="type" items={productTypeOptions} />
 							<ErrorMessage
@@ -514,7 +537,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
 								disabled={siteSettings?.tax_type === taxTypes.NVAT}
@@ -527,7 +550,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="Qty Allowance" spacing />
 							<FormRadioButton
 								disabled={
@@ -546,7 +569,7 @@ export const ModifyProductForm = ({
 							)}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label id="pointSystemTagId" label="Point System Tag" spacing />
 							<Select
 								className="w-100"
@@ -576,7 +599,7 @@ export const ModifyProductForm = ({
 
 						<Divider dashed>QUANTITY</Divider>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="Reorder Point" spacing />
 							<FormInput
 								id="reorderPoint"
@@ -592,7 +615,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="Max Balance" spacing />
 							<FormInput
 								id="maxBalance"
@@ -608,7 +631,7 @@ export const ModifyProductForm = ({
 							/>
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'piecesInBulk',
 								label: 'Pieces in Bulk',
@@ -619,7 +642,7 @@ export const ModifyProductForm = ({
 						</Col>
 
 						{(values.barcode || values.sellingBarcode) && (
-							<Col sm={12}>
+							<Col sm={12} span={24}>
 								{renderInputField({
 									name: 'conversionAmount',
 									label: 'Conversion (Grams)',
@@ -630,7 +653,7 @@ export const ModifyProductForm = ({
 							</Col>
 						)}
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							<Label label="" spacing />
 							{renderInputField({
 								name: 'allowableSpoilage',
@@ -657,7 +680,7 @@ export const ModifyProductForm = ({
 							<Text mark>(must be in 2 decimal places)</Text>
 						</Divider>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'costPerPiece',
 								label: 'Cost (Piece)',
@@ -667,7 +690,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'costPerBulk',
 								label: 'Cost (Bulk)',
@@ -677,7 +700,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'pricePerPiece',
 								label: 'Regular Price (Piece)',
@@ -687,7 +710,7 @@ export const ModifyProductForm = ({
 							})}
 						</Col>
 
-						<Col sm={12}>
+						<Col sm={12} span={24}>
 							{renderInputField({
 								name: 'pricePerBulk',
 								label: 'Regular Price (Bulk)',
@@ -696,6 +719,50 @@ export const ModifyProductForm = ({
 								type: inputTypes.MONEY,
 							})}
 						</Col>
+
+						{product && (
+							<>
+								<Col sm={12} span={24}>
+									{renderInputField({
+										name: 'markdownPricePerPiece1',
+										label: 'Wholesale Price (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+
+								<Col sm={12} span={24}>
+									{renderInputField({
+										name: 'markdownPricePerBulk1',
+										label: 'Wholesale Price (Bulk)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+
+								<Col sm={12} span={24}>
+									{renderInputField({
+										name: 'markdownPricePerPiece2',
+										label: 'Special Price (Piece)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+
+								<Col sm={12} span={24}>
+									{renderInputField({
+										name: 'markdownPricePerBulk2',
+										label: 'Special Price (Bulk)',
+										setFieldValue,
+										values,
+										type: inputTypes.MONEY,
+									})}
+								</Col>
+							</>
+						)}
 					</Row>
 
 					<div className="ModalCustomFooter">

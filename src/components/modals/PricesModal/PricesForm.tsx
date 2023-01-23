@@ -9,7 +9,7 @@ import {
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import React, { useCallback } from 'react';
-import { filterOption } from 'utils';
+import { filterOption, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 	branchProducts: any;
 	onSubmit: any;
 	onClose: any;
-	loading: boolean;
+	isLoading: boolean;
 }
 
 export const PricesForm = ({
@@ -25,27 +25,46 @@ export const PricesForm = ({
 	branchProducts,
 	onSubmit,
 	onClose,
-	loading,
+	isLoading,
 }: Props) => {
 	const getFormDetails = useCallback(
 		() => ({
-			DefaultValues: branchProducts.map((branchProduct) => ({
-				branchId: branchProduct?.branch_id,
+			DefaultValues: branchProducts.map((branchProduct) => {
+				const branch = getBranch(branchProduct?.branch_id);
 
-				markdownType:
-					branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
-				costPerPiece: branchProduct?.cost_per_piece || '',
-				costPerBulk: branchProduct?.cost_per_bulk || '',
-				pricePerPiece: branchProduct?.price_per_piece || '',
-				pricePerBulk: branchProduct?.price_per_bulk || '',
+				return {
+					branchId: getId(branch),
+					branchName: branch?.name,
 
-				initialMarkdownType:
-					branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
-				initialCostPerPiece: branchProduct?.cost_per_piece || '',
-				initialCostPerBulk: branchProduct?.cost_per_bulk || '',
-				initialPricePerPiece: branchProduct?.price_per_piece || '',
-				initialPricePerBulk: branchProduct?.price_per_bulk || '',
-			})),
+					markdownType:
+						branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
+					costPerPiece: branchProduct?.cost_per_piece || '',
+					costPerBulk: branchProduct?.cost_per_bulk || '',
+					pricePerPiece: branchProduct?.price_per_piece || '',
+					pricePerBulk: branchProduct?.price_per_bulk || '',
+					markdownPricePerPiece1:
+						branchProduct?.markdown_price_per_piece1 || '',
+					markdownPricePerPiece2:
+						branchProduct?.markdown_price_per_piece2 || '',
+					markdownPricePerBulk1: branchProduct?.markdown_price_per_bulk1 || '',
+					markdownPricePerBulk2: branchProduct?.markdown_price_per_bulk2 || '',
+
+					initialMarkdownType:
+						branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
+					initialCostPerPiece: branchProduct?.cost_per_piece || '',
+					initialCostPerBulk: branchProduct?.cost_per_bulk || '',
+					initialPricePerPiece: branchProduct?.price_per_piece || '',
+					initialPricePerBulk: branchProduct?.price_per_bulk || '',
+					initialMarkdownPricePerPiece1:
+						branchProduct?.markdown_price_per_piece1 || '',
+					initialMarkdownPricePerPiece2:
+						branchProduct?.markdown_price_per_piece2 || '',
+					initialMarkdownPricePerBulk1:
+						branchProduct?.markdown_price_per_bulk1 || '',
+					initialMarkdownPricePerBulk2:
+						branchProduct?.markdown_price_per_bulk2 || '',
+				};
+			}),
 			Schema: Yup.array(
 				Yup.object().shape({
 					markdownType: Yup.string().label('Current Sales Price Type'),
@@ -53,10 +72,22 @@ export const PricesForm = ({
 					costPerBulk: Yup.number().min(0).label('Cost (Bulk)'),
 					pricePerPiece: Yup.number().min(0).label('Regular Price (Piece)'),
 					pricePerBulk: Yup.number().min(0).label('Regular Price (Bulk)'),
+					markdownPricePerPiece1: Yup.number()
+						.min(0)
+						.label('Wholesale Price (Piece)'),
+					markdownPricePerPiece2: Yup.number()
+						.min(0)
+						.label('Special Price (Piece)'),
+					markdownPricePerBulk1: Yup.number()
+						.min(0)
+						.label('Wholesale Price (Bulk)'),
+					markdownPricePerBulk2: Yup.number()
+						.min(0)
+						.label('Special Price (Bulk)'),
 				}),
 			),
 		}),
-		[branchProducts],
+		[branchProducts, branches],
 	);
 
 	const renderInputField = ({
@@ -89,18 +120,18 @@ export const PricesForm = ({
 		branchProduct.initialCostPerPiece !== branchProduct.costPerPiece ||
 		branchProduct.initialCostPerBulk !== branchProduct.costPerBulk ||
 		branchProduct.initialPricePerPiece !== branchProduct.pricePerPiece ||
-		branchProduct.initialPricePerBulk !== branchProduct.pricePerBulk;
+		branchProduct.initialPricePerBulk !== branchProduct.pricePerBulk ||
+		branchProduct.initialMarkdownPricePerPiece1 !==
+			branchProduct.markdownPricePerPiece1 ||
+		branchProduct.initialMarkdownPricePerPiece2 !==
+			branchProduct.markdownPricePerPiece2 ||
+		branchProduct.initialMarkdownPricePerBulk1 !==
+			branchProduct.markdownPricePerBulk1 ||
+		branchProduct.initialMarkdownPricePerBulk2 !==
+			branchProduct.markdownPricePerBulk2;
 
-	const getBranchName = useCallback(
-		(branchId) => {
-			let branchName = '';
-			const branch = branches.find(({ id }) => id === branchId);
-			if (branch) {
-				branchName = branch.name;
-			}
-
-			return branchName;
-		},
+	const getBranch = useCallback(
+		(branchId) => branches.find(({ id }) => id === branchId),
 		[branches],
 	);
 
@@ -144,6 +175,32 @@ export const PricesForm = ({
 							data['pricePerBulk'] = value.pricePerBulk;
 						}
 
+						if (
+							value.initialMarkdownPricePerPiece1 !==
+							value.markdownPricePerPiece1
+						) {
+							data['markdownPricePerPiece1'] = value.markdownPricePerPiece1;
+						}
+
+						if (
+							value.initialMarkdownPricePerPiece2 !==
+							value.markdownPricePerPiece2
+						) {
+							data['markdownPricePerPiece2'] = value.markdownPricePerPiece2;
+						}
+
+						if (
+							value.initialMarkdownPricePerBulk1 !== value.markdownPricePerBulk1
+						) {
+							data['markdownPricePerBulk1'] = value.markdownPricePerBulk1;
+						}
+
+						if (
+							value.initialMarkdownPricePerBulk2 !== value.markdownPricePerBulk2
+						) {
+							data['markdownPricePerBulk2'] = value.markdownPricePerBulk2;
+						}
+
 						return data;
 					})
 					.filter((data) => Object.keys(data).length > ALLOWED_LENGTH);
@@ -166,7 +223,7 @@ export const PricesForm = ({
 									key={branchProduct.branchId}
 									header={
 										<Row className="w-100" justify="space-between">
-											<Col>{getBranchName(branchProduct.branchId)}</Col>
+											<Col>{branchProduct.branchName}</Col>
 											{isEdited(branchProduct) && (
 												<Col>
 													<Tag color="blue" icon={<EditOutlined />}>
@@ -178,7 +235,7 @@ export const PricesForm = ({
 									}
 								>
 									<Row gutter={[16, 16]}>
-										<Col sm={12} xs={24}>
+										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.costPerPiece`,
 												label: 'Cost (Piece)',
@@ -188,7 +245,7 @@ export const PricesForm = ({
 											})}
 										</Col>
 
-										<Col sm={12} xs={24}>
+										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.costPerBulk`,
 												label: 'Cost (Bulk)',
@@ -198,7 +255,7 @@ export const PricesForm = ({
 											})}
 										</Col>
 
-										<Col sm={12} xs={24}>
+										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.pricePerPiece`,
 												label: 'Regular Price (Piece)',
@@ -208,12 +265,54 @@ export const PricesForm = ({
 											})}
 										</Col>
 
-										<Col sm={12} xs={24}>
+										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.pricePerBulk`,
 												label: 'Regular Price (Bulk)',
 												placeholder: branchProduct.initialPricePerBulk,
 												value: branchProduct.pricePerBulk,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.markdownPricePerPiece1`,
+												label: 'Wholesale Price (Piece)',
+												placeholder:
+													branchProduct.initialMarkdownPricePerPiece1,
+												value: branchProduct.markdownPricePerPiece1,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.markdownPricePerBulk1`,
+												label: 'Wholesale Price (Bulk)',
+												placeholder: branchProduct.initialMarkdownPricePerBulk1,
+												value: branchProduct.markdownPricePerBulk1,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.markdownPricePerPiece2`,
+												label: 'Special Price (Piece)',
+												placeholder:
+													branchProduct.initialMarkdownPricePerPiece2,
+												value: branchProduct.markdownPricePerPiece2,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.markdownPricePerBulk2`,
+												label: 'Special Price (Bulk)',
+												placeholder: branchProduct.initialMarkdownPricePerBulk2,
+												value: branchProduct.markdownPricePerBulk2,
 												setFieldValue,
 											})}
 										</Col>
@@ -267,13 +366,13 @@ export const PricesForm = ({
 
 					<div className="ModalCustomFooter">
 						<Button
-							disabled={loading}
+							disabled={isLoading}
 							text="Cancel"
 							type="button"
 							onClick={onClose}
 						/>
 						<Button
-							loading={loading}
+							loading={isLoading}
 							text="Submit"
 							type="submit"
 							variant="primary"

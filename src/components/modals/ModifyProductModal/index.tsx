@@ -27,13 +27,13 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	const { user } = useAuth();
 	const {
 		mutateAsync: createProduct,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingProduct,
+		error: createProductError,
 	} = useProductCreate();
 	const {
 		mutateAsync: editProduct,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingProduct,
+		error: editProductError,
 	} = useProductEdit();
 
 	// METHODS
@@ -73,14 +73,16 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createProductError?.errors),
+					...convertIntoArray(editProductError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyProductForm
-				isLoading={isCreating || isEditing || isFetchingPointSystemTags}
+				isLoading={
+					isCreatingProduct || isEditingProduct || isFetchingPointSystemTags
+				}
 				pointSystemTags={pointSystemTags}
 				product={product}
 				onClose={onClose}

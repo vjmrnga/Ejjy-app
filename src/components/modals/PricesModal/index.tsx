@@ -9,7 +9,7 @@ import {
 	usePriceMarkdownCreate,
 } from 'hooks';
 import React from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { PricesForm } from './PricesForm';
 
 interface Props {
@@ -58,8 +58,8 @@ export const PricesModal = ({ product, onClose }: Props) => {
 	}) => {
 		if (branchProductFormData.length > 0) {
 			await editBranchProductPriceCost({
-				actingUserId: user.id,
-				productId: product.id,
+				actingUserId: getId(user),
+				productId: getId(product),
 				data: branchProductFormData,
 			});
 		}
@@ -107,7 +107,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			<PricesForm
 				branches={branches}
 				branchProducts={branchProducts}
-				loading={
+				isLoading={
 					isFetchingBranches ||
 					isFetchingBranchProducts ||
 					isCreatingPriceMarkdown ||

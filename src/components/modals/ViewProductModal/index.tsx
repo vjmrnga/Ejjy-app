@@ -137,7 +137,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 
 			<Descriptions
 				className="w-100"
-				column={1}
+				column={2}
 				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
@@ -151,17 +151,17 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 				<Descriptions.Item label="Price (Piece)">
 					{formatInPeso(product.price_per_piece)}
 				</Descriptions.Item>
-				<Descriptions.Item label="Wholesale Price (Piece)">
-					{formatInPeso(branchProduct?.markdown_price_per_piece1)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Special Price (Piece)">
-					{formatInPeso(branchProduct?.markdown_price_per_piece2)}
-				</Descriptions.Item>
 				<Descriptions.Item label="Price (Bulk)">
 					{formatInPeso(product.price_per_bulk)}
 				</Descriptions.Item>
+				<Descriptions.Item label="Wholesale Price (Piece)">
+					{formatInPeso(branchProduct?.markdown_price_per_piece1)}
+				</Descriptions.Item>
 				<Descriptions.Item label="Wholesale Price (Bulk)">
 					{formatInPeso(branchProduct?.markdown_price_per_bulk1)}
+				</Descriptions.Item>
+				<Descriptions.Item label="Special Price (Piece)">
+					{formatInPeso(branchProduct?.markdown_price_per_piece2)}
 				</Descriptions.Item>
 				<Descriptions.Item label="Special Price (Bulk)">
 					{formatInPeso(branchProduct?.markdown_price_per_bulk2)}

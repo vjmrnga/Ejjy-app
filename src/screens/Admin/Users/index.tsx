@@ -4,12 +4,12 @@ import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE, userPendingApprovalTypes } from 'global';
 import { useUserApprove, useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, getFullName, getUserTypeName } from 'utils';
+import { convertIntoArray, getFullName, getId, getUserTypeName } from 'utils';
 
 const columns: ColumnsType = [
-	{ title: 'Name', dataIndex: 'name', key: 'name' },
-	{ title: 'User Type', dataIndex: 'user_type', key: 'user_type' },
-	{ title: 'Actions', dataIndex: 'actions', key: 'actions' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'User Type', dataIndex: 'userType' },
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const Users = () => (
@@ -33,29 +33,31 @@ const PendingUserCreation = () => {
 	});
 	const {
 		mutateAsync: approveUser,
-		isLoading: isApproving,
-		error: approveError,
+		isLoading: isApprovingUser,
+		error: approveUserError,
 	} = useUserApprove();
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
-		error: deleteError,
+		error: deleteUserError,
 	} = useUserDelete();
 
 	// METHODS
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
-			const { id, user_type } = user;
+			const { user_type } = user;
+
+			const id = getId(user);
 
 			return {
 				key: id,
 				name: getFullName(user),
-				user_type: getUserTypeName(user_type),
+				userType: getUserTypeName(user_type),
 				actions: (
 					<TableActions
 						onApprove={async () => {
 							await approveUser({
-								id,
+								id: getId(user),
 								pendingApprovalType: userPendingApprovalTypes.CREATE,
 							});
 						}}
@@ -73,11 +75,11 @@ const PendingUserCreation = () => {
 	return (
 		<Box>
 			<RequestErrors
-				className="PaddingHorizontal"
+				className="px-6"
 				errors={[
 					...convertIntoArray(userError),
-					...convertIntoArray(approveError?.errors),
-					...convertIntoArray(deleteError?.errors),
+					...convertIntoArray(approveUserError?.errors),
+					...convertIntoArray(deleteUserError?.errors),
 				]}
 			/>
 
@@ -85,7 +87,7 @@ const PendingUserCreation = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingUsers || isApproving || isDeletingUser}
+				loading={isFetchingUsers || isApprovingUser || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered
@@ -108,24 +110,26 @@ const PendingEditUserType = () => {
 	});
 	const {
 		mutateAsync: approveUser,
-		isLoading: isApproving,
-		error: approveError,
+		isLoading: isApprovingUser,
+		error: approveUserError,
 	} = useUserApprove();
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
-		error: deleteError,
+		error: deleteUserError,
 	} = useUserDelete();
 
 	// METHODS
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
-			const { id, user_type } = user;
+			const { user_type } = user;
+
+			const id = getId(user);
 
 			return {
 				key: id,
 				name: getFullName(user),
-				user_type: getUserTypeName(user_type),
+				userType: getUserTypeName(user_type),
 				actions: (
 					<TableActions
 						onApprove={async () => {
@@ -148,11 +152,11 @@ const PendingEditUserType = () => {
 	return (
 		<Box>
 			<RequestErrors
-				className="PaddingHorizontal"
+				className="px-6"
 				errors={[
 					...convertIntoArray(userError),
-					...convertIntoArray(approveError?.errors),
-					...convertIntoArray(deleteError?.errors),
+					...convertIntoArray(approveUserError?.errors),
+					...convertIntoArray(deleteUserError?.errors),
 				]}
 			/>
 
@@ -160,7 +164,7 @@ const PendingEditUserType = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingUsers || isApproving || isDeletingUser}
+				loading={isFetchingUsers || isApprovingUser || isDeletingUser}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered

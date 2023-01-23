@@ -18,6 +18,10 @@ interface Modify {
 	has_quantity_allowance: boolean;
 	is_shown_in_scale_list?: boolean;
 	is_vat_exempted: boolean;
+	markdown_price_per_bulk1?: number;
+	markdown_price_per_bulk2?: number;
+	markdown_price_per_piece1?: number;
+	markdown_price_per_piece2?: number;
 	max_balance: number;
 	name: string;
 	packing_barcode_unit_of_measurement?: 'Weighing' | 'Non-Weighing';
@@ -26,8 +30,8 @@ interface Modify {
 	point_system_tag_id: number;
 	price_per_bulk: number;
 	price_per_piece: number;
-	print_details: string;
 	price_tag_print_details: string;
+	print_details: string;
 	product_category: string;
 	reorder_point: number;
 	selling_barcode_unit_of_measurement?: 'Weighing' | 'Non-Weighing';
