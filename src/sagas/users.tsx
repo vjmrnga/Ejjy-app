@@ -207,24 +207,6 @@ function* remove({ payload }: any) {
 	}
 }
 
-function* requestUserTypeChange({ payload }: any) {
-	const { id, newUserType, callback } = payload;
-	callback({ status: request.REQUESTING });
-
-	try {
-		const response = yield call(
-			UsersService.requestUserTypeChange,
-			id,
-			{ new_user_type: newUserType },
-			getOnlineApiUrl(),
-		);
-
-		callback({ status: request.SUCCESS, response: response.data });
-	} catch (e) {
-		callback({ status: request.ERROR, errors: e.errors });
-	}
-}
-
 /* WATCHERS */
 const listUsersWatcherSaga = function* listUsersWatcherSaga() {
 	yield takeLatest(types.GET_USERS, listUsers);
@@ -258,11 +240,6 @@ const removeWatcherSaga = function* removeWatcherSaga() {
 	yield takeLatest(types.REMOVE_USER, remove);
 };
 
-const requestUserTypeChangeWatcherSaga =
-	function* requestUserTypeChangeWatcherSaga() {
-		yield takeLatest(types.REQUEST_USER_TYPE_CHANGE, requestUserTypeChange);
-	};
-
 export default [
 	listUsersWatcherSaga(),
 	listOnlineUsersWatcherSaga(),
@@ -272,5 +249,4 @@ export default [
 	createOnlineWatcherSaga(),
 	editOnlineWatcherSaga(),
 	removeWatcherSaga(),
-	requestUserTypeChangeWatcherSaga(),
 ];

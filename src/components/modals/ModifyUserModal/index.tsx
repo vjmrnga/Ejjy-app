@@ -1,6 +1,10 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
-import { useUserCreate, useUserEdit } from 'hooks';
+import {
+	useUserCreate,
+	useUserEdit,
+	useUserRequestUserTypeChange,
+} from 'hooks';
 import React from 'react';
 import { convertIntoArray, getId } from 'utils';
 import { ModifyUserForm } from './ModifyUserForm';
@@ -29,14 +33,30 @@ export const ModifyUserModal = ({
 		isLoading: isEditingUser,
 		error: editUserError,
 	} = useUserEdit();
+	const {
+		mutateAsync: requestUserTypeChange,
+		isLoading: isRequestingUserTypeChange,
+		error: requestUserTypeChangeError,
+	} = useUserRequestUserTypeChange();
 
 	const handleSubmit = async (formData) => {
 		let response = null;
 		if (user) {
 			response = await editUser({
 				...formData,
+				userType: undefined,
 				id: getId(user),
 			});
+
+			console.log('formData.user_type', formData.userType);
+			console.log('user.user_type', user.user_type);
+			if (formData.userType !== user.user_type) {
+				requestUserTypeChange({
+					id: getId(user),
+					newUserType: formData.userType,
+				});
+			}
+
 			message.success('User was edited successfully');
 		} else {
 			response = await createUser(formData);
@@ -60,13 +80,16 @@ export const ModifyUserModal = ({
 				errors={[
 					...convertIntoArray(createUserError?.errors),
 					...convertIntoArray(editUserError?.errors),
+					...convertIntoArray(requestUserTypeChangeError?.errors),
 				]}
 				withSpaceBottom
 			/>
 
 			<ModifyUserForm
 				branchUsersOnly={branchUsersOnly}
-				isLoading={isCreatingUser || isEditingUser}
+				isLoading={
+					isCreatingUser || isEditingUser || isRequestingUserTypeChange
+				}
 				user={user}
 				onClose={onClose}
 				onSubmit={handleSubmit}

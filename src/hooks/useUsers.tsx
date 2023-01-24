@@ -1,5 +1,5 @@
 import { actions, selectors, types } from 'ducks/OfficeManager/users';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request, serviceTypes } from 'global';
 import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
@@ -59,9 +59,6 @@ export const useUsers = () => {
 	const createOnlineUserAction = useActionDispatch(actions.createOnlineUser);
 	const editUserAction = useActionDispatch(actions.editUser);
 	const removeUserAction = useActionDispatch(actions.removeUser);
-	const requestUserTypeChangeAction = useActionDispatch(
-		actions.requestUserTypeChange,
-	);
 
 	// GENERAL METHODS
 	const reset = () => {
@@ -218,14 +215,6 @@ export const useUsers = () => {
 		});
 	};
 
-	const requestUserTypeChange = (data, extraCallback = null) => {
-		setRecentRequest(types.APPROVE_USER);
-		requestUserTypeChangeAction({
-			...data,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
 	return {
 		users: currentPageData,
 		pageCount,
@@ -244,7 +233,6 @@ export const useUsers = () => {
 		createOnlineUser,
 		editUser,
 		removeUser,
-		requestUserTypeChange,
 		status,
 		errors,
 		warnings,
@@ -258,14 +246,23 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 		[
 			'useUsers',
 			params?.branchId,
+			params?.isPendingCreateApproval,
+			params?.isPendingUpdateUserTypeApproval,
 			params?.page,
 			params?.pageSize,
 			params?.serverUrl,
+			params?.serviceType,
 		],
 		() => {
-			const service = isStandAlone()
+			let service = isStandAlone()
 				? UsersService.list
 				: UsersService.listOffline;
+
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = UsersService.listOffline;
+			} else if (serviceTypes.ONLINE === params?.serviceType) {
+				service = UsersService.list;
+			}
 
 			return wrapServiceWithCatch(
 				service(
@@ -273,6 +270,9 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 						branch_id: params?.branchId,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						is_pending_create_approval: params?.isPendingCreateApproval,
+						is_pending_update_user_type_approval:
+							params?.isPendingUpdateUserTypeApproval,
 					},
 					params?.serverUrl || getLocalApiUrl(),
 				),
@@ -413,5 +413,16 @@ export const useUserDelete = () => {
 		},
 	);
 };
+
+export const useUserRequestUserTypeChange = () =>
+	useMutation<any, any, any>(({ id, newUserType }: any) =>
+		UsersService.requestUserTypeChange(
+			id,
+			{
+				new_user_type: newUserType,
+			},
+			getBaseUrl(),
+		),
+	);
 
 export default useUsersNew;

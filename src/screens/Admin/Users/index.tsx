@@ -1,10 +1,16 @@
+import { message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableActions, TableHeader } from 'components';
 import { Box } from 'components/elements';
-import { MAX_PAGE_SIZE, userPendingApprovalTypes } from 'global';
+import { MAX_PAGE_SIZE, serviceTypes, userPendingApprovalTypes } from 'global';
 import { useUserApprove, useUserDelete, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, getFullName, getId, getUserTypeName } from 'utils';
+import {
+	convertIntoArray,
+	getFullName,
+	getGoogleApiUrl,
+	getUserTypeName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -29,7 +35,12 @@ const PendingUserCreation = () => {
 		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			isPendingCreateApproval: true,
+			pageSize: MAX_PAGE_SIZE,
+			serviceType: serviceTypes.ONLINE,
+			serverUrl: getGoogleApiUrl(),
+		},
 	});
 	const {
 		mutateAsync: approveUser,
@@ -45,9 +56,7 @@ const PendingUserCreation = () => {
 	// METHODS
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
-			const { user_type } = user;
-
-			const id = getId(user);
+			const { id, user_type } = user;
 
 			return {
 				key: id,
@@ -57,12 +66,16 @@ const PendingUserCreation = () => {
 					<TableActions
 						onApprove={async () => {
 							await approveUser({
-								id: getId(user),
+								id,
 								pendingApprovalType: userPendingApprovalTypes.CREATE,
 							});
+
+							message.success("User's creation was approved successfully");
 						}}
 						onRemove={async () => {
 							await deleteUser(id);
+
+							message.success("User's creation was declined successfully");
 						}}
 					/>
 				),
@@ -106,7 +119,12 @@ const PendingEditUserType = () => {
 		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
-		params: { isPendingUpdateUserTypeApproval: true, pageSize: MAX_PAGE_SIZE },
+		params: {
+			isPendingUpdateUserTypeApproval: true,
+			pageSize: MAX_PAGE_SIZE,
+			serviceType: serviceTypes.ONLINE,
+			serverUrl: getGoogleApiUrl(),
+		},
 	});
 	const {
 		mutateAsync: approveUser,
@@ -122,9 +140,7 @@ const PendingEditUserType = () => {
 	// METHODS
 	useEffect(() => {
 		const formattedUsers = users.map((user) => {
-			const { user_type } = user;
-
-			const id = getId(user);
+			const { id, user_type } = user;
 
 			return {
 				key: id,
@@ -137,9 +153,17 @@ const PendingEditUserType = () => {
 								id,
 								pendingApprovalType: userPendingApprovalTypes.UPDATE_USER_TYPE,
 							});
+
+							message.success(
+								"User's type change request was updated successfully",
+							);
 						}}
 						onRemove={async () => {
 							await deleteUser(id);
+
+							message.success(
+								"User's type change request was declined successfully",
+							);
 						}}
 					/>
 				),

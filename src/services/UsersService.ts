@@ -3,20 +3,11 @@ import { IListRequest } from './interfaces';
 
 interface List extends IListRequest {
 	branch_id?: number;
+	is_pending_create_approval?: boolean;
+	is_pending_update_user_type_approval?: boolean;
 }
 
-interface Create {
-	contact_number: string;
-	display_name: string;
-	email: string;
-	first_name: string;
-	last_name: string;
-	password: string;
-	user_type: string;
-	username: string;
-}
-
-interface Edit {
+interface Modify {
 	branch_id?: number;
 	contact_number?: string;
 	display_name?: string;
@@ -25,6 +16,10 @@ interface Edit {
 	last_name?: string;
 	password?: string;
 	user_type?: string;
+	username?: string;
+}
+interface RequestUserTypeChange {
+	new_user_type: string;
 }
 
 const service = {
@@ -33,10 +28,10 @@ const service = {
 
 	retrieve: async (id, baseURL) => axios.get(`/users/${id}/`, { baseURL }),
 
-	create: async (body: Create, baseURL) =>
+	create: async (body: Modify, baseURL) =>
 		axios.post('/users/', body, { baseURL }),
 
-	edit: async (id, body: Edit, baseURL) =>
+	edit: async (id, body: Modify, baseURL) =>
 		axios.patch(`/users/${id}/`, body, { baseURL }),
 
 	authenticate: async (body, baseURL) =>
@@ -45,7 +40,12 @@ const service = {
 	delete: async (id, baseURL) => axios.delete(`/users/${id}/`, { baseURL }),
 
 	approve: async (id, body, baseURL) =>
-		axios.post(`/online-users/${id}/approve/`, body, { baseURL }),
+		axios.post(`/users/${id}/approve/`, body, { baseURL }),
+
+	requestUserTypeChange: async (id, body: RequestUserTypeChange, baseURL) =>
+		axios.post(`/users/${id}/request-user-type-change/`, body, {
+			baseURL,
+		}),
 };
 
 const serviceOnline = {
@@ -55,19 +55,14 @@ const serviceOnline = {
 	getByIdOnline: async (id, baseURL) =>
 		axios.get(`/online-users/${id}/`, { baseURL }),
 
-	createOnline: async (body: Create, baseURL) =>
+	createOnline: async (body: Modify, baseURL) =>
 		axios.post('/online-users/', body, { baseURL }),
 
-	editOnline: async (id, body: Edit, baseURL) =>
+	editOnline: async (id, body: Modify, baseURL) =>
 		axios.patch(`/online-users/${id}/`, body, { baseURL }),
 
 	removeOnline: async (id, baseURL) =>
 		axios.delete(`/online-users/${id}/`, { baseURL }),
-
-	requestUserTypeChange: async (id, body, baseURL) =>
-		axios.post(`/online-users/${id}/request-user-type-change/`, body, {
-			baseURL,
-		}),
 };
 
 const serviceOffline = {

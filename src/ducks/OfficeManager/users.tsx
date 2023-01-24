@@ -14,7 +14,6 @@ export const types = {
 	CREATE_ONLINE_USER: `${key}/CREATE_ONLINE_USER`,
 	EDIT_USER: `${key}/EDIT_USER`,
 	APPROVE_USER: `${key}/APPROVE_USER`,
-	REQUEST_USER_TYPE_CHANGE: `${key}/REQUEST_USER_TYPE_CHANGE`,
 };
 
 const initialState = {
@@ -52,7 +51,6 @@ export const actions = {
 	createOnlineUser: createAction(types.CREATE_ONLINE_USER),
 	editUser: createAction(types.EDIT_USER),
 	removeUser: createAction(types.REMOVE_USER),
-	requestUserTypeChange: createAction(types.REQUEST_USER_TYPE_CHANGE),
 };
 
 const selectState = (state: any) => state[key] || initialState;

@@ -246,7 +246,7 @@ export const Products = () => {
 	// };
 
 	return (
-		<Content title="Products">
+		<Content title="General Products">
 			<ProductsInfo />
 
 			<ConnectionAlert />
