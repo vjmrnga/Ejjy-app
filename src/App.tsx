@@ -22,6 +22,7 @@ import {
 	getLocalBranchId,
 	getOnlineApiUrl,
 	getOnlineBranchId,
+	isStandAlone,
 } from 'utils';
 import npmPackage from '../package.json';
 
@@ -52,7 +53,7 @@ const App = () => {
 				branchId: getOnlineBranchId(),
 			},
 			options: {
-				enabled: isNetworkSuccess,
+				enabled: isNetworkSuccess && !!getOnlineApiUrl() && !isStandAlone(),
 			},
 		});
 

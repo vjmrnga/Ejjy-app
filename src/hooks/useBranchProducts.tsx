@@ -373,7 +373,7 @@ export const useBranchProductEditPriceCost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ actingUserId, productId, data }: any) =>
+		({ actingUserId, productId, data, serverUrl }: any) =>
 			BranchProductsService.editPriceCost(
 				{
 					acting_user_id: actingUserId,
@@ -391,7 +391,7 @@ export const useBranchProductEditPriceCost = () => {
 							markdown_price_per_bulk2: d?.markdownPricePerBulk2 || undefined,
 						})) || undefined,
 				},
-				getBaseUrl(),
+				serverUrl || getBaseUrl(),
 			),
 		{
 			onSuccess: () => {

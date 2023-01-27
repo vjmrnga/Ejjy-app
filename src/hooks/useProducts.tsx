@@ -1,9 +1,9 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
-import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductsService } from 'services';
-import { getLocalApiUrl, isStandAlone } from 'utils';
+import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
 const useProducts = ({ params }: Query) =>
 	useQuery<any>(
@@ -107,7 +107,7 @@ export const useProductCreate = () => {
 					type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				getBaseUrl(),
+				getGoogleApiUrl(), // TODO: Need to change this to accomodate if standalone. Dapat mu-send sa online api if standalone
 			),
 		{
 			onSuccess: () => {
@@ -190,7 +190,7 @@ export const useProductEdit = () => {
 					type,
 					unit_of_measurement: unitOfMeasurement,
 				},
-				getBaseUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -208,7 +208,7 @@ export const useProductDelete = () => {
 			ProductsService.delete(
 				id,
 				{ acting_user_id: actingUserId },
-				getBaseUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {

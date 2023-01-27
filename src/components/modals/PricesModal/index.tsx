@@ -9,7 +9,12 @@ import {
 	usePriceMarkdownCreate,
 } from 'hooks';
 import React from 'react';
-import { convertIntoArray, getId } from 'utils';
+import {
+	convertIntoArray,
+	getGoogleApiUrl,
+	getId,
+	isUserFromBranch,
+} from 'utils';
 import { PricesForm } from './PricesForm';
 
 interface Props {
@@ -61,6 +66,9 @@ export const PricesModal = ({ product, onClose }: Props) => {
 				actingUserId: getId(user),
 				productId: getId(product),
 				data: branchProductFormData,
+				serverUrl: isUserFromBranch(user.user_type)
+					? undefined
+					: getGoogleApiUrl(),
 			});
 		}
 

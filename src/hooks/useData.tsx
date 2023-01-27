@@ -2,11 +2,11 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { DataService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const REFETCH_INTERVAL_MS = 60000;
 
-export const useInitializeData = ({ params }: Query) =>
+export const useInitializeData = ({ params, options }: Query) =>
 	useQuery(
 		['useInitializeData', params?.branchId],
 		() =>
@@ -17,10 +17,10 @@ export const useInitializeData = ({ params }: Query) =>
 				),
 			),
 		{
-			enabled: !!getOnlineApiUrl() && !isStandAlone(),
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
-			notifyOnChangeProps: ['isLoading'],
+			notifyOnChangeProps: ['isLoading', 'isSuccess'],
+			...options,
 		},
 	);
 
