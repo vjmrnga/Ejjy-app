@@ -3,10 +3,11 @@ import { useBranches } from 'hooks';
 import { usePendingTransactions } from 'hooks/usePendingTransactions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Branches } from '../Shared/Branches';
-import { ViewBranch } from '../Shared/Branches/ViewBranch';
-import { ProductCategories } from '../Shared/ProductCategories';
-import { Products } from '../Shared/Products';
+import { Branches } from 'screens/Shared/Branches';
+import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
+import { ProductCategories } from 'screens/Shared/ProductCategories';
+import { Products } from 'screens/Shared/Products';
+import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import { Dashboard } from './Dashboard';
 import { useFailedTransfers } from './hooks/useFailedTransfers';
 import { Logs } from './Logs/Logs';
@@ -149,7 +150,12 @@ const Admin = () => {
 					/>
 					<Route component={Users} path="/admin/users" />
 					<Route component={Branches} path="/admin/branches" exact />
-					<Route component={ViewBranch} path="/admin/branches/:id" />
+					<Route component={ViewBranch} path="/admin/branches/:id" exact />
+					<Route
+						component={ViewBranchMachine}
+						path="/admin/branch-machines/:id"
+						exact
+					/>
 					<Route component={Products} path="/admin/products" />
 					<Route
 						component={ProductCategories}

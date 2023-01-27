@@ -104,7 +104,7 @@ export const TabTransactions = ({ branch }: Props) => {
 
 	return (
 		<>
-			<TableHeader title="Transactions" wrapperClassName="pt-0" />
+			<TableHeader title="Transactions" wrapperClassName="pt-2 px-0" />
 
 			<Filter isLoading={isFetchingTransactions} />
 

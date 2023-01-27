@@ -180,7 +180,7 @@ export const TabDays = ({ branch }: Props) => {
 
 	return (
 		<div className="ViewBranchMachineDays">
-			<TableHeader title="Days" wrapperClassName="pt-0" />
+			<TableHeader title="Days" wrapperClassName="pt-2 px-0" />
 
 			<Filter isLoading={isFetchingBranchDays} />
 

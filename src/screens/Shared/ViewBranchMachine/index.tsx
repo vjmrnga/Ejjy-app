@@ -12,11 +12,11 @@ import { useAuth } from 'hooks/useAuth';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { TabBirReport } from 'screens/BranchManager/BranchMachines/components/TabBirReport';
-import { TabDailyProductSalesReport } from 'screens/BranchManager/BranchMachines/components/TabDailyProductSalesReport';
-import { convertIntoArray, getUrlPrefix } from 'utils';
+import { convertIntoArray, getUrlPrefix, isUserFromBranch } from 'utils';
+import { TabBirReport } from './components/TabBirReport';
 import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
+import { TabDailyProductSalesReport } from './components/TabDailyProductSalesReport';
 import { TabDays } from './components/TabDays';
 import { TabSessions } from './components/TabSessions';
 import { TabTransactionAdjustmentReport } from './components/TabTransactionAdjustmentReport';
@@ -65,7 +65,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 	// METHODS
 	useEffect(() => {
 		if (isBranchMachineFetched && !branchMachine) {
-			history.replace(`/branch-manager/branch-machines`);
+			history.replace(`/${getUrlPrefix(user.user_type)}/branch-machines`);
 			message.error(GENERIC_ERROR_MESSAGE);
 		}
 	}, [branchMachine, isBranchMachineFetched]);
@@ -96,15 +96,16 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		>
 			<ViewBranchMachineInfo />
 			<Spin spinning={isLoadingBranchMachine}>
-				{branchMachine?.is_online === false && (
-					<Alert
-						className="mb-4"
-						description="The branch machine is offline. Data might be outdated."
-						message="Branch Machine Connectivity"
-						type="warning"
-						showIcon
-					/>
-				)}
+				{isUserFromBranch(user.user_type) &&
+					branchMachine?.is_online === false && (
+						<Alert
+							className="mb-4"
+							description="The branch machine is offline. Data might be outdated."
+							message="Branch Machine Connectivity"
+							type="warning"
+							showIcon
+						/>
+					)}
 
 				<Box className="ViewBranchMachine">
 					{branchMachineError && (

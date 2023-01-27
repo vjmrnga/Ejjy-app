@@ -8,6 +8,7 @@ import {
 } from 'components';
 import { useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { convertIntoArray, getId } from 'utils';
 
 const columns: ColumnsType = [
@@ -48,7 +49,11 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
 			key: branchMachine.id,
-			name: branchMachine.name,
+			name: (
+				<Link to={`/office-manager/branch-machines/${branchMachine.id}`}>
+					{branchMachine.name}
+				</Link>
+			),
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
@@ -82,7 +87,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 			<TableHeader
 				buttonName="Create Branch Machine"
 				title="Branch Machines"
-				wrapperClassName="pt-0"
+				wrapperClassName="pt-2 px-0"
 				onCreate={handleCreate}
 				onCreateDisabled={disabled}
 			/>

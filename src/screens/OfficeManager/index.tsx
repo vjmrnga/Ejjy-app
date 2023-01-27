@@ -14,6 +14,7 @@ import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
+import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import { BackOrders } from './BackOrders/BackOrders';
 import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
@@ -206,6 +207,12 @@ const OfficeManager = () => {
 					<Route
 						component={ViewBranch}
 						path="/office-manager/branches/:id"
+						exact
+					/>
+
+					<Route
+						component={ViewBranchMachine}
+						path="/office-manager/branch-machines/:id"
 						exact
 					/>
 
