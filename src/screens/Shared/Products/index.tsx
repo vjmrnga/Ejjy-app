@@ -41,6 +41,7 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	userTypes,
 } from 'global';
 import {
 	usePingOnlineServer,
@@ -278,19 +279,21 @@ export const Products = () => {
 					<TableHeader
 						buttonName="Create Product"
 						buttons={
-							<Upload
-								accept=".csv"
-								beforeUpload={handleReinitialize}
-								disabled={isReinitializingProduct}
-								showUploadList={false}
-							>
-								<Button
-									icon={<UploadOutlined />}
-									loading={isReinitializingProduct}
+							user.user_type === userTypes.OFFICE_MANAGER && (
+								<Upload
+									accept=".csv"
+									beforeUpload={handleReinitialize}
+									disabled={isReinitializingProduct}
+									showUploadList={false}
 								>
-									Upload CSV
-								</Button>
-							</Upload>
+									<Button
+										icon={<UploadOutlined />}
+										loading={isReinitializingProduct}
+									>
+										Upload CSV
+									</Button>
+								</Upload>
+							)
 						}
 						onCreate={() => handleOpenModal(null, modals.MODIFY)}
 						onCreateDisabled={isConnected === false}
