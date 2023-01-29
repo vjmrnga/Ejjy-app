@@ -1,4 +1,5 @@
-import { Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -9,15 +10,18 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { ButtonLink, Label } from 'components/elements';
+import { printAdjustmentReport } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
+	JSPDF_SETTINGS,
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
 	transactionStatus,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
+import jsPDF from 'jspdf';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -43,6 +47,8 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
+	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
+	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -133,9 +139,39 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 		setDataSource(data);
 	}, [transactions]);
 
+	const handleCreatePdf = () => {
+		setIsCreatingPdf(true);
+
+		// eslint-disable-next-line new-cap
+		const pdf = new jsPDF(JSPDF_SETTINGS);
+		const dataHtml = printAdjustmentReport(transactions);
+
+		setHtml(dataHtml);
+
+		pdf.html(dataHtml, {
+			margin: 10,
+			callback: (instance) => {
+				window.open(instance.output('bloburl').toString());
+				setIsCreatingPdf(false);
+				setHtml('');
+			},
+		});
+	};
+
 	return (
 		<>
 			<TableHeader
+				buttons={
+					<Button
+						disabled={dataSource.length === 0}
+						icon={<FilePdfOutlined />}
+						loading={isCreatingPdf}
+						type="primary"
+						onClick={handleCreatePdf}
+					>
+						Print Adjustment Report
+					</Button>
+				}
 				title="Transaction Adjustment Report"
 				wrapperClassName="pt-2 px-0"
 			/>
@@ -179,6 +215,12 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 					onClose={() => setSelectedBackOrder(null)}
 				/>
 			)}
+
+			<div
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
+				style={{ display: 'none' }}
+			/>
 		</>
 	);
 };

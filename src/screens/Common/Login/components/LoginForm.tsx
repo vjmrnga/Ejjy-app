@@ -36,7 +36,7 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 			}}
 		>
 			{({ values, setFieldValue }) => (
-				<Form className="form">
+				<Form className="w-100">
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label label="Username" spacing />
@@ -48,7 +48,7 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 							/>
 							<ErrorMessage
 								name="username"
-								render={(error) => <FieldError error={error} />}
+								render={(error) => <FieldError error={error} withSpaceTop />}
 							/>
 						</Col>
 
@@ -63,7 +63,7 @@ export const LoginForm = ({ errors, loading, onSubmit }: Props) => (
 							/>
 							<ErrorMessage
 								name="password"
-								render={(error) => <FieldError error={error} />}
+								render={(error) => <FieldError error={error} withSpaceTop />}
 							/>
 						</Col>
 

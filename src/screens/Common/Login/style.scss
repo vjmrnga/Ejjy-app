@@ -9,10 +9,6 @@
 		padding: 2.5rem;
 		@include flex(center, center, column);
 
-		.form {
-			width: 100%;
-		}
-
 		.logo {
 			width: 80%;
 			margin-bottom: 2.5rem;
