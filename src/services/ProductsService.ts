@@ -52,6 +52,14 @@ const service = {
 	create: async (body: Modify, baseURL) =>
 		axios.post('/products/', body, { baseURL }),
 
+	reinitialize: async (body, baseURL) =>
+		axios.post('/products/reinitialize-with-csv/', body, {
+			baseURL,
+			headers: {
+				'content-type': 'multipart/form-data',
+			},
+		}),
+
 	edit: async (id: number, body: Modify, baseURL) =>
 		axios.patch(`/products/${id}/`, body, { baseURL }),
 

@@ -5,17 +5,20 @@ import {
 	EditFilled,
 	PrinterFilled,
 	SearchOutlined,
+	UploadOutlined,
 } from '@ant-design/icons';
 import {
 	Button,
 	Col,
 	Input,
+	message,
 	Popconfirm,
 	Row,
 	Select,
 	Space,
 	Table,
 	Tooltip,
+	Upload,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import cn from 'classnames';
@@ -43,6 +46,7 @@ import {
 	usePingOnlineServer,
 	useProductCategories,
 	useProductDelete,
+	useProductReinitialize,
 	useProducts,
 	useQueryParams,
 } from 'hooks';
@@ -101,10 +105,15 @@ export const Products = () => {
 		},
 	});
 	const {
-		mutate: deleteProduct,
+		mutateAsync: deleteProduct,
 		isLoading: isDeletingProduct,
 		error: deleteProductError,
 	} = useProductDelete();
+	const {
+		mutateAsync: reinitializeProduct,
+		isLoading: isReinitializingProduct,
+		error: reinitializeProductError,
+	} = useProductReinitialize();
 
 	// METHODS
 	useEffect(() => {
@@ -172,12 +181,14 @@ export const Products = () => {
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this?"
-								onConfirm={() =>
-									deleteProduct({
+								onConfirm={async () => {
+									await deleteProduct({
 										id: getId(product),
 										actingUserId: getId(user),
-									})
-								}
+									});
+
+									message.success('Product was deleted successfully.');
+								}}
 							>
 								<Tooltip title="Remove">
 									<Button
@@ -225,6 +236,17 @@ export const Products = () => {
 		}, 500);
 	};
 
+	const handleReinitialize = async (file) => {
+		const formData = new FormData();
+		formData.append('csv_file', file);
+
+		await reinitializeProduct(formData);
+
+		message.success('Products were reinitialized successfully.');
+
+		return false;
+	};
+
 	// NOTE: Temporarily disable the initial deletion of data
 	// const onRemoveProduct = (product) => {
 	// 	removeProduct(
@@ -255,6 +277,21 @@ export const Products = () => {
 				{isCUDShown(user.user_type) && (
 					<TableHeader
 						buttonName="Create Product"
+						buttons={
+							<Upload
+								accept=".csv"
+								beforeUpload={handleReinitialize}
+								disabled={isReinitializingProduct}
+								showUploadList={false}
+							>
+								<Button
+									icon={<UploadOutlined />}
+									loading={isReinitializingProduct}
+								>
+									Upload CSV
+								</Button>
+							</Upload>
+						}
 						onCreate={() => handleOpenModal(null, modals.MODIFY)}
 						onCreateDisabled={isConnected === false}
 					/>
@@ -267,6 +304,10 @@ export const Products = () => {
 					errors={[
 						...convertIntoArray(productsError, 'Product'),
 						...convertIntoArray(deleteProductError?.errors, 'Product Delete'),
+						...convertIntoArray(
+							reinitializeProductError?.errors,
+							'Product Reinitialize',
+						),
 					]}
 				/>
 
@@ -275,7 +316,9 @@ export const Products = () => {
 				<Table
 					columns={columns}
 					dataSource={dataSource}
-					loading={isFetchingProducts || isDeletingProduct}
+					loading={
+						isFetchingProducts || isDeletingProduct || isReinitializingProduct
+					}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
 						total,

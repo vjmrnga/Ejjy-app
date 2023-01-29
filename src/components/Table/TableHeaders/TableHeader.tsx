@@ -11,6 +11,7 @@ import './style.scss';
 const SEARCH_DEBOUNCE_TIME_MS = 250;
 
 interface Props {
+	buttons?: ReactNode;
 	buttonName?: string;
 	onCreate?: any;
 	onCreateDisabled?: boolean;
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export const TableHeader = ({
+	buttons,
 	buttonName,
 	onCreate,
 	onCreateDisabled,
@@ -84,6 +86,8 @@ export const TableHeader = ({
 
 				<div className="pending-button">
 					{pending >= 0 && <PendingCount value={pending} />}
+
+					{buttons}
 
 					{onCreate && (
 						<Tooltip title={onCreateTooltip}>

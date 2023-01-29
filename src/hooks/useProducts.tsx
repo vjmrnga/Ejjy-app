@@ -117,6 +117,19 @@ export const useProductCreate = () => {
 	);
 };
 
+export const useProductReinitialize = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		(data) => ProductsService.reinitialize(data, getGoogleApiUrl()),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useProducts');
+			},
+		},
+	);
+};
+
 export const useProductEdit = () => {
 	const queryClient = useQueryClient();
 

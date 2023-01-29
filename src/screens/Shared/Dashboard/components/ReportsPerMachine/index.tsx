@@ -175,7 +175,6 @@ export const ReportsPerMachine = ({
 			/>
 
 			<RequestErrors
-				className="px-6"
 				errors={[
 					...convertIntoArray(branchMachinesError),
 					...convertIntoArray(createXReadReportError?.errors),
