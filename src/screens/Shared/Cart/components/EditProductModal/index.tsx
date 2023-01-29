@@ -30,7 +30,7 @@ export const EditProductModal = ({ product, onClose }: Props) => {
 			},
 		});
 
-		message.success(`${product.name} was edited sucessfully.`);
+		message.success(`${product.name} was edited successfully.`);
 		onClose();
 	};
 
