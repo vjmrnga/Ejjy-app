@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Spin } from 'antd';
-import { CashieringCard, RequestErrors } from 'components';
+import { RequestErrors } from 'components';
 import { Box, Button } from 'components/elements';
 import { printCancelledTransactions } from 'configurePrinter';
 import { MAX_PAGE_SIZE } from 'global';
@@ -108,9 +108,4 @@ export const TransactionsCancelled = ({
 			</Spin>
 		</Box>
 	);
-};
-
-CashieringCard.defaultProps = {
-	className: undefined,
-	bordered: false,
 };

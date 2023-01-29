@@ -1,5 +1,5 @@
 import { Divider, Spin, Tabs } from 'antd';
-import { Content, RequestErrors } from 'components';
+import { BranchDayAuthorization, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
 import { useBranches, useProductCategories, useQueryParams } from 'hooks';
@@ -7,7 +7,7 @@ import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 
 export const Dashboard = () => {
 	// CUSTOM HOOKS
@@ -33,7 +33,8 @@ export const Dashboard = () => {
 	// METHODS
 	useEffect(() => {
 		if (branches && !currentBranchId) {
-			handleTabClick(branches?.[0]?.id);
+			const id = getId(branches?.[0]);
+			handleTabClick(id);
 		}
 	}, [branches, currentBranchId]);
 
@@ -67,21 +68,34 @@ export const Dashboard = () => {
 						destroyInactiveTabPane
 						onTabClick={handleTabClick}
 					>
-						{branches.map(({ name, id }) => (
-							<Tabs.TabPane key={id} tab={name}>
-								<ReportsPerMachine
-									branchId={id}
-									tableHeaderClassName="pt-2 px-0"
-								/>
+						{branches.map((branch) => {
+							const id = getId(branch);
 
-								<Divider />
+							return (
+								<Tabs.TabPane key={id} tab={branch.name}>
+									<BranchDayAuthorization
+										branch={branch}
+										className="mt-2"
+										bordered
+									/>
 
-								<BranchProductBalances
-									branchId={id}
-									productCategories={productCategories}
-								/>
-							</Tabs.TabPane>
-						))}
+									<Divider />
+
+									<ReportsPerMachine
+										branchId={id}
+										tableHeaderClassName="pt-2 px-0"
+									/>
+
+									<Divider />
+
+									<BranchProductBalances
+										branchId={id}
+										productCategories={productCategories}
+										tableHeaderClassName="pt-2 px-0"
+									/>
+								</Tabs.TabPane>
+							);
+						})}
 					</Tabs>
 				</Spin>
 			</Box>
