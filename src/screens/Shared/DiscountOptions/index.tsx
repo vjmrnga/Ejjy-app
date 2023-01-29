@@ -1,4 +1,14 @@
-import { List, message, Tag, Typography } from 'antd';
+import { DeleteOutlined, EditFilled } from '@ant-design/icons';
+import {
+	Button,
+	List,
+	message,
+	Popconfirm,
+	Space,
+	Tag,
+	Tooltip,
+	Typography,
+} from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import cn from 'classnames';
 import {
@@ -7,7 +17,6 @@ import {
 	DiscountOptionsInfo,
 	ModifyDiscountOptionModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
@@ -26,7 +35,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, isCUDShown } from 'utils';
+import { convertIntoArray, getId, isCUDShown } from 'utils';
 
 interface DataType {
 	key: React.Key;
@@ -83,17 +92,39 @@ export const DiscountOptions = () => {
 			),
 			fields: discountOption.additional_fields,
 			actions: (
-				<TableActions
-					areButtonsDisabled={isConnected === false}
-					onEdit={() => {
-						setSelectedDiscountOption(discountOption);
-						setModifyDiscountOptionModalVisible(true);
-					}}
-					onRemove={() => {
-						message.success('Discount option was deleted successfully');
-						deleteDiscountOption(discountOption.id);
-					}}
-				/>
+				<Space>
+					{isCUDShown(user.user_type) && (
+						<Tooltip title="Edit">
+							<Button
+								disabled={isConnected === false}
+								icon={<EditFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setSelectedDiscountOption(discountOption);
+									setModifyDiscountOptionModalVisible(true);
+								}}
+							/>
+						</Tooltip>
+					)}
+					{isCUDShown(user.user_type) && (
+						<Popconfirm
+							cancelText="No"
+							disabled={isConnected === false}
+							okText="Yes"
+							placement="left"
+							title="Are you sure to remove this?"
+							onConfirm={() => {
+								deleteDiscountOption(getId(discountOption));
+								message.success('Discount option was deleted successfully');
+							}}
+						>
+							<Tooltip title="Remove">
+								<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+							</Tooltip>
+						</Popconfirm>
+					)}
+				</Space>
 			),
 		}));
 

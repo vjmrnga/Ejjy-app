@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Radio, Row, Select, Table } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
-import { ColoredText, RequestErrors } from 'components';
+import { ColoredText, RequestErrors, TableHeader } from 'components';
 import { Label } from 'components/elements';
 import {
 	branchProductStatusOptions,
@@ -68,11 +68,13 @@ const columns: ColumnsType = [
 interface Props {
 	branchId: number;
 	productCategories: IProductCategory[];
+	tableHeaderClassName?: string;
 }
 
 export const BranchProductBalances = ({
 	branchId,
 	productCategories,
+	tableHeaderClassName,
 }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
@@ -158,6 +160,11 @@ export const BranchProductBalances = ({
 
 	return (
 		<>
+			<TableHeader
+				title="Branch Product Balances"
+				wrapperClassName={tableHeaderClassName}
+			/>
+
 			<RequestErrors
 				errors={convertIntoArray(branchProductsErrors, 'Branch Product')}
 				withSpaceBottom
