@@ -15,9 +15,9 @@ export * from './useBranchAssignments';
 export { default as useBranchAssignments } from './useBranchAssignments';
 export * from './useBranchDayAuthorizations';
 export { default as useBranchDayAuthorizations } from './useBranchDayAuthorizations';
+export { default as useBranchDays } from './useBranchDays';
 export * from './useBranches';
 export { default as useBranches } from './useBranches';
-export { default as useBranchDays } from './useBranchesDays';
 export * from './useBranchMachines';
 export { default as useBranchMachines } from './useBranchMachines';
 export * from './useBranchProducts';
@@ -28,6 +28,7 @@ export { default as useCashieringAssignments } from './useCashieringAssignments'
 export { default as useCashieringSessions } from './useCashieringSessions';
 export { default as useCheckInvoiceValidity } from './useCheckInvoiceValidity';
 export { default as useCollectionReceipts } from './useCollectionReceipts';
+export { default as useConnectivity } from './useConnectivity';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
 export { default as useCreditRegistrations } from './useCreditRegistrations';

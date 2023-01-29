@@ -1,7 +1,7 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { BranchesService } from 'services';
 import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
@@ -9,11 +9,11 @@ const useBranches = ({ key, params, options }: Query = {}) =>
 	useQuery<any>(
 		[
 			'useBranches',
+			key,
 			params?.baseURL,
 			params?.page,
 			params?.pageSize,
 			params?.serviceType,
-			key,
 		],
 		() => {
 			let service = isStandAlone()
@@ -66,58 +66,37 @@ export const useBranchRetrieve = ({ id, params, options }: Query) =>
 		},
 	);
 
-export const useBranchCreate = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		({ name, onlineUrl }: any) =>
-			BranchesService.create(
-				{
-					name,
-					online_url: onlineUrl,
-				},
-				getGoogleApiUrl(),
-			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranches');
+export const useBranchCreate = () =>
+	useMutation<any, any, any>(({ name, serverUrl }: any) =>
+		BranchesService.create(
+			{
+				name,
+				server_url: serverUrl,
 			},
-		},
+			getGoogleApiUrl(),
+		),
 	);
-};
 
-export const useBranchEdit = () => {
-	const queryClient = useQueryClient();
+export const useBranchPing = () =>
+	useMutation<any, any, any>(({ id }: any) =>
+		BranchesService.ping({ online_branch_id: id }, getLocalApiUrl()),
+	);
 
-	return useMutation<any, any, any>(
-		({ id, name, onlineUrl }: any) =>
-			BranchesService.edit(
-				id,
-				{
-					name,
-					online_url: onlineUrl,
-				},
-				getGoogleApiUrl(),
-			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranches');
+export const useBranchEdit = () =>
+	useMutation<any, any, any>(({ id, name, serverUrl }: any) =>
+		BranchesService.edit(
+			id,
+			{
+				name,
+				server_url: serverUrl,
 			},
-		},
+			getGoogleApiUrl(),
+		),
 	);
-};
 
-export const useBranchDelete = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		(id: number) => BranchesService.delete(id, getGoogleApiUrl()),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranches');
-			},
-		},
+export const useBranchDelete = () =>
+	useMutation<any, any, any>((id: number) =>
+		BranchesService.delete(id, getGoogleApiUrl()),
 	);
-};
 
 export default useBranches;

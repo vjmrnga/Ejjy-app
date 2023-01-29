@@ -4,7 +4,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { BranchesDaysService } from 'services';
+import { BranchDaysService } from 'services';
 import { getLocalApiUrl, modifiedExtraCallback, onCallback } from 'utils';
 import {
 	addInCachedData,
@@ -17,7 +17,7 @@ import { useActionDispatch } from './useActionDispatch';
 
 const LIST_ERROR_MESSAGE = 'An error occurred while fetching transactions.';
 
-export const useBranchesDays = () => {
+export const useBranchDays = () => {
 	// STATES
 	const [status, setStatus] = useState<any>(request.NONE);
 	const [errors, setErrors] = useState<any>([]);
@@ -171,7 +171,7 @@ const useBranchDaysNew = ({ params, options }: Query) =>
 		],
 		() =>
 			wrapServiceWithCatch(
-				BranchesDaysService.list(
+				BranchDaysService.list(
 					{
 						branch_id: params?.branchId,
 						branch_machine_id: params?.branchMachineId,

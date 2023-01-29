@@ -2,7 +2,7 @@ import { Button, Col, Input, message, Modal, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';
@@ -21,19 +21,22 @@ export const ModifyBranchMachineModal = ({
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createBranchMachine,
-		isLoading: isCreating,
-		error: createError,
+		isLoading: isCreatingBranchMachine,
+		error: createBranchMachineError,
 	} = useBranchMachineCreate();
 	const {
 		mutateAsync: editBranchMachine,
-		isLoading: isEditing,
-		error: editError,
+		isLoading: isEditingBranchMachine,
+		error: editBranchMachineError,
 	} = useBranchMachineEdit();
 
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (branchMachine) {
-			await editBranchMachine(formData);
+			await editBranchMachine({
+				id: getId(branchMachine),
+				...formData,
+			});
 			message.success('Branch machine was edited successfully');
 		} else {
 			await createBranchMachine(formData);
@@ -54,8 +57,8 @@ export const ModifyBranchMachineModal = ({
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createBranchMachineError?.errors),
+					...convertIntoArray(editBranchMachineError?.errors),
 				]}
 				withSpaceBottom
 			/>
@@ -63,7 +66,7 @@ export const ModifyBranchMachineModal = ({
 			<ModifyBranchMachineForm
 				branchId={branchId}
 				branchMachine={branchMachine}
-				isLoading={isCreating || isEditing}
+				isLoading={isCreatingBranchMachine || isEditingBranchMachine}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>
@@ -89,7 +92,6 @@ export const ModifyBranchMachineForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: branchMachine?.id || null,
 				branchId: branchMachine?.branch?.id || branchId,
 				machineIdentificationNumber:
 					branchMachine?.machine_identification_number || '',

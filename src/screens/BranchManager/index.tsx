@@ -3,8 +3,10 @@ import { Container, TimeMismatchBoundary } from 'components';
 import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranches,
+	useBranchPing,
 	useBranchProducts,
 	useBranchProductsOffline,
+	useConnectivity,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
@@ -31,7 +33,8 @@ import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
-import { isStandAlone } from 'utils';
+import useInterval from 'use-interval';
+import { getOnlineBranchId, isStandAlone } from 'utils';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
@@ -52,10 +55,14 @@ const refetchOptions: any = {
 };
 
 const BranchManager = () => {
+	// VARIABLES
+	const onlineBranchId = getOnlineBranchId();
+
 	// STATES
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
+	useConnectivity();
 	const { isFetching: isFetchingBranches } = useBranches({
 		options: { enabled: IS_APP_LIVE },
 	});
@@ -82,6 +89,14 @@ const BranchManager = () => {
 		},
 	});
 	useUploadData();
+
+	const { mutateAsync: pingBranch } = useBranchPing();
+	useInterval(
+		async () => {
+			await pingBranch({ id: onlineBranchId });
+		},
+		onlineBranchId ? 5000 : null,
+	);
 
 	const { mutate: createCheckDaily } = useProductCheckCreateDaily();
 	const { mutate: createCheckRandom } = useProductCheckCreateRandom();

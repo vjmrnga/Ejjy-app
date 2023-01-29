@@ -1,4 +1,4 @@
-import { Divider, Spin, Tabs } from 'antd';
+import { Badge, Divider, Spin, Tabs } from 'antd';
 import { BranchDayAuthorization, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
@@ -9,13 +9,17 @@ import { BranchProductBalances } from 'screens/Shared/Dashboard/components/Branc
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
 import { convertIntoArray, getId } from 'utils';
 
+const BRANCHES_REFETCH_INTERVAL_MS = 2500;
+
 export const Dashboard = () => {
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
-		isFetching: isFetchingBranches,
+		isLoading: isFetchingBranches,
 		error: branchesErrors,
-	} = useBranches();
+	} = useBranches({
+		options: { refetchInterval: BRANCHES_REFETCH_INTERVAL_MS },
+	});
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
@@ -72,7 +76,17 @@ export const Dashboard = () => {
 							const id = getId(branch);
 
 							return (
-								<Tabs.TabPane key={id} tab={branch.name}>
+								<Tabs.TabPane
+									key={id}
+									tab={
+										<Badge
+											status={branch.is_online ? 'success' : 'warning'}
+											dot
+										>
+											<span>{branch.name}</span>
+										</Badge>
+									}
+								>
 									<BranchDayAuthorization
 										branch={branch}
 										className="mt-2"

@@ -12,7 +12,6 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
-	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import { useConnectivityLogs, useQueryParams } from 'hooks';
@@ -25,10 +24,10 @@ const columns: ColumnsType = [
 ];
 
 interface Props {
-	branchMachineId: any;
+	branch: any;
 }
 
-export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
+export const TabConnectivityLogs = ({ branch }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -36,18 +35,13 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { connectivityLogs, total },
-		error: connectivityLogsError,
 		isFetching: isFetchingConnectivityLogs,
-		isFetched: isConnectivityLogsFetched,
+		error: connectivityLogsError,
 	} = useConnectivityLogs({
 		params: {
-			// We explicitly set the params to prevent multiple re-rerending because of the `tab` query parameter.
+			branch_id: branch.id,
 			...params,
-			page: params?.page,
-			pageSize: params?.pageSize,
-			branchMachineId,
 		},
-		options: refetchOptions,
 	});
 
 	// METHODS
@@ -65,16 +59,14 @@ export const TabConnectivityLogs = ({ branchMachineId }: Props) => {
 		<>
 			<TableHeader title="Connectivity Logs" wrapperClassName="pt-2 px-0" />
 
-			<Filter
-				isLoading={isFetchingConnectivityLogs && !isConnectivityLogsFetched}
-			/>
+			<Filter isLoading={isFetchingConnectivityLogs} />
 
 			<RequestErrors errors={convertIntoArray(connectivityLogsError)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingConnectivityLogs && !isConnectivityLogsFetched}
+				loading={isFetchingConnectivityLogs}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

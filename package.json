@@ -79,6 +79,7 @@
 		"tree-kill": "^1.2.2",
 		"typescript": "^3.7.5",
 		"use-debounce": "^7.0.1",
+		"use-interval": "^1.4.0",
 		"yup": "^0.29.3",
 		"zustand": "^4.1.1"
 	},

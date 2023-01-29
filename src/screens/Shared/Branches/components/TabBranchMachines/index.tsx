@@ -1,9 +1,9 @@
-import { message } from 'antd';
+import { DeleteOutlined, EditFilled } from '@ant-design/icons';
+import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyBranchMachineModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 } from 'components';
 import { useBranchMachineDelete, useBranchMachines } from 'hooks';
@@ -40,7 +40,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 		params: { branchId: branch?.id },
 	});
 	const {
-		mutate: deleteBranchMachine,
+		mutateAsync: deleteBranchMachine,
 		isLoading: isDeletingBranchMachine,
 		error: deleteBranchMachineError,
 	} = useBranchMachineDelete();
@@ -58,14 +58,36 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
 			actions: (
-				<TableActions
-					areButtonsDisabled={disabled}
-					onEdit={() => handleEdit(branchMachine)}
-					onRemove={() => {
-						message.success('Branch machine was deleted successfully');
-						deleteBranchMachine(getId(branchMachine));
-					}}
-				/>
+				<Space>
+					<Tooltip title="Edit">
+						<Button
+							disabled={disabled}
+							icon={<EditFilled />}
+							type="primary"
+							ghost
+							onClick={() => {
+								setSelectedBranchMachine(branchMachine);
+								setModifyBranchMachineModalVisible(true);
+							}}
+						/>
+					</Tooltip>
+
+					<Popconfirm
+						cancelText="No"
+						disabled={disabled}
+						okText="Yes"
+						placement="left"
+						title="Are you sure to remove this?"
+						onConfirm={async () => {
+							await deleteBranchMachine(getId(branchMachine));
+							message.success('Branch machine was deleted successfully');
+						}}
+					>
+						<Tooltip title="Remove">
+							<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+						</Tooltip>
+					</Popconfirm>
+				</Space>
 			),
 		}));
 
@@ -74,11 +96,6 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 
 	const handleCreate = () => {
 		setSelectedBranchMachine(null);
-		setModifyBranchMachineModalVisible(true);
-	};
-
-	const handleEdit = (branchMachine) => {
-		setSelectedBranchMachine(branchMachine);
 		setModifyBranchMachineModalVisible(true);
 	};
 

@@ -2,7 +2,7 @@ import { call, select, takeLatest } from 'redux-saga/effects';
 import { types } from '../ducks/branches-days';
 import { selectors as branchesSelectors } from '../ducks/OfficeManager/branches';
 import { request } from '../global/types';
-import { BranchesDaysService } from '../services';
+import { BranchDaysService } from '../services';
 import { getBaseUrl } from './helper';
 
 /* WORKERS */
@@ -42,7 +42,7 @@ function* list({ payload }: any) {
 
 		try {
 			// Fetch in branch url
-			response = yield call(BranchesDaysService.list, data, baseURL);
+			response = yield call(BranchDaysService.list, data, baseURL);
 		} catch (e) {
 			// Retry to fetch in backup branch url
 			const baseBackupURL = yield select(
@@ -51,7 +51,7 @@ function* list({ payload }: any) {
 
 			if (baseURL && baseBackupURL) {
 				// Fetch branch url
-				response = yield call(BranchesDaysService.list, data, baseBackupURL);
+				response = yield call(BranchDaysService.list, data, baseBackupURL);
 				isFetchedFromBackupURL = true;
 			} else {
 				throw e;
@@ -77,7 +77,7 @@ function* getBranchDay({ payload }: any) {
 	const baseURL = getBaseUrl(branchId, callback);
 
 	try {
-		const response = yield call(BranchesDaysService.get, baseURL);
+		const response = yield call(BranchDaysService.get, baseURL);
 		callback({ status: request.SUCCESS, response: response.data });
 	} catch (e) {
 		callback({ status: request.ERROR, errors: e.errors });
@@ -92,7 +92,7 @@ function* create({ payload }: any) {
 
 	try {
 		const response = yield call(
-			BranchesDaysService.create,
+			BranchDaysService.create,
 			{ started_by_id: startedById, online_started_by_id: onlineStartedById },
 			baseURL,
 		);
@@ -111,7 +111,7 @@ function* edit({ payload }: any) {
 
 	try {
 		const response = yield call(
-			BranchesDaysService.edit,
+			BranchDaysService.edit,
 			id,
 			{ ended_by_id: endedById, online_ended_by_id: onlineEndedById },
 			baseURL,

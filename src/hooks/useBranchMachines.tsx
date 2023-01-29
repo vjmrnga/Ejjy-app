@@ -2,7 +2,12 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchMachinesService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import {
+	getGoogleApiUrl,
+	getLocalApiUrl,
+	getOnlineApiUrl,
+	isStandAlone,
+} from 'utils';
 
 const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -72,7 +77,7 @@ export const useBranchMachineCreate = () => {
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
 				},
-				getOnlineApiUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -105,7 +110,7 @@ export const useBranchMachineEdit = () => {
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
 				},
-				getOnlineApiUrl(),
+				getGoogleApiUrl(),
 			),
 		{
 			onSuccess: () => {

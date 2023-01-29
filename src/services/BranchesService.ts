@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-interface Create {
+interface Modify {
 	name: string;
-	online_url?: string;
+	server_url: string;
 }
 
-interface Edit {
-	name?: string;
-	online_url?: string;
+interface Ping {
+	online_branch_id: number;
 }
 
 const service = {
@@ -17,10 +16,13 @@ const service = {
 
 	retrieve: async (id, baseURL) => axios.get(`/branches/${id}/`, { baseURL }),
 
-	create: async (body: Create, baseURL) =>
+	create: async (body: Modify, baseURL) =>
 		axios.post('/branches/', body, { baseURL }),
 
-	edit: async (id, body: Edit, baseURL) =>
+	ping: async (body: Ping, baseURL) =>
+		axios.post('/branches/ping/', body, { baseURL }),
+
+	edit: async (id, body: Modify, baseURL) =>
 		axios.patch(`/branches/${id}/`, body, { baseURL }),
 
 	delete: async (id, baseURL) => axios.delete(`/branches/${id}/`, { baseURL }),

@@ -13,7 +13,7 @@ export { default as BalanceAdjustmentLogService } from './BalanceAdjustmentLogSe
 export { default as BirReportsService } from './BirReportsService';
 export { default as BranchAssignmentsService } from './BranchAssignmentsService';
 export { default as BranchDayAuthorizationsService } from './BranchDayAuthorizationsService';
-export { default as BranchesDaysService } from './BranchesDaysService';
+export { default as BranchDaysService } from './BranchDaysService';
 export { default as BranchesService } from './BranchesService';
 export { default as BranchMachinesService } from './BranchMachinesService';
 export { default as BranchProductsService } from './BranchProductsService';

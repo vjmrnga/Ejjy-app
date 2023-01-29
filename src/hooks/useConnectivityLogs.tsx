@@ -9,6 +9,7 @@ const useConnectivityLogs = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useConnectivityLogs',
+			params?.branchId,
 			params?.branchMachineId,
 			params?.page,
 			params?.pageSize,
@@ -19,6 +20,7 @@ const useConnectivityLogs = ({ params, options }: Query) =>
 			wrapServiceWithCatch(
 				ConnectivityLogsService.list(
 					{
+						branch_id: params?.branchId,
 						branch_machine_id: params?.branchMachineId,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,

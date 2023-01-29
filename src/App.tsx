@@ -1,11 +1,6 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute } from 'components';
-import {
-	appTypes,
-	APP_LOCAL_BRANCH_ID_KEY,
-	MAX_PAGE_SIZE,
-	userTypes,
-} from 'global';
+import { appTypes, APP_LOCAL_BRANCH_ID_KEY, userTypes } from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -62,12 +57,7 @@ const App = () => {
 		isFetching: isFetchingBranches,
 	} = useBranches({
 		key: 'App',
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			enabled: isInitializationSuccess && !getLocalBranchId(),
-		},
+		options: { enabled: isInitializationSuccess && !getLocalBranchId() },
 	});
 
 	// METHODS

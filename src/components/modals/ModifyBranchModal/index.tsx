@@ -1,40 +1,47 @@
-import { Col, Input, message, Modal, Row } from 'antd';
+import { Col, Input, message, Modal, Row, Button } from 'antd';
 import { RequestErrors } from 'components';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchCreate, useBranchEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { useQueryClient } from 'react-query';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface Props {
 	branch: any;
+	queryKey: string;
 	onClose: any;
 }
 
-export const ModifyBranchModal = ({ branch, onClose }: Props) => {
+export const ModifyBranchModal = ({ branch, queryKey, onClose }: Props) => {
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const {
 		mutateAsync: createBranch,
 		isLoading: isCreatingBranch,
-		error: createError,
+		error: createBranchError,
 	} = useBranchCreate();
 	const {
 		mutateAsync: editBranch,
 		isLoading: isEditingBranch,
-		error: editError,
+		error: editBranchError,
 	} = useBranchEdit();
 
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (branch) {
-			await editBranch(formData);
+			await editBranch({
+				id: getId(branch),
+				...formData,
+			});
 			message.success('Branch was edited successfully');
 		} else {
 			await createBranch(formData);
 			message.success('Branch was created successfully');
 		}
 
+		queryClient.invalidateQueries(['useBranches', queryKey]);
 		onClose();
 	};
 
@@ -49,8 +56,8 @@ export const ModifyBranchModal = ({ branch, onClose }: Props) => {
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(createError?.errors),
-					...convertIntoArray(editError?.errors),
+					...convertIntoArray(createBranchError?.errors),
+					...convertIntoArray(editBranchError?.errors),
 				]}
 				withSpaceBottom
 			/>
@@ -81,13 +88,12 @@ export const ModifyBranchForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: branch?.online_id || undefined,
 				name: branch?.name || '',
-				onlineUrl: branch?.online_url || '',
+				serverUrl: branch?.server_url || '',
 			},
 			Schema: Yup.object().shape({
 				name: Yup.string().required().max(75).label('Name'),
-				onlineUrl: Yup.string().required().label('Online URL'),
+				serverUrl: Yup.string().required().label('Server URL'),
 			}),
 		}),
 		[branch],
@@ -108,7 +114,6 @@ export const ModifyBranchForm = ({
 						<Col span={24}>
 							<Label label="Name" spacing />
 							<Input
-								name="name"
 								value={values['name']}
 								onChange={(e) => {
 									setFieldValue('name', e.target.value);
@@ -121,34 +126,27 @@ export const ModifyBranchForm = ({
 						</Col>
 
 						<Col span={24}>
-							<Label label="Online URL" spacing />
+							<Label label="Server URL" spacing />
 							<Input
-								name="onlineUrl"
-								value={values['onlineUrl']}
+								value={values['serverUrl']}
 								onChange={(e) => {
-									setFieldValue('onlineUrl', e.target.value);
+									setFieldValue('serverUrl', e.target.value);
 								}}
 							/>
 							<ErrorMessage
-								name="onlineUrl"
+								name="serverUrl"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={isLoading}
-							text={branch ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							{branch ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}
