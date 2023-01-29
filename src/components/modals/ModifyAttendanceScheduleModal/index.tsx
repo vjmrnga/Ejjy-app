@@ -106,7 +106,7 @@ export const ModifyAttendanceScheduleModal = ({ account, onClose }: Props) => {
 		});
 
 		message.success(
-			`${account.first_name}'s schedules were edited sucessfully.`,
+			`${account.first_name}'s schedules were edited successfully.`,
 		);
 
 		onClose();

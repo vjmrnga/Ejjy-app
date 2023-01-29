@@ -32,7 +32,7 @@ export const CreateBalanceAdjustmentLogModal = ({
 			creatingUserId: user.id,
 			newBalance: formData.newBalance,
 		});
-		message.success('Balance adjustment log was created sucessfully.');
+		message.success('Balance adjustment log was created successfully.');
 
 		onSuccess();
 		onClose();

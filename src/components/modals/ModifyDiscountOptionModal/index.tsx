@@ -18,7 +18,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { Button, FieldError, FormInputLabel, Label } from '../../elements';
@@ -47,7 +47,10 @@ export const ModifyDiscountOptionModal = ({
 	// METHODS
 	const handleSubmit = async (formData) => {
 		if (discountOption) {
-			await editDiscountOption(formData);
+			await editDiscountOption({
+				...formData,
+				id: getId(discountOption),
+			});
 			message.success('Discount option was edited successfully');
 		} else {
 			await createDiscountOption(formData);
@@ -104,7 +107,6 @@ export const ModifyDiscountOptionForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: {
-				id: discountOption?.id || undefined,
 				name: discountOption?.name || '',
 				code: discountOption?.code || '',
 				type: discountOption?.type || discountTypes.AMOUNT,

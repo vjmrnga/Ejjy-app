@@ -24,7 +24,7 @@ export const CreateSupplierRegistrationModal = ({ onClose }: ModalProps) => {
 	// METHODS
 	const handleSubmit = async (formData) => {
 		await createSupplierRegistration(formData);
-		message.success('Supplier account was created sucessfully.');
+		message.success('Supplier account was created successfully.');
 
 		onClose();
 	};

@@ -46,10 +46,10 @@ export const ModifyCreditRegistrationModal = ({
 				id: creditRegistration.id,
 				...formData,
 			});
-			message.success('Credit account was edited sucessfully.');
+			message.success('Credit account was edited successfully.');
 		} else {
 			await createCreditRegistration(formData);
-			message.success('Credit account was created sucessfully.');
+			message.success('Credit account was created successfully.');
 		}
 
 		onClose();

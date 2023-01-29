@@ -31,10 +31,10 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 				id: account.id,
 				...formData,
 			});
-			message.success('Account was edited sucessfully.');
+			message.success('Account was edited successfully.');
 		} else {
 			await createAccount(formData);
-			message.success('Account was created sucessfully.');
+			message.success('Account was created successfully.');
 		}
 
 		onSuccess();
