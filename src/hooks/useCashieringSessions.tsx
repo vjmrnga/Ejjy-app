@@ -9,6 +9,7 @@ const useCashieringSessions = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useCashieringSessions',
+			params?.branchMachineId,
 			params?.page,
 			params?.pageSize,
 			params?.timeRange,
@@ -17,6 +18,7 @@ const useCashieringSessions = ({ params }: Query) =>
 			wrapServiceWithCatch(
 				CashieringSessionsService.list(
 					{
+						branch_machine_id: params?.branchMachineId,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						time_range: params?.timeRange,

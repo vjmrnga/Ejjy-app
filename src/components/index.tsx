@@ -1,7 +1,7 @@
 export * from './BadgePills/BadgePills';
 export * from './Breadcrumb/Breadcrumb';
 export * from './ButtonIcons/ButtonIcons';
-export * from './CashieringCard/CashieringCard';
+export * from './BranchDayAuthorization';
 export * from './ColoredText/ColoredText';
 export * from './ConnectionAlert';
 export { default as ConnectivityType } from './ConnectivityType';
