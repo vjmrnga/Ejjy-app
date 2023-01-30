@@ -156,10 +156,6 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	const handlePrintPDF = () => {
 		setIsPrinting(true);
 
-		const dataHtml = printBirReport({
-			birReports,
-			siteSettings,
-		});
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
 			orientation: 'l',
@@ -169,6 +165,10 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			putOnlyUsedFonts: true,
 		});
 
+		const dataHtml = printBirReport({
+			birReports,
+			siteSettings,
+		});
 		setHtml(dataHtml);
 
 		setTimeout(() => {

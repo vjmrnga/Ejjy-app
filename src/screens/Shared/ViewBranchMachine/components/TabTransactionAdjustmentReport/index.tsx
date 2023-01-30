@@ -14,7 +14,6 @@ import { printAdjustmentReport } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	JSPDF_SETTINGS,
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
@@ -144,9 +143,14 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
+		const pdf = new jsPDF({
+			orientation: 'l',
+			unit: 'px',
+			format: [1225, 840],
+			hotfixes: ['px_scaling'],
+			putOnlyUsedFonts: true,
+		});
 		const dataHtml = printAdjustmentReport({ transactions, user });
-
 		setHtml(dataHtml);
 
 		pdf.html(dataHtml, {
