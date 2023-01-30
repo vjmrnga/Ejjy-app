@@ -20,7 +20,7 @@ import {
 	timeRangeTypes,
 	transactionStatus,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useAuth, useQueryParams, useTransactions } from 'hooks';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import moment from 'moment';
@@ -51,6 +51,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total },
@@ -144,7 +145,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF(JSPDF_SETTINGS);
-		const dataHtml = printAdjustmentReport(transactions);
+		const dataHtml = printAdjustmentReport({ transactions, user });
 
 		setHtml(dataHtml);
 
