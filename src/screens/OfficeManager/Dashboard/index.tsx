@@ -1,4 +1,5 @@
-import { Badge, Divider, Spin, Tabs } from 'antd';
+import { CheckCircleFilled, ExclamationCircleFilled } from '@ant-design/icons';
+import { Divider, Spin, Tabs } from 'antd';
 import { BranchDayAuthorization, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
@@ -68,6 +69,7 @@ export const Dashboard = () => {
 					<Tabs
 						activeKey={_.toString(currentBranchId)}
 						className="pa-6"
+						tabPosition="left"
 						type="card"
 						destroyInactiveTabPane
 						onTabClick={handleTabClick}
@@ -79,12 +81,15 @@ export const Dashboard = () => {
 								<Tabs.TabPane
 									key={id}
 									tab={
-										<Badge
-											status={branch.is_online ? 'success' : 'warning'}
-											dot
-										>
+										<>
+											{branch.is_online ? (
+												<CheckCircleFilled style={{ color: '#20bf6b' }} />
+											) : (
+												<ExclamationCircleFilled style={{ color: '#fc5c65' }} />
+											)}
+
 											<span>{branch.name}</span>
-										</Badge>
+										</>
 									}
 								>
 									<BranchDayAuthorization

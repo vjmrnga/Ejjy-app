@@ -205,7 +205,7 @@ function initServer(store) {
 			stdio: 'ignore',
 		});
 
-		let apiPort = '0.0.0.0:8000';
+		let apiPort = '[::]:8000';
 		if (appType === appTypes.HEAD_OFFICE) {
 			apiPort = '[::]:8001';
 		}
