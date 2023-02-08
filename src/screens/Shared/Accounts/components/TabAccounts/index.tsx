@@ -28,7 +28,6 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
-	serviceTypes,
 } from 'global';
 import { useAccounts, useAuth, useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -41,7 +40,6 @@ import {
 	getAccountTypeName,
 	getFullName,
 	isCUDShown,
-	isUserFromBranch,
 } from 'utils';
 
 interface Props {
@@ -68,14 +66,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 		isFetching: isFetchingAccounts,
 		error: accountError,
 		refetch: refetchAccounts,
-	} = useAccounts({
-		params: {
-			...params,
-			serviceType: isUserFromBranch(user.user_type)
-				? serviceTypes.OFFLINE
-				: serviceTypes.NORMAL,
-		},
-	});
+	} = useAccounts({ params });
 
 	// METHODS
 	useEffect(() => {

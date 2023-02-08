@@ -1,8 +1,13 @@
 import { Button, Modal, Spin, Tabs } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter/TimeRangeFilter';
-import { MAX_PAGE_SIZE, timeRangeTypes, userLogTypes } from 'global';
-import { useBranchProductRetrieve, useUserLogs } from 'hooks';
+import {
+	MAX_PAGE_SIZE,
+	serviceTypes,
+	timeRangeTypes,
+	userLogTypes,
+} from 'global';
+import { useAuth, useBranchProductRetrieve, useUserLogs } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import {
 	CartesianGrid,
@@ -14,7 +19,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import { convertIntoArray, formatDateTime } from 'utils';
+import { convertIntoArray, formatDateTime, isUserFromBranch } from 'utils';
 
 const tabs = {
 	PRICE_PER_PIECE: 'price_per_piece',
@@ -39,6 +44,7 @@ export const ViewBranchProductChartModal = ({
 	const [timeRange, setTimeRange] = useState(null);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		data: fetchedBranchProduct,
 		isFetching: isFetchingBranchProduct,
@@ -60,6 +66,9 @@ export const ViewBranchProductChartModal = ({
 		params: {
 			branchProductId,
 			pageSize: MAX_PAGE_SIZE,
+			serviceType: isUserFromBranch(user.user_type)
+				? serviceTypes.NORMAL
+				: serviceTypes.OFFLINE,
 			timeRange,
 			type: userLogTypes.BRANCH_PRODUCTS,
 		},

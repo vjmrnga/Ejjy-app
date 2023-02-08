@@ -89,6 +89,7 @@ export const BranchProductBalances = ({
 	} = useBranchProducts({
 		params: {
 			...params,
+			branchId,
 			hasBoBalance: params.hasBoBalance === 'true',
 		},
 		options: refetchOptions,

@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchMachinesService } from 'services';
@@ -23,15 +24,17 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 				? BranchMachinesService.list
 				: BranchMachinesService.listOffline;
 
-			return service(
-				{
-					branch_id: params?.branchId,
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					sales_time_range: params?.salesTimeRange,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors));
+			return wrapServiceWithCatch(
+				service(
+					{
+						branch_id: params?.branchId,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						sales_time_range: params?.salesTimeRange,
+					},
+					getLocalApiUrl(),
+				),
+			);
 		},
 		{
 			initialData: { data: { results: [], count: 0 } },

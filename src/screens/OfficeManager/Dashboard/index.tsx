@@ -101,14 +101,14 @@ export const Dashboard = () => {
 									<Divider />
 
 									<ReportsPerMachine
-										branchId={id}
+										branchId={branch.id}
 										tableHeaderClassName="pt-2 px-0"
 									/>
 
 									<Divider />
 
 									<BranchProductBalances
-										branchId={id}
+										branchId={branch.id}
 										productCategories={productCategories}
 										tableHeaderClassName="pt-2 px-0"
 									/>

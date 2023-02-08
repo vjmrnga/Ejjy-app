@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { UserLogsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
+// TODO: Add offline version of the list in service selection
 const useUserLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
@@ -15,6 +16,7 @@ const useUserLogs = ({ params }: Query) =>
 			params?.page,
 			params?.pageSize,
 			params?.productId,
+			params?.serviceType,
 			params?.timeRange,
 			params?.type,
 		],

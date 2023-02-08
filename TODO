@@ -39,6 +39,15 @@ https://localhost:8001/v1/bulk-initialize/?branch_id=5
 - "name": "Test Branch (Andrew)"
 - "id": 26,
 - "name": "Test Branch (Home)"
+- "id": 27,
+- "name": "Test Branch (ROG)"
 
 
 http://localhost:8000/v1/bulk-initialize/?branch_id=5
+http://localhost:8000/v1/bulk-initialize/?branch_id=17
+http://localhost:8000/v1/bulk-initialize/?branch_id=18
+http://localhost:8000/v1/bulk-initialize/?branch_id=19
+http://localhost:8000/v1/bulk-initialize/?branch_id=20
+http://localhost:8000/v1/bulk-initialize/?branch_id=25
+http://localhost:8000/v1/bulk-initialize/?branch_id=26
+http://localhost:8000/v1/bulk-initialize/?branch_id=27

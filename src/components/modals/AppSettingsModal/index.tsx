@@ -23,6 +23,7 @@ import {
 	getAppTagPrinterFontSize,
 	getAppTagPrinterPaperHeight,
 	getAppTagPrinterPaperWidth,
+	getAppType,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 	getOnlineBranchId,
@@ -36,10 +37,11 @@ interface Props {
 
 export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { appType, setAppType } = useAppType();
+	const { setAppType } = useAppType();
 
 	// METHODS
 	const handleSubmit = (formData) => {
+		setAppType(formData.appType);
 		localStorage.setItem(APP_APP_TYPE_KEY, formData.appType);
 		localStorage.setItem(APP_ONLINE_BRANCH_ID_KEY, formData.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, formData.localApiUrl);
@@ -71,10 +73,6 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 			formData.tagPrinterPaperWidth,
 		);
 
-		if (appType !== formData.appType) {
-			setAppType(formData.appType);
-		}
-
 		message.success('App settings were updated successfully');
 		onSuccess?.();
 		onClose();
@@ -91,7 +89,7 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 			onCancel={onClose}
 		>
 			<AppSettingsForm
-				appType={appType}
+				appType={getAppType()}
 				branchId={getOnlineBranchId()}
 				localApiUrl={getLocalApiUrl()}
 				onlineApiUrl={getOnlineApiUrl()}

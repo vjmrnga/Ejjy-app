@@ -205,7 +205,7 @@ function initServer(store) {
 			stdio: 'ignore',
 		});
 
-		let apiPort = '[::]:8000';
+		let apiPort = '0.0.0.0:8000';
 		if (appType === appTypes.HEAD_OFFICE) {
 			apiPort = '[::]:8001';
 		}
@@ -221,7 +221,7 @@ function initServer(store) {
 		logStatus('Server: Started API');
 
 		if (appType === appTypes.HEAD_OFFICE) {
-			const LOCALHOSTRUN_INTERVAL_MS = 600_000;
+			const LOCALHOSTRUN_INTERVAL_MS = 60_000;
 			logStatus('Server: Starting LocalhostRun');
 			setInterval(() => {
 				exec(
