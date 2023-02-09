@@ -48,13 +48,13 @@ import {
 	useProductCategories,
 	useProductDelete,
 	useProductReinitialize,
-	useProducts,
 	useQueryParams,
 } from 'hooks';
 import { useAuth } from 'hooks/useAuth';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useProductsData } from 'screens/Shared/Products/useProductsData';
 import {
 	convertIntoArray,
 	filterOption,
@@ -62,6 +62,7 @@ import {
 	getLocalBranchId,
 	getProductCode,
 	isCUDShown,
+	isUserFromBranch,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -96,14 +97,15 @@ export const Products = () => {
 	const { isConnected } = usePingOnlineServer();
 	const { user } = useAuth();
 	const {
-		data: { products, total },
+		data: { products, total: productsTotal },
 		isFetching: isFetchingProducts,
 		error: productsError,
-	} = useProducts({
+	} = useProductsData({
 		params: {
 			...params,
 			branchId: getLocalBranchId(),
 		},
+		user,
 	});
 	const {
 		mutateAsync: deleteProduct,
@@ -115,6 +117,8 @@ export const Products = () => {
 		isLoading: isReinitializingProduct,
 		error: reinitializeProductError,
 	} = useProductReinitialize();
+
+	console.log('products', products);
 
 	// METHODS
 	useEffect(() => {
@@ -269,7 +273,9 @@ export const Products = () => {
 	// };
 
 	return (
-		<Content title="General Products">
+		<Content
+			title={`${isUserFromBranch(user.user_type) ? '' : 'General'} Products`}
+		>
 			<ProductsInfo />
 
 			<ConnectionAlert />
@@ -324,7 +330,7 @@ export const Products = () => {
 					}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
-						total,
+						total: productsTotal,
 						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 						onChange: (page, newPageSize) => {
 							setQueryParams({
