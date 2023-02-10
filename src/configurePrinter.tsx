@@ -2179,4 +2179,280 @@ export const printAdjustmentReport = ({ transactions, user }) => {
 	`;
 };
 
+export const printSalesInvoice = ({
+	transaction,
+	siteSettings,
+	isReprint = false,
+	isPdf = false,
+}) => {
+	const change =
+		Number(transaction.payment.amount_tendered) - transaction.total_amount;
+
+	const previousTransactionOrNumber =
+		transaction?.adjustment_remarks?.previous_voided_transaction?.invoice
+			?.or_number;
+	const newTransactionOrNumber =
+		transaction?.adjustment_remarks?.new_updated_transaction?.invoice
+			?.or_number;
+
+	// Set discount option additional fields
+	let discountOptionFields = null;
+	if (transaction.discount_option_additional_fields_values?.length > 0) {
+		discountOptionFields = JSON.parse(
+			transaction.discount_option_additional_fields_values,
+		);
+	}
+
+	// Set client name
+	let title = '';
+	if (transaction.payment.mode === saleTypes.CASH) {
+		title = 'CASH SALES INVOICE';
+	} else if (transaction.payment.mode === saleTypes.CREDIT) {
+		title = 'CHARGE SALES INVOICE';
+	}
+
+	// Set client fields
+	let fields = [];
+	if (discountOptionFields) {
+		fields = Object.keys(discountOptionFields).map((key) => ({
+			key,
+			value: discountOptionFields[key],
+		}));
+	} else if (
+		transaction.client?.name ||
+		transaction.payment?.creditor_account
+	) {
+		fields = [
+			{
+				key: 'NAME',
+				value:
+					transaction.client?.name ||
+					getFullName(transaction.payment?.creditor_account) ||
+					'',
+			},
+			{
+				key: 'TIN',
+				value:
+					transaction.client?.tin ||
+					transaction.payment?.creditor_account?.tin ||
+					'',
+			},
+			{
+				key: 'ADDRESS',
+				value:
+					transaction.client?.address ||
+					transaction.payment?.creditor_account?.home_address ||
+					'',
+			},
+		];
+	}
+
+	const data = `
+	<div class="container" style="${getPageStyle()}">
+		${getHeader({
+			siteSettings,
+			title,
+		})}
+
+		${isReprint ? `<div>For ${formatDateTime(dayjs(), false)}</div>` : ''}
+
+		<br />
+
+		<table style="width: 100%;">
+			${transaction.products
+				.map(
+					(item) => `<tr>
+						<td colspan="2">${item.branch_product.product.print_details} - ${
+						item.branch_product.product.is_vat_exempted
+							? vatTypes.VAT_EMPTY
+							: vatTypes.VATABLE
+					}</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 4ch">${item.original_quantity} @ ${formatInPeso(
+						item.price_per_piece,
+						PESO_SIGN,
+					)} </td>
+						<td style="text-align: right">
+							${formatInPeso(
+								Number(item.quantity) * Number(item.price_per_piece),
+								PESO_SIGN,
+							)}&nbsp;</td>
+					</tr>`,
+				)
+				.join('')}
+		</table>
+
+		<div style="width: 100%; text-align: right">----------------</div>
+
+		<table style="width: 100%;">
+			${
+				transaction.discount_option
+					? `
+        <tr>
+				  <td>GROSS AMOUNT</td>
+				  <td style="text-align: right;">
+					  ${formatInPeso(transaction.gross_amount, PESO_SIGN)}&nbsp;
+				  </td>
+			  </tr>
+
+        ${
+					transaction.invoice.vat_sales_discount > 0
+						? `
+            <tr>
+              <td>VAT AMOUNT</td>
+              <td style="text-align: right;">
+                (${formatInPeso(
+									transaction.invoice.vat_sales_discount,
+									PESO_SIGN,
+								)})
+              </td>
+            </tr>`
+						: ''
+				}
+
+        <tr>
+				  <td>DISCOUNT | ${transaction.discount_option.code}</td>
+				  <td style="text-align: right;">
+					  (${formatInPeso(transaction.overall_discount, PESO_SIGN)})
+				  </td>
+			  </tr>
+        <tr>
+				  <td colspan="2" style="text-align: right;">----------------</td>
+			  </tr>
+      `
+					: ''
+			}
+
+			<tr>
+				<td>TOTAL AMOUNT</td>
+				<td style="text-align: right; font-weight: bold;">
+					${formatInPeso(transaction.total_amount, PESO_SIGN)}&nbsp;
+				</td>
+			</tr>
+		</table>
+
+		<br />
+
+    ${
+			transaction.payment.mode === saleTypes.CASH
+				? `
+        <table style="width: 100%;">
+          <tr>
+            <td style="padding-left: 4ch">AMOUNT RECEIVED</td>
+            <td style="text-align: right">
+              ${formatInPeso(
+								transaction.payment.amount_tendered,
+								PESO_SIGN,
+							)}&nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-left: 4ch">AMOUNT DUE</td>
+            <td style="text-align: right">
+              ${formatInPeso(transaction.total_amount, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-left: 4ch">CHANGE</td>
+            <td style="text-align: right; font-weight: bold">
+              ${formatInPeso(change, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+        </table><br />`
+				: ''
+		}
+
+    ${
+			siteSettings.tax_type === taxTypes.VAT
+				? `
+        <table style="width: 100%;">
+          <tr>
+            <td>VAT Exempt</td>
+            <td style="text-align: right">
+              ${formatInPeso(transaction.invoice.vat_exempt, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>VATable Sales</td>
+            <td style="text-align: right">
+              ${formatInPeso(transaction.invoice.vat_sales, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>VAT Amount</td>
+            <td style="text-align: right">
+              ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>ZERO Rated</td>
+            <td style="text-align: right">
+              ${formatInPeso(0, PESO_SIGN)}&nbsp;
+            </td>
+          </tr>
+        </table><br />`
+				: ''
+		}
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${formatDateTime(transaction.invoice.datetime_created)}</span>
+			<span style="text-align: right;">${transaction.teller.employee_id}</span>
+		</div>
+
+		<div style="display: flex; align-items: center; justify-content: space-between">
+			<span>${transaction.invoice.or_number}</span>
+			<span>${transaction.products.length} item(s)</span>
+		</div>
+
+    ${
+			previousTransactionOrNumber
+				? `<div>Prev Invoice #: ${previousTransactionOrNumber}</div>`
+				: ''
+		}
+    ${
+			newTransactionOrNumber
+				? `<div>New Invoice #: ${newTransactionOrNumber}</div>`
+				: ''
+		}
+
+    <table style="width: 100%; padding-left: 4ch;">
+    ${fields
+			.map(
+				({ key, value }) =>
+					`<tr>
+            <td width="80px">${key}:</td>
+            <td>${value}</td>
+          </tr>`,
+			)
+			.join('')}
+    </table>
+
+		<br />
+
+		${getFooter(siteSettings)}
+
+		<div style="text-align: center; display: flex; flex-direction: column">
+      ${
+				isReprint
+					? '<span>REPRINT ONLY</span>'
+					: '<span>THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.</span><span>THIS SERVES AS YOUR SALES INVOICE</span>'
+			}
+			<span>"${siteSettings?.thank_you_message}"</span>
+		</div>
+	</div>
+	`;
+
+	if (isPdf) {
+		return appendHtmlElement(data);
+	}
+
+	print({
+		data,
+		loadingMessage: 'Printing sales invoice...',
+		successMessage: 'Successfully printed receipt.',
+		errorMessage: 'Error occurred while trying to print receipt.',
+	});
+};
+
 export default configurePrinter;

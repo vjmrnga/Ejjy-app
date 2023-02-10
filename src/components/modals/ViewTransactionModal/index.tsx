@@ -1,10 +1,32 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Descriptions, Modal, Space, Spin, Table, Typography } from 'antd';
+import {
+	FilePdfOutlined,
+	FileTextOutlined,
+	PrinterOutlined,
+} from '@ant-design/icons';
+import {
+	Button,
+	Descriptions,
+	Modal,
+	Space,
+	Spin,
+	Table,
+	Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Button } from 'components/elements';
+
 import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
-import { EMPTY_CELL, saleTypes, taxTypes, vatTypes } from 'global';
+import { printSalesInvoice } from 'configurePrinter';
+import { createSalesInvoiceTxt } from 'configureTxt';
+import {
+	EMPTY_CELL,
+	JSPDF_SETTINGS,
+	saleTypes,
+	taxTypes,
+	vatTypes,
+} from 'global';
 import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
+import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -32,7 +54,11 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [transactionData, setTransactionData] = useState(null);
+
 	const [fields, setFields] = useState([]);
+	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
+	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
+	const [html, setHtml] = useState('');
 	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
@@ -131,12 +157,91 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		setFields(newFields);
 	}, [transactionRetrieved, transaction]);
 
+	const handleCreatePdf = () => {
+		setIsCreatingPdf(true);
+
+		// eslint-disable-next-line new-cap
+		const pdf = new jsPDF(JSPDF_SETTINGS);
+
+		const dataHtml = printSalesInvoice({
+			transaction: transactionData,
+			siteSettings,
+			isPdf: true,
+			isReprint: true,
+		});
+
+		setHtml(dataHtml);
+
+		setTimeout(() => {
+			pdf.html(dataHtml, {
+				margin: 10,
+				filename: `SalesInvoice_${transactionData.id}`,
+				callback: (instance) => {
+					window.open(instance.output('bloburl').toString());
+					setIsCreatingPdf(false);
+					setHtml('');
+				},
+			});
+		}, 2000);
+	};
+
+	const handleCreateTxt = () => {
+		setIsCreatingTxt(true);
+		createSalesInvoiceTxt({
+			transaction: transactionData,
+			siteSettings,
+			isReprint: true,
+		});
+		setIsCreatingTxt(false);
+	};
+
+	const handlePrint = () => {
+		printSalesInvoice({
+			transaction: transactionData,
+			siteSettings,
+			isReprint: true,
+		});
+	};
+
 	return (
 		<Modal
 			className="Modal__hasFooter"
-			footer={[<Button key="button" text="Close" onClick={onClose} />]}
-			title="View Transaction"
-			width={400}
+			footer={[
+				<Button
+					key="print"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<PrinterOutlined />}
+					size="large"
+					type="primary"
+					onClick={handlePrint}
+				>
+					Print
+				</Button>,
+				<Button
+					key="pdf"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<FilePdfOutlined />}
+					loading={isCreatingPdf}
+					size="large"
+					type="primary"
+					onClick={handleCreatePdf}
+				>
+					Create PDF
+				</Button>,
+				<Button
+					key="txt"
+					disabled={isCreatingPdf || isCreatingTxt}
+					icon={<FileTextOutlined />}
+					loading={isCreatingTxt}
+					size="large"
+					type="primary"
+					onClick={handleCreateTxt}
+				>
+					Create TXT
+				</Button>,
+			]}
+			title={title}
+			width={425}
 			centered
 			closable
 			visible
@@ -330,6 +435,12 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 					</>
 				)}
 			</Spin>
+
+			<div
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: html }}
+				style={{ display: 'none' }}
+			/>
 		</Modal>
 	);
 };

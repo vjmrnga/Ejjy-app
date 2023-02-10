@@ -2,9 +2,10 @@ import dayjs from 'dayjs';
 import { EMPTY_CELL, unitOfMeasurementTypes } from 'global';
 import _ from 'lodash';
 
-export const formatDateTime = _.memoize((datetime) =>
-	dayjs.tz(datetime).format('MM/DD/YYYY h:mmA'),
-);
+export const formatDateTime = (datetime, withTimezone = true) => {
+	const dt = withTimezone ? dayjs.tz(datetime, 'GMT') : dayjs(datetime);
+	return dt.format('MM/DD/YYYY h:mmA');
+};
 
 export const formatDateTimeExtended = _.memoize((datetime) =>
 	dayjs.tz(datetime).format('MMMM D, YYYY h:mmA'),
