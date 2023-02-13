@@ -118,8 +118,6 @@ export const Products = () => {
 		error: reinitializeProductError,
 	} = useProductReinitialize();
 
-	console.log('products', products);
-
 	// METHODS
 	useEffect(() => {
 		const formattedProducts = products.map((product) => {

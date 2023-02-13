@@ -336,7 +336,7 @@ const ReceiptPrinter = () => {
 				</Select>
 				<ErrorMessage
 					name="printerName"
-					render={(error) => <FieldError error={error} />}
+					render={(error) => <FieldError error={error} withSpaceTop />}
 				/>
 				{status?.error?.printerName && (
 					<FieldError error={status.error.printerName} />

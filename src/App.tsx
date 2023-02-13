@@ -42,33 +42,48 @@ const App = () => {
 			},
 		});
 
-	const { isLoading: isInitializingData, isSuccess: isInitializationSuccess } =
-		useInitializeData({
-			params: {
-				branchId: getOnlineBranchId(),
-			},
-			options: {
-				enabled: isNetworkSuccess && !!getOnlineApiUrl() && !isStandAlone(),
-			},
-		});
-
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
+		isSuccess: isFetchingBranchesSuccess,
 	} = useBranches({
 		key: 'App',
-		options: { enabled: isInitializationSuccess && !getLocalBranchId() },
+		params: {
+			baseURL:
+				getAppType() === appTypes.BACK_OFFICE
+					? getLocalApiUrl()
+					: getOnlineApiUrl(),
+		},
+	});
+
+	const { isLoading: isInitializingData } = useInitializeData({
+		params: {
+			branchId:
+				getAppType() === appTypes.BACK_OFFICE ? getOnlineBranchId() : undefined,
+			branchIds:
+				getAppType() === appTypes.HEAD_OFFICE
+					? branches.map(({ id }) => id)
+					: undefined,
+		},
+		options: {
+			enabled:
+				isNetworkSuccess &&
+				isFetchingBranchesSuccess &&
+				!!getOnlineApiUrl() &&
+				!isStandAlone(),
+		},
 	});
 
 	// METHODS
 	useEffect(() => {
 		if (branches.length > 0) {
+			const localBranchId = Number(getLocalBranchId());
 			const onlineBranchId = Number(getOnlineBranchId());
 			const localBranch = branches.find(
 				(branch) => branch.online_id === onlineBranchId,
 			);
 
-			if (localBranch) {
+			if (localBranch && Number(localBranch.id) !== localBranchId) {
 				localStorage.setItem(APP_LOCAL_BRANCH_ID_KEY, localBranch.id);
 			}
 		}

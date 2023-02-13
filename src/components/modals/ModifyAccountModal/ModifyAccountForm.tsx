@@ -10,7 +10,7 @@ import {
 	Select,
 	Upload,
 } from 'antd';
-import type { RcFile } from 'antd/es/upload/interface';
+import { RcFile } from 'antd/es/upload/interface';
 import { ErrorMessage, Form, Formik, useFormikContext } from 'formik';
 import { accountTypes } from 'global';
 import moment from 'moment';

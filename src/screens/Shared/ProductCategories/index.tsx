@@ -5,7 +5,7 @@ import {
 	MenuOutlined,
 } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
 import cn from 'classnames';
 import {
