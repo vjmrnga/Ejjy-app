@@ -24,26 +24,21 @@ interface Props {
 
 export const PricesModal = ({ product, onClose }: Props) => {
 	// CUSTOM HOOKS
+
+	const { user } = useAuth();
 	const {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,
 	} = useBranchProducts({
-		params: {
-			productIds: product.id,
-		},
-		options: {
-			enabled: product !== null,
-		},
+		params: { productIds: product.id },
+		options: { enabled: product !== null },
 	});
-	const { user } = useAuth();
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
 	} = useBranches({
 		key: 'PricesModalBranch',
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		mutateAsync: createPriceMarkdown,
@@ -74,7 +69,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 
 		if (priceMarkdownFormData.length > 0) {
 			await createPriceMarkdown({
-				productId: product.id,
+				productId: getId(product),
 				data: priceMarkdownFormData,
 			});
 		}

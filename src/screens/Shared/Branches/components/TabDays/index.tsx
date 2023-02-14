@@ -1,4 +1,4 @@
-import { Col, Radio, Row, Select, Table, Tag } from 'antd';
+import { Col, Descriptions, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
@@ -8,6 +8,8 @@ import {
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	refetchOptions,
+	timeRangeTypes,
 } from 'global';
 import { useBranchDays, useQueryParams, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +17,7 @@ import {
 	convertIntoArray,
 	filterOption,
 	formatDateTimeShortMonth,
+	formatTimeRange,
 	getFullName,
 } from 'utils';
 
@@ -38,10 +41,11 @@ const closingTypes = {
 };
 
 interface Props {
-	branch: any;
+	branch?: any;
+	branchMachineId?: any;
 }
 
-export const TabDays = ({ branch }: Props) => {
+export const TabDays = ({ branch, branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -49,12 +53,15 @@ export const TabDays = ({ branch }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { branchDays, total },
-		isFetching: isFetchingBranchDays,
 		error: branchDaysError,
+		isFetching: isFetchingBranchDays,
+		isFetched: isBranchDaysFetched,
 	} = useBranchDays({
 		params: {
 			...params,
-			branchId: branch.id,
+			branchId: branch?.id,
+			branchMachineId,
+			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isUnauthorized: (() => {
 				let isUnauthorized;
 				if (params.type === branchDayTypes.UNAUTHORIZED) {
@@ -76,21 +83,39 @@ export const TabDays = ({ branch }: Props) => {
 				return isAutomaticallyClosed;
 			})(),
 		},
+		options: refetchOptions,
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchDays = branchDays.map((branchDay) => {
+		const data = branchDays.map((branchDay) => {
 			const {
 				id,
 				started_by,
 				ended_by,
-				datetime_created,
-				datetime_ended,
+				datetime_created: datetimeCreated,
+				datetime_ended: datetimeEnded,
 				is_automatically_closed: isAutomaticallyClosed,
 				is_unauthorized,
 				is_unauthorized_datetime_ended,
 			} = branchDay;
+
+			const datetime = renderDateTime({
+				datetimeStarted: datetimeCreated,
+				datetimeEnded,
+				isAutomaticallyClosed,
+			});
+
+			let unauthorizedTimeRange: any = EMPTY_CELL;
+			if (is_unauthorized_datetime_ended) {
+				unauthorizedTimeRange = renderDateTime({
+					datetimeStarted: datetimeCreated,
+					datetimeEnded: is_unauthorized_datetime_ended,
+					isAutomaticallyClosed,
+				});
+			} else if (is_unauthorized) {
+				unauthorizedTimeRange = formatTimeRange(datetimeCreated, datetimeEnded);
+			}
 
 			return {
 				key: id,
@@ -99,18 +124,8 @@ export const TabDays = ({ branch }: Props) => {
 					endedBy: ended_by,
 					isAutomaticallyClosed,
 				}),
-				datetime: renderDateTime({
-					datetimeStarted: datetime_created,
-					datetimeEnded: datetime_ended,
-					isAutomaticallyClosed,
-				}),
-				unauthorizedTimeRange: is_unauthorized_datetime_ended
-					? renderDateTime({
-							datetimeStarted: datetime_created,
-							datetimeEnded: is_unauthorized_datetime_ended,
-							isAutomaticallyClosed,
-					  })
-					: EMPTY_CELL,
+				datetime,
+				unauthorizedTimeRange,
 				status: is_unauthorized ? (
 					<Tag color="red">Unauthorized</Tag>
 				) : (
@@ -119,7 +134,7 @@ export const TabDays = ({ branch }: Props) => {
 			};
 		});
 
-		setDataSource(formattedBranchDays);
+		setDataSource(data);
 	}, [branchDays]);
 
 	const renderUser = ({ startedBy, endedBy, isAutomaticallyClosed }) => {
@@ -133,18 +148,12 @@ export const TabDays = ({ branch }: Props) => {
 		}
 
 		return (
-			<div className="branch-day-column">
-				<div className="first-row">
-					<span className="label">Open: </span>
-					<span className="value">
-						{startedBy ? startedByUser : EMPTY_CELL}
-					</span>
-				</div>
-				<div>
-					<span className="label">Close: </span>
-					<span className="value">{endedByUser}</span>
-				</div>
-			</div>
+			<Descriptions column={1} size="small" bordered>
+				<Descriptions.Item label="Open">
+					{startedBy ? startedByUser : EMPTY_CELL}
+				</Descriptions.Item>
+				<Descriptions.Item label="Close">{endedByUser}</Descriptions.Item>
+			</Descriptions>
 		);
 	};
 
@@ -153,36 +162,30 @@ export const TabDays = ({ branch }: Props) => {
 		datetimeEnded,
 		isAutomaticallyClosed,
 	}) => (
-		<div className="branch-day-column">
-			<div className="first-row">
-				<span className="label">Open: </span>
-				<span className="value">
-					{datetimeStarted
-						? formatDateTimeShortMonth(datetimeStarted)
-						: EMPTY_CELL}
-				</span>
-			</div>
-			<div>
-				<span className="label">Close: </span>
-				<span className="value">
-					{datetimeEnded ? (
-						<>
-							{formatDateTimeShortMonth(datetimeEnded)}{' '}
-							{isAutomaticallyClosed && <Tag color="blue">Auto</Tag>}
-						</>
-					) : (
-						EMPTY_CELL
-					)}
-				</span>
-			</div>
-		</div>
+		<Descriptions column={1} size="small" bordered>
+			<Descriptions.Item label="Open">
+				{datetimeStarted
+					? formatDateTimeShortMonth(datetimeStarted)
+					: EMPTY_CELL}
+			</Descriptions.Item>
+			<Descriptions.Item label="Close">
+				{datetimeEnded ? (
+					<>
+						{formatDateTimeShortMonth(datetimeEnded)}{' '}
+						{isAutomaticallyClosed && <Tag color="blue">Auto</Tag>}
+					</>
+				) : (
+					EMPTY_CELL
+				)}
+			</Descriptions.Item>
+		</Descriptions>
 	);
 
 	return (
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isFetchingBranchDays} />
+			<Filter isLoading={isFetchingBranchDays && !isBranchDaysFetched} />
 
 			<RequestErrors
 				errors={convertIntoArray(branchDaysError)}
@@ -192,7 +195,7 @@ export const TabDays = ({ branch }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingBranchDays}
+				loading={isFetchingBranchDays && !isBranchDaysFetched}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
