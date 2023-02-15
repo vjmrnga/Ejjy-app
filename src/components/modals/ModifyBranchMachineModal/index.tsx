@@ -1,8 +1,14 @@
-import { Button, Col, Input, message, Modal, Row } from 'antd';
+import { Button, Col, Input, message, Modal, Row, Select } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { branchMachineTypes } from 'global';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray, getId } from 'utils';
+import {
+	convertIntoArray,
+	filterOption,
+	getBranchMachineTypeName,
+	getId,
+} from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';
@@ -99,6 +105,7 @@ export const ModifyBranchMachineForm = ({
 				permitToUse: branchMachine?.permit_to_use || '',
 				posTerminal: branchMachine?.pos_terminal || '',
 				serverUrl: branchMachine?.server_url || '',
+				type: branchMachine?.type || branchMachineTypes.CASHIERING,
 			},
 			Schema: Yup.object().shape({
 				branchId: Yup.string().required().label('Branch ID'),
@@ -110,6 +117,7 @@ export const ModifyBranchMachineForm = ({
 				permitToUse: Yup.string().required().max(75).label('Permit To Use'),
 				posTerminal: Yup.string().required().max(75).label('Serial #'),
 				serverUrl: Yup.string().required().max(75).label('Server URL'),
+				type: Yup.string().required().label('Type'),
 			}),
 		}),
 		[branchMachine],
@@ -153,6 +161,35 @@ export const ModifyBranchMachineForm = ({
 							/>
 							<ErrorMessage
 								name="serverUrl"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24}>
+							<Label label="Type" spacing />
+							<Select
+								className="w-100"
+								filterOption={filterOption}
+								optionFilterProp="children"
+								value={values['type']}
+								allowClear
+								showSearch
+								onChange={(value) => {
+									setFieldValue('type', value);
+								}}
+							>
+								{[
+									branchMachineTypes.CASHIERING,
+									branchMachineTypes.SCALE,
+									branchMachineTypes.SCALE_AND_CASHIERING,
+								].map((type) => (
+									<Select.Option key={type} value={type}>
+										{getBranchMachineTypeName(type)}
+									</Select.Option>
+								))}
+							</Select>
+							<ErrorMessage
+								name="type"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

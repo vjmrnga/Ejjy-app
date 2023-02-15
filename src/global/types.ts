@@ -265,3 +265,9 @@ export const userLogTypes = {
 	PRODUCTS: 'products',
 	BRANCH_PRODUCTS: 'branch_products',
 };
+
+export const branchMachineTypes = {
+	SCALE: 'scale',
+	CASHIERING: 'cashiering',
+	SCALE_AND_CASHIERING: 'scale_and_cashiering',
+};

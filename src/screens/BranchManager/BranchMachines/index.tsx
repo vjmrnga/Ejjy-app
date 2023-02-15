@@ -13,7 +13,12 @@ import { Box } from 'components/elements';
 import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getLocalBranchId, isCUDShown } from 'utils';
+import {
+	convertIntoArray,
+	getBranchMachineTypeName,
+	getLocalBranchId,
+	isCUDShown,
+} from 'utils';
 
 export const BranchMachines = () => {
 	// STATES
@@ -52,6 +57,7 @@ export const BranchMachines = () => {
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
+			type: getBranchMachineTypeName(branchMachine.type),
 			actions: (
 				<TableActions
 					onEdit={() => handleEdit(branchMachine)}
@@ -72,6 +78,7 @@ export const BranchMachines = () => {
 			{ title: 'Server URL', dataIndex: 'serverUrl' },
 			{ title: 'Machine ID', dataIndex: 'machineID' },
 			{ title: 'PTU', dataIndex: 'ptu' },
+			{ title: 'Type', dataIndex: 'type' },
 		];
 
 		if (isCUDShown(user.user_type)) {

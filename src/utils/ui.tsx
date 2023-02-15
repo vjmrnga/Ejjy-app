@@ -18,6 +18,7 @@ import {
 	appTypes,
 	attendanceCategories,
 	backOrdersStatuses,
+	branchMachineTypes,
 	cashBreakdownCategories,
 	cashBreakdownTypes,
 	deliveryReceiptStatus,
@@ -594,6 +595,26 @@ export const getAccountTypeName = (type) => {
 			break;
 		case accountTypes.GOVERNMENT:
 			typeName = 'Government';
+			break;
+		default:
+			typeName = '';
+	}
+
+	return typeName;
+};
+
+export const getBranchMachineTypeName = (type) => {
+	let typeName = '';
+
+	switch (type) {
+		case branchMachineTypes.CASHIERING:
+			typeName = 'Cashiering';
+			break;
+		case branchMachineTypes.SCALE:
+			typeName = 'Scale';
+			break;
+		case branchMachineTypes.SCALE_AND_CASHIERING:
+			typeName = 'Scale and Cashiering';
 			break;
 		default:
 			typeName = '';

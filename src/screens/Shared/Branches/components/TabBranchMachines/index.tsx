@@ -6,16 +6,22 @@ import {
 	RequestErrors,
 	TableHeader,
 } from 'components';
-import { useBranchMachineDelete, useBranchMachines } from 'hooks';
+import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { convertIntoArray, getId } from 'utils';
+import {
+	convertIntoArray,
+	getBranchMachineTypeName,
+	getId,
+	getUrlPrefix,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
 	{ title: 'Server URL', dataIndex: 'serverUrl' },
 	{ title: 'Machine ID', dataIndex: 'machineID' },
 	{ title: 'PTU', dataIndex: 'ptu' },
+	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
@@ -32,6 +38,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 		useState(false);
 
 	// CUSTOM HOOKS
+	const { user } = useAuth();
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,
@@ -50,13 +57,18 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
 			key: branchMachine.id,
 			name: (
-				<Link to={`/office-manager/branch-machines/${branchMachine.id}`}>
+				<Link
+					to={`/${getUrlPrefix(user.user_type)}/branch-machines/${
+						branchMachine.id
+					}`}
+				>
 					{branchMachine.name}
 				</Link>
 			),
 			serverUrl: branchMachine.server_url,
 			machineID: branchMachine.machine_identification_number,
 			ptu: branchMachine.permit_to_use,
+			type: getBranchMachineTypeName(branchMachine.type),
 			actions: (
 				<Space>
 					<Tooltip title="Edit">

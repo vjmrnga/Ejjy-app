@@ -70,6 +70,7 @@ export const useBranchMachineCreate = () => {
 			permitToUse,
 			posTerminal,
 			serverUrl,
+			type,
 		}: any) =>
 			BranchMachinesService.create(
 				{
@@ -79,6 +80,7 @@ export const useBranchMachineCreate = () => {
 					permit_to_use: permitToUse,
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
+					type,
 				},
 				getGoogleApiUrl(),
 			),
@@ -102,6 +104,7 @@ export const useBranchMachineEdit = () => {
 			permitToUse,
 			posTerminal,
 			serverUrl,
+			type,
 		}: any) =>
 			BranchMachinesService.edit(
 				id,
@@ -112,6 +115,7 @@ export const useBranchMachineEdit = () => {
 					permit_to_use: permitToUse,
 					pos_terminal: posTerminal,
 					server_url: serverUrl,
+					type,
 				},
 				getGoogleApiUrl(),
 			),

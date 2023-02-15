@@ -18,10 +18,14 @@ export const useInitializeData = ({ params, options }: Query) =>
 					DataService.initialize({ branch_id: params.branchId }, baseURL),
 				);
 			} else if (params?.branchIds) {
-				// eslint-disable-next-line no-restricted-syntax
-				for (const branchId of params.branchIds) {
-					// eslint-disable-next-line no-await-in-loop
-					await DataService.initialize({ branch_id: branchId }, baseURL);
+				try {
+					// eslint-disable-next-line no-restricted-syntax
+					for (const branchId of params.branchIds) {
+						// eslint-disable-next-line no-await-in-loop
+						await DataService.initialize({ branch_id: branchId }, baseURL);
+					}
+				} catch (e) {
+					console.error('Initialize Data', e);
 				}
 			}
 
