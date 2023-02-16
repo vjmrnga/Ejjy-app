@@ -2,15 +2,18 @@ import { CheckCircleFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { Divider, Spin, Tabs } from 'antd';
 import { BranchDayAuthorization, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	NOTIFICATION_INTERVAL_MS,
+} from 'global';
 import { useBranches, useProductCategories, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
 import { convertIntoArray, getId } from 'utils';
-
-const BRANCHES_REFETCH_INTERVAL_MS = 2500;
 
 export const Dashboard = () => {
 	// CUSTOM HOOKS
@@ -19,7 +22,7 @@ export const Dashboard = () => {
 		isLoading: isFetchingBranches,
 		error: branchesErrors,
 	} = useBranches({
-		options: { refetchInterval: BRANCHES_REFETCH_INTERVAL_MS },
+		options: { refetchInterval: NOTIFICATION_INTERVAL_MS },
 	});
 	const {
 		data: { productCategories },

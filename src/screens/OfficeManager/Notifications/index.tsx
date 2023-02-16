@@ -1,18 +1,17 @@
 import { Badge, Space, Tabs } from 'antd';
 import { Content, NotificationsInfo } from 'components';
 import { Box } from 'components/elements';
-import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
-import {
-	useAttendanceLogs,
-	useProblematicAttendanceLogs,
-	useQueryParams,
-} from 'hooks';
+import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
+import shallow from 'zustand/shallow';
+import { TabBranchConnectivityLogs } from './components/TabBranchConnectivityLogs';
 import { TabDTR } from './components/TabDTR';
+import { useNotificationStore } from './stores/useNotificationStore';
 
 const tabs = {
 	DTR: 'DTR',
+	BRANCH_CONNECTIVITY: 'Branch Connectivity',
 };
 
 export const Notifications = () => {
@@ -21,7 +20,13 @@ export const Notifications = () => {
 		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
-	const problematicAttendanceLogsCount = useDtrHooks();
+	const { connectivityCount, dtrCount } = useNotificationStore(
+		(state: any) => ({
+			connectivityCount: state.connectivityCount,
+			dtrCount: state.dtrCount,
+		}),
+		shallow,
+	);
 
 	// METHODS
 	const handleTabClick = (selectedTab) => {
@@ -48,55 +53,28 @@ export const Notifications = () => {
 						tab={
 							<Space align="center">
 								<span>{tabs.DTR}</span>
-								{problematicAttendanceLogsCount > 0 && (
-									<Badge
-										count={problematicAttendanceLogsCount}
-										overflowCount={999}
-									/>
-								)}
+								{dtrCount > 0 && <Badge count={dtrCount} overflowCount={999} />}
 							</Space>
 						}
 					>
 						<TabDTR />
 					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.BRANCH_CONNECTIVITY}
+						tab={
+							<Space align="center">
+								<span>{tabs.BRANCH_CONNECTIVITY}</span>
+								{connectivityCount > 0 && (
+									<Badge count={connectivityCount} overflowCount={999} />
+								)}
+							</Space>
+						}
+					>
+						<TabBranchConnectivityLogs />
+					</Tabs.TabPane>
 				</Tabs>
 			</Box>
 		</Content>
 	);
-};
-
-const useDtrHooks = () => {
-	const { isSuccess: isAttendanceLogsSuccess } = useAttendanceLogs({
-		params: {
-			pageSize: MAX_PAGE_SIZE,
-			serviceType: serviceTypes.OFFLINE,
-		},
-		options: { notifyOnChangeProps: ['isSuccess'] },
-	});
-	const {
-		data: { total: problematicAttendanceLogsCount },
-	} = useProblematicAttendanceLogs({
-		params: {
-			attendanceCategory: attendanceCategories.ATTENDANCE,
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			enabled: isAttendanceLogsSuccess,
-			notifyOnChangeProps: ['data'],
-		},
-	});
-	const {
-		data: { total: problematicTrackerLogsCount },
-	} = useProblematicAttendanceLogs({
-		params: {
-			attendanceCategory: attendanceCategories.TRACKER,
-			pageSize: MAX_PAGE_SIZE,
-		},
-		options: {
-			enabled: isAttendanceLogsSuccess,
-			notifyOnChangeProps: ['data'],
-		},
-	});
-
-	return problematicAttendanceLogsCount + problematicTrackerLogsCount;
 };
