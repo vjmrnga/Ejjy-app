@@ -150,7 +150,7 @@ const Filter = () => {
 	});
 
 	// METHODS
-	const handleDebouncedSearch = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setProductSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
@@ -238,7 +238,7 @@ const Filter = () => {
 								{ shouldResetPage: true },
 							);
 						}}
-						onSearch={handleDebouncedSearch}
+						onSearch={handleSearchDebounced}
 					>
 						{branchProducts.map((branchProduct) => (
 							<Select.Option key={branchProduct.id} value={branchProduct.id}>

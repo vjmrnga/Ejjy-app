@@ -183,7 +183,7 @@ export const CreateOrderOfPaymentForm = ({
 		[maxAmount, transaction],
 	);
 
-	const handleDebouncedSearch = useCallback(
+	const handleSearchDebounced = useCallback(
 		debounce((search) => {
 			setAccountSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
@@ -218,7 +218,7 @@ export const CreateOrderOfPaymentForm = ({
 								onChange={(value) => {
 									setFieldValue('payorId', value);
 								}}
-								onSearch={handleDebouncedSearch}
+								onSearch={handleSearchDebounced}
 							>
 								{accounts.map((account) => (
 									<Select.Option key={account.id} value={account.id}>

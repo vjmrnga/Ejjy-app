@@ -1,4 +1,4 @@
-import { CheckCircleFilled, ExclamationCircleFilled } from '@ant-design/icons';
+import { LockOutlined, WifiOutlined } from '@ant-design/icons';
 import { Divider, Spin, Tabs } from 'antd';
 import { BranchDayAuthorization, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
@@ -8,7 +8,12 @@ import {
 	MAX_PAGE_SIZE,
 	NOTIFICATION_INTERVAL_MS,
 } from 'global';
-import { useBranches, useProductCategories, useQueryParams } from 'hooks';
+import {
+	useBranchDayAuthorizations,
+	useBranches,
+	useProductCategories,
+	useQueryParams,
+} from 'hooks';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
@@ -29,6 +34,13 @@ export const Dashboard = () => {
 		isFetching: isFetchingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+	const {
+		data: { branchDayAuthorizations },
+		isFetching: isFetchingBranchDayAuthorizations,
+		error: branchDayAuthorizationsError,
+	} = useBranchDayAuthorizations({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
@@ -53,15 +65,25 @@ export const Dashboard = () => {
 			pageSize: DEFAULT_PAGE_SIZE,
 		});
 	};
-
+	console.log('branchDayAuthorizations', branchDayAuthorizations);
 	return (
 		<Content title="Dashboard">
 			<Box>
-				<Spin spinning={isFetchingBranches || isFetchingProductCategories}>
+				<Spin
+					spinning={
+						isFetchingBranches ||
+						isFetchingBranchDayAuthorizations ||
+						isFetchingProductCategories
+					}
+				>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={[
 							...convertIntoArray(branchesErrors, 'Branches'),
+							...convertIntoArray(
+								branchDayAuthorizationsError,
+								'Branch Day Authorizations',
+							),
 							...convertIntoArray(
 								productCategoriesErrors,
 								'Product Categories',
@@ -80,16 +102,21 @@ export const Dashboard = () => {
 						{branches.map((branch) => {
 							const id = getId(branch);
 
+							// const branchDayAuthorization = branchDayAuthorization.find()
+
 							return (
 								<Tabs.TabPane
 									key={id}
 									tab={
 										<>
-											{branch.is_online ? (
-												<CheckCircleFilled style={{ color: '#20bf6b' }} />
-											) : (
-												<ExclamationCircleFilled style={{ color: '#fc5c65' }} />
-											)}
+											<WifiOutlined
+												style={{
+													color: branch.is_online ? '#20bf6b' : '#fc5c65',
+												}}
+											/>
+
+											<LockOutlined />
+											{/* <UnlockOutlined /> */}
 
 											<span>{branch.name}</span>
 										</>

@@ -39,9 +39,7 @@ export const BranchDayAuthorization = ({
 		isFetching: isFetchingBranchDayAuthorizations,
 		error: branchDayAuthorizationsError,
 	} = useBranchDayAuthorizations({
-		params: {
-			branchId: getId(branch),
-		},
+		params: { branchId: getId(branch) },
 	});
 	const {
 		data: fetchedBranchDay,

@@ -71,7 +71,7 @@ const Component = ({ barcodeScannerRef }: Props, ref) => {
 		}
 	};
 
-	const handleDebouncedSearch = useCallback(
+	const handleSearchDebounced = useCallback(
 		debounce((keyword) => {
 			if (
 				Math.abs(previousSearchedKey.current.length - keyword.length) >
@@ -111,7 +111,7 @@ const Component = ({ barcodeScannerRef }: Props, ref) => {
 				value={inputText}
 				onChange={(value) => {
 					setInputText(value);
-					handleDebouncedSearch(value);
+					handleSearchDebounced(value);
 				}}
 				onFocus={() => setInputText(inputText)}
 			/>

@@ -10,13 +10,7 @@ import {
 	SEARCH_DEBOUNCE_TIME,
 	userLogTypes,
 } from 'global';
-import {
-	useBranches,
-	useProducts,
-	useQueryParams,
-	useUserLogs,
-	useUsers,
-} from 'hooks';
+import { useProducts, useQueryParams, useUserLogs, useUsers } from 'hooks';
 
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -102,13 +96,6 @@ const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { branches },
-		isFetching: isFetchingBranches,
-		error: branchErrors,
-	} = useBranches({
-		params: { pageSize: MAX_PAGE_SIZE },
-	});
-	const {
 		data: { users },
 		isFetching: isFetchingUsers,
 		error: usersError,
@@ -130,7 +117,7 @@ const Filter = () => {
 	});
 
 	// METHODS
-	const handleDebouncedSearch = useCallback(
+	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
 			setProductSearch(search);
 		}, SEARCH_DEBOUNCE_TIME),
@@ -141,7 +128,6 @@ const Filter = () => {
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(branchErrors, 'Branches'),
 					...convertIntoArray(productsError, 'Product'),
 					...convertIntoArray(usersError, 'Users'),
 				]}
@@ -149,28 +135,6 @@ const Filter = () => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
-				<Col md={12}>
-					<Label label="Branch" spacing />
-					<Select
-						className="w-100"
-						filterOption={filterOption}
-						loading={isFetchingBranches}
-						optionFilterProp="children"
-						value={params.branchId ? Number(params.branchId) : null}
-						allowClear
-						showSearch
-						onChange={(value) => {
-							setQueryParams({ branchId: value }, { shouldResetPage: true });
-						}}
-					>
-						{branches.map((branch) => (
-							<Select.Option key={branch.id} value={branch.id}>
-								{branch.name}
-							</Select.Option>
-						))}
-					</Select>
-				</Col>
-
 				<Col md={12}>
 					<Label label="User" spacing />
 					<Select
@@ -211,7 +175,7 @@ const Filter = () => {
 						onChange={(value) => {
 							setQueryParams({ productId: value }, { shouldResetPage: true });
 						}}
-						onSearch={handleDebouncedSearch}
+						onSearch={handleSearchDebounced}
 					>
 						{products.map((product) => (
 							<Select.Option key={product.id} value={product.id}>
