@@ -1,0 +1,45 @@
+@use 'assets/styles' as *;
+
+.AppIcons {
+	position: fixed;
+	top: 1em;
+	left: 1em;
+	display: flex;
+	align-items: center;
+	column-gap: 0.5em;
+	z-index: 2;
+
+	&_icon {
+		width: 40px;
+		height: 40px;
+		padding: 5px;
+		background-color: white;
+		border-radius: 50%;
+		box-shadow: 0px 0px 41px 3px rgba(0, 0, 0, 0.2);
+		font-size: 1.25rem;
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+
+		&--info {
+			color: $color-info !important;
+		}
+
+		&--warning {
+			color: $color-secondary !important;
+		}
+
+		&--success {
+			color: $color-primary !important;
+		}
+
+		&--error {
+			color: $color-red !important;
+		}
+	}
+
+	img {
+		width: 100%;
+		height: auto;
+	}
+}

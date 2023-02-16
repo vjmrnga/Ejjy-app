@@ -1,12 +1,11 @@
 import { Spin } from 'antd';
-import { Container, TimeMismatchBoundary } from 'components';
+import { AppIcons, Container, TimeMismatchBoundary } from 'components';
 import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranches,
 	useBranchPing,
 	useBranchProducts,
 	useBranchProductsOffline,
-	useConnectivity,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
@@ -62,7 +61,6 @@ const BranchManager = () => {
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
-	useConnectivity();
 	const { isFetching: isFetchingBranches } = useBranches({
 		options: { enabled: IS_APP_LIVE },
 	});
@@ -293,6 +291,8 @@ const BranchManager = () => {
 	return (
 		<Container sidebarItems={getSidebarItems()}>
 			{!IS_APP_LIVE && <TimeMismatchBoundary />}
+
+			<AppIcons />
 
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>

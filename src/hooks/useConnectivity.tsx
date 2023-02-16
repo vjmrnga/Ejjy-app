@@ -2,7 +2,12 @@ import { connectivityTypes } from 'global';
 import { useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ConnectivityLogsService, SiteSettingsService } from 'services';
-import { getLocalApiUrl, getLocalBranchId, getOnlineApiUrl } from 'utils';
+import {
+	getLocalApiUrl,
+	getLocalBranchId,
+	getOnlineApiUrl,
+	isStandAlone,
+} from 'utils';
 
 const serverUrl = getOnlineApiUrl();
 const branchId = Number(getLocalBranchId());
@@ -18,6 +23,7 @@ const useConnectivity = () => {
 				Promise.reject(e.errors),
 			),
 		{
+			enabled: !isStandAlone(),
 			refetchInterval: 5000,
 			select: (query) => query.data,
 			onSettled: (_data, error) => {
