@@ -1,13 +1,15 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { CashBreakdownsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 import { Query } from './inteface';
 
 const useCashBreakdowns = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useCashBreakdowns',
+			params?.branchId,
 			params?.branchMachineId,
 			params?.category,
 			params?.creatingUserId,
@@ -17,18 +19,21 @@ const useCashBreakdowns = ({ params }: Query) =>
 			params?.type,
 		],
 		async () =>
-			CashBreakdownsService.list(
-				{
-					branch_machine_id: params?.branchMachineId,
-					category: params?.category,
-					creating_user_id: params?.creatingUserId,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					time_range: params?.timeRange,
-					type: params?.type,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+			wrapServiceWithCatch(
+				CashBreakdownsService.list(
+					{
+						branch_id: params?.branchId,
+						branch_machine_id: params?.branchMachineId,
+						category: params?.category,
+						creating_user_id: params?.creatingUserId,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						time_range: params?.timeRange,
+						type: params?.type,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

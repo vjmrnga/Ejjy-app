@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { BranchAssignmentsService } from 'services';
@@ -15,16 +16,18 @@ const useBranchAssignments = ({ params }: Query) =>
 			params?.userId,
 		],
 		async () =>
-			BranchAssignmentsService.list(
-				{
-					branch_id: params?.branchId,
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					time_range: params?.timeRange,
-					user_id: params?.userId,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+			wrapServiceWithCatch(
+				BranchAssignmentsService.list(
+					{
+						branch_id: params?.branchId,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						time_range: params?.timeRange,
+						user_id: params?.userId,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

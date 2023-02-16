@@ -10,6 +10,7 @@ const useUserLogs = ({ params }: Query) =>
 		[
 			'useUserLogs',
 			params?.actingUserId,
+			params?.branchId,
 			params?.branchMachineId,
 			params?.branchProductId,
 			params?.page,
@@ -29,6 +30,7 @@ const useUserLogs = ({ params }: Query) =>
 				service(
 					{
 						acting_user_id: params?.actingUserId,
+						branch_id: params?.branchId,
 						branch_machine_id: params?.branchMachineId,
 						branch_product_id: params?.branchProductId,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,

@@ -38,6 +38,7 @@ export const TabBranchAssignments = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { branchAssignments, total },
 		isFetching: isFetchingBranchAssignments,
@@ -45,6 +46,9 @@ export const TabBranchAssignments = () => {
 	} = useBranchAssignments({
 		params: {
 			...params,
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params?.branchId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 		},
 	});
@@ -107,6 +111,7 @@ const Filter = () => {
 		error: branchesError,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !isUserFromBranch(user.user_type) },
 	});
 	const {
 		data: { users },

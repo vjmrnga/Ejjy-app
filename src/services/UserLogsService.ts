@@ -3,6 +3,7 @@ import { IListRequest } from 'services/interfaces';
 
 interface List extends IListRequest {
 	acting_user_id: number;
+	branch_id: number;
 	branch_machine_id: number;
 	time_range: string;
 	branch_product_id: number;

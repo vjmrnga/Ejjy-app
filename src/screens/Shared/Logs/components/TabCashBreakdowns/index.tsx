@@ -18,6 +18,8 @@ import {
 	timeRangeTypes,
 } from 'global';
 import {
+	useAuth,
+	useBranches,
 	useBranchMachines,
 	useCashBreakdowns,
 	useQueryParams,
@@ -31,6 +33,8 @@ import {
 	formatDateTime,
 	getCashBreakdownTypeDescription,
 	getFullName,
+	getLocalBranchId,
+	isUserFromBranch,
 } from 'utils';
 
 export const cashBreakdownOptions = [
@@ -71,6 +75,7 @@ export const TabCashBreakdowns = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
 	const {
 		data: { cashBreakdowns, total },
 		isFetching: isFetchingCashBreakdowns,
@@ -78,6 +83,9 @@ export const TabCashBreakdowns = () => {
 	} = useCashBreakdowns({
 		params: {
 			...params,
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params?.branchId,
 			timeRange: params.timeRange || timeRangeTypes.DAILY,
 		},
 	});
@@ -152,23 +160,45 @@ export const TabCashBreakdowns = () => {
 
 const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
+	const { user } = useAuth();
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchesError,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !isUserFromBranch(user.user_type) },
+	});
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,
 		error: branchMachinesError,
-	} = useBranchMachines();
+	} = useBranchMachines({
+		params: {
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
 
 	return (
 		<>
 			<RequestErrors
 				errors={[
+					...convertIntoArray(branchesError, 'Branches'),
 					...convertIntoArray(branchMachinesError, 'Branch Machines'),
 					...convertIntoArray(usersError, 'Users'),
 				]}
@@ -176,8 +206,78 @@ const Filter = () => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
+				{!isUserFromBranch(user.user_type) && (
+					<Col md={12}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((branch) => (
+								<Select.Option key={branch.id} value={branch.id}>
+									{branch.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
+
 				<Col md={12}>
-					<TimeRangeFilter />
+					<Label label="Branch Machine" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.branchMachineId}
+						filterOption={filterOption}
+						loading={isFetchingBranchMachines}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ branchMachineId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{branchMachines.map(({ id, name }) => (
+							<Select.Option key={id} value={id}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col md={12}>
+					<Label label="User" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.creatingUserId}
+						filterOption={filterOption}
+						loading={isFetchingUsers}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ creatingUserId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{users.map((u) => (
+							<Select.Option key={u.id} value={u.id}>
+								{getFullName(u)}
+							</Select.Option>
+						))}
+					</Select>
 				</Col>
 
 				<Col md={12}>
@@ -232,53 +332,7 @@ const Filter = () => {
 				</Col>
 
 				<Col md={12}>
-					<Label label="Branch Machine" spacing />
-					<Select
-						className="w-100"
-						defaultValue={params.branchMachineId}
-						disabled={isFetchingBranchMachines}
-						filterOption={filterOption}
-						optionFilterProp="children"
-						allowClear
-						showSearch
-						onChange={(value) => {
-							setQueryParams(
-								{ branchMachineId: value },
-								{ shouldResetPage: true },
-							);
-						}}
-					>
-						{branchMachines.map(({ id, name }) => (
-							<Select.Option key={id} value={id}>
-								{name}
-							</Select.Option>
-						))}
-					</Select>
-				</Col>
-
-				<Col md={12}>
-					<Label label="User" spacing />
-					<Select
-						className="w-100"
-						defaultValue={params.creatingUserId}
-						disabled={isFetchingUsers}
-						filterOption={filterOption}
-						optionFilterProp="children"
-						allowClear
-						showSearch
-						onChange={(value) => {
-							setQueryParams(
-								{ creatingUserId: value },
-								{ shouldResetPage: true },
-							);
-						}}
-					>
-						{users.map((user) => (
-							<Select.Option key={user.id} value={user.id}>
-								{getFullName(user)}
-							</Select.Option>
-						))}
-					</Select>
+					<TimeRangeFilter />
 				</Col>
 			</Row>
 		</>

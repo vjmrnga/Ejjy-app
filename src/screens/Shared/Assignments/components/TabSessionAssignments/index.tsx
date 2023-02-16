@@ -115,6 +115,7 @@ const Filter = () => {
 		error: branchErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !isUserFromBranch(user.user_type) },
 	});
 	const {
 		data: { users },
