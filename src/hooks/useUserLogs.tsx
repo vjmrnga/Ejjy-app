@@ -1,11 +1,10 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { UserLogsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
-// TODO: Add offline version of the list in service selection
 const useUserLogs = ({ params }: Query) =>
 	useQuery<any>(
 		[
@@ -20,9 +19,14 @@ const useUserLogs = ({ params }: Query) =>
 			params?.timeRange,
 			params?.type,
 		],
-		async () =>
-			wrapServiceWithCatch(
-				UserLogsService.list(
+		() => {
+			let service = UserLogsService.list;
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = UserLogsService.listOffline;
+			}
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						acting_user_id: params?.actingUserId,
 						branch_machine_id: params?.branchMachineId,
@@ -35,7 +39,8 @@ const useUserLogs = ({ params }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

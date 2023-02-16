@@ -13,7 +13,6 @@ import React, { useCallback } from 'react';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
-import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDays } from './components/TabDays';
 import { TabSessions } from './components/TabSessions';
 import { TabTransactions } from './components/TabTransactions';
@@ -31,7 +30,6 @@ const tabs = {
 	SESSIONS: 'Sessions',
 	DAYS: 'Days',
 	CHECKINGS: 'Checkings',
-	CONNECTIVITY_LOGS: 'Connectivity Logs',
 };
 
 export const ViewBranch = ({ match }: Props) => {
@@ -112,13 +110,6 @@ export const ViewBranch = ({ match }: Props) => {
 
 							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
 								<TabDays branch={branch} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane
-								key={tabs.CONNECTIVITY_LOGS}
-								tab={tabs.CONNECTIVITY_LOGS}
-							>
-								<TabConnectivityLogs branch={branch} />
 							</Tabs.TabPane>
 						</Tabs>
 					</Box>

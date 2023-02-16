@@ -27,7 +27,8 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const MAX_PAGE_SIZE = 500;
 export const MAX_RETRY = 1;
 export const RETRY_INTERVAL_MS = 300;
-export const REPORTS_RETRY_INTERVAL_MS = 30000;
+export const REPORTS_RETRY_INTERVAL_MS = 30_000;
+export const NOTIFICATION_INTERVAL_MS = 10_000;
 export const GENERIC_ERROR_MESSAGE =
 	'An error occurred while processing you request.';
 
@@ -62,7 +63,7 @@ export const TAG_DEFAULT_FONT_SIZE = '13';
 export const JSPDF_SETTINGS: jsPDFOptions = {
 	orientation: 'p',
 	unit: 'px',
-	format: [400, 841.89],
+	format: [400, 700],
 	hotfixes: ['px_scaling'],
 };
 

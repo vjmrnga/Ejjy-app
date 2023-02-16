@@ -7,7 +7,7 @@ import {
 	timeRangeTypes,
 	userLogTypes,
 } from 'global';
-import { useAuth, useBranchProductRetrieve, useUserLogs } from 'hooks';
+import { useUserLogs } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import {
 	CartesianGrid,
@@ -19,7 +19,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import { convertIntoArray, formatDateTime, isUserFromBranch } from 'utils';
+import { convertIntoArray, formatDateTime, isStandAlone } from 'utils';
 
 const tabs = {
 	PRICE_PER_PIECE: 'price_per_piece',
@@ -44,36 +44,23 @@ export const ViewBranchProductChartModal = ({
 	const [timeRange, setTimeRange] = useState(null);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
-	const {
-		data: fetchedBranchProduct,
-		isFetching: isFetchingBranchProduct,
-		error: branchProductError,
-	} = useBranchProductRetrieve({
-		id: product.id,
-		options: {
-			enabled: product !== null,
-		},
-	});
-
-	const branchProductId = fetchedBranchProduct?.id || branchProduct?.id;
-
 	const {
 		data: { logs },
 		isFetching: isFetchingLogs,
 		error: logsError,
 	} = useUserLogs({
 		params: {
-			branchProductId,
+			branchProductId: branchProduct?.id,
+			productId: product?.id,
 			pageSize: MAX_PAGE_SIZE,
-			serviceType: isUserFromBranch(user.user_type)
-				? serviceTypes.NORMAL
-				: serviceTypes.OFFLINE,
+			serviceType: isStandAlone() ? serviceTypes.NORMAL : serviceTypes.OFFLINE,
 			timeRange,
-			type: userLogTypes.BRANCH_PRODUCTS,
+			type: branchProduct?.id
+				? userLogTypes.BRANCH_PRODUCTS
+				: userLogTypes.PRODUCTS,
 		},
 		options: {
-			enabled: !!branchProductId,
+			enabled: !!branchProduct || !!product,
 		},
 	});
 
@@ -87,16 +74,13 @@ export const ViewBranchProductChartModal = ({
 			visible
 			onCancel={onClose}
 		>
-			<Spin spinning={isFetchingBranchProduct || isFetchingLogs}>
+			<Spin spinning={isFetchingLogs}>
 				<TimeRangeFilter
 					fields={[timeRangeTypes.MONTHLY, timeRangeTypes.DATE_RANGE]}
 					onChange={setTimeRange}
 				/>
 				<RequestErrors
-					errors={[
-						...convertIntoArray(branchProductError, 'Branch Product'),
-						...convertIntoArray(logsError, 'Users'),
-					]}
+					errors={convertIntoArray(logsError, 'Logs')}
 					withSpaceBottom
 				/>
 
@@ -136,13 +120,17 @@ const Chart = ({ dataKey, logs }) => {
 	useEffect(() => {
 		const data = [];
 		logs.reverse().forEach((log) => {
-			const dataChanges = JSON.parse(log?.product_metadata?.data_changes);
+			let dataChanges = log?.product_metadata?.data_changes;
 
-			if (dataKey in dataChanges) {
-				data.push({
-					name: formatDateTime(log.datetime_created),
-					amount: dataChanges[dataKey],
-				});
+			if (dataChanges) {
+				dataChanges = JSON.parse(log?.product_metadata?.data_changes);
+
+				if (dataKey in dataChanges) {
+					data.push({
+						name: formatDateTime(log.datetime_created),
+						amount: dataChanges[dataKey],
+					});
+				}
 			}
 		});
 

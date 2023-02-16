@@ -72,7 +72,7 @@ export const ReportsPerMachine = ({
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
 			key: branchMachine.id,
-			machines: branchMachine.name,
+			machine: branchMachine.name,
 			connectivityStatus: branchMachine.is_online ? (
 				<Tag color="green">Online</Tag>
 			) : (
@@ -110,7 +110,7 @@ export const ReportsPerMachine = ({
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType = [
-			{ title: 'Machines', dataIndex: 'machines' },
+			{ title: 'Machine', dataIndex: 'machine' },
 			{ title: 'Actions', dataIndex: 'actions' },
 		];
 

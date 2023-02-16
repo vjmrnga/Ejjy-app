@@ -296,7 +296,7 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 
 export const useBranchProductRetrieve = ({ id, params, options }: Query = {}) =>
 	useQuery<any>(
-		['useBranchProductRetrieve', id],
+		['useBranchProductRetrieve', id, params?.branchId],
 		() =>
 			wrapServiceWithCatch(
 				BranchProductsService.list(

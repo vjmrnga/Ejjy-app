@@ -11,8 +11,16 @@ interface List extends IListRequest {
 }
 
 const service = {
-	list: async (params: List, baseURL) =>
+	list: async (params: List, baseURL: string) =>
 		axios.get('/user-logs/', { baseURL, params }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: List, baseURL: string) =>
+		axios.get('/offline-user-logs/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

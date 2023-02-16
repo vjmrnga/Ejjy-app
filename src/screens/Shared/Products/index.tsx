@@ -367,7 +367,12 @@ export const Products = () => {
 
 				{modalType === modals.CHART && selectedProduct && (
 					<ViewBranchProductChartModal
-						product={selectedProduct}
+						branchProduct={
+							isUserFromBranch(user.user_type) ? selectedProduct : undefined
+						}
+						product={
+							isUserFromBranch(user.user_type) ? undefined : selectedProduct
+						}
 						onClose={() => handleOpenModal(null, null)}
 					/>
 				)}
