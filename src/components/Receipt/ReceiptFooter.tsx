@@ -13,7 +13,9 @@ export const ReceiptFooter = () => {
 		software_developer_address: softwareDeveloperAddress,
 		software_developer_tin: softwareDeveloperTin,
 		pos_accreditation_number: posAccreditationNumber,
-		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
+		pos_accreditation_date: posAccreditationDate,
+		ptu_number: ptuNumber,
+		ptu_date: ptuDate,
 	} = siteSettings;
 
 	return (
@@ -26,8 +28,10 @@ export const ReceiptFooter = () => {
 			<Text>{softwareDeveloper}</Text>
 			<Text style={{ whiteSpace: 'pre-line' }}>{softwareDeveloperAddress}</Text>
 			<Text>{softwareDeveloperTin}</Text>
-			<Text>{posAccreditationNumber}</Text>
-			<Text>{posAccreditationValidUntilDate}</Text>
+			<Text>Acc No: {posAccreditationNumber}</Text>
+			<Text>Date Issued: {posAccreditationDate}</Text>
+			<Text>PTU No: {ptuNumber}</Text>
+			<Text>Date Issued: {ptuDate}</Text>
 		</Space>
 	);
 };

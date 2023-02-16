@@ -159,7 +159,6 @@ const getHeader = (headerData) => {
 	const {
 		name = '',
 		machine_identification_number: machineID = '',
-		permit_to_use: ptuNumber = '',
 		pos_terminal: posTerminal = '',
 	} = branchMachine || {};
 
@@ -181,7 +180,6 @@ const getHeader = (headerData) => {
       <span>${proprietor}</span>
       <span>${taxType} | ${tin}</span>
       <span>${machineID}</span>
-      <span>${ptuNumber}</span>
       <span>${posTerminal}</span>
       ${title ? '<br/>' : ''}
       ${title ? `<span>[${title}]</span>` : ''}
@@ -195,7 +193,9 @@ const getFooter = (footerData) => {
 		software_developer_address: softwareDeveloperAddress,
 		software_developer_tin: softwareDeveloperTin,
 		pos_accreditation_number: posAccreditationNumber,
-		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
+		pos_accreditation_date: posAccreditationDate,
+		ptu_number: ptuNumber,
+		ptu_date: ptuDate,
 	} = footerData;
 
 	return `
@@ -203,8 +203,10 @@ const getFooter = (footerData) => {
 			<span>${softwareDeveloper}</span>
 			<span style="white-space: pre-line">${softwareDeveloperAddress}</span>
 			<span>${softwareDeveloperTin}</span>
-			<span>${posAccreditationNumber}</span>
-			<span>${posAccreditationValidUntilDate}</span>
+			<span>Acc No: ${posAccreditationNumber}</span>
+			<span>Date Issued: ${posAccreditationDate}</span>
+      <span>PTU No: ${ptuNumber}</span>
+      <span>Date Issued: ${ptuDate}</span>
 			<br />
 		</div>`;
 };

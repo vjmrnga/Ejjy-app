@@ -30,7 +30,6 @@ const writeHeader = (headerData) => {
 	} = siteSettings;
 	const {
 		name = '',
-		permit_to_use: ptuNumber = '',
 		machine_identification_number: machineID = '',
 		pos_terminal: posTerminal = '',
 	} = branchMachine || {};
@@ -85,13 +84,6 @@ const writeHeader = (headerData) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: ptuNumber,
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
 		text: posTerminal,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
@@ -121,7 +113,9 @@ const writeFooter = (footerData) => {
 		software_developer_address: softwareDeveloperAddress,
 		software_developer_tin: softwareDeveloperTin,
 		pos_accreditation_number: posAccreditationNumber,
-		pos_accreditation_valid_until_date: posAccreditationValidUntilDate,
+		pos_accreditation_date: posAccreditationDate,
+		ptu_number: ptuNumber,
+		ptu_date: ptuDate,
 	} = siteSettings;
 	let rowNumber = currentRowNumber;
 
@@ -150,14 +144,28 @@ const writeFooter = (footerData) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: posAccreditationNumber,
+		text: `Acc No: ${posAccreditationNumber}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: posAccreditationValidUntilDate,
+		text: `Date Issued: ${posAccreditationDate}`,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `PTU No: ${ptuNumber}`,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `Date Issued: ${ptuDate}`,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});

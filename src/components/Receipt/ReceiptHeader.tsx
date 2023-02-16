@@ -24,7 +24,6 @@ export const ReceiptHeader = ({ branchMachine, title }: Props) => {
 
 	const {
 		name = '',
-		permit_to_use: ptuNumber = '',
 		machine_identification_number: machineID = '',
 		pos_terminal: posTerminal = '',
 	} = branchMachine || {};
@@ -42,7 +41,6 @@ export const ReceiptHeader = ({ branchMachine, title }: Props) => {
 			<Text>{proprietor}</Text>
 			<Text>{[taxType, tin].filter(Boolean).join(' | ')}</Text>
 			<Text>{machineID}</Text>
-			<Text>{ptuNumber}</Text>
 			<Text>{posTerminal}</Text>
 
 			{title && (
