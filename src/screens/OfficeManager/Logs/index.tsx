@@ -9,12 +9,14 @@ import { TabSessionAssignments } from 'screens/Shared/Assignments/components/Tab
 import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { TabCashBreakdowns } from 'screens/Shared/Logs/components/TabCashBreakdowns';
 import { TabUserLogs } from 'screens/Shared/Logs/components/TabUserLogs';
+import { TabBranchConnectivityLogs } from './components/TabBranchConnectivityLogs';
 import { TabProductLogs } from './components/TabProductLogs';
 
 export const tabs = {
 	PRODUCTS: 'Products',
 	BRANCH_PRODUCTS: 'Branch Products',
 	BRANCH_ASSIGNMENTS: 'Branch Assignments',
+	BRANCH_CONNECTIVITY_LOGS: 'Branch Connectivity Logs',
 	CASHIERING_ASSIGNMENTS: 'Cashiering Assignments',
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
 	USERS: 'Users',
@@ -60,6 +62,13 @@ export const Logs = () => {
 						tab={tabs.BRANCH_ASSIGNMENTS}
 					>
 						<TabBranchAssignments />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.BRANCH_CONNECTIVITY_LOGS}
+						tab={tabs.BRANCH_CONNECTIVITY_LOGS}
+					>
+						<TabBranchConnectivityLogs />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane

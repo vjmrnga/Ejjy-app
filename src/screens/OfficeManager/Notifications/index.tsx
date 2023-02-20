@@ -5,7 +5,7 @@ import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import shallow from 'zustand/shallow';
-import { TabBranchConnectivityLogs } from './components/TabBranchConnectivityLogs';
+import { TabBranchStatus } from './components/TabBranchStatus';
 import { TabDTR } from './components/TabDTR';
 import { useNotificationStore } from './stores/useNotificationStore';
 
@@ -71,7 +71,7 @@ export const Notifications = () => {
 							</Space>
 						}
 					>
-						<TabBranchConnectivityLogs />
+						<TabBranchStatus />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

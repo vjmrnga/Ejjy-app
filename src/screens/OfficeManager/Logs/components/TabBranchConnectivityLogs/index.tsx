@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Select, Table, Tag } from 'antd';
+import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectivityType,
@@ -12,7 +12,6 @@ import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
-	NOTIFICATION_INTERVAL_MS,
 	pageSizeOptions,
 	timeRangeTypes,
 } from 'global';
@@ -21,73 +20,6 @@ import React, { useEffect, useState } from 'react';
 import { convertIntoArray, filterOption, formatDateTime } from 'utils';
 
 export const TabBranchConnectivityLogs = () => {
-	return (
-		<>
-			<ConnectivityStatusesTable />
-
-			<Divider />
-
-			<ConnectivityLogsTable />
-		</>
-	);
-};
-
-const ConnectivityStatusesTable = () => {
-	// VARIABLES
-	const columns: ColumnsType = [
-		{ title: 'Branch', dataIndex: 'branch' },
-		{ title: 'Connectivity Status', dataIndex: 'connectivityStatus' },
-	];
-
-	// STATES
-	const [dataSource, setDataSource] = useState([]);
-
-	// CUSTOM HOOKS
-	const {
-		data: { branches },
-		isLoading: isFetchingBranches,
-		error: branchesErrors,
-	} = useBranches({
-		params: { pageSize: MAX_PAGE_SIZE },
-		options: { refetchInterval: NOTIFICATION_INTERVAL_MS },
-	});
-
-	// METHODS
-	useEffect(() => {
-		const data = branches.map((branch) => ({
-			key: branch.id,
-			branch: branch?.name,
-			connectivityStatus: branch.is_online ? (
-				<Tag color="green">Online</Tag>
-			) : (
-				<Tag color="red">Offline</Tag>
-			),
-		}));
-
-		setDataSource(data);
-	}, [branches]);
-
-	return (
-		<>
-			<TableHeader
-				title="Branch Connectivity Status"
-				wrapperClassName="pt-2 px-0"
-			/>
-
-			<RequestErrors errors={convertIntoArray(branchesErrors)} />
-
-			<Table
-				columns={columns}
-				dataSource={dataSource}
-				loading={isFetchingBranches}
-				pagination={false}
-				bordered
-			/>
-		</>
-	);
-};
-
-const ConnectivityLogsTable = () => {
 	// VARIABLES
 	const columns: ColumnsType = [
 		{ title: 'Branch', dataIndex: 'branch' },
