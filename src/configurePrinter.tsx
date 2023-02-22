@@ -43,6 +43,11 @@ const PAPER_WIDTH_INCHES = 3;
 const QZ_MESSAGE_KEY = 'QZ_MESSAGE_KEY';
 const PRINT_MESSAGE_KEY = 'PRINT_MESSAGE_KEY';
 
+const printerStatuses = {
+	OK: 'OK',
+	NOT_AVAILABLE: 'NOT_AVAILABLE',
+};
+
 const configurePrinter = () => {
 	authenticateQZTray(qz);
 
@@ -69,81 +74,109 @@ const configurePrinter = () => {
 		});
 };
 
-const print = ({
+const print = async ({
 	data: printData,
 	loadingMessage,
 	successMessage,
 	errorMessage,
 	onComplete = null,
 }) => {
-	console.log(printData);
-
-	if (qz.websocket.isActive()) {
-		message.loading({
-			content: loadingMessage,
-			key: PRINT_MESSAGE_KEY,
-			duration: 5_000,
-		});
-
-		const { isPrinterConnected } =
-			useUserInterfaceStore.getState().userInterface;
-
-		// if (isPrinterConnected) {
-		qz.printers
-			.find(getAppReceiptPrinterName())
-			.then((printer) => {
-				const config = qz.configs.create(printer, {
-					margins: {
-						top: 0,
-						right: PAPER_MARGIN_INCHES,
-						bottom: 0,
-						left: PAPER_MARGIN_INCHES,
-					},
-					density: 'draft',
-				});
-
-				const data = [
-					{
-						type: 'pixel',
-						format: 'html',
-						flavor: 'plain',
-						options: { pageWidth: PAPER_WIDTH_INCHES },
-						data: printData,
-					},
-				];
-
-				return qz.print(config, data);
-			})
-			.then(() => {
-				message.success({
-					content: successMessage,
-					key: PRINT_MESSAGE_KEY,
-				});
-			})
-			.catch((err) => {
-				message.error({
-					content: errorMessage,
-					key: PRINT_MESSAGE_KEY,
-				});
-				console.error(err);
-			})
-			.finally(() => {
-				if (onComplete) {
-					onComplete();
-				}
-			});
-		// } else {
-		// 	message.error({
-		// 		key: PRINT_MESSAGE_KEY,
-		// 		content:
-		// 			'Printer is not detected. Please check the printer connection first and try printing again.',
-		// 	});
-		// }
-	} else {
+	if (!qz.websocket.isActive()) {
 		message.error({
 			content: 'Printer is not connected or QZTray is not open.',
 		});
+
+		return;
 	}
+
+	message.loading({
+		content: loadingMessage,
+		key: PRINT_MESSAGE_KEY,
+		duration: 5_000,
+	});
+
+	let printerStatus = null;
+
+	// Add printer callback
+	qz.printers.setPrinterCallbacks((event) => {
+		console.log('event', event);
+		printerStatus = event;
+	});
+
+	// Register listener and get status; deregister after
+	await qz.printers.startListening(getAppReceiptPrinterName());
+	await qz.printers.getStatus();
+	await qz.printers.stopListening();
+
+	if (printerStatus === null) {
+		message.error({
+			key: PRINT_MESSAGE_KEY,
+			content: 'Unable to detect selected printer.',
+		});
+
+		return;
+	}
+
+	// NOT_AVAILABLE: Printer is not available
+	if (printerStatus.statusText === printerStatuses.NOT_AVAILABLE) {
+		message.error({
+			key: PRINT_MESSAGE_KEY,
+			content:
+				'Printer is not available. Make sure printer is connected to the machine.',
+		});
+
+		return;
+	}
+
+	// OK: Ready to print
+	if (printerStatus.statusText === printerStatuses.OK) {
+		console.log(printData);
+
+		try {
+			const config = qz.configs.create(getAppReceiptPrinterName(), {
+				margins: {
+					top: 0,
+					right: PAPER_MARGIN_INCHES,
+					bottom: 0,
+					left: PAPER_MARGIN_INCHES,
+				},
+				density: 'draft',
+			});
+
+			await qz.print(config, [
+				{
+					type: 'pixel',
+					format: 'html',
+					flavor: 'plain',
+					options: { pageWidth: PAPER_WIDTH_INCHES },
+					data: printData,
+				},
+			]);
+
+			message.success({
+				content: successMessage,
+				key: PRINT_MESSAGE_KEY,
+			});
+		} catch (e) {
+			message.error({
+				content: errorMessage,
+				key: PRINT_MESSAGE_KEY,
+			});
+			console.error(e);
+		} finally {
+			if (onComplete) {
+				onComplete();
+			}
+		}
+
+		return;
+	}
+
+	// OTHERS
+	message.error({
+		key: PRINT_MESSAGE_KEY,
+		content: 'Printer cannot print right now. Please contact an administrator.',
+	});
 };
 
 const getHeader = (headerData) => {

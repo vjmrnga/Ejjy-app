@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.328",
+	"version": "0.1.335",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -25,9 +25,11 @@
 		"build:local": "env-cmd -f .env.local react-scripts build",
 		"build:electron": "electron-builder -w --x64 -p always --config electron-builder.json",
 		"build:electron:headoffice": "electron-builder -w --x64 -p always --config electron-builder-headoffice.json",
-		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron && npm run build:electron:headoffice"
+		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron && npm run build:electron:headoffice",
+		"publish:backoffice": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron"
 	},
 	"dependencies": {
+		"@ant-design/colors": "^7.0.0",
 		"@ant-design/icons": "^4.2.2",
 		"antd": "4.19.1",
 		"antd-css-utilities": "^1.0.3",

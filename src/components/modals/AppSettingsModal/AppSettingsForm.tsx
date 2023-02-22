@@ -300,11 +300,7 @@ const ReceiptPrinter = () => {
 				setPrinters(data);
 			})
 			.catch(() => {
-				setStatus({
-					error: {
-						printerName: 'Unable to list printers.',
-					},
-				});
+				setStatus({ error: { printerName: 'Unable to list printers.' } });
 			})
 			.finally(() => {
 				setIsFetchingPrinters(false);

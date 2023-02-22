@@ -21,12 +21,14 @@ interface Props {
 	bordered?: boolean;
 	branch: any;
 	className?: string;
+	onSuccess?: any;
 }
 
 export const BranchDayAuthorization = ({
 	bordered,
 	branch,
 	className,
+	onSuccess,
 }: Props) => {
 	// STATES
 	const [branchDay, setBranchDay] = useState(null);
@@ -132,15 +134,14 @@ export const BranchDayAuthorization = ({
 				let response = null;
 				if (branchDay) {
 					response = await endBranchDayAuthorization({
-						id: getId(branchDay),
-						branchId: getId(branch),
+						branchIds: `${getId(branch)}`,
 						endedById: getId(user),
 					});
 
 					message.success('Day was closed successfully.');
 				} else {
 					response = await createBranchDayAuthorization({
-						branchId: getId(branch),
+						branchIds: `${getId(branch)}`,
 						startedById: getId(user),
 					});
 
@@ -148,9 +149,12 @@ export const BranchDayAuthorization = ({
 				}
 
 				if (response) {
+					const branchDayAuth = response.data[0];
+					onSuccess?.(getId(branch), !branchDay);
+
 					setBranchDay(() => ({
-						...response.data,
-						online_id: response.data.id,
+						...branchDayAuth,
+						online_id: branchDayAuth.id,
 					}));
 				}
 			}
