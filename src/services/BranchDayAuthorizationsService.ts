@@ -10,12 +10,12 @@ interface Retrieve {
 }
 
 interface Create {
-	branch_id: number;
+	branch_ids: string;
 	started_by_id: number;
 }
 
 interface End {
-	branch_id: number;
+	branch_ids: string;
 	ended_by_id: number;
 }
 
@@ -30,8 +30,8 @@ const service = {
 		axios.post<any>('/branches-day-authorizations/', body, {
 			baseURL,
 		}),
-	end: async (id, body: End, baseURL) =>
-		axios.post<any>(`/branches-day-authorizations/${id}/end/`, body, {
+	end: async (body: End, baseURL) =>
+		axios.post<any>(`/branches-day-authorizations/end/`, body, {
 			baseURL,
 		}),
 };

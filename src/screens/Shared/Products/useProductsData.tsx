@@ -36,10 +36,8 @@ export const useProductsData = ({ params, user }) => {
 		if (isUserFromBranch(user.user_type)) {
 			setDataSource(
 				branchProducts.map((branchProduct) => ({
-					...branchProduct,
 					...branchProduct.product,
-					id: branchProduct.id,
-					online_id: branchProduct.online_id,
+					...branchProduct,
 				})),
 			);
 		} else {

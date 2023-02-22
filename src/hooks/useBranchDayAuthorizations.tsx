@@ -58,10 +58,10 @@ export const useBranchDayAuthorizationCreate = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ branchId, startedById }: any) =>
+		({ branchIds, startedById }: any) =>
 			BranchDayAuthorizationsService.create(
 				{
-					branch_id: branchId,
+					branch_ids: branchIds,
 					started_by_id: startedById,
 				},
 				getGoogleApiUrl(),
@@ -79,11 +79,10 @@ export const useBranchDayAuthorizationEnd = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		({ id, branchId, endedById }) =>
+		({ branchIds, endedById }) =>
 			BranchDayAuthorizationsService.end(
-				id,
 				{
-					branch_id: branchId,
+					branch_ids: branchIds,
 					ended_by_id: endedById,
 				},
 				getGoogleApiUrl(),
