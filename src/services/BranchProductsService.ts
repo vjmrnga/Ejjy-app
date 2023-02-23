@@ -64,8 +64,8 @@ const service = {
 };
 
 const serviceOffline = {
-	listOffline: async (baseURL) =>
-		axios.get('/branches-products/offline/', { baseURL }),
+	listOffline: async (params: List, baseURL) =>
+		axios.get('/offline-branches-products/', { baseURL, params }),
 };
 
 export default {
