@@ -1,8 +1,11 @@
-import { Button, Descriptions, Divider, Modal } from 'antd';
-import { useBranchProductRetrieve } from 'hooks';
-import { upperFirst } from 'lodash';
-import React from 'react';
+import { Button, Descriptions, Divider, Modal, Spin, Tabs } from 'antd';
+import { RequestErrors } from 'components';
+import { MAX_PAGE_SIZE } from 'global';
+import { useBranches, useBranchProducts } from 'hooks';
+import _, { upperFirst } from 'lodash';
+import React, { useEffect, useState } from 'react';
 import {
+	convertIntoArray,
 	formatInPeso,
 	formatQuantity,
 	getProductType,
@@ -15,13 +18,31 @@ interface Props {
 }
 
 export const ViewProductModal = ({ product, onClose }: Props) => {
+	// STATES
+	const [activeBranch, setActiveBranch] = useState(null);
+
 	// CUSTOM HOOKS
-	const { data: branchProduct } = useBranchProductRetrieve({
-		id: product?.id,
-		options: {
-			enabled: product !== null,
-		},
+	const {
+		data: { branchProducts },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductError,
+	} = useBranchProducts({
+		params: { productIds: product?.id },
+		options: { enabled: product !== null },
 	});
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchesErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+
+	useEffect(() => {
+		if (branches.length > 0) {
+			setActiveBranch(_.toString(branches?.[0]?.id));
+		}
+	}, [branches]);
 
 	return (
 		<Modal
@@ -33,6 +54,14 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 			visible
 			onCancel={onClose}
 		>
+			<RequestErrors
+				className="px-6 pt-6"
+				errors={[
+					...convertIntoArray(branchesErrors, 'Branches'),
+					...convertIntoArray(branchProductError, 'Branch Products'),
+				]}
+			/>
+
 			<Descriptions
 				className="w-100"
 				column={2}
@@ -68,6 +97,9 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 				</Descriptions.Item>
 				<Descriptions.Item label="Description" span={2}>
 					{product.description}
+				</Descriptions.Item>
+				<Descriptions.Item label="Include in Scale">
+					{product.is_shown_in_scale_list ? 'Yes' : 'No'}
 				</Descriptions.Item>
 			</Descriptions>
 
@@ -154,19 +186,56 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 				<Descriptions.Item label="Price (Bulk)">
 					{formatInPeso(product.price_per_bulk)}
 				</Descriptions.Item>
-				<Descriptions.Item label="Wholesale Price (Piece)">
-					{formatInPeso(branchProduct?.markdown_price_per_piece1)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Wholesale Price (Bulk)">
-					{formatInPeso(branchProduct?.markdown_price_per_bulk1)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Special Price (Piece)">
-					{formatInPeso(branchProduct?.markdown_price_per_piece2)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Special Price (Bulk)">
-					{formatInPeso(branchProduct?.markdown_price_per_bulk2)}
-				</Descriptions.Item>
 			</Descriptions>
+
+			<Divider orientation="left">Branch Product Prices</Divider>
+
+			<Spin spinning={isFetchingBranchProducts || isFetchingBranches}>
+				<Tabs
+					activeKey={activeBranch}
+					tabPosition="left"
+					type="card"
+					destroyInactiveTabPane
+					onTabClick={setActiveBranch}
+				>
+					{branches.map((branch) => {
+						const branchProduct = branchProducts?.find(
+							(bp) => bp.branch_id === branch.id,
+						);
+
+						return branchProduct ? (
+							<Tabs.TabPane key={branch.id} tab={branch.name}>
+								<Descriptions
+									className="w-100"
+									column={2}
+									labelStyle={{ width: 200 }}
+									size="small"
+									bordered
+								>
+									<Descriptions.Item label="Price (Piece)">
+										{formatInPeso(branchProduct.price_per_piece)}
+									</Descriptions.Item>
+									<Descriptions.Item label="Price (Bulk)">
+										{formatInPeso(branchProduct.price_per_bulk)}
+									</Descriptions.Item>
+									<Descriptions.Item label="Wholesale Price (Piece)">
+										{formatInPeso(branchProduct?.markdown_price_per_piece1)}
+									</Descriptions.Item>
+									<Descriptions.Item label="Wholesale Price (Bulk)">
+										{formatInPeso(branchProduct?.markdown_price_per_bulk1)}
+									</Descriptions.Item>
+									<Descriptions.Item label="Special Price (Piece)">
+										{formatInPeso(branchProduct?.markdown_price_per_piece2)}
+									</Descriptions.Item>
+									<Descriptions.Item label="Special Price (Bulk)">
+										{formatInPeso(branchProduct?.markdown_price_per_bulk2)}
+									</Descriptions.Item>
+								</Descriptions>
+							</Tabs.TabPane>
+						) : undefined;
+					})}
+				</Tabs>
+			</Spin>
 		</Modal>
 	);
 };
