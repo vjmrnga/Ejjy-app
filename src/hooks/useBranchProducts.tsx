@@ -214,7 +214,9 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 		],
 		() =>
 			wrapServiceWithCatch(
-				BranchProductsService.list(
+				// TODO: We are temporarily directly using the List Offline to make sure all data are updated.
+				// We need to identify when to use list offline so refactor this one.
+				BranchProductsService.listOffline(
 					{
 						branch_id: params?.branchId,
 						has_bo_balance: params?.hasBoBalance,
@@ -243,11 +245,44 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 		},
 	);
 
-export const useBranchProductsOffline = ({ options }: Query) =>
+export const useBranchProductsOffline = ({ params, options }: Query) =>
 	useQuery<any>(
-		['useBranchProductsOffline'],
+		[
+			'useBranchProductsOffline',
+			params?.ids,
+			params?.branchId,
+			params?.hasBoBalance,
+			params?.hasNegativeBalance,
+			params?.identifier,
+			params?.isSoldInBranch,
+			params?.page,
+			params?.pageSize,
+			params?.productCategory,
+			params?.productIds,
+			params?.productStatus,
+			params?.search,
+		],
 		() =>
-			wrapServiceWithCatch(BranchProductsService.listOffline(getLocalApiUrl())),
+			wrapServiceWithCatch(
+				BranchProductsService.listOffline(
+					{
+						branch_id: params?.branchId,
+						has_bo_balance: params?.hasBoBalance,
+						has_negative_balance: params?.hasNegativeBalance,
+						identifier: params?.identifier,
+						ids: params?.ids,
+						is_sold_in_branch: params?.isSoldInBranch,
+						ordering: '-product__textcode',
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						product_category: params?.productCategory,
+						product_ids: params?.productIds,
+						product_status: params?.productStatus,
+						search: params?.search,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		options,
 	);
 
