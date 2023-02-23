@@ -68,7 +68,14 @@ export const ViewBranchProductChartModal = ({
 		<Modal
 			className="Modal__hasFooter Modal__large"
 			footer={<Button onClick={onClose}>Close</Button>}
-			title="Product Trend"
+			title={
+				<>
+					<span>Product Trend</span>
+					<span className="ModalTitleMainInfo">
+						{product?.name || branchProduct?.product?.name}
+					</span>
+				</>
+			}
 			centered
 			closable
 			visible
