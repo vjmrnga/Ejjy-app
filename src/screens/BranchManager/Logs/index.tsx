@@ -5,17 +5,18 @@ import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
-import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
+import { TabSessions } from 'screens/Shared/Branches/components/TabSessions';
 import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { TabCashBreakdowns } from 'screens/Shared/Logs/components/TabCashBreakdowns';
 import { TabUserLogs } from 'screens/Shared/Logs/components/TabUserLogs';
-import { isStandAlone } from 'utils';
+import { getLocalBranchId, isStandAlone } from 'utils';
 
 export const tabs = {
 	BRANCH_PRODUCTS: 'Branch Products',
 	BRANCH_ASSIGNMENTS: 'Branch Assignments',
 	CASHIERING_ASSIGNMENTS: 'Cashiering Assignments',
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
+	CASHIERING_SESSIONS: 'Cashiering Sessions',
 	USERS: 'Users',
 };
 
@@ -60,10 +61,10 @@ export const Logs = () => {
 					)}
 
 					<Tabs.TabPane
-						key={tabs.CASHIERING_ASSIGNMENTS}
-						tab={tabs.CASHIERING_ASSIGNMENTS}
+						key={tabs.CASHIERING_SESSIONS}
+						tab={tabs.CASHIERING_SESSIONS}
 					>
-						<TabSessionAssignments />
+						<TabSessions branch={{ id: getLocalBranchId() }} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.CASH_BREAKDOWNS} tab={tabs.CASH_BREAKDOWNS}>
