@@ -139,7 +139,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			{ title: 'VAT Payable', dataIndex: 'vatPayable' },
 			{
 				title:
-					siteSettings.tax_type === taxTypes.VAT
+					siteSettings?.tax_type === taxTypes.VAT
 						? 'Net Sales VAT'
 						: 'Net Sales NVAT',
 				dataIndex: 'netSales',

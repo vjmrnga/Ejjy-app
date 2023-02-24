@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { TransactionProductsService } from 'services';
 import { getLocalApiUrl } from 'utils';
@@ -16,17 +17,19 @@ const useTransactionProducts = ({ params, options }: Query) =>
 			params?.timeRange,
 		],
 		() =>
-			TransactionProductsService.list(
-				{
-					is_vat_exempted: params?.isVatExempted,
-					or_number: params?.orNumber,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					statuses: params?.statuses,
-					time_range: params?.timeRange,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+			wrapServiceWithCatch(
+				TransactionProductsService.list(
+					{
+						is_vat_exempted: params?.isVatExempted,
+						or_number: params?.orNumber,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						statuses: params?.statuses,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

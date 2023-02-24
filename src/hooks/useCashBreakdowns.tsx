@@ -18,7 +18,7 @@ const useCashBreakdowns = ({ params }: Query) =>
 			params?.timeRange,
 			params?.type,
 		],
-		async () =>
+		() =>
 			wrapServiceWithCatch(
 				CashBreakdownsService.list(
 					{

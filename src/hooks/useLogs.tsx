@@ -1,8 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { LogsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 const useLogs = ({ params }: Query) =>
 	useQuery<any>(
@@ -14,17 +15,19 @@ const useLogs = ({ params }: Query) =>
 			params?.timeRange,
 			params?.type,
 		],
-		async () =>
-			LogsService.list(
-				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					branch_machine_id: params?.branchMachineId,
-					acting_user_id: params?.actingUserId,
-					time_range: params?.timeRange,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(
+				LogsService.list(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						branch_machine_id: params?.branchMachineId,
+						acting_user_id: params?.actingUserId,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

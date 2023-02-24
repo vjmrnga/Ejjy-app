@@ -16,7 +16,7 @@ const useConnectivityLogs = ({ params, options }: Query) =>
 			params?.timeRange,
 			params?.type,
 		],
-		async () =>
+		() =>
 			wrapServiceWithCatch(
 				ConnectivityLogsService.list(
 					{

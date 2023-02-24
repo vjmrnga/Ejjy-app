@@ -7,7 +7,7 @@ import {
 	ViewZReadReportModal,
 } from 'components';
 import { FieldError } from 'components/elements';
-import { EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
+import { branchMachineTypes, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchMachines,
 	useCashieringSessions,
@@ -29,6 +29,11 @@ interface Props {
 	tableHeaderClassName?: string;
 }
 
+const branchMachineCashieringTypes = [
+	branchMachineTypes.CASHIERING,
+	branchMachineTypes.SCALE_AND_CASHIERING,
+];
+
 const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
 export const ReportsPerMachine = ({
@@ -48,7 +53,8 @@ export const ReportsPerMachine = ({
 	const { user } = useAuth();
 	const {
 		data: { branchMachines },
-		isLoading: isLoadingBranchMachines,
+		isFetching: isFetchingBranchMachines,
+		isFetchedAfterMount: isBranchMachinesFetchedAfterMount,
 		error: branchMachinesError,
 	} = useBranchMachines({
 		params: {
@@ -57,6 +63,7 @@ export const ReportsPerMachine = ({
 		},
 		options: { refetchInterval: BRANCH_MACHINES_REFETCH_INTERVAL_MS },
 	});
+
 	const {
 		mutateAsync: createXReadReport,
 		isLoading: isCreatingXReadReport,
@@ -78,7 +85,7 @@ export const ReportsPerMachine = ({
 			) : (
 				<Tag color="red">Offline</Tag>
 			),
-			actions: (
+			actions: branchMachineCashieringTypes.includes(branchMachine.type) ? (
 				<Space>
 					<Button
 						type="primary"
@@ -102,7 +109,7 @@ export const ReportsPerMachine = ({
 						View ZRead
 					</Button>
 				</Space>
-			),
+			) : null,
 		}));
 
 		setDataSource(formattedBranchMachines);
@@ -189,7 +196,7 @@ export const ReportsPerMachine = ({
 				loading={
 					isCreatingXReadReport ||
 					isCreatingZReadReport ||
-					isLoadingBranchMachines
+					(isFetchingBranchMachines && !isBranchMachinesFetchedAfterMount)
 				}
 				pagination={false}
 				scroll={{ x: 650 }}

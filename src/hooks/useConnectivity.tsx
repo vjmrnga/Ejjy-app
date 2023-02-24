@@ -1,4 +1,5 @@
 import { connectivityTypes } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ConnectivityLogsService, SiteSettingsService } from 'services';
@@ -18,10 +19,7 @@ const useConnectivity = () => {
 
 	useQuery(
 		['useConnectivity'],
-		() =>
-			SiteSettingsService.retrieve(serverUrl).catch((e) =>
-				Promise.reject(e.errors),
-			),
+		() => wrapServiceWithCatch(SiteSettingsService.retrieve(serverUrl)),
 		{
 			enabled: !isStandAlone(),
 			refetchInterval: 5000,

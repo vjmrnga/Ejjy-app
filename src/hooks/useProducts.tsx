@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductsService } from 'services';
 import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
-const useProducts = ({ params }: Query) =>
+const useProducts = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
 			'useProducts',
@@ -16,7 +16,7 @@ const useProducts = ({ params }: Query) =>
 			params?.productCategory,
 			params?.search,
 		],
-		async () => {
+		() => {
 			const service = isStandAlone()
 				? ProductsService.list
 				: ProductsService.listOffline;
@@ -41,6 +41,7 @@ const useProducts = ({ params }: Query) =>
 				products: query.data.results,
 				total: query.data.count,
 			}),
+			...options,
 		},
 	);
 

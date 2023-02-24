@@ -1,4 +1,5 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ProductChecksService } from 'services';
@@ -14,17 +15,19 @@ const useProductChecks = ({ params }: Query) =>
 			params?.pageSize,
 			params?.type,
 		],
-		async () =>
-			ProductChecksService.list(
-				{
-					is_filled_up: params?.isFilledUp,
-					only_of_today: params?.onlyOfToday,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					page: params?.page || DEFAULT_PAGE,
-					type: params?.type,
-				},
-				getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(
+				ProductChecksService.list(
+					{
+						is_filled_up: params?.isFilledUp,
+						only_of_today: params?.onlyOfToday,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						page: params?.page || DEFAULT_PAGE,
+						type: params?.type,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -37,10 +40,8 @@ const useProductChecks = ({ params }: Query) =>
 export const useProductCheckRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useProductCheckRetrieve', id],
-		async () =>
-			ProductChecksService.retrieve(id, getLocalApiUrl()).catch((e) =>
-				Promise.reject(e.errors),
-			),
+		() =>
+			wrapServiceWithCatch(ProductChecksService.retrieve(id, getLocalApiUrl())),
 		{
 			select: (query) => query.data,
 			...options,

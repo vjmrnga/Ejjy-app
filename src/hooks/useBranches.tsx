@@ -41,8 +41,8 @@ const useBranches = ({ key, params, options }: Query = {}) =>
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
-				branches: query.data.results,
-				total: query.data.count,
+				branches: query?.data?.results || [],
+				total: query?.data?.count || 0,
 			}),
 			...options,
 		},

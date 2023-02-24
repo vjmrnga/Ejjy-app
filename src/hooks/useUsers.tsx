@@ -291,7 +291,7 @@ const useUsersNew = ({ params, options }: Query = {}) =>
 export const useUserRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useUserRetrieve', id],
-		async () =>
+		() =>
 			// NOTE: We didn't catch the this request so we can check the status code of the error
 			UsersService.retrieve(id, getLocalApiUrl()),
 		{

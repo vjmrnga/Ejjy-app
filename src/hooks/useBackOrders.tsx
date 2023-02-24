@@ -1,5 +1,6 @@
 import { actions } from 'ducks/back-orders';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE, request } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { BackOrdersService } from 'services';
@@ -84,15 +85,17 @@ export const useBackOrders = () => {
 const useBackOrdersNew = ({ params }: Query) =>
 	useQuery<any>(
 		['useBackOrders', params?.page, params?.pageSize, params?.type],
-		async () =>
-			BackOrdersService.list(
-				{
-					page: params?.page || DEFAULT_PAGE,
-					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-					type: params?.type,
-				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(
+				BackOrdersService.list(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						type: params?.type,
+					},
+					getLocalApiUrl(),
+				),
+			),
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -105,11 +108,8 @@ const useBackOrdersNew = ({ params }: Query) =>
 export const useBackOrderRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useBackOrderRetrieve', id],
-		async () =>
-			BackOrdersService.retrieve(
-				id,
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
-			).catch((e) => Promise.reject(e.errors)),
+		() =>
+			wrapServiceWithCatch(BackOrdersService.retrieve(id, getLocalApiUrl())),
 		{
 			select: (query) => query.data,
 			...options,

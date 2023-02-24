@@ -58,7 +58,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 			key: branchMachine.id,
 			name: (
 				<Link
-					to={`/${getUrlPrefix(user.user_type)}/branch-machines/${
+					to={`${getUrlPrefix(user.user_type)}/branch-machines/${
 						branchMachine.id
 					}`}
 				>

@@ -19,7 +19,7 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 			params?.pageSize,
 			params?.salesTimeRange,
 		],
-		async () => {
+		() => {
 			const service = isStandAlone()
 				? BranchMachinesService.list
 				: BranchMachinesService.listOffline;
@@ -49,9 +49,9 @@ const useBranchMachines = ({ params, options }: Query = {}) =>
 export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 	useQuery<any>(
 		['useBranchMachineRetrieve', id],
-		async () =>
-			BranchMachinesService.retrieve(id, getLocalApiUrl()).catch((e) =>
-				Promise.reject(e.errors),
+		() =>
+			wrapServiceWithCatch(
+				BranchMachinesService.retrieve(id, getLocalApiUrl()),
 			),
 		{
 			select: (query) => query.data,

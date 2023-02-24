@@ -1,9 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { BranchAssignmentsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getGoogleApiUrl, getLocalApiUrl } from 'utils';
 
 const useBranchAssignments = ({ params }: Query) =>
 	useQuery<any>(
@@ -15,7 +15,7 @@ const useBranchAssignments = ({ params }: Query) =>
 			params?.timeRange,
 			params?.userId,
 		],
-		async () =>
+		() =>
 			wrapServiceWithCatch(
 				BranchAssignmentsService.list(
 					{
@@ -44,7 +44,7 @@ export const useBranchAssignmentCreate = () =>
 				branch_id: branchId,
 				user_id: userId,
 			},
-			IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+			getGoogleApiUrl(),
 		),
 	);
 

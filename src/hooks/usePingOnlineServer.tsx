@@ -1,4 +1,5 @@
 import { useAuth } from 'hooks';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
@@ -19,10 +20,7 @@ const usePingOnlineServer = () => {
 
 	useQuery(
 		['usePingOnlineServer', isEnabled],
-		() =>
-			SiteSettingsService.retrieve(getOnlineApiUrl()).catch((e) =>
-				Promise.reject(e.errors),
-			),
+		() => wrapServiceWithCatch(SiteSettingsService.retrieve(getOnlineApiUrl())),
 		{
 			enabled: isEnabled,
 			notifyOnChangeProps: ['data'],
