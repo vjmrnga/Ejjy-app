@@ -1,8 +1,9 @@
 import { Spin } from 'antd';
 import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { useAccountRetrieve, useAuth } from 'hooks';
+import { useAccountRetrieve } from 'hooks';
 import React, { useCallback } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getFullName, getUrlPrefix } from 'utils';
 import { AccountDetails } from './components/ViewAccount/AccountDetails';
 import { PointTransactions } from './components/ViewAccount/PointTransactions';
@@ -16,7 +17,7 @@ export const ViewAccount = ({ match }: Props) => {
 	const accountId = match?.params?.id;
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: account,
 		isFetching: isFetchingAccount,

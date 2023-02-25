@@ -5,6 +5,11 @@ export const request = {
 	ERROR: 3,
 };
 
+export const appTypes = {
+	BACK_OFFICE: 'back_office',
+	HEAD_OFFICE: 'head_office',
+};
+
 export const productTypes = {
 	DRY: 'dry',
 	WET: 'wet',
@@ -218,11 +223,6 @@ export const cashBreakdownCategories = {
 	CASH_BREAKDOWN: 'cash_breakdown',
 	CASH_IN: 'cash_in',
 	CASH_OUT: 'cash_out',
-};
-
-export const appTypes = {
-	BACK_OFFICE: 'back_office',
-	HEAD_OFFICE: 'head_office',
 };
 
 export const serviceTypes = {

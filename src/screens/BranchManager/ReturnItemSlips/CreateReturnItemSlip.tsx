@@ -2,18 +2,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ErrorMessage, Form, Formik } from 'formik';
-import { isEmpty, isInteger } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import {
-	convertIntoArray,
-	convertToPieces,
-	getBranchProductStatus,
-	sleep,
-} from 'utils';
-import * as Yup from 'yup';
-import { Content, RequestErrors, TableHeader } from '../../../components';
+import { Content, RequestErrors, TableHeader } from 'components';
 import {
 	Box,
 	Button,
@@ -21,20 +10,29 @@ import {
 	FormCheckbox,
 	FormInput,
 	FormSelect,
-} from '../../../components/elements';
+} from 'components/elements';
+import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	branchProductStatusOptionsWithAll,
 	pageSizeOptions,
 	quantityTypeOptions,
-} from '../../../global/options';
-import {
 	quantityTypes,
 	request,
 	unitOfMeasurementTypes,
-} from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useBranchProducts } from '../../../hooks/useBranchProducts';
-import { useReturnItemSlips } from '../../../hooks/useReturnItemSlips';
+} from 'global';
+import { useBranchProducts } from 'hooks/useBranchProducts';
+import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
+import { isEmpty, isInteger } from 'lodash';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
+import {
+	convertIntoArray,
+	convertToPieces,
+	getBranchProductStatus,
+	sleep,
+} from 'utils';
+import * as Yup from 'yup';
 
 const tabs = {
 	ALL: 'ALL',
@@ -60,7 +58,7 @@ export const CreateReturnItemSlip = () => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		branchProducts,
 		pageCount,

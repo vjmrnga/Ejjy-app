@@ -1,6 +1,5 @@
 import { Divider, Modal } from 'antd';
 import { RequestErrors } from 'components';
-import { selectors as authSelectors } from 'ducks/auth';
 import { types } from 'ducks/BranchManager/delivery-receipts';
 import {
 	orderSlipStatus,
@@ -9,7 +8,7 @@ import {
 	requisitionSlipDetailsType,
 } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useUserStore } from 'stores';
 import { convertIntoArray } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
@@ -46,7 +45,7 @@ export const ReceiveDeliveryReceiptModal = ({
 	const [products, setProducts] = useState([]);
 
 	// CUSTOM HOOKS
-	const user = useSelector(authSelectors.selectUser());
+	const user = useUserStore((state) => state.user);
 	const {
 		receiveDeliveryReceipt,
 		status: deliveryReceiptStatus,

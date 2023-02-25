@@ -2,13 +2,13 @@ import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import {
-	useAuth,
 	useBranches,
 	useBranchProductEditPriceCost,
 	useBranchProducts,
 	usePriceMarkdownCreate,
 } from 'hooks';
 import React from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getGoogleApiUrl,
@@ -24,8 +24,7 @@ interface Props {
 
 export const PricesModal = ({ product, onClose }: Props) => {
 	// CUSTOM HOOKS
-
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,

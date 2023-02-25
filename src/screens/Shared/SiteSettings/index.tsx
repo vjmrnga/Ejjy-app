@@ -27,13 +27,13 @@ import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
 import {
-	useAuth,
 	usePingOnlineServer,
 	useSiteSettingsEdit,
 	useSiteSettingsRetrieve,
 } from 'hooks';
 import moment from 'moment';
 import React, { useCallback } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, isCUDShown } from 'utils';
 import * as Yup from 'yup';
 
@@ -58,7 +58,7 @@ const getValidDateTest = (label) =>
 export const SiteSettings = () => {
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,

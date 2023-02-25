@@ -1,11 +1,10 @@
 import { Divider, message, Modal } from 'antd';
+import { RequestErrors } from 'components';
+import { Label, Textarea } from 'components/elements';
+import { request } from 'global';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useUserStore } from 'stores';
 import { formatQuantity } from 'utils';
-import { RequestErrors } from '../../../../../components';
-import { Label, Textarea } from '../../../../../components/elements';
-import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { request } from '../../../../../global/types';
 import { useOrderSlipAdjustmentSlips } from '../../../hooks/useOrderSlipAdjustmentSlips';
 import { DEFAULT_APPROVED_FULFILLED_QUANTITY } from '../constants';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
@@ -26,7 +25,7 @@ export const CreateAdjustmentSlipModal = ({
 	const [preparationSlipProducts, setPreparationSlipProducts] = useState([]);
 
 	// STATES
-	const user = useSelector(authSelectors.selectUser());
+	const user = useUserStore((state) => state.user);
 	const {
 		create,
 		status: adjustmentSlipsStatus,

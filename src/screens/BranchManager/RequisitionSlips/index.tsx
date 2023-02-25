@@ -16,11 +16,10 @@ import {
 	useRequisitionSlipCreate,
 	useRequisitionSlips,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import { upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
-
 import { Link, useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -44,7 +43,7 @@ export const RequisitionSlips = () => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { requisitionSlips, total },

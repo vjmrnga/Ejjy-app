@@ -1,10 +1,10 @@
 import { Spin } from 'antd';
 import { Breadcrumb, Content } from 'components';
 import { request } from 'global';
-import { useAuth } from 'hooks';
 import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import { OrderSlips } from './components/OrderSlips/OrderSlips';
 import { RequestedProducts } from './components/RequestedProducts';
 
@@ -18,7 +18,7 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		requisitionSlip,
 		getRequisitionSlipsById,

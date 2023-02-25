@@ -16,12 +16,12 @@ import {
 	SEARCH_DEBOUNCE_TIME,
 	unitOfMeasurementTypes,
 } from 'global';
-import { useAuth } from 'hooks';
 import { usePreparationSlips } from 'hooks/usePreparationSlips';
 import { debounce, throttle, toString } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatQuantity, getKeyDownCombination } from 'utils';
 import { FULFILL_TYPES } from './components/constants';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
@@ -89,7 +89,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { getPreparationSlipById, status: prepSlipStatus } =
 		usePreparationSlips();
 	const {

@@ -15,10 +15,11 @@ import {
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useAuth, useCreditRegistrations, useQueryParams } from 'hooks';
+import { useCreditRegistrations, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { accountTabs } from 'screens/Shared/Accounts/data';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDate,
@@ -50,7 +51,7 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		isFetching: isFetchingCreditRegistrations,
 		data: { creditRegistrations, total },

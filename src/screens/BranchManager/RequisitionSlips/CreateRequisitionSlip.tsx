@@ -15,7 +15,6 @@ import {
 	unitOfMeasurementTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranchProducts,
 	useQueryParams,
 	useRequisitionSlipCreate,
@@ -30,6 +29,7 @@ import React, {
 	useState,
 } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getBranchProductStatus,
@@ -62,7 +62,7 @@ export const CreateRequisitionSlip = () => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchProducts, total },
 		isFetching: isFetchingBranchProducts,

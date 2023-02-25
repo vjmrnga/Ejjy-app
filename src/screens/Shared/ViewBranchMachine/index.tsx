@@ -8,10 +8,10 @@ import {
 import { Box } from 'components/elements';
 import { GENERIC_ERROR_MESSAGE } from 'global';
 import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getUrlPrefix, isUserFromBranch } from 'utils';
 import { TabDays } from '../Branches/components/TabDays';
 import { TabSessions } from '../Branches/components/TabSessions';
@@ -47,7 +47,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const history = useHistory();
 	const {
 		data: branchMachine,

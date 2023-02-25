@@ -6,7 +6,7 @@ export * from './useAttendanceLogs';
 export { default as useAttendanceLogs } from './useAttendanceLogs';
 export * from './useAttendanceSchedules';
 export { default as useAttendanceSchedules } from './useAttendanceSchedules';
-export { default as useAuth } from './useAuth';
+export * from './useAuth';
 export * from './useBackOrders';
 export { default as useBackOrders } from './useBackOrders';
 export * from './useBalanceAdjustmentLogs';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useUserStore } from 'stores';
 
 interface Props {
 	forUserType: string;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const CommonRoute = ({ forUserType, isLoading, ...rest }: Props) => {
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 
 	if (isLoading) {
 		return null;

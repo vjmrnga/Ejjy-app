@@ -63,7 +63,7 @@ export const ViewBranchCheck = () => {
 
 	// // CUSTOM HOOKS
 	// const history = useHistory();
-	// const { user } = useAuth();
+	// const user = useUserStore((state) => state.user);
 	// const {
 	// 	getProductCheck,
 	// 	status: productChecksStatus,

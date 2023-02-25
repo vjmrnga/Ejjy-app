@@ -12,7 +12,6 @@ import {
 } from 'global';
 import _ from 'lodash';
 import qz from 'qz-tray';
-import { useUserInterfaceStore } from 'stores';
 import {
 	calculateCashBreakdownTotal,
 	formatDate,

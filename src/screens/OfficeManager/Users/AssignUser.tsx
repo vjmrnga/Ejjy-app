@@ -12,13 +12,13 @@ import { Box } from 'components/elements';
 import dayjs from 'dayjs';
 import { GENERIC_ERROR_MESSAGE, MAX_PAGE_SIZE } from 'global';
 import {
-	useAuth,
 	useCashieringAssignmentDelete,
 	useCashieringAssignments,
 	usePingOnlineServer,
 	useUserRetrieve,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	confirmPassword,
 	convertIntoArray,
@@ -49,7 +49,7 @@ export const AssignUser = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
-	const { user: actingUser } = useAuth();
+	const actingUser = useUserStore((state) => state.user);
 	const {
 		data: user,
 		isFetching: isFetchingUser,

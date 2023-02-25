@@ -1,12 +1,12 @@
 import { Spin } from 'antd';
+import { Breadcrumb, Content } from 'components';
+import { selectors } from 'ducks/requisition-slips';
+import { request } from 'global';
+import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Breadcrumb, Content } from '../../../components';
-import { selectors } from '../../../ducks/requisition-slips';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { useRequisitionSlips } from '../../../hooks/useRequisitionSlips';
+import { useUserStore } from 'stores';
 import { OrderSlips } from './components/OrderSlips/OrderSlips';
 import { RequestedProducts } from './components/RequestedProducts';
 import './style.scss';
@@ -21,7 +21,7 @@ export const ViewRequisitionSlip = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		getRequisitionSlipsById,
 		removeRequisitionSlipByBranch,

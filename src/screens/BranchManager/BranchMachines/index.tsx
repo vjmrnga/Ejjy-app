@@ -10,9 +10,10 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
+import { useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getBranchMachineTypeName,
@@ -31,7 +32,7 @@ export const BranchMachines = () => {
 	const branchId = getLocalBranchId();
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,

@@ -1,19 +1,22 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { AddButtonIcon } from 'components';
+import { ButtonLink } from 'components/elements';
+import {
+	EMPTY_CELL,
+	pageSizeOptions,
+	request,
+	returnItemSlipsStatuses,
+} from 'global';
+import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
 import React, {
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
 	useState,
 } from 'react';
+import { useUserStore } from 'stores';
 import { formatDateTime, getReturnItemSlipStatus } from 'utils';
-import { AddButtonIcon } from '../../../../components';
-import { ButtonLink } from '../../../../components/elements';
-import { EMPTY_CELL } from '../../../../global/constants';
-import { pageSizeOptions } from '../../../../global/options';
-import { request, returnItemSlipsStatuses } from '../../../../global/types';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useReturnItemSlips } from '../../../../hooks/useReturnItemSlips';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -32,7 +35,7 @@ const Component = ({ selectReturnItemSlip, onFulfill }: Props, ref) => {
 	const [data, setData] = useState([]);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		returnItemSlips,
 		pageCount,

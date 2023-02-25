@@ -1,8 +1,8 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { useBalanceAdjustmentLogCreate } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import React from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray } from 'utils';
 import { CreateBalanceAdjustmentLogForm } from './CreateBalanceAdjustmentLogForm';
 
@@ -18,7 +18,7 @@ export const CreateBalanceAdjustmentLogModal = ({
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		mutateAsync: createBalanceAdjustmentLog,
 		isLoading: isCreatingBalanceAdjustmentLog,

@@ -11,7 +11,6 @@ import {
 	serviceTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranches,
 	useBranchMachines,
 	useQueryParams,
@@ -20,6 +19,7 @@ import {
 } from 'hooks';
 
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -46,7 +46,7 @@ export const TabUserLogs = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
@@ -112,7 +112,7 @@ export const TabUserLogs = () => {
 
 const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

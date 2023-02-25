@@ -1,7 +1,6 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import { RequestErrors, RequestWarnings } from 'components';
 import { Label, Select } from 'components/elements';
-import { selectors as authSelectors } from 'ducks/auth';
 import { selectors as branchesSelectors } from 'ducks/OfficeManager/branches';
 import { types } from 'ducks/order-slips';
 import {
@@ -12,6 +11,7 @@ import {
 } from 'global';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useUserStore } from 'stores';
 import { convertIntoArray, convertToPieces } from 'utils';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
 import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
@@ -52,6 +52,7 @@ export const CreateEditOrderSlipModal = ({
 	errors,
 }: Props) => {
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const {
 		createOrderSlip,
 		editOrderSlip,
@@ -62,7 +63,6 @@ export const CreateEditOrderSlipModal = ({
 	} = useOrderSlips();
 
 	// SELECTORS
-	const user = useSelector(authSelectors.selectUser());
 	const branches = useSelector(branchesSelectors.selectBranches());
 
 	// Effect: Close modal if create/edit success

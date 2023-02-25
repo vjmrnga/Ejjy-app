@@ -14,12 +14,12 @@ import {
 import {
 	useAccounts,
 	useAttendanceLogs,
-	useAuth,
 	useBranches,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -55,7 +55,7 @@ export const TabDTR = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { attendanceLogs, total },
 		isFetching: isFetchingAttendanceLogs,
@@ -127,7 +127,7 @@ export const TabDTR = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

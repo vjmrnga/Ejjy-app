@@ -21,7 +21,7 @@ export const APP_TAG_PRINTER_FONT_FAMILY = 'EJJY_TAG_PRINTER_FONT_FAMILY';
 export const APP_TAG_PRINTER_FONT_SIZE = 'EJJY_TAG_PRINTER_FONT_SIZE';
 
 // Request
-export const AUTH_CHECKING_INTERVAL_MS = 10000;
+
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 10;
 export const MAX_PAGE_SIZE = 500;

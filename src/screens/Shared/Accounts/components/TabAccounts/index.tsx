@@ -29,10 +29,11 @@ import {
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useAccounts, useAuth, useQueryParams } from 'hooks';
+import { useAccounts, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -60,7 +61,7 @@ export const TabAccounts = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { accounts, total },
 		isFetching: isFetchingAccounts,

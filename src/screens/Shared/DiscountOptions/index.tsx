@@ -27,7 +27,6 @@ import {
 	pageSizeOptions,
 } from 'global';
 import {
-	useAuth,
 	useDiscountOptionDelete,
 	useDiscountOptions,
 	usePingOnlineServer,
@@ -35,6 +34,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getId, isCUDShown } from 'utils';
 
 interface DataType {
@@ -60,7 +60,7 @@ export const DiscountOptions = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { discountOptions, total },
 		isFetching: isFetchingDiscountOptions,

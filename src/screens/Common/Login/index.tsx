@@ -1,14 +1,17 @@
 import { Button, Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box } from 'components/elements';
-import { IS_APP_LIVE, request } from 'global';
-import { useAuth } from 'hooks';
+import { appTypes, IS_APP_LIVE } from 'global';
+import { useAuthLogin } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
+	convertIntoArray,
 	getAppType,
 	getKeyDownCombination,
 	getLocalApiUrl,
 	getOnlineApiUrl,
+	isUserFromBranch,
 } from 'utils';
 import { LoginForm } from './components/LoginForm';
 import './style.scss';
@@ -17,9 +20,15 @@ const Login = () => {
 	// STATES
 	const [appSettingsModalVisible, setAppSettingsModalVisible] = useState(false);
 	const [isSetupButtonsVisible, setSetupButtonsVisible] = useState(false);
+	const [error, setError] = useState('');
+	const setUser = useUserStore((state) => state.setUser);
 
 	// CUSTOM HOOKS
-	const { login, status, errors } = useAuth();
+	const {
+		mutateAsync: login,
+		isLoading: isLoggingIn,
+		error: loginError,
+	} = useAuthLogin();
 
 	// METHODS
 	useEffect(() => {
@@ -46,11 +55,23 @@ const Login = () => {
 		}
 	};
 
-	const handleSubmit = (formData) => {
-		login({
-			...formData,
-			appType: getAppType(),
-		});
+	const handleSubmit = async (formData) => {
+		const { data: user } = await login(formData);
+
+		const appType = getAppType();
+		const userType = user.user_type;
+
+		if (appType === appTypes.HEAD_OFFICE && isUserFromBranch(userType)) {
+			setError('Admin and office manager can only use this app.');
+			return;
+		}
+
+		if (appType === appTypes.BACK_OFFICE && !isUserFromBranch(userType)) {
+			setError('Branch managers and personnels can only use this app.');
+			return;
+		}
+
+		setUser(user);
 	};
 
 	return (
@@ -63,8 +84,11 @@ const Login = () => {
 				/>
 
 				<LoginForm
-					errors={errors}
-					loading={status === request.REQUESTING}
+					errors={[
+						...convertIntoArray(error),
+						...convertIntoArray(loginError?.errors),
+					]}
+					loading={isLoggingIn}
 					onSubmit={handleSubmit}
 				/>
 

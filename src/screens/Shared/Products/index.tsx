@@ -50,11 +50,11 @@ import {
 	useProductReinitialize,
 	useQueryParams,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useProductsData } from 'screens/Shared/Products/useProductsData';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -95,7 +95,7 @@ export const Products = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { products, total: productsTotal },
 		isFetching: isFetchingProducts,
@@ -401,7 +401,7 @@ export const Products = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,

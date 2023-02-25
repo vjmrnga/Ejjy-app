@@ -5,9 +5,9 @@ import { ColumnsType } from 'antd/lib/table';
 import { Button, Label } from 'components/elements';
 import { printOrderSlip } from 'configurePrinter';
 import { quantityTypes } from 'global';
-import { useAuth } from 'hooks/useAuth';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertToBulk,
 	filterOption,
@@ -42,7 +42,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	const [printingDisabled, setPrintingDisabled] = useState(false);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 
 	// METHODS
 	useEffect(() => {

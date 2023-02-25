@@ -19,11 +19,12 @@ import {
 	timeRangeTypes,
 	transactionStatus,
 } from 'global';
-import { useAuth, useQueryParams, useTransactions } from 'hooks';
+import { useQueryParams, useTransactions } from 'hooks';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
 
 const columns: ColumnsType = [
@@ -50,7 +51,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: { transactions, total },

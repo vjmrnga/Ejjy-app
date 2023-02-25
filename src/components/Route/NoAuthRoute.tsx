@@ -1,14 +1,15 @@
 import { userTypes } from 'global';
-import { useAuth } from 'hooks/useAuth';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
+import { useUserStore } from 'stores';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const NoAuthRoute = ({ forUserType, noRedirects, ...rest }: any) => {
-	const { user } = useAuth();
-	const { user_type: userType } = user || {};
+	const user = useUserStore((state) => state.user);
 
 	if (!noRedirects) {
+		const userType = user?.user_type;
+
 		// Redirect to Admin
 		if (userType === userTypes.ADMIN) {
 			return <Route render={() => <Redirect to="/admin" />} />;

@@ -15,13 +15,13 @@ import {
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
 import {
-	useAuth,
 	useQueryParams,
 	useSupplierRegistrationDelete,
 	useSupplierRegistrations,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatDate, getFullName, isCUDShown } from 'utils';
 
 const columns: ColumnsType = [
@@ -43,7 +43,7 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { supplierRegistrations, total },
 		isFetching: isFetchingSupplierRegistrations,

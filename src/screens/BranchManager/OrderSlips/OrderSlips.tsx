@@ -1,11 +1,10 @@
 import { Table } from 'antd';
+import { Content, TableHeader } from 'components';
+import { Box, ButtonLink } from 'components/elements';
+import { pageSizeOptions, request } from 'global';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { formatDateTime, getOrderSlipStatusBranchManager, sleep } from 'utils';
-import { Content, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { pageSizeOptions } from '../../../global/options';
-import { request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
 import { useOrderSlips } from '../hooks/useOrderSlips';
 import { ViewOrderSlipModal } from './components/ViewOrderSlipModal';
 
@@ -22,7 +21,7 @@ export const OrderSlips = () => {
 	const [pendingCount, setPendingCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		orderSlips,
 		getOrderSlipsExtended,

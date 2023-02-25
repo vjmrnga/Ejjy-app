@@ -16,9 +16,10 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { useAuth, useQueryParams, useTransactions } from 'hooks';
+import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTime,
@@ -47,7 +48,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { transactions, total },
 		isFetching: isFetchingTransactions,

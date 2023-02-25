@@ -31,7 +31,6 @@ import {
 	vatTypes,
 } from 'global';
 import {
-	useAuth,
 	useBackOrderCreate,
 	useBranchProducts,
 	useProductCategories,
@@ -40,6 +39,7 @@ import {
 import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	convertToPieces,
@@ -73,7 +73,7 @@ export const CreateStockOut = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchProducts, total },
 		isFetching: isFetchingBranchProducts,

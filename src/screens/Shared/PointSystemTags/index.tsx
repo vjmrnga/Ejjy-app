@@ -12,13 +12,13 @@ import {
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, pageSizeOptions } from 'global';
 import {
-	useAuth,
 	usePingOnlineServer,
 	usePointSystemTagDelete,
 	usePointSystemTags,
 	useQueryParams,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatInPeso, isCUDShown } from 'utils';
 
 export const PointSystemTags = () => {
@@ -33,7 +33,7 @@ export const PointSystemTags = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { pointSystemTags, total },
 		isFetching: isFetchingPointSystemTags,

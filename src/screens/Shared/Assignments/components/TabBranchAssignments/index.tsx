@@ -10,13 +10,13 @@ import {
 	timeRangeTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranchAssignments,
 	useBranches,
 	useQueryParams,
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -38,7 +38,7 @@ export const TabBranchAssignments = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchAssignments, total },
 		isFetching: isFetchingBranchAssignments,
@@ -104,7 +104,7 @@ export const TabBranchAssignments = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

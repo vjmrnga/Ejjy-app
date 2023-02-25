@@ -7,9 +7,9 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
+import { useUserStore } from 'stores';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
@@ -42,7 +42,7 @@ export const ViewBranch = ({ match }: Props) => {
 		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { data: branch, isFetching: isFetchingBranch } = useBranchRetrieve({
 		id: branchIdParam,
 		options: {

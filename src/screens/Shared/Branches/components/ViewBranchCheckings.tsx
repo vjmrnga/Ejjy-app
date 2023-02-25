@@ -18,7 +18,7 @@ export const ViewBranchCheckings = () => {
 	// const [type, setType] = useState(productCheckingTypes.DAILY);
 
 	// // CUSTOM HOOKS
-	// const { user } = useAuth();
+	// const user = useUserStore((state) => state.user);
 	// const {
 	// 	productChecks,
 	// 	getProductChecks,

@@ -1,6 +1,6 @@
 import { Button, Col, Row, Statistic } from 'antd';
-import { useAuth } from 'hooks';
 import React from 'react';
+import { useUserStore } from 'stores';
 import { formatInPeso, getFullName, isCUDShown } from 'utils';
 import './style.scss';
 
@@ -17,7 +17,7 @@ export const AccountTotalBalance = ({
 	disabled,
 	onClick,
 }: Props) => {
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 
 	return (
 		<div className="AccountTotalBalance mb-4">

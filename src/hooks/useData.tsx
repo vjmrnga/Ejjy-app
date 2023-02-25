@@ -50,6 +50,6 @@ export const useUploadData = () =>
 			enabled: !isStandAlone(),
 			refetchInterval: REFETCH_INTERVAL_MS,
 			refetchIntervalInBackground: true,
-			notifyOnChangeProps: ['isLoading'],
+			notifyOnChangeProps: [],
 		},
 	);

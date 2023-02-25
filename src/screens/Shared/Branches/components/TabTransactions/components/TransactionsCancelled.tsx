@@ -5,8 +5,8 @@ import { Box, Button } from 'components/elements';
 import { printCancelledTransactions } from 'configurePrinter';
 import { MAX_PAGE_SIZE } from 'global';
 import { useSiteSettingsRetrieve, useTransactions } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatInPeso, isUserFromBranch } from 'utils';
 
 interface Props {
@@ -27,7 +27,7 @@ export const TransactionsCancelled = ({
 	const [isPrinting, setIsPrinting] = useState(false);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { transactions },
 		isFetching: isFetchingTransactions,

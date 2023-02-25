@@ -3,14 +3,14 @@ import cn from 'classnames';
 import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import {
-	useAuth,
-	useBranchDayAuthorizations,
 	useBranchDayAuthorizationCreate,
 	useBranchDayAuthorizationEnd,
+	useBranchDayAuthorizations,
 	useBranchDayAuthorizationsRetrieve,
 	useSiteSettingsRetrieve,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import swal from 'sweetalert';
 import { convertIntoArray, formatDateTimeExtended, getId } from 'utils';
 import { RequestErrors } from '..';
@@ -32,8 +32,9 @@ export const BranchDayAuthorization = ({
 }: Props) => {
 	// STATES
 	const [branchDay, setBranchDay] = useState(null);
+
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
 		useSiteSettingsRetrieve();
 	const {

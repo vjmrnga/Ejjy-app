@@ -18,7 +18,6 @@ import {
 	timeRangeTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranches,
 	useBranchMachines,
 	useCashBreakdowns,
@@ -27,6 +26,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -75,7 +75,7 @@ export const TabCashBreakdowns = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { cashBreakdowns, total },
 		isFetching: isFetchingCashBreakdowns,
@@ -160,7 +160,7 @@ export const TabCashBreakdowns = () => {
 
 const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

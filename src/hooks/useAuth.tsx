@@ -1,74 +1,63 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { actions, selectors } from '../ducks/auth';
-import { request } from '../global/types';
-import { useActionDispatch } from './useActionDispatch';
+import { APP_KEY } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery } from 'react-query';
+import { useHistory } from 'react-router';
+import storage from 'redux-persist/lib/storage';
+import { AuthService } from 'services';
+import { useUserStore } from 'stores';
+import { getLocalApiUrl } from 'utils';
 
-export const useAuth = () => {
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
+const AUTH_CHECKING_INTERVAL_MS = 10_000;
 
-	const user = useSelector(selectors.selectUser());
-	const accessToken = useSelector(selectors.selectAccessToken());
-	const refreshToken = useSelector(selectors.selectRefreshToken());
-
-	const loginAction = useActionDispatch(actions.login);
-	const loginOnlineAction = useActionDispatch(actions.loginOnline);
-	const logoutAction = useActionDispatch(actions.logout);
-	const retrieveUserAction = useActionDispatch(actions.retrieveUser);
-	const saveAction = useActionDispatch(actions.save);
-
-	const callback = ({
-		status: callbackStatus,
-		errors: callbackErrors = [],
-	}) => {
-		setStatus(callbackStatus);
-		setErrors(callbackErrors);
-	};
-
-	const login = (data) => {
-		loginAction({ ...data, callback });
-	};
-
-	const loginOnline = (data) => {
-		loginOnlineAction({ ...data, callback });
-	};
-
-	const logout = (id: number) => {
-		logoutAction({ id });
-	};
-
-	const retrieveUser = (id, loginCount) => {
-		retrieveUserAction({ id, loginCount });
-	};
-
-	const updateLocalIpAddress = (newLocalIpAddress) => {
-		saveAction({ localIpAddress: newLocalIpAddress });
-	};
-
-	const updateUserActiveSessionCount = (loggedInUser, count) => {
-		saveAction({
-			user: {
-				...loggedInUser,
-				active_online_sessions_count: count,
-				active_sessions_count: count,
+export const useAuthLogin = () =>
+	useMutation<any, any, any>(({ username, password }) =>
+		AuthService.login(
+			{
+				login: username,
+				password,
 			},
-		});
-	};
+			getLocalApiUrl(),
+		),
+	);
 
-	return {
-		user,
-		accessToken,
-		refreshToken,
-		login,
-		loginOnline,
-		logout,
-		retrieveUser,
-		updateLocalIpAddress,
-		updateUserActiveSessionCount,
-		status,
-		errors,
-	};
+export const useAuthLogout = () => {
+	const history = useHistory();
+	const resetUser = useUserStore((state) => state.resetUser);
+
+	return useMutation<any, any, any>(
+		(id) => AuthService.logout(id, getLocalApiUrl()),
+		{
+			onSuccess: () => {
+				history.replace('login');
+
+				storage.removeItem(APP_KEY);
+				resetUser();
+			},
+		},
+	);
 };
 
-export default useAuth;
+export const useAuthLoginCountChecker = ({ id, params, options }: Query) => {
+	const { mutateAsync: logout } = useAuthLogout();
+
+	return useQuery<any>(
+		['useAuthLoginCountChecker', id, params.loginCount],
+		() => wrapServiceWithCatch(AuthService.retrieve(id, getLocalApiUrl())),
+		{
+			enabled: !!id,
+			refetchInterval: AUTH_CHECKING_INTERVAL_MS,
+			refetchIntervalInBackground: true,
+			notifyOnChangeProps: [],
+			onSuccess: async ({ data }) => {
+				const { loginCount } = params;
+				const newLoginCount = data.login_count;
+
+				if (loginCount !== newLoginCount) {
+					await logout(id);
+				}
+			},
+			...options,
+		},
+	);
+};

@@ -1,13 +1,9 @@
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { MAX_PAGE_SIZE } from 'global';
-import {
-	useAuth,
-	usePointSystemTags,
-	useProductCreate,
-	useProductEdit,
-} from 'hooks';
+import { usePointSystemTags, useProductCreate, useProductEdit } from 'hooks';
 import React from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getId } from 'utils';
 import { ModifyProductForm } from './ModifyProductForm';
 
@@ -24,7 +20,7 @@ export const ModifyProductModal = ({ product, onClose }: Props) => {
 	} = usePointSystemTags({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		mutateAsync: createProduct,
 		isLoading: isCreatingProduct,

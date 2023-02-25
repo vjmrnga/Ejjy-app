@@ -14,9 +14,9 @@ import {
 	useXReadReportCreate,
 	useZReadReportCreate,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTime,
@@ -50,7 +50,7 @@ export const ReportsPerMachine = ({
 		useState(false);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,

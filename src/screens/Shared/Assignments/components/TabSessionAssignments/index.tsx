@@ -11,13 +11,13 @@ import {
 	timeRangeTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranches,
 	useCashieringAssignments,
 	useQueryParams,
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -108,7 +108,7 @@ export const TabSessionAssignments = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

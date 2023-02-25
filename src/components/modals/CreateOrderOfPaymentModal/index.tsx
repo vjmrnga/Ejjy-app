@@ -14,9 +14,9 @@ import {
 	useCheckInvoiceValidity,
 	useOrderOfPaymentsCreate,
 } from 'hooks';
-import { useAuth } from 'hooks/useAuth';
 import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -42,7 +42,7 @@ export const CreateOrderOfPaymentModal = ({
 	const [invoiceValidityError, setInvoiceValidityError] = useState(null);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		mutateAsync: createOrderOfPayment,
 		isLoading: isCreatingOrderOfPayment,

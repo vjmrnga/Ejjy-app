@@ -12,7 +12,6 @@ import {
 	userLogTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranches,
 	useBranchProducts,
 	useQueryParams,
@@ -21,6 +20,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	filterOption,
@@ -36,7 +36,7 @@ export const TabBranchProductLogs = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { logs, total },
 		isFetching: isFetchingLogs,
@@ -114,7 +114,7 @@ const Filter = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

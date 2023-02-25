@@ -1,11 +1,10 @@
 import { Divider, message, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { Label, Textarea } from 'components/elements';
-import { selectors as authSelectors } from 'ducks/auth';
 import { types } from 'ducks/OfficeManager/adjustment-slips';
 import { deliveryReceiptStatus, request } from 'global';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useUserStore } from 'stores';
 import { confirmPassword, convertIntoArray } from 'utils';
 import { useAdjustmentSlips } from '../../../hooks/useAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
@@ -28,7 +27,7 @@ export const CreateAdjustmentSlipModal = ({
 	const [deliveryReceiptProducts, setDeliveryReceiptProducts] = useState([]);
 
 	// CUSTOM HOOKS
-	const user = useSelector(authSelectors.selectUser());
+	const user = useUserStore((state) => state.user);
 	const {
 		createAdjustmentSlip,
 		status: adjustmentSlipsStatus,

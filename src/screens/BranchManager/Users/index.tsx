@@ -11,10 +11,11 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
-import { useAuth, useUserDelete, useUsers } from 'hooks';
+import { useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getFullName,
@@ -32,7 +33,7 @@ export const Users = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,

@@ -1,9 +1,10 @@
 import { Tabs } from 'antd';
 import { Content } from 'components';
 import { Box } from 'components/elements';
-import { useAuth, useQueryParams } from 'hooks';
+import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
+import { useUserStore } from 'stores';
 import { isUserFromBranch } from 'utils';
 import { TabDTR } from './components/TabDTR';
 import { TabDTRPrinting } from './components/TabDTRPrinting';
@@ -19,7 +20,7 @@ export const DTR = () => {
 		params: { tab },
 		setQueryParams,
 	} = useQueryParams();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 
 	// METHODS
 	const handleTabClick = (selectedTab) => {

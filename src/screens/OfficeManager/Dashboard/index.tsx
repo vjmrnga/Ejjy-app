@@ -11,7 +11,6 @@ import {
 	serviceTypes,
 } from 'global';
 import {
-	useAuth,
 	useBranchDayAuthorizationCreate,
 	useBranchDayAuthorizationEnd,
 	useBranches,
@@ -23,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getId } from 'utils';
 import './style.scss';
 
@@ -40,7 +40,7 @@ export const Dashboard = () => {
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isLoading: isLoadingBranches,

@@ -1,15 +1,14 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { AddButtonIcon, Content, TableHeader } from 'components';
+import { Box, ButtonLink } from 'components/elements';
+import { pageSizeOptions, preparationSlipStatus, request } from 'global';
+import { usePreparationSlips } from 'hooks/usePreparationSlips';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import { formatDateTime, getPreparationSlipStatus } from 'utils';
-import { AddButtonIcon, Content, TableHeader } from '../../../components';
-import { Box, ButtonLink } from '../../../components/elements';
-import { pageSizeOptions } from '../../../global/options';
-import { preparationSlipStatus, request } from '../../../global/types';
-import { useAuth } from '../../../hooks/useAuth';
-import { usePreparationSlips } from '../../../hooks/usePreparationSlips';
 import { useOrderSlips } from '../../BranchManager/hooks/useOrderSlips';
 import { ViewPreparationSlipModal } from './components/ViewPreparationSlipModal';
 import './style.scss';
@@ -29,7 +28,7 @@ export const PreparationSlips = () => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		preparationSlips,
 		pageCount,

@@ -1,8 +1,8 @@
-import { useAuth } from 'hooks';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
+import { useUserStore } from 'stores';
 import {
 	getLocalApiUrl,
 	getOnlineApiUrl,
@@ -16,7 +16,7 @@ const usePingOnlineServer = () => {
 	const [isConnected, setIsConnected] = useState(null);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 
 	useQuery(
 		['usePingOnlineServer', isEnabled],

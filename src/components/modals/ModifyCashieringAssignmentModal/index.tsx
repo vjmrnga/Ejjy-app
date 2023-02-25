@@ -2,13 +2,13 @@ import { Col, message, Modal, Row, Select, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
-	useAuth,
 	useBranchMachines,
 	useCashieringAssignmentCreate,
 	useCashieringAssignmentEdit,
 } from 'hooks';
 import moment, { Moment } from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, filterOption } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
@@ -50,7 +50,7 @@ export const ModifyCashieringAssignmentModal = ({
 	onClose,
 }: ModalProps) => {
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchMachines },
 		error: branchMachinesError,

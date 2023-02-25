@@ -1,11 +1,10 @@
 import { Divider, message, Modal } from 'antd';
+import { RequestErrors } from 'components';
+import { Label, Textarea } from 'components/elements';
+import { backOrdersStatuses, request } from 'global';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useUserStore } from 'stores';
 import { formatQuantity } from 'utils';
-import { RequestErrors } from '../../../../../components';
-import { Label, Textarea } from '../../../../../components/elements';
-import { selectors as authSelectors } from '../../../../../ducks/auth';
-import { backOrdersStatuses, request } from '../../../../../global/types';
 import { useBackOrderAdjustmentSlips } from '../../../hooks/useBackOrderAdjustmentSlips';
 import { CreateAdjustmentSlipForm } from './CreateAdjustmentSlipForm';
 
@@ -25,7 +24,7 @@ export const CreateAdjustmentSlipModal = ({
 	const [backOrderProducts, setBackOrderProducts] = useState([]);
 
 	// CUSTOM HOOKS
-	const user = useSelector(authSelectors.selectUser());
+	const user = useUserStore((state) => state.user);
 	const {
 		createBackOrderAdjustmentSlip,
 		status: adjustmentSlipsStatus,

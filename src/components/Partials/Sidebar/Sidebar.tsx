@@ -3,11 +3,12 @@
 import { Layout } from 'antd';
 import cn from 'classnames';
 import { userTypes } from 'global';
-import { useAuth } from 'hooks';
-import React, { useCallback, useState } from 'react';
+import { useAuthLogout } from 'hooks';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { getUserTypeName } from 'utils';
+import { useUserStore } from 'stores';
+import { getFullName, getUserTypeName } from 'utils';
 import { useUI } from '../../../hooks/useUI';
 import './style.scss';
 
@@ -20,21 +21,12 @@ export const Sidebar = ({ items }: Props) => {
 	const [popupVisible, setPopupVisible] = useState(false);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { pathname } = useLocation();
-	const { user, logout } = useAuth();
+	const { mutateAsync: logout } = useAuthLogout();
 	// TODO: Create a reducer for this which will be updated everytime network check is done
 	// const { hasInternetConnection } = useNetwork();
 	const { isSidebarCollapsed, onCollapseSidebar } = useUI();
-
-	// METHODS
-	const getName = useCallback(() => {
-		const firstName =
-			user.user_type === userTypes.ADMIN ? 'Emman' : user.first_name;
-		const lastName =
-			user.user_type === userTypes.ADMIN ? 'Fineza' : user.last_name;
-
-		return `${firstName} ${lastName}`;
-	}, [user]);
 
 	return (
 		<Layout.Sider
@@ -123,8 +115,12 @@ export const Sidebar = ({ items }: Props) => {
 						src={require('../../../assets/images/sample-avatar.png')}
 					/>
 					<div className="user-text-info">
-						<span className="name">{getName()}</span>
-						<span className="role">{getUserTypeName(user.user_type)}</span>
+						<span className="name">
+							{user?.user_type === userTypes.ADMIN
+								? 'Emman Fineza'
+								: getFullName(user)}
+						</span>
+						<span className="role">{getUserTypeName(user?.user_type)}</span>
 					</div>
 				</div>
 			</div>

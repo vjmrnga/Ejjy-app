@@ -1,9 +1,9 @@
 import { Descriptions, Divider, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { request, SHOW_HIDE_SHORTCUT } from 'global';
-import { useAuth } from 'hooks';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	confirmPassword,
 	convertIntoArray,
@@ -30,7 +30,7 @@ export const AddBranchProductBalanceModal = ({
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		editBranchProductBalance,
 		status: branchProductsStatus,

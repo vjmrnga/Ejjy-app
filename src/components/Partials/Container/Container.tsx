@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unused-prop-types */
 import { Layout, notification, Spin } from 'antd';
+import { useAuthLoginCountChecker } from 'hooks';
 import React, { ReactNode, useEffect } from 'react';
-import { IS_APP_LIVE } from '../../../global/constants';
-import { useAuth } from '../../../hooks/useAuth';
+import { useUserStore } from 'stores';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './style.scss';
 
@@ -25,21 +25,18 @@ export const Container = ({
 	sidebarItems,
 	children,
 }: Props) => {
-	const { user, retrieveUser, updateUserActiveSessionCount } = useAuth();
+	const { user, setUser } = useUserStore((state) => ({
+		user: state.user,
+		setUser: state.setUser,
+	}));
+
+	useAuthLoginCountChecker({
+		id: user.id,
+		params: { loginCount: user.login_count },
+	});
 
 	useEffect(() => {
-		retrieveUser(
-			user.id,
-			IS_APP_LIVE ? user.online_login_count : user.login_count,
-		);
-	}, []);
-
-	useEffect(() => {
-		const activeSessionsCount = IS_APP_LIVE
-			? user?.active_online_sessions_count
-			: user?.active_sessions_count;
-
-		if (activeSessionsCount > 1) {
+		if (user.active_sessions_count > 1) {
 			notification.warning({
 				key: SINGLE_SIGN_IN_WARNINGS_KEY,
 				duration: null,
@@ -47,7 +44,10 @@ export const Container = ({
 				description: 'Someone else was using this account.',
 			});
 
-			updateUserActiveSessionCount(user, 1);
+			setUser({
+				...user,
+				active_sessions_count: 1,
+			});
 		}
 	}, [user]);
 

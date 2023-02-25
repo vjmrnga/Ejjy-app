@@ -19,7 +19,6 @@ import {
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
 import {
-	useAuth,
 	usePingOnlineServer,
 	useProductCategories,
 	useProductCategoryDelete,
@@ -33,6 +32,7 @@ import {
 	SortableElement,
 	SortableHandle,
 } from 'react-sortable-hoc';
+import { useUserStore } from 'stores';
 import { useDebouncedCallback } from 'use-debounce';
 import { convertIntoArray, getId, isCUDShown } from 'utils';
 
@@ -60,7 +60,7 @@ export const ProductCategories = () => {
 
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,

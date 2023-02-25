@@ -6,9 +6,10 @@ import {
 	RequestErrors,
 	TableHeader,
 } from 'components';
-import { useAuth, useBranchMachineDelete, useBranchMachines } from 'hooks';
+import { useBranchMachineDelete, useBranchMachines } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getBranchMachineTypeName,
@@ -38,7 +39,7 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 		useState(false);
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchMachines },
 		isFetching: isFetchingBranchMachines,

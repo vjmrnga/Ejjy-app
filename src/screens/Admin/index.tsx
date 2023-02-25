@@ -1,5 +1,5 @@
 import { Container } from 'components';
-import { useBranches } from 'hooks';
+import { useBranches, useUploadData } from 'hooks';
 import { usePendingTransactions } from 'hooks/usePendingTransactions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -23,6 +23,7 @@ const Admin = () => {
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
+	useUploadData();
 	const { pendingTransactionsCount, getPendingTransactionsCount } =
 		usePendingTransactions();
 	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();

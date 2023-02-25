@@ -2,15 +2,16 @@ import { Spin, Tabs } from 'antd';
 import { Content, RequestErrors, SalesInfo } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, userTypes } from 'global';
-import { useAuth, useBranches, useQueryParams } from 'hooks';
+import { useBranches, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getLocalBranchId } from 'utils';
 import { BranchSales } from './components/BranchSales';
 
 export const Sales = () => {
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,

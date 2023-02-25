@@ -2,6 +2,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Divider, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { Content, RequestErrors, TableHeader } from 'components';
 import {
 	Box,
 	Button,
@@ -19,14 +20,13 @@ import {
 	request,
 	unitOfMeasurementTypes,
 } from 'global';
-import { useAuth } from 'hooks';
 import { useBackOrders } from 'hooks/useBackOrders';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, getBranchProductStatus, sleep } from 'utils';
 import * as Yup from 'yup';
-import { Content, RequestErrors, TableHeader } from '../../../components';
 
 const tabs = {
 	ALL: 'ALL',
@@ -51,7 +51,7 @@ export const CreateBackOrder = () => {
 	const productsRef = useRef({});
 
 	// CUSTOM HOOKS
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const {
 		branchProducts,
 		pageCount,

@@ -9,9 +9,9 @@ import {
 	preparationSlipStatus,
 	request,
 } from 'global';
-import { useAuth } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	formatDateTime,
 	formatQuantity,
@@ -47,7 +47,7 @@ export const ViewPendingTransaction = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const history = useHistory();
-	const { user } = useAuth();
+	const user = useUserStore((state) => state.user);
 	const { retrieve, status: preparationSlipsStatus } = usePreparationSlips();
 
 	// METHODS
