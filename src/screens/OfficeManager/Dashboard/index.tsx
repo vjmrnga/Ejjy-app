@@ -17,7 +17,7 @@ import {
 	useProductCategories,
 	useQueryParams,
 } from 'hooks';
-import _, { cloneDeep } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
@@ -37,6 +37,8 @@ const authorizationStatuses = {
 export const Dashboard = () => {
 	// STATES
 	const [branchesStatus, setBranchesStatus] = useState({});
+	const [isBranchesStatusInitialized, setIsBranchesStatusInitialized] =
+		useState(false);
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
@@ -84,16 +86,20 @@ export const Dashboard = () => {
 			handleTabClick(id);
 		}
 
-		if (branches.length) {
-			const status = {};
+		if (branches.length > 0 && !isBranchesStatusInitialized) {
+			if (branches.length) {
+				const status = {};
 
-			branches.forEach((branch) => {
-				status[getId(branch)] = branch.authorization_status;
-			});
+				branches.forEach((branch) => {
+					status[getId(branch)] = branch.authorization_status;
+				});
 
-			setBranchesStatus(status);
+				setBranchesStatus(status);
+			}
+
+			setIsBranchesStatusInitialized(true);
 		}
-	}, [branches, currentBranchId]);
+	}, [branches, currentBranchId, isBranchesStatusInitialized]);
 
 	const handleTabClick = (branchId) => {
 		setQueryParams({
@@ -116,11 +122,15 @@ export const Dashboard = () => {
 
 			if (response) {
 				setBranchesStatus((values) => {
-					const status = cloneDeep(values);
-					response.data.forEach((branchDay) => {
-						status[getId(branchDay.branch)] = authorizationStatuses.OPENED;
+					const status = _.cloneDeep(values);
+					branchIds.forEach((branchId) => {
+						status[branchId] = authorizationStatuses.OPENED;
 					});
+
+					return status;
 				});
+
+				queryClient.invalidateQueries(['useBranches', LIST_QUERY_KEY]);
 			}
 
 			message.success('Day was opened successfully.');
@@ -140,11 +150,15 @@ export const Dashboard = () => {
 
 			if (response) {
 				setBranchesStatus((values) => {
-					const status = cloneDeep(values);
-					response.data.forEach((branchDay) => {
-						status[getId(branchDay.branch)] = authorizationStatuses.CLOSED;
+					const status = _.cloneDeep(values);
+					branchIds.forEach((branchId) => {
+						status[branchId] = authorizationStatuses.CLOSED;
 					});
+
+					return status;
 				});
+
+				queryClient.invalidateQueries(['useBranches', LIST_QUERY_KEY]);
 			}
 
 			message.success('Day was closed successfully.');
@@ -222,7 +236,11 @@ export const Dashboard = () => {
 										<>
 											<Tooltip
 												placement="top"
-												title={branch.is_online ? 'Online' : 'Offline'}
+												title={
+													branch.is_online
+														? 'Branch is online'
+														: 'Branch is offline'
+												}
 											>
 												<WifiOutlined
 													style={{
@@ -235,19 +253,19 @@ export const Dashboard = () => {
 
 											{branchesStatus[id] ===
 												authorizationStatuses.UNOPENED && (
-												<Tooltip placement="top" title="Close">
+												<Tooltip placement="top" title="Branch is not yet open">
 													<LockOutlined style={{ color: grey.primary }} />
 												</Tooltip>
 											)}
 
 											{branchesStatus[id] === authorizationStatuses.OPENED && (
-												<Tooltip placement="top" title="Open">
+												<Tooltip placement="top" title="Branch is open">
 													<UnlockOutlined style={{ color: blue.primary }} />
 												</Tooltip>
 											)}
 
 											{branchesStatus[id] === authorizationStatuses.CLOSED && (
-												<Tooltip placement="top" title="Close">
+												<Tooltip placement="top" title="Branch has been closed">
 													<LockOutlined style={{ color: red.primary }} />
 												</Tooltip>
 											)}
@@ -262,7 +280,7 @@ export const Dashboard = () => {
 										bordered
 										onSuccess={(branchId, isOpen) => {
 											setBranchesStatus((values) => {
-												const status = cloneDeep(values);
+												const status = _.cloneDeep(values);
 												status[branchId] = isOpen
 													? authorizationStatuses.OPENED
 													: authorizationStatuses.CLOSED;
