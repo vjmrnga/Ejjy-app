@@ -39,12 +39,15 @@ export const useInitializeData = ({ params, options }: Query) =>
 		},
 	);
 
-export const useUploadData = () =>
+export const useUploadData = ({ params }: Query) =>
 	useQuery(
-		['useUploadData'],
+		['useUploadData', params?.isBackOffice],
 		() =>
 			wrapServiceWithCatch(
-				DataService.upload({ is_back_office: true }, getLocalApiUrl()),
+				DataService.upload(
+					{ is_back_office: params?.isBackOffice },
+					getLocalApiUrl(),
+				),
 			),
 		{
 			enabled: !isStandAlone(),

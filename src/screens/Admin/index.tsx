@@ -23,13 +23,15 @@ const Admin = () => {
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
-	useUploadData();
 	const { pendingTransactionsCount, getPendingTransactionsCount } =
 		usePendingTransactions();
 	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();
 	const {
 		data: { branches },
 	} = useBranches();
+	useUploadData({
+		params: { isBackOffice: false },
+	});
 
 	// REFS
 	const pendingTransactionsCountRef = useRef(null);

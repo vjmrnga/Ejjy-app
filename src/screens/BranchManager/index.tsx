@@ -91,7 +91,9 @@ const BranchManager = () => {
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: refetchOptions,
 	});
-	useUploadData();
+	useUploadData({
+		params: { isBackOffice: true },
+	});
 
 	const { mutateAsync: pingBranch } = useBranchPing();
 	useInterval(

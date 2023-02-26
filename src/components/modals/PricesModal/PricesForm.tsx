@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Col, Collapse, Row, Select, Tag } from 'antd';
+import { Col, Collapse, Divider, Row, Select, Space, Tag, Tooltip } from 'antd';
 import {
 	Button,
 	FieldError,
@@ -9,7 +9,7 @@ import {
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import React, { useCallback } from 'react';
-import { filterOption, getId } from 'utils';
+import { filterOption, formatInPeso, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {
@@ -19,6 +19,61 @@ interface Props {
 	onClose: any;
 	isLoading: boolean;
 }
+
+const variableNames = [
+	{
+		valueKey: 'markdownType',
+		initialValueKey: 'initialMarkdownType',
+	},
+	{
+		valueKey: 'costPerPiece',
+		initialValueKey: 'initialCostPerPiece',
+	},
+	{
+		valueKey: 'costPerBulk',
+		initialValueKey: 'initialCostPerBulk',
+	},
+	{
+		valueKey: 'pricePerPiece',
+		initialValueKey: 'initialPricePerPiece',
+	},
+	{
+		valueKey: 'pricePerBulk',
+		initialValueKey: 'initialPricePerBulk',
+	},
+	{
+		valueKey: 'markdownPricePerPiece1',
+		initialValueKey: 'initialMarkdownPricePerPiece1',
+	},
+	{
+		valueKey: 'markdownPricePerPiece2',
+		initialValueKey: 'initialMarkdownPricePerPiece2',
+	},
+	{
+		valueKey: 'markdownPricePerBulk1',
+		initialValueKey: 'initialMarkdownPricePerBulk1',
+	},
+	{
+		valueKey: 'markdownPricePerBulk2',
+		initialValueKey: 'initialMarkdownPricePerBulk2',
+	},
+	{
+		valueKey: 'creditPricePerPiece',
+		initialValueKey: 'initialCreditPricePerPiece',
+	},
+	{
+		valueKey: 'creditPricePerBulk',
+		initialValueKey: 'initialCreditPricePerBulk',
+	},
+	{
+		valueKey: 'governmentCreditPricePerPiece',
+		initialValueKey: 'initialGovernmentCreditPricePerPiece',
+	},
+	{
+		valueKey: 'governmentCreditPricePerBulk',
+		initialValueKey: 'initialGovernmentCreditPricePerBulk',
+	},
+];
 
 export const PricesForm = ({
 	branches,
@@ -48,6 +103,12 @@ export const PricesForm = ({
 						branchProduct?.markdown_price_per_piece2 || '',
 					markdownPricePerBulk1: branchProduct?.markdown_price_per_bulk1 || '',
 					markdownPricePerBulk2: branchProduct?.markdown_price_per_bulk2 || '',
+					creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
+					creditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
+					governmentCreditPricePerPiece:
+						branchProduct?.government_credit_price_per_piece || '',
+					governmentCreditPricePerBulk:
+						branchProduct?.government_credit_price_per_bulk || '',
 
 					initialMarkdownType:
 						branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
@@ -63,6 +124,27 @@ export const PricesForm = ({
 						branchProduct?.markdown_price_per_bulk1 || '',
 					initialMarkdownPricePerBulk2:
 						branchProduct?.markdown_price_per_bulk2 || '',
+					initialCreditPricePerPiece:
+						branchProduct?.credit_price_per_piece || '',
+					initialCreditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
+					initialGovernmentCreditPricePerPiece:
+						branchProduct?.government_credit_price_per_piece || '',
+					initialGovernmentCreditPricePerBulk:
+						branchProduct?.government_credit_price_per_bulk || '',
+
+					// NOTE: UI changes only
+					initialCreditPricePerPieceDifference:
+						Number(branchProduct?.price_per_piece) -
+						Number(branchProduct?.government_credit_price_per_piece),
+					initialCreditPricePerBulkDifference:
+						Number(branchProduct?.price_per_bulk) -
+						Number(branchProduct?.government_credit_price_per_bulk),
+					initialGovernmentCreditPricePerPieceDifference:
+						Number(branchProduct?.price_per_piece) -
+						Number(branchProduct?.government_credit_price_per_piece),
+					initialGovernmentCreditPricePerBulkDifference:
+						Number(branchProduct?.price_per_bulk) -
+						Number(branchProduct?.government_credit_price_per_bulk),
 				};
 			}),
 			Schema: Yup.array(
@@ -84,6 +166,26 @@ export const PricesForm = ({
 					markdownPricePerBulk2: Yup.number()
 						.min(0)
 						.label('Special Price (Bulk)'),
+					creditPricePerPiece: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Credit Price (Piece)'),
+					creditPricePerBulk: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Credit Price (Bulk)'),
+					governmentCreditPricePerPiece: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Government Credit Price (Piece)'),
+					governmentCreditPricePerBulk: Yup.number()
+						.required()
+						.moreThan(0)
+						.nullable()
+						.label('Government Credit Price (Bulk)'),
 				}),
 			),
 		}),
@@ -116,19 +218,11 @@ export const PricesForm = ({
 	);
 
 	const isEdited = (branchProduct) =>
-		branchProduct.initialMarkdownType !== branchProduct.markdownType ||
-		branchProduct.initialCostPerPiece !== branchProduct.costPerPiece ||
-		branchProduct.initialCostPerBulk !== branchProduct.costPerBulk ||
-		branchProduct.initialPricePerPiece !== branchProduct.pricePerPiece ||
-		branchProduct.initialPricePerBulk !== branchProduct.pricePerBulk ||
-		branchProduct.initialMarkdownPricePerPiece1 !==
-			branchProduct.markdownPricePerPiece1 ||
-		branchProduct.initialMarkdownPricePerPiece2 !==
-			branchProduct.markdownPricePerPiece2 ||
-		branchProduct.initialMarkdownPricePerBulk1 !==
-			branchProduct.markdownPricePerBulk1 ||
-		branchProduct.initialMarkdownPricePerBulk2 !==
-			branchProduct.markdownPricePerBulk2;
+		variableNames.some(
+			(variable) =>
+				branchProduct[variable.initialValueKey] !==
+				branchProduct[variable.valueKey],
+		);
 
 	const getBranch = useCallback(
 		(branchId) => branches.find(({ id }) => id === branchId),
@@ -159,47 +253,13 @@ export const PricesForm = ({
 					.map((value) => {
 						const data = { branchId: value.branchId };
 
-						if (value.initialCostPerPiece !== value.costPerPiece) {
-							data['costPerPiece'] = value.costPerPiece;
-						}
-
-						if (value.initialCostPerBulk !== value.costPerBulk) {
-							data['costPerBulk'] = value.costPerBulk;
-						}
-
-						if (value.initialPricePerPiece !== value.pricePerPiece) {
-							data['pricePerPiece'] = value.pricePerPiece;
-						}
-
-						if (value.initialPricePerBulk !== value.pricePerBulk) {
-							data['pricePerBulk'] = value.pricePerBulk;
-						}
-
-						if (
-							value.initialMarkdownPricePerPiece1 !==
-							value.markdownPricePerPiece1
-						) {
-							data['markdownPricePerPiece1'] = value.markdownPricePerPiece1;
-						}
-
-						if (
-							value.initialMarkdownPricePerPiece2 !==
-							value.markdownPricePerPiece2
-						) {
-							data['markdownPricePerPiece2'] = value.markdownPricePerPiece2;
-						}
-
-						if (
-							value.initialMarkdownPricePerBulk1 !== value.markdownPricePerBulk1
-						) {
-							data['markdownPricePerBulk1'] = value.markdownPricePerBulk1;
-						}
-
-						if (
-							value.initialMarkdownPricePerBulk2 !== value.markdownPricePerBulk2
-						) {
-							data['markdownPricePerBulk2'] = value.markdownPricePerBulk2;
-						}
+						variableNames.forEach((variable) => {
+							if (
+								value[variable.initialValueKey] !== value[variable.valueKey]
+							) {
+								data[variable.valueKey] = value[variable.valueKey];
+							}
+						});
 
 						return data;
 					})
@@ -237,6 +297,94 @@ export const PricesForm = ({
 									<Row gutter={[16, 16]}>
 										<Col sm={12} span={24}>
 											{renderInputField({
+												name: `${index}.creditPricePerPiece`,
+												label: (
+													<Space>
+														<span>Credit Price (Piece)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialCreditPricePerPieceDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder: branchProduct.initialCreditPricePerPiece,
+												value: branchProduct.creditPricePerPiece,
+												setFieldValue,
+											})}
+										</Col>
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.creditPricePerBulk`,
+												label: (
+													<Space>
+														<span>Credit Price (Bulk)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialCreditPricePerBulkDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder: branchProduct.initialCreditPricePerBulk,
+												value: branchProduct.creditPricePerBulk,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.governmentCreditPricePerPiece`,
+												label: (
+													<Space>
+														<span>Government Credit Price (Piece)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialGovernmentCreditPricePerPieceDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder:
+													branchProduct.initialGovernmentCreditPricePerPiece,
+												value: branchProduct.governmentCreditPricePerPiece,
+												setFieldValue,
+											})}
+										</Col>
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.governmentCreditPricePerBulk`,
+												label: (
+													<Space>
+														<span>Government Credit Price (Bulk)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialGovernmentCreditPricePerBulkDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder:
+													branchProduct.initialGovernmentCreditPricePerBulk,
+												value: branchProduct.governmentCreditPricePerBulk,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col span={24}>
+											<Divider className="my-0" />
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
 												name: `${index}.costPerPiece`,
 												label: 'Cost (Piece)',
 												placeholder: branchProduct.initialCostPerPiece,
@@ -244,7 +392,6 @@ export const PricesForm = ({
 												setFieldValue,
 											})}
 										</Col>
-
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.costPerBulk`,
@@ -255,23 +402,50 @@ export const PricesForm = ({
 											})}
 										</Col>
 
+										<Col span={24}>
+											<Divider className="my-0" />
+										</Col>
+
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.pricePerPiece`,
 												label: 'Regular Price (Piece)',
 												placeholder: branchProduct.initialPricePerPiece,
 												value: branchProduct.pricePerPiece,
-												setFieldValue,
+												setFieldValue: (name, newValue) => {
+													setFieldValue(name, newValue);
+													setFieldValue(
+														`${index}.creditPricePerPiece`,
+														Number(newValue) +
+															branchProduct.initialCreditPricePerPieceDifference,
+													);
+													setFieldValue(
+														`${index}.governmentCreditPricePerPiece`,
+														Number(newValue) +
+															branchProduct.initialGovernmentCreditPricePerPieceDifference,
+													);
+												},
 											})}
 										</Col>
-
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.pricePerBulk`,
 												label: 'Regular Price (Bulk)',
 												placeholder: branchProduct.initialPricePerBulk,
 												value: branchProduct.pricePerBulk,
-												setFieldValue,
+												setFieldValue: (name, newValue) => {
+													setFieldValue(name, newValue);
+													setFieldValue(
+														`${index}.creditPricePerBulk`,
+														Number(newValue) +
+															branchProduct.initialCreditPricePerBulkDifference,
+													);
+													setFieldValue(
+														`${index}.governmentCreditPricePerBulk`,
+														Number(newValue) +
+															branchProduct.initialGovernmentCreditPricePerBulkDifference,
+													);
+												},
 											})}
 										</Col>
 
@@ -285,7 +459,6 @@ export const PricesForm = ({
 												setFieldValue,
 											})}
 										</Col>
-
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.markdownPricePerBulk1`,
@@ -306,7 +479,6 @@ export const PricesForm = ({
 												setFieldValue,
 											})}
 										</Col>
-
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.markdownPricePerBulk2`,

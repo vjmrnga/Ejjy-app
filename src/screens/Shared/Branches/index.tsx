@@ -10,6 +10,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
+import { MAX_PAGE_SIZE } from 'global';
 import { useBranchDelete, useBranches, usePingOnlineServer } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -41,9 +42,7 @@ export const Branches = () => {
 		error: branchesError,
 	} = useBranches({
 		key: LIST_QUERY_KEY,
-		params: {
-			pageSize: 123,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		mutateAsync: deleteBranch,
@@ -128,10 +127,12 @@ export const Branches = () => {
 				{modifyBranchModalVisible && (
 					<ModifyBranchModal
 						branch={selectedBranch}
-						queryKey={LIST_QUERY_KEY}
 						onClose={() => {
 							setSelectedBranch(null);
 							setModifyBranchModalVisible(false);
+						}}
+						onSuccess={() => {
+							queryClient.invalidateQueries(['useBranches', LIST_QUERY_KEY]);
 						}}
 					/>
 				)}
