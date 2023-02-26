@@ -13,6 +13,7 @@ import {
 	convertIntoArray,
 	getGoogleApiUrl,
 	getId,
+	getLocalBranchId,
 	isUserFromBranch,
 } from 'utils';
 import { PricesForm } from './PricesForm';
@@ -29,7 +30,12 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,
 	} = useBranchProducts({
-		params: { productIds: product.id },
+		params: {
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: undefined,
+			productIds: product.id,
+		},
 		options: { enabled: product !== null },
 	});
 	const {

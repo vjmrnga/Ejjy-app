@@ -1,3 +1,4 @@
+import { serviceTypes } from 'global';
 import { useBranchProducts, useProducts } from 'hooks';
 import { useEffect, useState } from 'react';
 import { getLocalBranchId, isUserFromBranch } from 'utils';
@@ -26,6 +27,7 @@ export const useProductsData = ({ params, user }) => {
 		params: {
 			...params,
 			branchId: getLocalBranchId(),
+			serviceType: serviceTypes.OFFLINE,
 		},
 		options: {
 			enabled: isUserFromBranch(user.user_type),

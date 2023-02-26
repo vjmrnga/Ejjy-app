@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request, serviceTypes } from 'global';
 import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,6 @@ import {
 	onCallback,
 } from 'utils';
 import { actions, types } from '../ducks/branch-products';
-import { request } from '../global/types';
 import {
 	executePaginatedRequest,
 	getDataForCurrentPage,
@@ -195,8 +194,8 @@ export const useBranchProducts = () => {
 	};
 };
 
-const useBranchProductsNew = ({ params, options }: Query) =>
-	useQuery<any>(
+const useBranchProductsNew = ({ params, options }: Query) => {
+	return useQuery<any>(
 		[
 			'useBranchProducts',
 			params?.ids,
@@ -212,11 +211,16 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 			params?.productStatus,
 			params?.search,
 		],
-		() =>
-			wrapServiceWithCatch(
+		() => {
+			let service = BranchProductsService.list;
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = BranchProductsService.listOffline;
+			}
+
+			return wrapServiceWithCatch(
 				// TODO: We are temporarily directly using the List Offline to make sure all data are updated.
 				// We need to identify when to use list offline so refactor this one.
-				BranchProductsService.listOffline(
+				service(
 					{
 						branch_id: params?.branchId,
 						has_bo_balance: params?.hasBoBalance,
@@ -234,7 +238,8 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -244,6 +249,7 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 			...options,
 		},
 	);
+};
 
 export const useBranchProductsOffline = ({ params, options }: Query) =>
 	useQuery<any>(

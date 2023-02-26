@@ -1,11 +1,10 @@
 import { Spin } from 'antd';
 import { AppIcons, Container, TimeMismatchBoundary } from 'components';
-import { IS_APP_LIVE, MAX_PAGE_SIZE } from 'global';
+import { IS_APP_LIVE, MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
 	useBranches,
 	useBranchPing,
 	useBranchProducts,
-	useBranchProductsOffline,
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
@@ -33,7 +32,7 @@ import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import useInterval from 'use-interval';
-import { getOnlineBranchId, isStandAlone } from 'utils';
+import { getLocalBranchId, getOnlineBranchId, isStandAlone } from 'utils';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';
@@ -69,22 +68,28 @@ const BranchManager = () => {
 		data: { total: branchProductsTotal },
 	} = useBranchProducts({
 		params: {
+			branchId: getLocalBranchId(),
 			hasNegativeBalance: true,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		options: refetchOptions,
 	});
+	useBranchProducts({
+		params: {
+			branchId: getLocalBranchId(),
+			serviceType: serviceTypes.OFFLINE,
+		},
+		options: {
+			...refetchOptions,
+			enabled: !isStandAlone(),
+		},
+	});
+
 	const {
 		data: { salesTrackers },
 	} = useSalesTracker({
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: refetchOptions,
-	});
-	useBranchProductsOffline({
-		options: {
-			...refetchOptions,
-			enabled: !isStandAlone(),
-		},
 	});
 	useUploadData();
 

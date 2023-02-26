@@ -43,7 +43,7 @@ import { AssignUser } from './Users/AssignUser';
 const OfficeManager = () => {
 	useNotificationConnectivity();
 	useNotificationDtr();
-	useUploadData();
+	// useUploadData();
 
 	const { connectivityCount, dtrCount } = useNotificationStore(
 		(state: any) => ({
