@@ -1,29 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { convertIntoArray, convertToBulk, formatQuantity } from 'utils';
+import { convertToBulk, formatQuantity } from 'utils';
 import { TableHeaderOrderSlip } from '../../../../../components';
 import { Box } from '../../../../../components/elements';
 import { selectors as branchesSelectors } from '../../../../../ducks/OfficeManager/branches';
 import { types as orderSlipsTypes } from '../../../../../ducks/order-slips';
 import { actions as prActions } from '../../../../../ducks/requisition-slips';
+import { MAX_PAGE_SIZE } from '../../../../../global/constants';
 import {
 	orderSlipStatus,
 	quantityTypes,
 	request,
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
-	userTypes,
 } from '../../../../../global/types';
 import { useActionDispatch } from '../../../../../hooks/useActionDispatch';
 import { useBranchProducts } from '../../../../../hooks/useBranchProducts';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import { useUsers } from '../../../../../hooks/useUsers';
-import { CreateEditOrderSlipModal } from './CreateEditOrderSlipModal';
 import { OrderSlipsTable } from './OrderSlipsTable';
 import { SetOutOfStockModal } from './SetOutOfStockModal';
 import { ViewOrderSlipModal } from './ViewOrderSlipModal';
-import { MAX_PAGE_SIZE } from '../../../../../global/constants';
 
 interface Props {
 	requisitionSlip: any;
@@ -66,14 +63,14 @@ export const OrderSlips = ({
 		warnings: branchProductsWarnings,
 		errors: branchProducstErrors,
 	} = useBranchProducts();
-	const {
-		users: branchPersonnels,
-		getUsers,
-		status: usersStatus,
-		warnings: userWarnings,
-		errors: userErrors,
-		reset: userReset,
-	} = useUsers();
+	// const {
+	// 	users: branchPersonnels,
+	// 	getUsers,
+	// 	status: usersStatus,
+	// 	warnings: userWarnings,
+	// 	errors: userErrors,
+	// 	reset: userReset,
+	// } = useUsers();
 
 	const branches = useSelector(branchesSelectors.selectBranches());
 	const setRequisitionSlipAction = useActionDispatch(
@@ -93,13 +90,13 @@ export const OrderSlips = ({
 		processOrderSlip(
 			requisitionSlip,
 			branchProducts,
-			branchPersonnels,
+			// branchPersonnels,
 			selectedOrderSlip,
 		);
 	}, [
 		requisitionSlip,
 		branchProducts,
-		branchPersonnels,
+		// branchPersonnels,
 		selectedBranchId,
 		selectedOrderSlip,
 	]);
@@ -270,18 +267,19 @@ export const OrderSlips = ({
 	const handleChangePreparingBranch = (branchId) => {
 		if (selectedBranchId !== branchId) {
 			setSelectedBranchId(branchId);
-			userReset();
+			// userReset();
 			branchProductsReset();
 
-			getUsers(
-				{
-					page: 1,
-					pageSize: MAX_PAGE_SIZE,
-					branchId,
-					userType: userTypes.BRANCH_PERSONNEL,
-				},
-				true,
-			);
+			// TODO: Requires refactoring once this feature is revisited
+			// getUsers(
+			// 	{
+			// 		page: 1,
+			// 		pageSize: MAX_PAGE_SIZE,
+			// 		branchId,
+			// 		userType: userTypes.BRANCH_PERSONNEL,
+			// 	},
+			// 	true,
+			// );
 
 			const productIds = requisitionSlip.products
 				.map(({ product_id }) => product_id)
@@ -362,7 +360,7 @@ export const OrderSlips = ({
 				/>
 			)}
 
-			<CreateEditOrderSlipModal
+			{/* <CreateEditOrderSlipModal
 				branchPersonnels={branchPersonnels}
 				errors={[
 					...convertIntoArray(branchProducstErrors, 'Branch Products'),
@@ -383,7 +381,7 @@ export const OrderSlips = ({
 				]}
 				onChangePreparingBranch={handleChangePreparingBranch}
 				onClose={() => setCreateEditOrderSlipVisible(false)}
-			/>
+			/> */}
 
 			<SetOutOfStockModal
 				requisitionSlip={requisitionSlip}

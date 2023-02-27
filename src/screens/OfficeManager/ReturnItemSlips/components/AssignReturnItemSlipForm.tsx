@@ -1,14 +1,6 @@
-import { Col, Row, Select } from 'antd';
-import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranches } from 'hooks';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, filterOption, sleep } from 'utils';
 import * as Yup from 'yup';
-import { Button, FieldError, Label } from '../../../../components/elements';
-import { RequestErrors } from '../../../../components/RequestErrors';
-import { MAX_PAGE_SIZE } from '../../../../global/constants';
-import { request, userTypes } from '../../../../global/types';
-import { useUsers } from '../../../../hooks/useUsers';
 
 interface Props {
 	returnItemSlip: any;
@@ -17,6 +9,7 @@ interface Props {
 	loading: boolean;
 }
 
+// TODO: Requires refactoring once this feature is revisited
 export const AssignReturnItemSlipForm = ({
 	returnItemSlip,
 	onSubmit,
@@ -30,12 +23,12 @@ export const AssignReturnItemSlipForm = ({
 	const {
 		data: { branches },
 	} = useBranches();
-	const {
-		users,
-		getOnlineUsers,
-		status: usersStatus,
-		errors: usersErrors,
-	} = useUsers();
+	// const {
+	// 	users,
+	// 	getOnlineUsers,
+	// 	status: usersStatus,
+	// 	errors: usersErrors,
+	// } = useUsers();
 
 	// METHODS
 	const getFormDetails = useCallback(
@@ -54,9 +47,9 @@ export const AssignReturnItemSlipForm = ({
 
 	return (
 		<>
-			<RequestErrors errors={convertIntoArray(usersErrors)} withSpaceBottom />
+			{/* <RequestErrors errors={convertIntoArray(usersErrors)} withSpaceBottom /> */}
 
-			<Formik
+			{/* <Formik
 				initialValues={getFormDetails().DefaultValues}
 				validationSchema={getFormDetails().Schema}
 				onSubmit={async (formData) => {
@@ -78,6 +71,7 @@ export const AssignReturnItemSlipForm = ({
 									optionFilterProp="children"
 									showSearch
 									onChange={(value) => {
+										// TODO: Requires refactoring once this feature is revisited
 										getOnlineUsers(
 											{
 												branchId: value,
@@ -149,7 +143,7 @@ export const AssignReturnItemSlipForm = ({
 						</div>
 					</Form>
 				)}
-			</Formik>
+			</Formik> */}
 		</>
 	);
 };

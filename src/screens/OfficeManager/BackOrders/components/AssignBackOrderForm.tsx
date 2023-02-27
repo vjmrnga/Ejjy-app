@@ -2,8 +2,7 @@ import { Select } from 'antd';
 import { RequestErrors } from 'components';
 import { Button, FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { MAIN_BRANCH_ID, MAX_PAGE_SIZE, request, userTypes } from 'global';
-import { useUsers } from 'hooks/useUsers';
+import { request } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, getFullName, sleep } from 'utils';
 import * as Yup from 'yup';
@@ -25,26 +24,27 @@ export const AssignBackOrderForm = ({
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	// CUSTOM HOOKS
-	const {
-		users,
-		getOnlineUsers,
-		status: usersStatus,
-		errors: usersErrors,
-	} = useUsers();
+	// const {
+	// 	users,
+	// 	getOnlineUsers,
+	// 	status: usersStatus,
+	// 	errors: usersErrors,
+	// } = useUsers();
 
 	// METHODS
 
 	useEffect(() => {
-		getOnlineUsers(
-			{
-				// NOTE: Currently the temporary 'bodega' is the main branch
-				branchId: MAIN_BRANCH_ID,
-				userType: userTypes.BRANCH_MANAGER,
-				page: 1,
-				pageSize: MAX_PAGE_SIZE,
-			},
-			true,
-		);
+		// TODO: Requires refactoring once this feature is revisited
+		// getOnlineUsers(
+		// 	{
+		// 		// NOTE: Currently the temporary 'bodega' is the main branch
+		// 		branchId: MAIN_BRANCH_ID,
+		// 		userType: userTypes.BRANCH_MANAGER,
+		// 		page: 1,
+		// 		pageSize: MAX_PAGE_SIZE,
+		// 	},
+		// 	true,
+		// );
 	}, []);
 
 	const getFormDetails = useCallback(
@@ -61,7 +61,7 @@ export const AssignBackOrderForm = ({
 
 	return (
 		<>
-			<RequestErrors errors={convertIntoArray(usersErrors)} withSpaceBottom />
+			{/* <RequestErrors errors={convertIntoArray(usersErrors)} withSpaceBottom />
 
 			<Formik
 				initialValues={getFormDetails().DefaultValues}
@@ -114,7 +114,7 @@ export const AssignBackOrderForm = ({
 						</div>
 					</Form>
 				)}
-			</Formik>
+			</Formik> */}
 		</>
 	);
 };

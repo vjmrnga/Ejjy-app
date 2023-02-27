@@ -38,8 +38,8 @@ const PendingUserCreation = () => {
 		params: {
 			isPendingCreateApproval: true,
 			pageSize: MAX_PAGE_SIZE,
-			serviceType: serviceTypes.ONLINE,
 			serverUrl: getGoogleApiUrl(),
+			serviceType: serviceTypes.NORMAL,
 		},
 	});
 	const {

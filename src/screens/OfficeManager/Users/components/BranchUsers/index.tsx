@@ -44,7 +44,7 @@ export const BranchUsers = ({
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: getId(branch),
+			branchId: branch.id,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
