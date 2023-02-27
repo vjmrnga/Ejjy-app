@@ -63,6 +63,7 @@ export const Dashboard = () => {
 					<Tabs
 						activeKey={_.toString(currentBranchId)}
 						className="pa-6"
+						tabPosition="left"
 						type="card"
 						destroyInactiveTabPane
 						onTabClick={handleTabClick}
@@ -79,6 +80,7 @@ export const Dashboard = () => {
 								<BranchProductBalances
 									branchId={id}
 									productCategories={productCategories}
+									tableHeaderClassName="pt-2 px-0"
 								/>
 							</Tabs.TabPane>
 						))}

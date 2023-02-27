@@ -1,9 +1,10 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Radio, Row, Select, Table } from 'antd';
+import { Col, Input, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/lib/table/interface';
-import { ColoredText, RequestErrors, TableHeader } from 'components';
+import { RequestErrors, TableHeader } from 'components';
 import { Label } from 'components/elements';
 import {
+	ALL_OPTION_KEY,
 	branchProductStatusOptions,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -17,7 +18,7 @@ import {
 import { useBranchProducts, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import { IProductCategory } from 'models';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	filterOption,
@@ -130,6 +131,13 @@ export const BranchProductBalances = ({
 				quantity: bo_balance,
 			});
 
+			let typeComponent: string | ReactNode = EMPTY_CELL;
+			if (requisitionSlipTypes.AUTOMATIC === type) {
+				typeComponent = <Tag color="green">Automatic</Tag>;
+			} else if (requisitionSlipTypes.MANUAL === type) {
+				typeComponent = <Tag color="orange">Manual</Tag>;
+			}
+
 			return {
 				key: branchProduct.id,
 				code: getProductCode(product),
@@ -140,24 +148,12 @@ export const BranchProductBalances = ({
 				deliveryDate: datetime_created
 					? formatDateTime(datetime_created)
 					: EMPTY_CELL,
-				type: renderRsType(type),
+				type: typeComponent,
 			};
 		});
 
 		setDataSource(data);
 	}, [branchProducts]);
-
-	const renderRsType = (type) => {
-		let component: any = EMPTY_CELL;
-
-		if (requisitionSlipTypes.AUTOMATIC === type) {
-			component = <ColoredText text="Automatic" variant="primary" />;
-		} else if (requisitionSlipTypes.MANUAL === type) {
-			component = <ColoredText text="Manual" variant="secondary" />;
-		}
-
-		return component;
-	};
 
 	return (
 		<>
@@ -290,10 +286,10 @@ const Filter = ({
 				<Col lg={12} span={24}>
 					<Label label="Show has BO Balance" spacing />
 					<Radio.Group
-						defaultValue={null}
+						defaultValue={ALL_OPTION_KEY}
 						disabled={isLoading}
 						options={[
-							{ label: 'Show All', value: null },
+							{ label: 'Show All', value: ALL_OPTION_KEY },
 							{ label: 'Has BO Balance', value: true },
 						]}
 						optionType="button"
