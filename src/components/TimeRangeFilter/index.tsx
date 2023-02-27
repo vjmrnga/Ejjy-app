@@ -121,7 +121,7 @@ export const TimeRangeFilter = ({
 				}}
 			/>
 		);
-	}, [params.timeRange, timeRangeOptions, disabled]);
+	}, [params.timeRange, disabled]);
 
 	const getOptions = useCallback(() => {
 		const options = [];
