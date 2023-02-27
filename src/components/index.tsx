@@ -29,5 +29,5 @@ export * from './Table/TableHeaders/TableHeaderOrderSlip';
 export * from './Table/TableHeaders/TableHeaderRequisitionSlip';
 export * from './TableNormal/TableNormal';
 export * from './TimeMismatchBoundary';
-export * from './TimeRangeFilter/TimeRangeFilter';
+export * from './TimeRangeFilter';
 export * from './types';

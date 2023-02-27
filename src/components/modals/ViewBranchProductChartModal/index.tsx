@@ -1,6 +1,6 @@
 import { Button, Modal, Spin, Tabs } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
-import { TimeRangeFilter } from 'components/TimeRangeFilter/TimeRangeFilter';
+import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
 	MAX_PAGE_SIZE,
 	serviceTypes,

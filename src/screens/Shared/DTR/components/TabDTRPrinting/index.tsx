@@ -80,6 +80,7 @@ export const TabDTRPrinting = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
 	const [html, setHtml] = useState('');
+	const [timeRangeError, setTimeRangeError] = useState('');
 
 	// CUSTOM HOOKS
 	const { params } = useQueryParams();
@@ -89,12 +90,14 @@ export const TabDTRPrinting = () => {
 		error: attendanceLogsError,
 	} = useAttendanceLogsForPrinting({
 		params,
-		options: { enabled: !!params?.employeeId && !!params?.timeRange },
+		options: {
+			enabled: !timeRangeError && !!params?.employeeId && !!params?.timeRange,
+		},
 	});
 
 	// METHODS
 	useEffect(() => {
-		if (dtr.logs) {
+		if (!timeRangeError && dtr.logs) {
 			const data = dtr?.logs?.map((log) => ({
 				key: log.id,
 				day: log.day_number,
@@ -112,7 +115,22 @@ export const TabDTRPrinting = () => {
 
 			setDataSource(data);
 		}
-	}, [dtr]);
+	}, [dtr, timeRangeError]);
+
+	useEffect(() => {
+		if (params?.timeRange) {
+			const dates = _.toString(params?.timeRange)?.split(',');
+			const startDate = dayjs(dates[0]);
+			const endDate = dayjs(dates[1]);
+
+			const isSameMonth =
+				startDate.isSame(endDate, 'month') && startDate.isSame(endDate, 'year');
+
+			setTimeRangeError(
+				isSameMonth ? null : 'Selected dates must be of the same month.',
+			);
+		}
+	}, [params?.timeRange]);
 
 	useEffect(() => {
 		if ((!params?.employeeId || !params?.timeRange) && dataSource.length > 0) {
@@ -163,7 +181,10 @@ export const TabDTRPrinting = () => {
 			/>
 
 			<RequestErrors
-				errors={convertIntoArray(attendanceLogsError, 'Logs')}
+				errors={[
+					...convertIntoArray(timeRangeError),
+					...convertIntoArray(attendanceLogsError, 'Logs'),
+				]}
 				withSpaceBottom
 			/>
 
@@ -201,7 +222,7 @@ const Filter = () => {
 	return (
 		<div className="mb-4">
 			<RequestErrors
-				errors={[...convertIntoArray(accountErrors, 'Users')]}
+				errors={convertIntoArray(accountErrors, 'Users')}
 				withSpaceBottom
 			/>
 
