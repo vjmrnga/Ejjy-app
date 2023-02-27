@@ -8,7 +8,7 @@ import {
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { filterOption, formatInPeso, getId } from 'utils';
 import * as Yup from 'yup';
 
@@ -82,6 +82,16 @@ export const PricesForm = ({
 	onClose,
 	isLoading,
 }: Props) => {
+	// STATES
+	const [activeKey, setActiveKey] = useState(null);
+
+	// METHODS
+	useEffect(() => {
+		if (branchProducts.length === 1) {
+			setActiveKey([branchProducts[0].branch_id]);
+		}
+	}, [branchProducts]);
+
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: branchProducts.map((branchProduct) => {
@@ -275,8 +285,11 @@ export const PricesForm = ({
 				<Form>
 					{values.length > 0 && (
 						<Collapse
-							defaultActiveKey={values.length === 1 ? values[0].branchId : null}
+							activeKey={activeKey}
 							expandIconPosition="right"
+							onChange={(key) => {
+								setActiveKey(key);
+							}}
 						>
 							{values.map((branchProduct, index) => (
 								<Collapse.Panel

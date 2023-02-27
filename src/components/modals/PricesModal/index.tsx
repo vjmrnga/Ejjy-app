@@ -34,7 +34,9 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			branchId: isUserFromBranch(user.user_type)
 				? getLocalBranchId()
 				: undefined,
-			productIds: product.id,
+			productIds: isUserFromBranch(user.user_type)
+				? product.product.id
+				: product.id,
 		},
 		options: { enabled: product !== null },
 	});
