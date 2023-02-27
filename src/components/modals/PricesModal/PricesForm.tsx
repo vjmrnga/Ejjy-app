@@ -8,6 +8,7 @@ import {
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { filterOption, formatInPeso, getId } from 'utils';
 import * as Yup from 'yup';
@@ -281,7 +282,7 @@ export const PricesForm = ({
 			enableReinitialize
 			onSubmit={(values) => {
 				const ALLOWED_LENGTH = 1;
-				console.log('values', values);
+
 				const priceMarkdownFormData = values
 					.map((value) => {
 						const data = { branchId: value.branchId };
@@ -296,7 +297,7 @@ export const PricesForm = ({
 
 				const branchProductFormData = values
 					.map((value) => {
-						const data = { branchIds: value.branchId };
+						const data = { branchIds: _.toString(value.branchId) };
 
 						variableNames.forEach((variable) => {
 							if (

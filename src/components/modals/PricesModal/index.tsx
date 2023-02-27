@@ -121,21 +121,6 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			/>
 
 			<Tabs type="card" destroyInactiveTabPane>
-				<Tabs.TabPane key={tabs.ALL} tab="All">
-					<PricesForm
-						branches={branches}
-						isLoading={
-							isFetchingBranches ||
-							isFetchingBranchProducts ||
-							isCreatingPriceMarkdown ||
-							isEditingBranchProductPriceCost
-						}
-						isBulkEdit
-						onClose={onClose}
-						onSubmit={handleSubmit}
-					/>
-				</Tabs.TabPane>
-
 				<Tabs.TabPane key={tabs.BRANCHES} tab="Branches">
 					<PricesForm
 						branches={branches}
@@ -146,6 +131,21 @@ export const PricesModal = ({ product, onClose }: Props) => {
 							isCreatingPriceMarkdown ||
 							isEditingBranchProductPriceCost
 						}
+						onClose={onClose}
+						onSubmit={handleSubmit}
+					/>
+				</Tabs.TabPane>
+
+				<Tabs.TabPane key={tabs.ALL} tab="All">
+					<PricesForm
+						branches={branches}
+						isLoading={
+							isFetchingBranches ||
+							isFetchingBranchProducts ||
+							isCreatingPriceMarkdown ||
+							isEditingBranchProductPriceCost
+						}
+						isBulkEdit
 						onClose={onClose}
 						onSubmit={handleSubmit}
 					/>
