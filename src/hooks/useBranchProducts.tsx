@@ -421,7 +421,7 @@ export const useBranchProductEditPriceCost = () => {
 					product_id: productId,
 					data:
 						data?.map((d) => ({
-							branch_id: d?.branchId || undefined,
+							branch_ids: d?.branchIds || undefined,
 							cost_per_piece: d?.costPerPiece || undefined,
 							cost_per_bulk: d?.costPerBulk || undefined,
 							price_per_piece: d?.pricePerPiece || undefined,

@@ -14,10 +14,11 @@ import * as Yup from 'yup';
 
 interface Props {
 	branches: any;
-	branchProducts: any;
+	branchProducts?: any;
 	onSubmit: any;
 	onClose: any;
 	isLoading: boolean;
+	isBulkEdit?: boolean;
 }
 
 const variableNames = [
@@ -81,82 +82,126 @@ export const PricesForm = ({
 	onSubmit,
 	onClose,
 	isLoading,
+	isBulkEdit,
 }: Props) => {
 	// STATES
 	const [activeKey, setActiveKey] = useState(null);
 
 	// METHODS
 	useEffect(() => {
-		if (branchProducts.length === 1) {
+		if (branchProducts?.length === 1) {
 			setActiveKey([branchProducts[0].branch_id]);
 		}
 	}, [branchProducts]);
 
 	const getFormDetails = useCallback(
 		() => ({
-			DefaultValues: branchProducts.map((branchProduct) => {
-				const branch = getBranch(branchProduct?.branch_id);
+			DefaultValues: isBulkEdit
+				? [
+						{
+							branchId: branches.map((branch) => getId(branch)).join(','),
+							branchName: 'All Branches',
 
-				return {
-					branchId: getId(branch),
-					branchName: branch?.name,
+							markdownType: markdownTypes.REGULAR,
+							costPerPiece: '',
+							costPerBulk: '',
+							pricePerPiece: '',
+							pricePerBulk: '',
+							markdownPricePerPiece1: '',
+							markdownPricePerPiece2: '',
+							markdownPricePerBulk1: '',
+							markdownPricePerBulk2: '',
+							creditPricePerPiece: '',
+							creditPricePerBulk: '',
+							governmentCreditPricePerPiece: '',
+							governmentCreditPricePerBulk: '',
 
-					markdownType:
-						branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
-					costPerPiece: branchProduct?.cost_per_piece || '',
-					costPerBulk: branchProduct?.cost_per_bulk || '',
-					pricePerPiece: branchProduct?.price_per_piece || '',
-					pricePerBulk: branchProduct?.price_per_bulk || '',
-					markdownPricePerPiece1:
-						branchProduct?.markdown_price_per_piece1 || '',
-					markdownPricePerPiece2:
-						branchProduct?.markdown_price_per_piece2 || '',
-					markdownPricePerBulk1: branchProduct?.markdown_price_per_bulk1 || '',
-					markdownPricePerBulk2: branchProduct?.markdown_price_per_bulk2 || '',
-					creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
-					creditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
-					governmentCreditPricePerPiece:
-						branchProduct?.government_credit_price_per_piece || '',
-					governmentCreditPricePerBulk:
-						branchProduct?.government_credit_price_per_bulk || '',
+							initialMarkdownType: markdownTypes.REGULAR,
+							initialCostPerPiece: '',
+							initialCostPerBulk: '',
+							initialPricePerPiece: '',
+							initialPricePerBulk: '',
+							initialMarkdownPricePerPiece1: '',
+							initialMarkdownPricePerPiece2: '',
+							initialMarkdownPricePerBulk1: '',
+							initialMarkdownPricePerBulk2: '',
+							initialCreditPricePerPiece: '',
+							initialCreditPricePerBulk: '',
+							initialGovernmentCreditPricePerPiece: '',
+							initialGovernmentCreditPricePerBulk: '',
 
-					initialMarkdownType:
-						branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
-					initialCostPerPiece: branchProduct?.cost_per_piece || '',
-					initialCostPerBulk: branchProduct?.cost_per_bulk || '',
-					initialPricePerPiece: branchProduct?.price_per_piece || '',
-					initialPricePerBulk: branchProduct?.price_per_bulk || '',
-					initialMarkdownPricePerPiece1:
-						branchProduct?.markdown_price_per_piece1 || '',
-					initialMarkdownPricePerPiece2:
-						branchProduct?.markdown_price_per_piece2 || '',
-					initialMarkdownPricePerBulk1:
-						branchProduct?.markdown_price_per_bulk1 || '',
-					initialMarkdownPricePerBulk2:
-						branchProduct?.markdown_price_per_bulk2 || '',
-					initialCreditPricePerPiece:
-						branchProduct?.credit_price_per_piece || '',
-					initialCreditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
-					initialGovernmentCreditPricePerPiece:
-						branchProduct?.government_credit_price_per_piece || '',
-					initialGovernmentCreditPricePerBulk:
-						branchProduct?.government_credit_price_per_bulk || '',
+							initialCreditPricePerPieceDifference: 0,
+							initialCreditPricePerBulkDifference: 0,
+							initialGovernmentCreditPricePerPieceDifference: 0,
+							initialGovernmentCreditPricePerBulkDifference: 0,
+						},
+				  ]
+				: branchProducts.map((branchProduct) => {
+						const branch = getBranch(branchProduct?.branch_id);
 
-					// NOTE: UI changes only
-					initialCreditPricePerPieceDifference:
-						Number(branchProduct?.price_per_piece) -
-						Number(branchProduct?.government_credit_price_per_piece),
-					initialCreditPricePerBulkDifference:
-						Number(branchProduct?.price_per_bulk) -
-						Number(branchProduct?.government_credit_price_per_bulk),
-					initialGovernmentCreditPricePerPieceDifference:
-						Number(branchProduct?.price_per_piece) -
-						Number(branchProduct?.government_credit_price_per_piece),
-					initialGovernmentCreditPricePerBulkDifference:
-						Number(branchProduct?.price_per_bulk) -
-						Number(branchProduct?.government_credit_price_per_bulk),
-				};
-			}),
+						return {
+							branchId: getId(branch),
+							branchName: branch?.name,
+
+							markdownType:
+								branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
+							costPerPiece: branchProduct?.cost_per_piece || '',
+							costPerBulk: branchProduct?.cost_per_bulk || '',
+							pricePerPiece: branchProduct?.price_per_piece || '',
+							pricePerBulk: branchProduct?.price_per_bulk || '',
+							markdownPricePerPiece1:
+								branchProduct?.markdown_price_per_piece1 || '',
+							markdownPricePerPiece2:
+								branchProduct?.markdown_price_per_piece2 || '',
+							markdownPricePerBulk1:
+								branchProduct?.markdown_price_per_bulk1 || '',
+							markdownPricePerBulk2:
+								branchProduct?.markdown_price_per_bulk2 || '',
+							creditPricePerPiece: branchProduct?.credit_price_per_piece || '',
+							creditPricePerBulk: branchProduct?.credit_price_per_bulk || '',
+							governmentCreditPricePerPiece:
+								branchProduct?.government_credit_price_per_piece || '',
+							governmentCreditPricePerBulk:
+								branchProduct?.government_credit_price_per_bulk || '',
+
+							initialMarkdownType:
+								branchProduct?.price_markdown?.type || markdownTypes.REGULAR,
+							initialCostPerPiece: branchProduct?.cost_per_piece || '',
+							initialCostPerBulk: branchProduct?.cost_per_bulk || '',
+							initialPricePerPiece: branchProduct?.price_per_piece || '',
+							initialPricePerBulk: branchProduct?.price_per_bulk || '',
+							initialMarkdownPricePerPiece1:
+								branchProduct?.markdown_price_per_piece1 || '',
+							initialMarkdownPricePerPiece2:
+								branchProduct?.markdown_price_per_piece2 || '',
+							initialMarkdownPricePerBulk1:
+								branchProduct?.markdown_price_per_bulk1 || '',
+							initialMarkdownPricePerBulk2:
+								branchProduct?.markdown_price_per_bulk2 || '',
+							initialCreditPricePerPiece:
+								branchProduct?.credit_price_per_piece || '',
+							initialCreditPricePerBulk:
+								branchProduct?.credit_price_per_bulk || '',
+							initialGovernmentCreditPricePerPiece:
+								branchProduct?.government_credit_price_per_piece || '',
+							initialGovernmentCreditPricePerBulk:
+								branchProduct?.government_credit_price_per_bulk || '',
+
+							// NOTE: UI changes only
+							initialCreditPricePerPieceDifference:
+								Number(branchProduct?.price_per_piece) -
+								Number(branchProduct?.government_credit_price_per_piece),
+							initialCreditPricePerBulkDifference:
+								Number(branchProduct?.price_per_bulk) -
+								Number(branchProduct?.government_credit_price_per_bulk),
+							initialGovernmentCreditPricePerPieceDifference:
+								Number(branchProduct?.price_per_piece) -
+								Number(branchProduct?.government_credit_price_per_piece),
+							initialGovernmentCreditPricePerBulkDifference:
+								Number(branchProduct?.price_per_bulk) -
+								Number(branchProduct?.government_credit_price_per_bulk),
+						};
+				  }),
 			Schema: Yup.array(
 				Yup.object().shape({
 					markdownType: Yup.string().label('Current Sales Price Type'),
@@ -177,24 +222,14 @@ export const PricesForm = ({
 						.min(0)
 						.label('Special Price (Bulk)'),
 					creditPricePerPiece: Yup.number()
-						.required()
-						.moreThan(0)
-						.nullable()
+						.min(0)
 						.label('Credit Price (Piece)'),
-					creditPricePerBulk: Yup.number()
-						.required()
-						.moreThan(0)
-						.nullable()
-						.label('Credit Price (Bulk)'),
+					creditPricePerBulk: Yup.number().min(0).label('Credit Price (Bulk)'),
 					governmentCreditPricePerPiece: Yup.number()
-						.required()
-						.moreThan(0)
-						.nullable()
+						.min(0)
 						.label('Government Credit Price (Piece)'),
 					governmentCreditPricePerBulk: Yup.number()
-						.required()
-						.moreThan(0)
-						.nullable()
+						.min(0)
 						.label('Government Credit Price (Bulk)'),
 				}),
 			),
@@ -246,7 +281,7 @@ export const PricesForm = ({
 			enableReinitialize
 			onSubmit={(values) => {
 				const ALLOWED_LENGTH = 1;
-
+				console.log('values', values);
 				const priceMarkdownFormData = values
 					.map((value) => {
 						const data = { branchId: value.branchId };
@@ -261,7 +296,7 @@ export const PricesForm = ({
 
 				const branchProductFormData = values
 					.map((value) => {
-						const data = { branchId: value.branchId };
+						const data = { branchIds: value.branchId };
 
 						variableNames.forEach((variable) => {
 							if (

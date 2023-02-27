@@ -1,22 +1,20 @@
-import { Col, Input, message, Modal, Row, Button } from 'antd';
+import { Button, Col, Input, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchCreate, useBranchEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { useQueryClient } from 'react-query';
 import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 
 interface Props {
 	branch: any;
-	queryKey: string;
 	onClose: any;
+	onSuccess: any;
 }
 
-export const ModifyBranchModal = ({ branch, queryKey, onClose }: Props) => {
+export const ModifyBranchModal = ({ branch, onClose, onSuccess }: Props) => {
 	// CUSTOM HOOKS
-	const queryClient = useQueryClient();
 	const {
 		mutateAsync: createBranch,
 		isLoading: isCreatingBranch,
@@ -41,7 +39,7 @@ export const ModifyBranchModal = ({ branch, queryKey, onClose }: Props) => {
 			message.success('Branch was created successfully');
 		}
 
-		queryClient.invalidateQueries(['useBranches', queryKey]);
+		onSuccess?.();
 		onClose();
 	};
 

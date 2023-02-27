@@ -4,12 +4,14 @@ import { MAX_PAGE_SIZE } from 'global';
 import { useBranches, useBranchProducts } from 'hooks';
 import _, { upperFirst } from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatInPeso,
 	formatQuantity,
 	getProductType,
 	getUnitOfMeasurement,
+	isUserFromBranch,
 } from 'utils';
 
 interface Props {
@@ -22,13 +24,14 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 	const [activeBranch, setActiveBranch] = useState(null);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,
 		error: branchProductError,
 	} = useBranchProducts({
 		params: { productIds: product?.id },
-		options: { enabled: product !== null },
+		options: { enabled: product !== null && !isUserFromBranch(user.user_type) },
 	});
 	const {
 		data: { branches },
@@ -36,6 +39,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 		error: branchesErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !isUserFromBranch(user.user_type) },
 	});
 
 	useEffect(() => {
@@ -188,54 +192,58 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
-			<Divider orientation="left">Branch Product Prices</Divider>
+			{!isUserFromBranch(user.user_type) && (
+				<>
+					<Divider orientation="left">Branch Product Prices</Divider>
 
-			<Spin spinning={isFetchingBranchProducts || isFetchingBranches}>
-				<Tabs
-					activeKey={activeBranch}
-					tabPosition="left"
-					type="card"
-					destroyInactiveTabPane
-					onTabClick={setActiveBranch}
-				>
-					{branches.map((branch) => {
-						const branchProduct = branchProducts?.find(
-							(bp) => bp.branch_id === branch.id,
-						);
+					<Spin spinning={isFetchingBranchProducts || isFetchingBranches}>
+						<Tabs
+							activeKey={activeBranch}
+							tabPosition="left"
+							type="card"
+							destroyInactiveTabPane
+							onTabClick={setActiveBranch}
+						>
+							{branches.map((branch) => {
+								const branchProduct = branchProducts?.find(
+									(bp) => bp.branch_id === branch.id,
+								);
 
-						return branchProduct ? (
-							<Tabs.TabPane key={branch.id} tab={branch.name}>
-								<Descriptions
-									className="w-100"
-									column={2}
-									labelStyle={{ width: 200 }}
-									size="small"
-									bordered
-								>
-									<Descriptions.Item label="Price (Piece)">
-										{formatInPeso(branchProduct.price_per_piece)}
-									</Descriptions.Item>
-									<Descriptions.Item label="Price (Bulk)">
-										{formatInPeso(branchProduct.price_per_bulk)}
-									</Descriptions.Item>
-									<Descriptions.Item label="Wholesale Price (Piece)">
-										{formatInPeso(branchProduct?.markdown_price_per_piece1)}
-									</Descriptions.Item>
-									<Descriptions.Item label="Wholesale Price (Bulk)">
-										{formatInPeso(branchProduct?.markdown_price_per_bulk1)}
-									</Descriptions.Item>
-									<Descriptions.Item label="Special Price (Piece)">
-										{formatInPeso(branchProduct?.markdown_price_per_piece2)}
-									</Descriptions.Item>
-									<Descriptions.Item label="Special Price (Bulk)">
-										{formatInPeso(branchProduct?.markdown_price_per_bulk2)}
-									</Descriptions.Item>
-								</Descriptions>
-							</Tabs.TabPane>
-						) : undefined;
-					})}
-				</Tabs>
-			</Spin>
+								return branchProduct ? (
+									<Tabs.TabPane key={branch.id} tab={branch.name}>
+										<Descriptions
+											className="w-100"
+											column={2}
+											labelStyle={{ width: 200 }}
+											size="small"
+											bordered
+										>
+											<Descriptions.Item label="Price (Piece)">
+												{formatInPeso(branchProduct.price_per_piece)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Price (Bulk)">
+												{formatInPeso(branchProduct.price_per_bulk)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Wholesale Price (Piece)">
+												{formatInPeso(branchProduct?.markdown_price_per_piece1)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Wholesale Price (Bulk)">
+												{formatInPeso(branchProduct?.markdown_price_per_bulk1)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Special Price (Piece)">
+												{formatInPeso(branchProduct?.markdown_price_per_piece2)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Special Price (Bulk)">
+												{formatInPeso(branchProduct?.markdown_price_per_bulk2)}
+											</Descriptions.Item>
+										</Descriptions>
+									</Tabs.TabPane>
+								) : undefined;
+							})}
+						</Tabs>
+					</Spin>
+				</>
+			)}
 		</Modal>
 	);
 };

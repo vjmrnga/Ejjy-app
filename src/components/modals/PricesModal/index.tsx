@@ -1,6 +1,6 @@
-import { message, Modal } from 'antd';
+import { message, Modal, Tabs } from 'antd';
 import { RequestErrors } from 'components';
-import { MAX_PAGE_SIZE } from 'global';
+import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
 	useBranches,
 	useBranchProductEditPriceCost,
@@ -17,6 +17,11 @@ import {
 	isUserFromBranch,
 } from 'utils';
 import { PricesForm } from './PricesForm';
+
+const tabs = {
+	ALL: 'All',
+	BRANCHES: 'Branches',
+};
 
 interface Props {
 	product: any;
@@ -37,6 +42,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			productIds: isUserFromBranch(user.user_type)
 				? product.product.id
 				: product.id,
+			serviceType: serviceTypes.OFFLINE,
 		},
 		options: { enabled: product !== null },
 	});
@@ -114,18 +120,37 @@ export const PricesModal = ({ product, onClose }: Props) => {
 				withSpaceBottom
 			/>
 
-			<PricesForm
-				branches={branches}
-				branchProducts={branchProducts}
-				isLoading={
-					isFetchingBranches ||
-					isFetchingBranchProducts ||
-					isCreatingPriceMarkdown ||
-					isEditingBranchProductPriceCost
-				}
-				onClose={onClose}
-				onSubmit={handleSubmit}
-			/>
+			<Tabs type="card" destroyInactiveTabPane>
+				<Tabs.TabPane key={tabs.ALL} tab="All">
+					<PricesForm
+						branches={branches}
+						isLoading={
+							isFetchingBranches ||
+							isFetchingBranchProducts ||
+							isCreatingPriceMarkdown ||
+							isEditingBranchProductPriceCost
+						}
+						isBulkEdit
+						onClose={onClose}
+						onSubmit={handleSubmit}
+					/>
+				</Tabs.TabPane>
+
+				<Tabs.TabPane key={tabs.BRANCHES} tab="Branches">
+					<PricesForm
+						branches={branches}
+						branchProducts={branchProducts}
+						isLoading={
+							isFetchingBranches ||
+							isFetchingBranchProducts ||
+							isCreatingPriceMarkdown ||
+							isEditingBranchProductPriceCost
+						}
+						onClose={onClose}
+						onSubmit={handleSubmit}
+					/>
+				</Tabs.TabPane>
+			</Tabs>
 		</Modal>
 	);
 };
