@@ -1,9 +1,14 @@
-import { message } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Button, message, Space, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
-import { Content, RequestErrors, TableActions, TableHeader } from 'components';
+import { Content, RequestErrors, TableHeader } from 'components';
 import { Box } from 'components/elements';
 import { MAX_PAGE_SIZE, serviceTypes, userPendingApprovalTypes } from 'global';
-import { useUserApprove, useUserDelete, useUsers } from 'hooks';
+import {
+	useUserApproveUserPendingApproval,
+	useUserDeclineUserPendingApproval,
+	useUsers,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
@@ -22,6 +27,7 @@ export const Users = () => (
 	<Content className="Users" title="Users">
 		<PendingUserCreation />
 		<PendingEditUserType />
+		<PendingUserDeletion />
 	</Content>
 );
 
@@ -43,15 +49,15 @@ const PendingUserCreation = () => {
 		},
 	});
 	const {
-		mutateAsync: approveUser,
-		isLoading: isApprovingUser,
-		error: approveUserError,
-	} = useUserApprove();
+		mutateAsync: approveUserPendingApproval,
+		isLoading: isApprovingUserPendingApproval,
+		error: approveUserPendingApprovalError,
+	} = useUserApproveUserPendingApproval();
 	const {
-		mutate: deleteUser,
-		isLoading: isDeletingUser,
-		error: deleteUserError,
-	} = useUserDelete();
+		mutate: declineUserPendingApproval,
+		isLoading: isDecliningUserPendingApproval,
+		error: declineUserPendingApprovalError,
+	} = useUserDeclineUserPendingApproval();
 
 	// METHODS
 	useEffect(() => {
@@ -63,21 +69,38 @@ const PendingUserCreation = () => {
 				name: getFullName(user),
 				userType: getUserTypeName(user_type),
 				actions: (
-					<TableActions
-						onApprove={async () => {
-							await approveUser({
-								id,
-								pendingApprovalType: userPendingApprovalTypes.CREATE,
-							});
+					<Space>
+						<Tooltip title="Approve">
+							<Button
+								icon={<CheckCircleOutlined />}
+								type="primary"
+								ghost
+								onClick={async () => {
+									await approveUserPendingApproval({
+										id,
+										pendingApprovalType: userPendingApprovalTypes.CREATE,
+									});
+									message.success("User's creation was approved successfully");
+								}}
+							/>
+						</Tooltip>
+						<Tooltip title="Reject">
+							<Button
+								icon={<CloseCircleOutlined />}
+								type="primary"
+								danger
+								ghost
+								onClick={async () => {
+									await declineUserPendingApproval({
+										id,
+										pendingApprovalType: userPendingApprovalTypes.CREATE,
+									});
 
-							message.success("User's creation was approved successfully");
-						}}
-						onRemove={async () => {
-							await deleteUser(id);
-
-							message.success("User's creation was declined successfully");
-						}}
-					/>
+									message.success("User's creation was declined successfully");
+								}}
+							/>
+						</Tooltip>
+					</Space>
 				),
 			};
 		});
@@ -87,20 +110,26 @@ const PendingUserCreation = () => {
 
 	return (
 		<Box>
+			<TableHeader title="Pending User Creation" />
+
 			<RequestErrors
 				className="px-6"
 				errors={[
 					...convertIntoArray(userError),
-					...convertIntoArray(approveUserError?.errors),
-					...convertIntoArray(deleteUserError?.errors),
+					...convertIntoArray(approveUserPendingApprovalError?.errors),
+					...convertIntoArray(declineUserPendingApprovalError?.errors),
 				]}
+				withSpaceBottom
 			/>
 
-			<TableHeader title="Pending User Creation" />
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingUsers || isApprovingUser || isDeletingUser}
+				loading={
+					isFetchingUsers ||
+					isApprovingUserPendingApproval ||
+					isDecliningUserPendingApproval
+				}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered
@@ -122,20 +151,20 @@ const PendingEditUserType = () => {
 		params: {
 			isPendingUpdateUserTypeApproval: true,
 			pageSize: MAX_PAGE_SIZE,
-			serviceType: serviceTypes.ONLINE,
+			serviceType: serviceTypes.NORMAL,
 			serverUrl: getGoogleApiUrl(),
 		},
 	});
 	const {
-		mutateAsync: approveUser,
-		isLoading: isApprovingUser,
-		error: approveUserError,
-	} = useUserApprove();
+		mutateAsync: approveUserPendingApproval,
+		isLoading: isApprovingUserPendingApproval,
+		error: approveUserPendingApprovalError,
+	} = useUserApproveUserPendingApproval();
 	const {
-		mutate: deleteUser,
-		isLoading: isDeletingUser,
-		error: deleteUserError,
-	} = useUserDelete();
+		mutate: declineUserPendingApproval,
+		isLoading: isDecliningUserPendingApproval,
+		error: declineUserPendingApprovalError,
+	} = useUserDeclineUserPendingApproval();
 
 	// METHODS
 	useEffect(() => {
@@ -147,25 +176,44 @@ const PendingEditUserType = () => {
 				name: getFullName(user),
 				userType: getUserTypeName(user_type),
 				actions: (
-					<TableActions
-						onApprove={async () => {
-							await approveUser({
-								id,
-								pendingApprovalType: userPendingApprovalTypes.UPDATE_USER_TYPE,
-							});
+					<Space>
+						<Tooltip title="Approve">
+							<Button
+								icon={<CheckCircleOutlined />}
+								type="primary"
+								ghost
+								onClick={async () => {
+									await approveUserPendingApproval({
+										id,
+										pendingApprovalType:
+											userPendingApprovalTypes.UPDATE_USER_TYPE,
+									});
+									message.success(
+										"User's type change request was updated successfully",
+									);
+								}}
+							/>
+						</Tooltip>
+						<Tooltip title="Reject">
+							<Button
+								icon={<CloseCircleOutlined />}
+								type="primary"
+								danger
+								ghost
+								onClick={async () => {
+									await declineUserPendingApproval({
+										id,
+										pendingApprovalType:
+											userPendingApprovalTypes.UPDATE_USER_TYPE,
+									});
 
-							message.success(
-								"User's type change request was updated successfully",
-							);
-						}}
-						onRemove={async () => {
-							await deleteUser(id);
-
-							message.success(
-								"User's type change request was declined successfully",
-							);
-						}}
-					/>
+									message.success(
+										"User's type change request was declined successfully",
+									);
+								}}
+							/>
+						</Tooltip>
+					</Space>
 				),
 			};
 		});
@@ -175,20 +223,132 @@ const PendingEditUserType = () => {
 
 	return (
 		<Box>
+			<TableHeader title="Pending User Type Update" />
+
 			<RequestErrors
 				className="px-6"
 				errors={[
 					...convertIntoArray(userError),
-					...convertIntoArray(approveUserError?.errors),
-					...convertIntoArray(deleteUserError?.errors),
+					...convertIntoArray(approveUserPendingApprovalError?.errors),
+					...convertIntoArray(declineUserPendingApprovalError?.errors),
 				]}
+				withSpaceBottom
 			/>
 
-			<TableHeader title="Pending User Type Update" />
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingUsers || isApprovingUser || isDeletingUser}
+				loading={
+					isFetchingUsers ||
+					isApprovingUserPendingApproval ||
+					isDecliningUserPendingApproval
+				}
+				pagination={false}
+				scroll={{ x: 800 }}
+				bordered
+			/>
+		</Box>
+	);
+};
+
+const PendingUserDeletion = () => {
+	// STATES
+	const [dataSource, setDataSource] = useState([]);
+
+	// CUSTOM HOOKS
+	const {
+		data: { users },
+		isFetching: isFetchingUsers,
+		error: userError,
+	} = useUsers({
+		params: {
+			isPendingDeleteApproval: true,
+			pageSize: MAX_PAGE_SIZE,
+			serverUrl: getGoogleApiUrl(),
+			serviceType: serviceTypes.NORMAL,
+		},
+	});
+	const {
+		mutateAsync: approveUserPendingApproval,
+		isLoading: isApprovingUserPendingApproval,
+		error: approveUserPendingApprovalError,
+	} = useUserApproveUserPendingApproval();
+	const {
+		mutate: declineUserPendingApproval,
+		isLoading: isDecliningUserPendingApproval,
+		error: declineUserPendingApprovalError,
+	} = useUserDeclineUserPendingApproval();
+
+	// METHODS
+	useEffect(() => {
+		const formattedUsers = users.map((user) => {
+			const { id, user_type } = user;
+
+			return {
+				key: id,
+				name: getFullName(user),
+				userType: getUserTypeName(user_type),
+				actions: (
+					<Space>
+						<Tooltip title="Approve">
+							<Button
+								icon={<CheckCircleOutlined />}
+								type="primary"
+								ghost
+								onClick={async () => {
+									await approveUserPendingApproval({
+										id,
+										pendingApprovalType: userPendingApprovalTypes.DELETE,
+									});
+									message.success("User's deletion was approved successfully");
+								}}
+							/>
+						</Tooltip>
+						<Tooltip title="Reject">
+							<Button
+								icon={<CloseCircleOutlined />}
+								type="primary"
+								danger
+								ghost
+								onClick={async () => {
+									await declineUserPendingApproval({
+										id,
+										pendingApprovalType: userPendingApprovalTypes.DELETE,
+									});
+									message.success("User's deletion was declined successfully");
+								}}
+							/>
+						</Tooltip>
+					</Space>
+				),
+			};
+		});
+
+		setDataSource(formattedUsers);
+	}, [users]);
+
+	return (
+		<Box>
+			<TableHeader title="Pending User Deletion" />
+
+			<RequestErrors
+				className="px-6"
+				errors={[
+					...convertIntoArray(userError),
+					...convertIntoArray(approveUserPendingApprovalError?.errors),
+					...convertIntoArray(declineUserPendingApprovalError?.errors),
+				]}
+				withSpaceBottom
+			/>
+
+			<Table
+				columns={columns}
+				dataSource={dataSource}
+				loading={
+					isFetchingUsers ||
+					isApprovingUserPendingApproval ||
+					isDecliningUserPendingApproval
+				}
 				pagination={false}
 				scroll={{ x: 800 }}
 				bordered

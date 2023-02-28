@@ -5,6 +5,7 @@ interface List extends IListRequest {
 	branch_id?: number;
 	is_pending_create_approval?: boolean;
 	is_pending_update_user_type_approval?: boolean;
+	is_pending_delete_approval?: boolean;
 }
 
 interface Modify {
@@ -20,6 +21,10 @@ interface Modify {
 }
 interface RequestUserTypeChange {
 	new_user_type: string;
+}
+
+interface DeclineUserPendingApproval {
+	pending_approval_type: string;
 }
 
 const service = {
@@ -39,11 +44,23 @@ const service = {
 
 	delete: async (id, baseURL) => axios.delete(`/users/${id}/`, { baseURL }),
 
-	approve: async (id, body, baseURL) =>
-		axios.post(`/users/${id}/approve/`, body, { baseURL }),
-
 	requestUserTypeChange: async (id, body: RequestUserTypeChange, baseURL) =>
 		axios.post(`/users/${id}/request-user-type-change/`, body, {
+			baseURL,
+		}),
+
+	requestUserDeletion: async (id, baseURL) =>
+		axios.post(`/users/${id}/request-user-deletion/`, {}, { baseURL }),
+
+	approveUserPendingApproval: async (id, body, baseURL) =>
+		axios.post(`/users/${id}/approve/`, body, { baseURL }),
+
+	declineUserPendingApproval: async (
+		id,
+		body: DeclineUserPendingApproval,
+		baseURL,
+	) =>
+		axios.post(`/users/${id}/decline/`, body, {
 			baseURL,
 		}),
 };

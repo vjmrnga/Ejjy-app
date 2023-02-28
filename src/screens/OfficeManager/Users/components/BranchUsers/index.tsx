@@ -10,6 +10,7 @@ import { RequestErrors, ViewUserModal } from 'components';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserRequestUserDeletion, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { convertIntoArray, getFullName, getId, getUserTypeName } from 'utils';
 
@@ -23,6 +24,7 @@ const columns: ColumnsType = [
 interface Props {
 	branch: any;
 	disabled: boolean;
+	isFetchUsersEnabled: boolean;
 	onEditUser: any;
 	onReassignUser: any;
 }
@@ -30,6 +32,7 @@ interface Props {
 export const BranchUsers = ({
 	branch,
 	disabled,
+	isFetchUsersEnabled,
 	onEditUser,
 	onReassignUser,
 }: Props) => {
@@ -38,6 +41,7 @@ export const BranchUsers = ({
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,
@@ -45,11 +49,17 @@ export const BranchUsers = ({
 	} = useUsers({
 		params: {
 			branchId: branch.id,
+			isPendingCreateApproval: false,
+			isPendingUpdateUserTypeApproval: false,
+			isPendingDeleteApproval: false,
 			pageSize: MAX_PAGE_SIZE,
+		},
+		options: {
+			enabled: isFetchUsersEnabled,
 		},
 	});
 	const {
-		mutate: requestUserDeletion,
+		mutateAsync: requestUserDeletion,
 		isLoading: isRequestingUserDeletion,
 		error: requestUserDeletionError,
 	} = useUserRequestUserDeletion();
@@ -124,7 +134,10 @@ export const BranchUsers = ({
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this user?"
-								onConfirm={() => requestUserDeletion(getId(user))}
+								onConfirm={async () => {
+									await requestUserDeletion(getId(user));
+									queryClient.invalidateQueries('useUserPendingApprovals');
+								}}
 							>
 								<Tooltip title="Remove">
 									<Button

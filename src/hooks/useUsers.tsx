@@ -12,6 +12,7 @@ const useUsers = ({ params, options }: Query = {}) =>
 			params?.branchId,
 			params?.isPendingCreateApproval,
 			params?.isPendingUpdateUserTypeApproval,
+			params?.isPendingDeleteApproval,
 			params?.page,
 			params?.pageSize,
 			params?.serverUrl,
@@ -37,6 +38,7 @@ const useUsers = ({ params, options }: Query = {}) =>
 						is_pending_create_approval: params?.isPendingCreateApproval,
 						is_pending_update_user_type_approval:
 							params?.isPendingUpdateUserTypeApproval,
+						is_pending_delete_approval: params?.isPendingDeleteApproval,
 					},
 					params?.serverUrl || getLocalApiUrl(),
 				),
@@ -75,7 +77,7 @@ export const useUserAuthenticate = () =>
 		),
 	);
 
-export const useUserCreate = () => {
+export const useUserCreate = ({ clearAfterRequest = true } = {}) => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
@@ -104,33 +106,15 @@ export const useUserCreate = () => {
 			),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries('useUsers');
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
 			},
 		},
 	);
 };
 
-export const useUserApprove = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		({ id, pendingApprovalType }: any) =>
-			UsersService.approve(
-				id,
-				{
-					pending_approval_type: pendingApprovalType,
-				},
-				getBaseUrl(),
-			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useUsers');
-			},
-		},
-	);
-};
-
-export const useUserEdit = () => {
+export const useUserEdit = ({ clearAfterRequest = true } = {}) => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
@@ -159,34 +143,116 @@ export const useUserEdit = () => {
 			),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries('useUsers');
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
 			},
 		},
 	);
 };
 
-export const useUserDelete = () => {
+export const useUserDelete = ({ clearAfterRequest = true } = {}) => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
 		(id: number) => UsersService.delete(id, getBaseUrl()),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries('useUsers');
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
 			},
 		},
 	);
 };
 
-export const useUserRequestUserTypeChange = () =>
-	useMutation<any, any, any>(({ id, newUserType }: any) =>
-		UsersService.requestUserTypeChange(
-			id,
-			{
-				new_user_type: newUserType,
+export const useUserRequestUserTypeChange = ({
+	clearAfterRequest = true,
+} = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, newUserType }: any) =>
+			UsersService.requestUserTypeChange(
+				id,
+				{
+					new_user_type: newUserType,
+				},
+				getBaseUrl(),
+			),
+		{
+			onSuccess: () => {
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
 			},
-			getBaseUrl(),
-		),
+		},
 	);
+};
+
+export const useUserRequestUserDeletion = ({
+	clearAfterRequest = true,
+} = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		(id) => UsersService.requestUserDeletion(id, getBaseUrl()),
+		{
+			onSuccess: () => {
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
+			},
+		},
+	);
+};
+
+export const useUserApproveUserPendingApproval = ({
+	clearAfterRequest = true,
+} = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, pendingApprovalType }: any) =>
+			UsersService.approveUserPendingApproval(
+				id,
+				{
+					pending_approval_type: pendingApprovalType,
+				},
+				getBaseUrl(),
+			),
+		{
+			onSuccess: () => {
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
+			},
+		},
+	);
+};
+
+export const useUserDeclineUserPendingApproval = ({
+	clearAfterRequest = true,
+} = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, pendingApprovalType }: any) =>
+			UsersService.declineUserPendingApproval(
+				id,
+				{
+					pending_approval_type: pendingApprovalType,
+				},
+				getBaseUrl(),
+			),
+		{
+			onSuccess: () => {
+				if (clearAfterRequest) {
+					queryClient.invalidateQueries('useUsers');
+				}
+			},
+		},
+	);
+};
 
 export default useUsers;

@@ -1,12 +1,23 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Tabs } from 'antd';
-import { ConnectionAlert, Content, ModifyUserModal } from 'components';
+import { Button, Spin, Tabs } from 'antd';
+import {
+	ConnectionAlert,
+	Content,
+	ModifyUserModal,
+	RequestErrors,
+} from 'components';
 import { Box } from 'components/elements';
 import { OfficeManagerUsersInfo } from 'components/info/OfficeManagerUsersInfo';
-import { useBranches, usePingOnlineServer, useQueryParams } from 'hooks';
+import {
+	useBranches,
+	usePingOnlineServer,
+	useQueryParams,
+	useUserPendingApprovals,
+} from 'hooks';
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { getId } from 'utils';
+import { useQueryClient } from 'react-query';
+import { convertIntoArray, getId } from 'utils';
 import { BranchAssignmentUserModal } from './components/BranchAssignmentUserModal';
 import { BranchUsers } from './components/BranchUsers';
 
@@ -20,15 +31,29 @@ export const Users = () => {
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
-
 	const { isConnected } = usePingOnlineServer();
+	const queryClient = useQueryClient();
 	const {
 		params: { branchId: currentBranchId },
 		setQueryParams,
 	} = useQueryParams();
 	const {
 		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchesError,
 	} = useBranches();
+	const {
+		isFetchedAfterMount: isUserPendingApprovalsFetched,
+		isFetching: isFetchingUserPendingApprovals,
+		error: userPendingApprovalsError,
+	} = useUserPendingApprovals({
+		options: {
+			onSuccess: () => {
+				queryClient.invalidateQueries('useUsers');
+			},
+			notifyOnChangeProps: ['isFetched', 'isFetching', 'error'],
+		},
+	});
 
 	// METHODS
 	const handleTabClick = (branchId) => {
@@ -45,42 +70,39 @@ export const Users = () => {
 			<OfficeManagerUsersInfo />
 
 			<Box>
-				<Tabs
-					activeKey={_.toString(currentBranchId) || _.toString(NO_BRANCH_ID)}
-					className="pa-6"
-					tabBarExtraContent={
-						<Button
-							disabled={isConnected === false}
-							icon={<PlusOutlined />}
-							type="primary"
-							onClick={() => setModifyUserModalVisible(true)}
-						>
-							Create User
-						</Button>
-					}
-					type="card"
-					onTabClick={handleTabClick}
-				>
-					<Tabs.TabPane key={NO_BRANCH_ID} tab="User List">
-						<BranchUsers
-							branch={{ id: NO_BRANCH_ID, online_id: NO_BRANCH_ID }}
-							disabled={isConnected === false}
-							onEditUser={(user) => {
-								setModifyUserModalVisible(true);
-								setSelectedUser(user);
-							}}
-							onReassignUser={(user) => {
-								setReassignUserModalVisible(true);
-								setSelectedUser(user);
-							}}
-						/>
-					</Tabs.TabPane>
+				<Spin spinning={isFetchingBranches || isFetchingUserPendingApprovals}>
+					<RequestErrors
+						errors={[
+							...convertIntoArray(branchesError, 'Branches'),
+							...convertIntoArray(
+								userPendingApprovalsError,
+								'User Pending Approvals',
+							),
+						]}
+						withSpaceBottom
+					/>
 
-					{branches.map((branch) => (
-						<Tabs.TabPane key={getId(branch)} tab={branch.name}>
-							<BranchUsers
-								branch={branch}
+					<Tabs
+						activeKey={_.toString(currentBranchId) || _.toString(NO_BRANCH_ID)}
+						className="pa-6"
+						tabBarExtraContent={
+							<Button
 								disabled={isConnected === false}
+								icon={<PlusOutlined />}
+								type="primary"
+								onClick={() => setModifyUserModalVisible(true)}
+							>
+								Create User
+							</Button>
+						}
+						type="card"
+						onTabClick={handleTabClick}
+					>
+						<Tabs.TabPane key={NO_BRANCH_ID} tab="User List">
+							<BranchUsers
+								branch={{ id: NO_BRANCH_ID, online_id: NO_BRANCH_ID }}
+								disabled={isConnected === false}
+								isFetchUsersEnabled={isUserPendingApprovalsFetched}
 								onEditUser={(user) => {
 									setModifyUserModalVisible(true);
 									setSelectedUser(user);
@@ -91,28 +113,49 @@ export const Users = () => {
 								}}
 							/>
 						</Tabs.TabPane>
-					))}
-				</Tabs>
 
-				{modifyUserModalVisible && (
-					<ModifyUserModal
-						user={selectedUser}
-						onClose={() => {
-							setModifyUserModalVisible(false);
-							setSelectedUser(null);
-						}}
-					/>
-				)}
+						{branches.map((branch) => (
+							<Tabs.TabPane key={getId(branch)} tab={branch.name}>
+								<BranchUsers
+									branch={branch}
+									disabled={isConnected === false}
+									isFetchUsersEnabled={isUserPendingApprovalsFetched}
+									onEditUser={(user) => {
+										setModifyUserModalVisible(true);
+										setSelectedUser(user);
+									}}
+									onReassignUser={(user) => {
+										setReassignUserModalVisible(true);
+										setSelectedUser(user);
+									}}
+								/>
+							</Tabs.TabPane>
+						))}
+					</Tabs>
 
-				{reassignUserModalVisible && (
-					<BranchAssignmentUserModal
-						user={selectedUser}
-						onClose={() => {
-							setReassignUserModalVisible(false);
-							setSelectedUser(null);
-						}}
-					/>
-				)}
+					{modifyUserModalVisible && (
+						<ModifyUserModal
+							user={selectedUser}
+							onClose={() => {
+								setModifyUserModalVisible(false);
+								setSelectedUser(null);
+							}}
+							onSuccess={() => {
+								queryClient.invalidateQueries('useUserPendingApprovals');
+							}}
+						/>
+					)}
+
+					{reassignUserModalVisible && (
+						<BranchAssignmentUserModal
+							user={selectedUser}
+							onClose={() => {
+								setReassignUserModalVisible(false);
+								setSelectedUser(null);
+							}}
+						/>
+					)}
+				</Spin>
 			</Box>
 		</Content>
 	);
