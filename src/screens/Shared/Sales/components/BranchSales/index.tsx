@@ -3,22 +3,33 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors, TimeRangeFilter } from 'components';
 import { MAX_PAGE_SIZE, refetchOptions, timeRangeTypes } from 'global';
 import { useBranchMachines, useQueryParams } from 'hooks';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
-	{ title: 'Machine Name', dataIndex: 'machineName' },
+	{ title: 'Machine Name', dataIndex: 'machineName', fixed: 'left' },
+	{ title: 'Cash Sales', dataIndex: 'cashSales' },
 	{ title: 'Credit Payments', dataIndex: 'creditPayments' },
 	{ title: 'Cash In', dataIndex: 'cashIn' },
 	{ title: 'Cash Out', dataIndex: 'cashOut' },
-	{ title: 'Cash Sales', dataIndex: 'cashSales' },
 	{ title: 'Cash On Hand', dataIndex: 'cashOnHand' },
 	{ title: 'Credit Sales', dataIndex: 'creditSales' },
-	{ title: 'Gross Sales', dataIndex: 'grossSales' },
+	{ title: 'Gross Sales From POS', dataIndex: 'grossSales' },
 	{ title: 'Voided Transactions', dataIndex: 'voidedTransactions' },
-	{ title: 'Discount', dataIndex: 'discount' },
-	{ title: 'Net Sales', dataIndex: 'netSales', fixed: 'right' },
+	{ title: 'Discounts', dataIndex: 'discounts' },
+	{ title: 'Net Sales (VAT Inclusive)', dataIndex: 'netSalesVAT' },
+	{ title: 'VAT Amount', dataIndex: 'vatAmount' },
+	{ title: 'Net Sales (Vat Exclusive)', dataIndex: 'netSalesNVAT' },
 ];
+
+const summaryInitialValues = {
+	cashSales: 0,
+	creditSales: 0,
+	creditPayments: 0,
+	cashOut: 0,
+	cashIn: 0,
+};
 
 interface Props {
 	branchId: any;
@@ -27,11 +38,7 @@ interface Props {
 export const BranchSales = ({ branchId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [summary, setSummary] = useState({
-		cashSales: 0,
-		creditSales: 0,
-		creditPayment: 0,
-	});
+	const [summary, setSummary] = useState(summaryInitialValues);
 
 	// CUSTOM HOOKS
 	const { params } = useQueryParams();
@@ -54,30 +61,30 @@ export const BranchSales = ({ branchId }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		const newSummary = {
-			cashSales: 0,
-			creditSales: 0,
-			creditPayment: 0,
-		};
+		const newSummary = _.clone(summaryInitialValues);
 
 		const data = branchMachines.map((branchMachine) => {
 			newSummary.cashSales += Number(branchMachine.sales.cash_sales);
 			newSummary.creditSales += Number(branchMachine.sales.credit_sales);
-			newSummary.creditPayment += Number(branchMachine.sales.credit_payments);
+			newSummary.creditPayments += Number(branchMachine.sales.credit_payments);
+			newSummary.cashIn += Number(branchMachine.sales.cash_in);
+			newSummary.cashOut += Number(branchMachine.sales.cash_out);
 
 			return {
 				key: branchMachine.id,
 				machineName: branchMachine.name,
+				cashSales: formatInPeso(branchMachine.sales.cash_sales),
 				creditPayments: formatInPeso(branchMachine.sales.credit_payments),
 				cashIn: formatInPeso(branchMachine.sales.cash_in),
 				cashOut: formatInPeso(branchMachine.sales.cash_out),
-				cashSales: formatInPeso(branchMachine.sales.cash_sales),
 				cashOnHand: formatInPeso(branchMachine.sales.cash_on_hand),
 				creditSales: formatInPeso(branchMachine.sales.credit_sales),
 				grossSales: formatInPeso(branchMachine.sales.gross_sales),
 				voidedTransactions: formatInPeso(branchMachine.sales.voided_total),
-				discount: formatInPeso(branchMachine.sales.discount),
-				netSales: formatInPeso(branchMachine.sales.net_sales),
+				discounts: formatInPeso(branchMachine.sales.discount),
+				netSalesVAT: formatInPeso(branchMachine.sales.net_sales_vat_inclusive),
+				vatAmount: formatInPeso(branchMachine.sales.vat_amount),
+				netSalesNVAT: formatInPeso(branchMachine.sales.net_sales_vat_exclusive),
 			};
 		});
 
@@ -99,19 +106,19 @@ export const BranchSales = ({ branchId }: Props) => {
 			<Col span={24}>
 				<div className="Summary">
 					<Row gutter={[16, 16]}>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
-								title="TOTAL SALES"
+								title="Gross Sales from POS"
 								value={formatInPeso(summary.cashSales + summary.creditSales)}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
 								title="Cash Sales"
 								value={formatInPeso(summary.cashSales)}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
 								title="Credit Sales"
 								value={formatInPeso(summary.creditSales)}
@@ -124,22 +131,36 @@ export const BranchSales = ({ branchId }: Props) => {
 			<Col span={24}>
 				<div className="Summary">
 					<Row gutter={[16, 16]}>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
-								title="TOTAL CASH ON HAND"
-								value={formatInPeso(summary.cashSales + summary.creditPayment)}
+								title="Cash On Hand"
+								value={formatInPeso(
+									summary.cashSales +
+										summary.creditPayments +
+										summary.cashIn -
+										summary.cashOut,
+								)}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
 								title="Cash Sales"
 								value={formatInPeso(summary.cashSales)}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col md={5}>
 							<Statistic
-								title="Credit Payment"
-								value={formatInPeso(summary.creditPayment)}
+								title="Credit Payments"
+								value={formatInPeso(summary.creditPayments)}
+							/>
+						</Col>
+						<Col md={5}>
+							<Statistic title="Cash In" value={formatInPeso(summary.cashIn)} />
+						</Col>
+						<Col md={4}>
+							<Statistic
+								title="Cash Out"
+								value={formatInPeso(summary.cashOut)}
 							/>
 						</Col>
 					</Row>
@@ -152,7 +173,7 @@ export const BranchSales = ({ branchId }: Props) => {
 					dataSource={dataSource}
 					loading={isFetchingBranchMachines && !isBranchMachinesFetched}
 					pagination={false}
-					scroll={{ x: 1200 }}
+					scroll={{ x: 1500 }}
 					bordered
 				/>
 			</Col>
