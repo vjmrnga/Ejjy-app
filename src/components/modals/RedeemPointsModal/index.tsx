@@ -1,8 +1,7 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { useAccountRedeemPoints } from 'hooks';
-import { useUserAuthenticate } from 'hooks/useUsers';
+import { useAccountRedeemPoints, useUserAuthenticate } from 'hooks';
 import React, { useCallback } from 'react';
 import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
