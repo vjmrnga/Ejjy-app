@@ -20,7 +20,7 @@ const columns: ColumnsType = [
 	{ title: 'Discounts', dataIndex: 'discounts' },
 	{ title: 'Net Sales (VAT Inclusive)', dataIndex: 'netSalesVAT' },
 	{ title: 'VAT Amount', dataIndex: 'vatAmount' },
-	{ title: 'Net Sales (Vat Exclusive)', dataIndex: 'netSalesNVAT' },
+	{ title: 'Net Sales (VAT Exclusive)', dataIndex: 'netSalesNVAT' },
 ];
 
 const summaryInitialValues = {

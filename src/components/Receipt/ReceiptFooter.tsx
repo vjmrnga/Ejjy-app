@@ -30,6 +30,7 @@ export const ReceiptFooter = () => {
 			<Text>{softwareDeveloperTin}</Text>
 			<Text>Acc No: {posAccreditationNumber}</Text>
 			<Text>Date Issued: {posAccreditationDate}</Text>
+			<br />
 			<Text>PTU No: {ptuNumber}</Text>
 			<Text>Date Issued: {ptuDate}</Text>
 		</Space>

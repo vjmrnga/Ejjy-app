@@ -7,6 +7,8 @@ const path = require('path');
 const { spawn, exec } = require('child_process');
 const Store = require('electron-store');
 
+const LOCALHOSTRUN_INTERVAL_MS = 60_000;
+
 const appTypes = {
 	BACK_OFFICE: 'back_office',
 	HEAD_OFFICE: 'head_office',
@@ -221,11 +223,11 @@ function initServer(store) {
 		logStatus('Server: Started API');
 
 		if (appType === appTypes.HEAD_OFFICE) {
-			const LOCALHOSTRUN_INTERVAL_MS = 60_000;
 			logStatus('Server: Starting LocalhostRun');
-			setInterval(() => {
+
+			const startLocalhostRun = () => {
 				exec(
-					'ssh -R office.ej-jy.com:80:localhost:8001 localhost.run -- --no-inject-proxy-protocol-header',
+					'ssh -R office.ej-jy.com:80:localhost:8001 localhost.run',
 					(error, stdout, stderr) => {
 						if (error) {
 							logStatus(`LocalhostRun error: ${error.message}`);
@@ -238,7 +240,12 @@ function initServer(store) {
 						logStatus(`LocalhostRun stdout: ${stdout}`);
 					},
 				);
-			}, LOCALHOSTRUN_INTERVAL_MS);
+			};
+
+			startLocalhostRun();
+
+			setInterval(startLocalhostRun, LOCALHOSTRUN_INTERVAL_MS);
+
 			logStatus('Server: Starded LocalhostRun');
 		}
 

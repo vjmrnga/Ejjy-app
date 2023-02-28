@@ -8,7 +8,7 @@ import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { RequestErrors, ViewUserModal } from 'components';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
-import { useUserDelete, useUsers } from 'hooks';
+import { useUserRequestUserDeletion, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { convertIntoArray, getFullName, getId, getUserTypeName } from 'utils';
@@ -49,10 +49,10 @@ export const BranchUsers = ({
 		},
 	});
 	const {
-		mutate: deleteUser,
-		isLoading: isDeletingUser,
-		error: deleteUserError,
-	} = useUserDelete();
+		mutate: requestUserDeletion,
+		isLoading: isRequestingUserDeletion,
+		error: requestUserDeletionError,
+	} = useUserRequestUserDeletion();
 
 	// METHODS
 	useEffect(() => {
@@ -124,7 +124,7 @@ export const BranchUsers = ({
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this user?"
-								onConfirm={() => deleteUser(getId(user))}
+								onConfirm={() => requestUserDeletion(getId(user))}
 							>
 								<Tooltip title="Remove">
 									<Button
@@ -149,7 +149,7 @@ export const BranchUsers = ({
 			<RequestErrors
 				errors={[
 					...convertIntoArray(usersError),
-					...convertIntoArray(deleteUserError?.errors),
+					...convertIntoArray(requestUserDeletionError?.errors),
 				]}
 				withSpaceBottom
 			/>
@@ -157,7 +157,7 @@ export const BranchUsers = ({
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingUsers || isDeletingUser}
+				loading={isFetchingUsers || isRequestingUserDeletion}
 				pagination={false}
 				scroll={{ x: 1000 }}
 				bordered

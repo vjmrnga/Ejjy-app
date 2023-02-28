@@ -272,7 +272,9 @@ export const Products = () => {
 
 	return (
 		<Content
-			title={`${isUserFromBranch(user.user_type) ? '' : 'General'} Products`}
+			title={`${
+				isUserFromBranch(user.user_type) ? 'Branch' : 'General'
+			} Products`}
 		>
 			<ProductsInfo />
 

@@ -236,7 +236,7 @@ const getFooter = (footerData) => {
 			<span style="white-space: pre-line">${softwareDeveloperAddress}</span>
 			<span>${softwareDeveloperTin}</span>
 			<span>Acc No: ${posAccreditationNumber}</span>
-			<span>Date Issued: ${posAccreditationDate}</span>
+			<span>Date Issued: ${posAccreditationDate}</span><br/>
       <span>PTU No: ${ptuNumber}</span>
       <span>Date Issued: ${ptuDate}</span>
 			<br />
@@ -2284,6 +2284,7 @@ export const printSalesInvoice = ({
 	const data = `
 	<div class="container" style="${getPageStyle()}">
 		${getHeader({
+			branchMachine: transaction?.branch_machine,
 			siteSettings,
 			title,
 		})}

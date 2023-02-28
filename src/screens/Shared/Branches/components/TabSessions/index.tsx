@@ -11,8 +11,14 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { useQueryParams, useSessions, useUsers } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import {
+	useBranches,
+	useBranchMachines,
+	useQueryParams,
+	useSessions,
+	useUsers,
+} from 'hooks';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	filterOption,
@@ -20,13 +26,6 @@ import {
 	formatTimeRange,
 	getFullName,
 } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'User', dataIndex: 'user' },
-	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
-	{ title: 'Status', dataIndex: 'status' },
-];
 
 const sessionTypes = {
 	ALL: 'all',
@@ -55,12 +54,12 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 		data: { sessions, total },
 		error: sessionsError,
 		isFetching: isFetchingSessions,
-		isFetched: isSessionsFetched,
+		isFetchedAfterMount: isSessionsFetchedAfterMount,
 	} = useSessions({
 		params: {
 			...params,
-			branchId: branch?.id,
-			branchMachineId,
+			branchId: branch?.id || params?.branchId,
+			branchMachineId: branchMachineId || params?.branchMachineId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed;
@@ -91,7 +90,8 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 		const data = sessions.map((session) => {
 			const {
 				id,
-				user,
+				branch_machine: branchMachine,
+				user: u,
 				datetime_started: datetimeStarted,
 				datetime_ended: datetimeEnded,
 				is_automatically_closed: isAutomaticallyClosed,
@@ -118,7 +118,8 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 
 			return {
 				key: id,
-				user: getFullName(user),
+				branchMachine: branchMachine.name,
+				user: getFullName(u),
 				datetime,
 				unauthorizedTimeRange,
 				status: is_unauthorized ? (
@@ -156,18 +157,41 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 		</Descriptions>
 	);
 
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'User', dataIndex: 'user' },
+			{ title: 'Date & Time', dataIndex: 'datetime' },
+			{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
+			{ title: 'Status', dataIndex: 'status' },
+		];
+
+		if (!branchMachineId) {
+			columns.unshift({ title: 'Branch Machine', dataIndex: 'branchMachine' });
+		}
+
+		if (!branch?.id && !branchMachineId) {
+			columns.unshift({ title: 'Branch', dataIndex: 'branch' });
+		}
+
+		return columns;
+	}, [branch, branchMachineId]);
+
 	return (
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isFetchingSessions && !isSessionsFetched} />
+			<Filter
+				branch={branch}
+				branchMachineId={branchMachineId}
+				isLoading={isFetchingSessions && !isSessionsFetchedAfterMount}
+			/>
 
 			<RequestErrors errors={convertIntoArray(sessionsError)} withSpaceBottom />
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
-				loading={isFetchingSessions && !isSessionsFetched}
+				loading={isFetchingSessions && !isSessionsFetchedAfterMount}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -190,82 +214,171 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 };
 
 interface FilterProps {
+	branch?: any;
+	branchMachineId?: any;
 	isLoading: boolean;
 }
 
-const Filter = ({ isLoading }: FilterProps) => {
+const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !branch?.id },
+	});
+	const {
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
+	} = useBranchMachines({
+		params: {
+			branchId: branch?.id || params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 	const {
 		data: { users },
 		isFetching: isFetchingUsers,
+		error: userErrors,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
 
 	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="User" spacing />
-				<Select
-					className="w-100"
-					defaultValue={params.userId}
-					disabled={isFetchingUsers || isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams({ userId: value }, { shouldResetPage: true });
-					}}
-				>
-					{users.map((user) => (
-						<Select.Option key={user.id} value={user.id}>
-							{getFullName(user)}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+		<>
+			<RequestErrors
+				errors={[
+					...convertIntoArray(userErrors, 'Users'),
+					...convertIntoArray(branchMachinesError, 'Branch Machines'),
+					...convertIntoArray(branchErrors, 'Branches'),
+				]}
+				withSpaceBottom
+			/>
 
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
-			</Col>
+			<Row className="mb-4" gutter={[16, 16]}>
+				{!branch?.id && !branchMachineId && (
+					<Col md={12}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((b) => (
+								<Select.Option key={b.id} value={b.id}>
+									{b.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
 
-			<Col lg={12} span={24}>
-				<Label label="Closing Type" spacing />
-				<Radio.Group
-					defaultValue={params.closingType || closingTypes.ALL}
-					disabled={isFetchingUsers || isLoading}
-					options={[
-						{ label: 'All', value: closingTypes.ALL },
-						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
-						{ label: 'Manual', value: closingTypes.MANUAL },
-					]}
-					optionType="button"
-					onChange={(e) => {
-						setQueryParams(
-							{ closingType: e.target.value },
-							{ shouldResetPage: true },
-						);
-					}}
-				/>
-			</Col>
+				{!branchMachineId && (
+					<Col lg={12} span={24}>
+						<Label label="Branch Machine" spacing />
+						<Select
+							className="w-100"
+							defaultValue={params.branchMachineId}
+							filterOption={filterOption}
+							loading={isFetchingBranchMachines}
+							optionFilterProp="children"
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams(
+									{ branchMachineId: value },
+									{ shouldResetPage: true },
+								);
+							}}
+						>
+							{branchMachines.map(({ id, name }) => (
+								<Select.Option key={id} value={id}>
+									{name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
 
-			<Col lg={12} span={24}>
-				<Label label="Authorization" spacing />
-				<Radio.Group
-					defaultValue={params.type || sessionTypes.ALL}
-					disabled={isFetchingUsers || isLoading}
-					options={[
-						{ label: 'All', value: sessionTypes.ALL },
-						{ label: 'Authorized', value: sessionTypes.AUTHORIZED },
-						{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
-					]}
-					optionType="button"
-					onChange={(e) => {
-						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
-					}}
-				/>
-			</Col>
-		</Row>
+				<Col lg={12} span={24}>
+					<Label label="User" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.userId}
+						disabled={isFetchingUsers || isLoading}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams({ userId: value }, { shouldResetPage: true });
+						}}
+					>
+						{users.map((u) => (
+							<Select.Option key={u.id} value={u.id}>
+								{getFullName(u)}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Closing Type" spacing />
+					<Radio.Group
+						defaultValue={params.closingType || closingTypes.ALL}
+						disabled={isFetchingUsers || isLoading}
+						options={[
+							{ label: 'All', value: closingTypes.ALL },
+							{ label: 'Automatic', value: closingTypes.AUTOMATIC },
+							{ label: 'Manual', value: closingTypes.MANUAL },
+						]}
+						optionType="button"
+						onChange={(e) => {
+							setQueryParams(
+								{ closingType: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Authorization" spacing />
+					<Radio.Group
+						defaultValue={params.type || sessionTypes.ALL}
+						disabled={isFetchingUsers || isLoading}
+						options={[
+							{ label: 'All', value: sessionTypes.ALL },
+							{ label: 'Authorized', value: sessionTypes.AUTHORIZED },
+							{ label: 'Unauthorized', value: sessionTypes.UNAUTHORIZED },
+						]}
+						optionType="button"
+						onChange={(e) => {
+							setQueryParams(
+								{ type: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+			</Row>
+		</>
 	);
 };

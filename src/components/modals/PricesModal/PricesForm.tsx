@@ -283,17 +283,33 @@ export const PricesForm = ({
 			onSubmit={(values) => {
 				const ALLOWED_LENGTH = 1;
 
-				const priceMarkdownFormData = values
-					.map((value) => {
-						const data = { branchId: value.branchId };
-
-						if (value.initialMarkdownType !== value.markdownType) {
-							data['type'] = value.markdownType;
-						}
+				let priceMarkdownFormData = [];
+				if (
+					isBulkEdit &&
+					values[0].initialMarkdownType !== values[0].markdownType
+				) {
+					const newMarkdownType = values[0].markdownType;
+					priceMarkdownFormData = branches.map((branch) => {
+						const data = {
+							branchId: getId(branch),
+							type: newMarkdownType,
+						};
 
 						return data;
-					})
-					.filter((data) => Object.keys(data).length > ALLOWED_LENGTH);
+					});
+				} else if (!isBulkEdit) {
+					priceMarkdownFormData = values
+						.map((value) => {
+							const data = { branchId: value.branchId };
+
+							if (value.initialMarkdownType !== value.markdownType) {
+								data['type'] = value.markdownType;
+							}
+
+							return data;
+						})
+						.filter((data) => Object.keys(data).length > ALLOWED_LENGTH);
+				}
 
 				const branchProductFormData = values
 					.map((value) => {

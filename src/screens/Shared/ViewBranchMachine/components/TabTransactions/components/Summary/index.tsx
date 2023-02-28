@@ -52,7 +52,7 @@ export const Summary = ({ branchMachineId }: Props) => {
 					<Row gutter={[16, 16]}>
 						<Col md={8} sm={8} xs={24}>
 							<Statistic
-								title="Vat-Exempt Sales"
+								title="VAT-Exempt Sales"
 								value={formatInPeso(summary?.vat_exempt_sales)}
 							/>
 						</Col>
@@ -69,7 +69,7 @@ export const Summary = ({ branchMachineId }: Props) => {
 					<Row gutter={[16, 16]}>
 						<Col md={8} sm={8} xs={24}>
 							<Statistic
-								title="Vatable Sales"
+								title="VATable Sales"
 								value={formatInPeso(summary?.vatable_sales)}
 							/>
 						</Col>
@@ -91,7 +91,7 @@ export const Summary = ({ branchMachineId }: Props) => {
 					<Row gutter={[16, 16]}>
 						<Col md={8} sm={8} xs={24}>
 							<Statistic
-								title="Vat Amount"
+								title="VAT Amount"
 								value={formatInPeso(summary?.vat_amount)}
 							/>
 						</Col>

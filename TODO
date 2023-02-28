@@ -16,6 +16,9 @@ TODO on sprint break:
 - Add border to tables
 - Refactor debounce method
 - Use navlink instead of history for button
+- Replace md={12} with lg={12} span={24}
+- Make the disabled filter fields disabled when other list are still fetching
+- Change isFetched with isFetchedAfterMount for polling list
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 
@@ -41,7 +44,6 @@ https://localhost:8001/v1/bulk-initialize/?branch_id=5
 - "name": "Test Branch (Home)"
 - "id": 27,
 - "name": "Test Branch (ROG)"
-
 
 http://localhost:8000/v1/bulk-initialize/?branch_id=5
 http://localhost:8000/v1/bulk-initialize/?branch_id=17

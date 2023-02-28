@@ -156,6 +156,7 @@ const writeFooter = (footerData) => {
 		rowNumber,
 	});
 	rowNumber += 1;
+	rowNumber += 1;
 
 	reportTextFile.write({
 		text: `PTU No: ${ptuNumber}`,
@@ -940,6 +941,7 @@ export const createSalesInvoiceTxt = ({
 	let rowNumber = 0;
 
 	rowNumber = writeHeader({
+		branchMachine: transaction?.branch_machine,
 		title,
 		siteSettings,
 		reportTextFile,

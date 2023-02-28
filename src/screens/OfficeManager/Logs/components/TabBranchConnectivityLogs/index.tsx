@@ -15,7 +15,12 @@ import {
 	pageSizeOptions,
 	timeRangeTypes,
 } from 'global';
-import { useBranches, useConnectivityLogs, useQueryParams } from 'hooks';
+import {
+	useBranches,
+	useBranchMachines,
+	useConnectivityLogs,
+	useQueryParams,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, filterOption, formatDateTime } from 'utils';
 
@@ -23,6 +28,7 @@ export const TabBranchConnectivityLogs = () => {
 	// VARIABLES
 	const columns: ColumnsType = [
 		{ title: 'Branch', dataIndex: 'branch' },
+		{ title: 'Branch Machine', dataIndex: 'branchMachine' },
 		{ title: 'Type', dataIndex: 'type' },
 		{ title: 'Date & Time Created', dataIndex: 'datetime' },
 	];
@@ -43,6 +49,7 @@ export const TabBranchConnectivityLogs = () => {
 		const data = connectivityLogs.map((connectivityLog) => ({
 			key: connectivityLog.id,
 			branch: connectivityLog.branch?.name,
+			branchMachine: connectivityLog.branch_machine?.name,
 			type: <ConnectivityType type={connectivityLog.type} />,
 			datetime: formatDateTime(connectivityLog.datetime_created),
 		}));
@@ -96,11 +103,24 @@ const Filter = ({ isLoading }: FilterProps) => {
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
 	});
+	const {
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
+	} = useBranchMachines({
+		params: {
+			branchId: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
 
 	return (
 		<div>
 			<RequestErrors
-				errors={convertIntoArray(branchErrors, 'Branches')}
+				errors={[
+					...convertIntoArray(branchErrors, 'Branches'),
+					...convertIntoArray(branchMachinesError, 'Branch Machines'),
+				]}
 				withSpaceBottom
 			/>
 
@@ -122,6 +142,31 @@ const Filter = ({ isLoading }: FilterProps) => {
 						{branches.map((branch) => (
 							<Select.Option key={branch.id} value={branch.id}>
 								{branch.name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Branch Machine" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.branchMachineId}
+						filterOption={filterOption}
+						loading={isFetchingBranchMachines}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ branchMachineId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{branchMachines.map(({ id, name }) => (
+							<Select.Option key={id} value={id}>
+								{name}
 							</Select.Option>
 						))}
 					</Select>
