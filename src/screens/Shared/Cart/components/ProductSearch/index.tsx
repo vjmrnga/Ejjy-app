@@ -9,7 +9,7 @@ import { SearchInput } from 'screens/Shared/Cart/components/ProductSearch/compon
 import { SearchSuggestion } from 'screens/Shared/Cart/components/ProductSearch/components/SearchSuggestion';
 import { NO_INDEX_SELECTED } from 'screens/Shared/Cart/data';
 import { useBoundStore } from 'screens/Shared/Cart/stores/useBoundStore';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getLocalBranchId } from 'utils';
 import shallow from 'zustand/shallow';
 import './style.scss';
 
@@ -49,8 +49,8 @@ export const ProductSearch = ({ barcodeScannerRef }: Props) => {
 	const { isFetching: isFetchingBranchProducts, error: branchProductsError } =
 		useBranchProducts({
 			params: {
+				branchId: getLocalBranchId(),
 				search: searchedText,
-				useGoogleApiUrl: true,
 			},
 			options: {
 				enabled: searchedText?.length > 0,

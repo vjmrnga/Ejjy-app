@@ -22,23 +22,24 @@ export const ModifyUserModal = ({
 	onSuccess,
 	user,
 }: Props) => {
-	// METHODS
+	// CUSTOM HOOKS
 	const {
 		mutateAsync: createUser,
 		isLoading: isCreatingUser,
 		error: createUserError,
-	} = useUserCreate();
+	} = useUserCreate({ clearAfterRequest: false });
 	const {
 		mutateAsync: editUser,
 		isLoading: isEditingUser,
 		error: editUserError,
-	} = useUserEdit();
+	} = useUserEdit({ clearAfterRequest: false });
 	const {
 		mutateAsync: requestUserTypeChange,
 		isLoading: isRequestingUserTypeChange,
 		error: requestUserTypeChangeError,
 	} = useUserRequestUserTypeChange();
 
+	// METHODS
 	const handleSubmit = async (formData) => {
 		let response = null;
 		if (user) {
@@ -48,8 +49,6 @@ export const ModifyUserModal = ({
 				id: getId(user),
 			});
 
-			console.log('formData.user_type', formData.userType);
-			console.log('user.user_type', user.user_type);
 			if (formData.userType !== user.user_type) {
 				requestUserTypeChange({
 					id: getId(user),

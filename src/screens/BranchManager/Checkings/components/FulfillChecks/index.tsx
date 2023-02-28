@@ -57,6 +57,7 @@ export const FulfillChecking = () => {
 	useEffect(() => {
 		const productChecks = [...dailyProductChecks, ...randomProductChecks];
 
+		// TODO: Refactor action into the new version
 		const data = productChecks
 			.filter((productCheck) => dayjs(productCheck.datetime_created).isToday())
 			.map((productCheck) => ({
@@ -80,49 +81,47 @@ export const FulfillChecking = () => {
 
 	return (
 		<>
-			{dataSource.length > 0 && (
-				<Box>
-					<TableHeader title="Unfulfilled Checks" />
+			<Box>
+				<TableHeader title="Unfulfilled Checks" />
 
-					<RequestErrors
-						errors={[
-							...convertIntoArray(
-								dailyProductChecksErrors,
-								'Daily Product Checks',
-							),
-							...convertIntoArray(
-								randomProductChecksErrors,
-								'Random Product Checks',
-							),
-						]}
-						withSpaceBottom
-					/>
+				<RequestErrors
+					errors={[
+						...convertIntoArray(
+							dailyProductChecksErrors,
+							'Daily Product Checks',
+						),
+						...convertIntoArray(
+							randomProductChecksErrors,
+							'Random Product Checks',
+						),
+					]}
+					withSpaceBottom
+				/>
 
-					<Table
-						columns={columns}
-						dataSource={dataSource}
-						loading={
-							isFetchingRandomProductChecks || isFetchingDailyProductChecks
-						}
-						pagination={{
-							current: Number(params.page) || DEFAULT_PAGE,
-							total,
-							pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-							onChange: (page, newPageSize) => {
-								setQueryParams({
-									page,
-									pageSize: newPageSize,
-								});
-							},
-							disabled: !dataSource,
-							position: ['bottomCenter'],
-							pageSizeOptions,
-						}}
-						scroll={{ x: 650 }}
-						bordered
-					/>
-				</Box>
-			)}
+				<Table
+					columns={columns}
+					dataSource={dataSource}
+					loading={
+						isFetchingRandomProductChecks || isFetchingDailyProductChecks
+					}
+					pagination={{
+						current: Number(params.page) || DEFAULT_PAGE,
+						total,
+						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+						onChange: (page, newPageSize) => {
+							setQueryParams({
+								page,
+								pageSize: newPageSize,
+							});
+						},
+						disabled: !dataSource,
+						position: ['bottomCenter'],
+						pageSizeOptions,
+					}}
+					scroll={{ x: 650 }}
+					bordered
+				/>
+			</Box>
 
 			{selectedProductCheck && (
 				<FulfillCheckModal
