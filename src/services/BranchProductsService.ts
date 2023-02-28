@@ -36,9 +36,17 @@ interface Edit {
 }
 
 type EditPriceCostData = {
-	branch_id: number;
+	branch_ids: string;
 	cost_per_bulk: string;
 	cost_per_piece: string;
+	credit_price_per_bulk: string;
+	credit_price_per_piece: string;
+	government_credit_price_per_bulk: string;
+	government_credit_price_per_piece: string;
+	markdown_price_per_bulk1: string;
+	markdown_price_per_bulk2: string;
+	markdown_price_per_piece1: string;
+	markdown_price_per_piece2: string;
 	price_per_bulk: string;
 	price_per_piece: string;
 };

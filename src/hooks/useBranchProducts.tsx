@@ -430,6 +430,12 @@ export const useBranchProductEditPriceCost = () => {
 							markdown_price_per_bulk1: d?.markdownPricePerBulk1 || undefined,
 							markdown_price_per_piece2: d?.markdownPricePerPiece2 || undefined,
 							markdown_price_per_bulk2: d?.markdownPricePerBulk2 || undefined,
+							credit_price_per_piece: d?.creditPricePerPiece || undefined,
+							credit_price_per_bulk: d?.creditPricePerBulk || undefined,
+							government_credit_price_per_piece:
+								d?.governmentCreditPricePerPiece || undefined,
+							government_credit_price_per_bulk:
+								d?.governmentCreditPricePerBulk || undefined,
 						})) || undefined,
 				},
 				serverUrl || getBaseUrl(),
