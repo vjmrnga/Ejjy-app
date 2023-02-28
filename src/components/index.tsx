@@ -11,6 +11,7 @@ export * from './info';
 export * from './KeyboardButton/KeyboardButton';
 export * from './modals';
 export * from './NotificationItem';
+export * from './PageInfo';
 export * from './Partials/Container/Container';
 export * from './Partials/Content/Content';
 export * from './PendingCount/PendingCount';

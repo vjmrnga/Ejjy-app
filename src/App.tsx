@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import { CommonRoute, NoAuthRoute } from 'components';
+import { CommonRoute, NoAuthRoute, PageInfo } from 'components';
 import { appTypes, APP_LOCAL_BRANCH_ID_KEY, userTypes } from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
@@ -114,6 +114,8 @@ const App = () => {
 						: 'EJJY Head Office'
 				} (v${npmPackage.version})`}
 			/>
+
+			<PageInfo />
 
 			<Spin
 				className="GlobalSpinner"
