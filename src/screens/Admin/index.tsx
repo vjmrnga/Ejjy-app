@@ -29,9 +29,9 @@ const Admin = () => {
 	const {
 		data: { branches },
 	} = useBranches();
-	useUploadData({
-		params: { isBackOffice: false },
-	});
+	// useUploadData({
+	// 	params: { isBackOffice: false },
+	// });
 
 	// REFS
 	const pendingTransactionsCountRef = useRef(null);

@@ -43,9 +43,9 @@ import { AssignUser } from './Users/AssignUser';
 const OfficeManager = () => {
 	useNotificationConnectivity();
 	useNotificationDtr();
-	useUploadData({
-		params: { isBackOffice: false },
-	});
+	// useUploadData({
+	// 	params: { isBackOffice: false },
+	// });
 
 	const { connectivityCount, dtrCount } = useNotificationStore(
 		(state: any) => ({

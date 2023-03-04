@@ -105,30 +105,28 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 					onCreateDisabled={!account}
 				/>
 
-				{account && (
-					<div className="AccountTotalPoints mb-4 px-6">
-						<Row gutter={[16, 16]}>
-							<Col span={8}>
-								<Statistic
-									title="Total Points Earned"
-									value={account.total_points_earned}
-								/>
-							</Col>
-							<Col span={8}>
-								<Statistic
-									title="Total Points Redeemed"
-									value={account.total_points_redeemed}
-								/>
-							</Col>
-							<Col span={8}>
-								<Statistic
-									title="Total Points Balance"
-									value={account.total_points_balance}
-								/>
-							</Col>
-						</Row>
-					</div>
-				)}
+				<div className="AccountTotalPoints mb-4 mx-6 px-6">
+					<Row gutter={[16, 16]}>
+						<Col span={8}>
+							<Statistic
+								title="Total Points Earned"
+								value={account.total_points_earned}
+							/>
+						</Col>
+						<Col span={8}>
+							<Statistic
+								title="Total Points Redeemed"
+								value={account.total_points_redeemed}
+							/>
+						</Col>
+						<Col span={8}>
+							<Statistic
+								title="Total Points Balance"
+								value={account.total_points_balance}
+							/>
+						</Col>
+					</Row>
+				</div>
 
 				<Table
 					columns={columns}

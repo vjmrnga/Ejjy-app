@@ -54,7 +54,7 @@ export const ViewAccount = ({ match }: Props) => {
 					{account && <AccountDetails account={account} />}
 				</Box>
 
-				{account?.is_point_system_eligible && (
+				{account && account?.is_point_system_eligible && (
 					<PointTransactions account={account} />
 				)}
 			</Spin>

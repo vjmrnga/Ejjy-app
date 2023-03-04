@@ -131,6 +131,7 @@ export const Dashboard = () => {
 				});
 
 				queryClient.invalidateQueries(['useBranches', LIST_QUERY_KEY]);
+				queryClient.invalidateQueries('useBranchDayAuthorizationsRetrieve');
 			}
 
 			message.success('Day was opened successfully.');
@@ -159,6 +160,7 @@ export const Dashboard = () => {
 				});
 
 				queryClient.invalidateQueries(['useBranches', LIST_QUERY_KEY]);
+				queryClient.invalidateQueries('useBranchDayAuthorizationsRetrieve');
 			}
 
 			message.success('Day was closed successfully.');
