@@ -121,10 +121,6 @@ export const ModifyProductForm = ({
 				costPerPiece: product?.cost_per_piece || '',
 				pricePerBulk: product?.price_per_bulk || '',
 				pricePerPiece: product?.price_per_piece || '',
-				// governmentCreditPricePerPiece:
-				// 	product?.government_credit_price_per_piece || '',
-				// governmentCreditPricePerBulk:
-				// 	product?.government_credit_price_per_bulk || '',
 
 				printDetails: product?.print_details || '',
 				priceTagPrintDetails: product?.price_tag_print_details || '',
@@ -145,20 +141,6 @@ export const ModifyProductForm = ({
 				packingBarcodeUnitOfMeasurement:
 					product?.packing_barcode_unit_of_measurement ||
 					unitOfMeasurementTypes.NON_WEIGHING,
-
-				// NOTE: Branch product settings
-				markdownPricePerPiece1: '',
-				markdownPricePerPiece2: '',
-				markdownPricePerBulk1: '',
-				markdownPricePerBulk2: '',
-
-				// NOTE: UI changes only
-				// initialPricePieceDifference:
-				// 	Number(product?.price_per_piece) -
-				// 		Number(product?.government_credit_price_per_piece) || 0,
-				// initialPriceBulkDifference:
-				// 	Number(product?.price_per_bulk) -
-				// 		Number(product?.government_credit_price_per_bulk) || 0,
 			},
 			Schema: Yup.object().shape(
 				{
@@ -281,31 +263,7 @@ export const ModifyProductForm = ({
 						.moreThan(0)
 						.nullable()
 						.label('Regular Price (Bulk)'),
-					// governmentCreditPricePerPiece: Yup.number()
-					// 	.required()
-					// 	.moreThan(0)
-					// 	.nullable()
-					// 	.label('Government Credit Price (Piece)'),
-					// governmentCreditPricePerBulk: Yup.number()
-					// 	.required()
-					// 	.moreThan(0)
-					// 	.nullable()
-					// 	.label('Government Credit Price (Bulk)'),
-
 					pointSystemTagId: Yup.string().nullable().label('Point System Tag'),
-
-					markdownPricePerPiece1: Yup.number()
-						.nullable()
-						.label('Wholesale Price (Piece)'),
-					markdownPricePerPiece2: Yup.number()
-						.nullable()
-						.label('Special Price (Piece)'),
-					markdownPricePerBulk1: Yup.number()
-						.nullable()
-						.label('Wholesale Price (Bulk)'),
-					markdownPricePerBulk2: Yup.number()
-						.nullable()
-						.label('Special Price (Bulk)'),
 				},
 				[['barcode', 'textcode']],
 			),
@@ -388,10 +346,6 @@ export const ModifyProductForm = ({
 					allowableSpoilage: isWeighing
 						? Number(formData.allowableSpoilage) / 100
 						: undefined,
-					markdownPricePerPiece1: formData.markdownPricePerPiece1 || undefined,
-					markdownPricePerPiece2: formData.markdownPricePerPiece2 || undefined,
-					markdownPricePerBulk1: formData.markdownPricePerBulk1 || undefined,
-					markdownPricePerBulk2: formData.markdownPricePerBulk2 || undefined,
 				};
 
 				onSubmit(data);
@@ -731,23 +685,6 @@ export const ModifyProductForm = ({
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,
-								options: {
-									onChange: (value) => {
-										// if (Number(values.governmentCreditPricePerPiece) <= 0) {
-										// 	setFieldValue('governmentCreditPricePerPiece', value);
-										// } else if (
-										// 	product &&
-										// 	values.initialPricePieceDifference > 0
-										// ) {
-										// 	setFieldValue(
-										// 		'governmentCreditPricePerPiece',
-										// 		value + values.initialPricePieceDifference,
-										// 	);
-										// }
-
-										setFieldValue('pricePerPiece', value);
-									},
-								},
 							})}
 						</Col>
 
@@ -758,89 +695,8 @@ export const ModifyProductForm = ({
 								setFieldValue,
 								values,
 								type: inputTypes.MONEY,
-								options: {
-									onChange: (value) => {
-										// if (Number(values.governmentCreditPricePerPiece) <= 0) {
-										// 	setFieldValue('governmentCreditPricePerBulk', value);
-										// } else if (
-										// 	product &&
-										// 	values.initialPriceBulkDifference > 0
-										// ) {
-										// 	setFieldValue(
-										// 		'governmentCreditPricePerBulk',
-										// 		value + values.initialPriceBulkDifference,
-										// 	);
-										// }
-
-										setFieldValue('pricePerBulk', value);
-									},
-								},
 							})}
 						</Col>
-
-						{/* <Col sm={12} span={24}>
-							{renderInputField({
-								name: 'governmentCreditPricePerPiece',
-								label: 'Government Credit Price (Piece)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col>
-
-						<Col sm={12} span={24}>
-							{renderInputField({
-								name: 'governmentCreditPricePerBulk',
-								label: 'Government Credit Price (Bulk)',
-								setFieldValue,
-								values,
-								type: inputTypes.MONEY,
-							})}
-						</Col> */}
-
-						{product && (
-							<>
-								<Col sm={12} span={24}>
-									{renderInputField({
-										name: 'markdownPricePerPiece1',
-										label: 'Wholesale Price (Piece)',
-										setFieldValue,
-										values,
-										type: inputTypes.MONEY,
-									})}
-								</Col>
-
-								<Col sm={12} span={24}>
-									{renderInputField({
-										name: 'markdownPricePerBulk1',
-										label: 'Wholesale Price (Bulk)',
-										setFieldValue,
-										values,
-										type: inputTypes.MONEY,
-									})}
-								</Col>
-
-								<Col sm={12} span={24}>
-									{renderInputField({
-										name: 'markdownPricePerPiece2',
-										label: 'Special Price (Piece)',
-										setFieldValue,
-										values,
-										type: inputTypes.MONEY,
-									})}
-								</Col>
-
-								<Col sm={12} span={24}>
-									{renderInputField({
-										name: 'markdownPricePerBulk2',
-										label: 'Special Price (Bulk)',
-										setFieldValue,
-										values,
-										type: inputTypes.MONEY,
-									})}
-								</Col>
-							</>
-						)}
 					</Row>
 
 					<div className="ModalCustomFooter">
