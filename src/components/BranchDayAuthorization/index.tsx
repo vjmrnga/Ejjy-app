@@ -5,7 +5,6 @@ import { EMPTY_CELL } from 'global';
 import {
 	useBranchDayAuthorizationCreate,
 	useBranchDayAuthorizationEnd,
-	useBranchDayAuthorizations,
 	useBranchDayAuthorizationsRetrieve,
 	useSiteSettingsRetrieve,
 } from 'hooks';
@@ -38,21 +37,12 @@ export const BranchDayAuthorization = ({
 	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
 		useSiteSettingsRetrieve();
 	const {
-		isFetched: isBranchDayAuthorizationsFetched,
-		isFetching: isFetchingBranchDayAuthorizations,
-		error: branchDayAuthorizationsError,
-	} = useBranchDayAuthorizations({
-		params: { branchId: getId(branch) },
-	});
-	const {
 		data: fetchedBranchDay,
 		isFetching: isFetchingBranchDayAuthorization,
 	} = useBranchDayAuthorizationsRetrieve({
 		params: {
 			branchId: branch.id,
-		},
-		options: {
-			enabled: isBranchDayAuthorizationsFetched,
+			onlineBranchId: getId(branch),
 		},
 	});
 	const {
@@ -166,7 +156,6 @@ export const BranchDayAuthorization = ({
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(branchDayAuthorizationsError),
 					...convertIntoArray(createBranchDayAuthorizationError?.errors),
 					...convertIntoArray(endBranchDayAuthorizationError?.errors),
 				]}
@@ -181,7 +170,6 @@ export const BranchDayAuthorization = ({
 					spinning={
 						isFetchingSiteSettings ||
 						isFetchingBranchDayAuthorization ||
-						isFetchingBranchDayAuthorizations ||
 						isCreatingBranchDayAuthorization ||
 						isEndingBranchDayAuthorization
 					}

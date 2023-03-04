@@ -39,16 +39,28 @@ const useBranchDayAuthorizations = ({ params, options }: Query) =>
 
 export const useBranchDayAuthorizationsRetrieve = ({ params }: Query) =>
 	useQuery<any>(
-		['useBranchDayAuthorizationsRetrieve', params?.branchId],
-		() =>
-			wrapServiceWithCatch(
+		[
+			'useBranchDayAuthorizationsRetrieve',
+			params?.branchId,
+			params?.onlineBranchId,
+		],
+		async () => {
+			await BranchDayAuthorizationsService.listOffline(
+				{
+					branch_id: params?.onlineBranchId,
+					page: params?.page || DEFAULT_PAGE,
+					page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+				},
+				getLocalApiUrl(),
+			);
+
+			return wrapServiceWithCatch(
 				BranchDayAuthorizationsService.retrieve(
-					{
-						branch_id: params?.branchId,
-					},
+					{ branch_id: params?.branchId },
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			select: (query) => query?.data,
 		},
