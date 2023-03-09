@@ -78,15 +78,8 @@
 			}
 
 			&_itemCount {
-				@include flex(center, center);
-				width: 20px;
-				height: 20px;
-				position: absolute;
+				position: absolute !important;
 				right: 0;
-				border-radius: 50%;
-				background-color: $color-red;
-				font-size: 0.65rem;
-				color: white;
 			}
 		}
 	}

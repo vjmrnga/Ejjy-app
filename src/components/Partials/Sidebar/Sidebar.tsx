@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Layout } from 'antd';
+import { Badge, Layout } from 'antd';
 import cn from 'classnames';
 import { userTypes } from 'global';
 import { useAuthLogout } from 'hooks';
@@ -65,9 +65,10 @@ export const Sidebar = ({ items }: Props) => {
 							<span className="Sidebar_sidebarList_item_name">{item.name}</span>
 
 							{item?.count > 0 && (
-								<span className="Sidebar_sidebarList_item_itemCount">
-									{item?.count}
-								</span>
+								<Badge
+									className="Sidebar_sidebarList_item_itemCount"
+									count={item?.count}
+								/>
 							)}
 
 							{/* {ONLINE_ROUTES.includes(item.link) && !hasInternetConnection && (
