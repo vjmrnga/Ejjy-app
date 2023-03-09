@@ -299,16 +299,16 @@ export const Dashboard = () => {
 
 									<Divider />
 
-									<ReportsPerMachine
+									<BranchProductBalances
 										branchId={branch.id}
+										productCategories={productCategories}
 										tableHeaderClassName="pt-2 px-0"
 									/>
 
 									<Divider />
 
-									<BranchProductBalances
+									<ReportsPerMachine
 										branchId={branch.id}
-										productCategories={productCategories}
 										tableHeaderClassName="pt-2 px-0"
 									/>
 								</Tabs.TabPane>

@@ -15,9 +15,5 @@
 			"repo": "ejjy-app",
 			"releaseType": "prerelease"
 		}
-	],
-	"nsis": {
-		"oneClick": false,
-		"allowToChangeInstallationDirectory": true
-	}
+	]
 }

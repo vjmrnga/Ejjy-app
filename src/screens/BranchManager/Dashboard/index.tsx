@@ -9,10 +9,10 @@ export const Dashboard = () => (
 	<Content title="Dashboard">
 		<DashboardInfo />
 
+		<BranchProductBalances />
+
 		<Box>
 			<ReportsPerMachine branchId={getLocalBranchId()} />
 		</Box>
-
-		<BranchProductBalances />
 	</Content>
 );
