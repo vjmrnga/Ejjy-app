@@ -120,37 +120,52 @@ export const PricesModal = ({ product, onClose }: Props) => {
 				withSpaceBottom
 			/>
 
-			<Tabs type="card" destroyInactiveTabPane>
-				<Tabs.TabPane key={tabs.BRANCHES} tab="Branches">
-					<PricesForm
-						branches={branches}
-						branchProducts={branchProducts}
-						isLoading={
-							isFetchingBranches ||
-							isFetchingBranchProducts ||
-							isCreatingPriceMarkdown ||
-							isEditingBranchProductPriceCost
-						}
-						onClose={onClose}
-						onSubmit={handleSubmit}
-					/>
-				</Tabs.TabPane>
+			{isUserFromBranch(user.user_type) ? (
+				<PricesForm
+					branches={branches}
+					branchProducts={branchProducts}
+					isLoading={
+						isFetchingBranches ||
+						isFetchingBranchProducts ||
+						isCreatingPriceMarkdown ||
+						isEditingBranchProductPriceCost
+					}
+					onClose={onClose}
+					onSubmit={handleSubmit}
+				/>
+			) : (
+				<Tabs type="card" destroyInactiveTabPane>
+					<Tabs.TabPane key={tabs.BRANCHES} tab="Branches">
+						<PricesForm
+							branches={branches}
+							branchProducts={branchProducts}
+							isLoading={
+								isFetchingBranches ||
+								isFetchingBranchProducts ||
+								isCreatingPriceMarkdown ||
+								isEditingBranchProductPriceCost
+							}
+							onClose={onClose}
+							onSubmit={handleSubmit}
+						/>
+					</Tabs.TabPane>
 
-				<Tabs.TabPane key={tabs.ALL} tab="All">
-					<PricesForm
-						branches={branches}
-						isLoading={
-							isFetchingBranches ||
-							isFetchingBranchProducts ||
-							isCreatingPriceMarkdown ||
-							isEditingBranchProductPriceCost
-						}
-						isBulkEdit
-						onClose={onClose}
-						onSubmit={handleSubmit}
-					/>
-				</Tabs.TabPane>
-			</Tabs>
+					<Tabs.TabPane key={tabs.ALL} tab="All">
+						<PricesForm
+							branches={branches}
+							isLoading={
+								isFetchingBranches ||
+								isFetchingBranchProducts ||
+								isCreatingPriceMarkdown ||
+								isEditingBranchProductPriceCost
+							}
+							isBulkEdit
+							onClose={onClose}
+							onSubmit={handleSubmit}
+						/>
+					</Tabs.TabPane>
+				</Tabs>
+			)}
 		</Modal>
 	);
 };
