@@ -5,7 +5,9 @@ import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
+import { TabDays } from 'screens/Shared/Branches/components/TabDays';
 import { TabSessions } from 'screens/Shared/Branches/components/TabSessions';
+import { TabBranchMachineConnectivityLogs } from 'screens/Shared/Logs/components/TabBranchMachineConnectivityLogs';
 import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { TabCashBreakdowns } from 'screens/Shared/Logs/components/TabCashBreakdowns';
 import { TabUserLogs } from 'screens/Shared/Logs/components/TabUserLogs';
@@ -17,6 +19,8 @@ export const tabs = {
 	CASHIERING_ASSIGNMENTS: 'Cashiering Assignments',
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
 	CASHIERING_SESSIONS: 'Cashiering Sessions',
+	CONNECTIVITY_LOGS: 'Connectivity Logs',
+	DAYS: 'Cashiering Sessions',
 	USERS: 'Users',
 };
 
@@ -69,6 +73,17 @@ export const Logs = () => {
 
 					<Tabs.TabPane key={tabs.CASH_BREAKDOWNS} tab={tabs.CASH_BREAKDOWNS}>
 						<TabCashBreakdowns />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
+						<TabDays branch={{ id: getLocalBranchId() }} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.CONNECTIVITY_LOGS}
+						tab={tabs.CONNECTIVITY_LOGS}
+					>
+						<TabBranchMachineConnectivityLogs />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.USERS} tab={tabs.USERS}>

@@ -207,7 +207,7 @@ const Filter = () => {
 
 			<Row className="mb-4" gutter={[16, 16]}>
 				{!isUserFromBranch(user.user_type) && (
-					<Col md={12}>
+					<Col lg={12} span={24}>
 						<Label label="Branch" spacing />
 						<Select
 							className="w-100"
@@ -230,7 +230,7 @@ const Filter = () => {
 					</Col>
 				)}
 
-				<Col md={12}>
+				<Col lg={12} span={24}>
 					<Label label="Branch Machine" spacing />
 					<Select
 						className="w-100"
@@ -255,7 +255,7 @@ const Filter = () => {
 					</Select>
 				</Col>
 
-				<Col md={12}>
+				<Col lg={12} span={24}>
 					<Label label="User" spacing />
 					<Select
 						className="w-100"
@@ -280,7 +280,7 @@ const Filter = () => {
 					</Select>
 				</Col>
 
-				<Col md={12}>
+				<Col lg={12} span={24}>
 					<Label label="Type" spacing />
 					<Select
 						className="w-100"
@@ -331,7 +331,7 @@ const Filter = () => {
 					</Select>
 				</Col>
 
-				<Col md={12}>
+				<Col lg={12} span={24}>
 					<TimeRangeFilter />
 				</Col>
 			</Row>

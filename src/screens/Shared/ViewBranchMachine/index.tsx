@@ -13,10 +13,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useUserStore } from 'stores';
 import { convertIntoArray, getUrlPrefix, isUserFromBranch } from 'utils';
-import { TabDays } from '../Branches/components/TabDays';
-import { TabSessions } from '../Branches/components/TabSessions';
 import { TabBirReport } from './components/TabBirReport';
-import { TabConnectivityLogs } from './components/TabConnectivityLogs';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
 import { TabDailyProductSalesReport } from './components/TabDailyProductSalesReport';
 import { TabTransactionAdjustmentReport } from './components/TabTransactionAdjustmentReport';
@@ -33,9 +30,6 @@ const tabs = {
 	DAILY_PRODUCT_SALES_REPORT: 'Daily Product Sales Report',
 	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
 	BIR_REPORT: 'BIR Report',
-	SESSIONS: 'Sessions',
-	DAYS: 'Days',
-	CONNECTIVITY_LOGS: 'Connectivity Logs',
 };
 
 export const ViewBranchMachine = ({ match }: Props) => {
@@ -153,21 +147,6 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 							<Tabs.TabPane key={tabs.BIR_REPORT} tab={tabs.BIR_REPORT}>
 								<TabBirReport branchMachineId={branchMachine.id} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
-								<TabSessions branchMachineId={branchMachine.id} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
-								<TabDays branchMachineId={branchMachine.id} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane
-								key={tabs.CONNECTIVITY_LOGS}
-								tab={tabs.CONNECTIVITY_LOGS}
-							>
-								<TabConnectivityLogs branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 						</Tabs>
 					)}
