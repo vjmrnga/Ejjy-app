@@ -10,8 +10,8 @@ import {
 import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import { upperFirst } from 'lodash';
 import React, { useState } from 'react';
-import { formatDateTime, getRequestor } from 'utils';
-import '../style.scss';
+import { useUserStore } from 'stores';
+import { formatDateTime, getRequestor, isUserFromBranch } from 'utils';
 
 interface Props {
 	requisitionSlip: any;
@@ -23,11 +23,11 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 	const [isPrintPreviewVisible, setIsPrintPreviewVisible] = useState(false);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { editRequisitionSlip, status: requisitionSlipsStatus } =
 		useRequisitionSlips();
 
 	// METHODS
-
 	const handleStatusChange = (status) => {
 		editRequisitionSlip(requisitionSlip.id, status);
 	};
@@ -37,9 +37,7 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 			<Descriptions
 				className="pa-6 pb-0 w-100"
 				column={2}
-				labelStyle={{
-					width: 200,
-				}}
+				labelStyle={{ width: 200 }}
 				size="small"
 				bordered
 			>
@@ -57,16 +55,18 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 							{upperFirst(requisitionSlip.type)}
 						</Descriptions.Item>
 
-						<Descriptions.Item label="Status">
-							<Select
-								classNames="status-select"
-								disabled={requisitionSlipsStatus === request.REQUESTING}
-								options={requisitionSlipActionsOptions}
-								placeholder="status"
-								value={requisitionSlip?.action?.action}
-								onChange={handleStatusChange}
-							/>
-						</Descriptions.Item>
+						{!isUserFromBranch(user.user_type) && (
+							<Descriptions.Item label="Status">
+								<Select
+									classNames="status-select"
+									disabled={requisitionSlipsStatus === request.REQUESTING}
+									options={requisitionSlipActionsOptions}
+									placeholder="status"
+									value={requisitionSlip?.action?.action}
+									onChange={handleStatusChange}
+								/>
+							</Descriptions.Item>
+						)}
 					</>
 				)}
 

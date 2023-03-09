@@ -8,10 +8,10 @@ import {
 	requisitionSlipDetailsType,
 } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
+import { RequisitionSlipDetails } from 'screens/Shared/RequisitionSlips/components/RequisitionSlipDetails';
 import { useUserStore } from 'stores';
 import { convertIntoArray } from 'utils';
 import { useDeliveryReceipt } from '../../../hooks/useDeliveryReceipt';
-import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
 import { ReceiveDeliveryReceiptForm } from './ReceiveDeliveryReceiptForm';
 
 interface Props {

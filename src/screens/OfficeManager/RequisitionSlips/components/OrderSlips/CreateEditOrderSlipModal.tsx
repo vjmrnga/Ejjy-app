@@ -11,10 +11,10 @@ import {
 } from 'global';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { RequisitionSlipDetails } from 'screens/Shared/RequisitionSlips/components/RequisitionSlipDetails';
 import { useUserStore } from 'stores';
 import { convertIntoArray, convertToPieces } from 'utils';
 import { useOrderSlips } from '../../../hooks/useOrderSlips';
-import { RequisitionSlipDetails } from '../RequisitionSlipDetails';
 import { CreateEditOrderSlipForm } from './CreateEditOrderSlipForm';
 import { OrderSlipDetails } from './OrderSlipDetails';
 

@@ -3,9 +3,9 @@ import { QuantitySelect } from 'components';
 import { Box, Label } from 'components/elements';
 import { quantityTypes, requisitionSlipDetailsType } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
+import { RequisitionSlipDetails } from 'screens/Shared/RequisitionSlips/components/RequisitionSlipDetails';
 import { convertToBulk, formatQuantity } from 'utils';
 import '../style.scss';
-import { RequisitionSlipDetails } from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;

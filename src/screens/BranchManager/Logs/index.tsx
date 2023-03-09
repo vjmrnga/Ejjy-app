@@ -20,7 +20,7 @@ export const tabs = {
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
 	CASHIERING_SESSIONS: 'Cashiering Sessions',
 	CONNECTIVITY_LOGS: 'Connectivity Logs',
-	DAYS: 'Cashiering Sessions',
+	DAYS: 'Days',
 	USERS: 'Users',
 };
 

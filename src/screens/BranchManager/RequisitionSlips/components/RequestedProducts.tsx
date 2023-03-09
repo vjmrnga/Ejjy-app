@@ -3,8 +3,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { Box, Label } from 'components/elements';
 import { requisitionSlipDetailsType } from 'global';
 import React, { useEffect, useState } from 'react';
+import { RequisitionSlipDetails } from 'screens/Shared/RequisitionSlips/components/RequisitionSlipDetails';
 import { getProductCode } from 'utils';
-import { RequisitionSlipDetails } from './RequisitionSlipDetails';
 
 interface Props {
 	requisitionSlip: any;
