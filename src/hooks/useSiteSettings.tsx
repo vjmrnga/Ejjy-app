@@ -4,9 +4,11 @@ import { useMutation, useQuery } from 'react-query';
 import { SiteSettingsService } from 'services';
 import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
-export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
+const SITE_SETTINGS_STALE_TIME = 10000;
+
+export const useSiteSettings = ({ params, options }: Query = {}) =>
 	useQuery<any>(
-		['useSiteSettingsRetrieve', params?.branchId],
+		['useSiteSettings', params?.branchId],
 		() => {
 			const service = isStandAlone()
 				? SiteSettingsService.retrieve
@@ -17,6 +19,7 @@ export const useSiteSettingsRetrieve = ({ params, options }: Query = {}) =>
 		{
 			select: (query) => query.data,
 			refetchOnMount: 'always',
+			staleTime: SITE_SETTINGS_STALE_TIME,
 			...options,
 		},
 	);
@@ -33,6 +36,7 @@ export const useSiteSettingsEdit = () =>
 			isManualInputAllowed,
 			isMarkdownAllowedIfCredit,
 			isTimeCheckerFeatureEnabled,
+			logoBase64,
 			permitNumber,
 			posAccreditationDate,
 			posAccreditationNumber,
@@ -64,6 +68,7 @@ export const useSiteSettingsEdit = () =>
 					is_manual_input_allowed: isManualInputAllowed,
 					is_markdown_allowed_if_credit: isMarkdownAllowedIfCredit,
 					is_time_checker_feature_enabled: isTimeCheckerFeatureEnabled,
+					logo_base64: logoBase64,
 					permit_number: permitNumber,
 					pos_accreditation_date: posAccreditationDate,
 					pos_accreditation_number: posAccreditationNumber,
