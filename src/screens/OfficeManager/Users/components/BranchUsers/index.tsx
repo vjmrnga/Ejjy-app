@@ -6,7 +6,11 @@ import {
 } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { RequestErrors, ViewUserModal } from 'components';
+import {
+	RequestErrors,
+	UserPendingApprovalType,
+	ViewUserModal,
+} from 'components';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserRequestUserDeletion, useUsers } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -49,9 +53,6 @@ export const BranchUsers = ({
 	} = useUsers({
 		params: {
 			branchId: branch.id,
-			isPendingCreateApproval: false,
-			isPendingUpdateUserTypeApproval: false,
-			isPendingDeleteApproval: false,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		options: {
@@ -81,7 +82,11 @@ export const BranchUsers = ({
 				),
 				name: getFullName(user),
 				type: getUserTypeName(user.user_type),
-				actions: (
+				actions: user.pending_approval?.approval_type ? (
+					<UserPendingApprovalType
+						type={user.pending_approval?.approval_type}
+					/>
+				) : (
 					<Space>
 						{user.user_type !== userTypes.ADMIN && (
 							<>
