@@ -8,7 +8,7 @@ import {
 	useProductCheckCreateDaily,
 	useProductCheckCreateRandom,
 	useSalesTracker,
-	useSiteSettingsRetrieve,
+	useSiteSettings,
 	useUploadData,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -63,7 +63,7 @@ const BranchManager = () => {
 	const { isFetching: isFetchingBranches } = useBranches({
 		options: { enabled: IS_APP_LIVE },
 	});
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 	const {
 		data: { total: branchProductsTotal },
 	} = useBranchProducts({

@@ -1,5 +1,6 @@
 import { Spin, Tooltip } from 'antd';
 import cn from 'classnames';
+import { useSiteSettings } from 'hooks';
 import React, { ReactNode } from 'react';
 import {
 	NO_INDEX_SELECTED,
@@ -28,6 +29,7 @@ interface Props {
 export const Table = ({ columns, data, activeRow, loading }: Props) => {
 	// CUSTOM HOOKS
 	const pageNumber = useBoundStore((state: any) => state.pageNumber);
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	const getStyleAlignment = (alignment) =>
@@ -52,7 +54,7 @@ export const Table = ({ columns, data, activeRow, loading }: Props) => {
 					<img
 						alt="logo"
 						className="placeholder"
-						src={require('assets/images/logo.png')}
+						src={siteSettings?.logo_base64}
 					/>
 				)}
 

@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
 import { printReceivingVoucherForm } from 'configurePrinter';
 import { JSPDF_SETTINGS, vatTypes, VIEW_PRINTING_MODAL_WIDTH } from 'global';
-import { useSiteSettingsRetrieve } from 'hooks';
+import { useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
@@ -32,7 +32,7 @@ export const ViewReceivingVoucherModal = ({
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	useEffect(() => {

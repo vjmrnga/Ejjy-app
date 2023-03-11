@@ -4,7 +4,7 @@ import { Button, Descriptions, Modal, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { printCashBreakdown, printCashOut } from 'configurePrinter';
 import { cashBreakdownCategories, JSPDF_SETTINGS } from 'global';
-import { useSiteSettingsRetrieve } from 'hooks';
+import { useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
 import {
@@ -52,7 +52,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	const handlePrint = () => {

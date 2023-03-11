@@ -25,7 +25,7 @@ import {
 	taxTypes,
 	vatTypes,
 } from 'global';
-import { useSiteSettingsRetrieve, useTransactionRetrieve } from 'hooks';
+import { useSiteSettings, useTransactionRetrieve } from 'hooks';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -63,7 +63,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 	// CUSTOM HOOKS
 	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
-		useSiteSettingsRetrieve();
+		useSiteSettings();
 	const { data: transactionRetrieved, isFetching: isTransactionFetching } =
 		useTransactionRetrieve({
 			id: transaction,

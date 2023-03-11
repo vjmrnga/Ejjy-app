@@ -9,11 +9,7 @@ import {
 	pageSizeOptions,
 	refetchOptions,
 } from 'global';
-import {
-	useCollectionReceipts,
-	useQueryParams,
-	useSiteSettingsRetrieve,
-} from 'hooks';
+import { useCollectionReceipts, useQueryParams, useSiteSettings } from 'hooks';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso, getFullName } from 'utils';
@@ -39,7 +35,7 @@ export const TabCollectionReceipts = () => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve();
+	} = useSiteSettings();
 	const {
 		data: { collectionReceipts, total },
 		isFetching: isFetchingCollectionReceipts,

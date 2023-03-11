@@ -14,7 +14,7 @@ import { discountTypes, taxTypes } from 'global';
 import {
 	useDiscountOptionCreate,
 	useDiscountOptionEdit,
-	useSiteSettingsRetrieve,
+	useSiteSettings,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
@@ -101,7 +101,7 @@ export const ModifyDiscountOptionForm = ({
 	onClose,
 }: FormProps) => {
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	const getFormDetails = useCallback(

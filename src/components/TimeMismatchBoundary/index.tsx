@@ -3,7 +3,7 @@
 import { Button, Result } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { useBranchMachines, useSiteSettingsRetrieve } from 'hooks';
+import { useBranchMachines, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import './style.scss';
@@ -24,7 +24,7 @@ export const TimeMismatchBoundary = () => {
 		isFetched: isBranchMachinesFetched,
 	} = useBranchMachines();
 	const { data: siteSettings, isFetched: isSiteSettingsFetched } =
-		useSiteSettingsRetrieve({
+		useSiteSettings({
 			options: { notifyOnChangeProps: ['data', 'isFetched'] },
 		});
 

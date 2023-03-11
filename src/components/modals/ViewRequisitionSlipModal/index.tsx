@@ -4,7 +4,7 @@ import { ReceiptHeader } from 'components/Receipt';
 import { printRequisitionSlip } from 'configurePrinter';
 import dayjs from 'dayjs';
 import { JSPDF_SETTINGS } from 'global';
-import { useSiteSettingsRetrieve } from 'hooks';
+import { useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
 import { useUserStore } from 'stores';
@@ -30,7 +30,7 @@ export const ViewRequisitionSlipModal = ({
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	const handlePrint = () => {

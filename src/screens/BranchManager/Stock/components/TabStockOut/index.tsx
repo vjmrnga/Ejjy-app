@@ -11,7 +11,7 @@ import {
 	JSPDF_SETTINGS,
 	pageSizeOptions,
 } from 'global';
-import { useBackOrders, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
+import { useBackOrders, useQueryParams, useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime } from 'utils';
@@ -37,7 +37,7 @@ export const TabStockOut = () => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve();
+	} = useSiteSettings();
 	const {
 		data: { backOrders, total },
 		isFetching: isFetchingBackOrders,

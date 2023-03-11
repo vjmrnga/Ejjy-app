@@ -19,7 +19,7 @@ import {
 	taxTypes,
 	unitOfMeasurementTypes,
 } from 'global';
-import { useProductCategories, useSiteSettingsRetrieve } from 'hooks';
+import { useProductCategories, useSiteSettings } from 'hooks';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
 import { filterOption, formatQuantity, getId } from 'utils';
@@ -82,7 +82,7 @@ export const ModifyProductForm = ({
 	product,
 }: Props) => {
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 	const {
 		data: { productCategories },
 	} = useProductCategories({

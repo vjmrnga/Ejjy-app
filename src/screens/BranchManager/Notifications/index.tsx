@@ -8,7 +8,7 @@ import {
 	useProblematicAttendanceLogs,
 	useQueryParams,
 	useSalesTracker,
-	useSiteSettingsRetrieve,
+	useSiteSettings,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -137,7 +137,7 @@ const useSalesTrackerCount = () => {
 	const [salesTrackerCount, setSalesTrackerCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve({
+	const { data: siteSettings } = useSiteSettings({
 		options: { notifyOnChangeProps: ['data'] },
 	});
 	const {

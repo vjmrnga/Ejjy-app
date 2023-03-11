@@ -2,7 +2,7 @@ import { Button, Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box } from 'components/elements';
 import { appTypes, IS_APP_LIVE } from 'global';
-import { useAuthLogin } from 'hooks';
+import { useAuthLogin, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
@@ -24,6 +24,7 @@ const Login = () => {
 	const setUser = useUserStore((state) => state.setUser);
 
 	// CUSTOM HOOKS
+	const { data: siteSettings } = useSiteSettings();
 	const {
 		mutateAsync: login,
 		isLoading: isLoggingIn,
@@ -77,11 +78,7 @@ const Login = () => {
 	return (
 		<section className="Login">
 			<Box className="container">
-				<img
-					alt="logo"
-					className="logo"
-					src={require('assets/images/logo.png')}
-				/>
+				<img alt="logo" className="logo" src={siteSettings?.logo_base64} />
 
 				<LoginForm
 					errors={[

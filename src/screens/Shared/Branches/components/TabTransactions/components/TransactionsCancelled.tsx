@@ -4,7 +4,7 @@ import { RequestErrors } from 'components';
 import { Box, Button } from 'components/elements';
 import { printCancelledTransactions } from 'configurePrinter';
 import { MAX_PAGE_SIZE } from 'global';
-import { useSiteSettingsRetrieve, useTransactions } from 'hooks';
+import { useSiteSettings, useTransactions } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray, formatInPeso, isUserFromBranch } from 'utils';
@@ -45,7 +45,7 @@ export const TransactionsCancelled = ({
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
+	} = useSiteSettings({
 		params: { branchId },
 	});
 

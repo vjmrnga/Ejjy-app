@@ -3,7 +3,7 @@
 import { Badge, Layout } from 'antd';
 import cn from 'classnames';
 import { userTypes } from 'global';
-import { useAuthLogout } from 'hooks';
+import { useAuthLogout, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -24,6 +24,7 @@ export const Sidebar = ({ items }: Props) => {
 	const user = useUserStore((state) => state.user);
 	const { pathname } = useLocation();
 	const { mutateAsync: logout } = useAuthLogout();
+	const { data: siteSettings } = useSiteSettings();
 	// TODO: Create a reducer for this which will be updated everytime network check is done
 	// const { hasInternetConnection } = useNetwork();
 	const { isSidebarCollapsed, onCollapseSidebar } = useUI();
@@ -40,7 +41,7 @@ export const Sidebar = ({ items }: Props) => {
 			<img
 				alt="logo"
 				className="Sidebar_logo"
-				src={require('../../../assets/images/logo.png')}
+				src={siteSettings?.logo_base64}
 			/>
 			<div className="Sidebar_sidebarList">
 				{items.map((item) => (

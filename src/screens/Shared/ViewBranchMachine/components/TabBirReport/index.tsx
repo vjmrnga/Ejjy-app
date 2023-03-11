@@ -11,7 +11,7 @@ import {
 	taxTypes,
 	timeRangeTypes,
 } from 'global';
-import { useBirReports, useQueryParams, useSiteSettingsRetrieve } from 'hooks';
+import { useBirReports, useQueryParams, useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils';
@@ -32,7 +32,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve();
+	} = useSiteSettings();
 	const {
 		data: { birReports, total },
 		isFetching: isFetchingBirReports,

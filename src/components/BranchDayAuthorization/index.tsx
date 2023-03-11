@@ -6,7 +6,7 @@ import {
 	useBranchDayAuthorizationCreate,
 	useBranchDayAuthorizationEnd,
 	useBranchDayAuthorizationsRetrieve,
-	useSiteSettingsRetrieve,
+	useSiteSettings,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
@@ -35,7 +35,7 @@ export const BranchDayAuthorization = ({
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
 	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
-		useSiteSettingsRetrieve();
+		useSiteSettings();
 	const {
 		data: fetchedBranchDay,
 		isFetching: isFetchingBranchDayAuthorization,

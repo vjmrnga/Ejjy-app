@@ -1,3 +1,4 @@
+import { PlusOutlined } from '@ant-design/icons';
 import {
 	Button,
 	Col,
@@ -7,9 +8,11 @@ import {
 	message,
 	Radio,
 	Row,
+	Space,
 	Spin,
 	TimePicker,
 } from 'antd';
+import Upload, { RcFile } from 'antd/lib/upload';
 import {
 	ConnectionAlert,
 	Content,
@@ -29,13 +32,19 @@ import { inputTypes, taxTypes } from 'global';
 import {
 	usePingOnlineServer,
 	useSiteSettingsEdit,
-	useSiteSettingsRetrieve,
+	useSiteSettings,
 } from 'hooks';
 import moment from 'moment';
 import React, { useCallback } from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray, isCUDShown } from 'utils';
 import * as Yup from 'yup';
+
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+	const reader = new FileReader();
+	reader.addEventListener('load', () => callback(reader.result as string));
+	reader.readAsDataURL(img);
+};
 
 const getValidTimeTest = (label) =>
 	Yup.string()
@@ -63,7 +72,7 @@ export const SiteSettings = () => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve();
+	} = useSiteSettings();
 	const {
 		mutateAsync: editSiteSettings,
 		isLoading: isEditingSiteSettings,
@@ -133,6 +142,7 @@ export const SiteSettings = () => {
 
 				storeName: siteSettings?.store_name || '',
 				addressOfTaxPayer: siteSettings?.address_of_tax_payer || '',
+				logoBase64: siteSettings?.logo_base64 || '',
 			},
 			Schema: Yup.object().shape({
 				closeSessionDeadline: getValidTimeTest('Close Session Deadline').test(
@@ -212,6 +222,7 @@ export const SiteSettings = () => {
 				addressOfTaxPayer: Yup.string()
 					.required()
 					.label('Address of Tax Payer'),
+				logoBase64: Yup.string().required().label('Store Logo'),
 			}),
 		}),
 		[siteSettings],
@@ -355,13 +366,17 @@ export const SiteSettings = () => {
 												{ label: 'Not Allowed', value: false },
 											]}
 											optionType="button"
-											value={values.isMarkdownAllowedIfCredit}
+											value={values['isMarkdownAllowedIfCredit']}
 											onChange={(e) => {
 												setFieldValue(
 													'isMarkdownAllowedIfCredit',
 													e.target.value,
 												);
 											}}
+										/>
+										<ErrorMessage
+											name="isMarkdownAllowedIfCredit"
+											render={(error) => <FieldError error={error} />}
 										/>
 									</Col>
 
@@ -373,13 +388,17 @@ export const SiteSettings = () => {
 												{ label: 'Not Allowed', value: false },
 											]}
 											optionType="button"
-											value={values.isDiscountAllowedIfCredit}
+											value={values['isDiscountAllowedIfCredit']}
 											onChange={(e) => {
 												setFieldValue(
 													'isDiscountAllowedIfCredit',
 													e.target.value,
 												);
 											}}
+										/>
+										<ErrorMessage
+											name="isDiscountAllowedIfCredit"
+											render={(error) => <FieldError error={error} />}
 										/>
 									</Col>
 
@@ -391,10 +410,14 @@ export const SiteSettings = () => {
 												{ label: 'Not Allowed', value: false },
 											]}
 											optionType="button"
-											value={values.isManualInputAllowed}
+											value={values['isManualInputAllowed']}
 											onChange={(e) => {
 												setFieldValue('isManualInputAllowed', e.target.value);
 											}}
+										/>
+										<ErrorMessage
+											name="isManualInputAllowed"
+											render={(error) => <FieldError error={error} />}
 										/>
 									</Col>
 
@@ -406,13 +429,17 @@ export const SiteSettings = () => {
 												{ label: 'Disabled', value: false },
 											]}
 											optionType="button"
-											value={values.isTimeCheckerFeatureEnabled}
+											value={values['isTimeCheckerFeatureEnabled']}
 											onChange={(e) => {
 												setFieldValue(
 													'isTimeCheckerFeatureEnabled',
 													e.target.value,
 												);
 											}}
+										/>
+										<ErrorMessage
+											name="isTimeCheckerFeatureEnabled"
+											render={(error) => <FieldError error={error} />}
 										/>
 									</Col>
 
@@ -427,6 +454,42 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col>
+
+									<Col md={12} span={24}>
+										<Label label="Store Logo" spacing />
+										<Upload
+											beforeUpload={(file: any) => {
+												getBase64(file, (url) => {
+													console.log('url', url);
+													setFieldValue('logoBase64', url);
+												});
+
+												return false;
+											}}
+											className="w-100 avatar-uploader"
+											listType="picture-card"
+											maxCount={1}
+											showUploadList={false}
+										>
+											{values.logoBase64 ? (
+												<img
+													alt="store's logo"
+													className="w-100"
+													src={values.logoBase64}
+												/>
+											) : (
+												<Space direction="horizontal">
+													<PlusOutlined />
+													<span className="mt-2">Upload</span>
+												</Space>
+											)}
+										</Upload>
+										<ErrorMessage
+											name="logoBase64"
+											render={(error) => <FieldError error={error} />}
+										/>
+									</Col>
+
 									<Col md={12} span={24}>
 										{renderInputField({
 											name: 'addressOfTaxPayer',
@@ -463,10 +526,14 @@ export const SiteSettings = () => {
 												{ label: 'NVAT', value: taxTypes.NVAT },
 											]}
 											optionType="button"
-											value={values.taxType}
+											value={values['taxType']}
 											onChange={(e) => {
 												setFieldValue('taxType', e.target.value);
 											}}
+										/>
+										<ErrorMessage
+											name="taxType"
+											render={(error) => <FieldError error={error} />}
 										/>
 									</Col>
 

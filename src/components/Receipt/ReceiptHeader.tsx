@@ -1,5 +1,5 @@
 import { Space, Typography } from 'antd';
-import { useSiteSettingsRetrieve } from 'hooks';
+import { useSiteSettings } from 'hooks';
 import React from 'react';
 
 const { Text } = Typography;
@@ -11,7 +11,7 @@ interface Props {
 
 export const ReceiptHeader = ({ branchMachine, title }: Props) => {
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	const {
 		contact_number: contactNumber,

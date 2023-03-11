@@ -9,7 +9,7 @@ import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
 import { EMPTY_CELL, JSPDF_SETTINGS, taxTypes } from 'global';
-import { useSiteSettingsRetrieve } from 'hooks';
+import { useSiteSettings } from 'hooks';
 import jsPDF from 'jspdf';
 import React, { useState } from 'react';
 import { formatDate, formatInPeso } from 'utils';
@@ -29,7 +29,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettingsRetrieve();
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	const handlePrint = () => {

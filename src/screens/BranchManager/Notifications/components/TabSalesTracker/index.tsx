@@ -1,7 +1,7 @@
 import { Alert, Empty, Spin } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
-import { useSalesTracker, useSiteSettingsRetrieve } from 'hooks';
+import { useSalesTracker, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso } from 'utils';
 
@@ -16,7 +16,7 @@ export const TabSalesTracker = () => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettingsRetrieve({
+	} = useSiteSettings({
 		options: { notifyOnChangeProps: ['data', 'isFetching'] },
 	});
 	const {
