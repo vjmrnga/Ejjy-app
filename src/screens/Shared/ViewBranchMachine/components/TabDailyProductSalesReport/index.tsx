@@ -1,4 +1,4 @@
-import { Col, Radio, Row, Table } from 'antd';
+import { Button, Col, Radio, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -8,7 +8,7 @@ import {
 	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -22,9 +22,10 @@ import { useQueryParams, useTransactionProducts } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
-	formatDate,
+	formatDateTime,
 	formatInPeso,
 	formatQuantity,
+	getProductCode,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -33,7 +34,7 @@ const columns: ColumnsType = [
 	{ title: 'Invoice Number', dataIndex: 'invoiceNumber', width: 150 },
 	{ title: 'Invoice Type', dataIndex: 'invoiceType', width: 150 },
 	{ title: 'Quantity', dataIndex: 'quantity' },
-	{ title: 'Code / Barcode', dataIndex: 'code', width: 150 },
+	{ title: 'Textcode / Code', dataIndex: 'code', width: 150 },
 	{ title: 'Item Name / Description', dataIndex: 'name', width: 300 },
 	{ title: 'Sale Price', dataIndex: 'sellingPrice', width: 150 },
 	{ title: 'V/VE', dataIndex: 'vatable' },
@@ -60,7 +61,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 	const {
 		data: { transactionProducts, total },
 		isFetching: isFetchingTransactionProducts,
-		isFetched: isTransactionProductsFetched,
+		isFetchedAfterMount: isTransactionProductsFetchedAfterMount,
 		error: transactionProductsError,
 	} = useTransactionProducts({
 		params: {
@@ -102,7 +103,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 			return {
 				key: id,
-				dateTime: formatDate(datetime_created),
+				dateTime: formatDateTime(datetime_created),
 				client: transaction.client ? (
 					`${transaction.client.id || ''} / ${transaction.client.name || ''}`
 				) : (
@@ -111,10 +112,12 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					</>
 				),
 				invoiceNumber: transaction.invoice ? (
-					<ButtonLink
-						text={transaction.invoice.or_number}
+					<Button
+						type="link"
 						onClick={() => setSelectedTransaction(transaction.id)}
-					/>
+					>
+						{transaction.invoice.or_number}
+					</Button>
 				) : (
 					EMPTY_CELL
 				),
@@ -123,9 +126,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 					unitOfMeasurement: product?.unit_of_measurement,
 					quantity,
 				}),
-				code: `${product?.textcode || ''} / ${
-					product?.barcode || product?.selling_barcode || ''
-				}`,
+				code: `${product?.textcode || ''} / ${getProductCode(product)}`,
 				name: `${product?.name} / ${product?.description}`,
 				sellingPrice: formatInPeso(price_per_piece),
 				vatable: product?.is_vat_exempted ? 'VAT Exempt' : 'Vatable',
@@ -143,7 +144,8 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 			<Filter
 				isLoading={
-					isFetchingTransactionProducts && !isTransactionProductsFetched
+					isFetchingTransactionProducts &&
+					!isTransactionProductsFetchedAfterMount
 				}
 			/>
 
@@ -152,7 +154,10 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingTransactionProducts && !isTransactionProductsFetched}
+				loading={
+					isFetchingTransactionProducts &&
+					!isTransactionProductsFetchedAfterMount
+				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

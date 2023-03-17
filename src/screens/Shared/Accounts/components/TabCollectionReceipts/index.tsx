@@ -1,4 +1,5 @@
-import { Button, Table } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
 import { printCollectionReceipt } from 'configurePrinter';
@@ -56,13 +57,15 @@ export const TabCollectionReceipts = () => {
 				payor: getFullName(payor),
 				amount: formatInPeso(amount),
 				actions: (
-					<Button
-						loading={isPrinting === id}
-						type="link"
-						onClick={() => handlePrintPDF(collectionReceipt)}
-					>
-						Print PDF
-					</Button>
+					<Tooltip title="Create PDF">
+						<Button
+							icon={<FilePdfOutlined />}
+							loading={isPrinting === id}
+							type="primary"
+							ghost
+							onClick={() => handleCreatePDF(collectionReceipt)}
+						/>
+					</Tooltip>
 				),
 			};
 		});
@@ -70,12 +73,15 @@ export const TabCollectionReceipts = () => {
 		setDataSource(data);
 	}, [collectionReceipts, isPrinting]);
 
-	const handlePrintPDF = (collectionReceipt) => {
+	const handleCreatePDF = (collectionReceipt) => {
 		setIsPrinting(collectionReceipt.id);
 
 		const html = printCollectionReceipt({ collectionReceipt, siteSettings });
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
+		const pdf = new jsPDF({
+			...JSPDF_SETTINGS,
+			format: 'legal',
+		});
 
 		setTimeout(() => {
 			pdf.html(html, {
@@ -95,7 +101,7 @@ export const TabCollectionReceipts = () => {
 			<RequestErrors
 				errors={[
 					...convertIntoArray(collectionReceiptsError, 'Collection Receipts'),
-					...convertIntoArray(siteSettingsError, 'Site Settings'),
+					...convertIntoArray(siteSettingsError, 'Settings'),
 				]}
 				withSpaceBottom
 			/>

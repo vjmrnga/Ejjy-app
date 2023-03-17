@@ -1,7 +1,10 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	PlusCircleOutlined,
+} from '@ant-design/icons';
 import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
-	AddButtonIcon,
 	Breadcrumb,
 	ConnectionAlert,
 	Content,
@@ -119,11 +122,15 @@ export const AssignUser = ({ match }: Props) => {
 						/>
 					),
 					actions: !isDateAfter && (
-						<AddButtonIcon
-							disabled={isConnected === false}
-							tooltip="Assign"
-							onClick={() => setSelectededDate(item.date)}
-						/>
+						<Tooltip title="Assign">
+							<Button
+								disabled={isConnected === false}
+								icon={<PlusCircleOutlined />}
+								type="primary"
+								ghost
+								onClick={() => setSelectededDate(item.date)}
+							/>
+						</Tooltip>
 					),
 				};
 			});
@@ -198,7 +205,7 @@ export const AssignUser = ({ match }: Props) => {
 							dataSource={dataSource}
 							loading={isFetchingUser || isFetchingCashieringAssignments}
 							pagination={false}
-							scroll={{ x: 1000 }}
+							scroll={{ x: 800 }}
 							bordered
 						/>
 
@@ -268,7 +275,7 @@ const Assignments = ({
 							danger
 							ghost
 							onClick={() =>
-								confirmPassword({ onSuccess: onDelete(assignment) })
+								confirmPassword({ onSuccess: () => onDelete(assignment) })
 							}
 						/>
 					</Tooltip>

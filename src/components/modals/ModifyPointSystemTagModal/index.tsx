@@ -1,16 +1,11 @@
-import { Button, Col, message, Modal, Row } from 'antd';
+import { Button, Col, Input, message, Modal, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { usePointSystemTagCreate, usePointSystemTagEdit } from 'hooks';
 import React, { useCallback } from 'react';
 import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
-import {
-	FieldError,
-	FormattedInputNumber,
-	FormInputLabel,
-	Label,
-} from '../../elements';
+import { FieldError, FormattedInputNumber, Label } from '../../elements';
 
 interface ModalProps {
 	pointSystemTag: any;
@@ -116,7 +111,13 @@ export const ModifyPointSystemTagForm = ({
 				<Form>
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
-							<FormInputLabel id="name" label="Name" />
+							<Label label="Name" spacing />
+							<Input
+								value={values['name']}
+								onChange={(e) => {
+									setFieldValue('name', e.target.value);
+								}}
+							/>
 							<ErrorMessage
 								name="name"
 								render={(error) => <FieldError error={error} />}

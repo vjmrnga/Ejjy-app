@@ -8,8 +8,8 @@ interface List extends IListRequest {
 }
 
 interface Modify {
-	user_id: number;
 	branch_id: number;
+	user_id: number;
 }
 
 const service = {
@@ -20,4 +20,12 @@ const service = {
 		axios.post('/branch-assignments/', body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (baseURL) =>
+		axios.get('/offline-branch-assignments/', { baseURL }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

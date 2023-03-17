@@ -6,6 +6,7 @@ import _ from 'lodash';
 import React from 'react';
 import { TabBranchAssignments } from 'screens/Shared/Assignments/components/TabBranchAssignments';
 import { TabSessionAssignments } from 'screens/Shared/Assignments/components/TabSessionAssignments';
+import { TabDays } from 'screens/Shared/Branches/components/TabDays';
 import { TabSessions } from 'screens/Shared/Branches/components/TabSessions';
 import { TabBranchProductLogs } from 'screens/Shared/Logs/components/TabBranchProductLogs';
 import { TabCashBreakdowns } from 'screens/Shared/Logs/components/TabCashBreakdowns';
@@ -17,6 +18,7 @@ export const tabs = {
 	PRODUCTS: 'Products',
 	BRANCH_PRODUCTS: 'Branch Products',
 	BRANCH_ASSIGNMENTS: 'Branch Assignments',
+	BRANCH_DAYS: 'Branch Days',
 	BRANCH_CONNECTIVITY_LOGS: 'Branch Connectivity Logs',
 	CASHIERING_ASSIGNMENTS: 'Cashiering Assignments',
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
@@ -71,6 +73,10 @@ export const Logs = () => {
 						tab={tabs.BRANCH_CONNECTIVITY_LOGS}
 					>
 						<TabBranchConnectivityLogs />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.BRANCH_DAYS} tab={tabs.BRANCH_DAYS}>
+						<TabDays />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane

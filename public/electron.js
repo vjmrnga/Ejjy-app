@@ -225,9 +225,13 @@ function initServer(store) {
 		if (appType === appTypes.HEAD_OFFICE) {
 			logStatus('Server: Starting LocalhostRun');
 
+			exec(
+				'ngrok config add-authtoken 1n3K1Pcfqdy2WKRk60koXTY1ZrB_7QC7rqRsspNCkayebuRUN',
+			);
+
 			const startLocalhostRun = () => {
 				exec(
-					'ssh -R office.ej-jy.com:80:localhost:8001 localhost.run',
+					'ngrok http --domain=headoffice.ngrok.app 8001',
 					(error, stdout, stderr) => {
 						if (error) {
 							logStatus(`LocalhostRun error: ${error.message}`);

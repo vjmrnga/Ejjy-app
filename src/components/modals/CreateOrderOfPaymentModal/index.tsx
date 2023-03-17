@@ -164,7 +164,7 @@ export const CreateOrderOfPaymentForm = ({
 				amount: transaction?.total_amount || '',
 				purpose: transaction ? orderOfPaymentPurposes.FULL_PAYMENT : null,
 				purposeOthers: '',
-				chargeSalesTransactionId: transaction?.id,
+				chargeSalesTransactionId: transaction?.invoice?.or_number,
 			},
 			schema: Yup.object().shape(
 				{

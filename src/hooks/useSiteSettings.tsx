@@ -69,7 +69,6 @@ export const useSiteSettingsEdit = () =>
 					is_markdown_allowed_if_credit: isMarkdownAllowedIfCredit,
 					is_time_checker_feature_enabled: isTimeCheckerFeatureEnabled,
 					logo_base64: logoBase64,
-					permit_number: permitNumber,
 					pos_accreditation_date: posAccreditationDate,
 					pos_accreditation_number: posAccreditationNumber,
 					pos_accreditation_valid_until_date: posAccreditationValidUntilDate,

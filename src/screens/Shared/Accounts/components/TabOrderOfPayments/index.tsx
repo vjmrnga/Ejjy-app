@@ -1,4 +1,5 @@
-import { Button, Col, Row, Select, Spin, Table } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Col, Row, Select, Spin, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
@@ -110,13 +111,15 @@ export const TabOrderOfPayments = () => {
 					EMPTY_CELL
 				),
 				actions: (
-					<Button
-						loading={isPrinting === id}
-						type="link"
-						onClick={() => handlePrintPDF(orderOfPayment)}
-					>
-						Print PDF
-					</Button>
+					<Tooltip title="Create PDF">
+						<Button
+							icon={<FilePdfOutlined />}
+							loading={isPrinting === id}
+							type="primary"
+							ghost
+							onClick={() => handleCreatePDF(orderOfPayment)}
+						/>
+					</Tooltip>
 				),
 			};
 		});
@@ -124,12 +127,15 @@ export const TabOrderOfPayments = () => {
 		setDataSource(formattedOrderOfPayments);
 	}, [orderOfPayments, isPrinting]);
 
-	const handlePrintPDF = (orderOfPayment) => {
+	const handleCreatePDF = (orderOfPayment) => {
 		setIsPrinting(orderOfPayment.id);
 
 		const html = printOrderOfPayment(orderOfPayment);
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
+		const pdf = new jsPDF({
+			...JSPDF_SETTINGS,
+			format: 'legal',
+		});
 
 		setTimeout(() => {
 			pdf.html(html, {

@@ -21,6 +21,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import { convertIntoArray, formatDate, getFullName, isCUDShown } from 'utils';
 
@@ -50,7 +51,7 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 		error: supplierRegistrationsError,
 	} = useSupplierRegistrations({ params });
 	const {
-		mutate: deleteSupplierRegistration,
+		mutateAsync: deleteSupplierRegistration,
 		isLoading: isDeletingSupplierRegistration,
 		error: deleteSupplierRegistrationError,
 	} = useSupplierRegistrationDelete();
@@ -63,13 +64,7 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 			return {
 				key: id,
 				clientCode: (
-					<Button
-						className="pa-0"
-						type="link"
-						onClick={() => setSelectedAccount(account)}
-					>
-						{account.account_code}
-					</Button>
+					<Link to={`accounts/${account.id}`}>{account.account_code}</Link>
 				),
 				clientName: getFullName(account),
 				datetimeCreated: formatDate(account.datetime_created),
@@ -82,7 +77,9 @@ export const TabSupplierRegistrations = ({ disabled }: Props) => {
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this?"
-								onConfirm={() => deleteSupplierRegistration(id)}
+								onConfirm={async () => {
+									await deleteSupplierRegistration(id);
+								}}
 							>
 								<Tooltip title="Remove">
 									<Button

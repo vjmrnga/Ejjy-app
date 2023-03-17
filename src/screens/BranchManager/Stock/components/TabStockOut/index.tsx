@@ -107,7 +107,7 @@ export const TabStockOut = () => {
 		<>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(siteSettingsError, 'Site Settings'),
+					...convertIntoArray(siteSettingsError, 'Settings'),
 					...convertIntoArray(backOrdersError, 'Receiving Vouchers'),
 				]}
 				withSpaceBottom

@@ -3,6 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
+	closingTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
@@ -31,12 +32,6 @@ const sessionTypes = {
 	ALL: 'all',
 	AUTHORIZED: 'authorized',
 	UNAUTHORIZED: 'unauthorized',
-};
-
-const closingTypes = {
-	ALL: 'all',
-	AUTOMATIC: 'automatic',
-	MANUAL: 'manual',
 };
 
 interface Props {

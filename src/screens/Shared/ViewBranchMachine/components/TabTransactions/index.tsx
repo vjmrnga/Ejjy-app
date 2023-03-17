@@ -75,7 +75,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 		data: { transactions, total },
 		error: transactionsError,
 		isFetching: isFetchingTransactions,
-		isFetched: isTransactionsFetched,
+		isFetchedAfterMount: isTransactionsFetchedAfterMount,
 	} = useTransactions({
 		params: {
 			...params,
@@ -116,7 +116,9 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 		<>
 			<TableHeader title="Transactions" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isFetchingTransactions && !isTransactionsFetched} />
+			<Filter
+				isLoading={isFetchingTransactions && !isTransactionsFetchedAfterMount}
+			/>
 
 			<RequestErrors errors={convertIntoArray(transactionsError)} />
 
@@ -132,7 +134,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingTransactions && !isTransactionsFetched}
+				loading={isFetchingTransactions && !isTransactionsFetchedAfterMount}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

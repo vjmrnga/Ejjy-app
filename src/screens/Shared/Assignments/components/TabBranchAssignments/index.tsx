@@ -51,6 +51,7 @@ export const TabBranchAssignments = () => {
 				: params?.branchId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 		},
+		shouldFetchOfflineFirst: true,
 	});
 
 	// METHODS

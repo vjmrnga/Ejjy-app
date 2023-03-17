@@ -9,7 +9,7 @@ import {
 	ViewBackOrderModal,
 	ViewTransactionModal,
 } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import { printAdjustmentReport } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
@@ -25,7 +25,12 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	formatInPeso,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },
@@ -79,19 +84,23 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 			const remarks = (
 				<Space direction="vertical">
 					{backOrder && (
-						<ButtonLink
-							text={`Back Order - ${backOrder.id}`}
+						<Button
+							type="link"
 							onClick={() => setSelectedBackOrder(backOrder.id)}
-						/>
+						>
+							Back Order - {backOrder.id}
+						</Button>
 					)}
 					{transaction.status === transactionStatus.VOID_CANCELLED && (
 						<TransactionStatus status={transaction.status} />
 					)}
 					{newTransaction && (
-						<ButtonLink
-							text={`New Invoice - ${newTransaction.invoice.or_number}`}
+						<Button
+							type="link"
 							onClick={() => setSelectedTransaction(newTransaction.id)}
-						/>
+						>
+							New Invoice - {newTransaction.invoice.or_number}
+						</Button>
 					)}
 					{discountOption && (
 						<Descriptions column={1} size="small" bordered>
@@ -114,12 +123,14 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 
 			return {
 				key: transaction.id,
-				dateTime: formatDate(transaction.invoice.datetime_created),
+				dateTime: formatDateTime(transaction.invoice.datetime_created),
 				invoiceNumber: (
-					<ButtonLink
-						text={transaction.invoice.or_number}
+					<Button
+						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
-					/>
+					>
+						{transaction.invoice.or_number}
+					</Button>
 				),
 				invoiceType: <ModeOfPayment modeOfPayment={transaction.payment.mode} />,
 				payment: (

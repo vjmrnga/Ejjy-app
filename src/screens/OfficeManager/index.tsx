@@ -135,11 +135,11 @@ const OfficeManager = () => {
 				link: '/office-manager/discount-options',
 			},
 			{
-				key: 'site-settings',
-				name: 'Site Settings',
+				key: 'settings',
+				name: 'Settings',
 				activeIcon: require('../../assets/images/icon-settings-active.svg'),
 				defaultIcon: require('../../assets/images/icon-settings.svg'),
-				link: '/office-manager/site-settings',
+				link: '/office-manager/settings',
 			},
 			// {
 			// 	key: 'checking',
@@ -258,10 +258,7 @@ const OfficeManager = () => {
 						path="/office-manager/discount-options"
 					/>
 
-					<Route
-						component={SiteSettings}
-						path="/office-manager/site-settings"
-					/>
+					<Route component={SiteSettings} path="/office-manager/settings" />
 
 					<Route component={Sales} path="/office-manager/sales" />
 

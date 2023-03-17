@@ -1,4 +1,4 @@
-import { Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
+import { Button, Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -7,7 +7,7 @@ import {
 	ViewBackOrderModal,
 	ViewTransactionModal,
 } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -21,7 +21,12 @@ import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDate, formatInPeso, getFullName } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	formatInPeso,
+	getFullName,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },
@@ -48,11 +53,14 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 		data: { transactions, total },
 		error: transactionsError,
 		isFetching: isFetchingTransactions,
-		isFetched: isTransactionsFetched,
+		isFetchedAfterMount: isTransactionsFetchedAfterMount,
 	} = useTransactions({
 		params: {
 			branchMachineId,
-			statuses: transactionStatus.FULLY_PAID,
+			statuses: [
+				transactionStatus.FULLY_PAID,
+				transactionStatus.VOID_EDITED,
+			].join(','),
 			timeRange: timeRangeTypes.DAILY,
 			...params,
 		},
@@ -72,22 +80,28 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 			const remarks = (
 				<Space direction="vertical">
 					{backOrder && (
-						<ButtonLink
-							text={`Back Order - ${backOrder.id}`}
+						<Button
+							type="link"
 							onClick={() => setSelectedBackOrder(backOrder.id)}
-						/>
+						>
+							Back Order - {backOrder.id}
+						</Button>
 					)}
 					{previousTransaction && (
-						<ButtonLink
-							text={`Prev. Invoice - ${previousTransaction.invoice.or_number}`}
+						<Button
+							type="link"
 							onClick={() => setSelectedTransaction(previousTransaction.id)}
-						/>
+						>
+							Prev. Invoice - {previousTransaction.invoice.or_number}
+						</Button>
 					)}
 					{newTransaction && (
-						<ButtonLink
-							text={`New Invoice - ${newTransaction.invoice.or_number}`}
+						<Button
+							type="link"
 							onClick={() => setSelectedTransaction(newTransaction.id)}
-						/>
+						>
+							New Invoice - {newTransaction.invoice.or_number}
+						</Button>
 					)}
 					{discountOption && (
 						<Descriptions column={1} size="small" bordered>
@@ -110,12 +124,14 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 
 			return {
 				key: transaction.id,
-				dateTime: formatDate(transaction.invoice.datetime_created),
+				dateTime: formatDateTime(transaction.invoice.datetime_created),
 				invoiceNumber: transaction.invoice ? (
-					<ButtonLink
-						text={transaction.invoice.or_number}
+					<Button
+						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
-					/>
+					>
+						{transaction.invoice.or_number}
+					</Button>
 				) : (
 					EMPTY_CELL
 				),
@@ -133,14 +149,16 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 		<>
 			<TableHeader title="Daily Invoice Report" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isFetchingTransactions && !isTransactionsFetched} />
+			<Filter
+				isLoading={isFetchingTransactions && !isTransactionsFetchedAfterMount}
+			/>
 
 			<RequestErrors errors={convertIntoArray(transactionsError)} />
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingTransactions && !isTransactionsFetched}
+				loading={isFetchingTransactions && !isTransactionsFetchedAfterMount}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

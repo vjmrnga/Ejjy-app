@@ -3,6 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
+	closingTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
@@ -11,8 +12,14 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { useBranchDays, useQueryParams, useUsers } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import {
+	useBranchDays,
+	useBranches,
+	useBranchMachines,
+	useQueryParams,
+	useUsers,
+} from 'hooks';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	filterOption,
@@ -21,23 +28,10 @@ import {
 	getFullName,
 } from 'utils';
 
-const columns: ColumnsType = [
-	{ title: 'User', dataIndex: 'user' },
-	{ title: 'Date & Time', dataIndex: 'datetime' },
-	{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
-	{ title: 'Status', dataIndex: 'status' },
-];
-
 const branchDayTypes = {
 	ALL: 'all',
 	AUTHORIZED: 'authorized',
 	UNAUTHORIZED: 'unauthorized',
-};
-
-const closingTypes = {
-	ALL: 'all',
-	AUTOMATIC: 'automatic',
-	MANUAL: 'manual',
 };
 
 interface Props {
@@ -55,23 +49,13 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 		data: { branchDays, total },
 		error: branchDaysError,
 		isFetching: isFetchingBranchDays,
-		isFetched: isBranchDaysFetched,
+		isFetchedAfterMount: isBranchDaysFetchedAfterMount,
 	} = useBranchDays({
 		params: {
 			...params,
-			branchId: branch?.id,
-			branchMachineId,
+			branchId: branch?.id || params?.branchId,
+			branchMachineId: branchMachineId || params?.branchMachineId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
-			isUnauthorized: (() => {
-				let isUnauthorized;
-				if (params.type === branchDayTypes.UNAUTHORIZED) {
-					isUnauthorized = true;
-				} else if (params.type === branchDayTypes.AUTHORIZED) {
-					isUnauthorized = false;
-				}
-
-				return isUnauthorized;
-			})(),
 			isAutomaticallyClosed: (() => {
 				let isAutomaticallyClosed;
 				if (params.closingType === closingTypes.AUTOMATIC) {
@@ -81,6 +65,16 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 				}
 
 				return isAutomaticallyClosed;
+			})(),
+			isUnauthorized: (() => {
+				let isUnauthorized;
+				if (params.type === branchDayTypes.UNAUTHORIZED) {
+					isUnauthorized = true;
+				} else if (params.type === branchDayTypes.AUTHORIZED) {
+					isUnauthorized = false;
+				}
+
+				return isUnauthorized;
 			})(),
 		},
 		options: refetchOptions,
@@ -181,11 +175,34 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 		</Descriptions>
 	);
 
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'User', dataIndex: 'user' },
+			{ title: 'Date & Time', dataIndex: 'datetime' },
+			{ title: 'Unauthorized Time Range', dataIndex: 'unauthorizedTimeRange' },
+			{ title: 'Status', dataIndex: 'status' },
+		];
+
+		if (!branchMachineId) {
+			columns.unshift({ title: 'Branch Machine', dataIndex: 'branchMachine' });
+		}
+
+		if (!branch?.id && !branchMachineId) {
+			columns.unshift({ title: 'Branch', dataIndex: 'branch' });
+		}
+
+		return columns;
+	}, [branch, branchMachineId]);
+
 	return (
 		<div className="ViewBranchMachineDays">
 			<TableHeader title="Days" wrapperClassName="pt-2 px-0" />
 
-			<Filter isLoading={isFetchingBranchDays && !isBranchDaysFetched} />
+			<Filter
+				branch={branch}
+				branchMachineId={branchMachineId}
+				isLoading={isFetchingBranchDays && !isBranchDaysFetchedAfterMount}
+			/>
 
 			<RequestErrors
 				errors={convertIntoArray(branchDaysError)}
@@ -193,9 +210,9 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 			/>
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
-				loading={isFetchingBranchDays && !isBranchDaysFetched}
+				loading={isFetchingBranchDays && !isBranchDaysFetchedAfterMount}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,
@@ -210,7 +227,7 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				scroll={{ x: 650 }}
+				scroll={{ x: 800 }}
 				bordered
 			/>
 		</div>
@@ -218,112 +235,172 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 };
 
 interface FilterProps {
+	branch?: any;
+	branchMachineId?: any;
 	isLoading: boolean;
 }
 
-const Filter = ({ isLoading }: FilterProps) => {
+const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: !branch?.id },
+	});
+	const {
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
+	} = useBranchMachines({
+		params: {
+			branchId: branch?.id || params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
+	});
+	const {
 		data: { users },
 		isFetching: isFetchingUsers,
+		error: userErrors,
 	} = useUsers({
-		params: { pageSize: MAX_PAGE_SIZE },
+		params: {
+			branchId: params.branchId,
+			pageSize: MAX_PAGE_SIZE,
+		},
 	});
 
 	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<Label label="Opened By" spacing />
-				<Select
-					className="w-100"
-					defaultValue={params.openedByUserId}
-					disabled={isFetchingUsers || isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ openedByUserId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{users.map((user) => (
-						<Select.Option key={user.id} value={user.id}>
-							{getFullName(user)}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+		<>
+			<RequestErrors
+				errors={[
+					...convertIntoArray(userErrors, 'Users'),
+					...convertIntoArray(branchMachinesError, 'Branch Machines'),
+					...convertIntoArray(branchErrors, 'Branches'),
+				]}
+				withSpaceBottom
+			/>
 
-			<Col lg={12} span={24}>
-				<Label label="Closed By" spacing />
-				<Select
-					className="w-100"
-					defaultValue={params.closedByUserId}
-					disabled={isFetchingUsers || isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams(
-							{ closedByUserId: value },
-							{ shouldResetPage: true },
-						);
-					}}
-				>
-					{users.map((user) => (
-						<Select.Option key={user.id} value={user.id}>
-							{getFullName(user)}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
+			<Row className="mb-4" gutter={[16, 16]}>
+				{!branch?.id && !branchMachineId && (
+					<Col md={12}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((b) => (
+								<Select.Option key={b.id} value={b.id}>
+									{b.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
 
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
-			</Col>
+				{!branchMachineId && (
+					<Col lg={12} span={24}>
+						<Label label="Branch Machine" spacing />
+						<Select
+							className="w-100"
+							defaultValue={params.branchMachineId}
+							filterOption={filterOption}
+							loading={isFetchingBranchMachines}
+							optionFilterProp="children"
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams(
+									{ branchMachineId: value },
+									{ shouldResetPage: true },
+								);
+							}}
+						>
+							{branchMachines.map(({ id, name }) => (
+								<Select.Option key={id} value={id}>
+									{name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
 
-			<Col lg={12} span={24}>
-				<Label label="Closing Type" spacing />
-				<Radio.Group
-					defaultValue={params.closingType || closingTypes.ALL}
-					disabled={isFetchingUsers || isLoading}
-					options={[
-						{ label: 'All', value: closingTypes.ALL },
-						{ label: 'Automatic', value: closingTypes.AUTOMATIC },
-						{ label: 'Manual', value: closingTypes.MANUAL },
-					]}
-					optionType="button"
-					onChange={(e) => {
-						setQueryParams(
-							{ closingType: e.target.value },
-							{ shouldResetPage: true },
-						);
-					}}
-				/>
-			</Col>
+				<Col lg={12} span={24}>
+					<Label label="User" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.userId}
+						disabled={isFetchingUsers || isLoading}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams({ userId: value }, { shouldResetPage: true });
+						}}
+					>
+						{users.map((u) => (
+							<Select.Option key={u.id} value={u.id}>
+								{getFullName(u)}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
 
-			<Col lg={12} span={24}>
-				<Label label="Authorization" spacing />
+				<Col lg={12} span={24}>
+					<TimeRangeFilter disabled={isFetchingUsers || isLoading} />
+				</Col>
 
-				<Radio.Group
-					defaultValue={params.type || branchDayTypes.ALL}
-					disabled={isFetchingUsers || isLoading}
-					options={[
-						{ label: 'All', value: branchDayTypes.ALL },
-						{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
-						{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
-					]}
-					optionType="button"
-					onChange={(e) => {
-						setQueryParams({ type: e.target.value }, { shouldResetPage: true });
-					}}
-				/>
-			</Col>
-		</Row>
+				<Col lg={12} span={24}>
+					<Label label="Closing Type" spacing />
+					<Radio.Group
+						defaultValue={params.closingType || closingTypes.ALL}
+						disabled={isFetchingUsers || isLoading}
+						options={[
+							{ label: 'All', value: closingTypes.ALL },
+							{ label: 'Automatic', value: closingTypes.AUTOMATIC },
+							{ label: 'Manual', value: closingTypes.MANUAL },
+						]}
+						optionType="button"
+						onChange={(e) => {
+							setQueryParams(
+								{ closingType: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Authorization" spacing />
+					<Radio.Group
+						defaultValue={params.type || branchDayTypes.ALL}
+						disabled={isFetchingUsers || isLoading}
+						options={[
+							{ label: 'All', value: branchDayTypes.ALL },
+							{ label: 'Authorized', value: branchDayTypes.AUTHORIZED },
+							{ label: 'Unauthorized', value: branchDayTypes.UNAUTHORIZED },
+						]}
+						optionType="button"
+						onChange={(e) => {
+							setQueryParams(
+								{ type: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+			</Row>
+		</>
 	);
 };

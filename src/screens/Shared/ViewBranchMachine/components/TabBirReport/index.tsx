@@ -1,4 +1,5 @@
-import { Col, Row, Table } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { printBirReport } from 'configurePrinter';
@@ -22,7 +23,7 @@ interface Props {
 
 export const TabBirReport = ({ branchMachineId }: Props) => {
 	// STATES
-	const [isPrinting, setIsPrinting] = useState(false);
+	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
 	const [html, setHtml] = useState('');
 	const [dataSource, setDataSource] = useState([]);
 
@@ -153,8 +154,8 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 		[siteSettings],
 	);
 
-	const handlePrintPDF = () => {
-		setIsPrinting(true);
+	const handleCreatePdf = () => {
+		setIsCreatingPdf(true);
 
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({
@@ -177,7 +178,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				filename: `BirReport_`,
 				callback: (instance) => {
 					window.open(instance.output('bloburl').toString());
-					setIsPrinting(false);
+					setIsCreatingPdf(false);
 					setHtml('');
 				},
 			});
@@ -187,18 +188,26 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	return (
 		<>
 			<TableHeader
-				buttonName="Print PDF"
+				buttons={
+					<Button
+						disabled={dataSource.length === 0}
+						icon={<FilePdfOutlined />}
+						loading={isCreatingPdf}
+						type="primary"
+						onClick={handleCreatePdf}
+					>
+						Print BIR Report
+					</Button>
+				}
 				title="BIR Report"
 				wrapperClassName="pt-2 px-0"
-				onCreate={handlePrintPDF}
-				onCreateDisabled={isPrinting}
 			/>
 
 			<Filter
 				isLoading={
 					(isFetchingBirReports && !isBirReportsFetched) ||
 					isFetchingSiteSettings ||
-					isPrinting
+					isCreatingPdf
 				}
 			/>
 
@@ -215,7 +224,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				loading={
 					(isFetchingBirReports && !isBirReportsFetched) ||
 					isFetchingSiteSettings ||
-					isPrinting
+					isCreatingPdf
 				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,

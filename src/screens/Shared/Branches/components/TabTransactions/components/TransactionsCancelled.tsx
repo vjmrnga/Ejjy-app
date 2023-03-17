@@ -81,7 +81,7 @@ export const TransactionsCancelled = ({
 					<RequestErrors
 						errors={[
 							...convertIntoArray(transactionsError, 'Transactions'),
-							...convertIntoArray(siteSettingsError, 'Site Settings'),
+							...convertIntoArray(siteSettingsError, 'Settings'),
 						]}
 						withSpaceBottom
 					/>

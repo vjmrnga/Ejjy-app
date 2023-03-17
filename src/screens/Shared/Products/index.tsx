@@ -49,6 +49,7 @@ import {
 	useProductDelete,
 	useProductReinitialize,
 	useQueryParams,
+	useSiteSettings,
 } from 'hooks';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
@@ -96,6 +97,11 @@ export const Products = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
 	const user = useUserStore((state) => state.user);
+	const {
+		data: siteSettings,
+		isFetching: isFetchingSiteSettings,
+		error: siteSettingsError,
+	} = useSiteSettings();
 	const {
 		data: { products, total: productsTotal },
 		isFetching: isFetchingProducts,
@@ -222,7 +228,7 @@ export const Products = () => {
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF('l', 'px', [113.38582677, 75.590551181]);
 
-		const dataHtml = printProductPriceTag(product);
+		const dataHtml = printProductPriceTag({ product, siteSettings });
 
 		setHtml(dataHtml);
 
@@ -312,6 +318,7 @@ export const Products = () => {
 					})}
 					errors={[
 						...convertIntoArray(productsError, 'Product'),
+						...convertIntoArray(siteSettingsError, 'Settings'),
 						...convertIntoArray(deleteProductError?.errors, 'Product Delete'),
 						...convertIntoArray(
 							reinitializeProductError?.errors,
@@ -326,7 +333,10 @@ export const Products = () => {
 					columns={columns}
 					dataSource={dataSource}
 					loading={
-						isFetchingProducts || isDeletingProduct || isReinitializingProduct
+						isFetchingProducts ||
+						isDeletingProduct ||
+						isReinitializingProduct ||
+						isFetchingSiteSettings
 					}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,

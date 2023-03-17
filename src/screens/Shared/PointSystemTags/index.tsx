@@ -1,4 +1,5 @@
-import { message } from 'antd';
+import { DeleteOutlined, EditFilled } from '@ant-design/icons';
+import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import Table from 'antd/lib/table';
 import cn from 'classnames';
 import {
@@ -6,7 +7,6 @@ import {
 	Content,
 	ModifyPointSystemTagModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
@@ -19,7 +19,7 @@ import {
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, formatInPeso, isCUDShown } from 'utils';
+import { convertIntoArray, formatInPeso, getId, isCUDShown } from 'utils';
 
 export const PointSystemTags = () => {
 	// STATES
@@ -40,7 +40,7 @@ export const PointSystemTags = () => {
 		error: pointSystemTagsError,
 	} = usePointSystemTags({ params });
 	const {
-		mutate: deletePointSystemTag,
+		mutateAsync: deletePointSystemTag,
 		isLoading: isDeletingPointSystemTag,
 		error: deletePointSystemTagError,
 	} = usePointSystemTagDelete();
@@ -52,17 +52,35 @@ export const PointSystemTags = () => {
 			name: pointSystemTag.name,
 			divisorAmount: formatInPeso(pointSystemTag.divisor_amount),
 			actions: (
-				<TableActions
-					areButtonsDisabled={isConnected === false}
-					onEdit={() => {
-						setSelectedPointSystemTag(pointSystemTag);
-						setModifyPointSystemTagModalVisible(true);
-					}}
-					onRemove={() => {
-						message.success('Point system tag was deleted successfully');
-						deletePointSystemTag(pointSystemTag.id);
-					}}
-				/>
+				<Space>
+					<Tooltip title="Edit">
+						<Button
+							disabled={isConnected === false}
+							icon={<EditFilled />}
+							type="primary"
+							ghost
+							onClick={() => {
+								setSelectedPointSystemTag(pointSystemTag);
+								setModifyPointSystemTagModalVisible(true);
+							}}
+						/>
+					</Tooltip>
+					<Popconfirm
+						cancelText="No"
+						disabled={isConnected === false}
+						okText="Yes"
+						placement="left"
+						title="Are you sure to remove this?"
+						onConfirm={async () => {
+							await deletePointSystemTag(getId(pointSystemTag));
+							message.success('Point system tag was deleted successfully');
+						}}
+					>
+						<Tooltip title="Remove">
+							<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+						</Tooltip>
+					</Popconfirm>
+				</Space>
 			),
 		}));
 

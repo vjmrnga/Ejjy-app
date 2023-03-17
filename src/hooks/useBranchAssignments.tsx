@@ -5,7 +5,7 @@ import { useMutation, useQuery } from 'react-query';
 import { BranchAssignmentsService } from 'services';
 import { getGoogleApiUrl, getLocalApiUrl } from 'utils';
 
-const useBranchAssignments = ({ params }: Query) =>
+const useBranchAssignments = ({ params, shouldFetchOfflineFirst }: Query) =>
 	useQuery<any>(
 		[
 			'useBranchAssignments',
@@ -14,9 +14,16 @@ const useBranchAssignments = ({ params }: Query) =>
 			params?.pageSize,
 			params?.timeRange,
 			params?.userId,
+			shouldFetchOfflineFirst,
 		],
-		() =>
-			wrapServiceWithCatch(
+		async () => {
+			const baseURL = getLocalApiUrl();
+
+			if (shouldFetchOfflineFirst) {
+				await BranchAssignmentsService.listOffline(baseURL);
+			}
+
+			return wrapServiceWithCatch(
 				BranchAssignmentsService.list(
 					{
 						branch_id: params?.branchId,
@@ -25,9 +32,10 @@ const useBranchAssignments = ({ params }: Query) =>
 						time_range: params?.timeRange,
 						user_id: params?.userId,
 					},
-					getLocalApiUrl(),
+					baseURL,
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

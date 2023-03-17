@@ -1,4 +1,4 @@
-import { Col, message, Modal, Row, Select, TimePicker } from 'antd';
+import { Button, Col, message, Modal, Row, Select, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
@@ -12,7 +12,7 @@ import { useUserStore } from 'stores';
 import { convertIntoArray, filterOption } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
-import { Button, FieldError, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 const setDateToTime = ({ assignment, date, times }) => {
 	const selectedDate = assignment ? dayjs.tz(assignment.datetime_start) : date;
@@ -199,7 +199,7 @@ export const ModifyCashieringAssignmentForm = ({
 						'overlap',
 						'Selected time overlaps existing assignments.',
 						(times) => {
-							if (filteredAssignments?.length > 0) {
+							if (filteredAssignments?.length > 0 && times?.length > 0) {
 								const { datetimeStart, datetimeEnd } = setDateToTime({
 									assignment,
 									date,
@@ -286,18 +286,12 @@ export const ModifyCashieringAssignmentForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={loading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={loading}
-							text={assignment ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={loading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={loading} type="primary">
+							{assignment ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

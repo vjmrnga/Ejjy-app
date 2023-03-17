@@ -13,8 +13,6 @@ import { useUserStore } from 'stores';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
-import { TabDays } from './components/TabDays';
-import { TabSessions } from './components/TabSessions';
 import { TabTransactions } from './components/TabTransactions';
 import './style.scss';
 
@@ -24,12 +22,8 @@ interface Props {
 
 const tabs = {
 	PRODUCTS: 'Products',
-	PENDING_PRICE_UPDATES: 'Pending Price Updates',
 	MACHINES: 'Machines',
 	TRANSACTIONS: 'Transactions',
-	SESSIONS: 'Sessions',
-	DAYS: 'Days',
-	CHECKINGS: 'Checkings',
 };
 
 export const ViewBranch = ({ match }: Props) => {
@@ -102,14 +96,6 @@ export const ViewBranch = ({ match }: Props) => {
 
 							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
 								<TabTransactions branch={branch} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane key={tabs.SESSIONS} tab={tabs.SESSIONS}>
-								<TabSessions branch={branch} />
-							</Tabs.TabPane>
-
-							<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
-								<TabDays branch={branch} />
 							</Tabs.TabPane>
 						</Tabs>
 					</Box>

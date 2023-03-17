@@ -4,7 +4,7 @@ import {
 	LoadingOutlined,
 	MenuOutlined,
 } from '@ant-design/icons';
-import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { arrayMoveImmutable } from 'array-move';
 import cn from 'classnames';
@@ -74,7 +74,7 @@ export const ProductCategories = () => {
 		error: editProductCategoryError,
 	} = useProductCategoryEdit();
 	const {
-		mutate: deleteProductCategory,
+		mutateAsync: deleteProductCategory,
 		isLoading: isDeletingProductCategory,
 		error: deleteProductCategoryError,
 	} = useProductCategoryDelete();
@@ -108,7 +108,10 @@ export const ProductCategories = () => {
 						okText="Yes"
 						placement="left"
 						title="Are you sure to remove this?"
-						onConfirm={() => deleteProductCategory(getId(productCategory))}
+						onConfirm={async () => {
+							await deleteProductCategory(getId(productCategory));
+							message.success('Product category was deleted successfully');
+						}}
 					>
 						<Tooltip title="Remove">
 							<Button icon={<DeleteOutlined />} type="primary" danger ghost />

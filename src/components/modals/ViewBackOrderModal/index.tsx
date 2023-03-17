@@ -1,11 +1,12 @@
-import { Descriptions, Divider, Modal, Spin, Table } from 'antd';
+import { Button, Descriptions, Divider, Modal, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Button } from 'components/elements';
+import { RequestErrors } from 'components';
 import { backOrderTypes, EMPTY_CELL, vatTypes } from 'global';
 import { useBackOrderRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
+	convertIntoArray,
 	formatDateTime,
 	formatQuantity,
 	getBackOrderStatus,
@@ -39,7 +40,11 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	const [columns, setColumns] = useState([]);
 
 	// CUSTOM HOOKS
-	const { data: backOrderRetrieved, isFetching } = useBackOrderRetrieve({
+	const {
+		data: backOrderRetrieved,
+		isFetching: isFetchingBackOrder,
+		error: backOrderErrors,
+	} = useBackOrderRetrieve({
 		id: backOrder,
 		options: {
 			enabled: _.isNumber(backOrder),
@@ -95,14 +100,19 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	return (
 		<Modal
 			className="Modal__large Modal__hasFooter"
-			footer={[<Button key="button" text="Close" onClick={onClose} />]}
+			footer={<Button onClick={onClose}>Close</Button>}
 			title={title}
 			centered
 			closable
 			visible
 			onCancel={onClose}
 		>
-			<Spin spinning={isFetching}>
+			<Spin spinning={isFetchingBackOrder}>
+				<RequestErrors
+					errors={convertIntoArray(backOrderErrors)}
+					withSpaceBottom
+				/>
+
 				{backOrderData?.type === backOrderTypes.DAMAGED && (
 					<Descriptions
 						className="w-100"

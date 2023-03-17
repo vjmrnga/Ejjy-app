@@ -178,7 +178,7 @@ export const ModifyAccountForm = ({
 							/>
 						</Col>
 						<Divider />
-						<Col md={8}>
+						<Col lg={8} span={24}>
 							<Label label="First Name" spacing />
 							<Input
 								value={values.firstName}
@@ -191,7 +191,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col lg={8} span={24}>
 							<Label label="Middle Name" spacing />
 							<Input
 								value={values.middleName}
@@ -204,7 +204,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-						<Col md={8}>
+						<Col lg={8} span={24}>
 							<Label label="Last Name" spacing />
 							<Input
 								value={values.lastName}
@@ -217,7 +217,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-						<Col md={12}>
+						<Col lg={12} span={24}>
 							<Label label="Gender" spacing />
 							<Radio.Group
 								options={[
@@ -235,7 +235,7 @@ export const ModifyAccountForm = ({
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
-						<Col md={12}>
+						<Col lg={12} span={24}>
 							<Label id="birthday" label="Birthday" spacing />
 							<DatePicker
 								allowClear={false}
@@ -286,7 +286,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12}>
+								<Col lg={12} span={24}>
 									<Label label="Nationality" spacing />
 									<Input
 										value={values.nationality}
@@ -299,7 +299,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12}>
+								<Col lg={12} span={24}>
 									<Label label="Religion" spacing />
 									<Input
 										value={values.religion}
@@ -312,7 +312,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12}>
+								<Col lg={12} span={24}>
 									<Label label="Father's Name" spacing />
 									<Input
 										value={values.fatherName}
@@ -325,7 +325,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12}>
+								<Col lg={12} span={24}>
 									<Label label="Mother's Maiden Name" spacing />
 									<Input
 										value={values.motherMaidenName}
@@ -352,7 +352,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12}>
+								<Col lg={12} span={24}>
 									<Label label="Biodata Image" spacing />
 									<ImageUploadField />
 									<ErrorMessage
@@ -381,7 +381,7 @@ export const ModifyAccountForm = ({
 							values.type,
 						) && (
 							<>
-								<Col md={12} span={24}>
+								<Col lg={12} span={24}>
 									<Label
 										label={
 											values.type === accountTypes.CORPORATE
@@ -401,7 +401,7 @@ export const ModifyAccountForm = ({
 										render={(error) => <FieldError error={error} />}
 									/>
 								</Col>
-								<Col md={12} span={24}>
+								<Col lg={12} span={24}>
 									<Label
 										label={
 											values.type === accountTypes.CORPORATE

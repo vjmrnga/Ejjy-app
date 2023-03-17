@@ -1,9 +1,9 @@
-import { Button, Col, Row, Table } from 'antd';
+import { PlusCircleFilled } from '@ant-design/icons';
+import { Button, Col, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateOrderOfPaymentModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 	TimeRangeFilter,
 	ViewTransactionModal,
@@ -77,6 +77,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				clientCode: payment?.creditor_account?.account_code,
 				invoiceNumber: (
 					<Button
+						className="pa-0"
 						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
 					>
@@ -87,11 +88,15 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				cashier: getFullName(teller),
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
 				actions: (
-					<TableActions
-						areButtonsDisabled={disabled}
-						onAdd={() => setSelectedCreditTransaction(transaction)}
-						onAddName="Create Order of Payment"
-					/>
+					<Tooltip title="Create Order of Payment">
+						<Button
+							disabled={disabled}
+							icon={<PlusCircleFilled />}
+							type="primary"
+							ghost
+							onClick={() => setSelectedCreditTransaction(transaction)}
+						/>
+					</Tooltip>
 				),
 			};
 		});

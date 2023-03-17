@@ -72,7 +72,7 @@ export const TabSalesTracker = () => {
 			<RequestErrors
 				errors={[
 					...convertIntoArray(salesTrackersError, 'Sales Tracker'),
-					...convertIntoArray(siteSettingsError, 'Site Settings'),
+					...convertIntoArray(siteSettingsError, 'Settings'),
 				]}
 				withSpaceBottom
 			/>

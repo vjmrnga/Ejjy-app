@@ -159,7 +159,6 @@ export const ModifyDiscountOptionForm = ({
 		<Formik
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
-			enableReinitialize
 			onSubmit={(formData) => {
 				onSubmit({
 					...formData,

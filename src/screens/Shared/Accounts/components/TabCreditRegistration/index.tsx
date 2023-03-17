@@ -1,10 +1,9 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table } from 'antd';
+import { EditFilled, EyeFilled, SearchOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyCreditRegistrationModal,
 	RequestErrors,
-	TableActions,
 	TableHeader,
 	ViewAccountModal,
 } from 'components';
@@ -18,6 +17,7 @@ import {
 import { useCreditRegistrations, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { accountTabs } from 'screens/Shared/Accounts/data';
 import { useUserStore } from 'stores';
 import {
@@ -66,39 +66,45 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 			return {
 				key: id,
 				clientCode: (
-					<Button
-						className="pa-0"
-						type="link"
-						onClick={() => setSelectedAccount(account)}
-					>
-						{account.account_code}
-					</Button>
+					<Link to={`accounts/${account.id}`}>{account.account_code}</Link>
 				),
 				clientName: getFullName(account),
 				creditLimit: formatInPeso(credit_limit),
 				totalBalance: formatInPeso(total_balance),
 				datetimeCreated: formatDate(account.datetime_created),
 				actions: (
-					<TableActions
-						areButtonsDisabled={disabled}
-						onEdit={
-							isCUDShown(user.user_type)
-								? () => {
-										setSelectedCreditRegistration(creditRegistration);
-								  }
-								: null
-						}
-						onView={() =>
-							setQueryParams(
-								{
-									tab: accountTabs.CREDIT_TRANSACTIONS,
-									payor: JSON.stringify(creditRegistration),
-								},
-								{ shouldResetPage: true },
-							)
-						}
-						onViewName="View Credit Transactions"
-					/>
+					<Space>
+						{isCUDShown(user.user_type) && (
+							<Tooltip title="Edit">
+								<Button
+									disabled={disabled}
+									icon={<EditFilled />}
+									type="primary"
+									ghost
+									onClick={() =>
+										setSelectedCreditRegistration(creditRegistration)
+									}
+								/>
+							</Tooltip>
+						)}
+						<Tooltip title="View Credit Transactions">
+							<Button
+								disabled={disabled}
+								icon={<EyeFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setQueryParams(
+										{
+											tab: accountTabs.CREDIT_TRANSACTIONS,
+											payor: JSON.stringify(creditRegistration),
+										},
+										{ shouldResetPage: true },
+									);
+								}}
+							/>
+						</Tooltip>
+					</Space>
 				),
 			};
 		});

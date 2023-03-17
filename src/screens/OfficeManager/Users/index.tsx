@@ -133,7 +133,7 @@ export const Users = () => {
 						))}
 					</Tabs>
 
-					{modifyUserModalVisible && (
+					{modifyUserModalVisible && selectedUser && (
 						<ModifyUserModal
 							user={selectedUser}
 							onClose={() => {
@@ -146,7 +146,7 @@ export const Users = () => {
 						/>
 					)}
 
-					{reassignUserModalVisible && (
+					{reassignUserModalVisible && selectedUser && (
 						<BranchAssignmentUserModal
 							user={selectedUser}
 							onClose={() => {

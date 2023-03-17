@@ -831,8 +831,9 @@ export const printBirReport = ({ birReports, siteSettings }) => {
 	<html lang="en">
   <head>
     <style>
-      body .bir-reports-pdf {
+      body .bir-reports-pdf * {
         font-size: 12px;
+        font-family: Arial;
       }
 
       table.bir-reports,
@@ -1899,7 +1900,7 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 	});
 };
 
-export const printProductPriceTag = (product) => {
+export const printProductPriceTag = ({ product, siteSettings }) => {
 	const name =
 		product.price_tag_print_details?.replace('\n', '<br/>') || EMPTY_CELL;
 	const price = formatInPeso(product.price_per_piece, 'P');
@@ -1920,7 +1921,9 @@ export const printProductPriceTag = (product) => {
     <div style="height: 2.2em; overflow: hidden; font-size: 1em; line-height: 1.1em;">${name}</div>
     <div style="width: 100%; margin: 6px 0; border-bottom: 0.25px solid black;"></div>
     <div style="font-size: 1.23em; text-align: right;">${price}</div>
-    <div style="margin-top: auto; font-size: 0.46em; text-align: center; line-height: 100%;">EJ & JY  Wet Market and Enterprises</div>
+    <div style="margin-top: auto; font-size: 0.46em; text-align: center; line-height: 100%;">${
+			siteSettings?.store_name
+		}</div>
 	</div>
 	`;
 };
@@ -2090,8 +2093,7 @@ export const printAdjustmentReport = ({ transactions, user }) => {
 				remarks = `New Invoice - ${newTransaction.invoice.or_number}`;
 			} else if (discountOption) {
 				remarks = `
-        <div>
-        <table>
+        <table style="margin-left: auto; margin-right: auto">
           <thead>
             <tr>
               <th>Name</th>
@@ -2109,7 +2111,6 @@ export const printAdjustmentReport = ({ transactions, user }) => {
             </tr>
           </tbody>
         </table>
-        </div>
         `;
 			}
 
@@ -2138,7 +2139,8 @@ export const printAdjustmentReport = ({ transactions, user }) => {
 	<html lang="en">
   <head>
     <style>
-      body .adjustment-report-pdf {
+      body .adjustment-report-pdf * {
+        font-family: Arial;
         font-size: 12px;
       }
 

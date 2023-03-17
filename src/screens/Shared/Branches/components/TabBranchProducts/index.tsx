@@ -2,7 +2,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { TableActions, TableHeader } from 'components';
+import { TableActions, TableHeader, ViewBranchProductModal } from 'components';
 import { Label } from 'components/elements';
 import { RequestErrors } from 'components/RequestErrors';
 import {
@@ -24,7 +24,6 @@ import {
 } from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
 import { EditBranchProductsModal } from './components/EditBranchProductsModal';
-import { ViewBranchProductModal } from './components/ViewBranchProductModal';
 
 const modals = {
 	VIEW: 0,
@@ -39,7 +38,7 @@ const isSoldInBranchOptions = {
 };
 
 const columns: ColumnsType = [
-	{ title: 'Barcode', dataIndex: 'barcode' },
+	{ title: 'Code', dataIndex: 'code' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Balance', dataIndex: 'balance' },
 	// { title: 'Actions', dataIndex: 'actions' }, // NOTE: Removed for the meantime as we don't know yet if this is needed in HeadOffice
@@ -137,7 +136,7 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 
 			return {
 				key: id,
-				barcode: (
+				code: (
 					<Button
 						className="pa-0"
 						type="link"
@@ -233,6 +232,7 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 			{selectedBranchProduct && modalType === modals.VIEW && (
 				<ViewBranchProductModal
 					branchProduct={selectedBranchProduct}
+					isCurrentBalanceVisible
 					onClose={() => setModalType(null)}
 				/>
 			)}

@@ -71,7 +71,7 @@ const Login = () => {
 			setError('Branch managers and personnels can only use this app.');
 			return;
 		}
-		console.log('user', user);
+
 		setUser(user);
 	};
 

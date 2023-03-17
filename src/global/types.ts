@@ -272,3 +272,9 @@ export const branchMachineTypes = {
 	CASHIERING: 'cashiering',
 	SCALE_AND_CASHIERING: 'scale_and_cashiering',
 };
+
+export const closingTypes = {
+	ALL: 'all',
+	AUTOMATIC: 'automatic',
+	MANUAL: 'manual',
+};

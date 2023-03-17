@@ -153,7 +153,10 @@ export const TabDTRPrinting = () => {
 		}
 
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
+		const pdf = new jsPDF({
+			...JSPDF_SETTINGS,
+			format: [400, 850],
+		});
 		const dataHtml = printDtr({ dtr, month });
 
 		setHtml(dataHtml);

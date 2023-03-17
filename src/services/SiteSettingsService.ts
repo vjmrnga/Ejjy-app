@@ -10,7 +10,6 @@ interface Edit {
 	is_markdown_allowed_if_credit: boolean;
 	is_time_checker_feature_enabled: boolean;
 	logo_base64: string;
-	permit_number: string;
 	pos_accreditation_date: string;
 	pos_accreditation_number: string;
 	pos_accreditation_valid_until_date: string;

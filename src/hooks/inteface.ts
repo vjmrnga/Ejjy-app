@@ -5,6 +5,7 @@ export interface Query {
 	key?: string;
 	params?: any;
 	options?: UseQueryOptions;
+	shouldFetchOfflineFirst?: boolean;
 }
 
 export interface Mutate {
