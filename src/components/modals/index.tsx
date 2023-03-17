@@ -1,6 +1,7 @@
 export * from './AppSettingsModal';
 export * from './CreateBalanceAdjustmentLogModal';
 export * from './CreateOrderOfPaymentModal';
+export * from './CreateProductGroupModal';
 export * from './CreateStockInModal';
 export * from './CreateStockOutModal';
 export * from './CreateSupplierRegistrationModal';

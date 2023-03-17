@@ -21,7 +21,6 @@ export const APP_TAG_PRINTER_FONT_FAMILY = 'EJJY_TAG_PRINTER_FONT_FAMILY';
 export const APP_TAG_PRINTER_FONT_SIZE = 'EJJY_TAG_PRINTER_FONT_SIZE';
 
 // Request
-
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 10;
 export const MAX_PAGE_SIZE = 500;
@@ -36,6 +35,8 @@ export const GENERIC_BRANCH_ERROR_MESSAGE =
 	'An error occurred while requesting on a local branch';
 
 // UI
+export const QUANTITY_WEIGHING_PRECISION = 3;
+export const QUANTITY_NON_WEIGHING_PRECISION = 0;
 export const VIEW_PRINTING_MODAL_WIDTH = 425;
 export const NOT_FOUND_INDEX = -1;
 export const EMPTY_CELL = '—';

@@ -19,6 +19,7 @@ TODO on sprint break:
 - Replace md={12} with lg={12} span={24}
 - Make the disabled filter fields disabled when other list are still fetching
 - Change isFetched with isFetchedAfterMount for polling list
+- Add Branch Machine ID in filter in Cashiering Assingments (Assignments -> Session)
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 

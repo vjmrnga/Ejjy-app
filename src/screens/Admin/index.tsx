@@ -1,5 +1,5 @@
 import { Container } from 'components';
-import { useBranches, useUploadData } from 'hooks';
+import { useBranches } from 'hooks';
 import { usePendingTransactions } from 'hooks/usePendingTransactions';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';

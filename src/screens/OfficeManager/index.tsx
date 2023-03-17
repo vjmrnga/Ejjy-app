@@ -1,5 +1,4 @@
 import { Container } from 'components';
-import { useUploadData } from 'hooks';
 import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import {
@@ -17,6 +16,8 @@ import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
+import { ProductGroups } from 'screens/Shared/ProductGroups';
+import { CreateProductGroup } from 'screens/Shared/ProductGroups/CreateProductGroup';
 import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
@@ -149,6 +150,13 @@ const OfficeManager = () => {
 			// 	link: '/office-manager/checkings',
 			// },
 			{
+				key: 'product-groups',
+				name: 'Product Groups',
+				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
+				defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
+				link: '/office-manager/product-groups',
+			},
+			{
 				key: 'requisition-slips',
 				name: 'Requisition Slips',
 				activeIcon: require('../../assets/images/icon-requisition-slip-active.svg'),
@@ -269,6 +277,23 @@ const OfficeManager = () => {
 					<Route
 						component={ViewChecking}
 						path="/office-manager/checkings/:branchId/:id"
+						exact
+					/>
+
+					<Route
+						component={ProductGroups}
+						path="/office-manager/product-groups"
+						exact
+					/>
+
+					<Route
+						component={CreateProductGroup}
+						path="/office-manager/product-groups/create"
+						exact
+					/>
+					<Route
+						component={CreateProductGroup}
+						path="/office-manager/product-groups/edit/:id"
 						exact
 					/>
 

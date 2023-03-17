@@ -48,6 +48,8 @@ export * from './useProductCategories';
 export { default as useProductCategories } from './useProductCategories';
 export * from './useProductChecks';
 export { default as useProductChecks } from './useProductChecks';
+export * from './useProductGroups';
+export { default as useProductGroups } from './useProductGroups';
 export * from './useProducts';
 export { default as useProducts } from './useProducts';
 export { default as useQueryParams } from './useQueryParams';

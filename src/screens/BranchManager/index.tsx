@@ -17,6 +17,7 @@ import { Checkings } from 'screens/BranchManager/Checkings';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { Logs } from 'screens/BranchManager/Logs';
 import { Reports } from 'screens/BranchManager/Reports';
+import { CreateRequisitionSlip } from 'screens/BranchManager/RequisitionSlips/CreateRequisitionSlip';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
@@ -266,11 +267,11 @@ const BranchManager = () => {
 				link: '/branch-manager/checkings',
 			},
 			{
-				key: 'site-settings',
-				name: 'Site Settings',
+				key: 'settings',
+				name: 'Settings',
 				activeIcon: require('../../assets/images/icon-settings-active.svg'),
 				defaultIcon: require('../../assets/images/icon-settings.svg'),
-				link: '/branch-manager/site-settings',
+				link: '/branch-manager/settings',
 			},
 			{
 				key: 'logs',
@@ -375,6 +376,12 @@ const BranchManager = () => {
 						exact
 					/>
 					<Route
+						component={CreateRequisitionSlip}
+						path="/branch-manager/requisition-slips/create/template"
+						exact
+					/>
+
+					<Route
 						component={ViewRequisitionSlip}
 						path="/branch-manager/requisition-slips/:id"
 						exact
@@ -418,10 +425,7 @@ const BranchManager = () => {
 
 					<Route component={Logs} path="/branch-manager/logs" />
 
-					<Route
-						component={SiteSettings}
-						path="/branch-manager/site-settings"
-					/>
+					<Route component={SiteSettings} path="/branch-manager/settings" />
 
 					<Route component={Cart} path="/branch-manager/cart" />
 

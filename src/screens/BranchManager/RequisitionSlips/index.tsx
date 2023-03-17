@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import { Col, message, Row, Select, Table } from 'antd';
-import { Content, RequestErrors, TableHeader } from 'components';
+import { Button, Col, message, Row, Select, Space, Table } from 'antd';
+import { Content, RequestErrors } from 'components';
 import { Box, Label } from 'components/elements';
 import {
 	ALL_OPTION_KEY,
@@ -108,32 +108,50 @@ export const RequisitionSlips = () => {
 	return (
 		<Content title="Requisition Slips">
 			<Box>
-				<TableHeader
-					buttonName="Create Requisition Slip"
-					onCreate={() => {
-						history.push({
-							pathname: '/branch-manager/requisition-slips/create',
-							state: {
-								title: 'Requisition Slip',
-								onSubmit: async (products) => {
-									const response = await createRequisitionSlip({
-										requestingUserUsername: user.username,
-										type: requisitionSlipTypes.MANUAL,
-										products: products.map((product) => ({
-											key: product.key,
-											quantity_piece: product.quantity,
-										})),
-									});
+				<div className="pa-6 d-flex justify-end">
+					<Space>
+						<Button
+							type="primary"
+							onClick={() => {
+								history.push(
+									'/branch-manager/requisition-slips/create/template',
+								);
+							}}
+						>
+							Create (From Template)
+						</Button>
+						<Button
+							type="primary"
+							onClick={() => {
+								history.push({
+									pathname: '/branch-manager/requisition-slips/create',
+									state: {
+										title: 'Requisition Slip',
+										onSubmit: async (products) => {
+											const response = await createRequisitionSlip({
+												requestingUserUsername: user.username,
+												type: requisitionSlipTypes.MANUAL,
+												products: products.map((product) => ({
+													key: product.key,
+													quantity_piece: product.quantity,
+												})),
+											});
 
-									message.success('Requisition slip was created successfully.');
-									history.push('/branch-manager/requisition-slips');
+											message.success(
+												'Requisition slip was created successfully.',
+											);
+											history.push('/branch-manager/requisition-slips');
 
-									return response;
-								},
-							},
-						});
-					}}
-				/>
+											return response;
+										},
+									},
+								});
+							}}
+						>
+							Create (Manual)
+						</Button>
+					</Space>
+				</div>
 
 				<RequestErrors
 					className="px-6"

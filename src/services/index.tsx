@@ -34,6 +34,7 @@ export { default as PointTransactionsService } from './PointTransactionsService'
 export { default as PriceMarkdownsService } from './PriceMarkdownsService';
 export { default as ProductCategoriesService } from './ProductCategoriesService';
 export { default as ProductChecksService } from './ProductChecksService';
+export { default as ProductGroupsService } from './ProductGroupsService';
 export { default as ProductsService } from './ProductsService';
 export { default as ReceivingVouchersService } from './ReceivingVouchersService';
 export { default as RequisitionSlipsService } from './RequisitionSlipsService';

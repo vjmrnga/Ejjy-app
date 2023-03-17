@@ -37,7 +37,6 @@ export const useSiteSettingsEdit = () =>
 			isMarkdownAllowedIfCredit,
 			isTimeCheckerFeatureEnabled,
 			logoBase64,
-			permitNumber,
 			posAccreditationDate,
 			posAccreditationNumber,
 			posAccreditationValidUntilDate,
