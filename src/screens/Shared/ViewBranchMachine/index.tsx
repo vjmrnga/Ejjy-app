@@ -1,10 +1,5 @@
 import { Alert, message, Spin, Tabs } from 'antd';
-import {
-	Breadcrumb,
-	Content,
-	RequestErrors,
-	ViewBranchMachineInfo,
-} from 'components';
+import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { GENERIC_ERROR_MESSAGE } from 'global';
 import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
@@ -88,7 +83,6 @@ export const ViewBranchMachine = ({ match }: Props) => {
 			rightTitle={branchMachine?.name}
 			title="[VIEW] Branch Machine"
 		>
-			<ViewBranchMachineInfo />
 			<Spin spinning={isLoadingBranchMachine}>
 				{isUserFromBranch(user.user_type) &&
 					branchMachine?.is_online === false && (

@@ -1,5 +1,5 @@
 import { Tabs } from 'antd';
-import { Content, LogsInfo } from 'components';
+import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -43,8 +43,6 @@ export const Logs = () => {
 
 	return (
 		<Content title="Logs">
-			<LogsInfo />
-
 			<Box>
 				<Tabs
 					activeKey={_.toString(tab) || tabs.PRODUCTS}

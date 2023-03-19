@@ -1,10 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import {
-	BackOrdersInfo,
-	Content,
-	ViewBackOrderModal,
-	ViewTransactionModal,
-} from 'components';
+import { Content, ViewBackOrderModal, ViewTransactionModal } from 'components';
 import { Box } from 'components/elements';
 import React, { useRef, useState } from 'react';
 import { BackOrdersTable } from './components/BackOrdersTable';
@@ -33,8 +28,6 @@ export const BackOrders = () => {
 
 	return (
 		<Content className="BackOrders" title="Back Orders">
-			<BackOrdersInfo />
-
 			<Box>
 				<BackOrdersTable
 					onSelectBackOrder={(backOrder) => {

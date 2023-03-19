@@ -68,8 +68,6 @@ export const ViewBranch = ({ match }: Props) => {
 		>
 			<ConnectionAlert />
 
-			<ViewBranchInfo />
-
 			<Spin spinning={isFetchingBranch}>
 				{branch && (
 					<Box className="ViewBranchMachine">

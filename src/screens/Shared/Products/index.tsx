@@ -27,7 +27,6 @@ import {
 	Content,
 	ModifyProductModal,
 	PricesModal,
-	ProductsInfo,
 	RequestErrors,
 	TableHeader,
 	ViewBranchProductChartModal,
@@ -282,8 +281,6 @@ export const Products = () => {
 				isUserFromBranch(user.user_type) ? 'Branch' : 'General'
 			} Products`}
 		>
-			<ProductsInfo />
-
 			<ConnectionAlert />
 
 			<Box>

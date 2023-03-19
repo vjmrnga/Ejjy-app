@@ -1,5 +1,5 @@
 import { Badge, Space, Tabs } from 'antd';
-import { Content, NotificationsInfo } from 'components';
+import { Content } from 'components';
 import { Box } from 'components/elements';
 import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
@@ -51,8 +51,6 @@ export const Notifications = () => {
 
 	return (
 		<Content title="Notifications">
-			<NotificationsInfo />
-
 			<Box>
 				<Tabs
 					activeKey={tab ? _.toString(tab) : tabs.BRANCH_PRODUCTS}

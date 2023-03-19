@@ -1,5 +1,5 @@
 import { Tabs } from 'antd';
-import { AccountsInfo, ConnectionAlert, Content } from 'components';
+import { ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
 import { usePingOnlineServer, useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -31,8 +31,6 @@ export const Accounts = () => {
 	return (
 		<Content title="Accounts">
 			<ConnectionAlert />
-
-			<AccountsInfo />
 
 			<Box>
 				<Tabs

@@ -7,7 +7,6 @@ import {
 	RequestErrors,
 } from 'components';
 import { Box } from 'components/elements';
-import { OfficeManagerUsersInfo } from 'components/info/OfficeManagerUsersInfo';
 import {
 	useBranches,
 	usePingOnlineServer,
@@ -66,8 +65,6 @@ export const Users = () => {
 	return (
 		<Content title="Users">
 			<ConnectionAlert />
-
-			<OfficeManagerUsersInfo />
 
 			<Box>
 				<Spin spinning={isFetchingBranches || isFetchingUserPendingApprovals}>

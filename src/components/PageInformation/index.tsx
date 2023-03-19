@@ -15,7 +15,7 @@ const data = [
 	},
 ];
 
-export const PageInfo = () => {
+export const PageInformation = () => {
 	const { pathname } = useLocation();
 
 	const getContent = useCallback(() => {
@@ -31,11 +31,11 @@ export const PageInfo = () => {
 	}, [data, pathname]);
 
 	return getContent() ? (
-		<div className="BaseInfo">
+		<div className="PageInformation">
 			<Tooltip placement="left" title="Page Information">
 				<a href={getContent()} rel="noreferrer" target="_blank">
 					<Button
-						className="BaseInfo__button"
+						className="PageInformation__button"
 						icon={<InfoCircleFilled />}
 						shape="circle"
 					/>

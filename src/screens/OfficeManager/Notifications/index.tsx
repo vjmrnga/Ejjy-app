@@ -1,5 +1,5 @@
 import { Badge, Space, Tabs } from 'antd';
-import { Content, NotificationsInfo } from 'components';
+import { Content } from 'components';
 import { Box } from 'components/elements';
 import { useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -38,8 +38,6 @@ export const Notifications = () => {
 
 	return (
 		<Content title="Notifications">
-			<NotificationsInfo />
-
 			<Box>
 				<Tabs
 					activeKey={tab ? _.toString(tab) : tabs.DTR}

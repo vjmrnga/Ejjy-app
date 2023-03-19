@@ -14,7 +14,6 @@ import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
-	DiscountOptionsInfo,
 	ModifyDiscountOptionModal,
 	RequestErrors,
 	TableHeader,
@@ -155,8 +154,6 @@ export const DiscountOptions = () => {
 	return (
 		<Content title="Discount Options">
 			<ConnectionAlert />
-
-			<DiscountOptionsInfo />
 
 			<Box>
 				{isCUDShown(user.user_type) && (

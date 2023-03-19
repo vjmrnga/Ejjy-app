@@ -2,7 +2,6 @@ import { Col, Radio, Row, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, Label } from 'components/elements';
-import { CheckingInfo } from 'components/info/CheckingInfo';
 import dayjs from 'dayjs';
 import {
 	DEFAULT_PAGE,
@@ -107,8 +106,6 @@ export const Checkings = () => {
 
 	return (
 		<Content title="Checkings">
-			<CheckingInfo />
-
 			<FulfillChecking />
 
 			<Box>

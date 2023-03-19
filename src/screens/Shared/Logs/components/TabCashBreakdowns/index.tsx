@@ -1,8 +1,8 @@
-import { Col, Row, Select } from 'antd';
+import { EyeFilled } from '@ant-design/icons';
+import { Button, Col, Row, Select, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
-	TableActions,
 	TableHeader,
 	TimeRangeFilter,
 	ViewCashBreakdownModal,
@@ -102,11 +102,14 @@ export const TabCashBreakdowns = () => {
 			machineName: cashBreakdown.branch_machine?.name,
 			user: getFullName(cashBreakdown.cashiering_session.user),
 			actions: (
-				<TableActions
-					onView={() => {
-						setSelectedCashBreakdown(cashBreakdown);
-					}}
-				/>
+				<Tooltip title="View">
+					<Button
+						icon={<EyeFilled />}
+						type="primary"
+						ghost
+						onClick={() => setSelectedCashBreakdown(cashBreakdown)}
+					/>
+				</Tooltip>
 			),
 		}));
 

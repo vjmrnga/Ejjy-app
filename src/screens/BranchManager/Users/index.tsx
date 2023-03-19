@@ -3,7 +3,6 @@ import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import cn from 'classnames';
 import {
-	BranchManagerUsersInfo,
 	Content,
 	ModifyUserModal,
 	RequestErrors,
@@ -129,8 +128,6 @@ export const Users = () => {
 
 	return (
 		<Content title="Users">
-			<BranchManagerUsersInfo />
-
 			<Box>
 				{isCUDShown(user.user_type) && (
 					<TableHeader

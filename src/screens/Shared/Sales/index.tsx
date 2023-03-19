@@ -1,5 +1,5 @@
 import { Spin, Tabs } from 'antd';
-import { Content, RequestErrors, SalesInfo } from 'components';
+import { Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, userTypes } from 'global';
 import { useBranches, useQueryParams } from 'hooks';
@@ -45,8 +45,6 @@ export const Sales = () => {
 
 	return (
 		<Content title="Sales">
-			<SalesInfo />
-
 			<Box padding={user.user_type === userTypes.BRANCH_MANAGER}>
 				{user.user_type === userTypes.OFFICE_MANAGER && (
 					<Spin spinning={isFetchingBranches}>

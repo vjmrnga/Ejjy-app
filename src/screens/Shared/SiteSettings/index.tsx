@@ -18,7 +18,6 @@ import {
 	Content,
 	RequestErrors,
 	ScrollToFieldError,
-	SiteSettingsInfo,
 } from 'components';
 import {
 	Box,
@@ -31,8 +30,8 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
 import {
 	usePingOnlineServer,
-	useSiteSettingsEdit,
 	useSiteSettings,
+	useSiteSettingsEdit,
 } from 'hooks';
 import moment from 'moment';
 import React, { useCallback } from 'react';
@@ -328,8 +327,6 @@ export const SiteSettings = () => {
 	return (
 		<Content title="Settings">
 			<ConnectionAlert />
-
-			<SiteSettingsInfo />
 
 			<Box padding>
 				<Spin spinning={isFetchingSiteSettings}>

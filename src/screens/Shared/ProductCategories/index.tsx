@@ -12,7 +12,6 @@ import {
 	ConnectionAlert,
 	Content,
 	ModifyProductCategoryModal,
-	ProductCategoriesInfo,
 	RequestErrors,
 	TableHeader,
 } from 'components';
@@ -193,8 +192,6 @@ export const ProductCategories = () => {
 
 	return (
 		<Content title="Product Categories">
-			<ProductCategoriesInfo />
-
 			<ConnectionAlert />
 
 			<Box>

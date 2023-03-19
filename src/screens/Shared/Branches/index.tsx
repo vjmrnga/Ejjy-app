@@ -2,7 +2,6 @@ import { DeleteOutlined, EditFilled } from '@ant-design/icons';
 import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
-	BranchesInfo,
 	ConnectionAlert,
 	Content,
 	ModifyBranchModal,
@@ -96,8 +95,6 @@ export const Branches = () => {
 	return (
 		<Content title="Branches">
 			<ConnectionAlert />
-
-			<BranchesInfo />
 
 			<Box>
 				<TableHeader
