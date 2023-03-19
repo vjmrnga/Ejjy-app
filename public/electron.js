@@ -56,16 +56,19 @@ function createWindow() {
 		},
 	});
 
+	const allowedLinks = ['blob:', 'https://gamy-mayonnaise-e86.notion.site'];
 	mainWindow.webContents.on('new-window', (event, url) => {
-		if (!url.startsWith('blob:')) {
+		if (!allowedLinks.every((link) => url.startsWith(link))) {
 			event.preventDefault();
 			mainWindow.loadURL();
 		}
 	});
 
-	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-		return { action: url.startsWith('blob:') ? 'allow' : 'deny' };
-	});
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => ({
+		action: allowedLinks.some((link) => url.startsWith(link))
+			? 'allow'
+			: 'deny',
+	}));
 
 	setTimeout(() => {
 		mainWindow.loadURL(
@@ -159,7 +162,6 @@ function createWindow() {
 //-------------------------------------------------------------------
 // Store
 //-------------------------------------------------------------------
-
 function initStore() {
 	Store.initRenderer();
 

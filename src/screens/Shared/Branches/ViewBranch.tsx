@@ -1,10 +1,5 @@
 import { Spin, Tabs } from 'antd';
-import {
-	Breadcrumb,
-	ConnectionAlert,
-	Content,
-	ViewBranchInfo,
-} from 'components';
+import { Breadcrumb, ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
 import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
 import _ from 'lodash';
