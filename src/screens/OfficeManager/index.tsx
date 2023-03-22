@@ -17,7 +17,7 @@ import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { ProductGroups } from 'screens/Shared/ProductGroups';
-import { CreateProductGroup } from 'screens/Shared/ProductGroups/CreateProductGroup';
+import { ModifyProductGroup } from 'screens/Shared/ProductGroups/ModifyProductGroup';
 import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
@@ -287,12 +287,12 @@ const OfficeManager = () => {
 					/>
 
 					<Route
-						component={CreateProductGroup}
+						component={ModifyProductGroup}
 						path="/office-manager/product-groups/create"
 						exact
 					/>
 					<Route
-						component={CreateProductGroup}
+						component={ModifyProductGroup}
 						path="/office-manager/product-groups/edit/:id"
 						exact
 					/>

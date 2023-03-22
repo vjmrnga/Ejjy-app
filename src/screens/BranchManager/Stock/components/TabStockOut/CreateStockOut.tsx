@@ -1,6 +1,16 @@
 /* eslint-disable react/no-this-in-sfc */
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Divider, Input, message, Row, Select, Table, Tabs } from 'antd';
+import {
+	Button,
+	Col,
+	Divider,
+	Input,
+	message,
+	Row,
+	Select,
+	Table,
+	Tabs,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
@@ -10,7 +20,6 @@ import {
 } from 'components';
 import {
 	Box,
-	Button,
 	FieldError,
 	FormCheckbox,
 	FormInput,
@@ -383,14 +392,14 @@ export const CreateStockOut = () => {
 
 							<Divider dashed />
 
-							<div className="CreateBackOrder_createContainer">
+							<div className="d-flex justify-end px-6 pb-6">
 								<Button
-									classNames="CreateBackOrder_btnCreate"
 									disabled={isLoading || _.isEmpty(productsRef.current)}
-									text="Create"
-									type="submit"
-									variant="primary"
-								/>
+									htmlType="submit"
+									type="primary"
+								>
+									Proceed
+								</Button>
 							</div>
 						</Form>
 					)}

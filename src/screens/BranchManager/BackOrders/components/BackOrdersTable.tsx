@@ -1,7 +1,6 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components';
-import { ButtonLink } from 'components/elements';
 import {
 	backOrderTypes,
 	DEFAULT_PAGE,
@@ -56,16 +55,22 @@ export const BackOrdersTable = ({
 		const formattedBackOrders = backOrders.map((backOrder) => ({
 			key: backOrder.id,
 			id: (
-				<ButtonLink
-					text={backOrder.id}
+				<Button
+					className="pa-0"
+					type="link"
 					onClick={() => onSelectBackOrder(backOrder)}
-				/>
+				>
+					{backOrder.id}
+				</Button>
 			),
 			invoice: backOrder.transaction ? (
-				<ButtonLink
-					text={backOrder.transaction.invoice.or_number}
+				<Button
+					className="pa-0"
+					type="link"
 					onClick={() => onSelectTransaction(backOrder.transaction)}
-				/>
+				>
+					{backOrder.transaction.invoice.or_number}
+				</Button>
 			) : (
 				EMPTY_CELL
 			),

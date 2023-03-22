@@ -1,5 +1,5 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table } from 'antd';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateBalanceAdjustmentLogModal,
@@ -59,12 +59,14 @@ export const TabBranchProducts = () => {
 				quantity: branchProduct.current_balance,
 			}),
 			actions: (
-				<Button
-					type="primary"
-					onClick={() => setSelectedBranchProduct(branchProduct)}
-				>
-					Create Balance Adjustment
-				</Button>
+				<Tooltip title="Create Balance Adjustment">
+					<Button
+						icon={<PlusOutlined />}
+						type="primary"
+						ghost
+						onClick={() => setSelectedBranchProduct(branchProduct)}
+					/>
+				</Tooltip>
 			),
 		}));
 

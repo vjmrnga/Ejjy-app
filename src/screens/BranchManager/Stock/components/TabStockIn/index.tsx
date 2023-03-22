@@ -1,7 +1,6 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewReceivingVoucherModal } from 'components';
-import { ButtonLink } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -17,7 +16,6 @@ const columns: ColumnsType = [
 	{ title: 'Date & Time Created', dataIndex: 'datetimeCreated' },
 	{ title: 'Supplier Name', dataIndex: 'supplierName' },
 	{ title: 'Amount Paid', dataIndex: 'amountPaid' },
-	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const TabStockIn = () => {
@@ -41,10 +39,13 @@ export const TabStockIn = () => {
 		const data = receivingVouchers.map((receivingVoucher) => ({
 			key: receivingVoucher.id,
 			id: (
-				<ButtonLink
-					text={receivingVoucher.id}
+				<Button
+					className="pa-0"
+					type="link"
 					onClick={() => setSelectedReceivingVoucher(receivingVoucher)}
-				/>
+				>
+					{receivingVoucher.id}
+				</Button>
 			),
 			datetimeCreated: receivingVoucher.datetime_created
 				? formatDateTime(receivingVoucher.datetime_created)

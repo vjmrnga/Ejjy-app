@@ -40,7 +40,6 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
-	userTypes,
 } from 'global';
 import {
 	usePingOnlineServer,
@@ -63,6 +62,7 @@ import {
 	getProductCode,
 	isCUDShown,
 	isUserFromBranch,
+	isUserFromOffice,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -288,7 +288,7 @@ export const Products = () => {
 					<TableHeader
 						buttonName="Create Product"
 						buttons={
-							user.user_type === userTypes.OFFICE_MANAGER && (
+							isUserFromOffice(user.user_type) && (
 								<Upload
 									accept=".csv"
 									beforeUpload={handleReinitialize}

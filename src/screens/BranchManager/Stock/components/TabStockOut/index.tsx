@@ -1,7 +1,7 @@
-import { Button, Table } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewBackOrderModal } from 'components';
-import { ButtonLink } from 'components/elements';
 import { printStockOutForm } from 'configurePrinter';
 import {
 	backOrderTypes,
@@ -54,25 +54,30 @@ export const TabStockOut = () => {
 		const data = backOrders.map((backOrder) => ({
 			key: backOrder.id,
 			id: (
-				<ButtonLink
-					text={backOrder.id}
+				<Button
+					className="pa-0"
+					type="link"
 					onClick={() => setSelectedBackOrder(backOrder)}
-				/>
+				>
+					{backOrder.id}
+				</Button>
 			),
 			datetimeCreated: backOrder.datetime_created
 				? formatDateTime(backOrder.datetime_created)
 				: EMPTY_CELL,
 			remarks: backOrder.overall_remarks,
 			actions: (
-				<Button
-					loading={isPrinting === backOrder.id}
-					type="link"
-					onClick={() => {
-						handlePrintPDF(backOrder);
-					}}
-				>
-					Print PDF
-				</Button>
+				<Tooltip title="Generate PDF">
+					<Button
+						icon={<FilePdfOutlined />}
+						loading={isPrinting === backOrder.id}
+						type="primary"
+						ghost
+						onClick={() => {
+							handlePrintPDF(backOrder);
+						}}
+					/>
+				</Tooltip>
 			),
 		}));
 

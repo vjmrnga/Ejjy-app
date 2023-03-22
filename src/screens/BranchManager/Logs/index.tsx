@@ -16,11 +16,11 @@ import { getLocalBranchId, isStandAlone } from 'utils';
 export const tabs = {
 	BRANCH_PRODUCTS: 'Branch Products',
 	BRANCH_ASSIGNMENTS: 'Branch Assignments',
+	BRANCH_CONNECTIVITY_LOGS: 'Branch Connectivity',
+	BRANCH_DAYS: 'Branch Days',
 	CASHIERING_ASSIGNMENTS: 'Cashiering Assignments',
 	CASH_BREAKDOWNS: 'Cash Breakdowns',
 	CASHIERING_SESSIONS: 'Cashiering Sessions',
-	CONNECTIVITY_LOGS: 'Connectivity Logs',
-	DAYS: 'Days',
 	USERS: 'Users',
 };
 
@@ -63,25 +63,25 @@ export const Logs = () => {
 					)}
 
 					<Tabs.TabPane
-						key={tabs.CASHIERING_SESSIONS}
-						tab={tabs.CASHIERING_SESSIONS}
+						key={tabs.BRANCH_CONNECTIVITY_LOGS}
+						tab={tabs.BRANCH_CONNECTIVITY_LOGS}
 					>
-						<TabSessions branch={{ id: getLocalBranchId() }} />
+						<TabBranchMachineConnectivityLogs />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.BRANCH_DAYS} tab={tabs.BRANCH_DAYS}>
+						<TabDays branch={{ id: getLocalBranchId() }} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.CASH_BREAKDOWNS} tab={tabs.CASH_BREAKDOWNS}>
 						<TabCashBreakdowns />
 					</Tabs.TabPane>
 
-					<Tabs.TabPane key={tabs.DAYS} tab={tabs.DAYS}>
-						<TabDays branch={{ id: getLocalBranchId() }} />
-					</Tabs.TabPane>
-
 					<Tabs.TabPane
-						key={tabs.CONNECTIVITY_LOGS}
-						tab={tabs.CONNECTIVITY_LOGS}
+						key={tabs.CASHIERING_SESSIONS}
+						tab={tabs.CASHIERING_SESSIONS}
 					>
-						<TabBranchMachineConnectivityLogs />
+						<TabSessions branch={{ id: getLocalBranchId() }} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.USERS} tab={tabs.USERS}>

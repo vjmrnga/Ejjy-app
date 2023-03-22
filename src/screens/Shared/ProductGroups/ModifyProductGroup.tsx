@@ -8,13 +8,14 @@ import {
 	message,
 	Row,
 	Select,
+	Spin,
 	Table,
 	Tabs,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	Content,
-	CreateProductGroupModal,
+	ModifyProductGroupModal,
 	RequestErrors,
 	TableHeader,
 } from 'components';
@@ -31,6 +32,7 @@ import {
 import {
 	useProductCategories,
 	useProductGroupCreate,
+	useProductGroupEdit,
 	useProductGroupRetrieve,
 	useProducts,
 	useQueryParams,
@@ -55,14 +57,14 @@ interface Props {
 	match: any;
 }
 
-export const CreateProductGroup = ({ match }: Props) => {
+export const ModifyProductGroup = ({ match }: Props) => {
 	// VARIABLES
 	const productGroupId = match?.params?.id;
 
 	// STATES
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
-	const [createProductGroupModalVisible, setCreateProductGroupModalVisible] =
+	const [modifyProductGroupModalVisible, setModifyProductGroupModalVisible] =
 		useState(false);
 
 	// REFS
@@ -71,14 +73,18 @@ export const CreateProductGroup = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const history = useHistory();
-	const { data: productGroup, isFetching: isFetchingGroupProduct } =
-		useProductGroupRetrieve({
-			id: productGroupId,
-			shouldFetchOfflineFirst: true,
-			options: {
-				enabled: !!productGroupId,
-			},
-		});
+	const {
+		data: productGroup,
+		isFetching: isFetchingGroupProduct,
+		isFetched: isGroupProductFetched,
+		error: productGroupErrors,
+	} = useProductGroupRetrieve({
+		id: productGroupId,
+		shouldFetchOfflineFirst: true,
+		options: {
+			enabled: !!productGroupId,
+		},
+	});
 	const {
 		data: { products, total },
 		isFetching: isFetchingProducts,
@@ -89,11 +95,31 @@ export const CreateProductGroup = ({ match }: Props) => {
 		isLoading: isCreatingProductGroup,
 		error: createProductGroupError,
 	} = useProductGroupCreate();
+	const {
+		mutateAsync: editProductGroup,
+		isLoading: isEditingProductGroup,
+		error: editProductGroupError,
+	} = useProductGroupEdit();
 
 	// METHODS: Retrieve product groups
 	useEffect(() => {
-		console.log('productGroup', productGroup);
-	}, [productGroup]);
+		if (productGroupId && isGroupProductFetched && productGroup) {
+			productsRef.current = {};
+
+			productGroup.items.forEach((item) => {
+				const { product } = item;
+
+				productsRef.current[product.id] = {
+					selected: true,
+					productId: product.id,
+					name: product.name,
+					isVatExempted: product.is_vat_exempted,
+				};
+			});
+
+			setCount(productGroup.items.length);
+		}
+	}, [productGroup, productGroupId, isGroupProductFetched]);
 
 	// METHODS: Form methods
 	const getFormDetails = useCallback(
@@ -106,7 +132,7 @@ export const CreateProductGroup = ({ match }: Props) => {
 
 								return {
 									selected: key in productsRef.current,
-									product_id: key,
+									productId: key,
 									productName: p.name,
 									isVatExempted: p.is_vat_exempted,
 								};
@@ -116,7 +142,7 @@ export const CreateProductGroup = ({ match }: Props) => {
 
 								return {
 									selected: true,
-									product_id: key,
+									productId: key,
 									productName: product.name,
 									isVatExempted: product.isVatExempted,
 								};
@@ -128,7 +154,7 @@ export const CreateProductGroup = ({ match }: Props) => {
 				),
 			}),
 		}),
-		[products, activeTab],
+		[products, productsRef.current, activeTab],
 	);
 
 	// METHODS: Change listeners
@@ -143,16 +169,29 @@ export const CreateProductGroup = ({ match }: Props) => {
 	};
 
 	// METHODS: Filters
-	const handleCreate = async (formData) => {
+	const handleSubmit = async (formData) => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
-			await createProductGroup({
-				name: formData.name,
-				items: productIds.map((id) => ({ product_id: id })),
-			});
+			const items = productIds.map((id) => ({ product_id: id }));
 
-			message.success('Product group was created successfully');
+			if (productGroupId && productGroup) {
+				await editProductGroup({
+					id: productGroup.id,
+					name: formData.name,
+					items,
+				});
+
+				message.success('Product group was edited successfully');
+			} else {
+				await createProductGroup({
+					name: formData.name,
+					items,
+				});
+
+				message.success('Product group was created successfully');
+			}
+
 			history.push('/office-manager/product-groups');
 		}
 	};
@@ -161,102 +200,110 @@ export const CreateProductGroup = ({ match }: Props) => {
 		isFetchingProducts || isFetchingGroupProduct || isCreatingProductGroup;
 
 	return (
-		<Content title="[Create] Product Group">
+		<Content title={`[${productGroupId ? 'Edit' : 'Create'}] Product Group`}>
 			<Box>
-				<TableHeader
-					searchDisabled={activeTab === tabs.SELECTED}
-					title="Product Group"
-				/>
-
-				<Filter isLoading={isLoading} />
-
-				<RequestErrors
-					className="px-6"
-					errors={[
-						...convertIntoArray(productsErrors, 'Products'),
-						...convertIntoArray(
-							createProductGroupError?.errors,
-							'Product Group',
-						),
-					]}
-					withSpaceBottom
-				/>
-
-				<Formik
-					initialValues={getFormDetails().DefaultValues}
-					validationSchema={getFormDetails().Schema}
-					enableReinitialize
-					onSubmit={() => {
-						setCreateProductGroupModalVisible(true);
-					}}
-				>
-					{({ values, setFieldValue }) => (
-						<Form>
-							<div className="px-6">
-								<Tabs
-									activeKey={activeTab}
-									type="card"
-									onTabClick={setActiveTab}
-								>
-									<Tabs.TabPane key={tabs.ALL} tab="All Products" />
-									<Tabs.TabPane
-										key={tabs.SELECTED}
-										tab={`Selected Products (${count})`}
-									/>
-								</Tabs>
-
-								<ProductsTable
-									activeTab={activeTab}
-									formProps={{
-										values,
-										setFieldValue,
-										onChangeCheckbox: handleChangeCheckbox,
-									}}
-									isLoading={isLoading}
-									paginationProps={{
-										current: Number(params.page) || DEFAULT_PAGE,
-										total,
-										pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-										onChange: (page, newPageSize) => {
-											setQueryParams({
-												page,
-												pageSize: newPageSize,
-											});
-										},
-										disabled: !isLoading,
-										position: ['bottomCenter'],
-										pageSizeOptions,
-									}}
-								/>
-							</div>
-
-							<Divider dashed />
-
-							<div className="d-flex justify-end px-6 pb-6">
-								<Button
-									disabled={isLoading || _.isEmpty(productsRef.current)}
-									htmlType="submit"
-									type="primary"
-								>
-									Create
-								</Button>
-							</div>
-						</Form>
-					)}
-				</Formik>
-
-				{createProductGroupModalVisible && (
-					<CreateProductGroupModal
-						isLoading={isCreatingProductGroup}
-						onClose={() => {
-							setCreateProductGroupModalVisible(false);
-						}}
-						onSubmit={(formData) => {
-							handleCreate(formData);
-							setCreateProductGroupModalVisible(false);
-						}}
+				<Spin spinning={productGroupId && isFetchingGroupProduct}>
+					<TableHeader
+						searchDisabled={activeTab === tabs.SELECTED}
+						title="Product Group"
 					/>
-				)}
+
+					<Filter isLoading={isLoading} />
+
+					<RequestErrors
+						className="px-6"
+						errors={[
+							...convertIntoArray(productsErrors, 'Products'),
+							...convertIntoArray(productGroupErrors, 'Product Group'),
+							...convertIntoArray(
+								createProductGroupError?.errors,
+								'Create Product Group',
+							),
+							...convertIntoArray(
+								editProductGroupError?.errors,
+								'Edit Product Group',
+							),
+						]}
+						withSpaceBottom
+					/>
+
+					<Formik
+						initialValues={getFormDetails().DefaultValues}
+						validationSchema={getFormDetails().Schema}
+						enableReinitialize
+						onSubmit={() => {
+							setModifyProductGroupModalVisible(true);
+						}}
+					>
+						{({ values, setFieldValue }) => (
+							<Form>
+								<div className="px-6">
+									<Tabs
+										activeKey={activeTab}
+										type="card"
+										onTabClick={setActiveTab}
+									>
+										<Tabs.TabPane key={tabs.ALL} tab="All Products" />
+										<Tabs.TabPane
+											key={tabs.SELECTED}
+											tab={`Selected Products (${count})`}
+										/>
+									</Tabs>
+
+									<ProductsTable
+										activeTab={activeTab}
+										formProps={{
+											values,
+											setFieldValue,
+											onChangeCheckbox: handleChangeCheckbox,
+										}}
+										isLoading={isLoading}
+										paginationProps={{
+											current: Number(params.page) || DEFAULT_PAGE,
+											total,
+											pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+											onChange: (page, newPageSize) => {
+												setQueryParams({
+													page,
+													pageSize: newPageSize,
+												});
+											},
+											disabled: !isLoading,
+											position: ['bottomCenter'],
+											pageSizeOptions,
+										}}
+									/>
+								</div>
+
+								<Divider dashed />
+
+								<div className="d-flex justify-end px-6 pb-6">
+									<Button
+										disabled={isLoading || _.isEmpty(productsRef.current)}
+										htmlType="submit"
+										type="primary"
+									>
+										Proceed
+									</Button>
+								</div>
+							</Form>
+						)}
+					</Formik>
+
+					{modifyProductGroupModalVisible && (
+						<ModifyProductGroupModal
+							isLoading={isCreatingProductGroup || isEditingProductGroup}
+							productGroup={productGroup}
+							onClose={() => {
+								setModifyProductGroupModalVisible(false);
+							}}
+							onSubmit={(formData) => {
+								handleSubmit(formData);
+								setModifyProductGroupModalVisible(false);
+							}}
+						/>
+					)}
+				</Spin>
 			</Box>
 		</Content>
 	);
@@ -289,13 +336,13 @@ const ProductsTable = ({
 						onChange={(value) => {
 							if (!value && activeTab === tabs.SELECTED) {
 								const newValues = values.products.filter(
-									({ product_id }) => product_id !== product.product_id,
+									({ product_id }) => product_id !== product.productId,
 								);
 
 								setFieldValue('products', newValues);
 							}
 
-							onChangeCheckbox(product.product_id, value, {
+							onChangeCheckbox(product.productId, value, {
 								name: product.productName,
 								isVatExempted: product.isVatExempted,
 							});

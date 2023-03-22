@@ -6,7 +6,7 @@ import { useBranches, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getLocalBranchId } from 'utils';
+import { convertIntoArray, getLocalBranchId, isUserFromOffice } from 'utils';
 import { BranchSales } from './components/BranchSales';
 
 export const Sales = () => {
@@ -18,7 +18,7 @@ export const Sales = () => {
 		error: branchesErrors,
 	} = useBranches({
 		options: {
-			enabled: user.user_type === userTypes.OFFICE_MANAGER,
+			enabled: isUserFromOffice(user.user_type),
 		},
 	});
 
@@ -46,7 +46,7 @@ export const Sales = () => {
 	return (
 		<Content title="Sales">
 			<Box padding={user.user_type === userTypes.BRANCH_MANAGER}>
-				{user.user_type === userTypes.OFFICE_MANAGER && (
+				{isUserFromOffice(user.user_type) && (
 					<Spin spinning={isFetchingBranches}>
 						<RequestErrors
 							className="px-6 pt-6"

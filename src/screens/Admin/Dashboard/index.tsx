@@ -1,21 +1,49 @@
-import { Divider, Spin, Tabs } from 'antd';
+import { blue, green, grey, red } from '@ant-design/colors';
+import { LockOutlined, UnlockOutlined, WifiOutlined } from '@ant-design/icons';
+import { Divider, Spin, Tabs, Tooltip } from 'antd';
 import { Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	NOTIFICATION_INTERVAL_MS,
+	serviceTypes,
+} from 'global';
 import { useBranches, useProductCategories, useQueryParams } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
+
+const LIST_QUERY_KEY = 'HeadOfficeDashboardBranch';
+
+const authorizationStatuses = {
+	UNOPENED: 'unopened',
+	OPENED: 'opened',
+	CLOSED: 'ended',
+};
 
 export const Dashboard = () => {
+	// STATES
+	const [branchesStatus, setBranchesStatus] = useState({});
+	const [isBranchesStatusInitialized, setIsBranchesStatusInitialized] =
+		useState(false);
+
 	// CUSTOM HOOKS
 	const {
 		data: { branches },
-		isFetching: isFetchingBranches,
+		isLoading: isLoadingBranches,
 		error: branchesErrors,
-	} = useBranches();
+	} = useBranches({
+		key: LIST_QUERY_KEY,
+		params: {
+			pageSize: MAX_PAGE_SIZE,
+			serviceType: serviceTypes.OFFLINE,
+		},
+		options: { refetchInterval: NOTIFICATION_INTERVAL_MS },
+	});
 	const {
 		data: { productCategories },
 		isFetching: isFetchingProductCategories,
@@ -32,10 +60,25 @@ export const Dashboard = () => {
 
 	// METHODS
 	useEffect(() => {
-		if (branches && !currentBranchId) {
-			handleTabClick(branches?.[0]?.id);
+		if (branches.length && !currentBranchId) {
+			const id = getId(branches?.[0]);
+			handleTabClick(id);
 		}
-	}, [branches, currentBranchId]);
+
+		if (branches.length > 0 && !isBranchesStatusInitialized) {
+			if (branches.length) {
+				const status = {};
+
+				branches.forEach((branch) => {
+					status[getId(branch)] = branch.authorization_status;
+				});
+
+				setBranchesStatus(status);
+			}
+
+			setIsBranchesStatusInitialized(true);
+		}
+	}, [branches, currentBranchId, isBranchesStatusInitialized]);
 
 	const handleTabClick = (branchId) => {
 		setQueryParams({
@@ -46,9 +89,9 @@ export const Dashboard = () => {
 	};
 
 	return (
-		<Content title="Dashboard">
+		<Content className="Dashboard" title="Dashboard">
 			<Box>
-				<Spin spinning={isFetchingBranches || isFetchingProductCategories}>
+				<Spin spinning={isLoadingBranches || isFetchingProductCategories}>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={[
@@ -68,22 +111,69 @@ export const Dashboard = () => {
 						destroyInactiveTabPane
 						onTabClick={handleTabClick}
 					>
-						{branches.map(({ name, id }) => (
-							<Tabs.TabPane key={id} tab={name}>
-								<BranchProductBalances
-									branchId={id}
-									productCategories={productCategories}
-									tableHeaderClassName="pt-2 px-0"
-								/>
+						{branches.map((branch) => {
+							const id = getId(branch);
 
-								<Divider />
+							return (
+								<Tabs.TabPane
+									key={id}
+									tab={
+										<>
+											<Tooltip
+												placement="top"
+												title={
+													branch.is_online
+														? 'Branch is online'
+														: 'Branch is offline'
+												}
+											>
+												<WifiOutlined
+													style={{
+														color: branch.is_online
+															? green.primary
+															: red.primary,
+													}}
+												/>
+											</Tooltip>
 
-								<ReportsPerMachine
-									branchId={id}
-									tableHeaderClassName="pt-2 px-0"
-								/>
-							</Tabs.TabPane>
-						))}
+											{branchesStatus[id] ===
+												authorizationStatuses.UNOPENED && (
+												<Tooltip placement="top" title="Branch is not yet open">
+													<LockOutlined style={{ color: grey.primary }} />
+												</Tooltip>
+											)}
+
+											{branchesStatus[id] === authorizationStatuses.OPENED && (
+												<Tooltip placement="top" title="Branch is open">
+													<UnlockOutlined style={{ color: blue.primary }} />
+												</Tooltip>
+											)}
+
+											{branchesStatus[id] === authorizationStatuses.CLOSED && (
+												<Tooltip placement="top" title="Branch has been closed">
+													<LockOutlined style={{ color: red.primary }} />
+												</Tooltip>
+											)}
+
+											<span>{branch.name}</span>
+										</>
+									}
+								>
+									<BranchProductBalances
+										branchId={branch.id}
+										productCategories={productCategories}
+										tableHeaderClassName="pt-2 px-0"
+									/>
+
+									<Divider />
+
+									<ReportsPerMachine
+										branchId={branch.id}
+										tableHeaderClassName="pt-2 px-0"
+									/>
+								</Tabs.TabPane>
+							);
+						})}
 					</Tabs>
 				</Spin>
 			</Box>
