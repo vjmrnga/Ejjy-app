@@ -45,7 +45,7 @@ function createWindow() {
 	});
 	splashWindow.loadURL(`file://${__dirname}/splash.html`);
 
-	// Main screen
+	// Main Screen
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -57,13 +57,6 @@ function createWindow() {
 	});
 
 	const allowedLinks = ['blob:', 'https://gamy-mayonnaise-e86.notion.site'];
-	mainWindow.webContents.on('new-window', (event, url) => {
-		if (!allowedLinks.every((link) => url.startsWith(link))) {
-			event.preventDefault();
-			mainWindow.loadURL();
-		}
-	});
-
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => ({
 		action: allowedLinks.some((link) => url.startsWith(link))
 			? 'allow'

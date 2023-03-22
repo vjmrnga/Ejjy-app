@@ -15,12 +15,13 @@ import {
 	getId,
 	getLocalBranchId,
 	isUserFromBranch,
+	isUserFromOffice,
 } from 'utils';
 import { PricesForm } from './PricesForm';
 
 const tabs = {
-	ALL: 'All',
-	BRANCHES: 'Branches',
+	ALL: 'General Products',
+	BRANCHES: 'Branch Products',
 };
 
 interface Props {
@@ -134,8 +135,14 @@ export const PricesModal = ({ product, onClose }: Props) => {
 					onSubmit={handleSubmit}
 				/>
 			) : (
-				<Tabs type="card" destroyInactiveTabPane>
-					<Tabs.TabPane key={tabs.BRANCHES} tab="Branches">
+				<Tabs
+					defaultActiveKey={
+						isUserFromOffice(user.user_type) ? tabs.ALL : tabs.BRANCHES
+					}
+					type="card"
+					destroyInactiveTabPane
+				>
+					<Tabs.TabPane key={tabs.BRANCHES} tab={tabs.BRANCHES}>
 						<PricesForm
 							branches={branches}
 							branchProducts={branchProducts}
@@ -150,7 +157,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 						/>
 					</Tabs.TabPane>
 
-					<Tabs.TabPane key={tabs.ALL} tab="All">
+					<Tabs.TabPane key={tabs.ALL} tab={tabs.ALL}>
 						<PricesForm
 							branches={branches}
 							isLoading={
