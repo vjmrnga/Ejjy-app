@@ -163,6 +163,10 @@ function initStore() {
 			type: 'string',
 			default: appTypes.BACK_OFFICE,
 		},
+		isMainHeadOffice: {
+			type: 'number',
+			default: 0,
+		},
 	};
 
 	const store = new Store({ schema });
@@ -194,7 +198,9 @@ let spawnLocalhostRun = null;
 function initServer(store) {
 	if (!isDev) {
 		logStatus('Server: Starting');
+
 		appType = store.get('appType');
+		isMainHeadOffice = store.get('isMainHeadOffice');
 		const apiPath = path.join(process.resourcesPath, 'api');
 
 		spawn('python', ['manage.py', 'migrate'], {
@@ -208,6 +214,7 @@ function initServer(store) {
 		}
 
 		logStatus('Server: Starting API');
+
 		const apiCommand = `manage.py runserver ${apiPort}`;
 		spawnApi = spawn('python', apiCommand.split(' '), {
 			cwd: apiPath,
@@ -215,9 +222,10 @@ function initServer(store) {
 			stdio: 'ignore',
 		});
 		logSpawn('API', spawnApi);
+
 		logStatus('Server: Started API');
 
-		if (appType === appTypes.HEAD_OFFICE) {
+		if (appType === appTypes.HEAD_OFFICE && isMainHeadOffice) {
 			logStatus('Server: Starting LocalhostRun');
 
 			exec(

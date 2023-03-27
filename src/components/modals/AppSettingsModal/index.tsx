@@ -2,6 +2,7 @@ import { message, Modal } from 'antd';
 
 import {
 	APP_APP_TYPE_KEY,
+	APP_IS_MAIN_HEAD_OFFICE,
 	APP_LOCAL_API_URL_KEY,
 	APP_ONLINE_API_URL_KEY,
 	APP_ONLINE_BRANCH_ID_KEY,
@@ -14,6 +15,7 @@ import {
 	APP_TAG_PRINTER_PAPER_WIDTH,
 } from 'global';
 import { useAppType } from 'hooks';
+import _ from 'lodash';
 import React from 'react';
 import {
 	getAppReceiptPrinterFontFamily,
@@ -24,6 +26,7 @@ import {
 	getAppTagPrinterPaperHeight,
 	getAppTagPrinterPaperWidth,
 	getAppType,
+	getIsMainHeadOffice,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 	getOnlineBranchId,
@@ -37,12 +40,18 @@ interface Props {
 
 export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { setAppType } = useAppType();
+	const { setAppType, setIsMainHeadOffice } = useAppType();
 
 	// METHODS
 	const handleSubmit = (formData) => {
-		setAppType(formData.appType);
+		setIsMainHeadOffice(formData.isMainHeadOffice);
+		setAppType(formData.appType, true);
+
 		localStorage.setItem(APP_APP_TYPE_KEY, formData.appType);
+		localStorage.setItem(
+			APP_IS_MAIN_HEAD_OFFICE,
+			_.toString(formData.isMainHeadOffice ? 1 : 0),
+		);
 		localStorage.setItem(APP_ONLINE_BRANCH_ID_KEY, formData.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, formData.localApiUrl);
 		localStorage.setItem(APP_ONLINE_API_URL_KEY, formData.onlineApiUrl);
@@ -91,6 +100,7 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 			<AppSettingsForm
 				appType={getAppType()}
 				branchId={getOnlineBranchId()}
+				isMainHeadOffice={getIsMainHeadOffice()}
 				localApiUrl={getLocalApiUrl()}
 				onlineApiUrl={getOnlineApiUrl()}
 				printerFontFamily={getAppReceiptPrinterFontFamily()}

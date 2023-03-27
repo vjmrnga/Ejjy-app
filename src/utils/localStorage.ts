@@ -2,6 +2,7 @@ import {
 	APP_APP_TYPE_KEY,
 	APP_LOCAL_API_URL_KEY,
 	APP_LOCAL_BRANCH_ID_KEY,
+	APP_IS_MAIN_HEAD_OFFICE,
 	APP_ONLINE_API_URL_KEY,
 	APP_ONLINE_BRANCH_ID_KEY,
 	APP_RECEIPT_PRINTER_FONT_FAMILY,
@@ -20,6 +21,9 @@ import {
 } from 'global';
 
 export const getAppType = () => localStorage.getItem(APP_APP_TYPE_KEY);
+
+export const getIsMainHeadOffice = () =>
+	Number(localStorage.getItem(APP_IS_MAIN_HEAD_OFFICE));
 
 export const getOnlineBranchId = () =>
 	localStorage.getItem(APP_ONLINE_BRANCH_ID_KEY);

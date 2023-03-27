@@ -159,8 +159,8 @@ export const BranchSales = ({ branchId }: Props) => {
 						</Col>
 						<Col md={4}>
 							<Statistic
-								title="(Cash Out)"
-								value={formatInPeso(summary.cashOut)}
+								title="Cash Out"
+								value={`(${formatInPeso(summary.cashOut)})`}
 							/>
 						</Col>
 					</Row>

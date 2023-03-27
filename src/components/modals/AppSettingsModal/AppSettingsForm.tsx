@@ -24,6 +24,7 @@ import { FieldError, Label } from '../../elements';
 interface Props {
 	appType: string;
 	branchId: string;
+	isMainHeadOffice: number;
 	localApiUrl: string;
 	onlineApiUrl: string;
 	printerFontFamily: string;
@@ -45,8 +46,11 @@ const collapseKeys = {
 export const AppSettingsForm = ({
 	appType,
 	branchId,
+	isMainHeadOffice,
 	localApiUrl,
+	onClose,
 	onlineApiUrl,
+	onSubmit,
 	printerFontFamily,
 	printerFontSize,
 	printerName,
@@ -54,8 +58,6 @@ export const AppSettingsForm = ({
 	tagPrinterFontSize,
 	tagPrinterPaperHeight,
 	tagPrinterPaperWidth,
-	onClose,
-	onSubmit,
 }: Props) => {
 	// STATES
 	const [baseURL, setBaseURL] = useState(onlineApiUrl || localApiUrl);
@@ -76,6 +78,7 @@ export const AppSettingsForm = ({
 		() => ({
 			DefaultValues: {
 				appType: appType || appTypes.BACK_OFFICE,
+				isMainHeadOffice,
 				branchId: branchId || '',
 				localApiUrl: localApiUrl || '',
 				onlineApiUrl: onlineApiUrl || '',
@@ -90,6 +93,10 @@ export const AppSettingsForm = ({
 			Schema: Yup.object().shape({
 				appType: Yup.string().label('App Type'),
 				branchId: Yup.string().label('Branch'),
+				isMainHeadOffice: Yup.number().when('appType', {
+					is: appTypes.HEAD_OFFICE,
+					then: Yup.number().required().label('Main Head Office'),
+				}),
 				localApiUrl: Yup.string().required().label('Local API URL'),
 				onlineApiUrl: Yup.string().required().label('Online API URL'),
 				printerName: Yup.string().label('Printer Name'),
@@ -113,6 +120,7 @@ export const AppSettingsForm = ({
 		[
 			appType,
 			branchId,
+			isMainHeadOffice,
 			localApiUrl,
 			onlineApiUrl,
 			printerFontFamily,
@@ -131,7 +139,13 @@ export const AppSettingsForm = ({
 			validationSchema={getFormDetails().Schema}
 			enableReinitialize
 			onSubmit={(values) => {
-				onSubmit(values);
+				onSubmit({
+					...values,
+					isMainHeadOffice:
+						values.appType === appTypes.HEAD_OFFICE
+							? values.isMainHeadOffice
+							: false,
+				});
 			}}
 		>
 			{({ values, setFieldValue }) => (
@@ -139,7 +153,6 @@ export const AppSettingsForm = ({
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label id="appType" label="App Type" spacing />
-
 							<Radio.Group
 								buttonStyle="solid"
 								options={[
@@ -155,7 +168,6 @@ export const AppSettingsForm = ({
 									setFieldValue('appType', e.target.value);
 								}}
 							/>
-
 							{values.appType !== appType && (
 								<Alert
 									className="mt-1"
@@ -164,12 +176,42 @@ export const AppSettingsForm = ({
 									showIcon
 								/>
 							)}
-
 							<ErrorMessage
 								name="appType"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>
+
+						{values.appType === appTypes.HEAD_OFFICE && (
+							<Col span={24}>
+								<Label label="Main Head Office" spacing />
+								<Radio.Group
+									buttonStyle="solid"
+									options={[
+										{ label: 'Main', value: 1 },
+										{
+											label: 'Not Main',
+											value: 0,
+										},
+									]}
+									optionType="button"
+									value={values.isMainHeadOffice}
+									onChange={(e) => {
+										setFieldValue('isMainHeadOffice', e.target.value);
+									}}
+								/>
+								<Alert
+									className="mt-1"
+									message="Main head office app starts the ngrok when opened."
+									type="info"
+									showIcon
+								/>
+								<ErrorMessage
+									name="isMainHeadOffice"
+									render={(error) => <FieldError error={error} />}
+								/>
+							</Col>
+						)}
 
 						<Col span={24}>
 							<Label label="Local API URL" spacing />

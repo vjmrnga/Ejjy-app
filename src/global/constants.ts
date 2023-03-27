@@ -7,6 +7,7 @@ export const SHOW_HIDE_SHORTCUT = ['meta+s', 'ctrl+s'];
 
 // Local Storage
 export const APP_APP_TYPE_KEY = 'EJJY_APP_TYPE';
+export const APP_IS_MAIN_HEAD_OFFICE = 'EJJY_IS_MAIN_HEAD_OFFICE';
 export const APP_ONLINE_BRANCH_ID_KEY = 'EJJY_BRANCH_ID';
 export const APP_LOCAL_BRANCH_ID_KEY = 'EJJY_LOCAL_BRANCH_ID';
 export const APP_LOCAL_API_URL_KEY = 'EJJY_LOCAL_API_URL';
