@@ -5,13 +5,9 @@ import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { stockTabs } from 'screens/BranchManager/Stock/data';
 import { TabStockIn } from './components/TabStockIn';
 import { TabStockOut } from './components/TabStockOut';
-
-const tabs = {
-	STOCK_IN: 'Stock In',
-	STOCK_OUT: 'Stock Out',
-};
 
 export const Stocks = () => {
 	// CUSTOM HOOKS
@@ -32,12 +28,12 @@ export const Stocks = () => {
 		<Content title="Stock">
 			<Box>
 				<Tabs
-					activeKey={_.toString(tab) || tabs.STOCK_IN}
+					activeKey={_.toString(tab) || stockTabs.STOCK_IN}
 					className="PaddingHorizontal PaddingVertical"
 					tabBarExtraContent={
 						<Link
 							to={`stocks/stock-${
-								_.toString(tab) === tabs.STOCK_IN ? 'in' : 'out'
+								_.toString(tab) === stockTabs.STOCK_IN ? 'in' : 'out'
 							}/create`}
 						>
 							<Button type="primary">Create {_.toString(tab)}</Button>
@@ -47,10 +43,10 @@ export const Stocks = () => {
 					destroyInactiveTabPane
 					onTabClick={handleTabClick}
 				>
-					<Tabs.TabPane key={tabs.STOCK_IN} tab={tabs.STOCK_IN}>
+					<Tabs.TabPane key={stockTabs.STOCK_IN} tab={stockTabs.STOCK_IN}>
 						<TabStockIn />
 					</Tabs.TabPane>
-					<Tabs.TabPane key={tabs.STOCK_OUT} tab={tabs.STOCK_OUT}>
+					<Tabs.TabPane key={stockTabs.STOCK_OUT} tab={stockTabs.STOCK_OUT}>
 						<TabStockOut />
 					</Tabs.TabPane>
 				</Tabs>

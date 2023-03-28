@@ -48,6 +48,7 @@ import {
 import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { stockTabs } from 'screens/BranchManager/Stock/data';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
@@ -314,7 +315,10 @@ export const CreateStockOut = () => {
 			});
 
 			message.success('Stock out was created successfully');
-			history.push('/branch-manager/stocks?tab=Stock Out');
+			history.replace({
+				pathname: '/branch-manager/stocks',
+				search: `?tab=${stockTabs.STOCK_OUT}`,
+			});
 		}
 	};
 

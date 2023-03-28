@@ -49,6 +49,7 @@ import {
 import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { stockTabs } from 'screens/BranchManager/Stock/data';
 import {
 	convertIntoArray,
 	convertToPieces,
@@ -316,7 +317,10 @@ export const CreateStockIn = () => {
 			});
 
 			message.success('Stock in was created successfully');
-			history.push('/branch-manager/stocks?tab=Stock In');
+			history.replace({
+				pathname: '/branch-manager/stocks',
+				search: `?tab=${stockTabs.STOCK_IN}`,
+			});
 		}
 	};
 
