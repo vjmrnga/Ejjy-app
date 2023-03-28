@@ -41,9 +41,18 @@ const columns: ColumnsType = [
 	},
 	{
 		title: 'Balance',
-		dataIndex: 'balance',
-		align: 'center',
-		sorter: true,
+		children: [
+			{
+				title: 'Current Balance',
+				dataIndex: 'balance',
+				align: 'center',
+			},
+			{
+				title: 'BO Balance',
+				dataIndex: 'boBalance',
+				align: 'center',
+			},
+		],
 	},
 	{
 		title: 'Remaining Bal',
@@ -145,6 +154,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 	} = useBranchProductsWithAnalytics({
 		params: {
 			...params,
+			hasBoBalance: params.hasBoBalance === 'true' ? true : undefined,
 			isSoldInBranch:
 				params?.isSoldInBranch === ALL_OPTION_KEY || !params?.isSoldInBranch
 					? undefined
@@ -192,6 +202,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 		const data = branchProducts.map((branchProduct) => {
 			const {
 				product,
+				bo_balance,
 				max_balance,
 				current_balance,
 				product_status,
@@ -219,10 +230,16 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 				quantity: max_balance,
 			});
 
+			const boBalance = formatQuantity({
+				unitOfMeasurement: unit_of_measurement,
+				quantity: bo_balance,
+			});
+
 			return {
 				code: getProductCode(product),
 				name,
 				balance: `${currentBalance} / ${maxBalance}`,
+				boBalance,
 				remaining_balance: `${remainingBalance.toFixed(2)}%`,
 				quantity_sold: quantitySold,
 				daily_average_sold,
@@ -272,7 +289,7 @@ export const ReportsBranch = ({ productCategories }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				scroll={{ x: 1400 }}
+				scroll={{ x: 1600 }}
 				bordered
 				onChange={(_pagination, _filters, sorter: SorterResult<any>, extra) => {
 					if (extra.action === 'sort') {
@@ -361,7 +378,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 
 	return (
 		<Row className="pa-6" gutter={[16, 16]}>
-			<Col md={12}>
+			<Col lg={12} span={24}>
 				<Label label="Product Name" spacing />
 				<Select
 					className="w-100"
@@ -385,7 +402,8 @@ const Filter = ({ productCategories }: FilterProps) => {
 					onSearch={handleSearchDebounced}
 				/>
 			</Col>
-			<Col md={12}>
+
+			<Col lg={12} span={24}>
 				<Label label="Product Category" spacing />
 				<Select
 					className="w-100"
@@ -409,7 +427,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 				</Select>
 			</Col>
 
-			<Col md={12}>
+			<Col lg={12} span={24}>
 				<Label label="Product Status" spacing />
 				<Select
 					className="w-100"
@@ -431,11 +449,11 @@ const Filter = ({ productCategories }: FilterProps) => {
 				</Select>
 			</Col>
 
-			<Col md={12}>
+			<Col lg={12} span={24}>
 				<TimeRangeFilter />
 			</Col>
 
-			<Col md={12}>
+			<Col lg={12} span={24}>
 				<Label label="Show Sold In Branch" spacing />
 				<Radio.Group
 					defaultValue={params.isSoldInBranch}
@@ -448,6 +466,25 @@ const Filter = ({ productCategories }: FilterProps) => {
 					onChange={(e) => {
 						setQueryParams(
 							{ isSoldInBranch: e.target.value },
+							{ shouldResetPage: true },
+						);
+					}}
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Show has BO Balance" spacing />
+				<Radio.Group
+					defaultValue={null}
+					options={[
+						{ label: 'Show All', value: null },
+						{ label: 'Has BO Balance', value: true },
+					]}
+					optionType="button"
+					value={params.hasBoBalance}
+					onChange={(e) => {
+						setQueryParams(
+							{ hasBoBalance: e.target.value },
 							{ shouldResetPage: true },
 						);
 					}}

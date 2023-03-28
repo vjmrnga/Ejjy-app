@@ -7,7 +7,7 @@ const path = require('path');
 const { spawn, exec } = require('child_process');
 const Store = require('electron-store');
 
-const LOCALHOSTRUN_INTERVAL_MS = 60_000;
+const TUNNELING_INTERVAL_MS = 60_000;
 
 const appTypes = {
 	BACK_OFFICE: 'back_office',
@@ -225,35 +225,35 @@ function initServer(store) {
 
 		logStatus('Server: Started API');
 
-		if (appType === appTypes.HEAD_OFFICE && isMainHeadOffice) {
-			logStatus('Server: Starting LocalhostRun');
+		if (appType === appTypes.HEAD_OFFICE && isMainHeadOffice === 1) {
+			logStatus('Server: Starting Tunneling');
 
 			exec(
 				'ngrok config add-authtoken 1n3K1Pcfqdy2WKRk60koXTY1ZrB_7QC7rqRsspNCkayebuRUN',
 			);
 
-			const startLocalhostRun = () => {
+			const startTunneling = () => {
 				exec(
 					'ngrok http --domain=headoffice.ngrok.app 8001',
 					(error, stdout, stderr) => {
 						if (error) {
-							logStatus(`LocalhostRun error: ${error.message}`);
+							logStatus(`Tunneling error: ${error.message}`);
 							return;
 						}
 						if (stderr) {
-							logStatus(`LocalhostRun stderr: ${stderr}`);
+							logStatus(`Tunneling stderr: ${stderr}`);
 							return;
 						}
-						logStatus(`LocalhostRun stdout: ${stdout}`);
+						logStatus(`Tunneling stdout: ${stdout}`);
 					},
 				);
 			};
 
-			startLocalhostRun();
+			startTunneling();
 
-			setInterval(startLocalhostRun, LOCALHOSTRUN_INTERVAL_MS);
+			setInterval(startTunneling, TUNNELING_INTERVAL_MS);
 
-			logStatus('Server: Starded LocalhostRun');
+			logStatus('Server: Starded Tunneling');
 		}
 
 		logStatus('Server: Started');

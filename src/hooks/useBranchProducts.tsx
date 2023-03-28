@@ -297,6 +297,7 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 		[
 			'useBranchProducts',
 			params?.branchId,
+			params?.hasBoBalance,
 			params?.ids,
 			params?.isSoldInBranch,
 			params?.ordering,
@@ -312,6 +313,7 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 				BranchProductsService.listWithAnalytics(
 					{
 						branch_id: params?.branchId,
+						has_bo_balance: params?.hasBoBalance,
 						is_sold_in_branch: params?.isSoldInBranch,
 						ordering: params?.ordering,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,

@@ -78,7 +78,9 @@ export const DiscountOptions = () => {
 			name: discountOption.name,
 			code: discountOption.code,
 			type: _.upperFirst(discountOption.type),
-			percentage: discountOption.percentage || EMPTY_CELL,
+			percentage: discountOption.percentage
+				? `${Number(discountOption.percentage)}%`
+				: EMPTY_CELL,
 			isSpecialDiscount: discountOption.is_special_discount ? (
 				<Tag color="green">Yes</Tag>
 			) : (
@@ -135,7 +137,7 @@ export const DiscountOptions = () => {
 			{ title: 'Name', dataIndex: 'name' },
 			{ title: 'Code', dataIndex: 'code' },
 			{ title: 'Type', dataIndex: 'type' },
-			{ title: 'Percentage', dataIndex: 'percentage' },
+			{ title: 'Percentage', dataIndex: 'percentage', align: 'center' },
 			{
 				title: 'Special Discount',
 				dataIndex: 'isSpecialDiscount',

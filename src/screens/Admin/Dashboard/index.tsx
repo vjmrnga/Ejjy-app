@@ -1,6 +1,6 @@
 import { blue, green, grey, red } from '@ant-design/colors';
 import { LockOutlined, UnlockOutlined, WifiOutlined } from '@ant-design/icons';
-import { Divider, Spin, Tabs, Tooltip } from 'antd';
+import { Spin, Tabs, Tooltip } from 'antd';
 import { Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
 import {
@@ -10,10 +10,9 @@ import {
 	NOTIFICATION_INTERVAL_MS,
 	serviceTypes,
 } from 'global';
-import { useBranches, useProductCategories, useQueryParams } from 'hooks';
+import { useBranches, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
 import { convertIntoArray, getId } from 'utils';
 
@@ -43,13 +42,6 @@ export const Dashboard = () => {
 			serviceType: serviceTypes.OFFLINE,
 		},
 		options: { refetchInterval: NOTIFICATION_INTERVAL_MS },
-	});
-	const {
-		data: { productCategories },
-		isFetching: isFetchingProductCategories,
-		error: productCategoriesErrors,
-	} = useProductCategories({
-		params: { pageSize: MAX_PAGE_SIZE },
 	});
 
 	// VARIABLES
@@ -91,16 +83,10 @@ export const Dashboard = () => {
 	return (
 		<Content className="Dashboard" title="Dashboard">
 			<Box>
-				<Spin spinning={isLoadingBranches || isFetchingProductCategories}>
+				<Spin spinning={isLoadingBranches}>
 					<RequestErrors
 						className="px-6 pt-6"
-						errors={[
-							...convertIntoArray(branchesErrors, 'Branches'),
-							...convertIntoArray(
-								productCategoriesErrors,
-								'Product Categories',
-							),
-						]}
+						errors={convertIntoArray(branchesErrors, 'Branches')}
 					/>
 
 					<Tabs
@@ -159,14 +145,6 @@ export const Dashboard = () => {
 										</>
 									}
 								>
-									<BranchProductBalances
-										branchId={branch.id}
-										productCategories={productCategories}
-										tableHeaderClassName="pt-2 px-0"
-									/>
-
-									<Divider />
-
 									<ReportsPerMachine
 										branchId={branch.id}
 										tableHeaderClassName="pt-2 px-0"

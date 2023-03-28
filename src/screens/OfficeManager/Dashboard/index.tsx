@@ -14,13 +14,11 @@ import {
 	useBranchDayAuthorizationCreate,
 	useBranchDayAuthorizationEnd,
 	useBranches,
-	useProductCategories,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { BranchProductBalances } from 'screens/Shared/Dashboard/components/BranchProductBalances';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
 import { useUserStore } from 'stores';
 import { convertIntoArray, getId } from 'utils';
@@ -54,13 +52,6 @@ export const Dashboard = () => {
 			serviceType: serviceTypes.OFFLINE,
 		},
 		options: { refetchInterval: NOTIFICATION_INTERVAL_MS },
-	});
-	const {
-		data: { productCategories },
-		isFetching: isFetchingProductCategories,
-		error: productCategoriesErrors,
-	} = useProductCategories({
-		params: { pageSize: MAX_PAGE_SIZE },
 	});
 	const {
 		mutateAsync: createBranchDayAuthorization,
@@ -170,15 +161,11 @@ export const Dashboard = () => {
 	return (
 		<Content className="Dashboard" title="Dashboard">
 			<Box>
-				<Spin spinning={isLoadingBranches || isFetchingProductCategories}>
+				<Spin spinning={isLoadingBranches}>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={[
 							...convertIntoArray(branchesErrors, 'Branches'),
-							...convertIntoArray(
-								productCategoriesErrors,
-								'Product Categories',
-							),
 							...convertIntoArray(createBranchDayAuthorizationError?.errors),
 							...convertIntoArray(endBranchDayAuthorizationError?.errors),
 						]}
@@ -295,14 +282,6 @@ export const Dashboard = () => {
 												LIST_QUERY_KEY,
 											]);
 										}}
-									/>
-
-									<Divider />
-
-									<BranchProductBalances
-										branchId={branch.id}
-										productCategories={productCategories}
-										tableHeaderClassName="pt-2 px-0"
 									/>
 
 									<Divider />
