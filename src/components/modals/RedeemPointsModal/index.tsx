@@ -120,7 +120,7 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 							<FormInputLabel
 								disabled={account.total_points_balance === 0}
 								id="points"
-								label={`Points (Balance: ${account.total_points_balance})`}
+								label={`Deduction (Balance: ${account.total_points_balance})`}
 								type="number"
 							/>
 							<ErrorMessage

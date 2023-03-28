@@ -95,6 +95,12 @@ export const PricesForm = ({
 		}
 	}, [branchProducts]);
 
+	useEffect(() => {
+		if (isBulkEdit) {
+			setActiveKey(branches.map((branch) => getId(branch)).join(','));
+		}
+	}, [branches, isBulkEdit]);
+
 	const getFormDetails = useCallback(
 		() => ({
 			DefaultValues: isBulkEdit
@@ -338,6 +344,9 @@ export const PricesForm = ({
 					{values.length > 0 && (
 						<Collapse
 							activeKey={activeKey}
+							collapsible={
+								isBulkEdit || values.length === 1 ? 'disabled' : undefined
+							}
 							expandIconPosition="right"
 							onChange={(key) => {
 								setActiveKey(key);
@@ -360,94 +369,6 @@ export const PricesForm = ({
 									}
 								>
 									<Row gutter={[16, 16]}>
-										<Col sm={12} span={24}>
-											{renderInputField({
-												name: `${index}.creditPricePerPiece`,
-												label: (
-													<Space>
-														<span>Credit Price (Piece)</span>
-														<Tooltip title="Difference between credit price and regular price">
-															<Tag color="blue">
-																{formatInPeso(
-																	branchProduct.initialCreditPricePerPieceDifference,
-																)}
-															</Tag>
-														</Tooltip>
-													</Space>
-												),
-												placeholder: branchProduct.initialCreditPricePerPiece,
-												value: branchProduct.creditPricePerPiece,
-												setFieldValue,
-											})}
-										</Col>
-										<Col sm={12} span={24}>
-											{renderInputField({
-												name: `${index}.creditPricePerBulk`,
-												label: (
-													<Space>
-														<span>Credit Price (Bulk)</span>
-														<Tooltip title="Difference between credit price and regular price">
-															<Tag color="blue">
-																{formatInPeso(
-																	branchProduct.initialCreditPricePerBulkDifference,
-																)}
-															</Tag>
-														</Tooltip>
-													</Space>
-												),
-												placeholder: branchProduct.initialCreditPricePerBulk,
-												value: branchProduct.creditPricePerBulk,
-												setFieldValue,
-											})}
-										</Col>
-
-										<Col sm={12} span={24}>
-											{renderInputField({
-												name: `${index}.governmentCreditPricePerPiece`,
-												label: (
-													<Space>
-														<span>Government Credit Price (Piece)</span>
-														<Tooltip title="Difference between credit price and regular price">
-															<Tag color="blue">
-																{formatInPeso(
-																	branchProduct.initialGovernmentCreditPricePerPieceDifference,
-																)}
-															</Tag>
-														</Tooltip>
-													</Space>
-												),
-												placeholder:
-													branchProduct.initialGovernmentCreditPricePerPiece,
-												value: branchProduct.governmentCreditPricePerPiece,
-												setFieldValue,
-											})}
-										</Col>
-										<Col sm={12} span={24}>
-											{renderInputField({
-												name: `${index}.governmentCreditPricePerBulk`,
-												label: (
-													<Space>
-														<span>Government Credit Price (Bulk)</span>
-														<Tooltip title="Difference between credit price and regular price">
-															<Tag color="blue">
-																{formatInPeso(
-																	branchProduct.initialGovernmentCreditPricePerBulkDifference,
-																)}
-															</Tag>
-														</Tooltip>
-													</Space>
-												),
-												placeholder:
-													branchProduct.initialGovernmentCreditPricePerBulk,
-												value: branchProduct.governmentCreditPricePerBulk,
-												setFieldValue,
-											})}
-										</Col>
-
-										<Col span={24}>
-											<Divider className="my-0" />
-										</Col>
-
 										<Col sm={12} span={24}>
 											{renderInputField({
 												name: `${index}.costPerPiece`,
@@ -594,6 +515,94 @@ export const PricesForm = ({
 												name="markdownType"
 												render={(error) => <FieldError error={error} />}
 											/>
+										</Col>
+
+										<Col span={24}>
+											<Divider className="my-0" />
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.creditPricePerPiece`,
+												label: (
+													<Space>
+														<span>Credit Price (Piece)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialCreditPricePerPieceDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder: branchProduct.initialCreditPricePerPiece,
+												value: branchProduct.creditPricePerPiece,
+												setFieldValue,
+											})}
+										</Col>
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.creditPricePerBulk`,
+												label: (
+													<Space>
+														<span>Credit Price (Bulk)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialCreditPricePerBulkDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder: branchProduct.initialCreditPricePerBulk,
+												value: branchProduct.creditPricePerBulk,
+												setFieldValue,
+											})}
+										</Col>
+
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.governmentCreditPricePerPiece`,
+												label: (
+													<Space>
+														<span>Government Credit Price (Piece)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialGovernmentCreditPricePerPieceDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder:
+													branchProduct.initialGovernmentCreditPricePerPiece,
+												value: branchProduct.governmentCreditPricePerPiece,
+												setFieldValue,
+											})}
+										</Col>
+										<Col sm={12} span={24}>
+											{renderInputField({
+												name: `${index}.governmentCreditPricePerBulk`,
+												label: (
+													<Space>
+														<span>Government Credit Price (Bulk)</span>
+														<Tooltip title="Difference between credit price and regular price">
+															<Tag color="blue">
+																{formatInPeso(
+																	branchProduct.initialGovernmentCreditPricePerBulkDifference,
+																)}
+															</Tag>
+														</Tooltip>
+													</Space>
+												),
+												placeholder:
+													branchProduct.initialGovernmentCreditPricePerBulk,
+												value: branchProduct.governmentCreditPricePerBulk,
+												setFieldValue,
+											})}
 										</Col>
 									</Row>
 								</Collapse.Panel>

@@ -10,7 +10,7 @@ import { TabDTR } from './components/TabDTR';
 import { TabDTRPrinting } from './components/TabDTRPrinting';
 
 const tabs = {
-	DTR: 'All',
+	DTR: 'List',
 	DTR_PRINTING: 'DTR Printing',
 };
 
