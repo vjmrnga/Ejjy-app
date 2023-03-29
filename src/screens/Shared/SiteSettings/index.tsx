@@ -34,7 +34,7 @@ import {
 	useSiteSettingsEdit,
 } from 'hooks';
 import moment from 'moment';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray, isCUDShown } from 'utils';
 import * as Yup from 'yup';
@@ -77,6 +77,9 @@ export const SiteSettings = () => {
 		isLoading: isEditingSiteSettings,
 		error: editSiteSettingsError,
 	} = useSiteSettingsEdit();
+
+	// STATES
+	const [isDisabled] = useState(!isCUDShown(user.user_type));
 
 	// METHODS
 	const getFormDetails = useCallback(
@@ -231,6 +234,7 @@ export const SiteSettings = () => {
 			<DatePicker
 				allowClear={false}
 				className="w-100"
+				disabled={isDisabled}
 				format="YYYY-MM-DD"
 				value={values[name]}
 				onSelect={(value) => setFieldValue(name, value)}
@@ -248,6 +252,7 @@ export const SiteSettings = () => {
 			<TimePicker
 				allowClear={false}
 				className="w-100"
+				disabled={isDisabled}
 				format="h:mm A"
 				name={name}
 				value={values[name]}
@@ -273,6 +278,7 @@ export const SiteSettings = () => {
 			<Label id={name} label={label} spacing />
 			{[inputTypes.TEXT, inputTypes.NUMBER].includes(type) && (
 				<Input
+					disabled={isDisabled}
 					name={name}
 					type={type}
 					value={values[name]}
@@ -283,6 +289,7 @@ export const SiteSettings = () => {
 			)}
 			{type === inputTypes.TEXTAREA && (
 				<Input.TextArea
+					disabled={isDisabled}
 					name={name}
 					rows={3}
 					value={values[name]}
@@ -295,6 +302,7 @@ export const SiteSettings = () => {
 				<FormattedInputNumber
 					className="w-100"
 					controls={false}
+					disabled={isDisabled}
 					name={name}
 					value={values[name]}
 					onChange={(value) => {
@@ -356,6 +364,7 @@ export const SiteSettings = () => {
 									<Col md={12} span={24}>
 										<Label label="Markdown on Credit Transactions" spacing />
 										<Radio.Group
+											disabled={isDisabled}
 											options={[
 												{ label: 'Allowed', value: true },
 												{ label: 'Not Allowed', value: false },
@@ -378,6 +387,7 @@ export const SiteSettings = () => {
 									<Col md={12} span={24}>
 										<Label label="Discount on Credit Transactions" spacing />
 										<Radio.Group
+											disabled={isDisabled}
 											options={[
 												{ label: 'Allowed', value: true },
 												{ label: 'Not Allowed', value: false },
@@ -400,6 +410,7 @@ export const SiteSettings = () => {
 									<Col md={12} span={24}>
 										<Label label="Manual Input for Weighing" spacing />
 										<Radio.Group
+											disabled={isDisabled}
 											options={[
 												{ label: 'Allowed', value: true },
 												{ label: 'Not Allowed', value: false },
@@ -419,6 +430,7 @@ export const SiteSettings = () => {
 									<Col md={12} span={24}>
 										<Label label="Time Checker Feature" spacing />
 										<Radio.Group
+											disabled={isDisabled}
 											options={[
 												{ label: 'Enabled', value: true },
 												{ label: 'Disabled', value: false },
@@ -449,6 +461,7 @@ export const SiteSettings = () => {
 												return false;
 											}}
 											className="w-100 avatar-uploader"
+											disabled={isDisabled}
 											listType="picture-card"
 											maxCount={1}
 											showUploadList={false}
@@ -515,6 +528,7 @@ export const SiteSettings = () => {
 									<Col sm={12} xs={24}>
 										<Label label="VAT Type" spacing />
 										<Radio.Group
+											disabled={isDisabled}
 											options={[
 												{ label: 'VAT', value: taxTypes.VAT },
 												{ label: 'NVAT', value: taxTypes.NVAT },
