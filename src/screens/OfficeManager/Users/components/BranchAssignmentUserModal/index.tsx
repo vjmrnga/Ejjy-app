@@ -2,7 +2,7 @@ import { Button, Col, message, Modal, Select } from 'antd';
 import { RequestErrors } from 'components';
 import { FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { useBranchAssignmentCreate, useBranches } from 'hooks';
+import { useBranchAssignmentCreate } from 'hooks';
 import React, { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
 import { convertIntoArray, filterOption, getId } from 'utils';
@@ -10,10 +10,15 @@ import * as Yup from 'yup';
 
 interface Props {
 	user: any;
+	branches: any;
 	onClose: any;
 }
 
-export const BranchAssignmentUserModal = ({ user, onClose }: Props) => {
+export const BranchAssignmentUserModal = ({
+	user,
+	branches,
+	onClose,
+}: Props) => {
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
 	const {
@@ -45,6 +50,7 @@ export const BranchAssignmentUserModal = ({ user, onClose }: Props) => {
 			/>
 
 			<BranchAssignmentUserForm
+				branches={branches}
 				isLoading={isCreatingBranchAssignment}
 				user={user}
 				onClose={onClose}
@@ -56,6 +62,7 @@ export const BranchAssignmentUserModal = ({ user, onClose }: Props) => {
 
 interface FormProps {
 	user: any;
+	branches: any;
 	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
@@ -63,16 +70,11 @@ interface FormProps {
 
 export const BranchAssignmentUserForm = ({
 	user,
+	branches,
 	isLoading,
 	onSubmit,
 	onClose,
 }: FormProps) => {
-	// CUSTOM HOOKS
-	const {
-		data: { branches },
-		isFetching: isFetchingBranches,
-	} = useBranches();
-
 	// METHODS
 	const getFormDetails = useCallback(
 		() => ({
@@ -104,7 +106,6 @@ export const BranchAssignmentUserForm = ({
 							allowClear={false}
 							className="w-100"
 							filterOption={filterOption}
-							loading={isFetchingBranches}
 							optionFilterProp="children"
 							value={values['branchId']}
 							showSearch

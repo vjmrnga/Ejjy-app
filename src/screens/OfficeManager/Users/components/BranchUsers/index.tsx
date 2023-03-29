@@ -51,6 +51,7 @@ export const BranchUsers = ({
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
+		shouldFetchOfflineFirst: true,
 		params: {
 			branchId: branch.id,
 			pageSize: MAX_PAGE_SIZE,

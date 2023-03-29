@@ -2,10 +2,10 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { UsersService } from 'services';
+import { BranchAssignmentsService, UsersService } from 'services';
 import { getLocalApiUrl, isStandAlone } from 'utils';
 
-const useUsers = ({ params, options }: Query = {}) =>
+const useUsers = ({ params, options, shouldFetchOfflineFirst }: Query = {}) =>
 	useQuery<any>(
 		[
 			'useUsers',
@@ -17,8 +17,9 @@ const useUsers = ({ params, options }: Query = {}) =>
 			params?.pageSize,
 			params?.serverUrl,
 			params?.serviceType,
+			shouldFetchOfflineFirst,
 		],
-		() => {
+		async () => {
 			let service = isStandAlone()
 				? UsersService.list
 				: UsersService.listOffline;
@@ -27,6 +28,14 @@ const useUsers = ({ params, options }: Query = {}) =>
 				service = UsersService.listOffline;
 			} else if (serviceTypes.NORMAL === params?.serviceType) {
 				service = UsersService.list;
+			}
+
+			if (shouldFetchOfflineFirst) {
+				await BranchAssignmentsService.listOffline(getLocalApiUrl());
+				await UsersService.listOffline(
+					null,
+					params?.serverUrl || getLocalApiUrl(),
+				);
 			}
 
 			return wrapServiceWithCatch(

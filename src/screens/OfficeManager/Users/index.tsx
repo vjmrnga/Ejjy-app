@@ -145,6 +145,7 @@ export const Users = () => {
 
 					{reassignUserModalVisible && selectedUser && (
 						<BranchAssignmentUserModal
+							branches={branches}
 							user={selectedUser}
 							onClose={() => {
 								setReassignUserModalVisible(false);

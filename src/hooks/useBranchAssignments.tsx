@@ -1,9 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { BranchAssignmentsService } from 'services';
-import { getGoogleApiUrl, getLocalApiUrl } from 'utils';
+import { getGoogleApiUrl, getLocalApiUrl, isStandAlone } from 'utils';
 
 const useBranchAssignments = ({ params, shouldFetchOfflineFirst }: Query) =>
 	useQuery<any>(
@@ -14,17 +14,29 @@ const useBranchAssignments = ({ params, shouldFetchOfflineFirst }: Query) =>
 			params?.pageSize,
 			params?.timeRange,
 			params?.userId,
+			params?.serviceType,
 			shouldFetchOfflineFirst,
 		],
 		async () => {
+			let service = isStandAlone()
+				? BranchAssignmentsService.list
+				: BranchAssignmentsService.listOffline;
 			const baseURL = getLocalApiUrl();
+
+			if (serviceTypes.NORMAL === params?.serviceType) {
+				service = BranchAssignmentsService.list;
+			}
+
+			if (serviceTypes.OFFLINE === params?.serviceType) {
+				service = BranchAssignmentsService.listOffline;
+			}
 
 			if (shouldFetchOfflineFirst) {
 				await BranchAssignmentsService.listOffline(baseURL);
 			}
 
 			return wrapServiceWithCatch(
-				BranchAssignmentsService.list(
+				service(
 					{
 						branch_id: params?.branchId,
 						page: params?.page || DEFAULT_PAGE,
