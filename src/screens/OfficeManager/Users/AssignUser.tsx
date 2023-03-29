@@ -1,8 +1,4 @@
-import {
-	DeleteOutlined,
-	EditOutlined,
-	PlusCircleOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	Breadcrumb,
@@ -125,7 +121,7 @@ export const AssignUser = ({ match }: Props) => {
 						<Tooltip title="Assign">
 							<Button
 								disabled={isConnected === false}
-								icon={<PlusCircleOutlined />}
+								icon={<PlusOutlined />}
 								type="primary"
 								ghost
 								onClick={() => setSelectededDate(item.date)}

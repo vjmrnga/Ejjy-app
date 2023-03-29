@@ -1,4 +1,4 @@
-import { PlusCircleFilled } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
@@ -19,13 +19,11 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTime,
 	formatInPeso,
 	getFullName,
-	isCUDShown,
 } from 'utils';
 import { accountTabs } from '../../data';
 import { AccountTotalBalance } from './components/AccountTotalBalance';
@@ -48,7 +46,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const user = useUserStore((state) => state.user);
 	const {
 		data: { transactions, total },
 		isFetching: isFetchingTransactions,
@@ -91,7 +88,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 					<Tooltip title="Create Order of Payment">
 						<Button
 							disabled={disabled}
-							icon={<PlusCircleFilled />}
+							icon={<PlusOutlined />}
 							type="primary"
 							ghost
 							onClick={() => setSelectedCreditTransaction(transaction)}
@@ -120,7 +117,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			{ title: 'Authorizer', dataIndex: 'authorizer' },
 		];
 
-		if (payor && isCUDShown(user.user_type)) {
+		if (payor) {
 			columns.push({
 				title: 'Actions',
 				dataIndex: 'actions',
