@@ -6,8 +6,14 @@ import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { viewBranchTabs } from 'screens/Shared/Branches/data';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getUrlPrefix, isUserFromBranch } from 'utils';
+import {
+	convertIntoArray,
+	getUrlPrefix,
+	isUserFromBranch,
+	isUserFromOffice,
+} from 'utils';
 import { TabBirReport } from './components/TabBirReport';
 import { TabDailyInvoiceReport } from './components/TabDailyInvoiceReport';
 import { TabDailyProductSalesReport } from './components/TabDailyProductSalesReport';
@@ -59,16 +65,27 @@ export const ViewBranchMachine = ({ match }: Props) => {
 		}
 	}, [branchMachine, isBranchMachineFetched]);
 
-	const getBreadcrumbItems = useCallback(
-		() => [
+	const getBreadcrumbItems = useCallback(() => {
+		const breadcrumbItems = [
 			{
 				name: 'Branch Machines',
 				link: `${getUrlPrefix(user.user_type)}/branch-machines`,
 			},
 			{ name: branchMachine?.name },
-		],
-		[branchMachine, user],
-	);
+		];
+
+		if (isUserFromOffice(user.user_type)) {
+			breadcrumbItems.unshift({
+				name: 'Branches',
+				link: `${getUrlPrefix(user.user_type)}/branches`,
+			});
+			breadcrumbItems[1].link = `${getUrlPrefix(user.user_type)}/branches/${
+				branchMachine?.branch?.id
+			}?tab=${viewBranchTabs.MACHINES}`;
+		}
+
+		return breadcrumbItems;
+	}, [branchMachine, user]);
 
 	const handleTabClick = (selectedTab) => {
 		setQueryParams(

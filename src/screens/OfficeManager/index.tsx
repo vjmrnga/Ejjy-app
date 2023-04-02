@@ -21,6 +21,7 @@ import { ModifyProductGroup } from 'screens/Shared/ProductGroups/ModifyProductGr
 import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
+import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import shallow from 'zustand/shallow';
 import { BackOrders } from './BackOrders/BackOrders';
@@ -39,7 +40,6 @@ import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
 import { Users } from './Users';
-import { AssignUser } from './Users/AssignUser';
 
 const OfficeManager = () => {
 	useNotificationConnectivity();
@@ -241,7 +241,7 @@ const OfficeManager = () => {
 
 					<Route component={Users} path="/office-manager/users" exact />
 					<Route
-						component={AssignUser}
+						component={CashieringAssignment}
 						path="/office-manager/users/assign/:id"
 						exact
 					/>

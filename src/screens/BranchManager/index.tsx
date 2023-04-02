@@ -21,7 +21,6 @@ import { CreateRequisitionSlip } from 'screens/BranchManager/RequisitionSlips/Cr
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
 import { CreateStockOut } from 'screens/BranchManager/Stock/components/TabStockOut/CreateStockOut';
-import { AssignUser } from 'screens/BranchManager/Users/AssignUser';
 import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
 import { Cart } from 'screens/Shared/Cart';
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
@@ -31,6 +30,7 @@ import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { Products } from 'screens/Shared/Products';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
+import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import useInterval from 'use-interval';
 import { getLocalBranchId, getOnlineBranchId, isStandAlone } from 'utils';
@@ -347,7 +347,7 @@ const BranchManager = () => {
 
 					<Route component={Users} path="/branch-manager/users" exact />
 					<Route
-						component={AssignUser}
+						component={CashieringAssignment}
 						path="/branch-manager/users/assign/:id"
 						exact
 					/>

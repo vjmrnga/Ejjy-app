@@ -1,7 +1,6 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
-	AddButtonIcon,
 	Breadcrumb,
 	ConnectionAlert,
 	Content,
@@ -23,6 +22,7 @@ import {
 	confirmPassword,
 	convertIntoArray,
 	getFullName,
+	getUrlPrefix,
 	isUserFromBranch,
 } from 'utils';
 
@@ -37,7 +37,7 @@ interface Props {
 	match: any;
 }
 
-export const AssignUser = ({ match }: Props) => {
+export const CashieringAssignment = ({ match }: Props) => {
 	// VARIABLES
 	const userId = match?.params?.id;
 
@@ -53,7 +53,7 @@ export const AssignUser = ({ match }: Props) => {
 	const {
 		data: user,
 		isFetching: isFetchingUser,
-		isSuccess: isUserSuccess,
+		isSuccess: isSuccessUser,
 		error: userErrors,
 	} = useUserRetrieve({
 		id: userId,
@@ -78,7 +78,7 @@ export const AssignUser = ({ match }: Props) => {
 			userId,
 		},
 		options: {
-			enabled: isUserSuccess,
+			enabled: isSuccessUser,
 		},
 	});
 	const { mutateAsync: deleteCashieringAssignment, error: deleteError } =
@@ -119,11 +119,15 @@ export const AssignUser = ({ match }: Props) => {
 						/>
 					),
 					actions: !isDateAfter && (
-						<AddButtonIcon
-							disabled={isConnected === false}
-							tooltip="Assign"
-							onClick={() => setSelectededDate(item.date)}
-						/>
+						<Tooltip title="Assign">
+							<Button
+								disabled={isConnected === false}
+								icon={<PlusOutlined />}
+								type="primary"
+								ghost
+								onClick={() => setSelectededDate(item.date)}
+							/>
+						</Tooltip>
 					),
 				};
 			});
@@ -160,10 +164,10 @@ export const AssignUser = ({ match }: Props) => {
 
 	const getBreadcrumbItems = useCallback(
 		() => [
-			{ name: 'Users', link: '/branch-manager/users' },
+			{ name: 'Users', link: `${getUrlPrefix(actingUser?.user_type)}/users` },
 			{ name: getFullName(user) },
 		],
-		[user],
+		[user, actingUser],
 	);
 
 	return (
@@ -198,7 +202,7 @@ export const AssignUser = ({ match }: Props) => {
 							dataSource={dataSource}
 							loading={isFetchingUser || isFetchingCashieringAssignments}
 							pagination={false}
-							scroll={{ x: 1000 }}
+							scroll={{ x: 800 }}
 							bordered
 						/>
 
@@ -268,7 +272,7 @@ const Assignments = ({
 							danger
 							ghost
 							onClick={() =>
-								confirmPassword({ onSuccess: onDelete(assignment) })
+								confirmPassword({ onSuccess: () => onDelete(assignment) })
 							}
 						/>
 					</Tooltip>

@@ -4,6 +4,7 @@ import { Box } from 'components/elements';
 import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
+import { viewBranchTabs } from 'screens/Shared/Branches/data';
 import { useUserStore } from 'stores';
 import { getUrlPrefix } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
@@ -14,12 +15,6 @@ import './style.scss';
 interface Props {
 	match: any;
 }
-
-const tabs = {
-	PRODUCTS: 'Products',
-	MACHINES: 'Machines',
-	TRANSACTIONS: 'Transactions',
-};
 
 export const ViewBranch = ({ match }: Props) => {
 	// VARIABLES
@@ -67,27 +62,36 @@ export const ViewBranch = ({ match }: Props) => {
 				{branch && (
 					<Box className="ViewBranchMachine">
 						<Tabs
-							activeKey={_.toString(tab) || tabs.PRODUCTS}
+							activeKey={_.toString(tab) || viewBranchTabs.PRODUCTS}
 							className="pa-6"
 							type="card"
 							destroyInactiveTabPane
 							onTabClick={handleTabClick}
 						>
-							<Tabs.TabPane key={tabs.PRODUCTS} tab={tabs.PRODUCTS}>
+							<Tabs.TabPane
+								key={viewBranchTabs.PRODUCTS}
+								tab={viewBranchTabs.PRODUCTS}
+							>
 								<TabBranchProducts
 									branch={branch}
 									disabled={isConnected === false}
 								/>
 							</Tabs.TabPane>
 
-							<Tabs.TabPane key={tabs.MACHINES} tab={tabs.MACHINES}>
+							<Tabs.TabPane
+								key={viewBranchTabs.MACHINES}
+								tab={viewBranchTabs.MACHINES}
+							>
 								<TabBranchMachines
 									branch={branch}
 									disabled={isConnected === false}
 								/>
 							</Tabs.TabPane>
 
-							<Tabs.TabPane key={tabs.TRANSACTIONS} tab={tabs.TRANSACTIONS}>
+							<Tabs.TabPane
+								key={viewBranchTabs.TRANSACTIONS}
+								tab={viewBranchTabs.TRANSACTIONS}
+							>
 								<TabTransactions branch={branch} />
 							</Tabs.TabPane>
 						</Tabs>
