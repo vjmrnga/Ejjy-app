@@ -130,7 +130,7 @@ export const Users = () => {
 						))}
 					</Tabs>
 
-					{modifyUserModalVisible && selectedUser && (
+					{modifyUserModalVisible && (
 						<ModifyUserModal
 							user={selectedUser}
 							onClose={() => {
