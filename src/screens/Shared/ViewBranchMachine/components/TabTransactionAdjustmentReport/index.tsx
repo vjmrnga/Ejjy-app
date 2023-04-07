@@ -1,4 +1,3 @@
-import { FilePdfOutlined } from '@ant-design/icons';
 import { Button, Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
@@ -10,6 +9,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
+import { PdfButtons } from 'components/Printing';
 import { printAdjustmentReport } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
@@ -19,8 +19,7 @@ import {
 	timeRangeTypes,
 	transactionStatus,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
-import jsPDF from 'jspdf';
+import { usePdf, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -52,8 +51,6 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
@@ -71,6 +68,17 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 			...params,
 		},
 		options: refetchOptions,
+	});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: 'TransactionAdjustmentReport.pdf',
+		jsPdfSettings: {
+			orientation: 'l',
+			unit: 'px',
+			format: [1225, 840],
+			hotfixes: ['px_scaling'],
+			putOnlyUsedFonts: true,
+		},
+		print: () => printAdjustmentReport({ transactions, user }),
 	});
 
 	// METHODS
@@ -151,43 +159,16 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 		setDataSource(data);
 	}, [transactions]);
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'l',
-			unit: 'px',
-			format: [1225, 840],
-			hotfixes: ['px_scaling'],
-			putOnlyUsedFonts: true,
-		});
-		const dataHtml = printAdjustmentReport({ transactions, user });
-		setHtml(dataHtml);
-
-		pdf.html(dataHtml, {
-			margin: 10,
-			callback: (instance) => {
-				window.open(instance.output('bloburl').toString());
-				setIsCreatingPdf(false);
-				setHtml('');
-			},
-		});
-	};
-
 	return (
 		<>
 			<TableHeader
 				buttons={
-					<Button
-						disabled={dataSource.length === 0}
-						icon={<FilePdfOutlined />}
-						loading={isCreatingPdf}
-						type="primary"
-						onClick={handleCreatePdf}
-					>
-						Print Adjustment Report
-					</Button>
+					<PdfButtons
+						key="pdf"
+						downloadPdf={downloadPdf}
+						isDisabled={dataSource.length === 0 || isLoadingPdf}
+						previewPdf={previewPdf}
+					/>
 				}
 				title="Transaction Adjustment Report"
 				wrapperClassName="pt-2 px-0"
@@ -235,7 +216,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</>

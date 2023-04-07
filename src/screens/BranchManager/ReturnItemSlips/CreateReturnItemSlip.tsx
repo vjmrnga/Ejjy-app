@@ -30,6 +30,7 @@ import {
 	convertIntoArray,
 	convertToPieces,
 	getBranchProductStatus,
+	getLocalBranchId,
 	sleep,
 } from 'utils';
 import * as Yup from 'yup';
@@ -75,7 +76,7 @@ export const CreateReturnItemSlip = () => {
 	} = useReturnItemSlips();
 
 	// VARIABLES
-	const branchId = user?.branch?.id;
+	const branchId = getLocalBranchId();
 
 	// METHODS
 	useEffect(() => {

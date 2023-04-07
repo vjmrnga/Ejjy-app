@@ -1,7 +1,7 @@
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Table } from 'antd';
+import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
+import { PdfButtons } from 'components/Printing';
 import { printBirReport } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
@@ -12,8 +12,7 @@ import {
 	taxTypes,
 	timeRangeTypes,
 } from 'global';
-import { useBirReports, useQueryParams, useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
+import { useBirReports, usePdf, useQueryParams, useSiteSettings } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils';
 
@@ -23,8 +22,6 @@ interface Props {
 
 export const TabBirReport = ({ branchMachineId }: Props) => {
 	// STATES
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
@@ -46,6 +43,21 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			...params,
 		},
 		options: refetchOptions,
+	});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `BIR_Reports.pdf`,
+		print: () =>
+			printBirReport({
+				birReports,
+				siteSettings,
+			}),
+		jsPdfSettings: {
+			orientation: 'l',
+			unit: 'px',
+			format: [1800, 840],
+			hotfixes: ['px_scaling'],
+			putOnlyUsedFonts: true,
+		},
 	});
 
 	// METHODS
@@ -154,50 +166,17 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 		[siteSettings],
 	);
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			orientation: 'l',
-			unit: 'px',
-			format: [1800, 840],
-			hotfixes: ['px_scaling'],
-			putOnlyUsedFonts: true,
-		});
-
-		const dataHtml = printBirReport({
-			birReports,
-			siteSettings,
-		});
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				filename: `BirReport_`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsCreatingPdf(false);
-					setHtml('');
-				},
-			});
-		}, 500);
-	};
-
 	return (
 		<>
 			<TableHeader
 				buttons={
-					<Button
-						disabled={dataSource.length === 0}
-						icon={<FilePdfOutlined />}
-						loading={isCreatingPdf}
-						type="primary"
-						onClick={handleCreatePdf}
-					>
-						Print BIR Report
-					</Button>
+					<PdfButtons
+						key="pdf"
+						downloadPdf={downloadPdf}
+						isDisabled={isLoadingPdf}
+						isLoading={isLoadingPdf || dataSource.length === 0}
+						previewPdf={previewPdf}
+					/>
 				}
 				title="BIR Report"
 				wrapperClassName="pt-2 px-0"
@@ -207,7 +186,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				isLoading={
 					(isFetchingBirReports && !isBirReportsFetched) ||
 					isFetchingSiteSettings ||
-					isCreatingPdf
+					isLoadingPdf
 				}
 			/>
 
@@ -224,7 +203,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				loading={
 					(isFetchingBirReports && !isBirReportsFetched) ||
 					isFetchingSiteSettings ||
-					isCreatingPdf
+					isLoadingPdf
 				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
@@ -250,7 +229,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</>

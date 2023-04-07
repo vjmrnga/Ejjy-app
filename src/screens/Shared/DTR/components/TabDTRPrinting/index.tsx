@@ -1,23 +1,22 @@
-import { FilePdfOutlined } from '@ant-design/icons';
 import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
+import { PdfButtons } from 'components/Printing';
 import { printDtr } from 'configurePrinter';
 import dayjs from 'dayjs';
 import {
 	accountTypes,
 	EMPTY_CELL,
-	JSPDF_SETTINGS,
 	MAX_PAGE_SIZE,
 	timeRangeTypes,
 } from 'global';
 import {
 	useAccounts,
 	useAttendanceLogsForPrinting,
+	usePdf,
 	useQueryParams,
 } from 'hooks';
-import jsPDF from 'jspdf';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -78,8 +77,6 @@ const columns: ColumnsType = [
 export const TabDTRPrinting = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
 	const [timeRangeError, setTimeRangeError] = useState('');
 
 	// CUSTOM HOOKS
@@ -92,6 +89,24 @@ export const TabDTRPrinting = () => {
 		params,
 		options: {
 			enabled: !timeRangeError && !!params?.employeeId && !!params?.timeRange,
+		},
+	});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: 'TransactionAdjustmentReport.pdf',
+		jsPdfSettings: { format: [400, 850] },
+		print: () => {
+			let month;
+			const timeRange = _.toString(params?.timeRange).split(',');
+			const dateStart = dayjs(timeRange[0]);
+			const dateEnd = dayjs(timeRange[1]);
+
+			if (dateStart.month() === dateEnd.month()) {
+				month = dateStart.format('MMMM');
+			} else {
+				month = `${dateStart.format('MMMM')} - ${dateEnd.format('MMMM')}`;
+			}
+
+			return printDtr({ dtr, month });
 		},
 	});
 
@@ -138,49 +153,20 @@ export const TabDTRPrinting = () => {
 		}
 	}, [params, dataSource]);
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		let month;
-		const timeRange = _.toString(params?.timeRange).split(',');
-		const dateStart = dayjs(timeRange[0]);
-		const dateEnd = dayjs(timeRange[1]);
-
-		if (dateStart.month() === dateEnd.month()) {
-			month = dateStart.format('MMMM');
-		} else {
-			month = `${dateStart.format('MMMM')} - ${dateEnd.format('MMMM')}`;
-		}
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			...JSPDF_SETTINGS,
-			format: [400, 850],
-		});
-		const dataHtml = printDtr({ dtr, month });
-
-		setHtml(dataHtml);
-
-		pdf.html(dataHtml, {
-			margin: 10,
-			callback: (instance) => {
-				window.open(instance.output('bloburl').toString());
-				setIsCreatingPdf(false);
-				setHtml('');
-			},
-		});
-	};
-
 	return (
 		<>
 			<TableHeader
-				buttonName="Print DTR"
+				buttons={
+					<PdfButtons
+						key="pdf"
+						downloadPdf={downloadPdf}
+						isDisabled={dataSource.length === 0 || isLoadingPdf}
+						isLoading={isLoadingPdf}
+						previewPdf={previewPdf}
+					/>
+				}
 				title="DTR Printing"
 				wrapperClassName="pt-2 px-0"
-				onCreate={handleCreatePdf}
-				onCreateDisabled={dataSource.length === 0}
-				onCreateIcon={<FilePdfOutlined />}
-				onCreateLoading={isCreatingPdf}
 			/>
 
 			<RequestErrors
@@ -204,7 +190,7 @@ export const TabDTRPrinting = () => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</>

@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Button, Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
@@ -8,11 +8,10 @@ import {
 	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
-import { ButtonLink, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
 	pageSizeOptions,
 	transactionStatus,
 } from 'global';
@@ -23,10 +22,9 @@ import { convertIntoArray, filterOption, formatInPeso, getId } from 'utils';
 import { TransactionsCancelled } from './components/TransactionsCancelled';
 
 const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id', key: 'id' },
-	{ title: 'Invoice', dataIndex: 'invoice', key: 'invoice' },
-	{ title: 'Amount', dataIndex: 'amount', key: 'amount' },
-	{ title: 'Status', dataIndex: 'status', key: 'status' },
+	{ title: 'Invoice', dataIndex: 'invoice' },
+	{ title: 'Amount', dataIndex: 'amount' },
+	{ title: 'Status', dataIndex: 'status' },
 ];
 
 const transactionStatusOptions = [
@@ -76,30 +74,32 @@ export const TabTransactions = ({ branch }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchTransactions = transactions.map(
-			(branchTransaction) => {
-				const {
-					id,
-					invoice,
-					total_amount,
-					status: branchTransactionStatus,
-				} = branchTransaction;
+		const data = transactions.map((branchTransaction) => {
+			const {
+				id,
+				invoice,
+				total_amount,
+				status: branchTransactionStatus,
+			} = branchTransaction;
 
-				return {
-					id: (
-						<ButtonLink
-							text={id}
-							onClick={() => setSelectedTransaction(branchTransaction)}
-						/>
-					),
-					invoice: invoice?.or_number || EMPTY_CELL,
-					amount: formatInPeso(total_amount),
-					status: <TransactionStatus status={branchTransactionStatus} />,
-				};
-			},
-		);
+			return {
+				key: id,
 
-		setDataSource(formattedBranchTransactions);
+				invoice: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => setSelectedTransaction(branchTransaction)}
+					>
+						{invoice?.or_number}
+					</Button>
+				),
+				amount: formatInPeso(total_amount),
+				status: <TransactionStatus status={branchTransactionStatus} />,
+			};
+		});
+
+		setDataSource(data);
 	}, [transactions]);
 
 	return (

@@ -1,16 +1,11 @@
-import {
-	FilePdfOutlined,
-	FileTextOutlined,
-	PrinterOutlined,
-} from '@ant-design/icons';
+import { FileTextOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Space, Typography } from 'antd';
-import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
+import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printZReadReport } from 'configurePrinter';
 import { createZReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, JSPDF_SETTINGS, taxTypes } from 'global';
-import { useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
+import { EMPTY_CELL, taxTypes } from 'global';
+import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { formatDate, formatInPeso } from 'utils';
 
@@ -23,39 +18,18 @@ interface Props {
 
 export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 	// STATES
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
 	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
-	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
 	const { data: siteSettings } = useSiteSettings();
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `ZReadReport_${report.id}.pdf`,
+		print: () => printZReadReport({ report, siteSettings, isPdf: true }),
+	});
 
 	// METHODS
 	const handlePrint = () => {
 		printZReadReport({ report, siteSettings });
-	};
-
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		const dataHtml = printZReadReport({ report, siteSettings, isPdf: true });
-
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				filename: `ZReadReport_${report.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsCreatingPdf(false);
-					setHtml('');
-				},
-			});
-		}, 2000);
 	};
 
 	const handleCreateTxt = () => {
@@ -69,27 +43,24 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			className="Modal__hasFooter"
 			footer={[
 				<Button
-					key="print"
-					disabled={isCreatingPdf || isCreatingTxt}
+					key="receipt"
+					disabled={isLoadingPdf || isCreatingTxt}
 					icon={<PrinterOutlined />}
 					type="primary"
 					onClick={handlePrint}
 				>
 					Print
 				</Button>,
-				<Button
+				<PdfButtons
 					key="pdf"
-					disabled={isCreatingPdf || isCreatingTxt}
-					icon={<FilePdfOutlined />}
-					loading={isCreatingPdf}
-					type="primary"
-					onClick={handleCreatePdf}
-				>
-					Create PDF
-				</Button>,
+					downloadPdf={downloadPdf}
+					isDisabled={isLoadingPdf || isCreatingTxt}
+					isLoading={isLoadingPdf}
+					previewPdf={previewPdf}
+				/>,
 				<Button
 					key="txt"
-					disabled={isCreatingPdf || isCreatingTxt}
+					disabled={isLoadingPdf || isCreatingTxt}
 					icon={<FileTextOutlined />}
 					loading={isCreatingTxt}
 					type="primary"
@@ -306,7 +277,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</Modal>

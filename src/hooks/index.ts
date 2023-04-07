@@ -39,6 +39,8 @@ export { default as useLogs } from './useLogs';
 export { default as useNetwork } from './useNetwork';
 export * from './useOrderOfPayments';
 export { default as useOrderOfPayments } from './useOrderOfPayments';
+export * from './usePdf';
+export { default as usePdf } from './usePdf';
 export { default as usePingOnlineServer } from './usePingOnlineServer';
 export * from './usePointSystemTags';
 export { default as usePointSystemTags } from './usePointSystemTags';

@@ -539,7 +539,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 
-	reportTextFile.export(`xread_${report.id}.txt`);
+	reportTextFile.export(`XReadReport_${report.id}.txt`);
 
 	return <h1>Dummy</h1>;
 };
@@ -865,7 +865,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 
-	reportTextFile.export(`zread_${report.id}.txt`);
+	reportTextFile.export(`ZReadReport_${report.id}.txt`);
 
 	return <h1>Dummy</h1>;
 };

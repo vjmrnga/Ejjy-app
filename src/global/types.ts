@@ -278,3 +278,8 @@ export const closingTypes = {
 	AUTOMATIC: 'automatic',
 	MANUAL: 'manual',
 };
+
+export const pdfButtonsKey = {
+	DOWNLOAD: 'download',
+	PREVIEW: 'preview',
+};

@@ -1,18 +1,16 @@
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Button, Table, Tooltip } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, ViewBackOrderModal } from 'components';
+import { PdfButtons } from 'components/Printing';
 import { printStockOutForm } from 'configurePrinter';
 import {
 	backOrderTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
-	JSPDF_SETTINGS,
 	pageSizeOptions,
 } from 'global';
-import { useBackOrders, useQueryParams, useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
+import { useBackOrders, usePdf, useQueryParams, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime } from 'utils';
 
@@ -22,14 +20,15 @@ const columns: ColumnsType = [
 	{ title: 'Remarks', dataIndex: 'remarks' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
-
+/**
+ TODO: Refactor this tab component to follow Stock In.
+ - remove actions column
+ - place pdf buttons inside preview modal
+ */
 export const TabStockOut = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBackOrder, setSelectedBackOrder] = useState(null);
-	const [html, setHtml] = useState('');
-	// NOTE: Will store the ID of the collection of receipt that is about to be printed.
-	const [isPrinting, setIsPrinting] = useState(null);
 
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
@@ -47,6 +46,9 @@ export const TabStockOut = () => {
 			type: backOrderTypes.FOR_RETURN,
 			...queryParams,
 		},
+	});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		print: (data) => printStockOutForm({ siteSettings, ...data }),
 	});
 
 	// METHODS
@@ -67,46 +69,28 @@ export const TabStockOut = () => {
 				: EMPTY_CELL,
 			remarks: backOrder.overall_remarks,
 			actions: (
-				<Tooltip title="Generate PDF">
-					<Button
-						icon={<FilePdfOutlined />}
-						loading={isPrinting === backOrder.id}
-						type="primary"
-						ghost
-						onClick={() => {
-							handlePrintPDF(backOrder);
-						}}
-					/>
-				</Tooltip>
+				<PdfButtons
+					key="pdf"
+					downloadPdf={() =>
+						downloadPdf({
+							title: `StockOut_${backOrder.id}.pdf`,
+							printData: { backOrder },
+						})
+					}
+					isDisabled={isLoadingPdf}
+					isLoading={isLoadingPdf}
+					previewPdf={() =>
+						previewPdf({
+							title: `StockOut_${backOrder.id}.pdf`,
+							printData: { backOrder },
+						})
+					}
+				/>
 			),
 		}));
 
 		setDataSource(data);
-	}, [backOrders, siteSettings, isPrinting]);
-
-	const handlePrintPDF = (backOrder) => {
-		setIsPrinting(backOrder.id);
-
-		const dataHtml = printStockOutForm({
-			backOrder,
-			siteSettings,
-		});
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsPrinting(null);
-					setHtml('');
-				},
-			});
-		}, 500);
-	};
+	}, [backOrders, siteSettings]);
 
 	return (
 		<>
@@ -121,7 +105,7 @@ export const TabStockOut = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingBackOrders || isFetchingSiteSettings}
+				loading={isFetchingBackOrders || isFetchingSiteSettings || isLoadingPdf}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,
 					total,
@@ -148,7 +132,7 @@ export const TabStockOut = () => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</>

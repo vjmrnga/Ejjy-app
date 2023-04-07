@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Button, Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
@@ -7,11 +7,10 @@ import {
 	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
-import { BadgePill, ButtonLink, Label } from 'components/elements';
+import { BadgePill, Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
 	pageSizeOptions,
 	paymentTypes,
 	refetchOptions,
@@ -26,7 +25,6 @@ import { convertIntoArray, filterOption, formatInPeso } from 'utils';
 import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [
-	{ title: 'ID', dataIndex: 'id' },
 	{ title: 'Invoice', dataIndex: 'invoice' },
 	{ title: 'Amount', dataIndex: 'amount' },
 	{ title: 'Status', dataIndex: 'status' },
@@ -92,13 +90,16 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 			return {
 				key: id,
-				id: (
-					<ButtonLink
-						text={id}
+
+				invoice: (
+					<Button
+						className="pa-0"
+						type="link"
 						onClick={() => setSelectedTransaction(transaction)}
-					/>
+					>
+						{invoice?.or_number}
+					</Button>
 				),
-				invoice: invoice?.or_number || EMPTY_CELL,
 				amount: formatInPeso(total_amount),
 				status:
 					payment.mode === paymentTypes.CREDIT ? (

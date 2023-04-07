@@ -1,17 +1,20 @@
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Button, Table, Tooltip } from 'antd';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
+import { PdfButtons } from 'components/Printing';
 import { printCollectionReceipt } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	JSPDF_SETTINGS,
 	pageSizeOptions,
 	refetchOptions,
 } from 'global';
-import { useCollectionReceipts, useQueryParams, useSiteSettings } from 'hooks';
-import { jsPDF } from 'jspdf';
+import {
+	useCollectionReceipts,
+	usePdf,
+	useQueryParams,
+	useSiteSettings,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso, getFullName } from 'utils';
 
@@ -27,9 +30,6 @@ export const TabCollectionReceipts = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
-	// NOTE: Will store the ID of the collection of receipt that is about to be printed.
-	const [isPrinting, setIsPrinting] = useState(null);
-
 	// CUSTOM HOOKS
 	const { params: queryParams, setQueryParams } = useQueryParams();
 	const {
@@ -43,6 +43,10 @@ export const TabCollectionReceipts = () => {
 		isFetched: isCollectionReceiptsFetched,
 		error: collectionReceiptsError,
 	} = useCollectionReceipts({ options: refetchOptions });
+	const { isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		jsPdfSettings: { format: 'legal' },
+		print: (data) => printCollectionReceipt({ siteSettings, ...data }),
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -57,42 +61,28 @@ export const TabCollectionReceipts = () => {
 				payor: getFullName(payor),
 				amount: formatInPeso(amount),
 				actions: (
-					<Tooltip title="Create PDF">
-						<Button
-							icon={<FilePdfOutlined />}
-							loading={isPrinting === id}
-							type="primary"
-							ghost
-							onClick={() => handleCreatePDF(collectionReceipt)}
-						/>
-					</Tooltip>
+					<PdfButtons
+						key="pdf"
+						downloadPdf={() =>
+							downloadPdf({
+								title: `CR_${collectionReceipt.id}.pdf`,
+								printData: { collectionReceipt },
+							})
+						}
+						isDisabled={isLoadingPdf}
+						previewPdf={() =>
+							previewPdf({
+								title: `CR_${collectionReceipt.id}.pdf`,
+								printData: { collectionReceipt },
+							})
+						}
+					/>
 				),
 			};
 		});
 
 		setDataSource(data);
-	}, [collectionReceipts, isPrinting]);
-
-	const handleCreatePDF = (collectionReceipt) => {
-		setIsPrinting(collectionReceipt.id);
-
-		const html = printCollectionReceipt({ collectionReceipt, siteSettings });
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			...JSPDF_SETTINGS,
-			format: 'legal',
-		});
-
-		setTimeout(() => {
-			pdf.html(html, {
-				filename: `CR_${collectionReceipt.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsPrinting(null);
-				},
-			});
-		}, 500);
-	};
+	}, [collectionReceipts]);
 
 	return (
 		<>
@@ -111,7 +101,8 @@ export const TabCollectionReceipts = () => {
 				dataSource={dataSource}
 				loading={
 					(isFetchingCollectionReceipts && !isCollectionReceiptsFetched) ||
-					isFetchingSiteSettings
+					isFetchingSiteSettings ||
+					isLoadingPdf
 				}
 				pagination={{
 					current: Number(queryParams.page) || DEFAULT_PAGE,

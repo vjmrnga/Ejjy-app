@@ -1,9 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import {
-	FilePdfOutlined,
-	FileTextOutlined,
-	PrinterOutlined,
-} from '@ant-design/icons';
+import { FileTextOutlined, PrinterOutlined } from '@ant-design/icons';
 import {
 	Button,
 	Descriptions,
@@ -15,18 +11,11 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 
-import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
+import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';
-import {
-	EMPTY_CELL,
-	JSPDF_SETTINGS,
-	saleTypes,
-	taxTypes,
-	vatTypes,
-} from 'global';
-import { useSiteSettings, useTransactionRetrieve } from 'hooks';
-import jsPDF from 'jspdf';
+import { EMPTY_CELL, saleTypes, taxTypes, vatTypes } from 'global';
+import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -56,9 +45,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	const [transactionData, setTransactionData] = useState(null);
 
 	const [fields, setFields] = useState([]);
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
 	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
-	const [html, setHtml] = useState('');
 	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
@@ -71,6 +58,16 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 				enabled: _.isNumber(transaction),
 			},
 		});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `SalesInvoice_${transactionData?.id}`,
+		print: () =>
+			printSalesInvoice({
+				transaction: transactionData,
+				siteSettings,
+				isPdf: true,
+				isReprint: true,
+			}),
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -157,34 +154,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		setFields(newFields);
 	}, [transactionRetrieved, transaction]);
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		const dataHtml = printSalesInvoice({
-			transaction: transactionData,
-			siteSettings,
-			isPdf: true,
-			isReprint: true,
-		});
-
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				filename: `SalesInvoice_${transactionData.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsCreatingPdf(false);
-					setHtml('');
-				},
-			});
-		}, 2000);
-	};
-
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
 		createSalesInvoiceTxt({
@@ -209,31 +178,26 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 			footer={[
 				<Button
 					key="print"
-					disabled={isCreatingPdf || isCreatingTxt}
+					disabled={isLoadingPdf || isCreatingTxt}
 					icon={<PrinterOutlined />}
-					size="large"
 					type="primary"
 					onClick={handlePrint}
 				>
 					Print
 				</Button>,
-				<Button
+				<PdfButtons
 					key="pdf"
-					disabled={isCreatingPdf || isCreatingTxt}
-					icon={<FilePdfOutlined />}
-					loading={isCreatingPdf}
-					size="large"
-					type="primary"
-					onClick={handleCreatePdf}
-				>
-					Create PDF
-				</Button>,
+					downloadPdf={downloadPdf}
+					isDisabled={isLoadingPdf || isCreatingTxt}
+					isLoading={isLoadingPdf}
+					previewPdf={previewPdf}
+				/>,
+
 				<Button
 					key="txt"
-					disabled={isCreatingPdf || isCreatingTxt}
+					disabled={isLoadingPdf || isCreatingTxt}
 					icon={<FileTextOutlined />}
 					loading={isCreatingTxt}
-					size="large"
 					type="primary"
 					onClick={handleCreateTxt}
 				>
@@ -438,7 +402,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</Modal>

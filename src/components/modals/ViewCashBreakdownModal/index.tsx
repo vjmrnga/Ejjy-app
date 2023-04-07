@@ -1,12 +1,12 @@
 /* eslint-disable no-prototype-builtins */
-import { FilePdfOutlined, PrinterOutlined } from '@ant-design/icons';
+import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { PdfButtons } from 'components/Printing';
 import { printCashBreakdown, printCashOut } from 'configurePrinter';
-import { cashBreakdownCategories, JSPDF_SETTINGS } from 'global';
-import { useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
-import React, { useState } from 'react';
+import { cashBreakdownCategories } from 'global';
+import { usePdf, useSiteSettings } from 'hooks';
+import React from 'react';
 import {
 	calculateCashBreakdownTotal,
 	formatDateTime,
@@ -47,12 +47,30 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 		cashBreakdown.type,
 	);
 
-	// STATES
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
-
 	// CUSTOM HOOKS
 	const { data: siteSettings } = useSiteSettings();
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `${
+			cashBreakdown.category === cashBreakdownCategories.CASH_OUT
+				? 'CashOut'
+				: 'CashBreakdown'
+		}_${cashBreakdown.id}.pdf`,
+		print: () => {
+			if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
+				return printCashOut({
+					cashOut: cashBreakdown,
+					siteSettings,
+					isPdf: true,
+				});
+			}
+
+			return printCashBreakdown({
+				cashBreakdown,
+				siteSettings,
+				isPdf: true,
+			});
+		},
+	});
 
 	// METHODS
 	const handlePrint = () => {
@@ -63,69 +81,26 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 		}
 	};
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		let dataHtml;
-		if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
-			dataHtml = printCashOut({
-				cashOut: cashBreakdown,
-				siteSettings,
-				isPdf: true,
-			});
-		} else {
-			dataHtml = printCashBreakdown({
-				cashBreakdown,
-				siteSettings,
-				isPdf: true,
-			});
-		}
-
-		setHtml(dataHtml);
-
-		const fileName =
-			cashBreakdown.category === cashBreakdownCategories.CASH_OUT
-				? 'CashOut'
-				: 'CashBreakdown';
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				filename: `${fileName}_${cashBreakdown.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsCreatingPdf(false);
-					setHtml('');
-				},
-			});
-		}, 2000);
-	};
-
 	return (
 		<Modal
 			className="Modal__hasFooter"
 			footer={[
 				<Button
 					key="print"
-					disabled={isCreatingPdf}
+					disabled={isLoadingPdf}
 					icon={<PrinterOutlined />}
 					type="primary"
 					onClick={handlePrint}
 				>
 					Print
 				</Button>,
-				<Button
+				<PdfButtons
 					key="pdf"
-					disabled={isCreatingPdf}
-					icon={<FilePdfOutlined />}
-					loading={isCreatingPdf}
-					type="primary"
-					onClick={handleCreatePdf}
-				>
-					Create PDF
-				</Button>,
+					downloadPdf={downloadPdf}
+					isDisabled={isLoadingPdf}
+					isLoading={isLoadingPdf}
+					previewPdf={previewPdf}
+				/>,
 			]}
 			title={`[View] ${type}`}
 			centered
@@ -141,7 +116,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</Modal>
@@ -211,6 +186,7 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 			columns={columns}
 			dataSource={[
 				{
+					key: 'divider_coins',
 					denom: (
 						<Typography.Title className="ma-0" level={5}>
 							COINS
@@ -243,6 +219,7 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 					amount: formatInPeso(20 * cashBreakdown.coins_20),
 				},
 				{
+					key: 'divider_bills',
 					denom: (
 						<Typography.Title className="ma-0" level={5}>
 							BILLS
@@ -250,6 +227,7 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 					),
 				},
 				{
+					key: '₱20.00_bill',
 					denom: '₱20.00',
 					quantity: cashBreakdown.bills_20,
 					amount: formatInPeso(20 * cashBreakdown.bills_20),
@@ -281,7 +259,7 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 				},
 			]}
 			pagination={false}
-			rowKey="denom"
+			rowKey={(record: any) => record?.key || record.denom}
 			summary={() => {
 				const total = calculateCashBreakdownTotal(cashBreakdown);
 

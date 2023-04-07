@@ -1,5 +1,4 @@
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Select, Spin, Table, Tooltip } from 'antd';
+import { Button, Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
@@ -8,19 +7,18 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
+import { PdfButtons } from 'components/Printing';
 import { printOrderOfPayment } from 'configurePrinter';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
-	JSPDF_SETTINGS,
 	orderOfPaymentPurposes,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 	timeRangeTypes,
 } from 'global';
-import { useAccounts, useOrderOfPayments, useQueryParams } from 'hooks';
-import { jsPDF } from 'jspdf';
+import { useAccounts, useOrderOfPayments, usePdf, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -46,9 +44,6 @@ export const TabOrderOfPayments = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
-	// NOTE: Will store the ID of the order of payment that is about to be printed.
-	const [isPrinting, setIsPrinting] = useState(null);
-
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
@@ -60,6 +55,10 @@ export const TabOrderOfPayments = () => {
 			...params,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 		},
+	});
+	const { isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		jsPdfSettings: { format: 'legal' },
+		print: (data) => printOrderOfPayment(data),
 	});
 
 	// METHODS
@@ -111,42 +110,28 @@ export const TabOrderOfPayments = () => {
 					EMPTY_CELL
 				),
 				actions: (
-					<Tooltip title="Create PDF">
-						<Button
-							icon={<FilePdfOutlined />}
-							loading={isPrinting === id}
-							type="primary"
-							ghost
-							onClick={() => handleCreatePDF(orderOfPayment)}
-						/>
-					</Tooltip>
+					<PdfButtons
+						key="pdf"
+						downloadPdf={() =>
+							downloadPdf({
+								title: `OP_${orderOfPayment.id}.pdf`,
+								printData: orderOfPayment,
+							})
+						}
+						isDisabled={isLoadingPdf}
+						previewPdf={() =>
+							previewPdf({
+								title: `OP_${orderOfPayment.id}.pdf`,
+								printData: orderOfPayment,
+							})
+						}
+					/>
 				),
 			};
 		});
 
 		setDataSource(formattedOrderOfPayments);
-	}, [orderOfPayments, isPrinting]);
-
-	const handleCreatePDF = (orderOfPayment) => {
-		setIsPrinting(orderOfPayment.id);
-
-		const html = printOrderOfPayment(orderOfPayment);
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF({
-			...JSPDF_SETTINGS,
-			format: 'legal',
-		});
-
-		setTimeout(() => {
-			pdf.html(html, {
-				filename: `OP_${orderOfPayment.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsPrinting(null);
-				},
-			});
-		}, 500);
-	};
+	}, [orderOfPayments]);
 
 	return (
 		<div>
@@ -162,7 +147,7 @@ export const TabOrderOfPayments = () => {
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingOrderOfPayments}
+				loading={isFetchingOrderOfPayments || isLoadingPdf}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
 					total,

@@ -1,11 +1,10 @@
-import { FilePdfOutlined, PrinterOutlined } from '@ant-design/icons';
+import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Modal, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ReceiptFooter, ReceiptHeader } from 'components/Receipt';
+import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printReceivingVoucherForm } from 'configurePrinter';
-import { JSPDF_SETTINGS, vatTypes, VIEW_PRINTING_MODAL_WIDTH } from 'global';
-import { useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
+import { vatTypes, VIEW_PRINTING_MODAL_WIDTH } from 'global';
+import { usePdf, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
 
@@ -26,13 +25,19 @@ export const ViewReceivingVoucherModal = ({
 	onClose,
 }: Props) => {
 	// STATES
-
 	const [dataSource, setDataSource] = useState([]);
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
 
 	// CUSTOM HOOKS
 	const { data: siteSettings } = useSiteSettings();
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `ReceivingVoucher_${receivingVoucher.id}.pdf`,
+		print: () =>
+			printReceivingVoucherForm({
+				receivingVoucher,
+				siteSettings,
+				isPdf: true,
+			}),
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -59,53 +64,26 @@ export const ViewReceivingVoucherModal = ({
 		printReceivingVoucherForm({ receivingVoucher, siteSettings });
 	};
 
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		const dataHtml = printReceivingVoucherForm({
-			receivingVoucher,
-			siteSettings,
-			isPdf: true,
-		});
-
-		setHtml(dataHtml);
-
-		pdf.html(dataHtml, {
-			margin: 10,
-			callback: (instance) => {
-				window.open(instance.output('bloburl').toString());
-				setIsCreatingPdf(false);
-				setHtml('');
-			},
-		});
-	};
-
 	return (
 		<Modal
 			className="Modal__hasFooter"
 			footer={[
 				<Button
 					key="print"
-					disabled={isCreatingPdf}
+					disabled={isLoadingPdf}
 					icon={<PrinterOutlined />}
 					type="primary"
 					onClick={handlePrint}
 				>
 					Print
 				</Button>,
-				<Button
+				<PdfButtons
 					key="pdf"
-					disabled={isCreatingPdf}
-					icon={<FilePdfOutlined />}
-					loading={isCreatingPdf}
-					type="primary"
-					onClick={handleCreatePdf}
-				>
-					Create PDF
-				</Button>,
+					downloadPdf={downloadPdf}
+					isDisabled={isLoadingPdf}
+					isLoading={isLoadingPdf}
+					previewPdf={previewPdf}
+				/>,
 			]}
 			title="[View] Receiving Voucher"
 			width={VIEW_PRINTING_MODAL_WIDTH}
@@ -154,7 +132,7 @@ export const ViewReceivingVoucherModal = ({
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</Modal>

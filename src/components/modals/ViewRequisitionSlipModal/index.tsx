@@ -1,12 +1,10 @@
-import { FilePdfOutlined, PrinterOutlined } from '@ant-design/icons';
+import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Col, Descriptions, Modal, Row } from 'antd';
-import { ReceiptHeader } from 'components/Receipt';
+import { PdfButtons, ReceiptHeader } from 'components/Printing';
 import { printRequisitionSlip } from 'configurePrinter';
 import dayjs from 'dayjs';
-import { JSPDF_SETTINGS } from 'global';
-import { useSiteSettings } from 'hooks';
-import jsPDF from 'jspdf';
-import React, { useState } from 'react';
+import { usePdf, useSiteSettings } from 'hooks';
+import React from 'react';
 import { useUserStore } from 'stores';
 import {
 	formatDateTime,
@@ -24,45 +22,23 @@ export const ViewRequisitionSlipModal = ({
 	requisitionSlip,
 	onClose,
 }: Props) => {
-	// STATES
-	const [isCreatingPdf, setIsCreatingPdf] = useState(false);
-	const [html, setHtml] = useState('');
-
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettings();
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		title: `RequisitionSlip_${requisitionSlip.id}.pdf`,
+		print: () =>
+			printRequisitionSlip({
+				requisitionSlip,
+				siteSettings,
+				user,
+				isPdf: true,
+			}),
+	});
 
 	// METHODS
 	const handlePrint = () => {
 		printRequisitionSlip({ requisitionSlip, siteSettings, user });
-	};
-
-	const handleCreatePdf = () => {
-		setIsCreatingPdf(true);
-
-		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF(JSPDF_SETTINGS);
-
-		const dataHtml = printRequisitionSlip({
-			requisitionSlip,
-			siteSettings,
-			user,
-			isPdf: true,
-		});
-
-		setHtml(dataHtml);
-
-		setTimeout(() => {
-			pdf.html(dataHtml, {
-				margin: 10,
-				filename: `RequisitionSlip_${requisitionSlip.id}`,
-				callback: (instance) => {
-					window.open(instance.output('bloburl').toString());
-					setIsCreatingPdf(false);
-					setHtml('');
-				},
-			});
-		}, 2000);
 	};
 
 	return (
@@ -71,23 +47,20 @@ export const ViewRequisitionSlipModal = ({
 			footer={[
 				<Button
 					key="print"
-					disabled={isCreatingPdf}
+					disabled={isLoadingPdf}
 					icon={<PrinterOutlined />}
 					type="primary"
 					onClick={handlePrint}
 				>
 					Print
 				</Button>,
-				<Button
+				<PdfButtons
 					key="pdf"
-					disabled={isCreatingPdf}
-					icon={<FilePdfOutlined />}
-					loading={isCreatingPdf}
-					type="primary"
-					onClick={handleCreatePdf}
-				>
-					Create PDF
-				</Button>,
+					downloadPdf={downloadPdf}
+					isDisabled={isLoadingPdf}
+					isLoading={isLoadingPdf}
+					previewPdf={previewPdf}
+				/>,
 			]}
 			title="Requisition Slip"
 			width={425}
@@ -158,7 +131,7 @@ export const ViewRequisitionSlipModal = ({
 
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={{ __html: html }}
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
 				style={{ display: 'none' }}
 			/>
 		</Modal>
