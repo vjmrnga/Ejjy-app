@@ -1,165 +1,112 @@
-import { useEffect, useState } from 'react';
-import { modifiedCallback, modifiedExtraCallback, onCallback } from 'utils';
-import { actions, types } from '../ducks/return-item-slips';
-import { request } from '../global/types';
-import {
-	addInCachedData,
-	executePaginatedRequest,
-	getDataForCurrentPage,
-	removeInCachedData,
-	updateInCachedData,
-} from '../utils/pagination';
-import { useActionDispatch } from './useActionDispatch';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, IS_APP_LIVE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
+import { Query } from 'hooks/inteface';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { ReturnItemSlipsService } from 'services';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
-const LIST_ERROR_MESSAGE = 'An error occurred while fetching return item slips';
-
-const CREATE_SUCCESS_MESSAGE = 'Return item slip was created successfully';
-const CREATE_ERROR_MESSAGE =
-	'An error occurred while creating the return item slip';
-
-const EDIT_SUCCESS_MESSAGE = 'Return item slip was edited successfully';
-const EDIT_ERROR_MESSAGE =
-	'An error occurred while updating the return item slip';
-
-const RECEIVE_SUCCESS_MESSAGE = 'Return item slip was received successfully';
-const RECEIVE_ERROR_MESSAGE =
-	'An error occurred while receiving the return item slip';
-
-export const useReturnItemSlips = () => {
-	// STATES
-	const [status, setStatus] = useState<any>(request.NONE);
-	const [errors, setErrors] = useState<any>([]);
-
-	// PAGINATION
-	const [allData, setAllData] = useState([]);
-	const [pageCount, setPageCount] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [currentPageData, setCurrentPageData] = useState([]);
-	const [pageSize, setPageSize] = useState(5);
-
-	// ACTIONS
-	const listAction = useActionDispatch(actions.list);
-	const retrieveAction = useActionDispatch(actions.retrieve);
-	const createAction = useActionDispatch(actions.create);
-	const editAction = useActionDispatch(actions.edit);
-	const receiveAction = useActionDispatch(actions.receive);
-
-	// GENERAL METHODS
-	const executeRequest = (data, requestCallback, action) => {
-		action({
-			...data,
-			callback: onCallback(
-				callback,
-				requestCallback?.onSuccess,
-				requestCallback?.onError,
+// TODO: Once the syncing of RIS, implement the correct base url.
+const useReturnItemSlips = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useReturnItemSlips',
+			params?.page,
+			params?.pageSize,
+			params?.receiverId,
+			params?.senderBranchId,
+		],
+		() =>
+			wrapServiceWithCatch(
+				ReturnItemSlipsService.list(
+					{
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						receiver_id: params?.receiverId,
+						sender_branch_id: params?.senderBranchId,
+					},
+					getOnlineApiUrl(),
+				),
 			),
-		});
-	};
-
-	const callback = ({ status: requestStatus, errors: requestErrors = [] }) => {
-		setStatus(requestStatus);
-		setErrors(requestErrors);
-	};
-
-	// PAGINATION METHODS
-	useEffect(() => {
-		setCurrentPageData(
-			getDataForCurrentPage({
-				data: allData,
-				currentPage,
-				pageSize,
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				returnItemSlips: query.data.results,
+				total: query.data.count,
 			}),
-		);
-	}, [allData, currentPage, pageSize]);
+		},
+	);
 
-	const addItemInPagination = (item) => {
-		setAllData((data) => addInCachedData({ data, item }));
-	};
-
-	const updateItemInPagination = (item) => {
-		setAllData((data) => updateInCachedData({ data, item }));
-	};
-
-	const removeItemInPagination = (item) => {
-		setAllData((data) => removeInCachedData({ data, item }));
-	};
-
-	// REQUEST METHODS
-	const getReturnItemSlips = (data, shouldReset = false) => {
-		executePaginatedRequest(data, shouldReset, {
-			requestAction: listAction,
-			requestType: types.LIST,
-			errorMessage: LIST_ERROR_MESSAGE,
-			allData,
-			pageSize,
-			executeRequest,
-			setAllData,
-			setPageCount,
-			setCurrentPage,
-			setPageSize,
-		});
-	};
-
-	const retrieveReturnItemSlip = (id, extraCallback = null) => {
-		retrieveAction({
-			id,
-			callback: modifiedExtraCallback(callback, extraCallback),
-		});
-	};
-
-	const createReturnItemSlip = (data, extraCallback = null) => {
-		createAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					CREATE_SUCCESS_MESSAGE,
-					CREATE_ERROR_MESSAGE,
-				),
-				extraCallback,
+export const useReturnItemSlipRetrieve = ({ id, options }: Query) =>
+	useQuery<any>(
+		['useReturnItemSlipRetrieve', id],
+		() =>
+			wrapServiceWithCatch(
+				ReturnItemSlipsService.retrieve(id, getOnlineApiUrl()),
 			),
-		});
-	};
+		{
+			select: (query) => query.data,
+			...options,
+		},
+	);
 
-	const editReturnItemSlip = (data, extraCallback = null) => {
-		editAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(callback, EDIT_SUCCESS_MESSAGE, EDIT_ERROR_MESSAGE),
-				extraCallback,
+export const useReturnItemSlipCreate = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ products, senderId }: any) =>
+			ReturnItemSlipsService.create(
+				{
+					is_online: IS_APP_LIVE,
+					products,
+					sender_id: senderId,
+				},
+				getOnlineApiUrl(),
 			),
-		});
-	};
-
-	const receiveReturnItemSlip = (data, extraCallback = null) => {
-		receiveAction({
-			...data,
-			callback: modifiedExtraCallback(
-				modifiedCallback(
-					callback,
-					RECEIVE_SUCCESS_MESSAGE,
-					RECEIVE_ERROR_MESSAGE,
-				),
-				extraCallback,
-			),
-		});
-	};
-
-	return {
-		returnItemSlips: currentPageData,
-		pageCount,
-		currentPage,
-		pageSize,
-		addItemInPagination,
-		updateItemInPagination,
-		removeItemInPagination,
-
-		getReturnItemSlips,
-		retrieveReturnItemSlip,
-		createReturnItemSlip,
-		editReturnItemSlip,
-		receiveReturnItemSlip,
-		status,
-		errors,
-	};
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useReturnItemSlips');
+			},
+		},
+	);
 };
+
+export const useReturnItemSlipEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, receiverId }: any) =>
+			ReturnItemSlipsService.edit(
+				id,
+				{ receiver_id: receiverId },
+				getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useReturnItemSlips');
+			},
+		},
+	);
+};
+
+export const useReturnItemSlipReceive = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, products }: any) =>
+			ReturnItemSlipsService.receive(
+				id,
+				{
+					is_online: IS_APP_LIVE,
+					products,
+				},
+				getLocalApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useReturnItemSlips');
+			},
+		},
+	);
+};
+
+export default useReturnItemSlips;

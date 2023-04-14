@@ -1,7 +1,7 @@
 import { Descriptions, Divider, Modal } from 'antd';
 import { RequestErrors } from 'components';
-import { EMPTY_CELL, quantityTypes, request } from 'global';
-import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
+import { EMPTY_CELL, quantityTypes } from 'global';
+import { useReturnItemSlipReceive } from 'hooks';
 import React from 'react';
 import {
 	convertIntoArray,
@@ -24,13 +24,13 @@ export const FulfillReturnItemSlipModal = ({
 }: Props) => {
 	// CUSTOM HOOKS
 	const {
-		receiveReturnItemSlip,
-		status: returnItemSlipsStatus,
-		errors: returnItemSlipsErrors,
-	} = useReturnItemSlips();
+		mutateAsync: receiveReturnItemSlip,
+		isLoading: isReceivingReturnItemSlip,
+		error: receiveReturnItemSlipError,
+	} = useReturnItemSlipReceive();
 
 	// METHODS
-	const handleFulfill = (formData) => {
+	const handleFulfill = async (formData) => {
 		const products = formData.map((product) => ({
 			product_id: product.product_id,
 			quantity_received:
@@ -39,18 +39,13 @@ export const FulfillReturnItemSlipModal = ({
 					: convertToPieces(product.quantity, product.piecesInBulk),
 		}));
 
-		receiveReturnItemSlip(
-			{
-				id: returnItemSlip.id,
-				products,
-			},
-			({ status }) => {
-				if (status === request.SUCCESS) {
-					onClose();
-					onSuccess();
-				}
-			},
-		);
+		await receiveReturnItemSlip({
+			id: returnItemSlip.id,
+			products,
+		});
+
+		onClose();
+		onSuccess();
 	};
 
 	return (
@@ -86,12 +81,12 @@ export const FulfillReturnItemSlipModal = ({
 			<Divider>Products</Divider>
 
 			<RequestErrors
-				errors={convertIntoArray(returnItemSlipsErrors)}
+				errors={convertIntoArray(receiveReturnItemSlipError?.errors)}
 				withSpaceBottom
 			/>
 
 			<FulfillReturnItemSlipForm
-				loading={returnItemSlipsStatus === request.REQUESTING}
+				loading={isReceivingReturnItemSlip}
 				returnItemSlip={returnItemSlip}
 				onClose={onClose}
 				onSubmit={handleFulfill}

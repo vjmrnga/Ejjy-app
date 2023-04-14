@@ -35,6 +35,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 	const {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,
+		error: branchProductError,
 	} = useBranchProducts({
 		params: {
 			branchId: isUserFromBranch(user.user_type)
@@ -109,6 +110,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		>
 			<RequestErrors
 				errors={[
+					...convertIntoArray(branchProductError, 'Branch Product'),
 					...convertIntoArray(
 						editBranchProductPricCostError?.errors,
 						'Branch Product Price Cost',

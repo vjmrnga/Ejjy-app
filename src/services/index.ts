@@ -38,6 +38,7 @@ export { default as ProductGroupsService } from './ProductGroupsService';
 export { default as ProductsService } from './ProductsService';
 export { default as ReceivingVouchersService } from './ReceivingVouchersService';
 export { default as RequisitionSlipsService } from './RequisitionSlipsService';
+export { default as ReturnItemSlipsService } from './ReturnItemSlipsService';
 export { default as SalesTrackerService } from './SalesTrackerService';
 export { default as SessionsService } from './SessionsService';
 export { default as SiteSettingsService } from './SiteSettingsService';

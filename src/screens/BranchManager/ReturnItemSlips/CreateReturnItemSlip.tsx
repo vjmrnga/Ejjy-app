@@ -1,6 +1,7 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Divider, Table, Tabs } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Divider, Input, Row, Select, Table, Tabs } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import {
@@ -10,25 +11,32 @@ import {
 	FormCheckbox,
 	FormInput,
 	FormSelect,
+	Label,
 } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	branchProductStatusOptionsWithAll,
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	quantityTypeOptions,
 	quantityTypes,
-	request,
+	SEARCH_DEBOUNCE_TIME,
 	unitOfMeasurementTypes,
 } from 'global';
-import { useBranchProducts } from 'hooks/useBranchProducts';
-import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
-import { isEmpty, isInteger } from 'lodash';
+import {
+	useBranchProducts,
+	useQueryParams,
+	useReturnItemSlipCreate,
+} from 'hooks';
+import _, { isEmpty, isInteger } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	convertToPieces,
+	filterOption,
 	getBranchProductStatus,
 	getLocalBranchId,
 	sleep,
@@ -48,8 +56,6 @@ const columns: ColumnsType = [
 
 export const CreateReturnItemSlip = () => {
 	// STATES
-	const [searchedKeyword, setSeachedKeyword] = useState('');
-	const [selectedStatus, setSelectedStatus] = useState('all');
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
 	const [isSubmitting, setSubmitting] = useState(false);
@@ -60,28 +66,24 @@ export const CreateReturnItemSlip = () => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const user = useUserStore((state) => state.user);
+	const { params, setQueryParams } = useQueryParams();
 	const {
-		branchProducts,
-		pageCount,
-		pageSize,
-		currentPage,
-		getBranchProducts,
-		status: branchProductsStatus,
-		errors: branchProductsErrors,
-	} = useBranchProducts();
+		data: { branchProducts, total },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsErrors,
+	} = useBranchProducts({
+		params: {
+			...params,
+			productStatus: params?.status === 'all' ? null : params?.status,
+			branchId: getLocalBranchId(),
+			isSoldInBranch: true,
+		},
+	});
 	const {
-		createReturnItemSlip,
-		status: returnItemSlipsStatus,
-		errors: returnItemSlipsErrors,
-	} = useReturnItemSlips();
-
-	// VARIABLES
-	const branchId = getLocalBranchId();
-
-	// METHODS
-	useEffect(() => {
-		getBranchProducts({ branchId, page: 1 });
-	}, []);
+		mutateAsync: createReturnItemSlip,
+		isLoading: isCreatingReturnItemSlip,
+		error: createReturnItemSlipError,
+	} = useReturnItemSlipCreate();
 
 	// METHODS: Form methods
 	const getFormDetails = useCallback(
@@ -232,38 +234,7 @@ export const CreateReturnItemSlip = () => {
 	};
 
 	// METHODS: Filters
-	const handlePageChange = (page, newPageSize) => {
-		getBranchProducts(
-			{
-				branchId,
-				search: searchedKeyword,
-				productStatus: selectedStatus === 'all' ? null : selectedStatus,
-				isSoldInBranch: true,
-				page,
-				pageSize: newPageSize,
-			},
-			newPageSize !== pageSize,
-		);
-	};
-
-	const handleSearch = (keyword) => {
-		const lowerCaseKeyword = keyword?.toLowerCase();
-
-		getBranchProducts(
-			{
-				branchId,
-				search: lowerCaseKeyword,
-				productStatus: selectedStatus === 'all' ? null : selectedStatus,
-				isSoldInBranch: true,
-				page: 1,
-			},
-			true,
-		);
-
-		setSeachedKeyword(lowerCaseKeyword);
-	};
-
-	const handleCreate = () => {
+	const handleCreate = async () => {
 		const productIds = Object.keys(productsRef.current);
 
 		if (productIds.length > 0) {
@@ -280,47 +251,31 @@ export const CreateReturnItemSlip = () => {
 				};
 			});
 
-			createReturnItemSlip({ senderId: user?.id, products }, ({ status }) => {
-				if (status === request.SUCCESS) {
-					history.push('/branch-manager/return-item-slips');
-				}
+			await createReturnItemSlip({
+				senderId: user?.id,
+				products,
 			});
+			history.push('/branch-manager/return-item-slips');
 		}
 	};
 
-	const loading = [returnItemSlipsStatus, branchProductsStatus].includes(
-		request.REQUESTING,
-	);
+	const isLoading = isCreatingReturnItemSlip || isFetchingBranchProducts;
 
 	return (
 		<Content className="CreateReturnItemSlip" title="Return Item Slip">
 			<Box>
-				<TableHeader
-					searchDisabled={activeTab === tabs.SELECTED}
-					statusDisabled={activeTab === tabs.SELECTED}
-					statuses={branchProductStatusOptionsWithAll}
-					title="Create Return Item Slip"
-					onSearch={handleSearch}
-					onStatusSelect={(status) => {
-						getBranchProducts(
-							{
-								branchId: user?.branch?.id,
-								search: searchedKeyword,
-								productStatus: status === 'all' ? null : status,
-								isSoldInBranch: true,
-								page: 1,
-							},
-							true,
-						);
-						setSelectedStatus(status);
-					}}
-				/>
+				<TableHeader title="Create Return Item Slip" />
+
+				<Filter isLoading={isLoading} />
 
 				<RequestErrors
 					className="px-6"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
-						...convertIntoArray(returnItemSlipsErrors, 'Return Item Slip'),
+						...convertIntoArray(
+							createReturnItemSlipError?.errors,
+							'Return Item Slip',
+						),
 					]}
 					withSpaceBottom
 				/>
@@ -361,12 +316,20 @@ export const CreateReturnItemSlip = () => {
 										renderQuantity,
 										onChangeCheckbox: handleChangeCheckbox,
 									}}
-									loading={loading || isSubmitting}
+									loading={isLoading || isSubmitting}
 									paginationProps={{
-										currentPage,
-										pageCount,
-										pageSize,
-										onPageChange: handlePageChange,
+										current: Number(params.page) || DEFAULT_PAGE,
+										total,
+										pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+										onChange: (page, newPageSize) => {
+											setQueryParams({
+												page,
+												pageSize: newPageSize,
+											});
+										},
+										disabled: !isLoading,
+										position: ['bottomCenter'],
+										pageSizeOptions,
 									}}
 								/>
 							</div>
@@ -377,7 +340,7 @@ export const CreateReturnItemSlip = () => {
 								<Button
 									classNames="CreateReturnItemSlip_btnCreate"
 									disabled={
-										loading || isSubmitting || isEmpty(productsRef.current)
+										isLoading || isSubmitting || isEmpty(productsRef.current)
 									}
 									text="Create"
 									type="submit"
@@ -468,5 +431,61 @@ const ProductsTable = ({
 				bordered
 			/>
 		</>
+	);
+};
+
+interface FilterProps {
+	isLoading: boolean;
+}
+
+const Filter = ({ isLoading }: FilterProps) => {
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
+
+	// METHODS
+	const handleSearchDebounced = useCallback(
+		_.debounce((keyword) => {
+			setQueryParams(
+				{ search: keyword?.toLowerCase() },
+				{ shouldResetPage: true },
+			);
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
+
+	return (
+		<Row className="pa-6 pt-0" gutter={[16, 16]}>
+			<Col lg={12} span={24}>
+				<Label label="Search" spacing />
+				<Input
+					defaultValue={params.search}
+					disabled={isLoading}
+					prefix={<SearchOutlined />}
+					allowClear
+					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
+				/>
+			</Col>
+
+			<Col lg={12} span={24}>
+				<Label label="Status" spacing />
+				<Select
+					className="w-100"
+					disabled={isLoading}
+					filterOption={filterOption}
+					optionFilterProp="children"
+					allowClear
+					showSearch
+					onChange={(value) => {
+						setQueryParams({ status: value }, { shouldResetPage: true });
+					}}
+				>
+					{branchProductStatusOptionsWithAll.map(({ name, value }) => (
+						<Select.Option key={value} value={value}>
+							{name}
+						</Select.Option>
+					))}
+				</Select>
+			</Col>
+		</Row>
 	);
 };

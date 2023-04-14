@@ -329,10 +329,7 @@ export const CreateStockIn = () => {
 	return (
 		<Content className="CreateBackOrder" title="Stocks">
 			<Box>
-				<TableHeader
-					searchDisabled={activeTab === tabs.SELECTED}
-					title="Create Stock In"
-				/>
+				<TableHeader title="Create Stock In" />
 
 				<Filter isLoading={isLoading} />
 

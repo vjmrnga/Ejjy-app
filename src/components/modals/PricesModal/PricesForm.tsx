@@ -1,11 +1,16 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Col, Collapse, Divider, Row, Select, Space, Tag, Tooltip } from 'antd';
 import {
 	Button,
-	FieldError,
-	FormattedInputNumber,
-	Label,
-} from 'components/elements';
+	Col,
+	Collapse,
+	Divider,
+	Row,
+	Select,
+	Space,
+	Tag,
+	Tooltip,
+} from 'antd';
+import { FieldError, FormattedInputNumber, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import _ from 'lodash';
@@ -611,18 +616,12 @@ export const PricesForm = ({
 					)}
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={isLoading}
-							text="Submit"
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							Submit
+						</Button>
 					</div>
 				</Form>
 			)}

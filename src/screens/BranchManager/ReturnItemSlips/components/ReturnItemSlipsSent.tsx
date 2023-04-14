@@ -1,11 +1,21 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { RequestErrors } from 'components';
 import { ButtonLink } from 'components/elements';
-import { EMPTY_CELL, pageSizeOptions, request } from 'global';
-import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	EMPTY_CELL,
+	pageSizeOptions,
+} from 'global';
+import { useQueryParams, useReturnItemSlips } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { formatDateTime, getReturnItemSlipStatus } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	getReturnItemSlipStatus,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -19,71 +29,68 @@ interface Props {
 
 export const ReturnItemSlipsSent = ({ selectReturnItemSlip }: Props) => {
 	// STATES
-	const [data, setData] = useState([]);
+	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const {
-		returnItemSlips,
-		pageCount,
-		currentPage,
-		pageSize,
-		getReturnItemSlips,
-		status: returnItemSlipsStatus,
-	} = useReturnItemSlips();
+		data: { returnItemSlips, total },
+		isFetching: isFetchingReturnItemSlips,
+		error: returnItemSlipsError,
+	} = useReturnItemSlips({
+		params: {
+			...params,
+			senderBranchId: user?.branch?.id,
+		},
+	});
 
 	// METHODS
 	useEffect(() => {
-		getReturnItemSlips({
-			senderBranchId: user?.branch?.id,
-			page: 1,
-		});
-	}, []);
+		const data = returnItemSlips.map((returnItemSlip) => ({
+			key: returnItemSlip.id,
+			id: (
+				<ButtonLink
+					text={returnItemSlip.id}
+					onClick={() => selectReturnItemSlip(returnItemSlip)}
+				/>
+			),
+			datetime_sent: returnItemSlip.datetime_sent
+				? formatDateTime(returnItemSlip.datetime_sent)
+				: EMPTY_CELL,
+			status: getReturnItemSlipStatus(returnItemSlip.status),
+		}));
 
-	useEffect(() => {
-		setData(
-			returnItemSlips.map((returnItemSlip) => ({
-				key: returnItemSlip.id,
-				id: (
-					<ButtonLink
-						text={returnItemSlip.id}
-						onClick={() => selectReturnItemSlip(returnItemSlip)}
-					/>
-				),
-				datetime_sent: returnItemSlip.datetime_sent
-					? formatDateTime(returnItemSlip.datetime_sent)
-					: EMPTY_CELL,
-				status: getReturnItemSlipStatus(returnItemSlip.status),
-			})),
-		);
+		setDataSource(data);
 	}, [returnItemSlips]);
 
-	const handlePageChange = (page, newPageSize) => {
-		getReturnItemSlips(
-			{
-				receiverId: user?.id,
-				page,
-				pageSize: newPageSize,
-			},
-			newPageSize !== pageSize,
-		);
-	};
-
 	return (
-		<Table
-			columns={columns}
-			dataSource={data}
-			loading={returnItemSlipsStatus === request.REQUESTING}
-			pagination={{
-				current: currentPage,
-				total: pageCount,
-				pageSize,
-				onChange: handlePageChange,
-				disabled: !data,
-				position: ['bottomCenter'],
-				pageSizeOptions,
-			}}
-			bordered
-		/>
+		<>
+			<RequestErrors
+				errors={convertIntoArray(returnItemSlipsError)}
+				withSpaceBottom
+			/>
+
+			<Table
+				columns={columns}
+				dataSource={dataSource}
+				loading={isFetchingReturnItemSlips}
+				pagination={{
+					current: Number(params.page) || DEFAULT_PAGE,
+					total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
+					disabled: !dataSource,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				bordered
+			/>
+		</>
 	);
 };

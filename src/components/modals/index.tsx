@@ -1,7 +1,7 @@
 export * from './AppSettingsModal';
+export * from './AssignReturnItemSlipModal';
 export * from './CreateBalanceAdjustmentLogModal';
 export * from './CreateOrderOfPaymentModal';
-export * from './ModifyProductGroupModal';
 export * from './CreateStockInModal';
 export * from './CreateStockOutModal';
 export * from './CreateSupplierRegistrationModal';
@@ -15,6 +15,7 @@ export * from './ModifyCreditRegistration';
 export * from './ModifyDiscountOptionModal';
 export * from './ModifyPointSystemTagModal';
 export * from './ModifyProductCategoryModal';
+export * from './ModifyProductGroupModal';
 export * from './ModifyProductModal';
 export * from './ModifyUserModal';
 export * from './PricesModal';

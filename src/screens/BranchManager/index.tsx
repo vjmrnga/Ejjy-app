@@ -44,7 +44,7 @@ import { OrderSlips } from './OrderSlips/OrderSlips';
 import { RequisitionSlips } from './RequisitionSlips';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
 import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
-import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
+import { ReturnItemSlips } from './ReturnItemSlips';
 import { Users } from './Users';
 
 const refetchOptions: any = {

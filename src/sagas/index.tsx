@@ -9,7 +9,6 @@ import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
 import preparationSlipsSagas from './preparation-slips';
 import requisitionSlipsSagas from './requisition-slips';
-import returnItemSlipsSagas from './return-item-slips';
 import usersSagas from './users';
 
 export default function* rootSaga() {
@@ -21,7 +20,6 @@ export default function* rootSaga() {
 		...orderSlipsSagas,
 		...preparationSlipsSagas,
 		...requisitionSlipsSagas,
-		...returnItemSlipsSagas,
 		...usersSagas,
 		...adminSagas,
 		...officeManagerSagas,

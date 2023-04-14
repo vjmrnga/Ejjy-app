@@ -59,6 +59,8 @@ export * from './useReceivingVouchers';
 export { default as useReceivingVouchers } from './useReceivingVouchers';
 export * from './useRequisitionSlips';
 export { default as useRequisitionSlips } from './useRequisitionSlips';
+export * from './useReturnItemSlips';
+export { default as useReturnItemSlips } from './useReturnItemSlips';
 export { default as useSalesTracker } from './useSalesTracker';
 export { default as useSessions } from './useSessions';
 export * from './useSiteSettings';

@@ -9,7 +9,6 @@ interface Props {
 	loading: boolean;
 }
 
-// TODO: Requires refactoring once this feature is revisited
 export const AssignReturnItemSlipForm = ({
 	returnItemSlip,
 	onSubmit,

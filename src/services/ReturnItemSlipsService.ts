@@ -1,17 +1,15 @@
-// NOTE: This is a standard service file
 import axios from 'axios';
 import { IListRequest } from './interfaces';
 
-// Interfaces
 interface List extends IListRequest {
 	sender_branch_id?: number;
 	receiver_id?: number;
 }
 
 interface Create {
-	sender_id: number;
 	is_online: boolean;
 	products: Product[];
+	sender_id: number;
 }
 
 interface Edit {
@@ -23,14 +21,12 @@ interface Receive {
 	products: Product[];
 }
 
-// Types
 type Product = {
 	product_id: number;
 	quantity_returned: number | string;
 };
 
-// Service
-export const service = {
+const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/return-item-slips/', { baseURL, params }),
 
@@ -46,3 +42,5 @@ export const service = {
 	receive: async (id: number, body: Receive, baseURL) =>
 		axios.post(`/return-item-slips/${id}/receive/`, body, { baseURL }),
 };
+
+export default service;

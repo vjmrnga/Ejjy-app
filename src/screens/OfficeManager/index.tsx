@@ -37,7 +37,7 @@ import { Reports } from './Reports/Reports';
 import { RequisitionSlips } from './RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
-import { ReturnItemSlips } from './ReturnItemSlips/ReturnItemSlips';
+import { ReturnItemSlips } from './ReturnItemSlips';
 import { ViewReturnItemSlip } from './ReturnItemSlips/ViewReturnItemSlip';
 import { Users } from './Users';
 

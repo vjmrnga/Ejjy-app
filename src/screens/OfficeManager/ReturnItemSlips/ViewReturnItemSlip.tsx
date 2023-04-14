@@ -1,7 +1,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Descriptions, Divider, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Breadcrumb, Content, TableHeader } from 'components';
+import { Breadcrumb, Content, RequestErrors, TableHeader } from 'components';
 import { Box, Label } from 'components/elements';
 import {
 	EMPTY_CELL,
@@ -9,10 +9,15 @@ import {
 	request,
 	returnItemSlipsStatuses,
 } from 'global';
-import { useReturnItemSlips } from 'hooks/useReturnItemSlips';
+import { useReturnItemSlipRetrieve } from 'hooks';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { formatDateTime, formatQuantity, getReturnItemSlipStatus } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTime,
+	formatQuantity,
+	getReturnItemSlipStatus,
+} from 'utils';
 import { useReturnItemSlipAdjustmentSlips } from '../hooks/useReturnItemSlipAdjustmentSlips';
 import { AdjustmentSlipsTable } from './components/AdjustmentSlips/AdjustmentSlipsTable';
 import { CreateAdjustmentSlipModal } from './components/AdjustmentSlips/CreateAdjustmentSlipModal';
@@ -20,8 +25,8 @@ import { ViewAdjustmentSlipModal } from './components/AdjustmentSlips/ViewAdjust
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
-	{ title: 'Qty Returned', dataIndex: 'qty_returned' },
-	{ title: 'Qty Received', dataIndex: 'qty_received' },
+	{ title: 'Qty Returned', dataIndex: 'qtyReturned' },
+	{ title: 'Qty Received', dataIndex: 'qtyReceived' },
 	{ title: 'Status', dataIndex: 'status' },
 ];
 
@@ -33,21 +38,18 @@ export const ViewReturnItemSlip = ({ match }: Props) => {
 	// VARIABLES
 	const returnItemSlipId = match?.params?.id;
 
-	// STATES
-	const [returnItemSlip, setReturnItemSlip] = useState(null);
-
 	// CUSTOM HOOKS
-	const history = useHistory();
-	const { retrieveReturnItemSlip, status: returnItemSlipsStatus } =
-		useReturnItemSlips();
+
+	const {
+		data: returnItemSlip,
+		isFetching: isFetchingReturnItemSlip,
+		error: returnItemSlipErrors,
+	} = useReturnItemSlipRetrieve({
+		id: returnItemSlipId,
+		options: { enabled: _.isNumber(returnItemSlipId) },
+	});
 
 	// METHODS
-	useEffect(() => {
-		if (returnItemSlipId) {
-			retrieveReturnItemSlipFn();
-		}
-	}, [returnItemSlipId]);
-
 	const getBreadcrumbItems = useCallback(
 		() => [
 			{
@@ -59,28 +61,22 @@ export const ViewReturnItemSlip = ({ match }: Props) => {
 		[returnItemSlipId],
 	);
 
-	const retrieveReturnItemSlipFn = () => {
-		retrieveReturnItemSlip(returnItemSlipId, ({ status, data }) => {
-			if (status === request.SUCCESS) {
-				setReturnItemSlip(data);
-			} else if (status === request.ERROR) {
-				history.replace('/404');
-			}
-		});
-	};
-
 	return (
 		<Content
 			breadcrumb={<Breadcrumb items={getBreadcrumbItems()} />}
 			rightTitle={`#${returnItemSlipId}`}
 			title="[VIEW] Return Item Slip"
 		>
-			<Details
-				returnItemSlip={returnItemSlip}
-				returnItemSlipsStatus={returnItemSlipsStatus}
+			<RequestErrors
+				errors={convertIntoArray(returnItemSlipErrors)}
+				withSpaceBottom
 			/>
+
+			<Spin spinning={isFetchingReturnItemSlip}>
+				{returnItemSlip && <Details returnItemSlip={returnItemSlip} />}
+			</Spin>
+
 			<AdjustmentSlips
-				retrieveReturnItemSlip={retrieveReturnItemSlipFn}
 				returnItemSlip={returnItemSlip}
 				returnItemSlipId={returnItemSlipId}
 			/>
@@ -89,91 +85,84 @@ export const ViewReturnItemSlip = ({ match }: Props) => {
 };
 
 interface DetailsProps {
-	returnItemSlip?: any;
-	returnItemSlipsStatus: number;
+	returnItemSlip: any;
 }
 
-const Details = ({ returnItemSlip, returnItemSlipsStatus }: DetailsProps) => {
+const Details = ({ returnItemSlip }: DetailsProps) => {
 	// STATES
 	const [requestedProducts, setRequestedProducts] = useState([]);
 
 	// METHODS
 	useEffect(() => {
-		if (returnItemSlip) {
-			setRequestedProducts(
-				returnItemSlip.products.map((item) => ({
-					key: item.id,
-					name: item.product.name,
-					qty_returned: formatQuantity({
+		const data = returnItemSlip.products.map((item) => ({
+			key: item.id,
+			name: item.product.name,
+			qtyReturned: formatQuantity({
+				unitOfMeasurement: item.product.unit_of_measurement,
+				quantity: item.quantity_returned,
+			}),
+			qtyReceived: item?.quantity_received
+				? formatQuantity({
 						unitOfMeasurement: item.product.unit_of_measurement,
-						quantity: item.quantity_returned,
-					}),
-					qty_received: item?.quantity_received
-						? formatQuantity({
-								unitOfMeasurement: item.product.unit_of_measurement,
-								quantity: item.quantity_received,
-						  })
-						: EMPTY_CELL,
-					status: getReturnItemSlipStatus(item.status),
-				})),
-			);
-		}
+						quantity: item.quantity_received,
+				  })
+				: EMPTY_CELL,
+			status: getReturnItemSlipStatus(item.status),
+		}));
+
+		setRequestedProducts(data);
 	}, [returnItemSlip]);
 
 	return (
-		<Spin spinning={returnItemSlipsStatus === request.REQUESTING}>
-			<Box className="pa-6">
-				<Descriptions column={2} bordered>
-					<Descriptions.Item label="ID" span={2}>
-						{returnItemSlip.id}
-					</Descriptions.Item>
+		<Box className="pa-6">
+			<Descriptions column={2} bordered>
+				<Descriptions.Item label="ID" span={2}>
+					{returnItemSlip.id}
+				</Descriptions.Item>
 
-					<Descriptions.Item label="Datetime Returned">
-						{returnItemSlip.datetime_sent
-							? formatDateTime(returnItemSlip.datetime_sent)
-							: EMPTY_CELL}
-					</Descriptions.Item>
+				<Descriptions.Item label="Datetime Returned">
+					{returnItemSlip.datetime_sent
+						? formatDateTime(returnItemSlip.datetime_sent)
+						: EMPTY_CELL}
+				</Descriptions.Item>
 
-					<Descriptions.Item label="Datetime Received">
-						{returnItemSlip.datetime_received
-							? formatDateTime(returnItemSlip.datetime_received)
-							: EMPTY_CELL}
-					</Descriptions.Item>
+				<Descriptions.Item label="Datetime Received">
+					{returnItemSlip.datetime_received
+						? formatDateTime(returnItemSlip.datetime_received)
+						: EMPTY_CELL}
+				</Descriptions.Item>
 
-					<Descriptions.Item label="Returned By (branch)">
-						{returnItemSlip.sender.branch.name}
-					</Descriptions.Item>
+				<Descriptions.Item label="Returned By (branch)">
+					{returnItemSlip.sender.branch.name}
+				</Descriptions.Item>
 
-					<Descriptions.Item label="Status">
-						{getReturnItemSlipStatus(returnItemSlip.status)}
-					</Descriptions.Item>
-				</Descriptions>
+				<Descriptions.Item label="Status">
+					{getReturnItemSlipStatus(returnItemSlip.status)}
+				</Descriptions.Item>
+			</Descriptions>
 
-				<Divider dashed />
+			<Divider dashed />
 
-				<Label label="Products" spacing />
+			<Label label="Products" spacing />
 
-				<Table
-					columns={columns}
-					dataSource={requestedProducts}
-					pagination={false}
-					scroll={{ x: 800 }}
-					bordered
-				/>
-			</Box>
-		</Spin>
+			<Table
+				columns={columns}
+				dataSource={requestedProducts}
+				pagination={false}
+				scroll={{ x: 800 }}
+				bordered
+			/>
+		</Box>
 	);
 };
 
 interface AdjustmentSlipsProps {
 	returnItemSlipId: string;
 	returnItemSlip?: any;
-	retrieveReturnItemSlip: any;
 }
 const AdjustmentSlips = ({
 	returnItemSlipId,
 	returnItemSlip,
-	retrieveReturnItemSlip,
 }: AdjustmentSlipsProps) => {
 	// STATE
 	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
@@ -237,7 +226,7 @@ const AdjustmentSlips = ({
 					returnItemSlip={returnItemSlip}
 					onClose={() => setCreateAdjustmentSlipVisible(false)}
 					onSuccess={() => {
-						retrieveReturnItemSlip();
+						// retrieveReturnItemSlip(); // TODO: Add invalidate the useReturnItemSlipRetriev in here or in the use of adjustment
 						listReturnItemSlipAdjustmentSlipsFn();
 					}}
 				/>
