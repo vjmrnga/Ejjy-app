@@ -12,7 +12,7 @@ import { TabStockOut } from './components/TabStockOut';
 export const Stocks = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = stockTabs.STOCK_IN },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -28,8 +28,8 @@ export const Stocks = () => {
 		<Content title="Stock">
 			<Box>
 				<Tabs
-					activeKey={_.toString(tab) || stockTabs.STOCK_IN}
-					className="PaddingHorizontal PaddingVertical"
+					activeKey={_.toString(tab)}
+					className="pa-6"
 					tabBarExtraContent={
 						<Link
 							to={`stocks/stock-${

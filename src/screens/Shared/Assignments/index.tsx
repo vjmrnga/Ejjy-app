@@ -15,7 +15,7 @@ export const assignmentTabs = {
 export const Assignments = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = assignmentTabs.BRANCH },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -31,7 +31,7 @@ export const Assignments = () => {
 		<Content title="Assignments">
 			<Box>
 				<Tabs
-					activeKey={_.toString(tab) || assignmentTabs.BRANCH}
+					activeKey={_.toString(tab)}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane

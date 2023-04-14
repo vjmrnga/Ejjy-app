@@ -29,7 +29,7 @@ export const tabs = {
 export const Logs = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = tabs.PRODUCTS },
 		setQueryParams,
 	} = useQueryParams();
 
@@ -45,7 +45,7 @@ export const Logs = () => {
 		<Content title="Logs">
 			<Box>
 				<Tabs
-					activeKey={_.toString(tab) || tabs.PRODUCTS}
+					activeKey={_.toString(tab)}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane

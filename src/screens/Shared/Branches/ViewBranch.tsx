@@ -23,7 +23,7 @@ export const ViewBranch = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
 	const {
-		params: { tab },
+		params: { tab = viewBranchTabs.PRODUCTS },
 		setQueryParams,
 	} = useQueryParams();
 	const user = useUserStore((state) => state.user);
@@ -62,7 +62,7 @@ export const ViewBranch = ({ match }: Props) => {
 				{branch && (
 					<Box className="ViewBranchMachine">
 						<Tabs
-							activeKey={_.toString(tab) || viewBranchTabs.PRODUCTS}
+							activeKey={_.toString(tab)}
 							className="pa-6"
 							type="card"
 							destroyInactiveTabPane

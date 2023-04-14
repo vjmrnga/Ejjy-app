@@ -17,7 +17,7 @@ const tabs = {
 export const Notifications = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = tabs.DTR },
 		setQueryParams,
 	} = useQueryParams();
 	const { connectivityCount, dtrCount } = useNotificationStore(
@@ -40,7 +40,7 @@ export const Notifications = () => {
 		<Content title="Notifications">
 			<Box>
 				<Tabs
-					activeKey={tab ? _.toString(tab) : tabs.DTR}
+					activeKey={_.toString(tab)}
 					className="pa-6"
 					defaultActiveKey={tabs.DTR}
 					type="card"

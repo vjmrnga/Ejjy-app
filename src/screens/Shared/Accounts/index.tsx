@@ -15,15 +15,15 @@ import { accountTabs } from './data';
 export const Accounts = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab: currentTab },
+		params: { tab = accountTabs.ACCOUNTS },
 		setQueryParams,
 	} = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
 
 	// METHODS
-	const handleTabClick = (tab) => {
+	const handleTabClick = (selectedTab) => {
 		setQueryParams(
-			{ tab },
+			{ tab: selectedTab },
 			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
 		);
 	};
@@ -34,7 +34,7 @@ export const Accounts = () => {
 
 			<Box>
 				<Tabs
-					activeKey={_.toString(currentTab) || accountTabs.ACCOUNTS}
+					activeKey={_.toString(tab)}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane

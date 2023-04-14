@@ -143,7 +143,7 @@ export const ViewChecking = () => {
 	// 				/>
 
 	// 				{productCheck && (
-	// 					<DetailsRow className="PaddingHorizontal PaddingVertical">
+	// 					<DetailsRow className="pa-6">
 	// 						<DetailsHalf label="ID" value={productCheck.id} />
 	// 						<DetailsHalf label="Type" value={upperFirst(productCheck.type)} />
 	// 						<DetailsHalf

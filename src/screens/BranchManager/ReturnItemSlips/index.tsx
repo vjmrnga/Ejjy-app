@@ -52,7 +52,7 @@ export const ReturnItemSlips = () => {
 				/>
 
 				<Tabs
-					className="ReturnItemSlips_tabs PaddingHorizontal PaddingVertical"
+					className="ReturnItemSlips_tabs pa-6"
 					defaultActiveKey={activeTab}
 					type="card"
 					onTabClick={setActiveTab}

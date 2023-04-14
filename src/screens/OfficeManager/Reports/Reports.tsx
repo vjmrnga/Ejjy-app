@@ -49,7 +49,7 @@ export const Reports = () => {
 
 	// 				<Tabs
 	// 					type="card"
-	// 					className="PaddingHorizontal PaddingVertical"
+	// 					className="pa-6"
 	// 					activeKey={toString(currentBranchId)}
 	// 					onTabClick={onTabClick}
 	// 					destroyInactiveTabPane

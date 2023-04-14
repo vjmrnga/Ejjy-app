@@ -25,7 +25,7 @@ const tabs = {
 export const Notifications = () => {
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = tabs.BRANCH_PRODUCTS },
 		setQueryParams,
 	} = useQueryParams();
 	const {
@@ -53,7 +53,7 @@ export const Notifications = () => {
 		<Content title="Notifications">
 			<Box>
 				<Tabs
-					activeKey={tab ? _.toString(tab) : tabs.BRANCH_PRODUCTS}
+					activeKey={_.toString(tab)}
 					className="pa-6"
 					type="card"
 					destroyInactiveTabPane

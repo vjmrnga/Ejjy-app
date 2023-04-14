@@ -39,7 +39,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 	// CUSTOM HOOKS
 	const {
-		params: { tab },
+		params: { tab = tabs.TRANSACTIONS },
 		setQueryParams,
 	} = useQueryParams();
 	const user = useUserStore((state) => state.user);
@@ -121,7 +121,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 
 					{branchMachine?.server_url && (
 						<Tabs
-							activeKey={_.toString(tab) || tabs.TRANSACTIONS}
+							activeKey={_.toString(tab)}
 							className="pa-6"
 							type="card"
 							destroyInactiveTabPane

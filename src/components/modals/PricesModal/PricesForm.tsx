@@ -481,48 +481,6 @@ export const PricesForm = ({
 										</Col>
 
 										<Col span={24}>
-											<Label
-												id="markdownType"
-												label="Current Sales Price Type"
-												spacing
-											/>
-											<Select
-												className="w-100"
-												filterOption={filterOption}
-												optionFilterProp="children"
-												value={branchProduct.markdownType}
-												showSearch
-												onChange={(value) => {
-													setFieldValue(`${index}.markdownType`, value);
-												}}
-											>
-												<Select.Option
-													key={markdownTypes.REGULAR}
-													value={markdownTypes.REGULAR}
-												>
-													Regular
-												</Select.Option>
-												<Select.Option
-													key={markdownTypes.WHOLESALE}
-													value={markdownTypes.WHOLESALE}
-												>
-													Wholesale
-												</Select.Option>
-												<Select.Option
-													key={markdownTypes.SPECIAL}
-													value={markdownTypes.SPECIAL}
-												>
-													Special
-												</Select.Option>
-											</Select>
-
-											<ErrorMessage
-												name="markdownType"
-												render={(error) => <FieldError error={error} />}
-											/>
-										</Col>
-
-										<Col span={24}>
 											<Divider className="my-0" />
 										</Col>
 
@@ -608,6 +566,52 @@ export const PricesForm = ({
 												value: branchProduct.governmentCreditPricePerBulk,
 												setFieldValue,
 											})}
+										</Col>
+
+										<Col span={24}>
+											<Divider className="my-0" />
+										</Col>
+
+										<Col span={24}>
+											<Label
+												id="markdownType"
+												label="Current Sales Price Type"
+												spacing
+											/>
+											<Select
+												className="w-100"
+												filterOption={filterOption}
+												optionFilterProp="children"
+												value={branchProduct.markdownType}
+												showSearch
+												onChange={(value) => {
+													setFieldValue(`${index}.markdownType`, value);
+												}}
+											>
+												<Select.Option
+													key={markdownTypes.REGULAR}
+													value={markdownTypes.REGULAR}
+												>
+													Regular
+												</Select.Option>
+												<Select.Option
+													key={markdownTypes.WHOLESALE}
+													value={markdownTypes.WHOLESALE}
+												>
+													Wholesale
+												</Select.Option>
+												<Select.Option
+													key={markdownTypes.SPECIAL}
+													value={markdownTypes.SPECIAL}
+												>
+													Special
+												</Select.Option>
+											</Select>
+
+											<ErrorMessage
+												name="markdownType"
+												render={(error) => <FieldError error={error} />}
+											/>
 										</Col>
 									</Row>
 								</Collapse.Panel>

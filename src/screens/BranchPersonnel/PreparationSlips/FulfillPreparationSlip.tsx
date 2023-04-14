@@ -422,7 +422,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 			>
 				<Box>
 					<PreparationSlipDetails
-						className="PaddingHorizontal PaddingVertical"
+						className="pa-6"
 						preparationSlip={preparationSlip}
 					/>
 
@@ -448,7 +448,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 						/>
 					</div>
 
-					<div className="PaddingHorizontal PaddingVertical">
+					<div className="pa-6">
 						<Label label="Search" spacing />
 						<Input
 							prefix={<SearchOutlined />}
@@ -464,7 +464,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					/>
 
 					{preparationSlip?.status !== preparationSlipStatus.COMPLETED && (
-						<div className="FulfillPreparationSlip_btnActions PaddingHorizontal PaddingVertical">
+						<div className="FulfillPreparationSlip_btnActions pa-6">
 							<Button
 								text="Save"
 								variant="secondary"
