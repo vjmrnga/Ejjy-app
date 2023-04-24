@@ -1491,7 +1491,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 					: ''
 			}
       <tr>
-        <td><b>NET SALES</b></td>
+        <td><b>ACCUMULATED GRAND TOTAL</b></td>
         <td style="text-align: right;"><b>${formatInPeso(
 					report.net_sales,
 					PESO_SIGN,
