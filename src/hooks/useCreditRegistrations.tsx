@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CreditRegistrationsService } from 'services';
-import { getLocalApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useCreditRegistrations = ({ params }: Query = {}) =>
 	useQuery<any>(
@@ -38,7 +38,7 @@ export const useCreditRegistrationCreate = () => {
 					account_id: accountId,
 					credit_limit: creditLimit,
 				},
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -56,7 +56,7 @@ export const useCreditRegistrationEdit = () => {
 			CreditRegistrationsService.edit(
 				id,
 				{ credit_limit: creditLimit },
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {

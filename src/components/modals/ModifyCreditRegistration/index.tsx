@@ -15,7 +15,7 @@ import {
 } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getFullName } from 'utils';
+import { convertIntoArray, getFullName, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {
@@ -43,7 +43,7 @@ export const ModifyCreditRegistrationModal = ({
 	const handleSubmit = async (formData) => {
 		if (creditRegistration) {
 			await editCreditRegistration({
-				id: creditRegistration.id,
+				id: getId(creditRegistration),
 				...formData,
 			});
 			message.success('Credit account was edited successfully.');
