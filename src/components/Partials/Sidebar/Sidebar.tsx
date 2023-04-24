@@ -56,12 +56,12 @@ export const Sidebar = ({ items }: Props) => {
 							<img
 								alt={item.name}
 								className="Sidebar_sidebarList_item_icon"
-								src={item.defaultIcon}
+								src={item.defaultIcon?.default}
 							/>
 							<img
 								alt={item.name}
 								className="Sidebar_sidebarList_item_icon Sidebar_sidebarList_item_icon__active"
-								src={item.activeIcon}
+								src={item.activeIcon?.default}
 							/>
 							<span className="Sidebar_sidebarList_item_name">{item.name}</span>
 
