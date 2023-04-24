@@ -59,7 +59,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 			},
 		});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
-		title: `SalesInvoice_${transactionData?.id}`,
+		title: `SalesInvoice_${transactionData?.invoice?.or_number}`,
 		print: () =>
 			printSalesInvoice({
 				transaction: transactionData,
