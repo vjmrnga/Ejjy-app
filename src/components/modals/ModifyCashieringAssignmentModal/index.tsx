@@ -1,6 +1,7 @@
 import { Button, Col, message, Modal, Row, Select, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ErrorMessage, Form, Formik } from 'formik';
+import { MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchMachines,
 	useCashieringAssignmentCreate,
@@ -53,8 +54,11 @@ export const ModifyCashieringAssignmentModal = ({
 	const user = useUserStore((state) => state.user);
 	const {
 		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
 		error: branchMachinesError,
-	} = useBranchMachines();
+	} = useBranchMachines({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 	const {
 		mutateAsync: createCashieringAssignment,
 		isLoading: isCreatingCashieringAssignment,
@@ -120,8 +124,10 @@ export const ModifyCashieringAssignmentModal = ({
 				assignments={assignments}
 				branchMachines={branchMachines}
 				date={date}
-				loading={
-					isCreatingCashieringAssignment || isEditingCashieringAssignment
+				isLoading={
+					isCreatingCashieringAssignment ||
+					isEditingCashieringAssignment ||
+					isFetchingBranchMachines
 				}
 				onClose={onClose}
 				onSubmit={handleSubmit}
@@ -135,7 +141,7 @@ interface FormProps {
 	assignments?: any;
 	branchMachines: any;
 	date?: any;
-	loading: boolean;
+	isLoading: boolean;
 	onClose: any;
 	onSubmit: any;
 }
@@ -145,7 +151,7 @@ export const ModifyCashieringAssignmentForm = ({
 	assignments,
 	branchMachines,
 	date,
-	loading,
+	isLoading,
 	onClose,
 	onSubmit,
 }: FormProps) => {
@@ -244,7 +250,7 @@ export const ModifyCashieringAssignmentForm = ({
 								<Select
 									className="w-100"
 									filterOption={filterOption}
-									loading={loading}
+									loading={isLoading}
 									optionFilterProp="children"
 									value={values.branchMachineId}
 									allowClear
@@ -286,10 +292,10 @@ export const ModifyCashieringAssignmentForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button disabled={loading} htmlType="button" onClick={onClose}>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button htmlType="submit" loading={loading} type="primary">
+						<Button htmlType="submit" loading={isLoading} type="primary">
 							{assignment ? 'Edit' : 'Create'}
 						</Button>
 					</div>
