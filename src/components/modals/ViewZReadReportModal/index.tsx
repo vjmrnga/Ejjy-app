@@ -82,7 +82,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space align="center" className="mt-6 w-100 justify-space-between">
 				<Text>Z-READ</Text>
-				<Text>{`For ${formatDate(report.date)}`}</Text>
+				<Text>{`AS OF ${formatDate(report.date)}`}</Text>
 			</Space>
 
 			<Descriptions
@@ -190,7 +190,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				)}
 				<Descriptions.Item
 					contentStyle={{ fontWeight: 'bold' }}
-					label="NET SALES"
+					label="ACCUMULATED GRAND TOTAL"
 					labelStyle={{ fontWeight: 'bold' }}
 				>
 					{formatInPeso(report.net_sales)}&nbsp;
