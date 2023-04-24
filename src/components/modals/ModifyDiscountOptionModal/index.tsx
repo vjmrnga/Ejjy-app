@@ -144,7 +144,7 @@ export const ModifyDiscountOptionForm = ({
 							)
 							.label('Percentage'),
 					}),
-				isSpecialDiscount: Yup.boolean().required().label('Special Discount'),
+				isSpecialDiscount: Yup.boolean().required().label('SC/PWD'),
 				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
 
 				additionalFields: Yup.array()
@@ -203,7 +203,7 @@ export const ModifyDiscountOptionForm = ({
 						</Col>
 
 						<Col sm={12} xs={24}>
-							<Label id="isSpecialDiscount" label="Special Discount" spacing />
+							<Label id="isSpecialDiscount" label="SC/PWD" spacing />
 							<Radio.Group
 								options={[
 									{ label: 'Yes', value: true },

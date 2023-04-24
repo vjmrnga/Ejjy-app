@@ -131,7 +131,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				title: 'Deductions',
 				children: [
 					{ title: 'Regular Discount', dataIndex: 'regularDiscount' },
-					{ title: 'Special Discount (SC/PWD)', dataIndex: 'specialDiscount' },
+					{ title: 'SC/PWD', dataIndex: 'specialDiscount' },
 					{ title: 'Returns', dataIndex: 'returns' },
 					{ title: 'Void', dataIndex: 'void' },
 					{ title: 'Total Deductions', dataIndex: 'totalDeductions' },
@@ -141,7 +141,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 				title: 'Adjustments on VAT',
 				children: [
 					{
-						title: 'VAT On Special Discounts',
+						title: 'VAT On SC/PWD',
 						dataIndex: 'vatOnSpecialDiscounts',
 					},
 					{ title: 'VAT On Returns', dataIndex: 'vatOnReturns' },

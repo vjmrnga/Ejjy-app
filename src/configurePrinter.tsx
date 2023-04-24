@@ -915,11 +915,11 @@ export const printBirReport = ({ birReports, siteSettings }) => {
         </tr>
         <tr class="nested-row" style="font-weight: bold">
           <td>Regular Discount</td>
-          <td>Special Discount (SC/PWD)</td>
+          <td>SC/PWD</td>
           <td>Returns</td>
           <td>Void</td>
           <td>Total Deductions</td>
-          <td>VAT on Special Discounts</td>
+          <td>VAT on SC/PWD</td>
           <td>VAT on Returns</td>
           <td>Others </td>
           <td>Total VAT Adj.</td>
@@ -1215,7 +1215,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+        <td style="padding-left: 15px">SC/PWD</td>
         <td style="text-align: right">(${formatInPeso(
 					report.special_discount,
 					PESO_SIGN,
@@ -1259,7 +1259,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
             <td>ADJUSTMENT ON VAT:</td>
           </tr>
           <tr>
-            <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+            <td style="padding-left: 15px">SC/PWD</td>
             <td style="text-align: right">${formatInPeso(
 							report.vat_special_discount,
 							PESO_SIGN,
@@ -1465,7 +1465,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+        <td style="padding-left: 15px">SC/PWD</td>
         <td style="text-align: right">(${formatInPeso(
 					report.special_discount,
 					PESO_SIGN,
@@ -1509,7 +1509,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
             <td>ADJUSTMENT ON VAT:</td>
           </tr>
           <tr>
-            <td style="padding-left: 15px">SPECIAL DISCOUNT</td>
+            <td style="padding-left: 15px">SC/PWD</td>
             <td style="text-align: right">${formatInPeso(
 							report.vat_special_discount,
 							PESO_SIGN,

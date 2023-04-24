@@ -332,7 +332,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: '   SPECIAL DISCOUNT',
+		text: '   SC/PWD',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -397,7 +397,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		rowNumber += 1;
 
 		reportTextFile.write({
-			text: '   SPECIAL DISCOUNT',
+			text: '   SC/PWD',
 			alignment: ReportTextFile.ALIGNMENTS.LEFT,
 			rowNumber,
 		});
@@ -690,7 +690,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: '   SPECIAL DISCOUNT',
+		text: '   SC/PWD',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -755,7 +755,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber += 1;
 
 		reportTextFile.write({
-			text: '   SPECIAL DISCOUNT',
+			text: '   SC/PWD',
 			alignment: ReportTextFile.ALIGNMENTS.LEFT,
 			rowNumber,
 		});
