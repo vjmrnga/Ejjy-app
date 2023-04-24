@@ -386,13 +386,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 						)}
 
 						<ReceiptFooter />
-						<Text className="mt-4 d-block text-center">
-							THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF
-							PERMIT TO USE.
-						</Text>
-						<Text className="d-block text-center">
-							THIS SERVES AS YOUR SALES INVOICE
-						</Text>
+
 						<Text className="d-block text-center">
 							&quot;{siteSettings.thank_you_message}&quot;
 						</Text>

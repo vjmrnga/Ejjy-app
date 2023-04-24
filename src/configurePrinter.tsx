@@ -2470,11 +2470,7 @@ export const printSalesInvoice = ({
 		${getFooter(siteSettings)}
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-      ${
-				isReprint
-					? '<span>REPRINT ONLY</span>'
-					: '<span>THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.</span><span>THIS SERVES AS YOUR SALES INVOICE</span>'
-			}
+      ${isReprint ? '<span>REPRINT ONLY</span>' : ''}
 			<span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>

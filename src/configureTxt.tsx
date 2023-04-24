@@ -1213,20 +1213,6 @@ export const createSalesInvoiceTxt = ({
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});
-
-		rowNumber += 1;
-		reportTextFile.write({
-			text: 'THIS INVOICE SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF PERMIT TO USE.',
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-
-		rowNumber += 1;
-		reportTextFile.write({
-			text: 'THIS SERVES AS YOUR SALES INVOICE',
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
 	}
 
 	rowNumber += 1;
