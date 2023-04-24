@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Col, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectivityType,
@@ -28,6 +28,22 @@ import {
 } from 'utils';
 
 const columns: ColumnsType = [
+	{
+		title: () => (
+			<Tooltip title="Connectivity between HeadOffice and BackOffice">
+				Branch (HO ⇆ BO)
+			</Tooltip>
+		),
+		dataIndex: 'branch',
+	},
+	{
+		title: () => (
+			<Tooltip title="Connectivity between BackOffice and Branch Machine">
+				Machine (BO ⇆ Cashiering)
+			</Tooltip>
+		),
+		dataIndex: 'branchMachine',
+	},
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Date & Time Created', dataIndex: 'datetime' },
 ];
@@ -57,12 +73,29 @@ export const TabBranchMachineConnectivityLogs = () => {
 	useEffect(() => {
 		const data = connectivityLogs.map((connectivityLog) => ({
 			key: connectivityLog.id,
+			branch: connectivityLog.branch?.name,
+			branchMachine: connectivityLog.branch_machine?.name,
 			type: <ConnectivityType type={connectivityLog.type} />,
 			datetime: formatDateTime(connectivityLog.datetime_created),
 		}));
 
 		setDataSource(data);
 	}, [connectivityLogs]);
+
+	// TODO: Wait for changes in Jude's side. Need to have a filter in query params for connectivity between BO<>HO and BO<>Cashiering
+	// const getColumns = useCallback(() => {
+	// 	const columns: ColumnsType = [
+	// 		{ title: 'Branch Machine', dataIndex: 'branchMachine', width: 200 },
+	// 		{ title: 'Type', dataIndex: 'type' },
+	// 		{ title: 'Date & Time Created', dataIndex: 'datetime' },
+	// 	];
+
+	// 	if (isUserFromOffice(user.user_type)) {
+	// 		columns.unshift({ title: 'Branch', dataIndex: 'branch' });
+	// 	}
+
+	// 	return columns;
+	// }, [user]);
 
 	return (
 		<>

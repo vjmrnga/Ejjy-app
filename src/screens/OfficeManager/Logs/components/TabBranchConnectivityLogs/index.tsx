@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Col, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ConnectivityType,
@@ -27,8 +27,22 @@ import { convertIntoArray, filterOption, formatDateTime } from 'utils';
 export const TabBranchConnectivityLogs = () => {
 	// VARIABLES
 	const columns: ColumnsType = [
-		{ title: 'Branch', dataIndex: 'branch' },
-		{ title: 'Branch Machine', dataIndex: 'branchMachine' },
+		{
+			title: () => (
+				<Tooltip title="Connectivity between HeadOffice and BackOffice">
+					Branch (HO ⇆ BO)
+				</Tooltip>
+			),
+			dataIndex: 'branch',
+		},
+		{
+			title: () => (
+				<Tooltip title="Connectivity between BackOffice and Branch Machine">
+					Machine (BO ⇆ Cashiering)
+				</Tooltip>
+			),
+			dataIndex: 'branchMachine',
+		},
 		{ title: 'Type', dataIndex: 'type' },
 		{ title: 'Date & Time Created', dataIndex: 'datetime' },
 	];
@@ -203,7 +217,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 
 				<Col lg={12} span={24}>
 					<TimeRangeFilter
-						disabled={isLoading || isFetchingBranches}
+						disabled={isLoading}
 						fields={[timeRangeTypes.DATE_RANGE]}
 					/>
 				</Col>
