@@ -341,6 +341,7 @@ export const PricesForm = ({
 				onSubmit({
 					branchProductFormData,
 					priceMarkdownFormData,
+					isBulkEdit,
 				});
 			}}
 		>

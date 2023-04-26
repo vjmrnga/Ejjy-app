@@ -8,6 +8,7 @@ const { spawn, exec } = require('child_process');
 const Store = require('electron-store');
 
 const TUNNELING_INTERVAL_MS = 60_000;
+const SPLASH_SCREEN_SHOWN_MS = 8_0000;
 
 const appTypes = {
 	BACK_OFFICE: 'back_office',
@@ -69,7 +70,7 @@ function createWindow() {
 				? 'http://localhost:3010'
 				: `file://${path.join(__dirname, '../build/index.html')}`,
 		);
-	}, 8000);
+	}, SPLASH_SCREEN_SHOWN_MS);
 
 	mainWindow.once('ready-to-show', () => {
 		splashWindow.destroy();
@@ -205,6 +206,7 @@ function initServer(store) {
 
 		spawn('python', ['manage.py', 'migrate'], {
 			cwd: apiPath,
+			detached: true,
 			stdio: 'ignore',
 		});
 
@@ -255,6 +257,14 @@ function initServer(store) {
 
 			logStatus('Server: Starded Tunneling');
 		}
+
+		setTimeout(() => {
+			spawn('python', ['manage.py', 'create_branch_product_balance'], {
+				cwd: apiPath,
+				detached: true,
+				stdio: 'ignore',
+			});
+		}, SPLASH_SCREEN_SHOWN_MS + 500);
 
 		logStatus('Server: Started');
 

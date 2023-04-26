@@ -1,15 +1,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Badge, Layout } from 'antd';
+import iconAccount from 'assets/images/icon-account.svg';
+import iconLogout from 'assets/images/icon-logout.svg';
+import sampleAvatar from 'assets/images/sample-avatar.png';
 import cn from 'classnames';
 import { userTypes } from 'global';
 import { useAuthLogout, useSiteSettings } from 'hooks';
+import { useUI } from 'hooks/useUI';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import { getFullName, getUserTypeName } from 'utils';
-import { useUI } from '../../../hooks/useUI';
 import './style.scss';
 
 interface Props {
@@ -92,30 +95,18 @@ export const Sidebar = ({ items }: Props) => {
 			>
 				<div className="menu">
 					<div className="item">
-						<img
-							alt="icon"
-							className="icon"
-							src={require('../../../assets/images/icon-account.svg')}
-						/>
+						<img alt="icon" className="icon" src={iconAccount} />
 						<span className="name">Account</span>
 					</div>
 
 					<div className="item" onClick={() => logout(user.id)}>
-						<img
-							alt="icon"
-							className="icon"
-							src={require('../../../assets/images/icon-logout.svg')}
-						/>
+						<img alt="icon" className="icon" src={iconLogout} />
 						<span className="name">Logout</span>
 					</div>
 				</div>
 
 				<div className="user-details">
-					<img
-						alt="user avatar"
-						className="avatar"
-						src={require('../../../assets/images/sample-avatar.png')}
-					/>
+					<img alt="user avatar" className="avatar" src={sampleAvatar} />
 					<div className="user-text-info">
 						<span className="name">
 							{user?.user_type === userTypes.ADMIN

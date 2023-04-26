@@ -1,14 +1,5 @@
 import { CloseOutlined } from '@ant-design/icons';
-import {
-	Button as AntdButton,
-	Col,
-	Divider,
-	Input,
-	message,
-	Modal,
-	Radio,
-	Row,
-} from 'antd';
+import { Button, Col, Divider, Input, message, Modal, Radio, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { discountTypes, taxTypes } from 'global';
 import {
@@ -21,7 +12,7 @@ import React, { useCallback } from 'react';
 import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
-import { Button, FieldError, FormInputLabel, Label } from '../../elements';
+import { FieldError, FormInputLabel, Label } from '../../elements';
 
 interface ModalProps {
 	discountOption: any;
@@ -293,7 +284,7 @@ export const ModifyDiscountOptionForm = ({
 											className="d-flex align-center justify-center pb-1"
 											xs={3}
 										>
-											<AntdButton
+											<Button
 												icon={<CloseOutlined />}
 												shape="circle"
 												size="small"
@@ -310,7 +301,7 @@ export const ModifyDiscountOptionForm = ({
 									</>
 								))}
 							</Row>
-							<AntdButton
+							<Button
 								className="d-block mt-4 mx-auto"
 								type="link"
 								onClick={() => {
@@ -321,23 +312,17 @@ export const ModifyDiscountOptionForm = ({
 								}}
 							>
 								+ Add Field
-							</AntdButton>
+							</Button>
 						</Col>
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={isLoading}
-							text={discountOption ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							{discountOption ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

@@ -1,4 +1,5 @@
 import React from 'react';
+import breadcrumbDivider from 'assets/images/icon-breadcrumb-divider.svg';
 import { Link } from 'react-router-dom';
 import './style.scss';
 
@@ -23,7 +24,7 @@ export const Breadcrumb = ({ items }: Props) => (
 						<img
 							alt="breadcrumb divider"
 							className="divider"
-							src={require('../../assets/images/icon-breadcrumb-divider.svg')}
+							src={breadcrumbDivider}
 						/>
 					</div>
 				)}

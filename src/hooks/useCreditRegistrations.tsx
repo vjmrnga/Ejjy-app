@@ -3,14 +3,18 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CreditRegistrationsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const useCreditRegistrations = ({ params }: Query = {}) =>
 	useQuery<any>(
 		['useCreditRegistrations', params?.page, params?.pageSize, params?.search],
-		() =>
-			wrapServiceWithCatch(
-				CreditRegistrationsService.list(
+		() => {
+			const service = isStandAlone()
+				? CreditRegistrationsService.list
+				: CreditRegistrationsService.listOffline;
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
@@ -18,7 +22,8 @@ const useCreditRegistrations = ({ params }: Query = {}) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({

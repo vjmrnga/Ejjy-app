@@ -1,11 +1,6 @@
-import { Col, message, Modal, Row, Select, Spin } from 'antd';
+import { Button, Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
-import {
-	Button,
-	FieldError,
-	FormattedInputNumber,
-	Label,
-} from 'components/elements';
+import { FieldError, FormattedInputNumber, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE, SEARCH_DEBOUNCE_TIME } from 'global';
 import {
@@ -191,18 +186,12 @@ export const ModifyCreditRegistrationForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={loading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={loading}
-							text={creditRegistration ? 'Edit' : 'Create'}
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={loading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={loading} type="primary">
+							{creditRegistration ? 'Edit' : 'Create'}
+						</Button>
 					</div>
 				</Form>
 			)}

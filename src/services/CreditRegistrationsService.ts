@@ -17,4 +17,12 @@ const service = {
 		axios.patch(`/credit-registrations/${id}/`, body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: IListRequest, baseURL) =>
+		axios.get('/offline-credit-registrations/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

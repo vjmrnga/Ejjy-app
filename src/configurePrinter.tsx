@@ -1122,6 +1122,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 			siteSettings,
 		})}
 
+    <br />
+
     ${
 			report?.gross_sales === 0
 				? '<div style="text-align: center">NO TRANSACTION</div>'
@@ -1377,6 +1379,8 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 			branchMachine: report.branch_machine,
 			siteSettings,
 		})}
+
+    <br />
 
 		<div
 			style="display: flex; align-items: center; justify-content: space-between"

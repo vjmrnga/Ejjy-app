@@ -6,6 +6,7 @@ import {
 	useBranchProductEditPriceCost,
 	useBranchProducts,
 	usePriceMarkdownCreate,
+	useProductEdit,
 } from 'hooks';
 import React from 'react';
 import { useUserStore } from 'stores';
@@ -65,11 +66,17 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		isLoading: isEditingBranchProductPriceCost,
 		error: editBranchProductPricCostError,
 	} = useBranchProductEditPriceCost();
+	const {
+		mutateAsync: editProduct,
+		isLoading: isEditingProduct,
+		error: editProductError,
+	} = useProductEdit();
 
 	// METHODS
 	const handleSubmit = async ({
 		branchProductFormData,
 		priceMarkdownFormData,
+		isBulkEdit,
 	}) => {
 		if (branchProductFormData.length > 0) {
 			await editBranchProductPriceCost({
@@ -86,6 +93,14 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			await createPriceMarkdown({
 				productId: getId(product),
 				data: priceMarkdownFormData,
+			});
+		}
+
+		if (isBulkEdit) {
+			await editProduct({
+				...branchProductFormData[0],
+				id: getId(product),
+				actingUserId: getId(user),
 			});
 		}
 
@@ -111,6 +126,7 @@ export const PricesModal = ({ product, onClose }: Props) => {
 			<RequestErrors
 				errors={[
 					...convertIntoArray(branchProductError, 'Branch Product'),
+					...convertIntoArray(editProductError, 'Product'),
 					...convertIntoArray(
 						editBranchProductPricCostError?.errors,
 						'Branch Product Price Cost',
@@ -131,7 +147,8 @@ export const PricesModal = ({ product, onClose }: Props) => {
 						isFetchingBranches ||
 						isFetchingBranchProducts ||
 						isCreatingPriceMarkdown ||
-						isEditingBranchProductPriceCost
+						isEditingBranchProductPriceCost ||
+						isEditingProduct
 					}
 					onClose={onClose}
 					onSubmit={handleSubmit}
@@ -152,7 +169,8 @@ export const PricesModal = ({ product, onClose }: Props) => {
 								isFetchingBranches ||
 								isFetchingBranchProducts ||
 								isCreatingPriceMarkdown ||
-								isEditingBranchProductPriceCost
+								isEditingBranchProductPriceCost ||
+								isEditingProduct
 							}
 							onClose={onClose}
 							onSubmit={handleSubmit}
@@ -166,7 +184,8 @@ export const PricesModal = ({ product, onClose }: Props) => {
 								isFetchingBranches ||
 								isFetchingBranchProducts ||
 								isCreatingPriceMarkdown ||
-								isEditingBranchProductPriceCost
+								isEditingBranchProductPriceCost ||
+								isEditingProduct
 							}
 							isBulkEdit
 							onClose={onClose}

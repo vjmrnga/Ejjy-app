@@ -53,8 +53,8 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const {
-		isFetching: isFetchingCreditRegistrations,
 		data: { creditRegistrations, total },
+		isFetching: isFetchingCreditRegistrations,
 		error: creditRegistrationsError,
 	} = useCreditRegistrations({ params });
 
