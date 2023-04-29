@@ -101,7 +101,12 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				<Descriptions.Item label="CASH SALES">
 					{formatInPeso(report.cash_sales)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item label="CREDIT SALES">
+				<Descriptions.Item
+					contentStyle={{
+						textDecoration: Number(report.credit_pay) ? 'underline' : 'none',
+					}}
+					label="CREDIT SALES"
+				>
 					{formatInPeso(report.credit_pay)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="GROSS SALES">
@@ -178,6 +183,11 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				{siteSettings.tax_type === taxTypes.VAT && (
 					<>
 						<Descriptions.Item
+							contentStyle={{
+								textDecoration: Number(report.vat_amount)
+									? 'underline'
+									: 'none',
+							}}
 							label="VAT Amount"
 							labelStyle={{ paddingLeft: 30 }}
 						>
@@ -187,7 +197,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				)}
 				<Descriptions.Item
 					contentStyle={{ fontWeight: 'bold' }}
-					label="ACCUMULATED GRAND TOTAL"
+					label="ACCUM. GRAND TOTAL"
 					labelStyle={{ fontWeight: 'bold' }}
 				>
 					{formatInPeso(report.net_sales)}&nbsp;
@@ -219,7 +229,13 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 						<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
 							{formatInPeso(report.vat_special_discount)}&nbsp;
 						</Descriptions.Item>
-						<Descriptions.Item label="OTHERS" labelStyle={{ paddingLeft: 30 }}>
+						<Descriptions.Item
+							contentStyle={{
+								textDecoration: Number(report.others) ? 'underline' : 'none',
+							}}
+							label="OTHERS"
+							labelStyle={{ paddingLeft: 30 }}
+						>
 							{formatInPeso(report.others)}&nbsp;
 						</Descriptions.Item>
 						<Descriptions.Item label="TOTAL" labelStyle={{ paddingLeft: 30 }}>
@@ -247,7 +263,14 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 						<Descriptions.Item label="VAT AMOUNT">
 							{formatInPeso(report.vat_amount)}&nbsp;
 						</Descriptions.Item>
-						<Descriptions.Item label="VAT ADJ.">
+						<Descriptions.Item
+							contentStyle={{
+								textDecoration: Number(report.total_vat_adjusted)
+									? 'underline'
+									: 'none',
+							}}
+							label="VAT ADJ."
+						>
 							({formatInPeso(report.total_vat_adjusted)})
 						</Descriptions.Item>
 						<Descriptions.Item label="VAT PAYABLE">
@@ -260,11 +283,11 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space className="mt-6 w-100 justify-space-between">
 				<Text>{dayjs().format('MM/DD/YYYY h:mmA')}</Text>
-				<Text>{report.generated_by.employee_id || EMPTY_CELL}</Text>
+				<Text>{report.generated_by?.employee_id || EMPTY_CELL}</Text>
 			</Space>
 
 			<Text className="w-100 text-center d-block">
-				End SI #: {report.ending_or?.or_number || EMPTY_CELL}
+				End SI #: {report.ending_or.or_number || EMPTY_CELL}
 			</Text>
 
 			<ReceiptFooter />

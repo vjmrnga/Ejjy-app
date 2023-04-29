@@ -1,6 +1,7 @@
+import React from 'react';
 import cn from 'classnames';
 import { useField } from 'formik';
-import * as React from 'react';
+import iconPeso from 'assets/images/icon-peso.svg';
 import { formatNumberWithCommas, formatRemoveCommas } from 'utils';
 import './style.scss';
 
@@ -99,11 +100,7 @@ const FormInput = ({
 	return (
 		<div className="FormInput">
 			{isMoney && (
-				<img
-					alt="peso sign"
-					className="FormInput_pesoSign"
-					src={require('../../../assets/images/icon-peso.svg')}
-				/>
+				<img alt="peso sign" className="FormInput_pesoSign" src={iconPeso} />
 			)}
 			<input
 				// eslint-disable-next-line react/jsx-props-no-spreading

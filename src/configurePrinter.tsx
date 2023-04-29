@@ -261,6 +261,14 @@ const appendHtmlElement = (data) => `
     </body>
   </html>`;
 
+const formatInPesoWithUnderline = (value) => {
+	const textDecoration = Number(value) > 0 ? 'underline' : 'none';
+
+	return `<span style="display:inline-block; text-decoration: ${textDecoration}">
+    ${formatInPeso(value, PESO_SIGN)}
+  </span>`;
+};
+
 export const printRequisitionSlip = ({
 	requisitionSlip,
 	siteSettings,
@@ -1149,9 +1157,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 			</tr>
 			<tr>
 				<td>CREDIT SALES</td>
-				<td style="text-align: right">${formatInPeso(
+				<td style="text-align: right">${formatInPesoWithUnderline(
 					report.credit_pay,
-					PESO_SIGN,
 				)}&nbsp;</td>
 			</tr>
 			<tr>
@@ -1235,9 +1242,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 					? `
           <tr>
             <td style="padding-left: 15px">VAT AMOUNT</td>
-            <td style="text-align: right">(${formatInPeso(
+            <td style="text-align: right">(${formatInPesoWithUnderline(
 							report.vat_amount,
-							PESO_SIGN,
 						)})</td>
           </tr>`
 					: ''
@@ -1269,9 +1275,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
           </tr>
           <tr>
             <td style="padding-left: 15px">OTHERS</td>
-            <td style="text-align: right">${formatInPeso(
+            <td style="text-align: right">${formatInPesoWithUnderline(
 							report.others,
-							PESO_SIGN,
 						)}&nbsp;</td>
           </tr>
           <tr>
@@ -1295,9 +1300,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
           </tr>
           <tr>
             <td>VAT ADJ.</td>
-            <td style="text-align: right">(${formatInPeso(
+            <td style="text-align: right">(${formatInPesoWithUnderline(
 							report.total_vat_adjusted,
-							PESO_SIGN,
 						)})</td>
           </tr>
           <tr>
@@ -1401,9 +1405,8 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 			</tr>
 			<tr>
 				<td>CREDIT SALES</td>
-				<td style="text-align: right">${formatInPeso(
+				<td style="text-align: right">${formatInPesoWithUnderline(
 					report.credit_pay,
-					PESO_SIGN,
 				)}&nbsp;</td>
 			</tr>
 			<tr>
@@ -1487,15 +1490,14 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 					? `
           <tr>
             <td style="padding-left: 15px">VAT AMOUNT</td>
-            <td style="text-align: right">(${formatInPeso(
+            <td style="text-align: right">(${formatInPesoWithUnderline(
 							report.vat_amount,
-							PESO_SIGN,
 						)})</td>
           </tr>`
 					: ''
 			}
       <tr>
-        <td><b>ACCUMULATED GRAND TOTAL</b></td>
+        <td><b>ACCUM. GRAND TOTAL</b></td>
         <td style="text-align: right;"><b>${formatInPeso(
 					report.net_sales,
 					PESO_SIGN,
@@ -1521,9 +1523,8 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
           </tr>
           <tr>
             <td style="padding-left: 15px">OTHERS</td>
-            <td style="text-align: right">${formatInPeso(
+            <td style="text-align: right">${formatInPesoWithUnderline(
 							report.others,
-							PESO_SIGN,
 						)}&nbsp;</td>
           </tr>
           <tr>
@@ -1547,9 +1548,8 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
           </tr>
           <tr>
             <td>VAT ADJ.</td>
-            <td style="text-align: right">(${formatInPeso(
+            <td style="text-align: right">(${formatInPesoWithUnderline(
 							report.total_vat_adjusted,
-							PESO_SIGN,
 						)})</td>
           </tr>
           <tr>

@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.375",
+	"version": "0.1.377",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",

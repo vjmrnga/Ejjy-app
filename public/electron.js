@@ -8,7 +8,7 @@ const { spawn, exec } = require('child_process');
 const Store = require('electron-store');
 
 const TUNNELING_INTERVAL_MS = 60_000;
-const SPLASH_SCREEN_SHOWN_MS = 8_0000;
+const SPLASH_SCREEN_SHOWN_MS = 8_000;
 
 const appTypes = {
 	BACK_OFFICE: 'back_office',

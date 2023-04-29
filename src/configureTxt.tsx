@@ -728,7 +728,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	}
 
 	reportTextFile.write({
-		text: 'ACCUMULATED GRAND TOTAL',
+		text: 'ACCUM. GRAND TOTAL',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});

@@ -1,3 +1,4 @@
+import iconCheckWhite from 'assets/images/icon-check-white.svg';
 import cn from 'classnames';
 import { useField } from 'formik';
 import * as React from 'react';
@@ -41,7 +42,7 @@ const FormRadioButton = ({ id, items, disabled, onChange }: Props) => {
 						<img
 							alt="check icon"
 							className="FormRadioButton_button_checkIcon"
-							src={require('../../../assets/images/icon-check-white.svg')}
+							src={iconCheckWhite}
 						/>
 					)}
 				</button>
