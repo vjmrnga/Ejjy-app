@@ -194,8 +194,8 @@ export const useBranchProducts = () => {
 	};
 };
 
-const useBranchProductsNew = ({ params, options }: Query) => {
-	return useQuery<any>(
+const useBranchProductsNew = ({ params, options }: Query) =>
+	useQuery<any>(
 		[
 			'useBranchProducts',
 			params?.ids,
@@ -249,7 +249,6 @@ const useBranchProductsNew = ({ params, options }: Query) => {
 			...options,
 		},
 	);
-};
 
 export const useBranchProductsOffline = ({ params, options }: Query) =>
 	useQuery<any>(

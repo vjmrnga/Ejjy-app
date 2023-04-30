@@ -1,23 +1,23 @@
+import React from 'react';
 import { message, Modal } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { useBalanceAdjustmentLogCreate } from 'hooks';
-import React from 'react';
+import { useQueryClient } from 'react-query';
 import { useUserStore } from 'stores';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { CreateBalanceAdjustmentLogForm } from './CreateBalanceAdjustmentLogForm';
 
 interface Props {
 	branchProduct: any;
-	onSuccess: any;
 	onClose: any;
 }
 
 export const CreateBalanceAdjustmentLogModal = ({
 	branchProduct,
-	onSuccess,
 	onClose,
 }: Props) => {
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const user = useUserStore((state) => state.user);
 	const {
 		mutateAsync: createBalanceAdjustmentLog,
@@ -28,13 +28,14 @@ export const CreateBalanceAdjustmentLogModal = ({
 	// METHODS
 	const handleSubmit = async (formData) => {
 		await createBalanceAdjustmentLog({
-			branchProductId: branchProduct.id,
-			creatingUserId: user.id,
+			branchProductId: getId(branchProduct),
+			creatingUserId: getId(user),
 			newBalance: formData.newBalance,
 		});
 		message.success('Balance adjustment log was created successfully.');
 
-		onSuccess();
+		queryClient.invalidateQueries('useBranchProducts');
+
 		onClose();
 	};
 

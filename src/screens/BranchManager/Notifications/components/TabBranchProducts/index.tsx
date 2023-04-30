@@ -12,6 +12,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	serviceTypes,
 	SHOW_HIDE_SHORTCUT,
 } from 'global';
 import { useBranchProducts, useQueryParams } from 'hooks';
@@ -54,6 +55,7 @@ export const TabBranchProducts = () => {
 	} = useBranchProducts({
 		params: {
 			hasNegativeBalance: true,
+			serviceType: serviceTypes.OFFLINE,
 			...params,
 		},
 	});

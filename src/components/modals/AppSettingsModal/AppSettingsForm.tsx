@@ -145,6 +145,10 @@ export const AppSettingsForm = ({
 						values.appType === appTypes.HEAD_OFFICE
 							? values.isMainHeadOffice
 							: false,
+					branchId:
+						values.appType === appTypes.HEAD_OFFICE
+							? undefined
+							: values.branchId,
 				});
 			}}
 		>
@@ -249,31 +253,33 @@ export const AppSettingsForm = ({
 							/>
 						</Col>
 
-						<Col span={24}>
-							<Label label="Branch" spacing />
-							<Select
-								allowClear={false}
-								className="w-100"
-								filterOption={filterOption}
-								loading={isFetchingBranches}
-								optionFilterProp="children"
-								value={values.branchId ? Number(values.branchId) : undefined}
-								showSearch
-								onChange={(value) => {
-									setFieldValue('branchId', value);
-								}}
-							>
-								{branches.map((branch) => (
-									<Select.Option key={branch.id} value={branch.id}>
-										{branch.name}
-									</Select.Option>
-								))}
-							</Select>
-							<ErrorMessage
-								name="branchId"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
+						{values.appType === appTypes.BACK_OFFICE && (
+							<Col span={24}>
+								<Label label="Branch" spacing />
+								<Select
+									allowClear={false}
+									className="w-100"
+									filterOption={filterOption}
+									loading={isFetchingBranches}
+									optionFilterProp="children"
+									value={values.branchId ? Number(values.branchId) : undefined}
+									showSearch
+									onChange={(value) => {
+										setFieldValue('branchId', value);
+									}}
+								>
+									{branches.map((branch) => (
+										<Select.Option key={branch.id} value={branch.id}>
+											{branch.name}
+										</Select.Option>
+									))}
+								</Select>
+								<ErrorMessage
+									name="branchId"
+									render={(error) => <FieldError error={error} />}
+								/>
+							</Col>
+						)}
 
 						<Col span={24}>
 							<Divider>Printers</Divider>

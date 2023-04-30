@@ -1,12 +1,13 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { InfoOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { userTypes } from 'global';
-import React, { useCallback, useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { useUserStore } from 'stores';
 import adminData from './data/admin';
 import backofficeData from './data/backoffice';
 import headofficeData from './data/headoffice';
+import commonData from './data/common';
 import './style.scss';
 
 export const PageInformation = () => {
@@ -21,6 +22,8 @@ export const PageInformation = () => {
 			setDataSource(backofficeData);
 		} else if (userTypes.OFFICE_MANAGER === user.user_type) {
 			setDataSource(headofficeData);
+		} else {
+			setDataSource(commonData);
 		}
 	}, [user]);
 
