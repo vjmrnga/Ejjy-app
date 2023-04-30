@@ -1,10 +1,8 @@
 @use 'assets/styles/' as *;
 
 .PageInformation {
-	&__button {
-		position: fixed !important;
-		right: 1.5em;
-		bottom: 1em;
-		z-index: 999;
-	}
+	position: fixed !important;
+	right: 1.5em;
+	bottom: 1em;
+	z-index: 999;
 }

@@ -43,11 +43,7 @@ export const PageInformation = () => {
 		<div className="PageInformation">
 			<Tooltip placement="left" title="Page Information">
 				<a href={getContent()} rel="noreferrer" target="_blank">
-					<Button
-						className="PageInformation__button"
-						icon={<InfoOutlined />}
-						shape="circle"
-					/>
+					<Button icon={<InfoOutlined />} shape="circle" />
 				</a>
 			</Tooltip>
 		</div>

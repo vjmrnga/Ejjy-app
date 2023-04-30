@@ -44,10 +44,6 @@ const data = [
 		link: 'https://gamy-mayonnaise-e86.notion.site/Accounts-48e43c82a2aa4192a0d6fee809f09485?pvs=4',
 	},
 	{
-		path: '',
-		link: 'https://gamy-mayonnaise-e86.notion.site/Settings-28096b7d4a90470d8b383372f4a2ef24?pvs=4',
-	},
-	{
 		path: '/branch-manager/users',
 		link: 'https://gamy-mayonnaise-e86.notion.site/Users-dcb2409b17fa48aa95f544cf3736d2e0?pvs=4',
 	},
@@ -56,8 +52,12 @@ const data = [
 		link: 'https://gamy-mayonnaise-e86.notion.site/DTR-adb194d9fe2047f19b568cfabc9efce0?pvs=4',
 	},
 	{
-		path: '/branch-manager/settings',
+		path: '/branch-manager/back-orders',
 		link: 'https://gamy-mayonnaise-e86.notion.site/Back-Orders-0c00ae262a6942c8af50424e8a6665c6?pvs=4',
+	},
+	{
+		path: '/branch-manager/settings',
+		link: 'https://gamy-mayonnaise-e86.notion.site/Settings-28096b7d4a90470d8b383372f4a2ef24?pvs=4',
 	},
 	{
 		path: '/branch-manager/logs',
