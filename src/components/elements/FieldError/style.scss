@@ -1,6 +1,7 @@
 @use 'assets/styles/' as *;
 
 .FieldError {
+	margin: 0.25em 0;
 	@include flex($align-items: center);
 
 	&_icon {

@@ -1,24 +1,24 @@
 /* eslint-disable no-confusing-arrow */
-import { Col, Row } from 'antd';
+import { Col, Input, Row, Button } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { unitOfMeasurementTypes } from 'global';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-import { Button, FieldError, FormInputLabel } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface Props {
 	branchProduct: any;
 	onSubmit: any;
 	onClose: any;
-	loading: boolean;
+	isLoading: boolean;
 }
 
 export const CreateBalanceAdjustmentLogForm = ({
 	branchProduct,
 	onSubmit,
 	onClose,
-	loading,
+	isLoading,
 }: Props) => {
 	const getFormDetails = useCallback(
 		() => ({
@@ -53,32 +53,35 @@ export const CreateBalanceAdjustmentLogForm = ({
 				onSubmit(formData);
 			}}
 		>
-			<Form>
-				<Row gutter={[16, 16]}>
-					<Col span={24}>
-						<FormInputLabel id="newBalance" label="New Balance" type="number" />
-						<ErrorMessage
-							name="newBalance"
-							render={(error) => <FieldError error={error} />}
-						/>
-					</Col>
-				</Row>
+			{({ values, setFieldValue }) => (
+				<Form>
+					<Row gutter={[16, 16]}>
+						<Col span={24}>
+							<Label label="New Balance" spacing />
+							<Input
+								type="number"
+								value={values.newBalance}
+								onChange={(e) => {
+									setFieldValue('newBalance', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="newBalance"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+					</Row>
 
-				<div className="ModalCustomFooter">
-					<Button
-						disabled={loading}
-						text="Cancel"
-						type="button"
-						onClick={onClose}
-					/>
-					<Button
-						loading={loading}
-						text="Create"
-						type="submit"
-						variant="primary"
-					/>
-				</div>
-			</Form>
+					<div className="ModalCustomFooter">
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							Submit
+						</Button>
+					</div>
+				</Form>
+			)}
 		</Formik>
 	);
 };

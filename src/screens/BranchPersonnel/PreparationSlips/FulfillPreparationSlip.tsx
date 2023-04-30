@@ -427,7 +427,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 					/>
 
 					<RequestErrors
-						className="PaddingHorizontal"
+						className="px-6"
 						errors={[
 							...convertIntoArray(fulfillPrepSlipErrors, 'Fulfill'),
 							...convertIntoArray(savePrepSlipErrors, 'Saving'),
@@ -435,7 +435,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 						withSpaceBottom
 					/>
 
-					<div className="FulfillPreparationSlip_keyboardKeys PaddingHorizontal">
+					<div className="FulfillPreparationSlip_keyboardKeys px-6">
 						<KeyboardButton
 							keyboardKey="F1"
 							label="Add Quantity"

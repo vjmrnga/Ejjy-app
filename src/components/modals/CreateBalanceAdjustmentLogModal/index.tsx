@@ -61,7 +61,7 @@ export const CreateBalanceAdjustmentLogModal = ({
 
 			<CreateBalanceAdjustmentLogForm
 				branchProduct={branchProduct}
-				loading={isCreatingBalanceAdjustmentLog}
+				isLoading={isCreatingBalanceAdjustmentLog}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>

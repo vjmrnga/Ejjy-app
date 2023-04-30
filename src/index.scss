@@ -21,16 +21,6 @@ body {
 	@include flex(center, center, column);
 }
 
-.PaddingHorizontal {
-	padding-left: 25px;
-	padding-right: 25px;
-}
-
-.PaddingVertical {
-	padding-top: 25px;
-	padding-bottom: 25px;
-}
-
 .ant-modal-root {
 	.ant-modal {
 		margin-top: 25px;

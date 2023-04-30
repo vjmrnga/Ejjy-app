@@ -307,7 +307,7 @@ export const CreateBackOrder = () => {
 				/>
 
 				<RequestErrors
-					className="PaddingHorizontal"
+					className="px-6"
 					errors={[
 						...convertIntoArray(branchProductsErrors, 'Branch Products'),
 						...convertIntoArray(backOrdersErrors, 'Back Orders'),
@@ -329,7 +329,7 @@ export const CreateBackOrder = () => {
 				>
 					{({ values, setFieldValue }) => (
 						<Form>
-							<div className="PaddingHorizontal">
+							<div className="px-6">
 								<Tabs
 									activeKey={activeTab}
 									type="card"
