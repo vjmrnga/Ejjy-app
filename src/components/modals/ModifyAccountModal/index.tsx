@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 import { RequestErrors } from 'components';
 import { useAccountCreate, useAccountEdit } from 'hooks';
 import React from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import { ModifyAccountForm } from './ModifyAccountForm';
 
 interface Props {
@@ -28,7 +28,7 @@ export const ModifyAccountModal = ({ account, onSuccess, onClose }: Props) => {
 	const handleSubmit = async (formData) => {
 		if (account) {
 			await editAccount({
-				id: account.id,
+				id: getId(account),
 				...formData,
 			});
 			message.success('Account was edited successfully.');

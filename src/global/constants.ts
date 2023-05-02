@@ -36,6 +36,7 @@ export const GENERIC_BRANCH_ERROR_MESSAGE =
 	'An error occurred while requesting on a local branch';
 
 // UI
+export const ADMIN_PASSWORD = 'generic123';
 export const QUANTITY_WEIGHING_PRECISION = 3;
 export const QUANTITY_NON_WEIGHING_PRECISION = 0;
 export const VIEW_PRINTING_MODAL_WIDTH = 425;

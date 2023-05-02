@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Space, Table, Tag, Tooltip } from 'antd';
+import { Button, Col, Input, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateBalanceAdjustmentLogModal,
@@ -12,39 +12,23 @@ import {
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
-	serviceTypes,
-	SHOW_HIDE_SHORTCUT,
 } from 'global';
 import { useBranchProducts, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	confirmPassword,
-	convertIntoArray,
-	formatQuantity,
-	getKeyDownCombination,
-} from 'utils';
+import { convertIntoArray, formatQuantity } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Balance', dataIndex: 'balance' },
-	{
-		title: (
-			<Space>
-				<span>Actions</span>
-				<Tag color="warning">Requires admin permission</Tag>
-			</Space>
-		),
-		dataIndex: 'actions',
-	},
+	{ title: 'Actions', dataIndex: 'actions' },
 ];
 
 export const TabBranchProducts = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchProduct, setSelectedBranchProduct] = useState(null);
-	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -55,20 +39,11 @@ export const TabBranchProducts = () => {
 	} = useBranchProducts({
 		params: {
 			hasNegativeBalance: true,
-			serviceType: serviceTypes.OFFLINE,
 			...params,
 		},
 	});
 
 	// METHODS
-	useEffect(() => {
-		document.addEventListener('keydown', handleKeyDown);
-
-		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-		};
-	});
-
 	useEffect(() => {
 		const data = branchProducts.map((branchProduct) => ({
 			key: branchProduct.id,
@@ -84,37 +59,17 @@ export const TabBranchProducts = () => {
 			actions: (
 				<Tooltip title="Create Balance Adjustment">
 					<Button
-						disabled={!isCurrentBalanceVisible}
 						icon={<PlusOutlined />}
 						type="primary"
 						ghost
-						onClick={
-							isCurrentBalanceVisible
-								? () => setSelectedBranchProduct(branchProduct)
-								: undefined
-						}
+						onClick={() => setSelectedBranchProduct(branchProduct)}
 					/>
 				</Tooltip>
 			),
 		}));
 
 		setDataSource(data);
-	}, [isCurrentBalanceVisible, branchProducts]);
-
-	const handleKeyDown = (event) => {
-		const key = getKeyDownCombination(event);
-
-		if (SHOW_HIDE_SHORTCUT.includes(key)) {
-			event.preventDefault();
-			if (isCurrentBalanceVisible) {
-				setIsCurrentBalanceVisible(false);
-			} else {
-				confirmPassword({
-					onSuccess: () => setIsCurrentBalanceVisible(true),
-				});
-			}
-		}
-	};
+	}, [branchProducts]);
 
 	return (
 		<>

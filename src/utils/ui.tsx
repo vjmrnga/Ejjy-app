@@ -15,6 +15,7 @@ import {
 import { BadgePill } from 'components/elements';
 import {
 	accountTypes,
+	ADMIN_PASSWORD,
 	appTypes,
 	attendanceCategories,
 	backOrdersStatuses,
@@ -661,7 +662,7 @@ export const confirmPassword = ({
 	});
 
 	const handleSubmit = () => {
-		if (password === 'generic123') {
+		if (password === ADMIN_PASSWORD) {
 			onSuccess();
 			modal.destroy();
 		} else {

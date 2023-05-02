@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 interface Props {
 	branches: any;
 	branchProducts?: any;
+	product?: any;
 	onSubmit: any;
 	onClose: any;
 	isLoading: boolean;
@@ -85,6 +86,7 @@ const variableNames = [
 export const PricesForm = ({
 	branches,
 	branchProducts,
+	product,
 	onSubmit,
 	onClose,
 	isLoading,
@@ -261,7 +263,7 @@ export const PricesForm = ({
 			<FormattedInputNumber
 				className="w-100"
 				controls={false}
-				placeholder={placeholder ? placeholder.toFixed(2) : undefined}
+				placeholder={placeholder ? Number(placeholder).toFixed(2) : undefined}
 				value={value}
 				onChange={(newValue) => {
 					setFieldValue(name, newValue);
@@ -379,7 +381,9 @@ export const PricesForm = ({
 											{renderInputField({
 												name: `${index}.costPerPiece`,
 												label: 'Cost (Piece)',
-												placeholder: branchProduct.initialCostPerPiece,
+												placeholder:
+													product?.cost_per_piece ||
+													branchProduct.initialCostPerPiece,
 												value: branchProduct.costPerPiece,
 												setFieldValue,
 											})}
@@ -388,7 +392,9 @@ export const PricesForm = ({
 											{renderInputField({
 												name: `${index}.costPerBulk`,
 												label: 'Cost (Bulk)',
-												placeholder: branchProduct.initialCostPerBulk,
+												placeholder:
+													product?.cost_per_bulk ||
+													branchProduct.initialCostPerBulk,
 												value: branchProduct.costPerBulk,
 												setFieldValue,
 											})}
@@ -402,7 +408,9 @@ export const PricesForm = ({
 											{renderInputField({
 												name: `${index}.pricePerPiece`,
 												label: 'Regular Price (Piece)',
-												placeholder: branchProduct.initialPricePerPiece,
+												placeholder:
+													product?.price_per_piece ||
+													branchProduct.initialPricePerPiece,
 												value: branchProduct.pricePerPiece,
 												setFieldValue: (name, newValue) => {
 													setFieldValue(name, newValue);
@@ -423,7 +431,9 @@ export const PricesForm = ({
 											{renderInputField({
 												name: `${index}.pricePerBulk`,
 												label: 'Regular Price (Bulk)',
-												placeholder: branchProduct.initialPricePerBulk,
+												placeholder:
+													product?.price_per_bulk ||
+													branchProduct.initialPricePerBulk,
 												value: branchProduct.pricePerBulk,
 												setFieldValue: (name, newValue) => {
 													setFieldValue(name, newValue);

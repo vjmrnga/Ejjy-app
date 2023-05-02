@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query';
 import { BalanceAdjustmentLogService } from 'services';
-import { getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl } from 'utils';
 
 export const useBalanceAdjustmentLogCreate = () =>
 	useMutation<any, any, any>(
@@ -11,6 +11,6 @@ export const useBalanceAdjustmentLogCreate = () =>
 					creating_user_id: creatingUserId,
 					new_balance: newBalance,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
 			),
 	);

@@ -4,7 +4,7 @@ import { RequestErrors } from 'components/RequestErrors';
 import { useBalanceAdjustmentLogCreate } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getId } from 'utils';
+import { convertIntoArray } from 'utils';
 import { CreateBalanceAdjustmentLogForm } from './CreateBalanceAdjustmentLogForm';
 
 interface Props {
@@ -28,8 +28,8 @@ export const CreateBalanceAdjustmentLogModal = ({
 	// METHODS
 	const handleSubmit = async (formData) => {
 		await createBalanceAdjustmentLog({
-			branchProductId: getId(branchProduct),
-			creatingUserId: getId(user),
+			branchProductId: branchProduct.id,
+			creatingUserId: user.id,
 			newBalance: formData.newBalance,
 		});
 		message.success('Balance adjustment log was created successfully.');

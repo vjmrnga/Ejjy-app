@@ -5,7 +5,7 @@ const data = [
 	},
 	{
 		path: '/office-manager/products',
-		link: 'https://gamy-mayonnaise-e86.notion.site/Products-e97dc2e4050d4fe480a72e5d11f931c7',
+		link: 'https://gamy-mayonnaise-e86.notion.site/Products-ca51e368790841ceaacaa869cb84bb30',
 	},
 	{
 		path: '/office-manager/product-categories',

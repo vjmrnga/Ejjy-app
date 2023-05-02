@@ -1,7 +1,6 @@
-/* eslint-disable no-confusing-arrow */
 import { Col, Input, Row, Button } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { unitOfMeasurementTypes } from 'global';
+import { ADMIN_PASSWORD, unitOfMeasurementTypes } from 'global';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
@@ -24,6 +23,7 @@ export const CreateBalanceAdjustmentLogForm = ({
 		() => ({
 			DefaultValues: {
 				newBalance: '',
+				password: '',
 			},
 			Schema: Yup.object().shape({
 				newBalance: Yup.number()
@@ -49,8 +49,12 @@ export const CreateBalanceAdjustmentLogForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			enableReinitialize
-			onSubmit={async (formData) => {
-				onSubmit(formData);
+			onSubmit={async (formData, { setFieldError }) => {
+				if (formData.password === ADMIN_PASSWORD) {
+					onSubmit(formData);
+				} else {
+					setFieldError('password', 'Incorrect admin password.');
+				}
 			}}
 		>
 			{({ values, setFieldValue }) => (
@@ -68,6 +72,20 @@ export const CreateBalanceAdjustmentLogForm = ({
 							<ErrorMessage
 								name="newBalance"
 								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+						<Col span={24}>
+							<Label label="Admin Password" spacing />
+							<Input.Password
+								type="password"
+								value={values['password']}
+								onChange={(e) => {
+									setFieldValue('password', e.target.value);
+								}}
+							/>
+							<ErrorMessage
+								name="password"
+								render={(error) => <FieldError error={error} withSpaceTop />}
 							/>
 						</Col>
 					</Row>
