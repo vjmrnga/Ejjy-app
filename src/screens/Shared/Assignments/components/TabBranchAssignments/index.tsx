@@ -24,6 +24,7 @@ import {
 	getFullName,
 	getLocalBranchId,
 	isUserFromBranch,
+	isUserFromOffice,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -112,7 +113,7 @@ const Filter = () => {
 		error: branchesError,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
-		options: { enabled: !isUserFromBranch(user.user_type) },
+		options: { enabled: isUserFromOffice(user.user_type) },
 	});
 	const {
 		data: { users },
@@ -138,8 +139,8 @@ const Filter = () => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
-				{!isUserFromBranch(user.user_type) && (
-					<Col md={12}>
+				{isUserFromOffice(user.user_type) && (
+					<Col lg={12} span={24}>
 						<Label label="Branch" spacing />
 						<Select
 							className="w-100"
@@ -162,7 +163,7 @@ const Filter = () => {
 					</Col>
 				)}
 
-				<Col md={12}>
+				<Col lg={12} span={24}>
 					<Label label="User" spacing />
 					<Select
 						className="w-100"

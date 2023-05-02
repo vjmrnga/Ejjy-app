@@ -19,6 +19,7 @@ import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { ProductGroups } from 'screens/Shared/ProductGroups';
 import { ModifyProductGroup } from 'screens/Shared/ProductGroups/ModifyProductGroup';
 import { Products } from 'screens/Shared/Products';
+import { Reports } from 'screens/Shared/Reports';
 import { Sales } from 'screens/Shared/Sales';
 import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
@@ -33,7 +34,6 @@ import { Logs } from './Logs';
 import { Notifications } from './Notifications';
 import { PendingTransactions } from './PendingTransactions/PendingTransactions';
 import { ViewPendingTransaction } from './PendingTransactions/ViewPendingTransaction';
-import { Reports } from './Reports/Reports';
 import { RequisitionSlips } from './RequisitionSlips';
 import { ViewDeliveryReceipt } from './RequisitionSlips/ViewDeliveryReceipt';
 import { ViewRequisitionSlip } from './RequisitionSlips/ViewRequisitionSlip';
@@ -177,13 +177,13 @@ const OfficeManager = () => {
 			// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 			// 	link: '/office-manager/back-orders',
 			// },
-			// {
-			// 	key: 'reports',
-			// 	name: 'Reports',
-			// 	activeIcon: require('../../assets/images/icon-report-active.svg'),
-			// 	defaultIcon: require('../../assets/images/icon-report.svg'),
-			// 	link: '/office-manager/reports',
-			// },
+			{
+				key: 'reports',
+				name: 'Reports',
+				activeIcon: require('../../assets/images/icon-report-active.svg'),
+				defaultIcon: require('../../assets/images/icon-report.svg'),
+				link: '/office-manager/reports',
+			},
 			// {
 			// 	key: 'pending-transactions',
 			// 	name: 'Pending Transactions',

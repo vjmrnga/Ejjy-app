@@ -16,7 +16,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Checkings } from 'screens/BranchManager/Checkings';
 import { ViewChecking } from 'screens/BranchManager/Checkings/ViewChecking';
 import { Logs } from 'screens/BranchManager/Logs';
-import { Reports } from 'screens/BranchManager/Reports';
 import { CreateRequisitionSlip } from 'screens/BranchManager/RequisitionSlips/CreateRequisitionSlip';
 import { Stocks } from 'screens/BranchManager/Stock';
 import { CreateStockIn } from 'screens/BranchManager/Stock/components/TabStockIn/CreateStockIn';
@@ -34,6 +33,7 @@ import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment'
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import useInterval from 'use-interval';
 import { getLocalBranchId, getOnlineBranchId, isStandAlone } from 'utils';
+import { Reports } from 'screens/Shared/Reports';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
 import { CreateBackOrder } from './BackOrders/CreateBackOrder';

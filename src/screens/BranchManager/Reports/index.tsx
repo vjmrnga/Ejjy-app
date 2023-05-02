@@ -10,7 +10,7 @@ import { ReportsBranch } from './components/ReportsBranch';
 export const Reports = () => {
 	const {
 		data: { productCategories },
-		isLoading: isLoadingProductCategories,
+		isFetching: isFetchingProductCategories,
 		error: productCategoriesErrors,
 	} = useProductCategories({
 		params: { pageSize: MAX_PAGE_SIZE },
@@ -19,7 +19,7 @@ export const Reports = () => {
 	return (
 		<Content title="Reports">
 			<Box>
-				<Spin spinning={isLoadingProductCategories}>
+				<Spin spinning={isFetchingProductCategories}>
 					<RequestErrors
 						className="px-6 pt-6"
 						errors={convertIntoArray(productCategoriesErrors)}
