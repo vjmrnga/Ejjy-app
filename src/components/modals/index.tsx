@@ -1,5 +1,6 @@
 export * from './AppSettingsModal';
 export * from './AssignReturnItemSlipModal';
+export * from './BranchAssignmentUserModal';
 export * from './CreateBalanceAdjustmentLogModal';
 export * from './CreateOrderOfPaymentModal';
 export * from './CreateStockInModal';

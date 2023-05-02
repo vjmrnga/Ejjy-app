@@ -161,7 +161,7 @@ export const Reports = () => {
 	const {
 		data: { branchProducts, total },
 		isFetching: isFetchingBranchProducts,
-		isFetched: isisBranchProductsFetched,
+		isFetchedAfterMount: isBranchProductsFetchedAfterMount,
 		error: branchProductsError,
 	} = useBranchProductsWithAnalytics({
 		params: {
@@ -183,7 +183,6 @@ export const Reports = () => {
 
 	// METHODS
 	useEffect(() => {
-		console.log('getLocalBranchId()', getLocalBranchId());
 		switch (params?.ordering) {
 			case sorts.CURRENT_BALANCE_ASC:
 				columns[2].sortOrder = 'ascend';
@@ -302,7 +301,9 @@ export const Reports = () => {
 					<Table
 						columns={columns}
 						dataSource={dataSource}
-						loading={isFetchingBranchProducts && !isisBranchProductsFetched}
+						loading={
+							isFetchingBranchProducts && !isBranchProductsFetchedAfterMount
+						}
 						pagination={{
 							current: Number(params.page) || DEFAULT_PAGE,
 							total,

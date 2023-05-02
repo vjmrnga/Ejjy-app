@@ -1,41 +1,83 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Spin, Tabs } from 'antd';
 import {
+	DeleteOutlined,
+	DesktopOutlined,
+	EditFilled,
+	SelectOutlined,
+} from '@ant-design/icons';
+import {
+	Button,
+	Col,
+	Popconfirm,
+	Row,
+	Select,
+	Space,
+	Spin,
+	Table,
+	Tooltip,
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+import {
+	BranchAssignmentUserModal,
 	ConnectionAlert,
 	Content,
 	ModifyUserModal,
 	RequestErrors,
+	TableHeader,
+	UserPendingApprovalType,
+	ViewUserModal,
 } from 'components';
-import { Box } from 'components/elements';
+import { Box, Label } from 'components/elements';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	DEV_USERNAME,
+	MAX_PAGE_SIZE,
+	NO_BRANCH_ID,
+	pageSizeOptions,
+	userTypes,
+} from 'global';
 import {
 	useBranches,
 	usePingOnlineServer,
 	useQueryParams,
 	useUserPendingApprovals,
+	useUserRequestUserDeletion,
+	useUsers,
 } from 'hooks';
-import _ from 'lodash';
-import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { convertIntoArray, getId } from 'utils';
-import { BranchAssignmentUserModal } from './components/BranchAssignmentUserModal';
-import { BranchUsers } from './components/BranchUsers';
+import { Link } from 'react-router-dom';
+import {
+	convertIntoArray,
+	filterOption,
+	getFullName,
+	getId,
+	getUserTypeName,
+	isUserFromBranch,
+	isUserFromOffice,
+} from 'utils';
+import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 
-const NO_BRANCH_ID = -1;
+const columns: ColumnsType = [
+	{ title: 'ID', dataIndex: 'id' },
+	{ title: 'Name', dataIndex: 'name' },
+	{ title: 'Type', dataIndex: 'type' },
+	{ title: 'Actions', dataIndex: 'actions' },
+];
 
 export const Users = () => {
 	// STATES
+	const [dataSource, setDataSource] = useState([]);
+	const [viewUserModalVisible, setViewUserModalVisible] = useState(false);
 	const [modifyUserModalVisible, setModifyUserModalVisible] = useState(false);
 	const [reassignUserModalVisible, setReassignUserModalVisible] =
 		useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS
-	const { isConnected } = usePingOnlineServer();
 	const queryClient = useQueryClient();
-	const {
-		params: { branchId: currentBranchId },
-		setQueryParams,
-	} = useQueryParams();
+	const { params, setQueryParams } = useQueryParams();
+	const { isConnected } = usePingOnlineServer();
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
@@ -50,17 +92,128 @@ export const Users = () => {
 			onSuccess: () => {
 				queryClient.invalidateQueries('useUsers');
 			},
-			notifyOnChangeProps: ['isFetched', 'isFetching', 'error'],
 		},
 	});
+	const {
+		data: { users, total },
+		isFetching: isFetchingUsers,
+		error: usersError,
+	} = useUsers({
+		shouldFetchOfflineFirst: true,
+		params: {
+			...params,
+			branchId: params?.branchId || NO_BRANCH_ID,
+		},
+		options: { enabled: isUserPendingApprovalsFetched },
+	});
+	const {
+		mutateAsync: requestUserDeletion,
+		isLoading: isRequestingUserDeletion,
+		error: requestUserDeletionError,
+	} = useUserRequestUserDeletion();
 
 	// METHODS
-	const handleTabClick = (branchId) => {
-		setQueryParams(
-			{ branchId },
-			{ shouldResetPage: true, shouldIncludeCurrentParams: false },
-		);
-	};
+	useEffect(() => {
+		const isDisabled = isConnected === false;
+		const branchId = Number(params?.branchId);
+		let branch = null;
+
+		if (branchId === NO_BRANCH_ID) {
+			branch = { id: NO_BRANCH_ID, online_id: NO_BRANCH_ID };
+		} else {
+			branch = branches?.filter(({ id }) => id === branchId);
+		}
+
+		const formattedUsers = users
+			.filter((user) => user.username !== DEV_USERNAME)
+			.map((user) => ({
+				key: user.id,
+				id: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => setSelectedUser(user)}
+					>
+						{user.employee_id}
+					</Button>
+				),
+				name: getFullName(user),
+				type: getUserTypeName(user.user_type),
+				actions: user.pending_approval?.approval_type ? (
+					<UserPendingApprovalType
+						type={user.pending_approval?.approval_type}
+					/>
+				) : (
+					<Space>
+						{user.user_type !== userTypes.ADMIN && (
+							<>
+								<Tooltip title="Cashiering Assignment">
+									<Link to={`/office-manager/users/assign/${user.id}`}>
+										<Button
+											disabled={isDisabled}
+											icon={<DesktopOutlined />}
+											type="primary"
+											ghost
+										/>
+									</Link>
+								</Tooltip>
+
+								<Tooltip title="Assign Branch">
+									<Button
+										disabled={isDisabled}
+										icon={<SelectOutlined />}
+										type="primary"
+										ghost
+										onClick={() => {
+											setReassignUserModalVisible(true);
+											setSelectedUser({ ...user, branchId: getId(branch) });
+										}}
+									/>
+								</Tooltip>
+							</>
+						)}
+
+						<Tooltip title="Edit">
+							<Button
+								disabled={isDisabled}
+								icon={<EditFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setModifyUserModalVisible(true);
+									setSelectedUser({ ...user, branchId: getId(branch) });
+								}}
+							/>
+						</Tooltip>
+
+						{user.user_type !== userTypes.ADMIN && (
+							<Popconfirm
+								cancelText="No"
+								okText="Yes"
+								placement="left"
+								title="Are you sure to remove this user?"
+								onConfirm={async () => {
+									await requestUserDeletion(getId(user));
+									queryClient.invalidateQueries('useUserPendingApprovals');
+								}}
+							>
+								<Tooltip title="Remove">
+									<Button
+										disabled={isDisabled}
+										icon={<DeleteOutlined />}
+										type="primary"
+										danger
+										ghost
+									/>
+								</Tooltip>
+							</Popconfirm>
+						)}
+					</Space>
+				),
+			}));
+
+		setDataSource(formattedUsers);
+	}, [users, params?.branchId, branches, isConnected]);
 
 	return (
 		<Content title="Users">
@@ -69,76 +222,67 @@ export const Users = () => {
 			<Box>
 				<Spin spinning={isFetchingBranches || isFetchingUserPendingApprovals}>
 					<RequestErrors
+						className="px-6"
 						errors={[
 							...convertIntoArray(branchesError, 'Branches'),
 							...convertIntoArray(
 								userPendingApprovalsError,
 								'User Pending Approvals',
 							),
+							...convertIntoArray(usersError, 'Users'),
+							...convertIntoArray(
+								requestUserDeletionError?.errors,
+								'User Deletion',
+							),
 						]}
 						withSpaceBottom
 					/>
 
-					<Tabs
-						activeKey={_.toString(currentBranchId) || _.toString(NO_BRANCH_ID)}
-						className="pa-6"
-						tabBarExtraContent={
-							<Button
-								disabled={isConnected === false}
-								icon={<PlusOutlined />}
-								type="primary"
-								onClick={() => setModifyUserModalVisible(true)}
-							>
-								Create User
-							</Button>
-						}
-						type="card"
-						onTabClick={handleTabClick}
-					>
-						<Tabs.TabPane key={NO_BRANCH_ID} tab="User List">
-							<BranchUsers
-								branch={{ id: NO_BRANCH_ID, online_id: NO_BRANCH_ID }}
-								disabled={isConnected === false}
-								isFetchUsersEnabled={isUserPendingApprovalsFetched}
-								onEditUser={(user) => {
-									setModifyUserModalVisible(true);
-									setSelectedUser(user);
-								}}
-								onReassignUser={(user) => {
-									setReassignUserModalVisible(true);
-									setSelectedUser(user);
-								}}
-							/>
-						</Tabs.TabPane>
+					<TableHeader
+						buttonName="Create User"
+						onCreate={() => setModifyUserModalVisible(true)}
+					/>
 
-						{branches.map((branch) => (
-							<Tabs.TabPane key={getId(branch)} tab={branch.name}>
-								<BranchUsers
-									branch={branch}
-									disabled={isConnected === false}
-									isFetchUsersEnabled={isUserPendingApprovalsFetched}
-									onEditUser={(user) => {
-										setModifyUserModalVisible(true);
-										setSelectedUser(user);
-									}}
-									onReassignUser={(user) => {
-										setReassignUserModalVisible(true);
-										setSelectedUser(user);
-									}}
-								/>
-							</Tabs.TabPane>
-						))}
-					</Tabs>
+					<Filter />
 
-					{modifyUserModalVisible && (
+					<Table
+						columns={columns}
+						dataSource={dataSource}
+						loading={isFetchingUsers || isRequestingUserDeletion}
+						pagination={{
+							current: Number(params.page) || DEFAULT_PAGE,
+							total,
+							pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+							onChange: (page, newPageSize) => {
+								setQueryParams({
+									page,
+									pageSize: newPageSize,
+								});
+							},
+							disabled: !dataSource,
+							position: ['bottomCenter'],
+							pageSizeOptions,
+						}}
+						scroll={{ x: 1000 }}
+						bordered
+					/>
+
+					{viewUserModalVisible && selectedUser && (
+						<ViewUserModal
+							user={selectedUser}
+							onClose={() => {
+								setViewUserModalVisible(false);
+								setSelectedUser(null);
+							}}
+						/>
+					)}
+
+					{modifyUserModalVisible && selectedUser && (
 						<ModifyUserModal
 							user={selectedUser}
 							onClose={() => {
 								setModifyUserModalVisible(false);
 								setSelectedUser(null);
-							}}
-							onSuccess={() => {
-								queryClient.invalidateQueries('useUserPendingApprovals');
 							}}
 						/>
 					)}
@@ -156,5 +300,56 @@ export const Users = () => {
 				</Spin>
 			</Box>
 		</Content>
+	);
+};
+
+const Filter = () => {
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: isUserFromOffice(user.user_type) },
+	});
+
+	return (
+		<div className="pa-6 pt-0">
+			<RequestErrors
+				errors={convertIntoArray(branchErrors, 'Branches')}
+				withSpaceBottom
+			/>
+
+			<Row gutter={[16, 16]}>
+				{isUserFromOffice(user.user_type) && (
+					<Col lg={12} span={24}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : NO_BRANCH_ID}
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							<Select.Option key={NO_BRANCH_ID} value={NO_BRANCH_ID}>
+								No Branch
+							</Select.Option>
+							{branches.map((branch) => (
+								<Select.Option key={branch.id} value={branch.id}>
+									{branch.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
+			</Row>
+		</div>
 	);
 };
