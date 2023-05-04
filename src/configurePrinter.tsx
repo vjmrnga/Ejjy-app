@@ -1349,7 +1349,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				</div>
 				<div style="display: flex; align-items: center; justify-content: space-between">
 					<span>P </span>
-					<span>${formatInPeso(report.net_sales, '')}</span>
+					<span>${formatInPeso(report.gross_sales, '')}</span>
 				</div>
 				<div style="display: flex; align-items: center; justify-content: space-between">
 					<span>P </span>

@@ -333,7 +333,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 					{formatInPeso(report.beginning_sales)}
 				</Descriptions.Item>
 				<Descriptions.Item label="Cur Sales">
-					{formatInPeso(report.total_sales)}
+					{formatInPeso(report.gross_sales)}
 				</Descriptions.Item>
 				<Descriptions.Item label="End Sales">
 					{formatInPeso(report.ending_sales)}

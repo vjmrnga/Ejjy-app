@@ -519,7 +519,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `Cur Sales: ${formatInPeso(report.net_sales, PESO_SIGN)}`,
+		text: `Cur Sales: ${formatInPeso(report.gross_sales, PESO_SIGN)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
