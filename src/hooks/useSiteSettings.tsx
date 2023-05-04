@@ -28,6 +28,7 @@ export const useSiteSettingsEdit = () =>
 	useMutation<any, any, any>(
 		({
 			addressOfTaxPayer,
+			appDescription,
 			closeDayDeadline,
 			closeSessionDeadline,
 			contactNumber,
@@ -60,6 +61,7 @@ export const useSiteSettingsEdit = () =>
 				id,
 				{
 					address_of_tax_payer: addressOfTaxPayer,
+					app_description: appDescription,
 					close_day_deadline: closeDayDeadline,
 					close_session_deadline: closeSessionDeadline,
 					contact_number: contactNumber,

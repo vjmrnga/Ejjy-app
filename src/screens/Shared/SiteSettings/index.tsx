@@ -144,6 +144,8 @@ export const SiteSettings = () => {
 				storeName: siteSettings?.store_name || '',
 				addressOfTaxPayer: siteSettings?.address_of_tax_payer || '',
 				logoBase64: siteSettings?.logo_base64 || '',
+
+				appDescription: siteSettings?.app_description || '',
 			},
 			Schema: Yup.object().shape({
 				closeSessionDeadline: getValidTimeTest('Close Session Deadline').test(
@@ -223,6 +225,8 @@ export const SiteSettings = () => {
 					.required()
 					.label('Address of Tax Payer'),
 				logoBase64: Yup.string().required().label('Store Logo'),
+
+				appDescription: Yup.string().required().label('App Description'),
 			}),
 		}),
 		[siteSettings],
@@ -703,6 +707,18 @@ export const SiteSettings = () => {
 												'Reset Counter Notification Threshold Invoice Number',
 											type: inputTypes.NUMBER,
 											setFieldValue,
+											values,
+										})}
+									</Col>
+
+									<Divider>App Display</Divider>
+
+									<Col sm={12} xs={24}>
+										{renderInputField({
+											name: 'appDescription',
+											label: 'App Description',
+											setFieldValue,
+											type: inputTypes.TEXTAREA,
 											values,
 										})}
 									</Col>

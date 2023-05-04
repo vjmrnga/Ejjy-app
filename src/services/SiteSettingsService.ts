@@ -2,6 +2,7 @@ import axios from 'axios';
 
 interface Edit {
 	address_of_tax_payer: string;
+	app_description: string;
 	close_day_deadline: string;
 	close_session_deadline: string;
 	contact_number: string;
