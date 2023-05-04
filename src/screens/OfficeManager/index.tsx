@@ -11,7 +11,6 @@ import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
 import { Assignments } from 'screens/Shared/Assignments';
 import { Branches } from 'screens/Shared/Branches';
 import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
-
 import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { DTR } from 'screens/Shared/DTR';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
@@ -71,6 +70,13 @@ const OfficeManager = () => {
 				activeIcon: require('../../assets/images/icon-sales-active.svg'),
 				defaultIcon: require('../../assets/images/icon-sales.svg'),
 				link: '/office-manager/sales',
+			},
+			{
+				key: 'reports',
+				name: 'Reports',
+				activeIcon: require('../../assets/images/icon-report-active.svg'),
+				defaultIcon: require('../../assets/images/icon-report.svg'),
+				link: '/office-manager/reports',
 			},
 			{
 				key: 'products',
@@ -177,13 +183,6 @@ const OfficeManager = () => {
 			// 	defaultIcon: require('../../assets/images/icon-requisition-slip.svg'),
 			// 	link: '/office-manager/back-orders',
 			// },
-			{
-				key: 'reports',
-				name: 'Reports',
-				activeIcon: require('../../assets/images/icon-report-active.svg'),
-				defaultIcon: require('../../assets/images/icon-report.svg'),
-				link: '/office-manager/reports',
-			},
 			// {
 			// 	key: 'pending-transactions',
 			// 	name: 'Pending Transactions',

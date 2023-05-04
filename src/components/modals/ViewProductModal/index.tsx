@@ -28,6 +28,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 	const {
 		data: { branchProducts },
 		isFetching: isFetchingBranchProducts,
+		isFetchedAfterMount: isBranchProductsFetchedAfterMount,
 		error: branchProductError,
 	} = useBranchProducts({
 		params: { productIds: product?.id },
@@ -36,6 +37,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
+		isFetchedAfterMount: isBranchesFetchedAfterMount,
 		error: branchesErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
@@ -196,7 +198,13 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 				<>
 					<Divider orientation="left">Branch Product Prices</Divider>
 
-					<Spin spinning={isFetchingBranchProducts || isFetchingBranches}>
+					<Spin
+						spinning={
+							(!isBranchProductsFetchedAfterMount &&
+								isFetchingBranchProducts) ||
+							(!isBranchesFetchedAfterMount && isFetchingBranches)
+						}
+					>
 						<Tabs
 							activeKey={activeBranch}
 							tabPosition="left"

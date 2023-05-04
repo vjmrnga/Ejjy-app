@@ -52,7 +52,6 @@ import {
 	getFullName,
 	getId,
 	getUserTypeName,
-	isUserFromBranch,
 	isUserFromOffice,
 } from 'utils';
 import React, { useEffect, useState } from 'react';

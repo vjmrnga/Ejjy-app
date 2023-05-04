@@ -100,7 +100,7 @@ export const AddBranchProductBalanceModal = ({
 				withSpaceBottom
 			/>
 
-			<Descriptions bordered>
+			<Descriptions column={1} bordered>
 				<Descriptions.Item label="Barcode">
 					{branchProduct.product.barcode}
 				</Descriptions.Item>

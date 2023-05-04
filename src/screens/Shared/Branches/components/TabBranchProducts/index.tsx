@@ -41,7 +41,7 @@ const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },
 	{ title: 'Name', dataIndex: 'name' },
 	{ title: 'Balance', dataIndex: 'balance' },
-	// { title: 'Actions', dataIndex: 'actions' }, // NOTE: Removed for the meantime as we don't know yet if this is needed in HeadOffice
+	{ title: 'Actions', dataIndex: 'actions' }, // NOTE: Removed for the meantime as we don't know yet if this is needed in HeadOffice
 ];
 
 interface Props {
