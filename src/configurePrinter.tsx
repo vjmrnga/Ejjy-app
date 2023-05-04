@@ -2474,7 +2474,9 @@ export const printSalesInvoice = ({
 		${getFooter(siteSettings)}
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-      ${isReprint ? '<span>REPRINT ONLY</span>' : ''}
+      <span>${
+				isReprint ? 'REPRINT ONLY' : siteSettings?.sales_invoice_message
+			}</span>
 			<span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>

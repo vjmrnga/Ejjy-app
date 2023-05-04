@@ -388,6 +388,9 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 						<ReceiptFooter />
 
 						<Text className="d-block text-center">
+							{siteSettings.sales_invoice_message}
+						</Text>
+						<Text className="d-block text-center">
 							&quot;{siteSettings.thank_you_message}&quot;
 						</Text>
 					</>

@@ -132,6 +132,7 @@ export const SiteSettings = () => {
 
 				// productVersion: siteSettings?.product_version || '',
 				thankYouMessage: siteSettings?.thank_you_message || '',
+				salesInvoiceMessage: siteSettings?.sales_invoice_message || '',
 
 				reportingPeriodDayOfMonth: siteSettings?.reporting_period_day_of_month,
 
@@ -203,6 +204,9 @@ export const SiteSettings = () => {
 
 				// productVersion: Yup.string().required().label('Product Version'),
 				thankYouMessage: Yup.string().required().label('Thank You Message'),
+				salesInvoiceMessage: Yup.string()
+					.required()
+					.label('Sales Invoice Message'),
 
 				reportingPeriodDayOfMonth: Yup.number()
 					.min(1)
@@ -596,6 +600,24 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
+									<Col sm={12} span={24}>
+										{renderInputField({
+											name: 'thankYouMessage',
+											label: 'Thank You Message',
+											setFieldValue,
+											values,
+										})}
+									</Col>
+
+									<Col sm={12} span={24}>
+										{renderInputField({
+											name: 'salesInvoiceMessage',
+											label: 'Sales Invoice Message',
+											setFieldValue,
+											values,
+										})}
+									</Col>
+
 									{/* <Col sm={8} xs={24}>
 										{renderDatePicker({
 											name: 'posAccreditationDate',
@@ -678,15 +700,6 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col> */}
-
-									<Col span={24}>
-										{renderInputField({
-											name: 'thankYouMessage',
-											label: 'Thank You Message',
-											setFieldValue,
-											values,
-										})}
-									</Col>
 
 									<Divider>Notification</Divider>
 

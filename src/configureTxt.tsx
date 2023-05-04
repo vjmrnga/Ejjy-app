@@ -1206,14 +1206,12 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	if (isReprint) {
-		rowNumber += 1;
-		reportTextFile.write({
-			text: 'REPRINT ONLY',
-			alignment: ReportTextFile.ALIGNMENTS.CENTER,
-			rowNumber,
-		});
-	}
+	rowNumber += 1;
+	reportTextFile.write({
+		text: isReprint ? 'REPRINT ONLY' : siteSettings?.sales_invoice_message,
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
+		rowNumber,
+	});
 
 	rowNumber += 1;
 	reportTextFile.write({
