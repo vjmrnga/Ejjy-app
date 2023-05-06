@@ -11,6 +11,7 @@ import {
 
 const PESO_SIGN = 'P';
 const EMPTY_CELL = '';
+const UNDERLINE_TEXT = '---------';
 
 const writeHeader = (headerData) => {
 	const {
@@ -236,6 +237,15 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	});
 	rowNumber += 1;
 
+	if (Number(report.credit_pay) > 0) {
+		reportTextFile.write({
+			text: UNDERLINE_TEXT,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
 	reportTextFile.write({
 		text: 'GROSS SALES',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -367,6 +377,15 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 			rowNumber,
 		});
 		rowNumber += 1;
+
+		if (Number(report.vat_amount) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
 	}
 
 	reportTextFile.write({
@@ -420,6 +439,15 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		});
 		rowNumber += 1;
 
+		if (Number(report.others) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
+
 		reportTextFile.write({
 			text: '   TOTAL',
 			alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -462,6 +490,15 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 			rowNumber,
 		});
 		rowNumber += 1;
+
+		if (Number(report.total_vat_adjusted) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
 
 		reportTextFile.write({
 			text: 'VAT PAYABLE',
@@ -594,6 +631,15 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	});
 	rowNumber += 1;
 
+	if (Number(report.credit_pay) > 0) {
+		reportTextFile.write({
+			text: UNDERLINE_TEXT,
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
 	reportTextFile.write({
 		text: 'GROSS SALES',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -725,6 +771,15 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 			rowNumber,
 		});
 		rowNumber += 1;
+
+		if (Number(report.vat_amount) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
 	}
 
 	reportTextFile.write({
@@ -778,6 +833,15 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		});
 		rowNumber += 1;
 
+		if (Number(report.others) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
+
 		reportTextFile.write({
 			text: '   TOTAL',
 			alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -820,6 +884,15 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 			rowNumber,
 		});
 		rowNumber += 1;
+
+		if (Number(report.total_vat_adjusted) > 0) {
+			reportTextFile.write({
+				text: UNDERLINE_TEXT,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
 
 		reportTextFile.write({
 			text: 'VAT PAYABLE',
@@ -1206,9 +1279,18 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
+	if (isReprint) {
+		rowNumber += 1;
+		reportTextFile.write({
+			text: 'REPRINT ONLY',
+			alignment: ReportTextFile.ALIGNMENTS.CENTER,
+			rowNumber,
+		});
+	}
+
 	rowNumber += 1;
 	reportTextFile.write({
-		text: isReprint ? 'REPRINT ONLY' : siteSettings?.sales_invoice_message,
+		text: siteSettings?.sales_invoice_message,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
@@ -1220,7 +1302,7 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	reportTextFile.export(`sales_invoice_${transaction.invoice.or_number}.txt`);
+	reportTextFile.export(`Sales_Invoice_${transaction.invoice.or_number}.txt`);
 
 	return <h1>Dummy</h1>;
 };

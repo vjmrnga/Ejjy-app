@@ -2,7 +2,12 @@ import { EditFilled } from '@ant-design/icons';
 import { Button, Col, Radio, Row, Select, Spin, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SorterResult } from 'antd/lib/table/interface';
-import { Content, RequestErrors, TimeRangeFilter } from 'components';
+import {
+	Content,
+	RequestErrors,
+	TimeRangeFilter,
+	EditBranchProductBalanceModal,
+} from 'components';
 import { Box, Label } from 'components/elements';
 import {
 	ALL_OPTION_KEY,
@@ -36,7 +41,6 @@ import {
 	isUserFromBranch,
 	isUserFromOffice,
 } from 'utils';
-import { EditBranchProductsModal } from './components/EditBranchProductsModal';
 
 const columns: ColumnsType = [
 	{
@@ -343,7 +347,7 @@ export const Reports = () => {
 					/>
 
 					{selectedBranchProduct && (
-						<EditBranchProductsModal
+						<EditBranchProductBalanceModal
 							branchProduct={selectedBranchProduct}
 							onClose={() => setSelectedBranchProduct(null)}
 						/>

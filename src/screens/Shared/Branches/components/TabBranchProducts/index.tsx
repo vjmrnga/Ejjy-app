@@ -23,12 +23,10 @@ import {
 	getProductCode,
 } from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
-import { EditBranchProductsModal } from './components/EditBranchProductsModal';
 
 const modals = {
 	VIEW: 0,
 	ADD: 1,
-	EDIT: 2,
 };
 
 const isSoldInBranchOptions = {
@@ -162,10 +160,6 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 							setModalType(modals.ADD);
 						}}
 						onAddName="Supplier Delivery"
-						onEdit={() => {
-							setSelectedBranchProduct(branchProduct);
-							setModalType(modals.EDIT);
-						}}
 					/>
 				),
 			};
@@ -234,15 +228,6 @@ export const TabBranchProducts = ({ branch, disabled }: Props) => {
 					branchProduct={selectedBranchProduct}
 					isCurrentBalanceVisible
 					onClose={() => setModalType(null)}
-				/>
-			)}
-
-			{selectedBranchProduct && modalType === modals.EDIT && (
-				<EditBranchProductsModal
-					branchId={getId(branch)}
-					branchProduct={selectedBranchProduct}
-					onClose={() => setModalType(null)}
-					onSuccess={refetchBranchProducts}
 				/>
 			)}
 

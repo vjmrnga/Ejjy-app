@@ -3,6 +3,7 @@ import {
 	DeleteOutlined,
 	DollarCircleOutlined,
 	EditFilled,
+	HomeOutlined,
 	PrinterFilled,
 	SearchOutlined,
 	UploadOutlined,
@@ -152,7 +153,7 @@ export const Products = () => {
 							/>
 						</Tooltip>
 						{isCUDShown(user.user_type) && (
-							<Tooltip title="Edit">
+							<Tooltip title="Edit General Product">
 								<Button
 									disabled={isConnected === false}
 									icon={<EditFilled />}
@@ -162,6 +163,15 @@ export const Products = () => {
 								/>
 							</Tooltip>
 						)}
+						<Tooltip title="Edit Branch Details">
+							<Button
+								disabled={isConnected === false}
+								icon={<HomeOutlined />}
+								type="primary"
+								ghost
+								onClick={() => handleOpenModal(product, modals.EDIT_PRICE_COST)}
+							/>
+						</Tooltip>
 						<Tooltip title="Print Price Tag">
 							<Button
 								disabled={isConnected === false}

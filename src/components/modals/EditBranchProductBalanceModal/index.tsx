@@ -18,7 +18,10 @@ interface Props {
 	onClose: any;
 }
 
-export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
+export const EditBranchProductBalanceModal = ({
+	branchProduct,
+	onClose,
+}: Props) => {
 	// STATES
 	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
 
@@ -92,7 +95,7 @@ export const EditBranchProductsModal = ({ branchProduct, onClose }: Props) => {
 				withSpaceBottom
 			/>
 
-			<EditBranchProductsForm
+			<EditBranchProductBalanceForm
 				branchProduct={branchProduct}
 				isCurrentBalanceVisible={isCurrentBalanceVisible}
 				isLoading={isEditingBranchProduct}
@@ -111,7 +114,7 @@ interface FormProps {
 	isCurrentBalanceVisible: boolean;
 }
 
-export const EditBranchProductsForm = ({
+export const EditBranchProductBalanceForm = ({
 	branchProduct,
 	onSubmit,
 	onClose,

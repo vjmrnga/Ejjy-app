@@ -262,9 +262,9 @@ const appendHtmlElement = (data) => `
   </html>`;
 
 const formatInPesoWithUnderline = (value) => {
-	const textDecoration = Number(value) > 0 ? 'underline' : 'none';
+	const borderStyles = Number(value) > 0 ? '2px dashed black' : 'none';
 
-	return `<span style="display:inline-block; text-decoration: ${textDecoration}">
+	return `<span style="display:inline-block; border-bottom: ${borderStyles}">
     ${formatInPeso(value, PESO_SIGN)}
   </span>`;
 };
@@ -2474,9 +2474,8 @@ export const printSalesInvoice = ({
 		${getFooter(siteSettings)}
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-      <span>${
-				isReprint ? 'REPRINT ONLY' : siteSettings?.sales_invoice_message
-			}</span>
+      <span>${isReprint ? 'REPRINT ONLY' : ''}</span>
+      <span>${siteSettings?.sales_invoice_message}</span>
 			<span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>

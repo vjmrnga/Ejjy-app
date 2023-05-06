@@ -1,7 +1,12 @@
 import { FileTextOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Space, Typography } from 'antd';
 import imgNoTransaction from 'assets/images/no-transaction.png';
-import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
+import {
+	PdfButtons,
+	ReceiptFooter,
+	ReceiptHeader,
+	ReceiptUnderlinedValue,
+} from 'components/Printing';
 import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
@@ -120,13 +125,8 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<Descriptions.Item label="CASH SALES">
 					{formatInPeso(report.cash_sales)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item
-					contentStyle={{
-						textDecoration: Number(report.credit_pay) ? 'underline' : 'none',
-					}}
-					label="CREDIT SALES"
-				>
-					{formatInPeso(report.credit_pay)}&nbsp;
+				<Descriptions.Item label="CREDIT SALES">
+					<ReceiptUnderlinedValue postfix="&nbsp;" value={report.credit_pay} />
 				</Descriptions.Item>
 				<Descriptions.Item label="GROSS SALES">
 					{formatInPeso(report.gross_sales)}&nbsp;
@@ -202,15 +202,14 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				{siteSettings.tax_type === taxTypes.VAT && (
 					<>
 						<Descriptions.Item
-							contentStyle={{
-								textDecoration: Number(report.vat_amount)
-									? 'underline'
-									: 'none',
-							}}
 							label="VAT Amount"
 							labelStyle={{ paddingLeft: 30 }}
 						>
-							({formatInPeso(report.vat_amount)})
+							<ReceiptUnderlinedValue
+								postfix=")"
+								prefix="("
+								value={report.vat_amount}
+							/>
 						</Descriptions.Item>
 					</>
 				)}
@@ -248,14 +247,8 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 						<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
 							{formatInPeso(report.vat_special_discount)}&nbsp;
 						</Descriptions.Item>
-						<Descriptions.Item
-							contentStyle={{
-								textDecoration: Number(report.others) ? 'underline' : 'none',
-							}}
-							label="OTHERS"
-							labelStyle={{ paddingLeft: 30 }}
-						>
-							{formatInPeso(report.others)}&nbsp;
+						<Descriptions.Item label="OTHERS" labelStyle={{ paddingLeft: 30 }}>
+							<ReceiptUnderlinedValue postfix="&nbsp;" value={report.others} />
 						</Descriptions.Item>
 						<Descriptions.Item label="TOTAL" labelStyle={{ paddingLeft: 30 }}>
 							{formatInPeso(report.total_vat_adjusted)}&nbsp;
@@ -282,15 +275,12 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 						<Descriptions.Item label="VAT AMOUNT">
 							{formatInPeso(report.vat_amount)}&nbsp;
 						</Descriptions.Item>
-						<Descriptions.Item
-							contentStyle={{
-								textDecoration: Number(report.total_vat_adjusted)
-									? 'underline'
-									: 'none',
-							}}
-							label="VAT ADJ."
-						>
-							({formatInPeso(report.total_vat_adjusted)})
+						<Descriptions.Item label="VAT ADJ.">
+							<ReceiptUnderlinedValue
+								postfix=")"
+								prefix="("
+								value={report.total_vat_adjusted}
+							/>
 						</Descriptions.Item>
 						<Descriptions.Item label="VAT PAYABLE">
 							{formatInPeso(report.vat_payable)}
