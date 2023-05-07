@@ -10,6 +10,12 @@ export const appTypes = {
 	HEAD_OFFICE: 'head_office',
 };
 
+export const printerStatuses = {
+	OK: 'OK',
+	PRINTING: 'PRINTING',
+	NOT_AVAILABLE: 'NOT_AVAILABLE',
+};
+
 export const productTypes = {
 	DRY: 'dry',
 	WET: 'wet',

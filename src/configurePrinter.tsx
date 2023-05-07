@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import {
 	cashBreakdownCategories,
 	orderOfPaymentPurposes,
+	printerStatuses,
 	quantityTypes,
 	saleTypes,
 	taxTypes,
@@ -41,11 +42,6 @@ const PAPER_MARGIN_INCHES = 0.2;
 const PAPER_WIDTH_INCHES = 3;
 const QZ_MESSAGE_KEY = 'QZ_MESSAGE_KEY';
 const PRINT_MESSAGE_KEY = 'PRINT_MESSAGE_KEY';
-
-const printerStatuses = {
-	OK: 'OK',
-	NOT_AVAILABLE: 'NOT_AVAILABLE',
-};
 
 const configurePrinter = () => {
 	authenticateQZTray(qz);
@@ -128,7 +124,11 @@ const print = async ({
 	}
 
 	// OK: Ready to print
-	if (printerStatus.statusText === printerStatuses.OK) {
+	if (
+		[printerStatuses.OK, printerStatuses.PRINTING].includes(
+			printerStatus.statusText,
+		)
+	) {
 		console.log(printData);
 
 		try {

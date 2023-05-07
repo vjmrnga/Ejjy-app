@@ -1,4 +1,4 @@
-import { Container } from 'components';
+import { AppIcons, Container } from 'components';
 import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import {
@@ -211,6 +211,8 @@ const OfficeManager = () => {
 
 	return (
 		<Container sidebarItems={getSidebarItems()}>
+			<AppIcons />
+
 			<React.Suspense fallback={<div>Loading...</div>}>
 				<Switch>
 					<Route component={Products} path="/office-manager/products" />
