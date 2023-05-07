@@ -49,7 +49,7 @@ export const useSiteSettingsEdit = () =>
 			reportingPeriodDayOfMonth,
 			resetCounterNotificationThresholdAmount,
 			resetCounterNotificationThresholdInvoiceNumber,
-			salesInvoiceMessage,
+			invoiceLastMessage,
 			softwareDeveloper,
 			softwareDeveloperAddress,
 			softwareDeveloperTin,
@@ -84,7 +84,7 @@ export const useSiteSettingsEdit = () =>
 						resetCounterNotificationThresholdAmount,
 					reset_counter_notification_threshold_invoice_number:
 						resetCounterNotificationThresholdInvoiceNumber,
-					sales_invoice_message: salesInvoiceMessage,
+					invoice_last_message: invoiceLastMessage,
 					software_developer_address: softwareDeveloperAddress,
 					software_developer_tin: softwareDeveloperTin,
 					software_developer: softwareDeveloper,

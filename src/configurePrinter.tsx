@@ -2475,7 +2475,7 @@ export const printSalesInvoice = ({
 
 		<div style="text-align: center; display: flex; flex-direction: column">
       <span>${isReprint ? 'REPRINT ONLY' : ''}</span>
-      <span>${siteSettings?.sales_invoice_message}</span>
+      <span>${siteSettings?.invoice_last_message}</span>
 			<span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>

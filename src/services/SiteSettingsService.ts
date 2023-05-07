@@ -22,7 +22,7 @@ interface Edit {
 	reporting_period_day_of_month: string;
 	reset_counter_notification_threshold_amount: number;
 	reset_counter_notification_threshold_invoice_number: number;
-	sales_invoice_message: string;
+	invoice_last_message: string;
 	software_developer_address: string;
 	software_developer_tin: string;
 	software_developer: string;

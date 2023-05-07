@@ -132,7 +132,7 @@ export const SiteSettings = () => {
 
 				// productVersion: siteSettings?.product_version || '',
 				thankYouMessage: siteSettings?.thank_you_message || '',
-				salesInvoiceMessage: siteSettings?.sales_invoice_message || '',
+				invoiceLastMessage: siteSettings?.invoice_last_message || '',
 
 				reportingPeriodDayOfMonth: siteSettings?.reporting_period_day_of_month,
 
@@ -204,9 +204,9 @@ export const SiteSettings = () => {
 
 				// productVersion: Yup.string().required().label('Product Version'),
 				thankYouMessage: Yup.string().required().label('Thank You Message'),
-				salesInvoiceMessage: Yup.string()
+				invoiceLastMessage: Yup.string()
 					.required()
-					.label('Sales Invoice Message'),
+					.label('Invoice Last Message'),
 
 				reportingPeriodDayOfMonth: Yup.number()
 					.min(1)
@@ -611,8 +611,8 @@ export const SiteSettings = () => {
 
 									<Col sm={12} span={24}>
 										{renderInputField({
-											name: 'salesInvoiceMessage',
-											label: 'Sales Invoice Message',
+											name: 'invoiceLastMessage',
+											label: 'Invoice Last Message',
 											setFieldValue,
 											values,
 										})}

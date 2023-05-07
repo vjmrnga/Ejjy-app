@@ -1290,7 +1290,7 @@ export const createSalesInvoiceTxt = ({
 
 	rowNumber += 1;
 	reportTextFile.write({
-		text: siteSettings?.sales_invoice_message,
+		text: siteSettings?.invoice_last_message,
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
