@@ -2338,15 +2338,12 @@ export const printSalesInvoice = ({
 			  </tr>
 
         ${
-					transaction.invoice.vat_sales_discount > 0
+					transaction.invoice.vat_amount > 0
 						? `
             <tr>
               <td>VAT AMOUNT</td>
               <td style="text-align: right;">
-                (${formatInPeso(
-									transaction.invoice.vat_sales_discount,
-									PESO_SIGN,
-								)})
+                (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
               </td>
             </tr>`
 						: ''
@@ -2474,9 +2471,25 @@ export const printSalesInvoice = ({
 		${getFooter(siteSettings)}
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-      <span>${isReprint ? 'REPRINT ONLY' : ''}</span>
-      <span>${siteSettings?.invoice_last_message}</span>
-			<span>"${siteSettings?.thank_you_message}"</span>
+    <span>${
+			isReprint && transaction.status === transactionStatus.FULLY_PAID
+				? 'REPRINT ONLY'
+				: ''
+		}</span>
+    <span>${
+			[
+				transactionStatus.VOID_EDITED,
+				transactionStatus.VOID_CANCELLED,
+			].includes(transaction.status)
+				? 'VOIDED TRANSACTION'
+				: ''
+		}</span>
+    <span>${
+			transaction.status === transactionStatus.FULLY_PAID
+				? siteSettings?.invoice_last_message
+				: ''
+		}</span>
+    <span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>
 	`;

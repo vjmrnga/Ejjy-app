@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { saleTypes, taxTypes, vatTypes } from 'global';
+import { saleTypes, taxTypes, transactionStatus, vatTypes } from 'global';
 import React from 'react';
 import {
 	formatDate,
@@ -1083,14 +1083,14 @@ export const createSalesInvoiceTxt = ({
 		});
 		rowNumber += 1;
 
-		if (transaction.invoice.vat_sales_discount > 0) {
+		if (transaction.invoice.vat_amount > 0) {
 			reportTextFile.write({
 				text: 'VAT AMOUNT',
 				alignment: ReportTextFile.ALIGNMENTS.LEFT,
 				rowNumber,
 			});
 			reportTextFile.write({
-				text: formatInPeso(transaction.invoice.vat_sales_discount, PESO_SIGN),
+				text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
 				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 				rowNumber,
 			});
@@ -1279,10 +1279,24 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	if (isReprint) {
+	if (isReprint && transaction.status === transactionStatus.FULLY_PAID) {
 		rowNumber += 1;
 		reportTextFile.write({
 			text: 'REPRINT ONLY',
+			alignment: ReportTextFile.ALIGNMENTS.CENTER,
+			rowNumber,
+		});
+	}
+
+	if (
+		[transactionStatus.VOID_EDITED, transactionStatus.VOID_CANCELLED].includes(
+			transaction.status,
+		)
+	) {
+		rowNumber += 2;
+
+		reportTextFile.write({
+			text: 'VOIDED TRANSACTION',
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});

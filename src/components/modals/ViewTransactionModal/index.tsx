@@ -14,7 +14,13 @@ import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';
-import { EMPTY_CELL, saleTypes, taxTypes, vatTypes } from 'global';
+import {
+	EMPTY_CELL,
+	saleTypes,
+	taxTypes,
+	transactionStatus,
+	vatTypes,
+} from 'global';
 import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -248,11 +254,9 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									<Descriptions.Item label="GROSS AMOUNT">
 										{formatInPeso(transactionData.gross_amount)}&nbsp;
 									</Descriptions.Item>
-									{transactionData.invoice.vat_sales_discount > 0 && (
+									{transactionData.invoice.vat_amount > 0 && (
 										<Descriptions.Item label="VAT AMOUNT">
-											(
-											{formatInPeso(transactionData.invoice.vat_sales_discount)}
-											)
+											({formatInPeso(transactionData.invoice.vat_amount)})
 										</Descriptions.Item>
 									)}
 									<Descriptions.Item
@@ -387,9 +391,19 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 						<ReceiptFooter />
 
-						<Text className="d-block text-center">
-							{siteSettings.invoice_last_message}
-						</Text>
+						{transactionData?.status === transactionStatus.FULLY_PAID && (
+							<Text className="d-block text-center">
+								{siteSettings.invoice_last_message}
+							</Text>
+						)}
+						{[
+							transactionStatus.VOID_CANCELLED,
+							transactionStatus.VOID_EDITED,
+						].includes(transactionData?.status) && (
+							<Text className="mt-4 d-block text-center">
+								VOIDED TRANSACTION
+							</Text>
+						)}
 						<Text className="d-block text-center">
 							&quot;{siteSettings.thank_you_message}&quot;
 						</Text>
