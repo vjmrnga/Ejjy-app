@@ -1083,19 +1083,17 @@ export const createSalesInvoiceTxt = ({
 		});
 		rowNumber += 1;
 
-		if (transaction.invoice.vat_amount > 0) {
-			reportTextFile.write({
-				text: 'VAT AMOUNT',
-				alignment: ReportTextFile.ALIGNMENTS.LEFT,
-				rowNumber,
-			});
-			reportTextFile.write({
-				text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
-				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-				rowNumber,
-			});
-			rowNumber += 1;
-		}
+		reportTextFile.write({
+			text: 'VAT AMOUNT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
 
 		reportTextFile.write({
 			text: `DISCOUNT | ${transaction.discount_option.code}`,

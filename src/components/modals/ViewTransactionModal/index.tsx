@@ -254,11 +254,9 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									<Descriptions.Item label="GROSS AMOUNT">
 										{formatInPeso(transactionData.gross_amount)}&nbsp;
 									</Descriptions.Item>
-									{transactionData.invoice.vat_amount > 0 && (
-										<Descriptions.Item label="VAT AMOUNT">
-											({formatInPeso(transactionData.invoice.vat_amount)})
-										</Descriptions.Item>
-									)}
+									<Descriptions.Item label="VAT AMOUNT">
+										({formatInPeso(transactionData.invoice.vat_amount)})
+									</Descriptions.Item>
 									<Descriptions.Item
 										label={`DISCOUNT | ${transactionData.discount_option.code}`}
 									>

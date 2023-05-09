@@ -2337,17 +2337,12 @@ export const printSalesInvoice = ({
 				  </td>
 			  </tr>
 
-        ${
-					transaction.invoice.vat_amount > 0
-						? `
-            <tr>
-              <td>VAT AMOUNT</td>
-              <td style="text-align: right;">
-                (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
-              </td>
-            </tr>`
-						: ''
-				}
+        <tr>
+          <td>VAT AMOUNT</td>
+          <td style="text-align: right;">
+            (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
+          </td>
+        </tr>
 
         <tr>
 				  <td>DISCOUNT | ${transaction.discount_option.code}</td>
