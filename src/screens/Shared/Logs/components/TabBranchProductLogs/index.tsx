@@ -9,6 +9,7 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	serviceTypes,
 	userLogTypes,
 } from 'global';
 import {
@@ -27,6 +28,7 @@ import {
 	formatDateTimeExtended,
 	getFullName,
 	getLocalBranchId,
+	isStandAlone,
 	isUserFromBranch,
 } from 'utils';
 
@@ -42,7 +44,11 @@ export const TabBranchProductLogs = () => {
 		isFetching: isFetchingLogs,
 		error: logsError,
 	} = useUserLogs({
-		params: { ...params, type: userLogTypes.BRANCH_PRODUCTS },
+		params: {
+			...params,
+			serviceType: isStandAlone() ? serviceTypes.NORMAL : serviceTypes.OFFLINE,
+			type: userLogTypes.BRANCH_PRODUCTS,
+		},
 	});
 
 	// METHODS

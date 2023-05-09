@@ -8,6 +8,7 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	serviceTypes,
 	userLogTypes,
 } from 'global';
 import { useProducts, useQueryParams, useUserLogs, useUsers } from 'hooks';
@@ -19,6 +20,7 @@ import {
 	filterOption,
 	formatDateTimeExtended,
 	getFullName,
+	isStandAlone,
 } from 'utils';
 
 const columns: ColumnsType = [
@@ -38,7 +40,11 @@ export const TabProductLogs = () => {
 		isFetching: isFetchingLogs,
 		error: logsError,
 	} = useUserLogs({
-		params: { ...params, type: userLogTypes.PRODUCTS },
+		params: {
+			...params,
+			serviceType: isStandAlone() ? serviceTypes.NORMAL : serviceTypes.OFFLINE,
+			type: userLogTypes.PRODUCTS,
+		},
 	});
 
 	// METHODS
