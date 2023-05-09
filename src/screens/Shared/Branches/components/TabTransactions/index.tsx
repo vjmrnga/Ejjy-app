@@ -12,10 +12,11 @@ import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	transactionStatus,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useBranchMachines, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, filterOption, formatInPeso, getId } from 'utils';
@@ -25,6 +26,7 @@ const columns: ColumnsType = [
 	{ title: 'Invoice', dataIndex: 'invoice' },
 	{ title: 'Amount', dataIndex: 'amount' },
 	{ title: 'Status', dataIndex: 'status' },
+	{ title: 'Branch Machine', dataIndex: 'branchMachine' },
 ];
 
 const transactionStatusOptions = [
@@ -80,11 +82,11 @@ export const TabTransactions = ({ branch }: Props) => {
 				invoice,
 				total_amount,
 				status: branchTransactionStatus,
+				branch_machine,
 			} = branchTransaction;
 
 			return {
 				key: id,
-
 				invoice: (
 					<Button
 						className="pa-0"
@@ -96,6 +98,7 @@ export const TabTransactions = ({ branch }: Props) => {
 				),
 				amount: formatInPeso(total_amount),
 				status: <TransactionStatus status={branchTransactionStatus} />,
+				branchMachine: branch_machine.name,
 			};
 		});
 
@@ -160,33 +163,73 @@ interface FilterProps {
 
 const Filter = ({ isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: { branchMachines },
+		isFetching: isFetchingBranchMachines,
+		error: branchMachinesError,
+	} = useBranchMachines({
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
 
 	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12} span={24}>
-				<TimeRangeFilter disabled={isLoading} />
-			</Col>
-			<Col lg={12} span={24}>
-				<Label label="Status" spacing />
-				<Select
-					className="w-100"
-					disabled={isLoading}
-					filterOption={filterOption}
-					optionFilterProp="children"
-					value={params.statuses}
-					allowClear
-					showSearch
-					onChange={(value) => {
-						setQueryParams({ statuses: value }, { shouldResetPage: true });
-					}}
-				>
-					{transactionStatusOptions.map((option) => (
-						<Select.Option key={option.value} value={option.value}>
-							{option.title}
-						</Select.Option>
-					))}
-				</Select>
-			</Col>
-		</Row>
+		<>
+			<RequestErrors
+				errors={convertIntoArray(branchMachinesError, 'Branch Machines')}
+				withSpaceBottom
+			/>
+
+			<Row className="mb-4" gutter={[16, 16]}>
+				<Col lg={12} span={24}>
+					<Label label="Status" spacing />
+					<Select
+						className="w-100"
+						disabled={isLoading}
+						filterOption={filterOption}
+						optionFilterProp="children"
+						value={params.statuses}
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams({ statuses: value }, { shouldResetPage: true });
+						}}
+					>
+						{transactionStatusOptions.map((option) => (
+							<Select.Option key={option.value} value={option.value}>
+								{option.title}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Branch Machine" spacing />
+					<Select
+						className="w-100"
+						defaultValue={params.branchMachineId}
+						filterOption={filterOption}
+						loading={isFetchingBranchMachines}
+						optionFilterProp="children"
+						allowClear
+						showSearch
+						onChange={(value) => {
+							setQueryParams(
+								{ branchMachineId: value },
+								{ shouldResetPage: true },
+							);
+						}}
+					>
+						{branchMachines.map(({ id, name }) => (
+							<Select.Option key={id} value={id}>
+								{name}
+							</Select.Option>
+						))}
+					</Select>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<TimeRangeFilter disabled={isLoading} />
+				</Col>
+			</Row>
+		</>
 	);
 };
