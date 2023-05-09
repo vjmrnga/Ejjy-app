@@ -129,7 +129,7 @@ const Filter = ({ isLoading }: FilterProps) => {
 	});
 
 	return (
-		<div>
+		<>
 			<RequestErrors
 				errors={[
 					...convertIntoArray(branchErrors, 'Branches'),
@@ -222,6 +222,6 @@ const Filter = ({ isLoading }: FilterProps) => {
 					/>
 				</Col>
 			</Row>
-		</div>
+		</>
 	);
 };
