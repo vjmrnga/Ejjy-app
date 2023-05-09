@@ -113,6 +113,7 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 
 			return {
 				key: id,
+				branch: branchMachine.branch?.name,
 				branchMachine: branchMachine.name,
 				user: getFullName(u),
 				datetime,
