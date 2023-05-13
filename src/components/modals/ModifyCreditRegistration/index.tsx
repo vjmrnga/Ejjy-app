@@ -157,7 +157,7 @@ export const ModifyCreditRegistrationForm = ({
 								onSearch={handleSearchDebounced}
 							>
 								{accounts.map((account) => (
-									<Select.Option key={account.id} value={account.id}>
+									<Select.Option key={getId(account)} value={getId(account)}>
 										{getFullName(account)}
 									</Select.Option>
 								))}

@@ -2088,6 +2088,11 @@ export const printAdjustmentReport = ({ transactions, user }) => {
 				transaction.adjustment_remarks?.new_updated_transaction;
 			const discountOption = transaction.adjustment_remarks?.discount_option;
 
+			const authorizers = [
+				transaction.void_authorizer,
+				transaction.discount_authorizer,
+			].filter(Boolean);
+
 			let remarks = '';
 			if (backOrder) {
 				remarks = `Back Order - ${backOrder.id}`;
@@ -2133,7 +2138,16 @@ export const printAdjustmentReport = ({ transactions, user }) => {
       <td>${remarks}</td>
       <td>${formatInPeso(transaction.total_amount, PESO_SIGN)}</td>
       <td>${getFullName(transaction.teller)}</td>
-      <td>${getFullName(transaction.void_authorizer)}</td>
+      <td>${authorizers
+				.map(
+					(authorizer) =>
+						`<div>
+          ${transaction.discount_authorizer === authorizer ? '(Discount) ' : ''}
+						${transaction.void_authorizer === authorizer ? '(Void) ' : ''}
+						${getFullName(authorizer)}
+          </div>`,
+				)
+				.join('')}</td>
     </tr>
   `;
 		})

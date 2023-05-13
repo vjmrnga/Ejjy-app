@@ -1,99 +1,175 @@
-import { Modal } from 'antd';
-import { RequestErrors } from 'components/RequestErrors';
-import { SHOW_HIDE_SHORTCUT } from 'global';
-import { useBranchProductEdit } from 'hooks';
-import React, { useEffect, useState } from 'react';
+import { message, Modal, Tabs } from 'antd';
+import { RequestErrors } from 'components';
+import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
-	confirmPassword,
+	useBranches,
+	useBranchProductEditPriceCost,
+	useBranchProducts,
+	useProductEdit,
+} from 'hooks';
+import React from 'react';
+import { useUserStore } from 'stores';
+import {
 	convertIntoArray,
-	getKeyDownCombination,
+	getGoogleApiUrl,
+	getId,
+	getLocalBranchId,
+	isUserFromBranch,
+	isUserFromOffice,
 } from 'utils';
 import { EditBranchProductsForm } from './EditBranchProductsForm';
 
+const tabs = {
+	ALL: 'General Products',
+	BRANCHES: 'Branch Products',
+};
+
 interface Props {
-	branchId: any;
-	branchProduct: any;
-	onSuccess: any;
+	product: any;
 	onClose: any;
 }
 
-export const EditBranchProductsModal = ({
-	branchId,
-	branchProduct,
-	onSuccess,
-	onClose,
-}: Props) => {
-	// STATES
-	const [isCurrentBalanceVisible, setIsCurrentBalanceVisible] = useState(false);
-
+export const EditBranchProductsModal = ({ product, onClose }: Props) => {
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const {
-		mutateAsync: editBranchProduct,
-		isLoading: isEditingBranchProduct,
-		error: editBranchProductError,
-	} = useBranchProductEdit();
+		data: { branchProducts },
+		isFetching: isFetchingBranchProducts,
+		error: branchProductError,
+	} = useBranchProducts({
+		params: {
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: undefined,
+			productIds: isUserFromBranch(user.user_type)
+				? product.product.id
+				: product.id,
+			serviceType: serviceTypes.OFFLINE,
+		},
+		options: { enabled: product !== null },
+	});
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+	} = useBranches({
+		key: 'EditBranchProductsModalBranch',
+		params: { pageSize: MAX_PAGE_SIZE },
+	});
+	const {
+		mutateAsync: editBranchProductPriceCost,
+		isLoading: isEditingBranchProductPriceCost,
+		error: editBranchProductPricCostError,
+	} = useBranchProductEditPriceCost();
+	const {
+		mutateAsync: editProduct,
+		isLoading: isEditingProduct,
+		error: editProductError,
+	} = useProductEdit();
 
 	// METHODS
-	useEffect(() => {
-		document.addEventListener('keydown', handleKeyDown);
-
-		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-		};
-	});
-
-	const handleSubmit = async (formData) => {
-		// await editBranchProduct({
-		// 	...formData,
-		// 	...product,
-		// 	branchId,
-		// });
-	};
-
-	const handleKeyDown = (event) => {
-		const key = getKeyDownCombination(event);
-
-		if (SHOW_HIDE_SHORTCUT.includes(key)) {
-			event.preventDefault();
-			if (isCurrentBalanceVisible) {
-				setIsCurrentBalanceVisible(false);
-			} else {
-				confirmPassword({
-					onSuccess: () => setIsCurrentBalanceVisible(true),
-				});
-			}
+	const handleSubmit = async ({ formData, isBulkEdit }) => {
+		if (formData.length > 0) {
+			await editBranchProductPriceCost({
+				actingUserId: getId(user),
+				productId: getId(product),
+				data: formData,
+				serverUrl: isUserFromBranch(user.user_type)
+					? undefined
+					: getGoogleApiUrl(),
+			});
 		}
+
+		if (isBulkEdit) {
+			await editProduct({
+				...formData[0],
+				id: getId(product),
+				actingUserId: getId(user),
+			});
+		}
+
+		message.success(`Branch product has been edited successfully.`);
+		onClose();
 	};
 
 	return (
 		<Modal
-			className="Modal__large ModalLarge__scrollable"
 			footer={null}
 			title={
 				<>
-					<span>{branchProduct ? '[Edit]' : '[Create]'} Branch Product</span>
-					<span className="ModalTitleMainInfo">
-						{branchProduct.product.name}
-					</span>
+					<span>Details</span>
+					<span className="ModalTitleMainInfo">{product.name}</span>
 				</>
 			}
+			width={600}
 			centered
 			closable
 			visible
 			onCancel={onClose}
 		>
 			<RequestErrors
-				errors={convertIntoArray(editBranchProductError?.errors)}
+				errors={[
+					...convertIntoArray(branchProductError, 'Branch Product'),
+					...convertIntoArray(editProductError, 'Product'),
+					...convertIntoArray(
+						editBranchProductPricCostError?.errors,
+						'Branch Product',
+					),
+				]}
 				withSpaceBottom
 			/>
 
-			<EditBranchProductsForm
-				branchProduct={branchProduct}
-				isCurrentBalanceVisible={isCurrentBalanceVisible}
-				isLoading={isEditingBranchProduct}
-				onClose={onClose}
-				onSubmit={handleSubmit}
-			/>
+			{isUserFromBranch(user.user_type) ? (
+				<EditBranchProductsForm
+					branches={branches}
+					branchProducts={branchProducts}
+					isLoading={
+						isFetchingBranches ||
+						isFetchingBranchProducts ||
+						isEditingBranchProductPriceCost ||
+						isEditingProduct
+					}
+					onClose={onClose}
+					onSubmit={handleSubmit}
+				/>
+			) : (
+				<Tabs
+					defaultActiveKey={
+						isUserFromOffice(user.user_type) ? tabs.ALL : tabs.BRANCHES
+					}
+					type="card"
+					destroyInactiveTabPane
+				>
+					<Tabs.TabPane key={tabs.BRANCHES} tab={tabs.BRANCHES}>
+						<EditBranchProductsForm
+							branches={branches}
+							branchProducts={branchProducts}
+							isLoading={
+								isFetchingBranches ||
+								isFetchingBranchProducts ||
+								isEditingBranchProductPriceCost ||
+								isEditingProduct
+							}
+							onClose={onClose}
+							onSubmit={handleSubmit}
+						/>
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={tabs.ALL} tab={tabs.ALL}>
+						<EditBranchProductsForm
+							branches={branches}
+							isLoading={
+								isFetchingBranches ||
+								isFetchingBranchProducts ||
+								isEditingBranchProductPriceCost ||
+								isEditingProduct
+							}
+							isBulkEdit
+							onClose={onClose}
+							onSubmit={handleSubmit}
+						/>
+					</Tabs.TabPane>
+				</Tabs>
+			)}
 		</Modal>
 	);
 };

@@ -1,4 +1,4 @@
-import { Button, Descriptions, Divider, Modal, Spin, Tabs } from 'antd';
+import { Button, Descriptions, Divider, Modal, Spin, Tabs, Tag } from 'antd';
 import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE } from 'global';
 import { useBranches, useBranchProducts } from 'hooks';
@@ -196,7 +196,7 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 
 			{!isUserFromBranch(user.user_type) && (
 				<>
-					<Divider orientation="left">Branch Product Prices</Divider>
+					<Divider orientation="left">Branch Product</Divider>
 
 					<Spin
 						spinning={
@@ -226,6 +226,30 @@ export const ViewProductModal = ({ product, onClose }: Props) => {
 											size="small"
 											bordered
 										>
+											<Descriptions.Item label="In Stock" span={2}>
+												{branchProduct.is_sold_in_branch ? (
+													<Tag color="green">Yes</Tag>
+												) : (
+													<Tag color="red">No</Tag>
+												)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Checking" span={2}>
+												{branchProduct.is_daily_checked ? (
+													<Tag color="purple">Daily</Tag>
+												) : (
+													<Tag color="blue">Random</Tag>
+												)}
+											</Descriptions.Item>
+											<Descriptions.Item label="Reorder Point">
+												{branchProduct.reorder_point}
+											</Descriptions.Item>
+											<Descriptions.Item label="Max Balance">
+												{formatQuantity({
+													unitOfMeasurement:
+														branchProduct.product.unit_of_measurement,
+													quantity: branchProduct.max_balance,
+												})}
+											</Descriptions.Item>
 											<Descriptions.Item label="Price (Piece)">
 												{formatInPeso(branchProduct.price_per_piece)}
 											</Descriptions.Item>

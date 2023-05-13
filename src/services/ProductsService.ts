@@ -16,8 +16,11 @@ interface Modify {
 	cost_per_piece: number;
 	description: string;
 	has_quantity_allowance: boolean;
+	is_daily_checked?: boolean;
+	is_randomly_checked?: boolean;
 	is_shown_in_scale_list?: boolean;
-	is_vat_exempted: boolean;
+	is_sold_in_branch?: boolean;
+	is_vat_exempted?: boolean;
 	markdown_price_per_bulk1?: number;
 	markdown_price_per_bulk2?: number;
 	markdown_price_per_piece1?: number;

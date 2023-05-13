@@ -1,4 +1,13 @@
-import { Button, Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
+import {
+	Button,
+	Col,
+	DatePicker,
+	Descriptions,
+	Row,
+	Space,
+	Table,
+	Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -89,6 +98,11 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 				transaction?.adjustment_remarks?.new_updated_transaction;
 			const discountOption = transaction?.adjustment_remarks?.discount_option;
 
+			const authorizers = [
+				transaction.void_authorizer,
+				transaction.discount_authorizer,
+			].filter(Boolean);
+
 			const remarks = (
 				<Space direction="vertical">
 					{backOrder && (
@@ -152,7 +166,13 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 				remarks,
 				totalAmount: formatInPeso(transaction.total_amount),
 				cashier: getFullName(transaction.teller),
-				authorizer: getFullName(transaction.void_authorizer),
+				authorizer: authorizers.map((authorizer) => (
+					<Typography.Text key={authorizer?.id} className="d-block">
+						{transaction.discount_authorizer === authorizer && '(Discount) '}
+						{transaction.void_authorizer === authorizer && '(Void) '}
+						{getFullName(authorizer)}
+					</Typography.Text>
+				)),
 			};
 		});
 

@@ -13,8 +13,10 @@ import {
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	booleanOptions,
+	checkingTypesOptions,
 	inputTypes,
 	MAX_PAGE_SIZE,
+	productCheckingTypes,
 	productTypes,
 	taxTypes,
 	unitOfMeasurementTypes,
@@ -102,11 +104,13 @@ export const ModifyProductForm = ({
 				description: product?.description || '',
 				hasQuantityAllowance: product?.has_quantity_allowance || false,
 				isShownInScaleList: product?.is_shown_in_scale_list || false,
+				isDailyChecked: undefined,
+				isRandomlyChecked: undefined,
+				isSoldInBranch: undefined,
 				isVatExempted:
 					siteSettings?.tax_type === taxTypes.NVAT
 						? 'true'
 						: (!!product?.is_vat_exempted).toString(),
-
 				maxBalance: product?.max_balance
 					? formatQuantity({
 							unitOfMeasurement: product?.unit_of_measurement,
@@ -500,6 +504,37 @@ export const ModifyProductForm = ({
 							<FormRadioButton id="isShownInScaleList" items={booleanOptions} />
 							<ErrorMessage
 								name="isShownInScaleList"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24}>
+							<Label label="In Stock" spacing />
+							<FormRadioButton id="isSoldInBranch" items={booleanOptions} />
+							<ErrorMessage
+								name="isSoldInBranch"
+								render={(error) => <FieldError error={error} />}
+							/>
+						</Col>
+
+						<Col span={24}>
+							<Label label="Checking" spacing />
+							<FormRadioButton
+								id="checking"
+								items={checkingTypesOptions}
+								onChange={(value) => {
+									setFieldValue(
+										'isDailyChecked',
+										value === productCheckingTypes.DAILY,
+									);
+									setFieldValue(
+										'isRandomlyChecked',
+										value === productCheckingTypes.RANDOM,
+									);
+								}}
+							/>
+							<ErrorMessage
+								name="checking"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

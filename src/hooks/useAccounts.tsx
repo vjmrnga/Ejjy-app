@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { AccountsService } from 'services';
-import { getLocalApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useAccounts = ({ params }: Query) =>
 	useQuery<any>(
@@ -97,7 +97,7 @@ export const useAccountCreate = () =>
 					tin,
 					type,
 				},
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 

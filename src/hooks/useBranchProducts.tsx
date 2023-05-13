@@ -437,6 +437,12 @@ export const useBranchProductEditPriceCost = () => {
 								d?.governmentCreditPricePerPiece || undefined,
 							government_credit_price_per_bulk:
 								d?.governmentCreditPricePerBulk || undefined,
+
+							is_daily_checked: d?.isDailyChecked || undefined,
+							is_randomly_checked: d?.isRandomlyChecked || undefined,
+							is_sold_in_branch: d?.isSoldInBranch || undefined,
+							reorder_point: d?.reorderPoint || undefined,
+							max_balance: d?.maxBalance || undefined,
 						})) || undefined,
 				},
 				serverUrl || getBaseUrl(),

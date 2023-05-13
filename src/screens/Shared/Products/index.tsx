@@ -26,6 +26,8 @@ import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
+	EditBranchProductBalanceModal,
+	EditBranchProductsModal,
 	ModifyProductModal,
 	PricesModal,
 	RequestErrors,
@@ -81,6 +83,7 @@ const modals = {
 	VIEW: 0,
 	MODIFY: 1,
 	EDIT_PRICE_COST: 2,
+	EDIT_BRANCH_PRODUCT: 3,
 	CHART: 4,
 };
 
@@ -163,13 +166,15 @@ export const Products = () => {
 								/>
 							</Tooltip>
 						)}
-						<Tooltip title="Edit Branch Details">
+						<Tooltip title="Edit Branch Product">
 							<Button
 								disabled={isConnected === false}
 								icon={<HomeOutlined />}
 								type="primary"
 								ghost
-								onClick={() => handleOpenModal(product, modals.EDIT_PRICE_COST)}
+								onClick={() =>
+									handleOpenModal(product, modals.EDIT_BRANCH_PRODUCT)
+								}
 							/>
 						</Tooltip>
 						<Tooltip title="Print Price Tag">
@@ -379,6 +384,13 @@ export const Products = () => {
 
 				{modalType === modals.EDIT_PRICE_COST && selectedProduct && (
 					<PricesModal
+						product={selectedProduct}
+						onClose={() => handleOpenModal(null, null)}
+					/>
+				)}
+
+				{modalType === modals.EDIT_BRANCH_PRODUCT && selectedProduct && (
+					<EditBranchProductsModal
 						product={selectedProduct}
 						onClose={() => handleOpenModal(null, null)}
 					/>

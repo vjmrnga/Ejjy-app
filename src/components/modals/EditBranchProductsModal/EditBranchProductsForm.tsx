@@ -1,115 +1,146 @@
-import { Button, Col, Descriptions, Divider, Row, Typography } from 'antd';
-import {
-	FieldError,
-	FormInputLabel,
-	FormRadioButton,
-	Label,
-} from 'components/elements';
+import React, { useCallback, useEffect, useState } from 'react';
+import { EditOutlined } from '@ant-design/icons';
+import { Button, Col, Collapse, Input, Row, Tag } from 'antd';
+import { FieldError, FormRadioButton, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	booleanOptions,
 	checkingTypesOptions,
 	productCheckingTypes,
-	unitOfMeasurementTypes,
 } from 'global';
-import { isInteger } from 'lodash';
-import React, { useCallback, useState } from 'react';
-import { getProductCode, sleep } from 'utils';
+import _ from 'lodash';
+import { getId } from 'utils';
 import * as Yup from 'yup';
 
-const { Text } = Typography;
-
 interface Props {
-	branchProduct: any;
+	branches: any;
+	branchProducts?: any;
 	onSubmit: any;
 	onClose: any;
 	isLoading: boolean;
-	isCurrentBalanceVisible: boolean;
+	isBulkEdit?: boolean;
 }
 
+const variableNames = [
+	{
+		valueKey: 'isSoldInBranch',
+		initialValueKey: 'initialIsSoldInBranch',
+	},
+	{
+		valueKey: 'checking',
+		initialValueKey: 'initialChecking',
+	},
+	{
+		valueKey: 'isDailyChecked',
+		initialValueKey: 'initialIsDailyChecked',
+	},
+	{
+		valueKey: 'isRandomlyChecked',
+		initialValueKey: 'initialIsRandomlyChecked',
+	},
+	{
+		valueKey: 'reorderPoint',
+		initialValueKey: 'initialReorderPoint',
+	},
+	{
+		valueKey: 'maxBalance',
+		initialValueKey: 'initialMaxBalance',
+	},
+];
+
 export const EditBranchProductsForm = ({
-	branchProduct,
+	branches,
+	branchProducts,
 	onSubmit,
 	onClose,
 	isLoading,
-	isCurrentBalanceVisible,
+	isBulkEdit,
 }: Props) => {
-	const [isSubmitting, setSubmitting] = useState(false);
+	// STATES
+	const [activeKey, setActiveKey] = useState(null);
+
+	// METHODS
+	useEffect(() => {
+		if (branchProducts?.length === 1) {
+			setActiveKey([branchProducts[0].branch_id]);
+		}
+	}, [branchProducts]);
+
+	useEffect(() => {
+		if (isBulkEdit) {
+			setActiveKey(branches.map((branch) => getId(branch)).join(','));
+		}
+	}, [branches, isBulkEdit]);
 
 	const getFormDetails = useCallback(
 		() => ({
-			DefaultValues: {
-				checking: branchProduct?.is_daily_checked
-					? productCheckingTypes.DAILY
-					: productCheckingTypes.RANDOM,
-				type: branchProduct?.product?.type,
-				unit_of_measurement: branchProduct?.product?.unit_of_measurement,
-				reorder_point: branchProduct?.reorder_point,
-				max_balance: branchProduct?.max_balance,
-				price_per_piece: branchProduct?.price_per_piece?.toFixed(2) || '',
-				markdown_price_per_piece1:
-					branchProduct?.markdown_price_per_piece1?.toFixed(2) || '',
-				markdown_price_per_piece2:
-					branchProduct?.markdown_price_per_piece2?.toFixed(2) || '',
-				price_per_bulk: branchProduct?.price_per_bulk?.toFixed(2) || '',
-				markdown_price_per_bulk1:
-					branchProduct?.markdown_price_per_bulk1?.toFixed(2) || '',
-				markdown_price_per_bulk2:
-					branchProduct?.markdown_price_per_bulk2?.toFixed(2) || '',
-				current_balance: branchProduct?.current_balance,
-				is_sold_in_branch: branchProduct.is_sold_in_branch,
-			},
-			Schema: Yup.object().shape({
-				checking: Yup.string().required().label('Checking'),
-				reorder_point: Yup.number()
-					.required()
-					.min(0)
-					.max(65535)
-					.label('Reorder Point'),
-				max_balance: Yup.number()
-					.required()
-					.min(0)
-					.max(65535)
-					.label('Max Balance'),
-				price_per_piece: Yup.number()
-					.required()
-					.min(0)
-					.label('Price per Piece'),
-				markdown_price_per_piece1: Yup.number()
-					.required()
-					.min(0)
-					.label('Wholesale Price (piece)'),
-				markdown_price_per_piece2: Yup.number()
-					.required()
-					.min(0)
-					.label('Special Price (piece)'),
-				price_per_bulk: Yup.number().required().min(0).label('Price per Bulk'),
-				markdown_price_per_bulk1: Yup.number()
-					.required()
-					.min(0)
-					.label('Wholesale Price (bulk)'),
-				markdown_price_per_bulk2: Yup.number()
-					.required()
-					.min(0)
-					.label('Special Price (bulk)'),
-				current_balance: isCurrentBalanceVisible
-					? Yup.number()
-							.required()
-							.min(0)
-							.test(
-								'is-whole-number',
-								'Non-weighing items require whole number quantity.',
-								(value) =>
-									branchProduct?.product?.unit_of_measurement ===
-									unitOfMeasurementTypes.NON_WEIGHING
-										? isInteger(Number(value))
-										: true,
-							)
-							.label('Current Balance')
-					: undefined,
-			}),
+			DefaultValues: isBulkEdit
+				? [
+						{
+							branchId: branches.map((branch) => getId(branch)).join(','),
+							branchName: 'All Branches',
+
+							checking: '',
+							isDailyChecked: '',
+							isRandomlyChecked: '',
+							reorderPoint: '',
+							maxBalance: '',
+							isSoldInBranch: '',
+
+							initialChecking: '',
+							initialIsDailyChecked: '',
+							initialIsRandomlyChecked: '',
+							initialReorderPoint: '',
+							initialMaxBalance: '',
+							initialIsSoldInBranch: '',
+						},
+				  ]
+				: branchProducts.map((branchProduct) => {
+						const branch = getBranch(branchProduct?.branch_id);
+
+						return {
+							branchId: getId(branch),
+							branchName: branch?.name,
+
+							checking: branchProduct?.is_daily_checked
+								? productCheckingTypes.DAILY
+								: productCheckingTypes.RANDOM,
+							isDailyChecked: branchProduct?.is_daily_checked,
+							isRandomlyChecked: !branchProduct?.is_daily_checked,
+							reorderPoint: branchProduct?.reorder_point,
+							maxBalance: branchProduct?.max_balance,
+							isSoldInBranch: branchProduct.is_sold_in_branch,
+
+							initialChecking: branchProduct?.is_daily_checked
+								? productCheckingTypes.DAILY
+								: productCheckingTypes.RANDOM,
+							initialIsDailyChecked: branchProduct?.is_daily_checked,
+							initialIsRandomlyChecked: !branchProduct?.is_daily_checked,
+							initialReorderPoint: branchProduct?.reorder_point,
+							initialMaxBalance: branchProduct?.max_balance,
+							initialIsSoldInBranch: branchProduct.is_sold_in_branch,
+						};
+				  }),
+			Schema: Yup.array(
+				Yup.object().shape({
+					reorderPoint: Yup.number().min(0).label('Reorder Point'),
+					maxBalance: Yup.number().min(0).label('Max Balance'),
+				}),
+			),
 		}),
-		[branchProduct, isCurrentBalanceVisible],
+		[branchProducts, branches],
+	);
+
+	const isEdited = (branchProduct) =>
+		variableNames.some(
+			(variable) =>
+				branchProduct[variable.initialValueKey] !==
+				branchProduct[variable.valueKey],
+		);
+
+	const getBranch = useCallback(
+		(branchId) => branches.find(({ id }) => id === branchId),
+		[branches],
 	);
 
 	return (
@@ -117,225 +148,145 @@ export const EditBranchProductsForm = ({
 			initialValues={getFormDetails().DefaultValues}
 			validationSchema={getFormDetails().Schema}
 			enableReinitialize
-			onSubmit={async (formData) => {
-				setSubmitting(true);
-				await sleep(500);
-				setSubmitting(false);
+			onSubmit={(values) => {
+				const ALLOWED_LENGTH = 1;
 
-				let data = branchProduct;
-				if (formData.is_sold_in_branch) {
-					data = {
-						...formData,
-						id: branchProduct?.id,
-						is_daily_checked: formData.checking === productCheckingTypes.DAILY,
-						is_randomly_checked:
-							formData.checking === productCheckingTypes.RANDOM,
-					};
-				}
+				const formData = values
+					.map((value) => {
+						const data = { branchIds: _.toString(value.branchId) };
 
-				onSubmit({
-					...data,
-					id: branchProduct?.id,
-					is_sold_in_branch: formData.is_sold_in_branch,
+						if (value.isSoldInBranch) {
+							variableNames.forEach((variable) => {
+								if (
+									value[variable.initialValueKey] !== value[variable.valueKey]
+								) {
+									data[variable.valueKey] = value[variable.valueKey];
+								}
+							});
+						}
 
-					// NOTE: Hidden fields must be visible in order to be saved.
-					current_balance: isCurrentBalanceVisible
-						? formData.current_balance
-						: undefined,
-				});
+						if (value.initialIsSoldInBranch !== value.isSoldInBranch) {
+							data['isSoldInBranch'] = value.isSoldInBranch;
+						}
+
+						return data;
+					})
+					.filter((data) => Object.keys(data).length > ALLOWED_LENGTH);
+
+				onSubmit({ formData, isBulkEdit });
 			}}
 		>
-			{({ values }) => (
+			{({ values, setFieldValue }) => (
 				<Form>
-					<Descriptions column={1} bordered>
-						<Descriptions.Item label="Code">
-							{getProductCode(branchProduct?.product)}
-						</Descriptions.Item>
-						<Descriptions.Item label="Textcode">
-							{branchProduct?.product?.textcode}
-						</Descriptions.Item>
+					{values.length > 0 && (
+						<Collapse
+							activeKey={activeKey}
+							collapsible={
+								isBulkEdit || values.length === 1 ? 'disabled' : undefined
+							}
+							expandIconPosition="right"
+							onChange={(key) => {
+								setActiveKey(key);
+							}}
+						>
+							{values.map((branchProduct, index) => (
+								<Collapse.Panel
+									key={branchProduct.branchId}
+									header={
+										<Row className="w-100" justify="space-between">
+											<Col>{branchProduct.branchName}</Col>
+											{isEdited(branchProduct) && (
+												<Col>
+													<Tag color="blue" icon={<EditOutlined />}>
+														Edited
+													</Tag>
+												</Col>
+											)}
+										</Row>
+									}
+								>
+									<Row gutter={[16, 16]}>
+										<Col span={24}>
+											<Label label="In Stock" spacing />
+											<FormRadioButton
+												id={`${index}.isSoldInBranch`}
+												items={booleanOptions}
+											/>
+											<ErrorMessage
+												name={`${index}.isSoldInBranch`}
+												render={(error) => <FieldError error={error} />}
+											/>
+										</Col>
 
-						<Descriptions.Item label="Name">
-							{branchProduct?.product?.name}
-						</Descriptions.Item>
-					</Descriptions>
+										<Col span={24}>
+											<Label label="Checking" spacing />
+											<FormRadioButton
+												disabled={values[index].isSoldInBranch === false}
+												id={`${index}.checking`}
+												items={checkingTypesOptions}
+												onChange={(value) => {
+													setFieldValue(
+														`${index}.isDailyChecked`,
+														value === productCheckingTypes.DAILY,
+													);
+													setFieldValue(
+														`${index}.isRandomlyChecked`,
+														value === productCheckingTypes.RANDOM,
+													);
+												}}
+											/>
+											<ErrorMessage
+												name={`${index}.checking`}
+												render={(error) => <FieldError error={error} />}
+											/>
+										</Col>
 
-					<Row className="mt-4" gutter={[16, 16]}>
-						<Col sm={12} xs={24}>
-							<Label label="Checking" spacing />
-							<FormRadioButton
-								disabled={!values.is_sold_in_branch}
-								id="checking"
-								items={checkingTypesOptions}
-							/>
-							<ErrorMessage
-								name="checking"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
+										<Col lg={12} span={24}>
+											<Label label="Reorder Point" spacing />
+											<Input
+												min={0}
+												type="number"
+												value={values[index]['reorderPoint']}
+												onChange={(e) => {
+													setFieldValue(
+														`${index}.reorderPoint`,
+														e.target.value,
+													);
+												}}
+											/>
+											<ErrorMessage
+												name={`${index}.reorderPoint`}
+												render={(error) => <FieldError error={error} />}
+											/>
+										</Col>
 
-						<Col sm={12} xs={24}>
-							<Label label="In Stock" spacing />
-							<FormRadioButton id="is_sold_in_branch" items={booleanOptions} />
-							<ErrorMessage
-								name="is_sold_in_branch"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Divider dashed>QUANTITY</Divider>
-
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="reorder_point"
-								label="Reorder Point"
-								min={0}
-								type="number"
-							/>
-							<ErrorMessage
-								name="reorder_point"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="max_balance"
-								label="Max Balance"
-								type="number"
-							/>
-							<ErrorMessage
-								name="max_balance"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Divider dashed>
-							MONEY
-							<br />
-							<Text mark>(must be in 2 decimal places)</Text>
-						</Divider>
-
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="price_per_piece"
-								label="Price (Piece)"
-								isMoney
-							/>
-							<ErrorMessage
-								name="price_per_piece"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="markdown_price_per_piece1"
-								label="Wholesale Price (piece)"
-								isMoney
-							/>
-							<ErrorMessage
-								name="markdown_price_per_piece1"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="markdown_price_per_piece2"
-								label="Special Price (piece)"
-								step=".01"
-								type="number"
-								isMoney
-							/>
-							<ErrorMessage
-								name="markdown_price_per_piece2"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="price_per_bulk"
-								label="Price (Bulk)"
-								type="number"
-								isMoney
-							/>
-							<ErrorMessage
-								name="price_per_bulk"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="markdown_price_per_bulk1"
-								label="Wholesale Price (bulk)"
-								type="number"
-								isMoney
-							/>
-							<ErrorMessage
-								name="markdown_price_per_bulk1"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-						<Col md={8} sm={12} xs={24}>
-							<FormInputLabel
-								disabled={!values.is_sold_in_branch}
-								id="markdown_price_per_bulk2"
-								label="Special Price (bulk)"
-								step=".01"
-								type="number"
-								isMoney
-							/>
-							<ErrorMessage
-								name="markdown_price_per_bulk2"
-								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						{isCurrentBalanceVisible && (
-							<>
-								<Divider dashed>HIDDEN FIELDS</Divider>
-
-								<Col sm={12} xs={24}>
-									<FormInputLabel
-										disabled={!values.is_sold_in_branch}
-										id="current_balance"
-										isWholeNumber={
-											branchProduct.product.unit_of_measurement ===
-											unitOfMeasurementTypes.NON_WEIGHING
-										}
-										label="Current Balance"
-										type="number"
-									/>
-									<ErrorMessage
-										name="current_balance"
-										render={(error) => <FieldError error={error} />}
-									/>
-								</Col>
-							</>
-						)}
-					</Row>
+										<Col lg={12} span={24}>
+											<Label label="Max Balance" spacing />
+											<Input
+												min={0}
+												type="number"
+												value={values[index]['maxBalance']}
+												onChange={(e) => {
+													setFieldValue(`${index}.maxBalance`, e.target.value);
+												}}
+											/>
+											<ErrorMessage
+												name={`${index}.maxBalance`}
+												render={(error) => <FieldError error={error} />}
+											/>
+										</Col>
+									</Row>
+								</Collapse.Panel>
+							))}
+						</Collapse>
+					)}
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={isLoading || isSubmitting}
-							htmlType="button"
-							onClick={onClose}
-						>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button
-							htmlType="submit"
-							loading={isLoading || isSubmitting}
-							type="primary"
-						>
-							{branchProduct ? 'Edit' : 'Create'}
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							Submit
 						</Button>
 					</div>
 				</Form>
