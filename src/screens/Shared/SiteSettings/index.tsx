@@ -149,9 +149,9 @@ export const SiteSettings = () => {
 				appDescription: siteSettings?.app_description || '',
 			},
 			Schema: Yup.object().shape({
-				closeSessionDeadline: getValidTimeTest('Close Session Deadline').test(
+				closeSessionDeadline: getValidTimeTest('End Session Deadline').test(
 					'5-minutes-before-close-day-deadline',
-					'Close Session Deadline must be atleast 5 minutes before the Close Day Deadline',
+					'End Session Deadline must be atleast 5 minutes before the Close Day Deadline',
 					function test(value) {
 						// NOTE: We need to use a no-named function so
 						// we can use 'this' and access the other form field value.
@@ -667,7 +667,7 @@ export const SiteSettings = () => {
 									<Col sm={12} xs={24}>
 										{renderTimePicker({
 											name: 'closeSessionDeadline',
-											label: 'Close Session Deadline',
+											label: 'End Session Deadline',
 											values,
 											setFieldValue,
 										})}

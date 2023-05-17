@@ -135,12 +135,12 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 		isAutomaticallyClosed,
 	}) => (
 		<Descriptions column={1} size="small" bordered>
-			<Descriptions.Item label="Open">
+			<Descriptions.Item label="Start">
 				{datetimeStarted
 					? formatDateTimeShortMonth(datetimeStarted)
 					: EMPTY_CELL}
 			</Descriptions.Item>
-			<Descriptions.Item label="Close">
+			<Descriptions.Item label="End">
 				{datetimeEnded ? (
 					<>
 						{formatDateTimeShortMonth(datetimeEnded)}{' '}
