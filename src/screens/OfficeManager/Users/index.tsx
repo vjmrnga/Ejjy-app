@@ -276,7 +276,7 @@ export const Users = () => {
 						/>
 					)}
 
-					{modifyUserModalVisible && selectedUser && (
+					{modifyUserModalVisible && (
 						<ModifyUserModal
 							user={selectedUser}
 							onClose={() => {
