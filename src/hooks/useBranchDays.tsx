@@ -1,5 +1,10 @@
 import { actions, types } from 'ducks/branches-days';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	request,
+	timeRangeTypes,
+} from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
@@ -181,7 +186,7 @@ const useBranchDaysNew = ({ params, options }: Query) =>
 						opened_by_user_id: params?.openedByUserId,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						page: params?.page || DEFAULT_PAGE,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),

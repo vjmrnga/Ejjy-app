@@ -1,4 +1,10 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, request, serviceTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	request,
+	serviceTypes,
+	timeRangeTypes,
+} from 'global';
 import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useEffect, useState } from 'react';
@@ -320,7 +326,7 @@ export const useBranchProductsWithAnalytics = ({ params, options }: Query) =>
 						product_category: params?.productCategory,
 						product_ids: params?.productIds,
 						product_status: params?.productStatus,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 						ids: params?.ids,
 					},
 					getLocalApiUrl(),

@@ -32,7 +32,7 @@ import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import useInterval from 'use-interval';
-import { getLocalBranchId, getOnlineBranchId, isStandAlone } from 'utils';
+import { getBranchKey, getLocalBranchId, isStandAlone } from 'utils';
 import { Reports } from 'screens/Shared/Reports';
 import { Accounts } from '../Shared/Accounts';
 import { BackOrders } from './BackOrders';
@@ -47,6 +47,8 @@ import { CreateReturnItemSlip } from './ReturnItemSlips/CreateReturnItemSlip';
 import { ReturnItemSlips } from './ReturnItemSlips';
 import { Users } from './Users';
 
+const PING_BRANCH_INTERVAL_MS = 10_000;
+
 const refetchOptions: any = {
 	refetchInterval: 60000,
 	refetchIntervalInBackground: true,
@@ -55,7 +57,7 @@ const refetchOptions: any = {
 
 const BranchManager = () => {
 	// VARIABLES
-	const onlineBranchId = getOnlineBranchId();
+	const branchKey = getBranchKey();
 
 	// STATES
 	const [notificationsCount, setNotificationsCount] = useState(0);
@@ -99,9 +101,9 @@ const BranchManager = () => {
 	const { mutateAsync: pingBranch } = useBranchPing();
 	useInterval(
 		async () => {
-			await pingBranch({ id: onlineBranchId });
+			await pingBranch({ branchKey });
 		},
-		onlineBranchId ? 5000 : null,
+		branchKey ? PING_BRANCH_INTERVAL_MS : null,
 	);
 
 	const { mutate: createCheckDaily } = useProductCheckCreateDaily();

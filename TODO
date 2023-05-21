@@ -20,6 +20,7 @@ TODO on sprint break:
 - Make the disabled filter fields disabled when other list are still fetching
 - Change isFetched with isFetchedAfterMount for polling list
 - Add Branch Machine ID in filter in Cashiering Assingments (Assignments -> Session)
+- Add `daily` directly in the service para dili magdoble ug request
 
 ssh -R office.ej-jy.com:80:localhost:8000 localhost.run -- --no-inject-proxy-protocol-header
 

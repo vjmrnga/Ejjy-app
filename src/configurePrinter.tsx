@@ -1180,26 +1180,20 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 					PESO_SIGN,
 				)}&nbsp;</td>
 			</tr>
-      ${
-				siteSettings.tax_type === taxTypes.VAT
-					? `
-          <tr>
-            <td>VATable Sales</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_sales,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td>VAT Amount</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_amount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        `
-					: ''
-			}
+      <tr>
+        <td>VATable Sales</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_sales,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td>VAT Amount</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_amount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
       <tr>
 				<td>ZERO Rated</td>
 				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}&nbsp;</td>
@@ -1237,17 +1231,12 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 					PESO_SIGN,
 				)})</td>
       </tr>
-      ${
-				siteSettings.tax_type === taxTypes.VAT
-					? `
-          <tr>
-            <td style="padding-left: 15px">VAT AMOUNT</td>
-            <td style="text-align: right">(${formatInPesoWithUnderline(
-							report.vat_amount,
-						)})</td>
-          </tr>`
-					: ''
-			}
+      <tr>
+        <td style="padding-left: 15px">VAT AMOUNT</td>
+        <td style="text-align: right">(${formatInPesoWithUnderline(
+					report.vat_amount,
+				)})</td>
+      </tr>
       <tr>
         <td><b>NET SALES</b></td>
         <td style="text-align: right;"><b>${formatInPeso(
@@ -1257,64 +1246,58 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
       </tr>
     </table>
 
-    ${
-			siteSettings.tax_type === taxTypes.VAT
-				? `
-        <div style="width: 100%; text-align: right">----------------</div>
+    <div style="width: 100%; text-align: right">----------------</div>
 
-        <table style="width: 100%;">
-          <tr>
-            <td>ADJUSTMENT ON VAT:</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">SC/PWD</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_special_discount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">OTHERS</td>
-            <td style="text-align: right">${formatInPesoWithUnderline(
-							report.others,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">TOTAL</td>
-            <td style="text-align: right">${formatInPeso(
-							report.total_vat_adjusted,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        </table>
+    <table style="width: 100%;">
+      <tr>
+        <td>ADJUSTMENT ON VAT:</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_special_discount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">OTHERS</td>
+        <td style="text-align: right">${formatInPesoWithUnderline(
+					report.others,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">TOTAL</td>
+        <td style="text-align: right">${formatInPeso(
+					report.total_vat_adjusted,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+    </table>
 
-        <div style="width: 100%; text-align: right">----------------</div>
+    <div style="width: 100%; text-align: right">----------------</div>
 
-        <table style="width: 100%;">
-          <tr>
-            <td>VAT AMOUNT</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_amount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td>VAT ADJ.</td>
-            <td style="text-align: right">(${formatInPesoWithUnderline(
-							report.total_vat_adjusted,
-						)})</td>
-          </tr>
-          <tr>
-            <td>VAT PAYABLE</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_payable,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        </table>
-        `
-				: ''
-		}
+    <table style="width: 100%;">
+      <tr>
+        <td>VAT AMOUNT</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_amount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td>VAT ADJ.</td>
+        <td style="text-align: right">(${formatInPesoWithUnderline(
+					report.total_vat_adjusted,
+				)})</td>
+      </tr>
+      <tr>
+        <td>VAT PAYABLE</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_payable,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+    </table>
 
     <br />
 
@@ -1428,26 +1411,20 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 					PESO_SIGN,
 				)}&nbsp;</td>
 			</tr>
-      ${
-				siteSettings.tax_type === taxTypes.VAT
-					? `
-          <tr>
-            <td>VATable Sales</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_sales,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td>VAT Amount</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_amount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        `
-					: ''
-			}
+      <tr>
+        <td>VATable Sales</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_sales,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td>VAT Amount</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_amount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
       <tr>
 				<td>ZERO Rated</td>
 				<td style="text-align: right">${formatInPeso(0, PESO_SIGN)}&nbsp;</td>
@@ -1485,17 +1462,12 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 					PESO_SIGN,
 				)})</td>
       </tr>
-      ${
-				siteSettings.tax_type === taxTypes.VAT
-					? `
-          <tr>
-            <td style="padding-left: 15px">VAT AMOUNT</td>
-            <td style="text-align: right">(${formatInPesoWithUnderline(
-							report.vat_amount,
-						)})</td>
-          </tr>`
-					: ''
-			}
+      <tr>
+        <td style="padding-left: 15px">VAT AMOUNT</td>
+        <td style="text-align: right">(${formatInPesoWithUnderline(
+					report.vat_amount,
+				)})</td>
+      </tr>
       <tr>
         <td><b>ACCUM. GRAND TOTAL</b></td>
         <td style="text-align: right;"><b>${formatInPeso(
@@ -1505,64 +1477,58 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
       </tr>
     </table>
 
-    ${
-			siteSettings.tax_type === taxTypes.VAT
-				? `
-        <div style="width: 100%; text-align: right">----------------</div>
+    <div style="width: 100%; text-align: right">----------------</div>
 
-        <table style="width: 100%;">
-          <tr>
-            <td>ADJUSTMENT ON VAT:</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">SC/PWD</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_special_discount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">OTHERS</td>
-            <td style="text-align: right">${formatInPesoWithUnderline(
-							report.others,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td style="padding-left: 15px">TOTAL</td>
-            <td style="text-align: right">${formatInPeso(
-							report.total_vat_adjusted,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        </table>
+    <table style="width: 100%;">
+      <tr>
+        <td>ADJUSTMENT ON VAT:</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_special_discount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">OTHERS</td>
+        <td style="text-align: right">${formatInPesoWithUnderline(
+					report.others,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="padding-left: 15px">TOTAL</td>
+        <td style="text-align: right">${formatInPeso(
+					report.total_vat_adjusted,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+    </table>
 
-        <div style="width: 100%; text-align: right">----------------</div>
+    <div style="width: 100%; text-align: right">----------------</div>
 
-        <table style="width: 100%;">
-          <tr>
-            <td>VAT AMOUNT</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_amount,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-          <tr>
-            <td>VAT ADJ.</td>
-            <td style="text-align: right">(${formatInPesoWithUnderline(
-							report.total_vat_adjusted,
-						)})</td>
-          </tr>
-          <tr>
-            <td>VAT PAYABLE</td>
-            <td style="text-align: right">${formatInPeso(
-							report.vat_payable,
-							PESO_SIGN,
-						)}&nbsp;</td>
-          </tr>
-        </table>
-        `
-				: ''
-		}
+    <table style="width: 100%;">
+      <tr>
+        <td>VAT AMOUNT</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_amount,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+      <tr>
+        <td>VAT ADJ.</td>
+        <td style="text-align: right">(${formatInPesoWithUnderline(
+					report.total_vat_adjusted,
+				)})</td>
+      </tr>
+      <tr>
+        <td>VAT PAYABLE</td>
+        <td style="text-align: right">${formatInPeso(
+					report.vat_payable,
+					PESO_SIGN,
+				)}&nbsp;</td>
+      </tr>
+    </table>
 
 		<br />
 
@@ -2410,37 +2376,32 @@ export const printSalesInvoice = ({
 				: ''
 		}
 
-    ${
-			siteSettings.tax_type === taxTypes.VAT
-				? `
-        <table style="width: 100%;">
-          <tr>
-            <td>VAT Exempt</td>
-            <td style="text-align: right">
-              ${formatInPeso(transaction.invoice.vat_exempt, PESO_SIGN)}&nbsp;
-            </td>
-          </tr>
-          <tr>
-            <td>VATable Sales</td>
-            <td style="text-align: right">
-              ${formatInPeso(transaction.invoice.vat_sales, PESO_SIGN)}&nbsp;
-            </td>
-          </tr>
-          <tr>
-            <td>VAT Amount</td>
-            <td style="text-align: right">
-              ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
-            </td>
-          </tr>
-          <tr>
-            <td>ZERO Rated</td>
-            <td style="text-align: right">
-              ${formatInPeso(0, PESO_SIGN)}&nbsp;
-            </td>
-          </tr>
-        </table><br />`
-				: ''
-		}
+    <table style="width: 100%;">
+      <tr>
+        <td>VAT Exempt</td>
+        <td style="text-align: right">
+          ${formatInPeso(transaction.invoice.vat_exempt, PESO_SIGN)}&nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>VATable Sales</td>
+        <td style="text-align: right">
+          ${formatInPeso(transaction.invoice.vat_sales, PESO_SIGN)}&nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>VAT Amount</td>
+        <td style="text-align: right">
+          ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>ZERO Rated</td>
+        <td style="text-align: right">
+          ${formatInPeso(0, PESO_SIGN)}&nbsp;
+        </td>
+      </tr>
+    </table><br />
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>${formatDateTime(transaction.invoice.datetime_created)}</span>

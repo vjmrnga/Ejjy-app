@@ -18,12 +18,15 @@ import {
 	TAG_DEFAULT_FONT_SIZE,
 	TAG_DEFAULT_PAPER_HEIGHT,
 	TAG_DEFAULT_PAPER_WIDTH,
+	APP_BRANCH_KEY_KEY,
 } from 'global';
 
 export const getAppType = () => localStorage.getItem(APP_APP_TYPE_KEY);
 
 export const getIsMainHeadOffice = () =>
 	Number(localStorage.getItem(APP_IS_MAIN_HEAD_OFFICE));
+
+export const getBranchKey = () => localStorage.getItem(APP_BRANCH_KEY_KEY);
 
 export const getOnlineBranchId = () =>
 	localStorage.getItem(APP_ONLINE_BRANCH_ID_KEY);

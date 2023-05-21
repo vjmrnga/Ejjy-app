@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { TransactionsService } from 'services';
@@ -31,7 +31,7 @@ const useTransactions = ({ params, options }: Query) =>
 						page: params?.page || DEFAULT_PAGE,
 						payor_creditor_account_id: params?.payorCreditorAccountId,
 						statuses: params?.statuses,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),
@@ -72,7 +72,7 @@ export const useTransactionsSummary = ({ params, options }: Query) =>
 					{
 						branch_machine_id: params?.branchMachineId,
 						statuses: params?.statuses,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),

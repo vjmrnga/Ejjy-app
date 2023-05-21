@@ -3,6 +3,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	serviceTypes,
+	timeRangeTypes,
 } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
@@ -38,7 +39,7 @@ const useAttendanceLogs = ({ params }: Query) =>
 						employee_id: params?.employeeId,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						page: params?.page || DEFAULT_PAGE,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),
@@ -92,7 +93,7 @@ export const useAttendanceLogsForPrinting = ({ params, options }: Query) =>
 						employee_id: params?.employeeId,
 						page_size: MAX_PAGE_SIZE,
 						page: DEFAULT_PAGE,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),

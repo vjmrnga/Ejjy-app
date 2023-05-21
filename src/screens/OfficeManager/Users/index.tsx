@@ -34,6 +34,7 @@ import {
 	MAX_PAGE_SIZE,
 	NO_BRANCH_ID,
 	pageSizeOptions,
+	serviceTypes,
 	userTypes,
 } from 'global';
 import {
@@ -98,10 +99,9 @@ export const Users = () => {
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
-		shouldFetchOfflineFirst: true,
 		params: {
 			...params,
-			branchId: params?.branchId || NO_BRANCH_ID,
+			serviceType: serviceTypes.OFFLINE,
 		},
 		options: { enabled: isUserPendingApprovalsFetched },
 	});
@@ -331,14 +331,15 @@ const Filter = () => {
 							filterOption={filterOption}
 							loading={isFetchingBranches}
 							optionFilterProp="children"
-							value={params.branchId ? Number(params.branchId) : NO_BRANCH_ID}
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
 							showSearch
 							onChange={(value) => {
 								setQueryParams({ branchId: value }, { shouldResetPage: true });
 							}}
 						>
 							<Select.Option key={NO_BRANCH_ID} value={NO_BRANCH_ID}>
-								No Branch
+								Unassigned
 							</Select.Option>
 							{branches.map((branch) => (
 								<Select.Option key={branch.id} value={branch.id}>

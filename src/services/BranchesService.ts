@@ -7,7 +7,7 @@ interface Modify {
 }
 
 interface Ping {
-	online_branch_id: number;
+	branch_key: string;
 }
 
 const service = {

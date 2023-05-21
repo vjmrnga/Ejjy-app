@@ -10,7 +10,7 @@ import {
 import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, taxTypes } from 'global';
+import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import { formatDate, formatInPeso } from 'utils';
 import React, { useState } from 'react';
@@ -149,16 +149,12 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<Descriptions.Item label="VAT Exempt">
 					{formatInPeso(report.vat_exempt)}&nbsp;
 				</Descriptions.Item>
-				{siteSettings.tax_type === taxTypes.VAT && (
-					<>
-						<Descriptions.Item label="VATable Sales">
-							{formatInPeso(report.vat_sales)}&nbsp;
-						</Descriptions.Item>
-						<Descriptions.Item label="VAT Amount">
-							{formatInPeso(report.vat_amount)}&nbsp;
-						</Descriptions.Item>
-					</>
-				)}
+				<Descriptions.Item label="VATable Sales">
+					{formatInPeso(report.vat_sales)}&nbsp;
+				</Descriptions.Item>
+				<Descriptions.Item label="VAT Amount">
+					{formatInPeso(report.vat_amount)}&nbsp;
+				</Descriptions.Item>
 				<Descriptions.Item label="ZERO Rated">
 					{formatInPeso(0)}&nbsp;
 				</Descriptions.Item>
@@ -199,20 +195,13 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				>
 					({formatInPeso(report.void)})
 				</Descriptions.Item>
-				{siteSettings.tax_type === taxTypes.VAT && (
-					<>
-						<Descriptions.Item
-							label="VAT Amount"
-							labelStyle={{ paddingLeft: 30 }}
-						>
-							<ReceiptUnderlinedValue
-								postfix=")"
-								prefix="("
-								value={report.vat_amount}
-							/>
-						</Descriptions.Item>
-					</>
-				)}
+				<Descriptions.Item label="VAT Amount" labelStyle={{ paddingLeft: 30 }}>
+					<ReceiptUnderlinedValue
+						postfix=")"
+						prefix="("
+						value={report.vat_amount}
+					/>
+				</Descriptions.Item>
 				<Descriptions.Item
 					contentStyle={{ fontWeight: 'bold' }}
 					label="NET SALES"
@@ -222,73 +211,67 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
-			{siteSettings.tax_type === taxTypes.VAT && (
-				<>
-					<div className="w-100" style={{ textAlign: 'right' }}>
-						----------------
-					</div>
+			<div className="w-100" style={{ textAlign: 'right' }}>
+				----------------
+			</div>
 
-					<Descriptions
-						className="w-100"
-						colon={false}
-						column={1}
-						contentStyle={{
-							textAlign: 'right',
-							display: 'block',
-						}}
-						labelStyle={{
-							width: 200,
-						}}
-						size="small"
-					>
-						<Descriptions.Item label="ADJUSTMENT ON VAT">
-							{null}
-						</Descriptions.Item>
-						<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
-							{formatInPeso(report.vat_special_discount)}&nbsp;
-						</Descriptions.Item>
-						<Descriptions.Item label="OTHERS" labelStyle={{ paddingLeft: 30 }}>
-							<ReceiptUnderlinedValue postfix="&nbsp;" value={report.others} />
-						</Descriptions.Item>
-						<Descriptions.Item label="TOTAL" labelStyle={{ paddingLeft: 30 }}>
-							{formatInPeso(report.total_vat_adjusted)}&nbsp;
-						</Descriptions.Item>
-					</Descriptions>
+			<Descriptions
+				className="w-100"
+				colon={false}
+				column={1}
+				contentStyle={{
+					textAlign: 'right',
+					display: 'block',
+				}}
+				labelStyle={{
+					width: 200,
+				}}
+				size="small"
+			>
+				<Descriptions.Item label="ADJUSTMENT ON VAT">{null}</Descriptions.Item>
+				<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
+					{formatInPeso(report.vat_special_discount)}&nbsp;
+				</Descriptions.Item>
+				<Descriptions.Item label="OTHERS" labelStyle={{ paddingLeft: 30 }}>
+					<ReceiptUnderlinedValue postfix="&nbsp;" value={report.others} />
+				</Descriptions.Item>
+				<Descriptions.Item label="TOTAL" labelStyle={{ paddingLeft: 30 }}>
+					{formatInPeso(report.total_vat_adjusted)}&nbsp;
+				</Descriptions.Item>
+			</Descriptions>
 
-					<div className="w-100" style={{ textAlign: 'right' }}>
-						----------------
-					</div>
+			<div className="w-100" style={{ textAlign: 'right' }}>
+				----------------
+			</div>
 
-					<Descriptions
-						className="w-100"
-						colon={false}
-						column={1}
-						contentStyle={{
-							textAlign: 'right',
-							display: 'block',
-						}}
-						labelStyle={{
-							width: 200,
-						}}
-						size="small"
-					>
-						<Descriptions.Item label="VAT AMOUNT">
-							{formatInPeso(report.vat_amount)}&nbsp;
-						</Descriptions.Item>
-						<Descriptions.Item label="VAT ADJ.">
-							<ReceiptUnderlinedValue
-								postfix=")"
-								prefix="("
-								value={report.total_vat_adjusted}
-							/>
-						</Descriptions.Item>
-						<Descriptions.Item label="VAT PAYABLE">
-							{formatInPeso(report.vat_payable)}
-							&nbsp;
-						</Descriptions.Item>
-					</Descriptions>
-				</>
-			)}
+			<Descriptions
+				className="w-100"
+				colon={false}
+				column={1}
+				contentStyle={{
+					textAlign: 'right',
+					display: 'block',
+				}}
+				labelStyle={{
+					width: 200,
+				}}
+				size="small"
+			>
+				<Descriptions.Item label="VAT AMOUNT">
+					{formatInPeso(report.vat_amount)}&nbsp;
+				</Descriptions.Item>
+				<Descriptions.Item label="VAT ADJ.">
+					<ReceiptUnderlinedValue
+						postfix=")"
+						prefix="("
+						value={report.total_vat_adjusted}
+					/>
+				</Descriptions.Item>
+				<Descriptions.Item label="VAT PAYABLE">
+					{formatInPeso(report.vat_payable)}
+					&nbsp;
+				</Descriptions.Item>
+			</Descriptions>
 
 			<Space className="mt-6 w-100 justify-space-between">
 				<Text>{dayjs().format('MM/DD/YYYY h:mmA')}</Text>

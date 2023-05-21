@@ -1,4 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	serviceTypes,
+	timeRangeTypes,
+} from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
@@ -41,7 +46,7 @@ const useBranchAssignments = ({ params, shouldFetchOfflineFirst }: Query) =>
 						branch_id: params?.branchId,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 						user_id: params?.userId,
 					},
 					baseURL,

@@ -78,8 +78,8 @@ export const useBranchCreate = () =>
 	);
 
 export const useBranchPing = () =>
-	useMutation<any, any, any>(({ id }: any) =>
-		BranchesService.ping({ online_branch_id: id }, getLocalApiUrl()),
+	useMutation<any, any, any>(({ branchKey }: any) =>
+		BranchesService.ping({ branch_key: branchKey }, getLocalApiUrl()),
 	);
 
 export const useBranchEdit = () =>

@@ -113,7 +113,7 @@ export const ModifyCreditRegistrationForm = ({
 				creditLimit: creditRegistration?.credit_limit || '',
 			},
 			schema: Yup.object().shape({
-				accountId: Yup.number().required().label('Account'),
+				accountId: Yup.number().nullable().required().label('Account'),
 				creditLimit: Yup.number().required().label('Credit Limit'),
 			}),
 		}),

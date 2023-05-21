@@ -1,4 +1,9 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, serviceTypes } from 'global';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PAGE_SIZE,
+	serviceTypes,
+	timeRangeTypes,
+} from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
@@ -36,7 +41,7 @@ const useUserLogs = ({ params }: Query) =>
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						page: params?.page || DEFAULT_PAGE,
 						product_id: params?.productId,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 						type: params?.type,
 					},
 					getLocalApiUrl(),

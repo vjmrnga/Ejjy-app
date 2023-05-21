@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { TransactionProductsService } from 'services';
@@ -25,7 +25,7 @@ const useTransactionProducts = ({ params, options }: Query) =>
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						page: params?.page || DEFAULT_PAGE,
 						statuses: params?.statuses,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 					},
 					getLocalApiUrl(),
 				),

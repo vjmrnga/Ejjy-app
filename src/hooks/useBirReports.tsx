@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global/';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global/';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useQuery } from 'react-query';
 import { BirReportsService } from 'services';
@@ -19,7 +19,7 @@ const useBirReports = ({ params, options }: Query) =>
 				BirReportsService.list(
 					{
 						branch_machine_id: params?.branchMachineId,
-						time_range: params?.timeRange,
+						time_range: params?.timeRange || timeRangeTypes.DAILY,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 					},

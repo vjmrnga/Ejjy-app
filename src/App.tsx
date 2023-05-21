@@ -1,6 +1,11 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute, PageInformation } from 'components';
-import { appTypes, APP_LOCAL_BRANCH_ID_KEY, userTypes } from 'global';
+import {
+	appTypes,
+	APP_BRANCH_KEY_KEY,
+	APP_LOCAL_BRANCH_ID_KEY,
+	userTypes,
+} from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -13,6 +18,7 @@ import NetworkError from 'screens/Common/NetworkError';
 import OfficeManager from 'screens/OfficeManager';
 import {
 	getAppType,
+	getBranchKey,
 	getLocalApiUrl,
 	getLocalBranchId,
 	getOnlineApiUrl,
@@ -77,6 +83,7 @@ const App = () => {
 	// METHODS
 	useEffect(() => {
 		if (branches.length > 0) {
+			const branchKey = getBranchKey();
 			const localBranchId = Number(getLocalBranchId());
 			const onlineBranchId = Number(getOnlineBranchId());
 			const localBranch = branches.find(
@@ -85,6 +92,10 @@ const App = () => {
 
 			if (localBranch && Number(localBranch.id) !== localBranchId) {
 				localStorage.setItem(APP_LOCAL_BRANCH_ID_KEY, localBranch.id);
+			}
+
+			if (localBranch && localBranch.key !== branchKey) {
+				localStorage.setItem(APP_BRANCH_KEY_KEY, localBranch.key);
 			}
 		}
 	}, [branches]);

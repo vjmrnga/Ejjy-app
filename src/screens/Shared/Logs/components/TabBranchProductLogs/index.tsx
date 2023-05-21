@@ -55,7 +55,7 @@ export const TabBranchProductLogs = () => {
 	useEffect(() => {
 		const data = logs.map((log) => ({
 			key: log.id,
-			branch: log.acting_user?.branch_assignment?.branch?.name || EMPTY_CELL,
+			branch: log?.branch?.name || EMPTY_CELL,
 			user: getFullName(log.acting_user),
 			description: log.description,
 			datetimeCreated: formatDateTimeExtended(log.datetime_created),

@@ -14,13 +14,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';
-import {
-	EMPTY_CELL,
-	saleTypes,
-	taxTypes,
-	transactionStatus,
-	vatTypes,
-} from 'global';
+import { EMPTY_CELL, saleTypes, transactionStatus, vatTypes } from 'global';
 import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -305,34 +299,32 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Descriptions>
 						)}
 
-						{siteSettings.tax_type === taxTypes.VAT && (
-							<Descriptions
-								className="mt-6 w-100"
-								colon={false}
-								column={1}
-								contentStyle={{
-									textAlign: 'right',
-									display: 'block',
-								}}
-								labelStyle={{
-									width: 200,
-								}}
-								size="small"
-							>
-								<Descriptions.Item label="VAT Exempt">
-									{formatInPeso(transactionData.invoice.vat_exempt)}
-								</Descriptions.Item>
-								<Descriptions.Item label="VAT Sales">
-									{formatInPeso(transactionData.invoice.vat_sales)}
-								</Descriptions.Item>
-								<Descriptions.Item label="VAT Amount">
-									{formatInPeso(transactionData.invoice.vat_amount)}
-								</Descriptions.Item>
-								<Descriptions.Item label="ZERO Rated">
-									{formatInPeso(0)}
-								</Descriptions.Item>
-							</Descriptions>
-						)}
+						<Descriptions
+							className="mt-6 w-100"
+							colon={false}
+							column={1}
+							contentStyle={{
+								textAlign: 'right',
+								display: 'block',
+							}}
+							labelStyle={{
+								width: 200,
+							}}
+							size="small"
+						>
+							<Descriptions.Item label="VAT Exempt">
+								{formatInPeso(transactionData.invoice.vat_exempt)}
+							</Descriptions.Item>
+							<Descriptions.Item label="VAT Sales">
+								{formatInPeso(transactionData.invoice.vat_sales)}
+							</Descriptions.Item>
+							<Descriptions.Item label="VAT Amount">
+								{formatInPeso(transactionData.invoice.vat_amount)}
+							</Descriptions.Item>
+							<Descriptions.Item label="ZERO Rated">
+								{formatInPeso(0)}
+							</Descriptions.Item>
+						</Descriptions>
 
 						<Space className="mt-6 w-100 justify-space-between">
 							<Text>
