@@ -261,13 +261,14 @@ const appendHtmlElement = (data) => `
     </body>
   </html>`;
 
-const formatInPesoWithUnderline = (value) => {
-	const borderStyles = Number(value) > 0 ? '2px dashed black' : 'none';
-
-	return `<span style="display:inline-block; border-bottom: ${borderStyles}">
+const formatInPesoWithUnderline = (value) => `<div style="display:inline-block">
     ${formatInPeso(value, PESO_SIGN)}
-  </span>`;
-};
+  </div>`;
+
+const addUnderline = (value) =>
+	Number(value) > 0
+		? '<div style="width: 100%; text-align: right">-----------</div>'
+		: '';
 
 export const printRequisitionSlip = ({
 	requisitionSlip,
@@ -1159,7 +1160,8 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				<td>CREDIT SALES</td>
 				<td style="text-align: right">${formatInPesoWithUnderline(
 					report.credit_pay,
-				)}&nbsp;</td>
+				)}&nbsp;
+        ${addUnderline(report.credit_pay)}</td>
 			</tr>
 			<tr>
 				<td>GROSS SALES</td>
@@ -1235,7 +1237,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td style="padding-left: 15px">VAT AMOUNT</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
-				)})</td>
+				)})${addUnderline(report.vat_amount)}</td>
       </tr>
       <tr>
         <td><b>NET SALES</b></td>
@@ -1263,7 +1265,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td style="padding-left: 15px">OTHERS</td>
         <td style="text-align: right">${formatInPesoWithUnderline(
 					report.others,
-				)}&nbsp;</td>
+				)}&nbsp;${addUnderline(report.others)}</td>
       </tr>
       <tr>
         <td style="padding-left: 15px">TOTAL</td>
@@ -1288,7 +1290,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td>VAT ADJ.</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.total_vat_adjusted,
-				)})</td>
+				)})${addUnderline(report.total_vat_adjusted)}</td>
       </tr>
       <tr>
         <td>VAT PAYABLE</td>
@@ -1353,9 +1355,9 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 	print({
 		data,
-		loadingMessage: 'Printing xread report...',
-		successMessage: 'Successfully printed xread report.',
-		errorMessage: 'Error occurred while trying to print xread report.',
+		loadingMessage: 'Printing x-read report...',
+		successMessage: 'X-Read report has been printed successfully.',
+		errorMessage: 'Error occurred while trying to print x-read report.',
 	});
 };
 
@@ -1390,7 +1392,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 				<td>CREDIT SALES</td>
 				<td style="text-align: right">${formatInPesoWithUnderline(
 					report.credit_pay,
-				)}&nbsp;</td>
+				)}&nbsp;${addUnderline(report.credit_pay)}</td>
 			</tr>
 			<tr>
 				<td>GROSS SALES</td>
@@ -1466,7 +1468,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td style="padding-left: 15px">VAT AMOUNT</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
-				)})</td>
+				)})${addUnderline(report.vat_amount)}</td>
       </tr>
       <tr>
         <td><b>ACCUM. GRAND TOTAL</b></td>
@@ -1494,7 +1496,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td style="padding-left: 15px">OTHERS</td>
         <td style="text-align: right">${formatInPesoWithUnderline(
 					report.others,
-				)}&nbsp;</td>
+				)}&nbsp;${addUnderline(report.others)}</td>
       </tr>
       <tr>
         <td style="padding-left: 15px">TOTAL</td>
@@ -1519,7 +1521,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
         <td>VAT ADJ.</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.total_vat_adjusted,
-				)})</td>
+				)})${addUnderline(report.total_vat_adjusted)}</td>
       </tr>
       <tr>
         <td>VAT PAYABLE</td>
@@ -1553,9 +1555,9 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 	print({
 		data,
-		loadingMessage: 'Printing zread report...',
-		successMessage: 'Successfully printed zread report.',
-		errorMessage: 'Error occurred while trying to print zread report.',
+		loadingMessage: 'Printing z-read report...',
+		successMessage: 'Z-Read report has been printed successfully.',
+		errorMessage: 'Error occurred while trying to print z-read report.',
 	});
 };
 
