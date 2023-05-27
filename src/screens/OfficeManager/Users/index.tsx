@@ -35,6 +35,7 @@ import {
 	NO_BRANCH_ID,
 	pageSizeOptions,
 	serviceTypes,
+	userPendingApprovalTypes,
 	userTypes,
 } from 'global';
 import {
@@ -57,6 +58,7 @@ import {
 } from 'utils';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
+import _ from 'lodash';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },
@@ -131,7 +133,10 @@ export const Users = () => {
 					<Button
 						className="pa-0"
 						type="link"
-						onClick={() => setSelectedUser(user)}
+						onClick={() => {
+							setViewUserModalVisible(true);
+							setSelectedUser(user);
+						}}
 					>
 						{user.employee_id}
 					</Button>
@@ -214,6 +219,34 @@ export const Users = () => {
 		setDataSource(formattedUsers);
 	}, [users, params?.branchId, branches, isConnected]);
 
+	const handleUserCreateSuccess = (user) => {
+		if (!user.online_id) {
+			const formattedUsers = _.cloneDeep(dataSource);
+			formattedUsers.unshift({
+				key: user.id,
+				id: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => {
+							setViewUserModalVisible(true);
+							setSelectedUser(user);
+						}}
+					>
+						{user.employee_id}
+					</Button>
+				),
+				name: getFullName(user),
+				type: getUserTypeName(user.user_type),
+				actions: (
+					<UserPendingApprovalType type={userPendingApprovalTypes.CREATE} />
+				),
+			});
+
+			setDataSource(formattedUsers);
+		}
+	};
+
 	return (
 		<Content title="Users">
 			<ConnectionAlert />
@@ -283,6 +316,7 @@ export const Users = () => {
 								setModifyUserModalVisible(false);
 								setSelectedUser(null);
 							}}
+							onSuccess={handleUserCreateSuccess}
 						/>
 					)}
 
