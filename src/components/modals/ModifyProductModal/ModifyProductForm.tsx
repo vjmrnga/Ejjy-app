@@ -18,7 +18,6 @@ import {
 	MAX_PAGE_SIZE,
 	productCheckingTypes,
 	productTypes,
-	taxTypes,
 	unitOfMeasurementTypes,
 } from 'global';
 import { useProductCategories, useSiteSettings } from 'hooks';
@@ -107,10 +106,7 @@ export const ModifyProductForm = ({
 				isDailyChecked: undefined,
 				isRandomlyChecked: undefined,
 				isSoldInBranch: undefined,
-				isVatExempted:
-					siteSettings?.tax_type === taxTypes.NVAT
-						? 'true'
-						: (!!product?.is_vat_exempted).toString(),
+				isVatExempted: (!!product?.is_vat_exempted).toString(),
 				maxBalance: product?.max_balance
 					? formatQuantity({
 							unitOfMeasurement: product?.unit_of_measurement,
@@ -553,7 +549,6 @@ export const ModifyProductForm = ({
 						<Col sm={12} span={24}>
 							<Label label="TT-003" spacing />
 							<FormRadioButton
-								disabled={siteSettings?.tax_type === taxTypes.NVAT}
 								id="isVatExempted"
 								items={isVatExemptedOptions}
 							/>

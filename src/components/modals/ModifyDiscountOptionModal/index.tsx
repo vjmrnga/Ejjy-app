@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Input, message, Modal, Radio, Row } from 'antd';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { discountTypes, taxTypes } from 'global';
+import { discountTypes } from 'global';
 import {
 	useDiscountOptionCreate,
 	useDiscountOptionEdit,
@@ -12,7 +12,7 @@ import React, { useCallback } from 'react';
 import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
-import { FieldError, FormInputLabel, Label } from '../../elements';
+import { FieldError, Label } from '../../elements';
 
 interface ModalProps {
 	discountOption: any;
@@ -103,10 +103,11 @@ export const ModifyDiscountOptionForm = ({
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
 				isSpecialDiscount: discountOption?.is_special_discount || false,
-				isVatInclusive:
-					siteSettings.tax_type === taxTypes.NVAT
-						? true
-						: !!discountOption?.is_vat_inclusive,
+				// isVatInclusive:
+				// 	siteSettings.tax_type === taxTypes.NVAT
+				// 		? true
+				// 		: !!discountOption?.is_vat_inclusive,
+				isVatInclusive: false,
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
 			Schema: Yup.object().shape({
@@ -137,7 +138,6 @@ export const ModifyDiscountOptionForm = ({
 					}),
 				isSpecialDiscount: Yup.boolean().required().label('SC/PWD'),
 				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
-
 				additionalFields: Yup.array()
 					.of(Yup.string().required().label('Field'))
 					.notRequired(),
@@ -163,7 +163,7 @@ export const ModifyDiscountOptionForm = ({
 			{({ values, setFieldValue }) => (
 				<Form>
 					<Row gutter={[16, 16]}>
-						<Col sm={12} xs={24}>
+						<Col lg={12} span={24}>
 							<Label label="Name" spacing />
 							<Input
 								name="name"
@@ -178,7 +178,7 @@ export const ModifyDiscountOptionForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						<Col lg={12} span={24}>
 							<Label label="Code" spacing />
 							<Input
 								name="code"
@@ -193,12 +193,12 @@ export const ModifyDiscountOptionForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
-							<Label id="isSpecialDiscount" label="SC/PWD" spacing />
+						<Col lg={12} span={24}>
+							<Label id="isSpecialDiscount" label="Discount Type" spacing />
 							<Radio.Group
 								options={[
-									{ label: 'Yes', value: true },
-									{ label: 'No', value: false },
+									{ label: 'Regular', value: false },
+									{ label: 'SC/PWD', value: true },
 								]}
 								optionType="button"
 								value={values.isSpecialDiscount}
@@ -209,7 +209,7 @@ export const ModifyDiscountOptionForm = ({
 							/>
 						</Col>
 
-						<Col sm={12} xs={24}>
+						{/* <Col lg={12} span={24}>
 							<Label id="isVatInclusive" label="VAT Inclusive" spacing />
 							<Radio.Group
 								disabled={siteSettings.tax_type === taxTypes.NVAT}
@@ -224,9 +224,9 @@ export const ModifyDiscountOptionForm = ({
 									setFieldValue('isVatInclusive', value);
 								}}
 							/>
-						</Col>
+						</Col> */}
 
-						<Col sm={12} xs={24}>
+						<Col lg={12} span={24}>
 							<Label id="type" label="Type" spacing />
 							<Radio.Group
 								options={[
@@ -244,11 +244,13 @@ export const ModifyDiscountOptionForm = ({
 						</Col>
 
 						{values.type === discountTypes.PERCENTAGE && (
-							<Col sm={12} xs={24}>
-								<FormInputLabel
-									id="percentage"
-									label="Percentage"
+							<Col lg={12} span={24}>
+								<Input
 									type="number"
+									value={values.percentage}
+									onChange={(e) => {
+										setFieldValue('percentage', e.target.value);
+									}}
 								/>
 								<ErrorMessage
 									name="percentage"
@@ -257,13 +259,13 @@ export const ModifyDiscountOptionForm = ({
 							</Col>
 						)}
 
-						<Col xs={24}>
+						<Col span={24}>
 							<Divider />
 
 							<Row align="bottom" gutter={[16, 16]} justify="center">
 								{values.additionalFields.map((field, index) => (
 									<>
-										<Col xs={21}>
+										<Col span={21}>
 											<Label label={`Field ${index + 1}`} spacing />
 											<Input
 												name={`additionalFields.${index}`}
@@ -282,7 +284,7 @@ export const ModifyDiscountOptionForm = ({
 										</Col>
 										<Col
 											className="d-flex align-center justify-center pb-1"
-											xs={3}
+											span={3}
 										>
 											<Button
 												icon={<CloseOutlined />}
