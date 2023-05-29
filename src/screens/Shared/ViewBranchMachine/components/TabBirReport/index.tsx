@@ -9,7 +9,6 @@ import {
 	EMPTY_CELL,
 	pageSizeOptions,
 	refetchOptions,
-	taxTypes,
 	timeRangeTypes,
 } from 'global';
 import { useBirReports, usePdf, useQueryParams, useSiteSettings } from 'hooks';
@@ -151,10 +150,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			},
 			{ title: 'VAT Payable', dataIndex: 'vatPayable' },
 			{
-				title:
-					siteSettings?.tax_type === taxTypes.VAT
-						? 'Net Sales VAT'
-						: 'Net Sales NVAT',
+				title: 'Net Sales',
 				dataIndex: 'netSales',
 			},
 			{ title: 'Other Income', dataIndex: 'otherIncome' },

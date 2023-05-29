@@ -113,6 +113,8 @@ export const TabDays = ({ branch, branchMachineId }: Props) => {
 
 			return {
 				key: id,
+				branch: branchDay.branch_machine?.branch?.name,
+				branchMachine: branchDay.branch_machine?.name,
 				user: renderUser({
 					startedBy: started_by,
 					endedBy: ended_by,

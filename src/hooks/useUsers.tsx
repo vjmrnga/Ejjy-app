@@ -13,6 +13,7 @@ const useUsers = ({ params, options, shouldFetchOfflineFirst }: Query = {}) =>
 			params?.isPendingCreateApproval,
 			params?.isPendingUpdateUserTypeApproval,
 			params?.isPendingDeleteApproval,
+			params?.ordering,
 			params?.page,
 			params?.pageSize,
 			params?.serverUrl,
@@ -42,6 +43,7 @@ const useUsers = ({ params, options, shouldFetchOfflineFirst }: Query = {}) =>
 				service(
 					{
 						branch_id: params?.branchId,
+						ordering: params?.ordering,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						is_pending_create_approval: params?.isPendingCreateApproval,

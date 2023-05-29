@@ -69,7 +69,7 @@ export const ModifyCreditRegistrationModal = ({
 
 			<ModifyCreditRegistrationForm
 				creditRegistration={creditRegistration}
-				loading={isCreatingCreditRegistration || isEditingCreditRegistration}
+				isLoading={isCreatingCreditRegistration || isEditingCreditRegistration}
 				onClose={onClose}
 				onSubmit={handleSubmit}
 			/>
@@ -79,14 +79,14 @@ export const ModifyCreditRegistrationModal = ({
 
 interface FormProps {
 	creditRegistration?: any;
-	loading: boolean;
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
 
 export const ModifyCreditRegistrationForm = ({
 	creditRegistration,
-	loading,
+	isLoading,
 	onSubmit,
 	onClose,
 }: FormProps) => {
@@ -101,7 +101,7 @@ export const ModifyCreditRegistrationForm = ({
 		params: {
 			pageSize: MAX_PAGE_SIZE,
 			search: accountSearch,
-			withCreditRegistration: false,
+			withCreditRegistration: creditRegistration ? null : false,
 		},
 	});
 
@@ -109,7 +109,7 @@ export const ModifyCreditRegistrationForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			defaultValues: {
-				accountId: creditRegistration?.account?.id || '',
+				accountId: getId(creditRegistration?.account) || '',
 				creditLimit: creditRegistration?.credit_limit || '',
 			},
 			schema: Yup.object().shape({
@@ -186,10 +186,10 @@ export const ModifyCreditRegistrationForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button disabled={loading} htmlType="button" onClick={onClose}>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button htmlType="submit" loading={loading} type="primary">
+						<Button htmlType="submit" loading={isLoading} type="primary">
 							{creditRegistration ? 'Edit' : 'Create'}
 						</Button>
 					</div>
