@@ -9,7 +9,7 @@ import {
 import { printZReadReport } from 'configurePrinter';
 import { createZReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, taxTypes } from 'global';
+import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { formatDate, formatInPeso } from 'utils';

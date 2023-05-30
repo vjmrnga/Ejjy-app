@@ -1,9 +1,9 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
-import { getBaseUrl, wrapServiceWithCatch } from 'hooks/helper';
+import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { PointSystemTagsService } from 'services';
-import { getLocalApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const usePointSystemTags = ({ params }: Query) =>
 	useQuery<any>(
@@ -42,7 +42,7 @@ export const usePointSystemTagCreate = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				getBaseUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -63,7 +63,7 @@ export const usePointSystemTagEdit = () => {
 					name,
 					divisor_amount: divisorAmount,
 				},
-				getBaseUrl(),
+				getOnlineApiUrl(),
 			),
 		{
 			onSuccess: () => {
@@ -77,7 +77,7 @@ export const usePointSystemTagDelete = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<any, any, any>(
-		(id: number) => PointSystemTagsService.delete(id, getBaseUrl()),
+		(id: number) => PointSystemTagsService.delete(id, getOnlineApiUrl()),
 		{
 			onSuccess: () => {
 				queryClient.invalidateQueries('usePointSystemTags');

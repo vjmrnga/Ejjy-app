@@ -1,14 +1,9 @@
-import {
-	DEFAULT_PAGE,
-	DEFAULT_PAGE_SIZE,
-	IS_APP_LIVE,
-	timeRangeTypes,
-} from 'global';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, timeRangeTypes } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { OrderOfPaymentsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const useOrderOfPayments = ({ params }: Query) =>
 	useQuery<any>(
@@ -20,9 +15,13 @@ const useOrderOfPayments = ({ params }: Query) =>
 			params?.page,
 			params?.pageSize,
 		],
-		() =>
-			wrapServiceWithCatch(
-				OrderOfPaymentsService.list(
+		() => {
+			const service = isStandAlone()
+				? OrderOfPaymentsService.list
+				: OrderOfPaymentsService.listOffline;
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						is_pending: params?.isPending,
 						page: params?.page || DEFAULT_PAGE,
@@ -32,7 +31,8 @@ const useOrderOfPayments = ({ params }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -61,7 +61,7 @@ export const useOrderOfPaymentsCreate = (options = {}) =>
 					extra_description: extraDescription,
 					charge_sales_transaction_id: chargeSalesTransactionId,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 		options,
 	);

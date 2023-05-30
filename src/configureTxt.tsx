@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { saleTypes, taxTypes, transactionStatus, vatTypes } from 'global';
+import { saleTypes, transactionStatus, vatTypes } from 'global';
 import React from 'react';
 import {
 	formatDate,
@@ -1072,7 +1072,7 @@ export const createSalesInvoiceTxt = ({
 		rowNumber += 1;
 
 		reportTextFile.write({
-			text: 'VAT AMOUNT',
+			text: 'ADJUSTMENT ON VAT',
 			alignment: ReportTextFile.ALIGNMENTS.LEFT,
 			rowNumber,
 		});

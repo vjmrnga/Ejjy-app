@@ -18,10 +18,19 @@ const Component = () => {
 
 	// METHODS
 	useEffect(() => {
+		window.addEventListener('focus', startPrinterConfiguration);
+		startPrinterConfiguration();
+
+		return () => {
+			window.removeEventListener('focus', startPrinterConfiguration);
+			qz.printers.stopListening();
+		};
+	}, []);
+
+	const startPrinterConfiguration = () => {
 		configurePrinter();
 
 		if (getAppReceiptPrinterName()) {
-			setUserInterface({ isPrinterConnected: null });
 			handlePrinterClick();
 
 			// setup a callback
@@ -51,11 +60,7 @@ const Component = () => {
 					});
 			}, 5000);
 		}
-
-		return () => {
-			qz.printers.stopListening();
-		};
-	}, []);
+	};
 
 	const handleConnectionClick = () => {
 		window.location.reload();

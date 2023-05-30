@@ -16,6 +16,7 @@ import {
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	productStatus,
+	quantityTypes,
 	refetchOptions,
 	SEARCH_DEBOUNCE_TIME,
 	timeRangeTypes,
@@ -33,6 +34,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
+	convertToBulk,
 	filterOption,
 	formatQuantity,
 	getBranchProductStatus,
@@ -69,31 +71,26 @@ const columns: ColumnsType = [
 		],
 	},
 	{
-		title: 'Remaining Bal',
-		dataIndex: 'remaining_balance',
-		align: 'center',
-	},
-	{
 		title: 'Quantity Sold',
-		dataIndex: 'quantity_sold',
+		dataIndex: 'quantitySold',
 		align: 'center',
 		sorter: true,
 	},
 	{
 		title: 'Daily Average Sold',
-		dataIndex: 'daily_average_sold',
+		dataIndex: 'dailyAverageSold',
 		align: 'center',
 		sorter: true,
 	},
 	{
 		title: 'Average Quantity Sold Percentage',
-		dataIndex: 'daily_average_sold_percentage',
+		dataIndex: 'dailyAverageSoldPercentage',
 		align: 'center',
 		sorter: true,
 	},
 	{
 		title: 'Average Daily Consumption',
-		dataIndex: 'average_daily_consumption',
+		dataIndex: 'averageDailyConsumption',
 		align: 'center',
 	},
 	{
@@ -230,28 +227,31 @@ export const Reports = () => {
 				daily_average_sold_percentage,
 				average_daily_consumption,
 			} = branchProduct;
-			const { name, unit_of_measurement } = product;
-			const remainingBalance =
-				(Number(current_balance) / Number(max_balance)) * 100;
+			const { name, unit_of_measurement, pieces_in_bulk } = product;
+
+			const convertQuantity = (quantity) =>
+				params?.quantityType === quantityTypes.BULK
+					? convertToBulk(quantity, pieces_in_bulk)
+					: quantity;
 
 			const currentBalance = formatQuantity({
 				unitOfMeasurement: unit_of_measurement,
-				quantity: current_balance,
+				quantity: convertQuantity(current_balance),
 			});
 
 			const quantitySold = formatQuantity({
 				unitOfMeasurement: unit_of_measurement,
-				quantity: quantity_sold,
+				quantity: convertQuantity(quantity_sold),
 			});
 
 			const maxBalance = formatQuantity({
 				unitOfMeasurement: unit_of_measurement,
-				quantity: max_balance,
+				quantity: convertQuantity(max_balance),
 			});
 
 			const boBalance = formatQuantity({
 				unitOfMeasurement: unit_of_measurement,
-				quantity: bo_balance,
+				quantity: convertQuantity(bo_balance),
 			});
 
 			return {
@@ -260,13 +260,12 @@ export const Reports = () => {
 				name,
 				balance: `${currentBalance} / ${maxBalance}`,
 				boBalance,
-				remainingBalance: `${remainingBalance.toFixed(2)}%`,
 				quantitySold,
 				dailyAverageSold: daily_average_sold,
 				dailyAverageSoldPercentage: `${daily_average_sold_percentage}%`,
 				averageDailyConsumption: formatQuantity({
 					unitOfMeasurement: unit_of_measurement,
-					quantity: average_daily_consumption,
+					quantity: convertQuantity(average_daily_consumption),
 				}),
 				status: getBranchProductStatus(product_status),
 				actions: (
@@ -283,7 +282,7 @@ export const Reports = () => {
 		});
 
 		setDataSource(data);
-	}, [branchProducts]);
+	}, [branchProducts, params?.quantityType]);
 
 	return (
 		<Content title="Reports">
@@ -330,7 +329,7 @@ export const Reports = () => {
 							sorter: SorterResult<any>,
 							extra,
 						) => {
-							if (extra.action === 'sort') {
+							if (extra.action === 'sort' && sorter.column) {
 								columns[2].sortOrder = null;
 								columns[4].sortOrder = null;
 								columns[5].sortOrder = null;
@@ -549,7 +548,7 @@ const Filter = ({ productCategories }: FilterProps) => {
 							{ label: 'In Stock', value: '1' },
 						]}
 						optionType="button"
-						value={params.isSoldInBranch}
+						value={params.isSoldInBranch || ALL_OPTION_KEY}
 						onChange={(e) => {
 							setQueryParams(
 								{ isSoldInBranch: e.target.value },
@@ -572,6 +571,25 @@ const Filter = ({ productCategories }: FilterProps) => {
 						onChange={(e) => {
 							setQueryParams(
 								{ hasBoBalance: e.target.value },
+								{ shouldResetPage: true },
+							);
+						}}
+					/>
+				</Col>
+
+				<Col lg={12} span={24}>
+					<Label label="Quantity Type" spacing />
+					<Radio.Group
+						defaultValue={null}
+						options={[
+							{ label: 'Piece', value: quantityTypes.PIECE },
+							{ label: 'Bulk', value: quantityTypes.BULK },
+						]}
+						optionType="button"
+						value={params.quantityType || quantityTypes.PIECE}
+						onChange={(e) => {
+							setQueryParams(
+								{ quantityType: e.target.value },
 								{ shouldResetPage: true },
 							);
 						}}

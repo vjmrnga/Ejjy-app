@@ -24,4 +24,12 @@ const service = {
 		axios.post('/order-of-payments/', body, { baseURL }),
 };
 
-export default service;
+const serviceOffline = {
+	listOffline: async (params: IList, baseURL) =>
+		axios.get('/offline-order-of-payments/', { baseURL, params }),
+};
+
+export default {
+	...service,
+	...serviceOffline,
+};

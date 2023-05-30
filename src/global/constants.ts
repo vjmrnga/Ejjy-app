@@ -31,8 +31,9 @@ export const RETRY_INTERVAL_MS = 300;
 export const REPORTS_RETRY_INTERVAL_MS = 30_000;
 export const NOTIFICATION_INTERVAL_MS = 10_000;
 export const GENERIC_ERROR_MESSAGE =
-	'An error occurred while processing you request.';
-
+	'An error occurred while processing your request.';
+export const GENERIC_STATUS_500_MESSAGE =
+	'An error occurred in the server while processing your request.';
 export const GENERIC_BRANCH_ERROR_MESSAGE =
 	'An error occurred while requesting on a local branch';
 

@@ -4,6 +4,7 @@ import { getOnlineApiUrl } from 'utils';
 import {
 	GENERIC_BRANCH_ERROR_MESSAGE,
 	GENERIC_ERROR_MESSAGE,
+	GENERIC_STATUS_500_MESSAGE,
 } from './global/constants';
 import { API_TIMEOUT } from './services';
 
@@ -19,14 +20,13 @@ export default function configureAxios() {
 		const modifiedError = { ...error };
 
 		if (error.isAxiosError) {
-			if (typeof error?.response?.data === 'string') {
+			if (error.response.status === 500) {
+				modifiedError.errors = [GENERIC_STATUS_500_MESSAGE];
+			} else if (typeof error?.response?.data === 'string') {
 				modifiedError.errors = [error.response.data];
 			} else if (typeof error?.response?.data === 'object') {
 				modifiedError.errors = _.flatten(_.values(error?.response?.data));
-			} else if (
-				error?.config.baseURL !== getOnlineApiUrl() &&
-				error?.isAxiosError
-			) {
+			} else if (error?.config.baseURL !== getOnlineApiUrl()) {
 				modifiedError.errors = [GENERIC_BRANCH_ERROR_MESSAGE];
 			} else {
 				modifiedError.errors = [GENERIC_ERROR_MESSAGE];

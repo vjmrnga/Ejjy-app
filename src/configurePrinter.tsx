@@ -44,29 +44,36 @@ const QZ_MESSAGE_KEY = 'QZ_MESSAGE_KEY';
 const PRINT_MESSAGE_KEY = 'PRINT_MESSAGE_KEY';
 
 const configurePrinter = () => {
-	authenticateQZTray(qz);
+	if (!qz.websocket.isActive()) {
+		authenticateQZTray(qz);
 
-	message.loading({
-		content: 'Connecting to QZTray...',
-		key: QZ_MESSAGE_KEY,
-		duration: 5_000,
-	});
-
-	qz.websocket
-		.connect()
-		.then(() => {
-			message.success({
-				content: 'Successfully connected to QZTray.',
-				key: QZ_MESSAGE_KEY,
-			});
-		})
-		.catch((err) => {
-			message.error({
-				content: 'Cannot connect to QZTray.',
-				key: QZ_MESSAGE_KEY,
-			});
-			console.error(err);
+		message.loading({
+			content: 'Connecting to QZTray...',
+			key: QZ_MESSAGE_KEY,
+			duration: 5_000,
 		});
+
+		qz.websocket
+			.connect()
+			.then(() => {
+				message.success({
+					content: 'Successfully connected to QZTray.',
+					key: QZ_MESSAGE_KEY,
+				});
+			})
+			.catch((err) => {
+				message.error({
+					content: 'Cannot connect to QZTray.',
+					key: QZ_MESSAGE_KEY,
+				});
+				console.error(err);
+			});
+	} else {
+		message.loading({
+			content: 'Already connected to QZTray. Rechecking printer connection...',
+			key: QZ_MESSAGE_KEY,
+		});
+	}
 };
 
 const print = async ({
@@ -2316,7 +2323,7 @@ export const printSalesInvoice = ({
 			  </tr>
 
         <tr>
-          <td>VAT AMOUNT</td>
+          <td>ADJUSTMENT ON VAT</td>
           <td style="text-align: right;">
             (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
           </td>

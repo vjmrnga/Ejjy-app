@@ -26,7 +26,6 @@ import cn from 'classnames';
 import {
 	ConnectionAlert,
 	Content,
-	EditBranchProductBalanceModal,
 	EditBranchProductsModal,
 	ModifyProductModal,
 	PricesModal,

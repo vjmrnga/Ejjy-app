@@ -128,7 +128,7 @@ export const useBackOrderCreate = () =>
 					encoded_by_id: encodedById,
 					type,
 				},
-				IS_APP_LIVE ? getOnlineApiUrl() : getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 
