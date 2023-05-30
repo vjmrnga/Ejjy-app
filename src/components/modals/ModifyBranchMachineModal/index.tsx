@@ -112,11 +112,16 @@ export const ModifyBranchMachineForm = ({
 				machineIdentificationNumber: Yup.string()
 					.required()
 					.max(75)
-					.label('Machine Identification Number'),
-				name: Yup.string().required().max(30).label('Name'),
-				permitToUse: Yup.string().required().max(75).label('Permit To Use'),
-				posTerminal: Yup.string().required().max(75).label('Serial #'),
-				serverUrl: Yup.string().required().max(75).label('Server URL'),
+					.label('Machine Identification Number')
+					.trim(),
+				name: Yup.string().required().max(30).label('Name').trim(),
+				permitToUse: Yup.string()
+					.required()
+					.max(75)
+					.label('Permit To Use')
+					.trim(),
+				posTerminal: Yup.string().required().max(75).label('Serial #').trim(),
+				serverUrl: Yup.string().required().max(75).label('Server URL').trim(),
 				type: Yup.string().required().label('Type'),
 			}),
 		}),

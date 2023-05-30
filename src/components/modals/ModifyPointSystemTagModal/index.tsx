@@ -91,8 +91,8 @@ export const ModifyPointSystemTagForm = ({
 				divisorAmount: pointSystemTag?.divisor_amount || '',
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().max(75).label('Name'),
-				divisorAmount: Yup.string().required().label('Divisor Amount'),
+				name: Yup.string().required().max(75).label('Name').trim(),
+				divisorAmount: Yup.string().required().label('Divisor Amount').trim(),
 			}),
 		}),
 		[pointSystemTag],

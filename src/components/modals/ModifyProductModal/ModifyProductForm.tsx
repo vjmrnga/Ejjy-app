@@ -170,17 +170,19 @@ export const ModifyProductForm = ({
 						.label('Scale Barcode'),
 					packingBarcode: Yup.string().max(50).label('Packing Barcode'),
 
-					name: Yup.string().required().max(70).label('Name'),
+					name: Yup.string().required().max(70).label('Name').trim(),
 					type: Yup.string().label('TT-001'),
 					unitOfMeasurement: Yup.string().label('TT-002'),
 					productCategory: Yup.string().label('Product Category'),
 					printDetails: Yup.string()
 						.required()
-						.label('Print Details (Receipt)'),
+						.label('Print Details (Receipt)')
+						.trim(),
 					priceTagPrintDetails: Yup.string()
 						.required()
-						.label('Print Details (Price Tag)'),
-					description: Yup.string().required().label('Description'),
+						.label('Print Details (Price Tag)')
+						.trim(),
+					description: Yup.string().required().label('Description').trim(),
 					piecesInBulk: Yup.number()
 						.required()
 						.moreThan(0)

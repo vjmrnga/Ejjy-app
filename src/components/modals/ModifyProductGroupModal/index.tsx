@@ -23,7 +23,7 @@ export const ModifyProductGroupModal = ({
 				name: productGroup?.name || '',
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().label('Name'),
+				name: Yup.string().required().label('Name').trim(),
 			}),
 		}),
 		[productGroup],

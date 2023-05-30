@@ -95,7 +95,7 @@ export const ModifyProductCategoryForm = ({
 				priorityLevel: productCategory?.priority_level || 1000,
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().label('Name'),
+				name: Yup.string().required().label('Name').trim(),
 			}),
 		}),
 		[productCategory],

@@ -90,8 +90,8 @@ export const ModifyBranchForm = ({
 				serverUrl: branch?.server_url || '',
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().max(75).label('Name'),
-				serverUrl: Yup.string().required().label('Server URL'),
+				name: Yup.string().required().max(75).label('Name').trim(),
+				serverUrl: Yup.string().required().label('Server URL').trim(),
 			}),
 		}),
 		[branch],

@@ -185,7 +185,7 @@ export const CreateStockOut = () => {
 						remarks: Yup.string()
 							.when('selected', {
 								is: true,
-								then: Yup.string().required(),
+								then: Yup.string().required().trim(),
 								otherwise: Yup.string().notRequired(),
 							})
 							.label('Remarks'),

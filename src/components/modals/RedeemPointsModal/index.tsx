@@ -36,14 +36,14 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 				remarks: '',
 			},
 			schema: Yup.object().shape({
-				username: Yup.string().required().label('Username'),
-				password: Yup.string().required().label('Password'),
+				username: Yup.string().required().label('Username').trim(),
+				password: Yup.string().required().label('Password').trim(),
 				points: Yup.number()
 					.min(0)
 					.max(Number(account.total_points_balance))
 					.required()
 					.label('Points'),
-				remarks: Yup.string().required().label('Remarks'),
+				remarks: Yup.string().required().label('Remarks').trim(),
 			}),
 		}),
 		[account],

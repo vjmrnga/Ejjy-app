@@ -170,10 +170,10 @@ export const CreateOrderOfPaymentForm = ({
 				{
 					payorId: Yup.number().required().label('Payor'),
 					amount: Yup.number().required().min(1).max(maxAmount).label('Amount'),
-					purpose: Yup.string().required().nullable().label('Purpose'),
+					purpose: Yup.string().required().nullable().label('Purpose').trim(),
 					purposeOthers: Yup.string().when('purpose', {
 						is: orderOfPaymentPurposes.OTHERS,
-						then: Yup.string().required().label('Purpose Description'),
+						then: Yup.string().required().label('Purpose Description').trim(),
 					}),
 					chargeSalesTransactionId: Yup.string().trim().nullable(),
 				},

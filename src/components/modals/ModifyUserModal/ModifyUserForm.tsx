@@ -44,22 +44,25 @@ export const ModifyUserForm = ({
 				confirmPassword: '',
 			},
 			Schema: Yup.object().shape({
-				firstName: Yup.string().required().label('First Name'),
-				lastName: Yup.string().required().label('Last Name'),
-				email: Yup.string().email().required().email().label('Email'),
-				userType: Yup.string().required().label('User Type'),
-				username: user ? undefined : Yup.string().required().label('Username'),
+				firstName: Yup.string().required().label('First Name').trim(),
+				lastName: Yup.string().required().label('Last Name').trim(),
+				email: Yup.string().email().required().email().label('Email').trim(),
+				userType: Yup.string().required().label('User Type').trim(),
+				username: user
+					? undefined
+					: Yup.string().required().label('Username').trim(),
 				password:
 					user && !passwordFieldsVisible
 						? undefined
-						: Yup.string().required().label('Password'),
+						: Yup.string().required().label('Password').trim(),
 				confirmPassword:
 					user && !passwordFieldsVisible
 						? undefined
 						: Yup.string()
 								.required()
 								.oneOf([Yup.ref('password'), null], 'Passwords must match')
-								.label('Confirm Password'),
+								.label('Confirm Password')
+								.trim(),
 			}),
 		}),
 		[passwordFieldsVisible],

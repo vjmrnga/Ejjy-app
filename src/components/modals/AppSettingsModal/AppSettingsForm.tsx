@@ -97,12 +97,14 @@ export const AppSettingsForm = ({
 					is: appTypes.HEAD_OFFICE,
 					then: Yup.number().required().label('Main Head Office'),
 				}),
-				localApiUrl: Yup.string().required().label('Local API URL'),
-				onlineApiUrl: Yup.string().required().label('Online API URL'),
+				localApiUrl: Yup.string().required().label('Local API URL').trim(),
+				onlineApiUrl: Yup.string().required().label('Online API URL').trim(),
 				printerName: Yup.string().label('Printer Name'),
-				printerFontFamily: Yup.string().required().label('Printer Font Family'),
+				printerFontFamily: Yup.string()
+					.required()
+					.label('Printer Font Family')
+					.trim(),
 				printerFontSize: Yup.number().required().label('Printer Font Size'),
-
 				tagPrinterPaperWidth: Yup.number()
 					.required()
 					.label('Tag Printer Paper Width'),
@@ -111,7 +113,8 @@ export const AppSettingsForm = ({
 					.label('Tag Printer Paper Height'),
 				tagPrinterFontFamily: Yup.string()
 					.required()
-					.label('Tag Printer Font Family'),
+					.label('Tag Printer Font Family')
+					.trim(),
 				tagPrinterFontSize: Yup.number()
 					.required()
 					.label('Tag Printer Font Size'),

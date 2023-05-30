@@ -17,9 +17,9 @@ const formDetails = {
 		checkedById: null,
 	},
 	schema: Yup.object().shape({
-		supplierName: Yup.string().required().label('Supplier Name'),
-		supplierAddress: Yup.string().required().label('Supplier Address'),
-		supplierTin: Yup.string().required().label('Supplier TIN'),
+		supplierName: Yup.string().required().label('Supplier Name').trim(),
+		supplierAddress: Yup.string().required().label('Supplier Address').trim(),
+		supplierTin: Yup.string().required().label('Supplier TIN').trim(),
 		encodedById: Yup.number().nullable().required().label('Encoded By Id'),
 		checkedById: Yup.number().nullable().required().label('Checked By Id'),
 	}),

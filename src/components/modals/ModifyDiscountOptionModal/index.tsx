@@ -111,9 +111,9 @@ export const ModifyDiscountOptionForm = ({
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
 			Schema: Yup.object().shape({
-				name: Yup.string().required().max(75).label('Name'),
-				code: Yup.string().required().max(4).label('Code'),
-				type: Yup.string().required().label('Type'),
+				name: Yup.string().required().max(75).label('Name').trim(),
+				code: Yup.string().required().max(4).label('Code').trim(),
+				type: Yup.string().required().label('Type').trim(),
 				percentage: Yup.number()
 					.nullable()
 					.when('type', {

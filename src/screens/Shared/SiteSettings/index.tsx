@@ -177,18 +177,23 @@ export const SiteSettings = () => {
 					.required()
 					.label('Time Checker Feature'),
 
-				proprietor: Yup.string().required().label('Proprietor'),
-				taxType: Yup.string().required().label('Tax Type'),
-				tin: Yup.string().required().label('TIN'),
-				contactNumber: Yup.string().required().label('Contact Number'),
+				proprietor: Yup.string().required().label('Proprietor').trim(),
+				taxType: Yup.string().required().label('Tax Type').trim(),
+				tin: Yup.string().required().label('TIN').trim(),
+				contactNumber: Yup.string().required().label('Contact Number').trim(),
 
-				softwareDeveloper: Yup.string().required().label('Software Developer'),
+				softwareDeveloper: Yup.string()
+					.required()
+					.label('Software Developer')
+					.trim(),
 				softwareDeveloperTin: Yup.string()
 					.required()
-					.label('Software Developer TIN'),
+					.label('Software Developer TIN')
+					.trim(),
 				softwareDeveloperAddress: Yup.string()
 					.required()
-					.label('Software Developer Address'),
+					.label('Software Developer Address')
+					.trim(),
 
 				posAccreditationNumber: Yup.string()
 					.required()
@@ -203,10 +208,14 @@ export const SiteSettings = () => {
 				ptuValidUntilDate: getValidDateTest('PTU Valid Until Date'),
 
 				// productVersion: Yup.string().required().label('Product Version'),
-				thankYouMessage: Yup.string().required().label('Thank You Message'),
+				thankYouMessage: Yup.string()
+					.required()
+					.label('Thank You Message')
+					.trim(),
 				invoiceLastMessage: Yup.string()
 					.required()
-					.label('Invoice Last Message'),
+					.label('Invoice Last Message')
+					.trim(),
 
 				reportingPeriodDayOfMonth: Yup.number()
 					.min(1)
@@ -224,13 +233,14 @@ export const SiteSettings = () => {
 					.max(999_999)
 					.label('Reset Counter Notification Threshold Invoice Number'),
 
-				storeName: Yup.string().required().label('Store Name'),
+				storeName: Yup.string().required().label('Store Name').trim(),
 				addressOfTaxPayer: Yup.string()
 					.required()
-					.label('Address of Tax Payer'),
-				logoBase64: Yup.string().required().label('Store Logo'),
+					.label('Address of Tax Payer')
+					.trim(),
+				logoBase64: Yup.string().required().label('Store Logo').trim(),
 
-				appDescription: Yup.string().required().label('App Description'),
+				appDescription: Yup.string().required().label('App Description').trim(),
 			}),
 		}),
 		[siteSettings],

@@ -15,7 +15,7 @@ const formDetails = {
 	},
 	schema: Yup.object().shape({
 		encodedById: Yup.number().nullable().required().label('Encoded By Id'),
-		overallRemarks: Yup.string().required().label('Overall Remarks'),
+		overallRemarks: Yup.string().required().label('Overall Remarks').trim(),
 	}),
 };
 
