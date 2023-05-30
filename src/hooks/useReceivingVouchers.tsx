@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { ReceivingVouchersService } from 'services';
-import { getLocalApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useReceivingVouchers = ({ params }: Query) =>
 	useQuery<any>(
@@ -46,7 +46,7 @@ export const useReceivingVoucherCreate = () =>
 					encoded_by_id: encodedById,
 					checked_by_id: checkedById,
 				},
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 

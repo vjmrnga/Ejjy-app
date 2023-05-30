@@ -1,8 +1,10 @@
-import { Button, Descriptions, Divider, Modal, Spin, Table } from 'antd';
+import { Descriptions, Divider, Modal, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components';
+import { PdfButtons } from 'components/Printing';
+import { printStockOutForm } from 'configurePrinter';
 import { backOrderTypes, EMPTY_CELL, vatTypes } from 'global';
-import { useBackOrderRetrieve } from 'hooks';
+import { useBackOrderRetrieve, usePdf, useSiteSettings } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
@@ -41,14 +43,22 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 
 	// CUSTOM HOOKS
 	const {
+		data: siteSettings,
+		isFetching: isFetchingSiteSettings,
+		error: siteSettingsError,
+	} = useSiteSettings();
+	const {
 		data: backOrderRetrieved,
 		isFetching: isFetchingBackOrder,
-		error: backOrderErrors,
+		error: backOrderError,
 	} = useBackOrderRetrieve({
 		id: backOrder,
 		options: {
 			enabled: _.isNumber(backOrder),
 		},
+	});
+	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
+		print: (data) => printStockOutForm({ siteSettings, ...data }),
 	});
 
 	// METHODS
@@ -100,16 +110,37 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	return (
 		<Modal
 			className="Modal__large Modal__hasFooter"
-			footer={<Button onClick={onClose}>Close</Button>}
+			footer={
+				<PdfButtons
+					key="pdf"
+					downloadPdf={() =>
+						downloadPdf({
+							title: `StockOut_${backOrder.id}.pdf`,
+							printData: { backOrder },
+						})
+					}
+					isDisabled={isLoadingPdf}
+					isLoading={isLoadingPdf}
+					previewPdf={() =>
+						previewPdf({
+							title: `StockOut_${backOrder.id}.pdf`,
+							printData: { backOrder },
+						})
+					}
+				/>
+			}
 			title={title}
 			centered
 			closable
 			visible
 			onCancel={onClose}
 		>
-			<Spin spinning={isFetchingBackOrder}>
+			<Spin spinning={isFetchingBackOrder || isFetchingSiteSettings}>
 				<RequestErrors
-					errors={convertIntoArray(backOrderErrors)}
+					errors={[
+						...convertIntoArray(siteSettingsError, 'Settings'),
+						...convertIntoArray(backOrderError),
+					]}
 					withSpaceBottom
 				/>
 
@@ -180,6 +211,12 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 					bordered
 				/>
 			</Spin>
+
+			<div
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: htmlPdf }}
+				style={{ display: 'none' }}
+			/>
 		</Modal>
 	);
 };

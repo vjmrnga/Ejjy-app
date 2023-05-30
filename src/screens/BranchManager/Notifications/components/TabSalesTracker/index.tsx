@@ -95,7 +95,8 @@ const SalesTrackerTotalSalesNotification = ({
 		description={
 			<>
 				Current total sales in <b>{branchMachineName}</b> is{' '}
-				<b>{formatInPeso(totalSales)}</b>. Please reset as soon as possible.
+				<b>{formatInPeso(totalSales)}</b>. Please report to BIR and secure
+				permission to reset sales.
 			</>
 		}
 		message="Sales Tracker - Total Sales"
@@ -113,7 +114,8 @@ const SalesTrackerInvoiceNotification = ({
 		description={
 			<>
 				Current invoice count value in <b>{branchMachineName}</b> is{' '}
-				<b>{transactionCount}</b>. Please reset as soon as possible.
+				<b>{transactionCount}</b>. Please report to BIR and secure permission to
+				reset sales.
 			</>
 		}
 		message="Sales Tracker - Invoice"

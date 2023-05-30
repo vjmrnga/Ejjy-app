@@ -8,12 +8,13 @@ import {
 	TransactionStatus,
 	ViewTransactionModal,
 } from 'components';
-import { Label } from 'components/elements';
+import { BadgePill, Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
+	paymentTypes,
 	transactionStatus,
 } from 'global';
 import { useBranchMachines, useQueryParams, useTransactions } from 'hooks';
@@ -81,6 +82,7 @@ export const TabTransactions = ({ branch }: Props) => {
 				id,
 				invoice,
 				total_amount,
+				payment,
 				status: branchTransactionStatus,
 				branch_machine,
 			} = branchTransaction;
@@ -97,7 +99,12 @@ export const TabTransactions = ({ branch }: Props) => {
 					</Button>
 				),
 				amount: formatInPeso(total_amount),
-				status: <TransactionStatus status={branchTransactionStatus} />,
+				status:
+					payment.mode === paymentTypes.CREDIT ? (
+						<BadgePill label="Collectible" variant="secondary" />
+					) : (
+						<TransactionStatus status={branchTransactionStatus} />
+					),
 				branchMachine: branch_machine.name,
 			};
 		});

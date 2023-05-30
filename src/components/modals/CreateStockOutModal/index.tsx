@@ -4,7 +4,7 @@ import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';
 import React from 'react';
-import { convertIntoArray, filterOption, getFullName } from 'utils';
+import { convertIntoArray, filterOption, getFullName, getId } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 
@@ -65,6 +65,7 @@ export const CreateStockOutModal = ({
 									className="w-100"
 									disabled={isFetchingUsers}
 									filterOption={filterOption}
+									loading={isFetchingUsers}
 									optionFilterProp="children"
 									value={values['encodedById']}
 									showSearch
@@ -72,11 +73,15 @@ export const CreateStockOutModal = ({
 										setFieldValue('encodedById', value);
 									}}
 								>
-									{users.map((user) => (
-										<Select.Option key={user.id} value={user.id}>
-											{getFullName(user)}
-										</Select.Option>
-									))}
+									{users.map((user) => {
+										const id = getId(user);
+
+										return id ? (
+											<Select.Option key={id} value={id}>
+												{getFullName(user)}
+											</Select.Option>
+										) : null;
+									})}
 								</Select>
 								<ErrorMessage
 									name="encodedById"

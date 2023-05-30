@@ -103,7 +103,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 				amount: formatInPeso(total_amount),
 				status:
 					payment.mode === paymentTypes.CREDIT ? (
-						<BadgePill label="Pending" variant="secondary" />
+						<BadgePill label="Collectible" variant="secondary" />
 					) : (
 						<TransactionStatus status={status} />
 					),
