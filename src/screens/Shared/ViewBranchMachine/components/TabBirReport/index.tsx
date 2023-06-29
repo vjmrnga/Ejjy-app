@@ -123,7 +123,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			},
 			{ title: 'Gross Sales From POS', dataIndex: 'grossSalesFromPos' },
 			{ title: 'VATable Sales', dataIndex: 'vatableSales' },
-			{ title: 'VAT Amount', dataIndex: 'vatAmount' },
+			{ title: 'VAT Amount (12%)', dataIndex: 'vatAmount' },
 			{ title: 'VAT-Exempt Sales', dataIndex: 'vatExemptSales' },
 			{ title: 'Zero Rated Sales', dataIndex: 'zeroRatedSales' },
 			{

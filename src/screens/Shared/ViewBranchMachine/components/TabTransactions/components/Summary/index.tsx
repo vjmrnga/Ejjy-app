@@ -91,7 +91,7 @@ export const Summary = ({ branchMachineId }: Props) => {
 					<Row gutter={[16, 16]}>
 						<Col md={8} sm={8} xs={24}>
 							<Statistic
-								title="VAT Amount"
+								title="VAT Amount (12%)"
 								value={formatInPeso(summary?.vat_amount)}
 							/>
 						</Col>

@@ -19,7 +19,7 @@ const columns: ColumnsType = [
 	{ title: 'Voided Transactions', dataIndex: 'voidedTransactions' },
 	{ title: 'Discounts', dataIndex: 'discounts' },
 	{ title: 'Net Sales (VAT Inclusive)', dataIndex: 'netSalesVAT' },
-	{ title: 'VAT Amount', dataIndex: 'vatAmount' },
+	{ title: 'VAT Amount (12%)', dataIndex: 'vatAmount' },
 	{ title: 'Net Sales (VAT Exclusive)', dataIndex: 'netSalesNVAT' },
 ];
 

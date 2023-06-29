@@ -285,7 +285,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'VAT Amount',
+		text: 'VAT Amount (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -364,7 +364,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: '   VAT AMOUNT',
+		text: '   VAT AMOUNT (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -463,7 +463,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'VAT AMOUNT',
+		text: 'VAT AMOUNT (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -575,7 +575,7 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	return <h1>Dummy</h1>;
 };
 
-export const createZReadTxt = ({ report, siteSettings }) => {
+export const createZReadTxt = ({ report, siteSettings, user }) => {
 	const reportTextFile = new ReportTextFile();
 	let rowNumber = 0;
 
@@ -592,9 +592,84 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
+	rowNumber += 1;
+
+	rowNumber += 1;
+
 	reportTextFile.write({
-		text: `AS OF ${dayjs().format('MM/DD/YYYY')}`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		text: 'INVOICE NUMBER',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg Invoice #: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End Invoice #: ${report?.ending_or?.or_number || EMPTY_CELL}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Cyr: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'TRANSACTION COUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Cur: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'ACCUMULATED SALES BREAKDOWN',
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
@@ -661,7 +736,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'VATable Sales',
+		text: 'VAT Sales',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -673,7 +748,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'VAT Amount',
+		text: 'VAT Amount (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -752,7 +827,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: '   VAT AMOUNT',
+		text: '   VAT AMOUNT (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -778,7 +853,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `(${formatInPeso(report.net_sales, PESO_SIGN)})`,
+		text: `${formatInPeso(report.net_sales, PESO_SIGN)}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -851,7 +926,7 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: 'VAT AMOUNT',
+		text: 'VAT AMOUNT (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -898,24 +973,30 @@ export const createZReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: dayjs().format('MM/DD/YYYY h:mmA'),
+		text: `GDT: ${formatDateTime(report.date)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `PDT: ${formatDateTime(dayjs())}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `C: WIP`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `${report.generated_by?.employee_id || EMPTY_CELL}`,
+		text: `PB: ${user?.employee_id || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
-	rowNumber += 1;
 
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: `End SI #: ${report.ending_or?.or_number || EMPTY_CELL}`,
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
-		rowNumber,
-	});
 	rowNumber += 1;
 
 	rowNumber += 1;
@@ -1178,7 +1259,7 @@ export const createSalesInvoiceTxt = ({
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: 'VAT Amount',
+		text: 'VAT Amount (12%)',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});

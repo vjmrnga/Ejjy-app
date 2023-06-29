@@ -912,7 +912,7 @@ export const printBirReport = ({ birReports, siteSettings }) => {
           <th rowspan="2">Sales Issued with Manual SI/OR (per RR 16-2018)</th>
           <th rowspan="2">Gross Sales From POS</th>
           <th rowspan="2">VATable Sales</th>
-          <th rowspan="2">VAT Amount</th>
+          <th rowspan="2">VAT Amount (12%)</th>
           <th rowspan="2">VAT-Exempt Sales</th>
           <th rowspan="2">Zero Rated Sales</th>
           <th colspan="5">Deductions</th>
@@ -1193,7 +1193,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)}&nbsp;</td>
       </tr>
       <tr>
-        <td>VAT Amount</td>
+        <td>VAT Amount (12%)</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_amount,
 					PESO_SIGN,
@@ -1237,7 +1237,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">VAT AMOUNT</td>
+        <td style="padding-left: 15px">VAT AMOUNT (12%)</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
 				)})${addUnderline(report.vat_amount)}</td>
@@ -1283,7 +1283,7 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 
     <table style="width: 100%;">
       <tr>
-        <td>VAT AMOUNT</td>
+        <td>VAT AMOUNT (12%)</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_amount,
 					PESO_SIGN,
@@ -1364,7 +1364,12 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 	});
 };
 
-export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
+export const printZReadReport = ({
+	report,
+	siteSettings,
+	user,
+	isPdf = false,
+}) => {
 	const data = `
 	<div class="container" style="${getPageStyle()}">
 		${getHeader({
@@ -1374,14 +1379,56 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 
     <br />
 
-		<div
-			style="display: flex; align-items: center; justify-content: space-between"
-		>
-			<span>Z-READ</span>
-			<span style="text-align: right">AS OF ${dayjs().format('MM/DD/YYYY')}</span>
-		</div>
+    <div>Z-READ</div>
+    <br/>
+
+    <div>INVOICE NUMBER</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg Invoice #:</td>
+        <td>WIP</td>
+      </tr>
+      <tr>
+      <td width="75px">End Invoice #:</td>
+        <td>${report?.ending_or?.or_number || EMPTY_CELL}</td>
+      </tr>
+    </table>
+
+    <div>SALES</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg:</td>
+        <td>WIP</td>
+      </tr>
+      <tr>
+        <td width="75px">Cur:</td>
+        <td>WIP</td>
+      </tr>
+        <td width="75px">End:</td>
+        <td>WIP</td>
+      </tr>
+    </table>
+
+    <div>TRANSACTION COUNT</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg:</td>
+        <td>WIP</td>
+      </tr>
+      <tr>
+        <td width="75px">Cur:</td>
+        <td>WIP</td>
+      </tr>
+        <td width="75px">End:</td>
+        <td>WIP</td>
+      </tr>
+    </table>
 
 		<br />
+
+    <div style="text-align: center;">ACCUMULATED SALES BREAKDOWN</div>
+
+    <br/>
 
 		<table style="width: 100%;">
 			<tr>
@@ -1417,14 +1464,14 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)}&nbsp;</td>
 			</tr>
       <tr>
-        <td>VATable Sales</td>
+        <td>VAT Sales</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_sales,
 					PESO_SIGN,
 				)}&nbsp;</td>
       </tr>
       <tr>
-        <td>VAT Amount</td>
+        <td>VAT Amount (12%)</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_amount,
 					PESO_SIGN,
@@ -1468,7 +1515,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">VAT AMOUNT</td>
+        <td style="padding-left: 15px"> (12%)</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
 				)})${addUnderline(report.vat_amount)}</td>
@@ -1514,7 +1561,7 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 
     <table style="width: 100%;">
       <tr>
-        <td>VAT AMOUNT</td>
+        <td>VAT AMOUNT (12%)</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_amount,
 					PESO_SIGN,
@@ -1537,13 +1584,12 @@ export const printZReadReport = ({ report, siteSettings, isPdf = false }) => {
 
 		<br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span style="text-align: right">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
-			<span>${report?.generated_by?.employee_id || EMPTY_CELL}</span>
-		</div>
+		<div>GDT: ${formatDateTime(report.date)}</div>
+    <div>PDT: ${formatDateTime(dayjs())}</div>
 
-		<div style="text-align: center">
-			End SI #: ${report?.ending_or?.or_number || EMPTY_CELL}
+    <div style="display: flex; align-items: center; justify-content: space-between">
+			<span>C: WIP</span>
+			<span>PB: ${user?.employee_id || EMPTY_CELL}</span>
 		</div>
 
 		<br />
@@ -2395,7 +2441,7 @@ export const printSalesInvoice = ({
         </td>
       </tr>
       <tr>
-        <td>VAT Amount</td>
+        <td>VAT Amount (12%)</td>
         <td style="text-align: right">
           ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
         </td>

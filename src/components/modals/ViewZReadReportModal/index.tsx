@@ -5,6 +5,7 @@ import {
 	ReceiptFooter,
 	ReceiptHeader,
 	ReceiptUnderlinedValue,
+	ReceiptReportSummary,
 } from 'components/Printing';
 import { printZReadReport } from 'configurePrinter';
 import { createZReadTxt } from 'configureTxt';
@@ -12,7 +13,8 @@ import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
-import { formatDate, formatInPeso } from 'utils';
+import { useUserStore } from 'stores';
+import { formatDateTime, formatInPeso } from 'utils';
 
 const { Text } = Typography;
 
@@ -26,20 +28,21 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `ZReadReport_${report.id}.pdf`,
-		print: () => printZReadReport({ report, siteSettings, isPdf: true }),
+		print: () => printZReadReport({ report, siteSettings, user, isPdf: true }),
 	});
 
 	// METHODS
 	const handlePrint = () => {
-		printZReadReport({ report, siteSettings });
+		printZReadReport({ report, siteSettings, user });
 	};
 
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
-		createZReadTxt({ report, siteSettings });
+		createZReadTxt({ report, siteSettings, user });
 		setIsCreatingTxt(false);
 	};
 
@@ -78,17 +81,46 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			width={425}
 			centered
 			closable
-			visible
+			open
 			onCancel={onClose}
 		>
 			{report?.branch_machine && (
 				<ReceiptHeader branchMachine={report.branch_machine} />
 			)}
 
-			<Space align="center" className="mt-6 w-100 justify-space-between">
-				<Text>Z-READ</Text>
-				<Text>{`AS OF ${formatDate(report.date)}`}</Text>
+			<Space className="mt-6 w-100" direction="vertical">
+				<Text className="w-100">Z-READ</Text>
+
+				<Text className="w-100 mt-2 d-block">INVOICE NUMBER</Text>
+				<ReceiptReportSummary
+					data={[
+						{ label: 'Beg Invoice #', value: '01-000100' },
+						{ label: 'End Invoice #', value: '01-000100' },
+					]}
+				/>
+
+				<Text className="w-100 mt-2 d-block">SALES</Text>
+				<ReceiptReportSummary
+					data={[
+						{ label: 'Beg', value: 'PHP 150,000.00' },
+						{ label: 'Cur', value: 'PHP 180,881.13' },
+						{ label: 'End', value: 'PHP 330,881.13' },
+					]}
+				/>
+
+				<Text className="w-100 mt-2 d-block">TRANSACTION COUNT</Text>
+				<ReceiptReportSummary
+					data={[
+						{ label: 'Beg', value: '100' },
+						{ label: 'Cur', value: '80' },
+						{ label: 'End', value: '95' },
+					]}
+				/>
 			</Space>
+
+			<Text className="w-100 mt-6 text-center d-block">
+				ACCUMULATED SALES BREAKDOWN
+			</Text>
 
 			<Descriptions
 				className="mt-6 w-100"
@@ -127,16 +159,19 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				}}
 				size="small"
 			>
-				<Descriptions.Item label="VAT Exempt">
+				<Descriptions.Item label="VAT Exempt" labelStyle={{ paddingLeft: 30 }}>
 					{formatInPeso(report.vat_exempt)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item label="VATable Sales">
+				<Descriptions.Item label="VAT Sales" labelStyle={{ paddingLeft: 30 }}>
 					{formatInPeso(report.vat_sales)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item label="VAT Amount">
+				<Descriptions.Item
+					label="VAT Amount (12%)"
+					labelStyle={{ paddingLeft: 30 }}
+				>
 					{formatInPeso(report.vat_amount)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item label="ZERO Rated">
+				<Descriptions.Item label="ZERO Rated" labelStyle={{ paddingLeft: 30 }}>
 					{formatInPeso(0)}&nbsp;
 				</Descriptions.Item>
 			</Descriptions>
@@ -176,7 +211,10 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				>
 					({formatInPeso(report.void)})
 				</Descriptions.Item>
-				<Descriptions.Item label="VAT Amount" labelStyle={{ paddingLeft: 30 }}>
+				<Descriptions.Item
+					label="VAT Amount (12%)"
+					labelStyle={{ paddingLeft: 30 }}
+				>
 					<ReceiptUnderlinedValue
 						postfix=")"
 						prefix="("
@@ -191,10 +229,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					{formatInPeso(report.net_sales)}&nbsp;
 				</Descriptions.Item>
 			</Descriptions>
-
-			<div className="w-100" style={{ textAlign: 'right' }}>
-				----------------
-			</div>
 
 			<Descriptions
 				className="w-100"
@@ -238,7 +272,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				}}
 				size="small"
 			>
-				<Descriptions.Item label="VAT AMOUNT">
+				<Descriptions.Item label="VAT AMOUNT (12%)">
 					{formatInPeso(report.vat_amount)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="VAT ADJ.">
@@ -254,14 +288,19 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
-			<Space className="mt-6 w-100 justify-space-between">
-				<Text>{dayjs().format('MM/DD/YYYY h:mmA')}</Text>
-				<Text>{report.generated_by?.employee_id || EMPTY_CELL}</Text>
+			<div className="w-100" style={{ textAlign: 'right' }}>
+				----------------
+			</div>
+
+			<Space className="mt-6 w-100" direction="vertical">
+				<Text>GDT: {formatDateTime(report.date)}</Text>
+				<Text>PDT: {formatDateTime(dayjs())}</Text>
 			</Space>
 
-			<Text className="w-100 text-center d-block">
-				End SI #: {report.ending_or?.or_number || EMPTY_CELL}
-			</Text>
+			<Space className="mt-2 w-100 justify-space-between">
+				<Text>C: WIP</Text>
+				<Text>PB: {user?.employee_id || EMPTY_CELL}</Text>
+			</Space>
 
 			<ReceiptFooter />
 

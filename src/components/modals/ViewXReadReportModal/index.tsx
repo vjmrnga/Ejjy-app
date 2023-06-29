@@ -152,7 +152,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<Descriptions.Item label="VATable Sales">
 					{formatInPeso(report.vat_sales)}&nbsp;
 				</Descriptions.Item>
-				<Descriptions.Item label="VAT Amount">
+				<Descriptions.Item label="VAT Amount (12%)">
 					{formatInPeso(report.vat_amount)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="ZERO Rated">
@@ -195,7 +195,10 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				>
 					({formatInPeso(report.void)})
 				</Descriptions.Item>
-				<Descriptions.Item label="VAT Amount" labelStyle={{ paddingLeft: 30 }}>
+				<Descriptions.Item
+					label="VAT Amount (12%)"
+					labelStyle={{ paddingLeft: 30 }}
+				>
 					<ReceiptUnderlinedValue
 						postfix=")"
 						prefix="("
@@ -257,7 +260,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				}}
 				size="small"
 			>
-				<Descriptions.Item label="VAT AMOUNT">
+				<Descriptions.Item label="VAT AMOUNT (12%)">
 					{formatInPeso(report.vat_amount)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="VAT ADJ.">
