@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { saleTypes, transactionStatus, vatTypes } from 'global';
 import React from 'react';
 import {
-	formatDate,
 	formatDateTime,
 	formatInPeso,
 	getFullName,
@@ -176,7 +175,7 @@ const writeFooter = (footerData) => {
 	return rowNumber;
 };
 
-export const createXReadTxt = ({ report, siteSettings }) => {
+export const createXReadTxt = ({ report, siteSettings, user }) => {
 	const reportTextFile = new ReportTextFile();
 	let rowNumber = 0;
 
@@ -204,9 +203,84 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
+	rowNumber += 1;
+
+	rowNumber += 1;
+
 	reportTextFile.write({
-		text: `For ${formatDate(report.datetime_created)}`,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		text: 'INVOICE NUMBER',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg Invoice #: ${report.beginning_or?.or_number || EMPTY_CELL}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End Invoice #: ${report.ending_or?.or_number || EMPTY_CELL}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'SALES',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg: ${formatInPeso(report.beginning_sales)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Cyr: ${formatInPeso(report.gross_sales)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End: ${formatInPeso(report.ending_sales)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'TRANSACTION COUNT',
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Beg: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   Cur: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+	reportTextFile.write({
+		text: `   End: WIP`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: 'CURRENT SALES BREAKDOWN',
+		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
 	rowNumber += 1;
@@ -510,56 +584,30 @@ export const createXReadTxt = ({ report, siteSettings }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: dayjs().format('MM/DD/YYYY h:mmA'),
+		text: `GDT: ${formatDateTime(report.date)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `PDT: ${formatDateTime(dayjs())}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: `C: WIP`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `${report.total_transactions} tran(s)`,
+		text: `PB: ${user?.employee_id || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
-	rowNumber += 1;
 
-	reportTextFile.write({
-		text: report.generated_by.employee_id,
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: `Beg Invoice #: ${report.beginning_or?.or_number || EMPTY_CELL}`,
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
-		rowNumber,
-	});
-	rowNumber += 1;
-	reportTextFile.write({
-		text: `End Invoice #: ${report.ending_or?.or_number || EMPTY_CELL}`,
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
-		rowNumber,
-	});
-	rowNumber += 1;
-
-	reportTextFile.write({
-		text: `Beg Sales: ${formatInPeso(report.beginning_sales, PESO_SIGN)}`,
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	rowNumber += 1;
-	reportTextFile.write({
-		text: `Cur Sales: ${formatInPeso(report.gross_sales, PESO_SIGN)}`,
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
-	rowNumber += 1;
-	reportTextFile.write({
-		text: `End Sales: ${formatInPeso(report.ending_sales, PESO_SIGN)}`,
-		alignment: ReportTextFile.ALIGNMENTS.LEFT,
-		rowNumber,
-	});
 	rowNumber += 1;
 
 	rowNumber += 1;

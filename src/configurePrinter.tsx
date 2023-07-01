@@ -1126,7 +1126,12 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 	return data;
 };
 
-export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
+export const printXReadReport = ({
+	report,
+	siteSettings,
+	user,
+	isPdf = false,
+}) => {
 	const data = `
 	<div class="container" style="${getPageStyle()}">
 		${getHeader({
@@ -1142,14 +1147,56 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 				: ''
 		}
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>X-READ</span>
-			<span style="text-align: right;">For ${formatDate(
-				report.datetime_created,
-			)}</span>
-		</div>
+		<div>X-READ</div>
+    <br/>
+
+    <div>INVOICE NUMBER</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg Invoice #:</td>
+        <td>${report.beginning_or?.or_number || EMPTY_CELL}</td>
+      </tr>
+      <tr>
+      <td width="75px">End Invoice #:</td>
+        <td>${report.ending_or?.or_number || EMPTY_CELL}</td>
+      </tr>
+    </table>
+
+    <div>SALES</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg:</td>
+        <td>${formatInPeso(report.beginning_sales)}</td>
+      </tr>
+      <tr>
+        <td width="75px">Cur:</td>
+        <td>${formatInPeso(report.gross_sales)}</td>
+      </tr>
+        <td width="75px">End:</td>
+        <td>${formatInPeso(report.ending_sales)}</td>
+      </tr>
+    </table>
+
+    <div>TRANSACTION COUNT</div>
+    <table style="margin-left: 15px;">
+      <tr>
+        <td width="75px">Beg:</td>
+        <td>WIP</td>
+      </tr>
+      <tr>
+        <td width="75px">Cur:</td>
+        <td>WIP</td>
+      </tr>
+        <td width="75px">End:</td>
+        <td>WIP</td>
+      </tr>
+    </table>
 
 		<br />
+
+    <div style="text-align: center;">CURRENT SALES BREAKDOWN</div>
+
+    <br/>
 
 		<table style="width: 100%;">
 			<tr>
@@ -1306,44 +1353,12 @@ export const printXReadReport = ({ report, siteSettings, isPdf = false }) => {
 
     <br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span style="text-align: center;">${dayjs().format('MM/DD/YYYY h:mmA')}</span>
-			<span style="text-align: right;">${report.total_transactions} tran(s)</span>
-		</div>
+		<div>GDT: ${formatDateTime(report.date)}</div>
+    <div>PDT: ${formatDateTime(dayjs())}</div>
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${report.generated_by.employee_id}</span>
-		</div>
-
-		<br />
-
-		<div style="text-align: center;">Beg Invoice #: ${
-			report.beginning_or?.or_number || EMPTY_CELL
-		}</div>
-		<div style="text-align: center;">End Invoice #: ${
-			report.ending_or?.or_number || EMPTY_CELL
-		}</div>
-
-		<div style="display: flex">
-			<div style="flex: 1; padding-right: 20px;">
-				<div>Beg Sales</div>
-				<div>Cur Sales</div>
-				<div>End Sales</div>
-			</div>
-			<div>
-				<div style="display: flex; align-items: center; justify-content: space-between">
-					<span>P </span>
-					<span>${formatInPeso(report.beginning_sales, '')}</span>
-				</div>
-				<div style="display: flex; align-items: center; justify-content: space-between">
-					<span>P </span>
-					<span>${formatInPeso(report.gross_sales, '')}</span>
-				</div>
-				<div style="display: flex; align-items: center; justify-content: space-between">
-					<span>P </span>
-					<span>${formatInPeso(report.ending_sales, '')}</span>
-				</div>
-			</div>
+    <div style="display: flex; align-items: center; justify-content: space-between">
+			<span>C: WIP</span>
+			<span>PB: ${user?.employee_id || EMPTY_CELL}</span>
 		</div>
 
 		<br />

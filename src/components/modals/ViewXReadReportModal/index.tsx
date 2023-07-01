@@ -5,6 +5,7 @@ import {
 	PdfButtons,
 	ReceiptFooter,
 	ReceiptHeader,
+	ReceiptReportSummary,
 	ReceiptUnderlinedValue,
 } from 'components/Printing';
 import { printXReadReport } from 'configurePrinter';
@@ -12,9 +13,10 @@ import { createXReadTxt } from 'configureTxt';
 import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
-import { formatDate, formatInPeso } from 'utils';
+import { formatDateTime, formatInPeso } from 'utils';
 import React, { useState } from 'react';
 import './style.scss';
+import { useUserStore } from 'stores';
 
 interface Props {
 	report: any;
@@ -28,6 +30,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 	const [isCreatingTxt, setIsCreatingTxt] = useState(false);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `XReadReport_${report.id}.pdf`,
@@ -41,17 +44,17 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 						h: 600,
 				  }
 				: null,
-		print: () => printXReadReport({ report, siteSettings, isPdf: true }),
+		print: () => printXReadReport({ report, siteSettings, user, isPdf: true }),
 	});
 
 	// METHODS
 	const handlePrint = () => {
-		printXReadReport({ report, siteSettings });
+		printXReadReport({ report, siteSettings, user });
 	};
 
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
-		createXReadTxt({ report, siteSettings });
+		createXReadTxt({ report, siteSettings, user });
 		setIsCreatingTxt(false);
 	};
 
@@ -104,10 +107,45 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<ReceiptHeader branchMachine={report.branch_machine} />
 			)}
 
-			<Space align="center" className="mt-6 w-100 justify-space-between">
-				<Text>X-READ</Text>
-				<Text>{`For ${formatDate(report.datetime_created)}`}</Text>
+			<Space className="mt-6 w-100" direction="vertical">
+				<Text className="w-100">X-READ</Text>
+
+				<Text className="w-100 mt-2 d-block">INVOICE NUMBER</Text>
+				<ReceiptReportSummary
+					data={[
+						{
+							label: 'Beg Invoice #',
+							value: report.beginning_or?.or_number || EMPTY_CELL,
+						},
+						{
+							label: 'End Invoice #',
+							value: report.ending_or?.or_number || EMPTY_CELL,
+						},
+					]}
+				/>
+
+				<Text className="w-100 mt-2 d-block">SALES</Text>
+				<ReceiptReportSummary
+					data={[
+						{ label: 'Beg', value: formatInPeso(report.beginning_sales) },
+						{ label: 'Cur', value: formatInPeso(report.gross_sales) },
+						{ label: 'End', value: formatInPeso(report.ending_sales) },
+					]}
+				/>
+
+				<Text className="w-100 mt-2 d-block">TRANSACTION COUNT</Text>
+				<ReceiptReportSummary
+					data={[
+						{ label: 'Beg', value: '100' },
+						{ label: 'Cur', value: '80' },
+						{ label: 'End', value: '95' },
+					]}
+				/>
 			</Space>
+
+			<Text className="w-100 mt-6 text-center d-block">
+				CURRENT SALES BREAKDOWN
+			</Text>
 
 			<Descriptions
 				className="mt-6 w-100"
@@ -276,45 +314,15 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
-			<Space className="mt-6 w-100 justify-space-between">
-				<Text>{dayjs().format('MM/DD/YYYY h:mmA')}</Text>
-				<Text>{report.total_transactions} tran(s)</Text>
-			</Space>
-			<Space className="w-100 justify-space-between">
-				<Text>{report.generated_by?.employee_id}</Text>
+			<Space className="mt-6 w-100" direction="vertical">
+				<Text>GDT: {formatDateTime(report.date)}</Text>
+				<Text>PDT: {formatDateTime(dayjs())}</Text>
 			</Space>
 
-			<Space
-				align="center"
-				className="mt-6 w-100 text-center"
-				direction="vertical"
-				size={0}
-			>
-				<Text>
-					Beginning SI #: {report.beginning_or?.or_number || EMPTY_CELL}
-				</Text>
-				<Text>Ending SI #: {report.ending_or?.or_number || EMPTY_CELL}</Text>
+			<Space className="mt-2 w-100 justify-space-between">
+				<Text>C: WIP</Text>
+				<Text>PB: {user?.employee_id || EMPTY_CELL}</Text>
 			</Space>
-
-			<Descriptions
-				colon={false}
-				column={1}
-				labelStyle={{
-					width: 200,
-					paddingLeft: 15,
-				}}
-				size="small"
-			>
-				<Descriptions.Item label="Beg Sales">
-					{formatInPeso(report.beginning_sales)}
-				</Descriptions.Item>
-				<Descriptions.Item label="Cur Sales">
-					{formatInPeso(report.gross_sales)}
-				</Descriptions.Item>
-				<Descriptions.Item label="End Sales">
-					{formatInPeso(report.ending_sales)}
-				</Descriptions.Item>
-			</Descriptions>
 
 			<ReceiptFooter />
 

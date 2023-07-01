@@ -230,6 +230,10 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				</Descriptions.Item>
 			</Descriptions>
 
+			<div className="w-100" style={{ textAlign: 'right' }}>
+				----------------
+			</div>
+
 			<Descriptions
 				className="w-100"
 				colon={false}
@@ -287,10 +291,6 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					&nbsp;
 				</Descriptions.Item>
 			</Descriptions>
-
-			<div className="w-100" style={{ textAlign: 'right' }}>
-				----------------
-			</div>
 
 			<Space className="mt-6 w-100" direction="vertical">
 				<Text>GDT: {formatDateTime(report.date)}</Text>
