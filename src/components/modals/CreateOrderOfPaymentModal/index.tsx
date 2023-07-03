@@ -22,6 +22,7 @@ import {
 	filterOption,
 	formatInPeso,
 	getFullName,
+	getId,
 } from 'utils';
 import * as Yup from 'yup';
 
@@ -74,7 +75,7 @@ export const CreateOrderOfPaymentModal = ({
 		}
 
 		await createOrderOfPayment({
-			createdById: user.id,
+			createdById: getId(user),
 			payorId: formData.payorId,
 			amount: formData.amount,
 			purpose: formData.purpose,
@@ -160,7 +161,7 @@ export const CreateOrderOfPaymentForm = ({
 	const getFormDetails = useCallback(
 		() => ({
 			defaultValues: {
-				payorId: payor.account.id,
+				payorId: getId(payor.account),
 				amount: transaction?.total_amount || '',
 				purpose: transaction ? orderOfPaymentPurposes.FULL_PAYMENT : null,
 				purposeOthers: '',

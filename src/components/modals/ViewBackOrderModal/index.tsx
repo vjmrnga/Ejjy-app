@@ -1,12 +1,22 @@
-import { Descriptions, Divider, Modal, Spin, Table } from 'antd';
+import {
+	Descriptions,
+	Divider,
+	Modal,
+	Space,
+	Spin,
+	Table,
+	Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components';
 import { PdfButtons } from 'components/Printing';
 import { printStockOutForm } from 'configurePrinter';
+import dayjs from 'dayjs';
 import { backOrderTypes, EMPTY_CELL, vatTypes } from 'global';
 import { useBackOrderRetrieve, usePdf, useSiteSettings } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTime,
@@ -14,6 +24,8 @@ import {
 	getBackOrderStatus,
 	getFullName,
 } from 'utils';
+
+const { Text } = Typography;
 
 const columnsDamage: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -42,6 +54,7 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 	const [columns, setColumns] = useState([]);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
@@ -210,6 +223,12 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 					scroll={{ x: 800 }}
 					bordered
 				/>
+
+				<Space className="mt-4 w-100" direction="vertical">
+					<Text>GDT: {formatDateTime(backOrderData?.datetime_created)}</Text>
+					<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+					<Text>C: {user.employee_id}</Text>
+				</Space>
 			</Spin>
 
 			<div

@@ -294,12 +294,12 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space className="mt-6 w-100" direction="vertical">
 				<Text>GDT: {formatDateTime(report.date)}</Text>
-				<Text>PDT: {formatDateTime(dayjs())}</Text>
+				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
 			</Space>
 
 			<Space className="mt-2 w-100 justify-space-between">
-				<Text>C: WIP</Text>
-				<Text>PB: {user?.employee_id || EMPTY_CELL}</Text>
+				<Text>C: {report?.generated_by?.employee_id || EMPTY_CELL}</Text>
+				<Text>PB: {user.employee_id}</Text>
 			</Space>
 
 			<ReceiptFooter />

@@ -13,6 +13,7 @@ import {
 } from 'global';
 import { useBirReports, usePdf, useQueryParams, useSiteSettings } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils';
 
 interface Props {
@@ -24,6 +25,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { params, setQueryParams } = useQueryParams();
 	const {
 		data: siteSettings,
@@ -49,6 +51,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			printBirReport({
 				birReports,
 				siteSettings,
+				user,
 			}),
 		jsPdfSettings: {
 			orientation: 'l',

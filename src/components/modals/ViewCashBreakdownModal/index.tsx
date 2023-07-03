@@ -1,9 +1,10 @@
 /* eslint-disable no-prototype-builtins */
 import { PrinterOutlined } from '@ant-design/icons';
-import { Button, Descriptions, Modal, Table, Typography } from 'antd';
+import { Button, Descriptions, Modal, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons } from 'components/Printing';
 import { printCashBreakdown, printCashOut } from 'configurePrinter';
+import dayjs from 'dayjs';
 import { cashBreakdownCategories } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React from 'react';
@@ -14,6 +15,8 @@ import {
 	getCashBreakdownTypeDescription,
 	getFullName,
 } from 'utils';
+
+const { Text } = Typography;
 
 const columns: ColumnsType = [
 	{
@@ -46,8 +49,10 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 		cashBreakdown.category,
 		cashBreakdown.type,
 	);
+	const session = cashBreakdown.cashiering_session;
 
 	// CUSTOM HOOKS
+
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `${
@@ -113,6 +118,12 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 			) : (
 				<CashBreakdownDetails cashBreakdown={cashBreakdown} type={type} />
 			)}
+
+			<Space className="mt-6 w-100" direction="vertical">
+				<Text>GDT: {formatDateTime(cashBreakdown.datetime_created)}</Text>
+				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+				<Text>{session?.user.employee_id}</Text>
+			</Space>
 
 			<div
 				// eslint-disable-next-line react/no-danger

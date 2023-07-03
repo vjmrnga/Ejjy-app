@@ -136,9 +136,9 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<Text className="w-100 mt-2 d-block">TRANSACTION COUNT</Text>
 				<ReceiptReportSummary
 					data={[
-						{ label: 'Beg', value: '100' },
-						{ label: 'Cur', value: '80' },
-						{ label: 'End', value: '95' },
+						{ label: 'Beg', value: report.beginning_transactions_count },
+						{ label: 'Cur', value: report.total_transactions },
+						{ label: 'End', value: report.ending_transactions_count },
 					]}
 				/>
 			</Space>
@@ -316,12 +316,12 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space className="mt-6 w-100" direction="vertical">
 				<Text>GDT: {formatDateTime(report.date)}</Text>
-				<Text>PDT: {formatDateTime(dayjs())}</Text>
+				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
 			</Space>
 
 			<Space className="mt-2 w-100 justify-space-between">
-				<Text>C: WIP</Text>
-				<Text>PB: {user?.employee_id || EMPTY_CELL}</Text>
+				<Text>C: {report?.generated_by?.employee_id || EMPTY_CELL}</Text>
+				<Text>PB: {user.employee_id}</Text>
 			</Space>
 
 			<ReceiptFooter />

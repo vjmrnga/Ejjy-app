@@ -289,3 +289,8 @@ export const pdfButtonsKey = {
 	DOWNLOAD: 'download',
 	PREVIEW: 'preview',
 };
+
+export const readReportTypes = {
+	XREAD: 'xread',
+	ZREAD: 'zread',
+};

@@ -1,13 +1,19 @@
 import { Button, Calendar, message, Modal, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
+	ReportTimeRangeModal,
 	RequestErrors,
 	TableHeader,
 	ViewXReadReportModal,
 	ViewZReadReportModal,
 } from 'components';
 import { FieldError } from 'components/elements';
-import { branchMachineTypes, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
+import {
+	branchMachineTypes,
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	readReportTypes,
+} from 'global';
 import {
 	useBranchMachines,
 	useCashieringSessions,
@@ -48,6 +54,7 @@ export const ReportsPerMachine = ({
 	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
 	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
 		useState(false);
+	const [generateReportType, setGenerateReportType] = useState(null);
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
@@ -177,6 +184,26 @@ export const ReportsPerMachine = ({
 	return (
 		<>
 			<TableHeader
+				buttons={[
+					<Button
+						key="btnXread"
+						loading={false}
+						type="primary"
+						ghost
+						onClick={() => setGenerateReportType(readReportTypes.XREAD)}
+					>
+						Generate XRead Reports
+					</Button>,
+					<Button
+						key="btnZread"
+						loading={false}
+						type="primary"
+						ghost
+						onClick={() => setGenerateReportType(readReportTypes.XREAD)}
+					>
+						Generate ZRead Reports
+					</Button>,
+				]}
 				title="Reports per Machine"
 				wrapperClassName={tableHeaderClassName}
 			/>
@@ -229,6 +256,13 @@ export const ReportsPerMachine = ({
 					branchMachine={selectedBranchMachine}
 					onClose={() => setSessionPickerModalVisible(false)}
 					onSubmit={handleSessionSelection}
+				/>
+			)}
+
+			{generateReportType && (
+				<ReportTimeRangeModal
+					type={generateReportType}
+					onClose={() => setGenerateReportType(null)}
 				/>
 			)}
 		</>

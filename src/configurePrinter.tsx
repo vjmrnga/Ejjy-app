@@ -512,6 +512,7 @@ export const printCancelledTransactions = ({
 	filterStatus,
 	siteSettings,
 	transactions,
+	user,
 	onComplete,
 }) => {
 	const branchMachine = transactions?.[0]?.branch_machine;
@@ -574,15 +575,13 @@ export const printCancelledTransactions = ({
 
 		<br />
 
-		${getFooter({
-			softwareDeveloper: siteSettings.software_developer,
-			softwareDeveloperTin: siteSettings.software_developer_tin,
-			posAccreditationNumber: siteSettings.pos_accreditation_number,
-			posAccreditationDate: siteSettings.pos_accreditation_date,
-			posAccreditationValidUntilDate:
-				siteSettings.pos_accreditation_valid_until_date,
-			ptuNumber: siteSettings.ptu_number,
-		})}
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
+    <div>${user.employee_id}</div>
+
+    <br />
+
+    ${getFooter(siteSettings)}
+
 	</div>
 	`;
 
@@ -773,14 +772,16 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 		}
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime(collectionReceipt?.datetime_created)}</span>
+			<span>GDT: ${formatDateTime(collectionReceipt?.datetime_created)}</span>
 			<span style="text-align: right;">${
 				collectionReceipt?.created_by?.employee_id
 			}</span>
 		</div>
-
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span>PDT: ${formatDateTime(dayjs(), false)}</span>
+		</div>
 		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${collectionReceipt?.id || EMPTY_CELL}</span>
+			<span>ID: ${collectionReceipt?.id || EMPTY_CELL}</span>
 		</div>
 
 		<br />
@@ -795,8 +796,7 @@ export const printCollectionReceipt = ({ collectionReceipt, siteSettings }) => {
 	return data;
 };
 
-export const printBirReport = ({ birReports, siteSettings }) => {
-	const PESO_SIGN = 'P';
+export const printBirReport = ({ birReports, siteSettings, user }) => {
 	const birReportsRow = birReports
 		.map(
 			(report) => `
@@ -938,6 +938,11 @@ export const printBirReport = ({ birReports, siteSettings }) => {
         </tr>
         ${birReportsRow}
       </table>
+
+      <br />
+
+      <div class="details">PDT: ${formatDateTime(dayjs(), false)}</div>
+      <div class="details">${user.employee_id}</div>
     </div>
   </body>
   </html>
@@ -999,9 +1004,8 @@ export const printReceivingVoucherForm = ({
 
 		<br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime(receivingVoucher.datetime_created)}</span>
-		</div>
+    <div>GDT: ${formatDateTime(receivingVoucher.datetime_created)}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${receivingVoucher.checked_by.employee_id}</span>
 			<span style="text-align: right;">E: ${
@@ -1103,19 +1107,15 @@ export const printStockOutForm = ({ backOrder, siteSettings }) => {
 
 		<br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime(backOrder.datetime_created)}</span>
-			<span style="text-align: right;">${EMPTY_CELL}</span>
-		</div>
+    <div>GDT: ${formatDateTime(backOrder.datetime_created)}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${EMPTY_CELL}</span>
 			<span style="text-align: right;">E: ${
 				backOrder?.encoded_by?.employee_id || EMPTY_CELL
 			}</span>
 		</div>
-    <div>
-      <span>Supplier: ${EMPTY_CELL}</span>
-    </div>
+		<div>Supplier: ${EMPTY_CELL}</div>
 
 		<br />
 
@@ -1134,10 +1134,10 @@ export const printXReadReport = ({
 }) => {
 	const data = `
 	<div class="container" style="${getPageStyle()}">
-		${getHeader({
-			branchMachine: report.branch_machine,
-			siteSettings,
-		})}
+  ${getHeader({
+		branchMachine: report.branch_machine,
+		siteSettings,
+	})}
 
     <br />
 
@@ -1153,42 +1153,57 @@ export const printXReadReport = ({
     <div>INVOICE NUMBER</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg Invoice #:</td>
-        <td>${report.beginning_or?.or_number || EMPTY_CELL}</td>
+        <td style="width: 120px;">Beg Invoice #:</td>
+        <td style="text-align: right">${
+					report.beginning_or?.or_number || EMPTY_CELL
+				}</td>
       </tr>
       <tr>
-      <td width="75px">End Invoice #:</td>
-        <td>${report.ending_or?.or_number || EMPTY_CELL}</td>
+      <td style="width: 120px;">End Invoice #:</td>
+        <td style="text-align: right">${
+					report.ending_or?.or_number || EMPTY_CELL
+				}</td>
       </tr>
     </table>
 
     <div>SALES</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg:</td>
-        <td>${formatInPeso(report.beginning_sales)}</td>
+        <td style="width: 120px;">Beg:</td>
+        <td style="text-align: right">${formatInPeso(
+					report.beginning_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
       <tr>
-        <td width="75px">Cur:</td>
-        <td>${formatInPeso(report.gross_sales)}</td>
+        <td style="width: 120px;">Cur:</td>
+        <td style="text-align: right">${formatInPeso(
+					report.gross_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
-        <td width="75px">End:</td>
-        <td>${formatInPeso(report.ending_sales)}</td>
+        <td style="width: 120px;">End:</td>
+        <td style="text-align: right">${formatInPeso(
+					report.ending_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
     </table>
 
     <div>TRANSACTION COUNT</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Beg:</td>
+        <td style="text-align: right">${
+					report.beginning_transactions_count
+				}</td>
       </tr>
       <tr>
-        <td width="75px">Cur:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Cur:</td>
+        <td style="text-align: right">${report.total_transactions}</td>
       </tr>
-        <td width="75px">End:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">End:</td>
+        <td style="text-align: right">${report.ending_transactions_count}</td>
       </tr>
     </table>
 
@@ -1354,10 +1369,10 @@ export const printXReadReport = ({
     <br />
 
 		<div>GDT: ${formatDateTime(report.date)}</div>
-    <div>PDT: ${formatDateTime(dayjs())}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
-			<span>C: WIP</span>
+			<span>C: ${report?.generated_by?.employee_id || EMPTY_CELL}</span>
 			<span>PB: ${user?.employee_id || EMPTY_CELL}</span>
 		</div>
 
@@ -1400,42 +1415,57 @@ export const printZReadReport = ({
     <div>INVOICE NUMBER</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg Invoice #:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Beg Invoice #:</td>
+        <td style="text-align: right;">${
+					report.beginning_or?.or_number || EMPTY_CELL
+				}</td>
       </tr>
       <tr>
-      <td width="75px">End Invoice #:</td>
-        <td>${report?.ending_or?.or_number || EMPTY_CELL}</td>
+        <td style="width: 120px;">End Invoice #:</td>
+        <td style="text-align: right;">${
+					report.ending_or?.or_number || EMPTY_CELL
+				}</td>
       </tr>
     </table>
 
     <div>SALES</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Beg:</td>
+        <td style="text-align: right;">${formatInPeso(
+					report.beginning_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
       <tr>
-        <td width="75px">Cur:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Cur:</td>
+        <td style="text-align: right;">${formatInPeso(
+					report.gross_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
-        <td width="75px">End:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">End:</td>
+        <td style="text-align: right;">${formatInPeso(
+					report.ending_sales,
+					PESO_SIGN,
+				)}</td>
       </tr>
     </table>
 
     <div>TRANSACTION COUNT</div>
     <table style="margin-left: 15px;">
       <tr>
-        <td width="75px">Beg:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Beg:</td>
+        <td style="text-align: right;">${
+					report.beginning_transactions_count
+				}</td>
       </tr>
       <tr>
-        <td width="75px">Cur:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">Cur:</td>
+        <td style="text-align: right;">${report.total_transactions}</td>
       </tr>
-        <td width="75px">End:</td>
-        <td>WIP</td>
+        <td style="width: 120px;">End:</td>
+        <td style="text-align: right;">${report.ending_transactions_count}</td>
       </tr>
     </table>
 
@@ -1600,10 +1630,10 @@ export const printZReadReport = ({
 		<br />
 
 		<div>GDT: ${formatDateTime(report.date)}</div>
-    <div>PDT: ${formatDateTime(dayjs())}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
-			<span>C: WIP</span>
+			<span>C: ${report?.generated_by?.employee_id || EMPTY_CELL}</span>
 			<span>PB: ${user?.employee_id || EMPTY_CELL}</span>
 		</div>
 
@@ -1815,10 +1845,9 @@ export const printCashBreakdown = ({
 
 		<br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime(dayjs())}</span>
-			<span>${session?.user?.employee_id}</span>
-		</div>
+    <div>GDT: ${formatDateTime(cashBreakdown.datetime_created)}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
+    <div>${session?.user?.employee_id}</div>
     ${
 			cashBreakdown.category === cashBreakdownCategories.CASH_IN
 				? `<div>Remarks: ${cashBreakdown.remarks}</div>`
@@ -1913,10 +1942,9 @@ export const printCashOut = ({ cashOut, siteSettings, isPdf = false }) => {
 
 		<br />
 
-    <div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${datetime}</span>
-			<span style="text-align: right;">${preparedByUser.employee_id}</span>
-		</div>
+    <div>GDT: ${datetime}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
+    <div>${preparedByUser.employee_id}</div>
 
     <br />
 
@@ -2467,17 +2495,20 @@ export const printSalesInvoice = ({
           ${formatInPeso(0, PESO_SIGN)}&nbsp;
         </td>
       </tr>
-    </table><br />
+    </table>
+    <br />
 
-		<div style="display: flex; align-items: center; justify-content: space-between">
-			<span>${formatDateTime(transaction.invoice.datetime_created)}</span>
-			<span style="text-align: right;">${transaction.teller.employee_id}</span>
-		</div>
+    <div>GDT: ${formatDateTime(transaction.invoice.datetime_created)}</div>
+    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
 		<div style="display: flex; align-items: center; justify-content: space-between">
 			<span>${transaction.invoice.or_number}</span>
 			<span>${transaction.products.length} item(s)</span>
 		</div>
+
+    <div>${transaction.teller.employee_id}</div>
+
+    <br />
 
     ${
 			previousTransactionOrNumber
@@ -2520,7 +2551,7 @@ export const printSalesInvoice = ({
 				? 'VOIDED TRANSACTION'
 				: ''
 		}</span>
-    <span>${
+    <span style="white-space: pre-line">${
 			transaction.status === transactionStatus.FULLY_PAID
 				? siteSettings?.invoice_last_message
 				: ''

@@ -175,7 +175,12 @@ const writeFooter = (footerData) => {
 	return rowNumber;
 };
 
-export const createXReadTxt = ({ report, siteSettings, user }) => {
+export const createXReadTxt = ({
+	report,
+	siteSettings,
+	user,
+	returnContent = false,
+}) => {
 	const reportTextFile = new ReportTextFile();
 	let rowNumber = 0;
 
@@ -239,7 +244,7 @@ export const createXReadTxt = ({ report, siteSettings, user }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Cyr: ${formatInPeso(report.gross_sales)}`,
+		text: `   Cur: ${formatInPeso(report.gross_sales)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -258,19 +263,19 @@ export const createXReadTxt = ({ report, siteSettings, user }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Beg: WIP`,
+		text: `   Beg: ${report.beginning_transactions_count}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Cur: WIP`,
+		text: `   Cur: ${report.total_transactions}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   End: WIP`,
+		text: `   End: ${report.ending_transactions_count}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -591,14 +596,14 @@ export const createXReadTxt = ({ report, siteSettings, user }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `PDT: ${formatDateTime(dayjs())}`,
+		text: `PDT: ${formatDateTime(dayjs(), false)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `C: WIP`,
+		text: `C: ${report?.generated_by?.employee_id || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -618,12 +623,21 @@ export const createXReadTxt = ({ report, siteSettings, user }) => {
 		rowNumber,
 	});
 
+	if (returnContent) {
+		return reportTextFile.get();
+	}
+
 	reportTextFile.export(`XReadReport_${report.id}.txt`);
 
 	return <h1>Dummy</h1>;
 };
 
-export const createZReadTxt = ({ report, siteSettings, user }) => {
+export const createZReadTxt = ({
+	report,
+	siteSettings,
+	user,
+	returnContent = false,
+}) => {
 	const reportTextFile = new ReportTextFile();
 	let rowNumber = 0;
 
@@ -651,13 +665,13 @@ export const createZReadTxt = ({ report, siteSettings, user }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Beg Invoice #: WIP`,
+		text: `   Beg Invoice #: ${report.beginning_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   End Invoice #: ${report?.ending_or?.or_number || EMPTY_CELL}`,
+		text: `   End Invoice #: ${report.ending_or?.or_number || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -670,19 +684,19 @@ export const createZReadTxt = ({ report, siteSettings, user }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Beg: WIP`,
+		text: `   Beg: ${formatInPeso(report.beginning_sales)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Cyr: WIP`,
+		text: `   Cur: ${formatInPeso(report.gross_sales)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   End: WIP`,
+		text: `   End: ${formatInPeso(report.ending_sales)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -695,19 +709,19 @@ export const createZReadTxt = ({ report, siteSettings, user }) => {
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Beg: WIP`,
+		text: `   Beg: ${report.beginning_transactions_count}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Cur: WIP`,
+		text: `   Cur: ${report.total_transactions}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   End: WIP`,
+		text: `   End: ${report.ending_transactions_count}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -1028,14 +1042,14 @@ export const createZReadTxt = ({ report, siteSettings, user }) => {
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `PDT: ${formatDateTime(dayjs())}`,
+		text: `PDT: ${formatDateTime(dayjs(), false)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `C: WIP`,
+		text: `C: ${report?.generated_by?.employee_id || EMPTY_CELL}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -1054,6 +1068,10 @@ export const createZReadTxt = ({ report, siteSettings, user }) => {
 		reportTextFile,
 		rowNumber,
 	});
+
+	if (returnContent) {
+		return reportTextFile.get();
+	}
 
 	reportTextFile.export(`ZReadReport_${report.id}.txt`);
 
@@ -1333,13 +1351,15 @@ export const createSalesInvoiceTxt = ({
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: formatDateTime(transaction.invoice.datetime_created),
+		text: `GDT: ${formatDateTime(transaction.invoice.datetime_created)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
+	rowNumber += 1;
+
 	reportTextFile.write({
-		text: transaction.teller.employee_id,
-		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		text: `PDT: ${formatDateTime(dayjs(), false)}`,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;
@@ -1353,6 +1373,13 @@ export const createSalesInvoiceTxt = ({
 	reportTextFile.write({
 		text: `${transaction.products.length} item(s)`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+		rowNumber,
+	});
+	rowNumber += 1;
+
+	reportTextFile.write({
+		text: transaction.teller.employee_id,
+		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
 	rowNumber += 1;

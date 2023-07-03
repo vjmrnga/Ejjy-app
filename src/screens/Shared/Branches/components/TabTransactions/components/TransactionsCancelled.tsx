@@ -68,6 +68,7 @@ export const TransactionsCancelled = ({
 			filterStatus: statuses,
 			siteSettings,
 			transactions,
+			user,
 			onComplete: () => {
 				setIsPrinting(false);
 			},

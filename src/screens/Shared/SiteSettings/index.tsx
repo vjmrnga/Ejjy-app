@@ -225,12 +225,10 @@ export const SiteSettings = () => {
 				resetCounterNotificationThresholdAmount: Yup.number()
 					.required()
 					.min(0)
-					.max(1_000_000_000)
 					.label('Reset Counter Notification Threshold Amount'),
 				resetCounterNotificationThresholdInvoiceNumber: Yup.number()
 					.required()
 					.min(0)
-					.max(999_999)
 					.label('Reset Counter Notification Threshold Invoice Number'),
 
 				storeName: Yup.string().required().label('Store Name').trim(),
@@ -623,6 +621,7 @@ export const SiteSettings = () => {
 										{renderInputField({
 											name: 'invoiceLastMessage',
 											label: 'Invoice Last Message',
+											type: inputTypes.TEXTAREA,
 											setFieldValue,
 											values,
 										})}

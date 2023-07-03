@@ -365,6 +365,17 @@ if (process.platform === 'win32') {
 }
 
 //-------------------------------------------------------------------
+// Open folder storing the exported TXT files
+//-------------------------------------------------------------------
+ipcMain.on('openFolder', (event, folderPath) => {
+	const mediaPath = isDev
+		? path.resolve(__dirname, '../api/' + folderPath)
+		: path.join(process.resourcesPath, 'api/' + folderPath);
+
+	shell.openPath(mediaPath);
+});
+
+//-------------------------------------------------------------------
 // Helper functions
 //-------------------------------------------------------------------
 function relaunchApp() {

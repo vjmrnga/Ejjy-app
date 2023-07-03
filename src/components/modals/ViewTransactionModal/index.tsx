@@ -14,6 +14,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';
+import dayjs from 'dayjs';
 import { EMPTY_CELL, saleTypes, transactionStatus, vatTypes } from 'global';
 import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
@@ -326,15 +327,18 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Descriptions.Item>
 						</Descriptions>
 
-						<Space className="mt-6 w-100 justify-space-between">
+						<Space className="mt-6 w-100" direction="vertical">
 							<Text>
-								{formatDateTime(transactionData.invoice.datetime_created)}
+								GDT: {formatDateTime(transactionData.invoice.datetime_created)}
 							</Text>
-							<Text>{transactionData.teller.employee_id}</Text>
-						</Space>
-						<Space className="w-100 justify-space-between">
-							<Text>{transactionData.invoice.or_number}</Text>
-							<Text>{dataSource.length} item(s)</Text>
+							<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+
+							<Space className="w-100 justify-space-between">
+								<Text>{transactionData.invoice.or_number}</Text>
+								<Text>{dataSource.length} item(s)</Text>
+							</Space>
+
+							<Text>{transaction.teller.employee_id}</Text>
 						</Space>
 
 						{transactionData?.adjustment_remarks
@@ -382,7 +386,10 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 						<ReceiptFooter />
 
 						{transactionData?.status === transactionStatus.FULLY_PAID && (
-							<Text className="d-block text-center">
+							<Text
+								className="d-block text-center"
+								style={{ whiteSpace: 'pre-line' }}
+							>
 								{siteSettings.invoice_last_message}
 							</Text>
 						)}

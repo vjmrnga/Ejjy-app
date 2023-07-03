@@ -3,10 +3,13 @@ import { Button, Modal, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printReceivingVoucherForm } from 'configurePrinter';
+import dayjs from 'dayjs';
 import { vatTypes, VIEW_PRINTING_MODAL_WIDTH } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { formatDateTime, formatInPeso, formatQuantity } from 'utils';
+
+const { Text } = Typography;
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },
@@ -103,29 +106,21 @@ export const ViewReceivingVoucherModal = ({
 				bordered
 			/>
 			<Space className="w-100 mt-2 justify-space-between">
-				<Typography.Text>TOTAL AMOUNT PAID</Typography.Text>
-				<Typography.Text strong>
-					{formatInPeso(receivingVoucher.amount_paid)}
-				</Typography.Text>
+				<Text>TOTAL AMOUNT PAID</Text>
+				<Text strong>{formatInPeso(receivingVoucher.amount_paid)}</Text>
 			</Space>
 
-			<Space className="mt-4 w-100">
-				<Typography.Text>
-					{formatDateTime(receivingVoucher.datetime_created)}
-				</Typography.Text>
-			</Space>
-			<Space className="w-100 justify-space-between">
-				<Typography.Text>
-					C: {receivingVoucher.checked_by.employee_id}
-				</Typography.Text>
-				<Typography.Text>
-					E: {receivingVoucher.encoded_by.employee_id}
-				</Typography.Text>
-			</Space>
-			<Space className="w-100">
-				<Typography.Text>
-					Supplier: {receivingVoucher.supplier_name}
-				</Typography.Text>
+			<Space className="mt-4 w-100" direction="vertical">
+				<Text>GDT: {formatDateTime(receivingVoucher.datetime_created)}</Text>
+				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+
+				<Space className="w-100 justify-space-between">
+					<Text>C: {receivingVoucher.checked_by.employee_id}</Text>
+					<Text>E: {receivingVoucher.encoded_by.employee_id}</Text>
+				</Space>
+				<Space className="w-100">
+					<Text>Supplier: {receivingVoucher.supplier_name}</Text>
+				</Space>
 			</Space>
 
 			<ReceiptFooter />
