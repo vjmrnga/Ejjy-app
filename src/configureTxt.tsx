@@ -589,7 +589,7 @@ export const createXReadTxt = ({
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `GDT: ${formatDateTime(report.date)}`,
+		text: `GDT: ${formatDateTime(report.datetime_created)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -1035,7 +1035,7 @@ export const createZReadTxt = ({
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `GDT: ${formatDateTime(report.date)}`,
+		text: `GDT: ${formatDateTime(report.datetime_created)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});

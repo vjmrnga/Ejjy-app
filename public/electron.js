@@ -1,4 +1,11 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
+const {
+	app,
+	BrowserWindow,
+	Menu,
+	dialog,
+	ipcMain,
+	shell,
+} = require('electron');
 const { autoUpdater } = require('electron-updater');
 const kill = require('tree-kill');
 const isDev = require('electron-is-dev');

@@ -13,6 +13,10 @@ interface List extends IListRequest {
 	time_range: string;
 }
 
+interface RetrieveToday {
+	branch_id: number;
+}
+
 interface Create {
 	started_by_id: number;
 	online_started_by_id?: number;
@@ -26,6 +30,9 @@ interface Edit {
 const service = {
 	list: async (params: List, baseURL) =>
 		axios.get('/branches-days/', { baseURL, params }),
+
+	retrieveToday: async (params: RetrieveToday, baseURL) =>
+		axios.get('/branches-days/latest-today/', { baseURL, params }),
 
 	get: async (baseURL) => axios.get('/branches-days/latest/', { baseURL }),
 

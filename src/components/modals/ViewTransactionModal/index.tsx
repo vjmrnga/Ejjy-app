@@ -338,7 +338,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								<Text>{dataSource.length} item(s)</Text>
 							</Space>
 
-							<Text>{transaction.teller.employee_id}</Text>
+							<Text>{transaction?.teller?.employee_id}</Text>
 						</Space>
 
 						{transactionData?.adjustment_remarks

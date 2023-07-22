@@ -1368,7 +1368,7 @@ export const printXReadReport = ({
 
     <br />
 
-		<div>GDT: ${formatDateTime(report.date)}</div>
+		<div>GDT: ${formatDateTime(report.datetime_created)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
@@ -1629,7 +1629,7 @@ export const printZReadReport = ({
 
 		<br />
 
-		<div>GDT: ${formatDateTime(report.date)}</div>
+		<div>GDT: ${formatDateTime(report.datetime_created)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
@@ -2506,7 +2506,7 @@ export const printSalesInvoice = ({
 			<span>${transaction.products.length} item(s)</span>
 		</div>
 
-    <div>${transaction.teller.employee_id}</div>
+    <div>${transaction?.teller?.employee_id || EMPTY_CELL}</div>
 
     <br />
 

@@ -32,6 +32,7 @@ import {
 
 interface Props {
 	branchId: string | number;
+	isDisableZReadButton?: boolean;
 	tableHeaderClassName?: string;
 }
 
@@ -44,6 +45,7 @@ const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
 export const ReportsPerMachine = ({
 	branchId,
+	isDisableZReadButton,
 	tableHeaderClassName,
 }: Props) => {
 	// STATES
@@ -112,7 +114,11 @@ export const ReportsPerMachine = ({
 					>
 						View XRead (Date)
 					</Button>
-					<Button type="primary" onClick={() => viewZReadReport(branchMachine)}>
+					<Button
+						disabled={isDisableZReadButton}
+						type="primary"
+						onClick={() => viewZReadReport(branchMachine)}
+					>
 						View ZRead
 					</Button>
 				</Space>

@@ -201,4 +201,20 @@ const useBranchDaysNew = ({ params, options }: Query) =>
 		},
 	);
 
+export const useBranchDayRetrieve = ({ params, options }: Query) =>
+	useQuery<any>(
+		['useBranchDayRetrieve', params?.branchId],
+		() =>
+			wrapServiceWithCatch(
+				BranchDaysService.retrieveToday(
+					{ branch_id: params?.branchId },
+					getLocalApiUrl(),
+				),
+			),
+		{
+			select: (query) => query.data,
+			...options,
+		},
+	);
+
 export default useBranchDaysNew;

@@ -288,6 +288,9 @@ export const Dashboard = () => {
 
 									<ReportsPerMachine
 										branchId={branch.id}
+										isDisableZReadButton={
+											branchesStatus[id] !== authorizationStatuses.CLOSED
+										}
 										tableHeaderClassName="pt-2 px-0"
 									/>
 								</Tabs.TabPane>

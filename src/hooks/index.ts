@@ -16,6 +16,7 @@ export { default as useBranchAssignments } from './useBranchAssignments';
 export * from './useBranchDayAuthorizations';
 export { default as useBranchDayAuthorizations } from './useBranchDayAuthorizations';
 export { default as useBranchDays } from './useBranchDays';
+export * from './useBranchDays';
 export * from './useBranchMachines';
 export { default as useBranchMachines } from './useBranchMachines';
 export * from './useBranchProducts';
