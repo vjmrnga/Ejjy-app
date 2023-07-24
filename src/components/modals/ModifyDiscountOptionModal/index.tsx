@@ -137,7 +137,6 @@ export const ModifyDiscountOptionForm = ({
 							.label('Percentage'),
 					}),
 				isSpecialDiscount: Yup.boolean().required().label('SC/PWD'),
-				isVatInclusive: Yup.boolean().required().label('VAT Inclusive'),
 				additionalFields: Yup.array()
 					.of(Yup.string().required().label('Field'))
 					.notRequired(),
@@ -208,23 +207,6 @@ export const ModifyDiscountOptionForm = ({
 								}}
 							/>
 						</Col>
-
-						{/* <Col lg={12} span={24}>
-							<Label id="isVatInclusive" label="VAT Inclusive" spacing />
-							<Radio.Group
-								disabled={siteSettings.tax_type === taxTypes.NVAT}
-								options={[
-									{ label: 'Yes', value: true },
-									{ label: 'No', value: false },
-								]}
-								optionType="button"
-								value={values.isVatInclusive}
-								onChange={(e) => {
-									const { value } = e.target;
-									setFieldValue('isVatInclusive', value);
-								}}
-							/>
-						</Col> */}
 
 						<Col lg={12} span={24}>
 							<Label id="type" label="Type" spacing />

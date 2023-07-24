@@ -15,7 +15,7 @@ import {
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
-	transactionStatus,
+	transactionStatuses,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
@@ -58,8 +58,8 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 		params: {
 			branchMachineId,
 			statuses: [
-				transactionStatus.FULLY_PAID,
-				transactionStatus.VOID_EDITED,
+				transactionStatuses.FULLY_PAID,
+				transactionStatuses.VOID_EDITED,
 			].join(','),
 			timeRange: timeRangeTypes.DAILY,
 			...params,

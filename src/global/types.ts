@@ -113,7 +113,7 @@ export const productCheckingTypes = {
 	RANDOM: 'random',
 };
 
-export const transactionStatus = {
+export const transactionStatuses = {
 	NEW: 'new',
 	FULLY_PAID: 'fully_paid',
 	HOLD: 'hold',

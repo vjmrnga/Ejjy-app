@@ -43,7 +43,6 @@ interface DataType {
 	type: string;
 	percentage: string;
 	isSpecialDiscount: string | React.ReactNode;
-	isVatInclusive: string | React.ReactNode;
 	fields?: string;
 }
 
@@ -82,11 +81,6 @@ export const DiscountOptions = () => {
 				? `${Number(discountOption.percentage)}%`
 				: EMPTY_CELL,
 			isSpecialDiscount: discountOption.is_special_discount ? (
-				<Tag color="green">Yes</Tag>
-			) : (
-				<Tag color="blue">No</Tag>
-			),
-			isVatInclusive: discountOption.is_vat_inclusive ? (
 				<Tag color="green">Yes</Tag>
 			) : (
 				<Tag color="blue">No</Tag>
@@ -143,7 +137,6 @@ export const DiscountOptions = () => {
 				dataIndex: 'isSpecialDiscount',
 				align: 'center',
 			},
-			{ title: 'VAT Inclusive', dataIndex: 'isVatInclusive', align: 'center' },
 		];
 
 		if (isCUDShown(user.user_type)) {

@@ -1,6 +1,12 @@
-import { Col, Radio, Row, Select, Table } from 'antd';
+import { EditFilled } from '@ant-design/icons';
+import { Button, Col, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
+import {
+	EditAttendanceLogModal,
+	RequestErrors,
+	TableHeader,
+	TimeRangeFilter,
+} from 'components';
 import { Label } from 'components/elements';
 import {
 	accountTypes,
@@ -15,10 +21,11 @@ import {
 	useAccounts,
 	useAttendanceLogs,
 	useBranches,
+	usePingOnlineServer,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
@@ -28,32 +35,16 @@ import {
 	getFullName,
 	getLocalBranchId,
 	isUserFromBranch,
+	isUserFromOffice,
 } from 'utils';
-
-const columns: ColumnsType = [
-	{ title: 'Employee Name', dataIndex: 'name' },
-	{
-		title: 'Date & Time',
-		children: [
-			{
-				title: 'Scheduled',
-				dataIndex: 'scheduledDateTime',
-			},
-			{
-				title: 'Real',
-				dataIndex: 'realDateTime',
-			},
-		],
-	},
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'Description', dataIndex: 'description' },
-];
 
 export const TabDTR = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [selectedLog, setSelectedLog] = useState(null);
 
 	// CUSTOM HOOKS
+	const { isConnected } = usePingOnlineServer();
 	const { params, setQueryParams } = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const {
@@ -83,10 +74,48 @@ export const TabDTR = () => {
 				log.attendance_category,
 				log.attendance_type,
 			),
+			actions: (
+				<Tooltip title="Edit">
+					<Button
+						disabled={isConnected === false}
+						icon={<EditFilled />}
+						type="primary"
+						ghost
+						onClick={() => setSelectedLog(log)}
+					/>
+				</Tooltip>
+			),
 		}));
 
 		setDataSource(data);
 	}, [attendanceLogs]);
+
+	const getColumns = useCallback(() => {
+		const columns: ColumnsType = [
+			{ title: 'Employee Name', dataIndex: 'name' },
+			{
+				title: 'Date & Time',
+				children: [
+					{
+						title: 'Scheduled',
+						dataIndex: 'scheduledDateTime',
+					},
+					{
+						title: 'Real',
+						dataIndex: 'realDateTime',
+					},
+				],
+			},
+			{ title: 'Type', dataIndex: 'type' },
+			{ title: 'Description', dataIndex: 'description' },
+		];
+
+		if (isUserFromOffice(user.user_type)) {
+			columns.push({ title: 'Actions', dataIndex: 'actions' });
+		}
+
+		return columns;
+	}, [user.user_type]);
 
 	return (
 		<>
@@ -100,7 +129,7 @@ export const TabDTR = () => {
 			<Filter />
 
 			<Table
-				columns={columns}
+				columns={getColumns()}
 				dataSource={dataSource}
 				loading={isFetchingAttendanceLogs}
 				pagination={{
@@ -120,6 +149,15 @@ export const TabDTR = () => {
 				scroll={{ x: 800 }}
 				bordered
 			/>
+
+			{selectedLog && (
+				<EditAttendanceLogModal
+					attendanceLog={selectedLog}
+					onClose={() => {
+						setSelectedLog(null);
+					}}
+				/>
+			)}
 		</>
 	);
 };

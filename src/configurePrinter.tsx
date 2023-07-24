@@ -7,8 +7,7 @@ import {
 	printerStatuses,
 	quantityTypes,
 	saleTypes,
-	taxTypes,
-	transactionStatus,
+	transactionStatuses,
 	vatTypes,
 } from 'global';
 import _ from 'lodash';
@@ -2156,7 +2155,7 @@ export const printAdjustmentReport = ({ transactions, user }) => {
 			let remarks = '';
 			if (backOrder) {
 				remarks = `Back Order - ${backOrder.id}`;
-			} else if (transaction.status === transactionStatus.VOID_CANCELLED) {
+			} else if (transaction.status === transactionStatuses.VOID_CANCELLED) {
 				remarks = getTransactionStatusDescription(transaction.status);
 			} else if (newTransaction) {
 				remarks = `New Invoice - ${newTransaction.invoice.or_number}`;
@@ -2412,13 +2411,6 @@ export const printSalesInvoice = ({
 			  </tr>
 
         <tr>
-          <td>ADJUSTMENT ON VAT</td>
-          <td style="text-align: right;">
-            (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
-          </td>
-        </tr>
-
-        <tr>
 				  <td>DISCOUNT | ${transaction.discount_option.code}</td>
 				  <td style="text-align: right;">
 					  (${formatInPeso(transaction.overall_discount, PESO_SIGN)})
@@ -2498,6 +2490,40 @@ export const printSalesInvoice = ({
     </table>
     <br />
 
+    ${
+			transaction.discount_option
+				? `
+      <table style="width: 100%;">
+        <tr>
+          <td>Discount Breakdown:</td>
+        </tr>
+        <tr>
+          <td style="padding-left: 4ch">Discount Deduction</td>
+          <td style="text-align: right;">
+            ${formatInPeso(
+							transaction.overall_discount - transaction.invoice.vat_amount,
+							PESO_SIGN,
+						)}&nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-left: 4ch">Adj. on VAT</td>
+          <td style="text-align: right;">
+            ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-left: 4ch">Total</td>
+          <td style="text-align: right;">
+            ${formatInPeso(transaction.overall_discount, PESO_SIGN)}&nbsp;
+          </td>
+        </tr>
+      </table>
+      `
+				: ''
+		}
+    <br />
+
     <div>GDT: ${formatDateTime(transaction.invoice.datetime_created)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
@@ -2539,20 +2565,20 @@ export const printSalesInvoice = ({
 
 		<div style="text-align: center; display: flex; flex-direction: column">
     <span>${
-			isReprint && transaction.status === transactionStatus.FULLY_PAID
+			isReprint && transaction.status === transactionStatuses.FULLY_PAID
 				? 'REPRINT ONLY'
 				: ''
 		}</span>
     <span>${
 			[
-				transactionStatus.VOID_EDITED,
-				transactionStatus.VOID_CANCELLED,
+				transactionStatuses.VOID_EDITED,
+				transactionStatuses.VOID_CANCELLED,
 			].includes(transaction.status)
 				? 'VOIDED TRANSACTION'
 				: ''
 		}</span>
     <span style="white-space: pre-line">${
-			transaction.status === transactionStatus.FULLY_PAID
+			transaction.status === transactionStatuses.FULLY_PAID
 				? siteSettings?.invoice_last_message
 				: ''
 		}</span>

@@ -33,7 +33,7 @@ import {
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
 	returnItemSlipsStatuses,
-	transactionStatus,
+	transactionStatuses,
 	unitOfMeasurementTypes,
 	userTypes,
 } from 'global';
@@ -392,19 +392,19 @@ export const getProductType = _.memoize((type) => {
 
 export const getTransactionStatusDescription = _.memoize((status) => {
 	switch (status) {
-		case transactionStatus.NEW: {
+		case transactionStatuses.NEW: {
 			return 'New';
 		}
-		case transactionStatus.FULLY_PAID: {
+		case transactionStatuses.FULLY_PAID: {
 			return 'Fully Paid';
 		}
-		case transactionStatus.HOLD: {
+		case transactionStatuses.HOLD: {
 			return 'Hold';
 		}
-		case transactionStatus.VOID_CANCELLED: {
+		case transactionStatuses.VOID_CANCELLED: {
 			return 'Cancelled';
 		}
-		case transactionStatus.VOID_EDITED: {
+		case transactionStatuses.VOID_EDITED: {
 			return 'Edited';
 		}
 		default: {

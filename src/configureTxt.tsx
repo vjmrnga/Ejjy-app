@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { saleTypes, transactionStatus, vatTypes } from 'global';
+import { saleTypes, transactionStatuses, vatTypes } from 'global';
 import React from 'react';
 import {
 	formatDateTime,
@@ -1082,6 +1082,7 @@ export const createSalesInvoiceTxt = ({
 	transaction,
 	siteSettings,
 	isReprint = false,
+	returnContent = false,
 }) => {
 	const change =
 		Number(transaction.payment.amount_tendered) - transaction.total_amount;
@@ -1149,7 +1150,6 @@ export const createSalesInvoiceTxt = ({
 	let rowNumber = 0;
 
 	rowNumber = writeHeader({
-		branchMachine: transaction?.branch_machine,
 		title,
 		siteSettings,
 		reportTextFile,
@@ -1213,18 +1213,6 @@ export const createSalesInvoiceTxt = ({
 		});
 		reportTextFile.write({
 			text: formatInPeso(transaction.gross_amount, PESO_SIGN),
-			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-			rowNumber,
-		});
-		rowNumber += 1;
-
-		reportTextFile.write({
-			text: 'ADJUSTMENT ON VAT',
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		reportTextFile.write({
-			text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
 			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 			rowNumber,
 		});
@@ -1350,6 +1338,56 @@ export const createSalesInvoiceTxt = ({
 
 	rowNumber += 1;
 
+	if (transaction.discount_option) {
+		reportTextFile.write({
+			text: 'Discount Breakdown:',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   Discount Deduction',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: formatInPeso(
+				transaction.overall_discount - transaction.invoice.vat_amount,
+				PESO_SIGN,
+			),
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   Adj. on VAT',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+
+		reportTextFile.write({
+			text: '   Total',
+			alignment: ReportTextFile.ALIGNMENTS.LEFT,
+			rowNumber,
+		});
+		reportTextFile.write({
+			text: formatInPeso(transaction.overall_discount, PESO_SIGN),
+			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+			rowNumber,
+		});
+		rowNumber += 1;
+	}
+
+	rowNumber += 1;
+
 	reportTextFile.write({
 		text: `GDT: ${formatDateTime(transaction.invoice.datetime_created)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -1419,7 +1457,7 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	if (isReprint && transaction.status === transactionStatus.FULLY_PAID) {
+	if (isReprint && transaction.status === transactionStatuses.FULLY_PAID) {
 		rowNumber += 1;
 		reportTextFile.write({
 			text: 'REPRINT ONLY',
@@ -1429,9 +1467,10 @@ export const createSalesInvoiceTxt = ({
 	}
 
 	if (
-		[transactionStatus.VOID_EDITED, transactionStatus.VOID_CANCELLED].includes(
-			transaction.status,
-		)
+		[
+			transactionStatuses.VOID_EDITED,
+			transactionStatuses.VOID_CANCELLED,
+		].includes(transaction.status)
 	) {
 		rowNumber += 2;
 
@@ -1455,6 +1494,10 @@ export const createSalesInvoiceTxt = ({
 		alignment: ReportTextFile.ALIGNMENTS.CENTER,
 		rowNumber,
 	});
+
+	if (returnContent) {
+		return reportTextFile.get();
+	}
 
 	reportTextFile.export(`Sales_Invoice_${transaction.invoice.or_number}.txt`);
 

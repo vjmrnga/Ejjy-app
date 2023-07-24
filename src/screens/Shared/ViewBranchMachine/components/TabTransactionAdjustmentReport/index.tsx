@@ -26,7 +26,7 @@ import {
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
-	transactionStatus,
+	transactionStatuses,
 } from 'global';
 import { usePdf, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
@@ -113,7 +113,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 							Back Order - {backOrder.id}
 						</Button>
 					)}
-					{transaction.status === transactionStatus.VOID_CANCELLED && (
+					{transaction.status === transactionStatuses.VOID_CANCELLED && (
 						<TransactionStatus status={transaction.status} />
 					)}
 					{newTransaction && (

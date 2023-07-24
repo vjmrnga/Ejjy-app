@@ -22,6 +22,10 @@ interface ApproveOrDecline {
 	is_approved: boolean;
 }
 
+interface Edit {
+	real_time: string;
+}
+
 const service = {
 	list: async (params: List, baseURL: string) =>
 		axios.get('/attendance-logs/', { baseURL, params }),
@@ -31,6 +35,9 @@ const service = {
 
 	listForPrinting: async (params: ListForPrinting, baseURL: string) =>
 		axios.get('/attendance-logs/for-printing/', { baseURL, params }),
+
+	edit: async (id: number, body: Edit, baseURL) =>
+		axios.patch(`/attendance-logs/${id}/`, body, { baseURL }),
 
 	resolve: async (id: number, body: Resolve, baseURL: string) =>
 		axios.post(`attendance-logs/${id}/resolve-problematic/`, body, { baseURL }),

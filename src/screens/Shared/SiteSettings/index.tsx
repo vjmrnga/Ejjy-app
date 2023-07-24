@@ -225,10 +225,12 @@ export const SiteSettings = () => {
 				resetCounterNotificationThresholdAmount: Yup.number()
 					.required()
 					.min(0)
+					.max(99_999_999_999)
 					.label('Reset Counter Notification Threshold Amount'),
 				resetCounterNotificationThresholdInvoiceNumber: Yup.number()
 					.required()
 					.min(0)
+					.max(99_999_999_999)
 					.label('Reset Counter Notification Threshold Invoice Number'),
 
 				storeName: Yup.string().required().label('Store Name').trim(),

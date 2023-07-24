@@ -15,7 +15,7 @@ import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';
 import dayjs from 'dayjs';
-import { EMPTY_CELL, saleTypes, transactionStatus, vatTypes } from 'global';
+import { EMPTY_CELL, saleTypes, transactionStatuses, vatTypes } from 'global';
 import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -173,6 +173,8 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 		});
 	};
 
+	console.log('transaction', transaction);
+
 	return (
 		<Modal
 			className="Modal__hasFooter"
@@ -249,9 +251,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									<Descriptions.Item label="GROSS AMOUNT">
 										{formatInPeso(transactionData.gross_amount)}&nbsp;
 									</Descriptions.Item>
-									<Descriptions.Item label="ADJUSTMENT ON VAT">
-										({formatInPeso(transactionData.invoice.vat_amount)})
-									</Descriptions.Item>
 									<Descriptions.Item
 										label={`DISCOUNT | ${transactionData.discount_option.code}`}
 									>
@@ -263,7 +262,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								contentStyle={{ fontWeight: 'bold' }}
 								label="TOTAL AMOUNT"
 							>
-								{formatInPeso(transactionData.total_amount)}
+								{formatInPeso(transactionData.total_amount)}&nbsp;
 							</Descriptions.Item>
 						</Descriptions>
 
@@ -283,10 +282,10 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 								size="small"
 							>
 								<Descriptions.Item label="AMOUNT RECEIVED">
-									{formatInPeso(transactionData.payment.amount_tendered)}
+									{formatInPeso(transactionData.payment.amount_tendered)}&nbsp;
 								</Descriptions.Item>
 								<Descriptions.Item label="AMOUNT DUE">
-									{formatInPeso(transactionData.total_amount)}
+									{formatInPeso(transactionData.total_amount)}&nbsp;
 								</Descriptions.Item>
 								<Descriptions.Item
 									contentStyle={{ fontWeight: 'bold' }}
@@ -296,6 +295,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 										Number(transactionData.payment.amount_tendered) -
 											Number(transactionData.total_amount),
 									)}
+									&nbsp;
 								</Descriptions.Item>
 							</Descriptions>
 						)}
@@ -314,18 +314,59 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							size="small"
 						>
 							<Descriptions.Item label="VAT Exempt">
-								{formatInPeso(transactionData.invoice.vat_exempt)}
+								{formatInPeso(transactionData.invoice.vat_exempt)}&nbsp;
 							</Descriptions.Item>
 							<Descriptions.Item label="VAT Sales">
-								{formatInPeso(transactionData.invoice.vat_sales)}
+								{formatInPeso(transactionData.invoice.vat_sales)}&nbsp;
 							</Descriptions.Item>
 							<Descriptions.Item label="VAT Amount (12%)">
-								{formatInPeso(transactionData.invoice.vat_amount)}
+								{formatInPeso(transactionData.invoice.vat_amount)}&nbsp;
 							</Descriptions.Item>
 							<Descriptions.Item label="ZERO Rated">
-								{formatInPeso(0)}
+								{formatInPeso(0)}&nbsp;
 							</Descriptions.Item>
 						</Descriptions>
+
+						{transactionData.discount_option && (
+							<Descriptions
+								className="mt-6 w-90"
+								colon={false}
+								column={1}
+								contentStyle={{
+									textAlign: 'right',
+									display: 'block',
+								}}
+								labelStyle={{ width: 200 }}
+								size="small"
+							>
+								<>
+									<Descriptions.Item label="Discount Breakdown:">
+										{null}
+									</Descriptions.Item>
+									<Descriptions.Item
+										label="Discount Deduction"
+										labelStyle={{ paddingLeft: 30 }}
+									>
+										{formatInPeso(
+											transactionData.overall_discount -
+												transactionData.invoice.vat_amount,
+										)}
+									</Descriptions.Item>
+									<Descriptions.Item
+										label="Adj. on VAT"
+										labelStyle={{ paddingLeft: 30 }}
+									>
+										{formatInPeso(transactionData.invoice.vat_amount)}
+									</Descriptions.Item>
+									<Descriptions.Item
+										label="Total"
+										labelStyle={{ paddingLeft: 30 }}
+									>
+										{formatInPeso(transactionData.overall_discount)}
+									</Descriptions.Item>
+								</>
+							</Descriptions>
+						)}
 
 						<Space className="mt-6 w-100" direction="vertical">
 							<Text>
@@ -385,7 +426,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 						<ReceiptFooter />
 
-						{transactionData?.status === transactionStatus.FULLY_PAID && (
+						{transactionData?.status === transactionStatuses.FULLY_PAID && (
 							<Text
 								className="d-block text-center"
 								style={{ whiteSpace: 'pre-line' }}
@@ -394,8 +435,8 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Text>
 						)}
 						{[
-							transactionStatus.VOID_CANCELLED,
-							transactionStatus.VOID_EDITED,
+							transactionStatuses.VOID_CANCELLED,
+							transactionStatuses.VOID_EDITED,
 						].includes(transactionData?.status) && (
 							<Text className="mt-4 d-block text-center">
 								VOIDED TRANSACTION

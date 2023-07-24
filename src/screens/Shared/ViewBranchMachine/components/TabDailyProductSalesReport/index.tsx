@@ -16,7 +16,7 @@ import {
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
-	transactionStatus,
+	transactionStatuses,
 } from 'global';
 import { useQueryParams, useTransactionProducts } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -43,8 +43,8 @@ const columns: ColumnsType = [
 ];
 
 const ALL_STATUS = [
-	transactionStatus.VOID_CANCELLED,
-	transactionStatus.FULLY_PAID,
+	transactionStatuses.VOID_CANCELLED,
+	transactionStatuses.FULLY_PAID,
 ].join(',');
 
 interface Props {
@@ -95,8 +95,8 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 			);
 
 			const remarks = [
-				transactionStatus.VOID_CANCELLED,
-				transactionStatus.VOID_EDITED,
+				transactionStatuses.VOID_CANCELLED,
+				transactionStatuses.VOID_EDITED,
 			].includes(transaction.status) && (
 				<TransactionStatus status={transaction.status} />
 			);
@@ -238,13 +238,13 @@ const Filter = ({ isLoading }: FilterProps) => {
 						},
 						{
 							label: 'Success',
-							value: transactionStatus.FULLY_PAID,
+							value: transactionStatuses.FULLY_PAID,
 						},
 						{
 							label: 'Voided',
 							value: [
-								transactionStatus.VOID_CANCELLED,
-								transactionStatus.VOID_EDITED,
+								transactionStatuses.VOID_CANCELLED,
+								transactionStatuses.VOID_EDITED,
 							].join(','),
 						},
 					]}

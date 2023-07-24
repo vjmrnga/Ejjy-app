@@ -9,7 +9,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AttendanceLogsService } from 'services';
-import { getLocalApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
 
 const useAttendanceLogs = ({ params }: Query) =>
 	useQuery<any>(
@@ -141,6 +141,24 @@ export const useProblematicAttendanceLogApproveDecline = () => {
 			onSuccess: () => {
 				queryClient.invalidateQueries('useAttendanceLogs');
 				queryClient.invalidateQueries('useProblematicAttendanceLogs');
+			},
+		},
+	);
+};
+
+export const useAttendanceLogEdit = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<any, any, any>(
+		({ id, realTime }: any) =>
+			AttendanceLogsService.edit(
+				id,
+				{ real_time: realTime },
+				getOnlineApiUrl(),
+			),
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('useAttendanceLogs');
 			},
 		},
 	);

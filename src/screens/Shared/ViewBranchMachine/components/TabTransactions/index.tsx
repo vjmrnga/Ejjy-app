@@ -15,7 +15,7 @@ import {
 	paymentTypes,
 	refetchOptions,
 	timeRangeTypes,
-	transactionStatus,
+	transactionStatuses,
 } from 'global';
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
@@ -32,30 +32,30 @@ const columns: ColumnsType = [
 
 const transactionStatusOptions = [
 	{
-		value: transactionStatus.NEW,
+		value: transactionStatuses.NEW,
 		title: 'New',
 	},
 	{
-		value: transactionStatus.HOLD,
+		value: transactionStatuses.HOLD,
 		title: 'Hold',
 	},
 	{
-		value: transactionStatus.VOID_EDITED,
+		value: transactionStatuses.VOID_EDITED,
 		title: 'Void Edited',
 	},
 	{
-		value: transactionStatus.VOID_CANCELLED,
+		value: transactionStatuses.VOID_CANCELLED,
 		title: 'Void Cancelled',
 	},
 	{
-		value: transactionStatus.FULLY_PAID,
+		value: transactionStatuses.FULLY_PAID,
 		title: 'Fully Paid',
 	},
 ];
 
 const voidedStatuses = [
-	transactionStatus.VOID_CANCELLED,
-	transactionStatus.VOID_EDITED,
+	transactionStatuses.VOID_CANCELLED,
+	transactionStatuses.VOID_EDITED,
 ];
 
 interface Props {
