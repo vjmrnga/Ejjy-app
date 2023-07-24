@@ -72,5 +72,8 @@ export const JSPDF_SETTINGS: jsPDFOptions = {
 	hotfixes: ['px_scaling'],
 };
 
+export const EJOURNAL_FOLDER = 'media';
+export const DESKTOP_FOLDER_OPEN_FUNCTION = 'openFolder';
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);

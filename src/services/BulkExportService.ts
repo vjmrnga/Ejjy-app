@@ -3,11 +3,11 @@ import axios from 'axios';
 type BulkExportData = {
 	contents: string;
 	file_name: string;
+	folder_name: string;
 };
 
 interface BulkExport {
 	data: BulkExportData[];
-	folder_name: string;
 }
 
 const service = {

@@ -23,6 +23,7 @@ export const useBulkExportXReadReports = () =>
 		);
 
 		const data = reports.results.map((report) => ({
+			folder_name: 'reports/zread',
 			file_name: `XReadReport_${report.id}.txt`,
 			contents: createXReadTxt({
 				report,
@@ -32,13 +33,7 @@ export const useBulkExportXReadReports = () =>
 			}),
 		}));
 
-		return BulkExportService.bulkExportReports(
-			{
-				data,
-				folder_name: 'xread',
-			},
-			localApiUrl,
-		);
+		return BulkExportService.bulkExportReports({ data }, localApiUrl);
 	});
 
 export const useBulkExportZReadReports = () =>
@@ -55,6 +50,7 @@ export const useBulkExportZReadReports = () =>
 		);
 
 		const data = reports.results.map((report) => ({
+			folder_name: 'reports/zread',
 			file_name: `ZReadReport_${report.id}.txt`,
 			contents: createZReadTxt({
 				report,
@@ -64,11 +60,5 @@ export const useBulkExportZReadReports = () =>
 			}),
 		}));
 
-		return BulkExportService.bulkExportReports(
-			{
-				data,
-				folder_name: 'zread',
-			},
-			localApiUrl,
-		);
+		return BulkExportService.bulkExportReports({ data }, localApiUrl);
 	});

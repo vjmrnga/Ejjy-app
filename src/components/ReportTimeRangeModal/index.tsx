@@ -1,7 +1,11 @@
 import { Button, Modal, message } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
-import { readReportTypes } from 'global';
+import {
+	DESKTOP_FOLDER_OPEN_FUNCTION,
+	EJOURNAL_FOLDER,
+	readReportTypes,
+} from 'global';
 import {
 	useBulkExportXReadReports,
 	useBulkExportZReadReports,
@@ -49,15 +53,14 @@ export const ReportTimeRangeModal = ({ type, onClose }: Props) => {
 			user,
 		};
 
-		let response = null;
 		if (readReportTypes.XREAD === type) {
-			response = await bulkExportXReadReports(paramsData);
+			await bulkExportXReadReports(paramsData);
 		} else if (readReportTypes.ZREAD === type) {
-			response = await bulkExportZReadReports(paramsData);
+			await bulkExportZReadReports(paramsData);
 		}
 
-		if (ipcRenderer && response.data) {
-			await ipcRenderer.send('openFolder', response.data);
+		if (ipcRenderer) {
+			await ipcRenderer.send(DESKTOP_FOLDER_OPEN_FUNCTION, EJOURNAL_FOLDER);
 		}
 
 		message.success('E-journals have been generated successfully.');
