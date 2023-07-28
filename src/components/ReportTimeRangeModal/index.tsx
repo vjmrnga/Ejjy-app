@@ -1,17 +1,8 @@
 import { Button, Modal, message } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
-import {
-	DESKTOP_FOLDER_OPEN_FUNCTION,
-	EJOURNAL_FOLDER,
-	readReportTypes,
-} from 'global';
-import {
-	useBulkExportXReadReports,
-	useBulkExportZReadReports,
-	useQueryParams,
-	useSiteSettings,
-} from 'hooks';
+import { DESKTOP_FOLDER_OPEN_FUNCTION, EJOURNAL_FOLDER } from 'global';
+import { useBulkExport, useQueryParams, useSiteSettings } from 'hooks';
 import React from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray } from 'utils';
@@ -23,11 +14,10 @@ if (window.require) {
 }
 
 interface Props {
-	type: any;
 	onClose: any;
 }
 
-export const ReportTimeRangeModal = ({ type, onClose }: Props) => {
+export const ReportTimeRangeModal = ({ onClose }: Props) => {
 	const { params } = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const {
@@ -36,28 +26,17 @@ export const ReportTimeRangeModal = ({ type, onClose }: Props) => {
 		error: siteSettingsError,
 	} = useSiteSettings();
 	const {
-		mutateAsync: bulkExportXReadReports,
-		isLoading: isExportingXReadReports,
-		error: bulkExportXReadReportsError,
-	} = useBulkExportXReadReports();
-	const {
-		mutateAsync: bulkExportZReadReports,
-		isLoading: isExportingZreadReports,
-		error: bulkExportZreadReportsError,
-	} = useBulkExportZReadReports();
+		mutateAsync: bulkExport,
+		isLoading: isExporting,
+		error: bulkExportError,
+	} = useBulkExport();
 
 	const handleBulkExport = async () => {
-		const paramsData = {
+		await bulkExport({
 			siteSettings,
 			timeRange: params.timeRange,
 			user,
-		};
-
-		if (readReportTypes.XREAD === type) {
-			await bulkExportXReadReports(paramsData);
-		} else if (readReportTypes.ZREAD === type) {
-			await bulkExportZReadReports(paramsData);
-		}
+		});
 
 		if (ipcRenderer) {
 			await ipcRenderer.send(DESKTOP_FOLDER_OPEN_FUNCTION, EJOURNAL_FOLDER);
@@ -83,20 +62,13 @@ export const ReportTimeRangeModal = ({ type, onClose }: Props) => {
 		>
 			<RequestErrors
 				errors={[
-					...convertIntoArray(bulkExportXReadReportsError),
-					...convertIntoArray(bulkExportZreadReportsError),
+					...convertIntoArray(bulkExportError),
 					...convertIntoArray(siteSettingsError),
 				]}
 				withSpaceBottom
 			/>
 
-			<TimeRangeFilter
-				disabled={
-					isExportingXReadReports ||
-					isExportingZreadReports ||
-					isFetchingSiteSettings
-				}
-			/>
+			<TimeRangeFilter disabled={isExporting || isFetchingSiteSettings} />
 		</Modal>
 	);
 };

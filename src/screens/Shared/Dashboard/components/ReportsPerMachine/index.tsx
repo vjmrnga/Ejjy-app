@@ -8,12 +8,7 @@ import {
 	ViewZReadReportModal,
 } from 'components';
 import { FieldError } from 'components/elements';
-import {
-	branchMachineTypes,
-	EMPTY_CELL,
-	MAX_PAGE_SIZE,
-	readReportTypes,
-} from 'global';
+import { branchMachineTypes, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useBranchMachines,
 	useCashieringSessions,
@@ -56,7 +51,8 @@ export const ReportsPerMachine = ({
 	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
 	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
 		useState(false);
-	const [generateReportType, setGenerateReportType] = useState(null);
+	const [isExportEjournalModalVisible, setIsExportEjournalModalVisible] =
+		useState(false);
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
@@ -190,26 +186,16 @@ export const ReportsPerMachine = ({
 	return (
 		<>
 			<TableHeader
-				buttons={[
+				buttons={
 					<Button
-						key="btnXread"
 						loading={false}
 						type="primary"
 						ghost
-						onClick={() => setGenerateReportType(readReportTypes.XREAD)}
+						onClick={() => setIsExportEjournalModalVisible(true)}
 					>
-						Generate XRead Reports
-					</Button>,
-					<Button
-						key="btnZread"
-						loading={false}
-						type="primary"
-						ghost
-						onClick={() => setGenerateReportType(readReportTypes.XREAD)}
-					>
-						Generate ZRead Reports
-					</Button>,
-				]}
+						Generate E-journal
+					</Button>
+				}
 				title="Reports per Machine"
 				wrapperClassName={tableHeaderClassName}
 			/>
@@ -265,10 +251,9 @@ export const ReportsPerMachine = ({
 				/>
 			)}
 
-			{generateReportType && (
+			{isExportEjournalModalVisible && (
 				<ReportTimeRangeModal
-					type={generateReportType}
-					onClose={() => setGenerateReportType(null)}
+					onClose={() => setIsExportEjournalModalVisible(null)}
 				/>
 			)}
 		</>
