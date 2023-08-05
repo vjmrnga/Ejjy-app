@@ -649,6 +649,17 @@ export const createZReadTxt = ({
 	});
 	rowNumber += 1;
 
+	if (report.total_transactions === 0) {
+		rowNumber += 1;
+		reportTextFile.write({
+			text: 'NO TRANSACTION',
+			alignment: ReportTextFile.ALIGNMENTS.CENTER,
+			rowNumber,
+		});
+		rowNumber += 1;
+		rowNumber += 1;
+	}
+
 	reportTextFile.write({
 		text: 'Z-READ',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
@@ -1457,10 +1468,10 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	if (isReprint && transaction.status === transactionStatuses.FULLY_PAID) {
+	if (transaction.status === transactionStatuses.FULLY_PAID) {
 		rowNumber += 1;
 		reportTextFile.write({
-			text: 'REPRINT ONLY',
+			text: isReprint ? 'REPRINT ONLY' : siteSettings?.invoice_last_message,
 			alignment: ReportTextFile.ALIGNMENTS.CENTER,
 			rowNumber,
 		});
@@ -1480,13 +1491,6 @@ export const createSalesInvoiceTxt = ({
 			rowNumber,
 		});
 	}
-
-	rowNumber += 1;
-	reportTextFile.write({
-		text: siteSettings?.invoice_last_message,
-		alignment: ReportTextFile.ALIGNMENTS.CENTER,
-		rowNumber,
-	});
 
 	rowNumber += 1;
 	reportTextFile.write({

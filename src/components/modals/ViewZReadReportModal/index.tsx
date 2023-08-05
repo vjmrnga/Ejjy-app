@@ -14,7 +14,9 @@ import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { useUserStore } from 'stores';
+import imgNoTransaction from 'assets/images/no-transaction.png';
 import { formatDateTime, formatInPeso } from 'utils';
+import './style.scss';
 
 const { Text } = Typography;
 
@@ -48,7 +50,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 	return (
 		<Modal
-			className="Modal__hasFooter"
+			className="ViewZReadReportModal Modal__hasFooter"
 			footer={[
 				<Button
 					key="receipt"
@@ -84,6 +86,14 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			open
 			onCancel={onClose}
 		>
+			{report.total_transactions === 0 && (
+				<img
+					alt="no transaction"
+					className="img-no-transaction"
+					src={imgNoTransaction}
+				/>
+			)}
+
 			{report?.branch_machine && (
 				<ReceiptHeader branchMachine={report.branch_machine} />
 			)}

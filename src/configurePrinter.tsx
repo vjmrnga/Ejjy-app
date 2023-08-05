@@ -1408,6 +1408,14 @@ export const printZReadReport = ({
 
     <br />
 
+    ${
+			report?.total_transactions === 0
+				? '<div style="text-align: center">NO TRANSACTION</div>'
+				: ''
+		}
+
+    <br/>
+
     <div>Z-READ</div>
     <br/>
 
@@ -2564,25 +2572,25 @@ export const printSalesInvoice = ({
 		${getFooter(siteSettings)}
 
 		<div style="text-align: center; display: flex; flex-direction: column">
-    <span>${
-			isReprint && transaction.status === transactionStatuses.FULLY_PAID
-				? 'REPRINT ONLY'
-				: ''
-		}</span>
-    <span>${
-			[
-				transactionStatuses.VOID_EDITED,
-				transactionStatuses.VOID_CANCELLED,
-			].includes(transaction.status)
-				? 'VOIDED TRANSACTION'
-				: ''
-		}</span>
-    <span style="white-space: pre-line">${
-			transaction.status === transactionStatuses.FULLY_PAID
-				? siteSettings?.invoice_last_message
-				: ''
-		}</span>
-    <span>"${siteSettings?.thank_you_message}"</span>
+      <span>${
+				isReprint && transaction.status === transactionStatuses.FULLY_PAID
+					? 'REPRINT ONLY'
+					: ''
+			}</span>
+      <span style="white-space: pre-line">${
+				!isReprint && transaction.status === transactionStatuses.FULLY_PAID
+					? siteSettings?.invoice_last_message
+					: ''
+			}</span>
+      <span>${
+				[
+					transactionStatuses.VOID_EDITED,
+					transactionStatuses.VOID_CANCELLED,
+				].includes(transaction.status)
+					? 'VOIDED TRANSACTION'
+					: ''
+			}</span>
+      <span>"${siteSettings?.thank_you_message}"</span>
 		</div>
 	</div>
 	`;
