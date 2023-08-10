@@ -449,7 +449,7 @@ export const createXReadTxt = ({
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `(${formatInPeso(report.vat_amount, PESO_SIGN)})`,
+		text: `(${formatInPeso(report.total_vat_adjusted, PESO_SIGN)})`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});
@@ -906,7 +906,7 @@ export const createZReadTxt = ({
 		rowNumber,
 	});
 	reportTextFile.write({
-		text: `(${formatInPeso(report.vat_amount, PESO_SIGN)})`,
+		text: `(${formatInPeso(report.total_vat_adjusted, PESO_SIGN)})`,
 		alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 		rowNumber,
 	});

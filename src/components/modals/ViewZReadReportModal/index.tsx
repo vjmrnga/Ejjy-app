@@ -228,7 +228,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 					<ReceiptUnderlinedValue
 						postfix=")"
 						prefix="("
-						value={report.vat_amount}
+						value={report.total_vat_adjusted}
 					/>
 				</Descriptions.Item>
 				<Descriptions.Item

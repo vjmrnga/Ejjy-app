@@ -1301,7 +1301,7 @@ export const printXReadReport = ({
         <td style="padding-left: 15px">VAT AMOUNT (12%)</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
-				)})${addUnderline(report.vat_amount)}</td>
+				)})${addUnderline(report.total_vat_adjusted)}</td>
       </tr>
       <tr>
         <td><b>NET SALES</b></td>
@@ -1570,7 +1570,7 @@ export const printZReadReport = ({
         <td style="padding-left: 15px"> (12%)</td>
         <td style="text-align: right">(${formatInPesoWithUnderline(
 					report.vat_amount,
-				)})${addUnderline(report.vat_amount)}</td>
+				)})${addUnderline(report.total_vat_adjusted)}</td>
       </tr>
       <tr>
         <td><b>ACCUM. GRAND TOTAL</b></td>
