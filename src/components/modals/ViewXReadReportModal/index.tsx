@@ -315,7 +315,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 			</Descriptions>
 
 			<Space className="mt-6 w-100" direction="vertical">
-				<Text>GDT: {formatDateTime(report.datetime_created)}</Text>
+				<Text>GDT: {formatDateTime(report.date)}</Text>
 				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
 			</Space>
 

@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { saleTypes, transactionStatuses, vatTypes } from 'global';
 import React from 'react';
 import {
+	formatDate,
 	formatDateTime,
 	formatInPeso,
 	getFullName,
@@ -589,7 +590,7 @@ export const createXReadTxt = ({
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `GDT: ${formatDateTime(report.datetime_created)}`,
+		text: `GDT: ${formatDateTime(report.date)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -1046,7 +1047,7 @@ export const createZReadTxt = ({
 	rowNumber += 1;
 
 	reportTextFile.write({
-		text: `GDT: ${formatDateTime(report.datetime_created)}`,
+		text: `GDT: ${formatDate(report.date)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});

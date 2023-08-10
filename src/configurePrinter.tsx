@@ -1367,7 +1367,7 @@ export const printXReadReport = ({
 
     <br />
 
-		<div>GDT: ${formatDateTime(report.datetime_created)}</div>
+    <div>GDT: ${formatDateTime(report.date)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
@@ -1636,7 +1636,7 @@ export const printZReadReport = ({
 
 		<br />
 
-		<div>GDT: ${formatDateTime(report.datetime_created)}</div>
+		<div>GDT: ${formatDate(report.date)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
