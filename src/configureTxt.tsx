@@ -1350,54 +1350,6 @@ export const createSalesInvoiceTxt = ({
 
 	rowNumber += 1;
 
-	if (transaction.discount_option) {
-		reportTextFile.write({
-			text: 'Discount Breakdown:',
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		rowNumber += 1;
-
-		reportTextFile.write({
-			text: '   Discount Deduction',
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		reportTextFile.write({
-			text: formatInPeso(
-				transaction.overall_discount - transaction.invoice.vat_amount,
-				PESO_SIGN,
-			),
-			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-			rowNumber,
-		});
-		rowNumber += 1;
-
-		reportTextFile.write({
-			text: '   Adj. on VAT',
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		reportTextFile.write({
-			text: formatInPeso(transaction.invoice.vat_amount, PESO_SIGN),
-			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-			rowNumber,
-		});
-		rowNumber += 1;
-
-		reportTextFile.write({
-			text: '   Total',
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		reportTextFile.write({
-			text: formatInPeso(transaction.overall_discount, PESO_SIGN),
-			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
-
 	rowNumber += 1;
 
 	reportTextFile.write({

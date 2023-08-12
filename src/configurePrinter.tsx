@@ -2498,40 +2498,6 @@ export const printSalesInvoice = ({
     </table>
     <br />
 
-    ${
-			transaction.discount_option
-				? `
-      <table style="width: 100%;">
-        <tr>
-          <td>Discount Breakdown:</td>
-        </tr>
-        <tr>
-          <td style="padding-left: 4ch">Discount Deduction</td>
-          <td style="text-align: right;">
-            ${formatInPeso(
-							transaction.overall_discount - transaction.invoice.vat_amount,
-							PESO_SIGN,
-						)}&nbsp;
-          </td>
-        </tr>
-        <tr>
-          <td style="padding-left: 4ch">Adj. on VAT</td>
-          <td style="text-align: right;">
-            ${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)}&nbsp;
-          </td>
-        </tr>
-        <tr>
-          <td style="padding-left: 4ch">Total</td>
-          <td style="text-align: right;">
-            ${formatInPeso(transaction.overall_discount, PESO_SIGN)}&nbsp;
-          </td>
-        </tr>
-      </table>
-      `
-				: ''
-		}
-    <br />
-
     <div>GDT: ${formatDateTime(transaction.invoice.datetime_created)}</div>
     <div>PDT: ${formatDateTime(dayjs(), false)}</div>
 

@@ -327,47 +327,6 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 							</Descriptions.Item>
 						</Descriptions>
 
-						{transactionData.discount_option && (
-							<Descriptions
-								className="mt-6 w-90"
-								colon={false}
-								column={1}
-								contentStyle={{
-									textAlign: 'right',
-									display: 'block',
-								}}
-								labelStyle={{ width: 200 }}
-								size="small"
-							>
-								<>
-									<Descriptions.Item label="Discount Breakdown:">
-										{null}
-									</Descriptions.Item>
-									<Descriptions.Item
-										label="Discount Deduction"
-										labelStyle={{ paddingLeft: 30 }}
-									>
-										{formatInPeso(
-											transactionData.overall_discount -
-												transactionData.invoice.vat_amount,
-										)}
-									</Descriptions.Item>
-									<Descriptions.Item
-										label="Adj. on VAT"
-										labelStyle={{ paddingLeft: 30 }}
-									>
-										{formatInPeso(transactionData.invoice.vat_amount)}
-									</Descriptions.Item>
-									<Descriptions.Item
-										label="Total"
-										labelStyle={{ paddingLeft: 30 }}
-									>
-										{formatInPeso(transactionData.overall_discount)}
-									</Descriptions.Item>
-								</>
-							</Descriptions>
-						)}
-
 						<Space className="mt-6 w-100" direction="vertical">
 							<Text>
 								GDT: {formatDateTime(transactionData.invoice.datetime_created)}
