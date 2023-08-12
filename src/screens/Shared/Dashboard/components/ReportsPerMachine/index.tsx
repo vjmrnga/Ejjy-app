@@ -8,7 +8,12 @@ import {
 	ViewZReadReportModal,
 } from 'components';
 import { FieldError } from 'components/elements';
-import { branchMachineTypes, EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
+import {
+	branchMachineTypes,
+	EMPTY_CELL,
+	MAX_PAGE_SIZE,
+	readReportTypes,
+} from 'global';
 import {
 	useBranchMachines,
 	useCashieringSessions,
@@ -27,7 +32,7 @@ import {
 
 interface Props {
 	branchId: string | number;
-	isDisableZReadButton?: boolean;
+	isZreadNotClosed?: boolean;
 	tableHeaderClassName?: string;
 }
 
@@ -40,7 +45,7 @@ const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
 export const ReportsPerMachine = ({
 	branchId,
-	isDisableZReadButton,
+	isZreadNotClosed,
 	tableHeaderClassName,
 }: Props) => {
 	// STATES
@@ -48,7 +53,7 @@ export const ReportsPerMachine = ({
 	const [zReadReport, setZReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
+	const [selectedReadReportType, setSelectedReadReportType] = useState(null);
 	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
 		useState(false);
 	const [isExportEjournalModalVisible, setIsExportEjournalModalVisible] =
@@ -105,15 +110,17 @@ export const ReportsPerMachine = ({
 						type="primary"
 						onClick={() => {
 							setSelectedBranchMachine(branchMachine);
-							setDatePickerModalVisible(true);
+							setSelectedReadReportType(readReportTypes.XREAD);
 						}}
 					>
 						View XRead (Date)
 					</Button>
 					<Button
-						disabled={isDisableZReadButton}
 						type="primary"
-						onClick={() => viewZReadReport(branchMachine)}
+						onClick={() => {
+							setSelectedBranchMachine(branchMachine);
+							setSelectedReadReportType(readReportTypes.ZREAD);
+						}}
 					>
 						View ZRead
 					</Button>
@@ -160,20 +167,26 @@ export const ReportsPerMachine = ({
 		setSelectedBranchMachine(null);
 	};
 
-	const viewZReadReport = async (branchMachine) => {
+	const viewZReadReport = async (branchMachine, { date = undefined }) => {
 		const { data } = await createZReadReport({
 			branchMachineId: branchMachine.id,
+			date,
 			userId: user.id,
 		});
 		setZReadReport(data);
 	};
 
 	const handleSubmitDateSelection = (date) => {
-		viewXReadReport(selectedBranchMachine, {
+		const viewReportFn =
+			selectedReadReportType === readReportTypes.ZREAD
+				? viewZReadReport
+				: viewXReadReport;
+
+		viewReportFn(selectedBranchMachine, {
 			date: date.format('YYYY-MM-DD'),
 		});
 
-		setDatePickerModalVisible(false);
+		setSelectedReadReportType(null);
 	};
 
 	const handleSessionSelection = (cashieringSessionId) => {
@@ -201,6 +214,7 @@ export const ReportsPerMachine = ({
 			/>
 
 			<RequestErrors
+				className="px-6"
 				errors={[
 					...convertIntoArray(branchMachinesError),
 					...convertIntoArray(createXReadReportError?.errors),
@@ -236,9 +250,19 @@ export const ReportsPerMachine = ({
 				/>
 			)}
 
-			{datePickerModalVisible && selectedBranchMachine && (
+			{selectedReadReportType && selectedBranchMachine && (
 				<DatePickerModal
-					onClose={() => setDatePickerModalVisible(false)}
+					calendarDefaultValue={
+						isZreadNotClosed ? moment().subtract(1, 'days') : moment()
+					}
+					calendarDisabledDate={(current) => {
+						if (isZreadNotClosed) {
+							return current.isSameOrAfter(moment(), 'date');
+						}
+
+						return current.isAfter(moment(), 'date');
+					}}
+					onClose={() => setSelectedReadReportType(false)}
 					onSubmit={handleSubmitDateSelection}
 				/>
 			)}
@@ -260,9 +284,14 @@ export const ReportsPerMachine = ({
 	);
 };
 
-const DatePickerModal = ({ onSubmit, onClose }) => {
+const DatePickerModal = ({
+	calendarDefaultValue = moment(),
+	calendarDisabledDate,
+	onSubmit,
+	onClose,
+}) => {
 	// STATES
-	const [selectedDate, setSelectedDate] = useState(moment());
+	const [selectedDate, setSelectedDate] = useState(calendarDefaultValue);
 	const [dateError, setDateError] = useState(null);
 
 	// METHODS
@@ -287,8 +316,8 @@ const DatePickerModal = ({ onSubmit, onClose }) => {
 			onOk={handleOk}
 		>
 			<Calendar
-				defaultValue={moment()}
-				disabledDate={(current) => current.isAfter(moment(), 'date')}
+				defaultValue={calendarDefaultValue}
+				disabledDate={calendarDisabledDate}
 				fullscreen={false}
 				onSelect={(value) => {
 					setSelectedDate(value);

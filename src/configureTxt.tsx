@@ -1314,7 +1314,7 @@ export const createSalesInvoiceTxt = ({
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: 'VAT Sales',
+		text: 'VATable Sales',
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});

@@ -8,6 +8,7 @@ interface List extends IListRequest {
 interface Create {
 	branch_machine_id: number;
 	user_id: number;
+	date: string;
 }
 
 const service = {

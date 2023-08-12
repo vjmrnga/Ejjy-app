@@ -27,7 +27,7 @@ export const Dashboard = () => {
 
 					<ReportsPerMachine
 						branchId={getLocalBranchId()}
-						isDisableZReadButton={_.isEmpty(branchDay?.datetime_ended)}
+						isZreadNotClosed={branchDay && _.isEmpty(branchDay?.datetime_ended)}
 					/>
 				</Box>
 			</Spin>
