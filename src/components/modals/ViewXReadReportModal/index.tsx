@@ -10,7 +10,6 @@ import {
 } from 'components/Printing';
 import { printXReadReport } from 'configurePrinter';
 import { createXReadTxt } from 'configureTxt';
-import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import { formatDateTime, formatInPeso } from 'utils';
@@ -315,8 +314,8 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 			</Descriptions>
 
 			<Space className="mt-6 w-100" direction="vertical">
-				<Text>GDT: {formatDateTime(report.date)}</Text>
-				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+				<Text>GDT: {formatDateTime(report.generation_datetime)}</Text>
+				<Text>PDT: {formatDateTime(report.printing_datetime)}</Text>
 			</Space>
 
 			<Space className="mt-2 w-100 justify-space-between">

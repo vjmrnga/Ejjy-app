@@ -67,11 +67,6 @@ const configurePrinter = () => {
 				});
 				console.error(err);
 			});
-	} else {
-		message.loading({
-			content: 'Already connected to QZTray. Rechecking printer connection...',
-			key: QZ_MESSAGE_KEY,
-		});
 	}
 };
 
@@ -1367,8 +1362,8 @@ export const printXReadReport = ({
 
     <br />
 
-    <div>GDT: ${formatDateTime(report.date)}</div>
-    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
+    <div>GDT: ${formatDateTime(report.generation_datetime)}</div>
+    <div>PDT: ${formatDateTime(report.printing_datetime)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${report?.generated_by?.employee_id || EMPTY_CELL}</span>
@@ -1636,8 +1631,8 @@ export const printZReadReport = ({
 
 		<br />
 
-		<div>GDT: ${formatDate(report.date)}</div>
-    <div>PDT: ${formatDateTime(dayjs(), false)}</div>
+		<div>GDT: ${formatDateTime(report.generation_datetime)}</div>
+    <div>PDT: ${formatDateTime(report.printing_datetime)}</div>
 
     <div style="display: flex; align-items: center; justify-content: space-between">
 			<span>C: ${report?.generated_by?.employee_id || EMPTY_CELL}</span>

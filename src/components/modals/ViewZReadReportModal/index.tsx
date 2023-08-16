@@ -9,13 +9,12 @@ import {
 } from 'components/Printing';
 import { printZReadReport } from 'configurePrinter';
 import { createZReadTxt } from 'configureTxt';
-import dayjs from 'dayjs';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { useUserStore } from 'stores';
 import imgNoTransaction from 'assets/images/no-transaction.png';
-import { formatDate, formatDateTime, formatInPeso } from 'utils';
+import { formatDateTime, formatInPeso } from 'utils';
 import './style.scss';
 
 const { Text } = Typography;
@@ -303,8 +302,8 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 			</Descriptions>
 
 			<Space className="mt-6 w-100" direction="vertical">
-				<Text>GDT: {formatDate(report.date)}</Text>
-				<Text>PDT: {formatDateTime(dayjs(), false)}</Text>
+				<Text>GDT: {formatDateTime(report.generation_datetime)}</Text>
+				<Text>PDT: {formatDateTime(report.printing_datetime)}</Text>
 			</Space>
 
 			<Space className="mt-2 w-100 justify-space-between">
