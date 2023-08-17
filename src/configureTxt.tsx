@@ -1167,14 +1167,6 @@ export const createSalesInvoiceTxt = ({
 		rowNumber,
 	});
 
-	if (isReprint) {
-		reportTextFile.write({
-			text: `For ${formatDateTime(dayjs(), false)}`,
-			alignment: ReportTextFile.ALIGNMENTS.LEFT,
-			rowNumber,
-		});
-		rowNumber += 1;
-	}
 	rowNumber += 1;
 
 	rowNumber += 1;

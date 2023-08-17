@@ -2371,8 +2371,6 @@ export const printSalesInvoice = ({
 			title,
 		})}
 
-		${isReprint ? `<div>For ${formatDateTime(dayjs(), false)}</div>` : ''}
-
 		<br />
 
 		<table style="width: 100%;">
