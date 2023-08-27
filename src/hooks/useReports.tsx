@@ -108,7 +108,7 @@ export const useBulkExport = () =>
 	});
 
 export const useGenerateReports = () => {
-	const REFETCH_INTERVAL_MS = 20_000;
+	const REFETCH_INTERVAL_MS = 30_000;
 	const branchId = getLocalBranchId();
 
 	return useQuery(

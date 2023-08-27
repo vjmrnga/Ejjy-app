@@ -24,6 +24,7 @@ import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import shallow from 'zustand/shallow';
+import { useGenerateReports } from 'hooks';
 import { BackOrders } from './BackOrders/BackOrders';
 import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
@@ -54,6 +55,8 @@ const OfficeManager = () => {
 		}),
 		shallow,
 	);
+
+	useGenerateReports();
 
 	const getSidebarItems = useCallback(
 		() => [
