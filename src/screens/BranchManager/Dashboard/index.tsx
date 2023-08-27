@@ -1,36 +1,15 @@
-import { Spin } from 'antd';
-import { Content, RequestErrors } from 'components';
+import { Content } from 'components';
 import { Box } from 'components/elements';
-import { useBranchDayRetrieve } from 'hooks';
-import _ from 'lodash';
-import React from 'react';
 import { ReportsPerMachine } from 'screens/Shared/Dashboard/components/ReportsPerMachine';
-import { convertIntoArray, getLocalBranchId } from 'utils';
+import { getLocalBranchId } from 'utils';
+import React from 'react';
 
 export const Dashboard = () => {
-	const {
-		data: branchDay,
-		isFetching: isFetchingBranchDay,
-		error: branchDayError,
-	} = useBranchDayRetrieve({
-		params: { branchId: getLocalBranchId() },
-	});
-
 	return (
 		<Content title="Dashboard">
-			<Spin spinning={isFetchingBranchDay}>
-				<Box>
-					<RequestErrors
-						errors={convertIntoArray(branchDayError)}
-						withSpaceBottom
-					/>
-
-					<ReportsPerMachine
-						branchId={getLocalBranchId()}
-						isZreadNotClosed={branchDay && _.isEmpty(branchDay?.datetime_ended)}
-					/>
-				</Box>
-			</Spin>
+			<Box>
+				<ReportsPerMachine branchId={getLocalBranchId()} />
+			</Box>
 		</Content>
 	);
 };

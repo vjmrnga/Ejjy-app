@@ -17,7 +17,7 @@ export { default as BranchDaysService } from './BranchDaysService';
 export { default as BranchMachinesService } from './BranchMachinesService';
 export { default as BranchProductsService } from './BranchProductsService';
 export { default as BranchesService } from './BranchesService';
-export { default as BulkExportService } from './BulkExportService';
+export { default as ReportsService } from './ReportsService';
 export { default as CashBreakdownsService } from './CashBreakdownsService';
 export { default as CashieringAssignmentsService } from './CashieringAssignmentsService';
 export { default as CashieringSessionsService } from './CashieringSessionsService';

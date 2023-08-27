@@ -11,6 +11,7 @@ import { Label } from '../elements';
 interface Props {
 	disabled?: boolean;
 	fields?: any;
+	queryName?: string;
 	onChange?: any;
 }
 
@@ -21,6 +22,7 @@ export const TimeRangeFilter = ({
 		timeRangeTypes.MONTHLY,
 		timeRangeTypes.DATE_RANGE,
 	],
+	queryName = 'timeRange',
 	onChange,
 }: Props) => {
 	// STATES
@@ -28,15 +30,18 @@ export const TimeRangeFilter = ({
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams({
-		onParamsCheck: ({ timeRange }) => {
+		onParamsCheck: (currentParams) => {
 			const newParams = {};
 
-			if (!_.toString(timeRange) && fields?.includes(timeRangeTypes.DAILY)) {
-				newParams['timeRange'] = timeRangeTypes.DAILY;
+			if (
+				!_.toString(currentParams[queryName]) &&
+				fields?.includes(timeRangeTypes.DAILY)
+			) {
+				newParams[queryName] = timeRangeTypes.DAILY;
 			}
 
-			if (_.toString(timeRange)) {
-				const validatedTimeRange = validateTimeRange(timeRange);
+			if (_.toString(currentParams[queryName])) {
+				const validatedTimeRange = validateTimeRange(currentParams[queryName]);
 
 				if (validatedTimeRange) {
 					const { areValid, areSameMonth, isStartOfTheMonth, isEndOfTheMonth } =
@@ -62,12 +67,12 @@ export const TimeRangeFilter = ({
 		if (onChange) {
 			onChange(value);
 		} else {
-			setQueryParams({ timeRange: value }, { shouldResetPage: true });
+			setQueryParams({ [queryName]: value }, { shouldResetPage: true });
 		}
 	};
 
 	const renderMonthPicker = useCallback(() => {
-		const validatedTimeRange = validateTimeRange(params.timeRange);
+		const validatedTimeRange = validateTimeRange(params[queryName]);
 
 		let defaultValue;
 		if (validatedTimeRange) {
@@ -96,10 +101,10 @@ export const TimeRangeFilter = ({
 				}}
 			/>
 		);
-	}, [params.timeRange]);
+	}, [params[queryName]]);
 
 	const renderRangePicker = useCallback(() => {
-		const timeRangeValues = _.toString(params.timeRange)?.split(',') || [];
+		const timeRangeValues = _.toString(params[queryName])?.split(',') || [];
 		const startDate = moment(timeRangeValues[0]);
 		const endDate = moment(timeRangeValues[1]);
 		const defaultValue: any =
@@ -121,7 +126,7 @@ export const TimeRangeFilter = ({
 				}}
 			/>
 		);
-	}, [params.timeRange, disabled]);
+	}, [params[queryName], disabled]);
 
 	const getOptions = useCallback(() => {
 		const options = [];

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { IListRequest } from 'services/interfaces';
 
 interface List extends IListRequest {
+	branch_machine_id?: number;
 	time_range: string;
 }
 

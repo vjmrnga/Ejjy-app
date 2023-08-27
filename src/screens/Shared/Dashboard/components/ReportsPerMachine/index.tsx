@@ -1,38 +1,20 @@
-import { Button, Calendar, message, Modal, Space, Tag } from 'antd';
+import { Button, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ReportTimeRangeModal,
 	RequestErrors,
 	TableHeader,
-	ViewXReadReportModal,
-	ViewZReadReportModal,
+	ViewXReadReportsModal,
+	ViewZReadReportsModal,
 } from 'components';
-import { FieldError } from 'components/elements';
-import {
-	branchMachineTypes,
-	EMPTY_CELL,
-	MAX_PAGE_SIZE,
-	readReportTypes,
-} from 'global';
-import {
-	useBranchMachines,
-	useCashieringSessions,
-	useXReadReportCreate,
-	useZReadReportCreate,
-} from 'hooks';
-import moment from 'moment';
+import { MAX_PAGE_SIZE, branchMachineTypes, readReportTypes } from 'global';
+import { useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getFullName,
-	isUserFromBranch,
-} from 'utils';
+import { convertIntoArray, isUserFromBranch } from 'utils';
 
 interface Props {
 	branchId: string | number;
-	isZreadNotClosed?: boolean;
 	tableHeaderClassName?: string;
 }
 
@@ -45,17 +27,12 @@ const BRANCH_MACHINES_REFETCH_INTERVAL_MS = 2500;
 
 export const ReportsPerMachine = ({
 	branchId,
-	isZreadNotClosed,
 	tableHeaderClassName,
 }: Props) => {
 	// STATES
-	const [xReadReport, setXReadReport] = useState(null);
-	const [zReadReport, setZReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
 	const [selectedReadReportType, setSelectedReadReportType] = useState(null);
-	const [sessionPickerModalVisible, setSessionPickerModalVisible] =
-		useState(false);
 	const [isExportEjournalModalVisible, setIsExportEjournalModalVisible] =
 		useState(false);
 
@@ -74,17 +51,6 @@ export const ReportsPerMachine = ({
 		options: { refetchInterval: BRANCH_MACHINES_REFETCH_INTERVAL_MS },
 	});
 
-	const {
-		mutateAsync: createXReadReport,
-		isLoading: isCreatingXReadReport,
-		error: createXReadReportError,
-	} = useXReadReportCreate();
-	const {
-		mutateAsync: createZReadReport,
-		isLoading: isCreatingZReadReport,
-		error: createZReadReportError,
-	} = useZReadReportCreate();
-
 	// METHODS
 	useEffect(() => {
 		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
@@ -101,19 +67,10 @@ export const ReportsPerMachine = ({
 						type="primary"
 						onClick={() => {
 							setSelectedBranchMachine(branchMachine);
-							setSessionPickerModalVisible(true);
-						}}
-					>
-						View XRead (Session)
-					</Button>
-					<Button
-						type="primary"
-						onClick={() => {
-							setSelectedBranchMachine(branchMachine);
 							setSelectedReadReportType(readReportTypes.XREAD);
 						}}
 					>
-						View XRead (Date)
+						View XRead Reports
 					</Button>
 					<Button
 						type="primary"
@@ -122,7 +79,7 @@ export const ReportsPerMachine = ({
 							setSelectedReadReportType(readReportTypes.ZREAD);
 						}}
 					>
-						View ZRead
+						View ZRead Reports
 					</Button>
 				</Space>
 			) : null,
@@ -148,54 +105,6 @@ export const ReportsPerMachine = ({
 		return columns;
 	}, [user]);
 
-	const viewXReadReport = async (
-		branchMachine,
-		{ date = undefined, cashieringSessionId = undefined },
-	) => {
-		const { data, status } = await createXReadReport({
-			branchMachineId: branchMachine.id,
-			date,
-			cashieringSessionId,
-			userId: user.id,
-		});
-
-		if (status === 204) {
-			message.warn('There is no active session.');
-		}
-
-		setXReadReport(data);
-		setSelectedBranchMachine(null);
-	};
-
-	const viewZReadReport = async (branchMachine, { date = undefined }) => {
-		const { data } = await createZReadReport({
-			branchMachineId: branchMachine.id,
-			date,
-			userId: user.id,
-		});
-		setZReadReport(data);
-	};
-
-	const handleSubmitDateSelection = (date) => {
-		const viewReportFn =
-			selectedReadReportType === readReportTypes.ZREAD
-				? viewZReadReport
-				: viewXReadReport;
-
-		viewReportFn(selectedBranchMachine, {
-			date: date.format('YYYY-MM-DD'),
-		});
-
-		setSelectedReadReportType(null);
-	};
-
-	const handleSessionSelection = (cashieringSessionId) => {
-		viewXReadReport(selectedBranchMachine, {
-			cashieringSessionId,
-		});
-		setSessionPickerModalVisible(false);
-	};
-
 	return (
 		<>
 			<TableHeader
@@ -215,194 +124,46 @@ export const ReportsPerMachine = ({
 
 			<RequestErrors
 				className="px-6"
-				errors={[
-					...convertIntoArray(branchMachinesError),
-					...convertIntoArray(createXReadReportError?.errors),
-					...convertIntoArray(createZReadReportError?.errors),
-				]}
+				errors={convertIntoArray(branchMachinesError)}
 				withSpaceBottom
 			/>
 
 			<Table
 				columns={getColumns()}
 				dataSource={dataSource}
-				loading={
-					isCreatingXReadReport ||
-					isCreatingZReadReport ||
-					(isFetchingBranchMachines && !isBranchMachinesFetchedAfterMount)
-				}
+				loading={isFetchingBranchMachines && !isBranchMachinesFetchedAfterMount}
 				pagination={false}
 				scroll={{ x: 650 }}
 				bordered
 			/>
-
-			{xReadReport && (
-				<ViewXReadReportModal
-					report={xReadReport}
-					onClose={() => setXReadReport(null)}
-				/>
-			)}
-
-			{zReadReport && (
-				<ViewZReadReportModal
-					report={zReadReport}
-					onClose={() => setZReadReport(null)}
-				/>
-			)}
-
-			{selectedReadReportType && selectedBranchMachine && (
-				<DatePickerModal
-					calendarDefaultValue={
-						isZreadNotClosed ? moment().subtract(1, 'days') : moment()
-					}
-					calendarDisabledDate={(current) => {
-						if (isZreadNotClosed) {
-							return current.isSameOrAfter(moment(), 'date');
-						}
-
-						return current.isAfter(moment(), 'date');
-					}}
-					onClose={() => setSelectedReadReportType(false)}
-					onSubmit={handleSubmitDateSelection}
-				/>
-			)}
-
-			{sessionPickerModalVisible && selectedBranchMachine && (
-				<SessionPickerModal
-					branchMachine={selectedBranchMachine}
-					onClose={() => setSessionPickerModalVisible(false)}
-					onSubmit={handleSessionSelection}
-				/>
-			)}
 
 			{isExportEjournalModalVisible && (
 				<ReportTimeRangeModal
 					onClose={() => setIsExportEjournalModalVisible(null)}
 				/>
 			)}
+
+			{selectedBranchMachine &&
+				readReportTypes.XREAD === selectedReadReportType && (
+					<ViewXReadReportsModal
+						branchMachineId={selectedBranchMachine.id}
+						onClose={() => {
+							setSelectedBranchMachine(null);
+							setSelectedReadReportType(null);
+						}}
+					/>
+				)}
+
+			{selectedBranchMachine &&
+				readReportTypes.ZREAD === selectedReadReportType && (
+					<ViewZReadReportsModal
+						branchMachineId={selectedBranchMachine.id}
+						onClose={() => {
+							setSelectedBranchMachine(null);
+							setSelectedReadReportType(null);
+						}}
+					/>
+				)}
 		</>
-	);
-};
-
-const DatePickerModal = ({
-	calendarDefaultValue = moment(),
-	calendarDisabledDate,
-	onSubmit,
-	onClose,
-}) => {
-	// STATES
-	const [selectedDate, setSelectedDate] = useState(calendarDefaultValue);
-	const [dateError, setDateError] = useState(null);
-
-	// METHODS
-	const handleOk = () => {
-		if (selectedDate.isAfter(moment(), 'day')) {
-			setDateError("Date must not be after today's date.");
-			return;
-		}
-
-		onSubmit(selectedDate);
-	};
-
-	return (
-		<Modal
-			className="Modal__hasFooter"
-			okButtonProps={{
-				disabled: !selectedDate || !!dateError,
-			}}
-			title="Select Date"
-			visible
-			onCancel={onClose}
-			onOk={handleOk}
-		>
-			<Calendar
-				defaultValue={calendarDefaultValue}
-				disabledDate={calendarDisabledDate}
-				fullscreen={false}
-				onSelect={(value) => {
-					setSelectedDate(value);
-					setDateError(null);
-				}}
-			/>
-			{dateError && <FieldError error={dateError} />}
-		</Modal>
-	);
-};
-
-const cashieringSessionColumns = [
-	{ title: 'Session', dataIndex: 'session' },
-	{ title: 'User', dataIndex: 'user' },
-];
-
-const SessionPickerModal = ({ branchMachine, onSubmit, onClose }) => {
-	// STATES
-	const [dataSource, setDataSource] = useState([]);
-	const [selectedRowKey, setSelectedRowKey] = useState(null);
-
-	// CUSTOM HOOKS
-	const {
-		data: { cashieringSessions },
-		isFetching: isFetchingCashieringSessions,
-		error: cashieringSessionErrors,
-	} = useCashieringSessions({
-		params: {
-			timeRange: 'daily',
-			branchMachineId: branchMachine.id,
-			pageSize: MAX_PAGE_SIZE,
-		},
-	});
-
-	// METHODS
-	useEffect(() => {
-		if (cashieringSessions) {
-			const formattedCashieringSessions = cashieringSessions.map((cs) => {
-				const { id, datetime_started, datetime_ended, user } = cs;
-
-				return {
-					key: id,
-					session: `${
-						datetime_started ? formatDateTime(datetime_started) : ''
-					} - ${datetime_ended ? formatDateTime(datetime_ended) : ''}`,
-					user: user ? getFullName(user) : EMPTY_CELL,
-				};
-			});
-
-			setDataSource(formattedCashieringSessions);
-		}
-	}, [cashieringSessions]);
-
-	return (
-		<Modal
-			className="Modal__hasFooter"
-			okButtonProps={{
-				disabled: !selectedRowKey,
-			}}
-			title="Select Cashiering Session"
-			visible
-			onCancel={onClose}
-			onOk={() => {
-				onSubmit(selectedRowKey);
-			}}
-		>
-			<RequestErrors
-				errors={convertIntoArray(cashieringSessionErrors)}
-				withSpaceBottom
-			/>
-
-			<Table
-				columns={cashieringSessionColumns}
-				dataSource={dataSource}
-				loading={isFetchingCashieringSessions}
-				pagination={false}
-				rowSelection={{
-					type: 'radio',
-					selectedRowKeys: [selectedRowKey],
-					onSelect: ({ key }) => {
-						setSelectedRowKey(key);
-					},
-				}}
-				bordered
-			/>
-		</Modal>
 	);
 };

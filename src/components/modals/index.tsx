@@ -37,4 +37,6 @@ export * from './ViewReturnItemSlipModal';
 export * from './ViewTransactionModal';
 export * from './ViewUserModal';
 export * from './ViewXReadReportModal';
+export * from './ViewXReadReportsModal';
 export * from './ViewZReadReportModal';
+export * from './ViewZReadReportsModal';

@@ -10,9 +10,16 @@ interface BulkExport {
 	data: BulkExportData[];
 }
 
+interface Generate {
+	branch_id: number;
+}
+
 const service = {
 	bulkExportReports: async (body: BulkExport, baseURL: string) =>
 		axios.post('/reports/bulk-export/', body, { baseURL }),
+
+	generate: async (body: Generate, baseURL: string) =>
+		axios.post('/reports/generate-reports/', body, { baseURL }),
 };
 
 export default service;

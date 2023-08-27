@@ -1,15 +1,38 @@
-import { useMutation } from 'react-query';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
+import { wrapServiceWithCatch } from 'hooks/helper';
+import { Query } from 'hooks/inteface';
+import { useQuery } from 'react-query';
 import { ZReadReportsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
-export const useZReadReportCreate = () =>
-	useMutation<any, any, any>(({ branchMachineId, date, userId }: any) =>
-		ZReadReportsService.create(
-			{
-				branch_machine_id: branchMachineId,
-				date,
-				user_id: userId,
-			},
-			getLocalApiUrl(),
-		),
+const useZReadReports = ({ params }: Query) =>
+	useQuery<any>(
+		[
+			'useZReadReports',
+			params?.branchMachineId,
+			params?.page,
+			params?.pageSize,
+			params?.timeRange,
+		],
+		() =>
+			wrapServiceWithCatch(
+				ZReadReportsService.list(
+					{
+						branch_machine_id: params?.branchMachineId,
+						page: params?.page || DEFAULT_PAGE,
+						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
+						time_range: params?.timeRange,
+					},
+					getLocalApiUrl(),
+				),
+			),
+		{
+			initialData: { data: { results: [], count: 0 } },
+			select: (query) => ({
+				zReadReports: query.data.results,
+				total: query.data.count,
+			}),
+		},
 	);
+
+export default useZReadReports;

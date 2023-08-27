@@ -75,5 +75,7 @@ export const JSPDF_SETTINGS: jsPDFOptions = {
 export const EJOURNAL_FOLDER = 'media';
 export const DESKTOP_FOLDER_OPEN_FUNCTION = 'openFolder';
 
+export const AUTOMATIC_GENERATED_REPORT_USER_NAME = 'Auto';
+
 // eslint-disable-next-line no-console
 console.info('IS LIVE: ', process.env.REACT_APP_IS_LIVE);
