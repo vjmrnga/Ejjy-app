@@ -103,26 +103,32 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				<Text className="w-100 mt-2 d-block">INVOICE NUMBER</Text>
 				<ReceiptReportSummary
 					data={[
-						{ label: 'Beg Invoice #', value: '01-000100' },
-						{ label: 'End Invoice #', value: '01-000100' },
+						{
+							label: 'Beg Invoice #',
+							value: report.beginning_or?.or_number || EMPTY_CELL,
+						},
+						{
+							label: 'End Invoice #',
+							value: report.ending_or?.or_number || EMPTY_CELL,
+						},
 					]}
 				/>
 
 				<Text className="w-100 mt-2 d-block">SALES</Text>
 				<ReceiptReportSummary
 					data={[
-						{ label: 'Beg', value: 'PHP 150,000.00' },
-						{ label: 'Cur', value: 'PHP 180,881.13' },
-						{ label: 'End', value: 'PHP 330,881.13' },
+						{ label: 'Beg', value: formatInPeso(report.beginning_sales) },
+						{ label: 'Cur', value: formatInPeso(report.gross_sales) },
+						{ label: 'End', value: formatInPeso(report.ending_sales) },
 					]}
 				/>
 
 				<Text className="w-100 mt-2 d-block">TRANSACTION COUNT</Text>
 				<ReceiptReportSummary
 					data={[
-						{ label: 'Beg', value: '100' },
-						{ label: 'Cur', value: '80' },
-						{ label: 'End', value: '95' },
+						{ label: 'Beg', value: report.beginning_transactions_count },
+						{ label: 'Cur', value: report.total_transactions },
+						{ label: 'End', value: report.ending_transactions_count },
 					]}
 				/>
 			</Space>
@@ -308,7 +314,10 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space className="mt-2 w-100 justify-space-between">
 				<Text>C: {report?.generated_by?.employee_id || EMPTY_CELL}</Text>
-				<Text>PB: {user.employee_id}</Text>
+				<Text>
+					PB:
+					{user.employee_id || report?.generated_by?.employee_id || EMPTY_CELL}
+				</Text>
 			</Space>
 
 			<ReceiptFooter />

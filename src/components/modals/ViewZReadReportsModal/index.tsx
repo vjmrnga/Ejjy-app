@@ -19,11 +19,11 @@ const columns = [
 const TIME_RANGE_PARAM_KEY = 'zreadTimeRange';
 
 interface Props {
-	branchMachineId: number;
+	branchMachine: any;
 	onClose: any;
 }
 
-export const ViewZReadReportsModal = ({ branchMachineId, onClose }: Props) => {
+export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
 	const [selectedZReadReport, setSelectedZReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
@@ -38,7 +38,7 @@ export const ViewZReadReportsModal = ({ branchMachineId, onClose }: Props) => {
 		params: {
 			...params,
 			timeRange: params[TIME_RANGE_PARAM_KEY],
-			branchMachineId,
+			branchMachineName: branchMachine.name,
 		},
 	});
 

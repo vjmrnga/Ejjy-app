@@ -19,11 +19,11 @@ const columns = [
 
 const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
 interface Props {
-	branchMachineId: number;
+	branchMachine: any;
 	onClose: any;
 }
 
-export const ViewXReadReportsModal = ({ branchMachineId, onClose }: Props) => {
+export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
 	const [selectedXReadReport, setSelectedXReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
@@ -38,7 +38,7 @@ export const ViewXReadReportsModal = ({ branchMachineId, onClose }: Props) => {
 		params: {
 			...params,
 			timeRange: params[TIME_RANGE_PARAM_KEY],
-			branchMachineId,
+			branchMachineName: branchMachine.name,
 		},
 	});
 

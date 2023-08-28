@@ -146,7 +146,7 @@ export const ReportsPerMachine = ({
 			{selectedBranchMachine &&
 				readReportTypes.XREAD === selectedReadReportType && (
 					<ViewXReadReportsModal
-						branchMachineId={selectedBranchMachine.id}
+						branchMachine={selectedBranchMachine}
 						onClose={() => {
 							setSelectedBranchMachine(null);
 							setSelectedReadReportType(null);
@@ -157,7 +157,7 @@ export const ReportsPerMachine = ({
 			{selectedBranchMachine &&
 				readReportTypes.ZREAD === selectedReadReportType && (
 					<ViewZReadReportsModal
-						branchMachineId={selectedBranchMachine.id}
+						branchMachine={selectedBranchMachine}
 						onClose={() => {
 							setSelectedBranchMachine(null);
 							setSelectedReadReportType(null);

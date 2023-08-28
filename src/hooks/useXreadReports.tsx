@@ -5,11 +5,14 @@ import { useQuery } from 'react-query';
 import { XReadReportsService } from 'services';
 import { getLocalApiUrl } from 'utils';
 
+const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
+
 const useXReadReports = ({ params }: Query) =>
 	useQuery<any>(
 		[
 			'useXReadReports',
 			params?.branchMachineId,
+			params?.branchMachineName,
 			params?.isWithDailySalesData,
 			params?.page,
 			params?.pageSize,
@@ -19,13 +22,15 @@ const useXReadReports = ({ params }: Query) =>
 			wrapServiceWithCatch(
 				XReadReportsService.list(
 					{
+						branch_machine_name: params?.branchMachineName,
 						branch_machine_id: params?.branchMachineId,
 						is_with_daily_sales_data: params?.isWithDailySalesData,
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
 						time_range: params?.timeRange,
 					},
-					getLocalApiUrl(),
+					MACHINE_SERVER_URL,
+					// getLocalApiUrl(),
 				),
 			),
 		{
