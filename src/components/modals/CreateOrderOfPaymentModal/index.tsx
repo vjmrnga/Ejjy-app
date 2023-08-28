@@ -1,7 +1,6 @@
-import { Col, Input, message, Modal, Row, Select, Spin } from 'antd';
+import { Button, Col, Input, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
 import {
-	Button,
 	FieldError,
 	FormattedInputNumber,
 	FormInputLabel,
@@ -114,7 +113,7 @@ export const CreateOrderOfPaymentModal = ({
 			/>
 
 			<CreateOrderOfPaymentForm
-				loading={isCreatingOrderOfPayment || isCheckingInvoiceValidity}
+				isLoading={isCreatingOrderOfPayment || isCheckingInvoiceValidity}
 				payor={payor}
 				transaction={transaction}
 				onClose={onClose}
@@ -127,7 +126,7 @@ export const CreateOrderOfPaymentModal = ({
 interface FormProps {
 	payor: any;
 	transaction?: any;
-	loading: boolean;
+	isLoading: boolean;
 	onSubmit: any;
 	onClose: any;
 }
@@ -135,7 +134,7 @@ interface FormProps {
 export const CreateOrderOfPaymentForm = ({
 	payor,
 	transaction,
-	loading,
+	isLoading,
 	onSubmit,
 	onClose,
 }: FormProps) => {
@@ -321,18 +320,12 @@ export const CreateOrderOfPaymentForm = ({
 					</Row>
 
 					<div className="ModalCustomFooter">
-						<Button
-							disabled={loading}
-							text="Cancel"
-							type="button"
-							onClick={onClose}
-						/>
-						<Button
-							loading={loading}
-							text="Create"
-							type="submit"
-							variant="primary"
-						/>
+						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+							Cancel
+						</Button>
+						<Button htmlType="submit" loading={isLoading} type="primary">
+							Create
+						</Button>
 					</div>
 				</Form>
 			)}

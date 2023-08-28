@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { OrderOfPaymentsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const useOrderOfPayments = ({ params }: Query) =>
 	useQuery<any>(
@@ -61,7 +61,8 @@ export const useOrderOfPaymentsCreate = (options = {}) =>
 					extra_description: extraDescription,
 					charge_sales_transaction_id: chargeSalesTransactionId,
 				},
-				getOnlineApiUrl(),
+				getLocalApiUrl(),
+				// getOnlineApiUrl(), TODO: For demo purposes, once upload to gcloud is enabled, revert to online API URL
 			),
 		options,
 	);
