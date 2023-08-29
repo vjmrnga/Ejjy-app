@@ -118,7 +118,7 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 				<ReceiptReportSummary
 					data={[
 						{ label: 'Beg', value: formatInPeso(report.beginning_sales) },
-						{ label: 'Cur', value: formatInPeso(report.gross_sales) },
+						{ label: 'Cur', value: formatInPeso(report.current_sales) },
 						{ label: 'End', value: formatInPeso(report.ending_sales) },
 					]}
 				/>

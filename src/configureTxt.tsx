@@ -4,6 +4,7 @@ import React from 'react';
 import {
 	formatDateTime,
 	formatInPeso,
+	getComputedDiscount,
 	getFullName,
 	ReportTextFile,
 } from 'utils';
@@ -701,7 +702,7 @@ export const createZReadTxt = ({
 	});
 	rowNumber += 1;
 	reportTextFile.write({
-		text: `   Cur: ${formatInPeso(report.gross_sales)}`,
+		text: `   Cur: ${formatInPeso(report.current_sales)}`,
 		alignment: ReportTextFile.ALIGNMENTS.LEFT,
 		rowNumber,
 	});
@@ -1227,11 +1228,25 @@ export const createSalesInvoiceTxt = ({
 			rowNumber,
 		});
 		reportTextFile.write({
-			text: `(${formatInPeso(transaction.overall_discount, PESO_SIGN)})`,
+			text: `(${formatInPeso(getComputedDiscount(transaction), PESO_SIGN)})`,
 			alignment: ReportTextFile.ALIGNMENTS.RIGHT,
 			rowNumber,
 		});
 		rowNumber += 1;
+
+		if (transaction.discount_option.is_special_discount) {
+			reportTextFile.write({
+				text: 'VAT AMOUNT',
+				alignment: ReportTextFile.ALIGNMENTS.LEFT,
+				rowNumber,
+			});
+			reportTextFile.write({
+				text: `(${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})`,
+				alignment: ReportTextFile.ALIGNMENTS.RIGHT,
+				rowNumber,
+			});
+			rowNumber += 1;
+		}
 
 		reportTextFile.write({
 			text: '----------------',

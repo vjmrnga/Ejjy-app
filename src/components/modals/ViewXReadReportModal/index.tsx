@@ -186,12 +186,14 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				<Descriptions.Item label="VAT Exempt">
 					{formatInPeso(report.vat_exempt)}&nbsp;
 				</Descriptions.Item>
+
 				<Descriptions.Item label="VATable Sales">
 					{formatInPeso(report.vat_sales)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="VAT Amount (12%)">
 					{formatInPeso(report.vat_amount)}&nbsp;
 				</Descriptions.Item>
+
 				<Descriptions.Item label="ZERO Rated">
 					{formatInPeso(0)}&nbsp;
 				</Descriptions.Item>
@@ -320,7 +322,9 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 
 			<Space className="mt-2 w-100 justify-space-between">
 				<Text>C: {report?.generated_by?.employee_id || EMPTY_CELL}</Text>
-				<Text>PB: {user.employee_id}</Text>
+				<Text>
+					PB: {user?.employee_id || report?.generated_by?.employee_id}
+				</Text>
 			</Space>
 
 			<ReceiptFooter />

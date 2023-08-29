@@ -27,6 +27,7 @@ import {
 	getAppTagPrinterPaperHeight,
 	getAppTagPrinterPaperWidth,
 	getCashBreakdownTypeDescription,
+	getComputedDiscount,
 	getFullName,
 	getOrderSlipStatusBranchManagerText,
 	getProductCode,
@@ -1442,7 +1443,7 @@ export const printZReadReport = ({
       <tr>
         <td style="width: 120px;">Cur:</td>
         <td style="text-align: right;">${formatInPeso(
-					report.gross_sales,
+					report.current_sales,
 					PESO_SIGN,
 				)}</td>
       </tr>
@@ -2401,28 +2402,40 @@ export const printSalesInvoice = ({
 		<div style="width: 100%; text-align: right">----------------</div>
 
 		<table style="width: 100%;">
-			${
-				transaction.discount_option
-					? `
-        <tr>
-				  <td>GROSS AMOUNT</td>
-				  <td style="text-align: right;">
-					  ${formatInPeso(transaction.gross_amount, PESO_SIGN)}&nbsp;
-				  </td>
-			  </tr>
+    ${
+			transaction.discount_option
+				? `
+      <tr>
+        <td>GROSS AMOUNT</td>
+        <td style="text-align: right;">
+          ${formatInPeso(transaction.gross_amount, PESO_SIGN)}&nbsp;
+        </td>
+      </tr>
 
-        <tr>
-				  <td>DISCOUNT | ${transaction.discount_option.code}</td>
-				  <td style="text-align: right;">
-					  (${formatInPeso(transaction.overall_discount, PESO_SIGN)})
-				  </td>
-			  </tr>
-        <tr>
-				  <td colspan="2" style="text-align: right;">----------------</td>
-			  </tr>
-      `
+      <tr>
+        <td>DISCOUNT | ${transaction.discount_option.code}</td>
+        <td style="text-align: right;">
+          (${formatInPeso(getComputedDiscount(transaction), PESO_SIGN)})
+        </td>
+      </tr>
+
+      ${
+				transaction.discount_option.is_special_discount
+					? `<tr>
+        <td>VAT AMOUNT</td>
+        <td style="text-align: right;">
+          (${formatInPeso(transaction.invoice.vat_amount, PESO_SIGN)})
+        </td>
+      </tr>`
 					: ''
 			}
+
+      <tr>
+        <td colspan="2" style="text-align: right;">----------------</td>
+      </tr>
+    `
+				: ''
+		}
 
 			<tr>
 				<td>TOTAL AMOUNT</td>

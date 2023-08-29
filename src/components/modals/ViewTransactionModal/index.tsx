@@ -23,6 +23,7 @@ import {
 	formatDateTime,
 	formatInPeso,
 	formatQuantity,
+	getComputedDiscount,
 	getFullName,
 } from 'utils';
 
@@ -254,8 +255,13 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 									<Descriptions.Item
 										label={`DISCOUNT | ${transactionData.discount_option.code}`}
 									>
-										({formatInPeso(transactionData.overall_discount)})
+										({formatInPeso(getComputedDiscount(transactionData))})
 									</Descriptions.Item>
+									{transactionData.discount_option.is_special_discount && (
+										<Descriptions.Item label="VAT AMOUNT">
+											({formatInPeso(transactionData.invoice.vat_amount)})
+										</Descriptions.Item>
+									)}
 								</>
 							)}
 							<Descriptions.Item

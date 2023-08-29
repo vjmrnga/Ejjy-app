@@ -10,3 +10,11 @@ export const calculateCashBreakdownTotal = (cashBreakdown) =>
 	200 * cashBreakdown.bills_200 +
 	500 * cashBreakdown.bills_500 +
 	1000 * cashBreakdown.bills_1000;
+
+// TODO: Remove once already implemented in backend
+export const getComputedDiscount = (transactionData) => {
+	return transactionData.discount_option.is_special_discount
+		? Number(transactionData.overall_discount) -
+				Number(transactionData.invoice.vat_amount)
+		: transactionData.overall_discount;
+};
