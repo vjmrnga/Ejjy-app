@@ -10,7 +10,6 @@ import {
 	Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
 import { printSalesInvoice } from 'configurePrinter';
 import { createSalesInvoiceTxt } from 'configureTxt';

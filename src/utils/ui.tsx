@@ -1,4 +1,4 @@
-import { Input, message, Modal } from 'antd';
+import { Input, message, Modal, Tag } from 'antd';
 import {
 	AddedToOSBadgePill,
 	AvailableBadgePill,
@@ -326,7 +326,7 @@ export const getUserTypeName = _.memoize((type) => {
 export const getOSDRStatus = _.memoize((status) => {
 	switch (status) {
 		case OSDRStatus.DONE: {
-			return <DoneBadgePill />;
+			return <Tag color="green">Done</Tag>;
 		}
 		case OSDRStatus.ERROR: {
 			return <ErrorBadgePill />;
