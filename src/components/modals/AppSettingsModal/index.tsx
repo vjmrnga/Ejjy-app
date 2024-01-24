@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 
 import {
 	APP_APP_TYPE_KEY,
-	APP_IS_MAIN_HEAD_OFFICE,
+	APP_HEAD_OFFICE_TYPE,
 	APP_LOCAL_API_URL_KEY,
 	APP_ONLINE_API_URL_KEY,
 	APP_ONLINE_BRANCH_ID_KEY,
@@ -26,7 +26,7 @@ import {
 	getAppTagPrinterPaperHeight,
 	getAppTagPrinterPaperWidth,
 	getAppType,
-	getIsMainHeadOffice,
+	getHeadOfficeType,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 	getOnlineBranchId,
@@ -40,17 +40,17 @@ interface Props {
 
 export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 	// CUSTOM HOOKS
-	const { setAppType, setIsMainHeadOffice } = useAppType();
+	const { setAppType, setHeadOfficeType } = useAppType();
 
 	// METHODS
 	const handleSubmit = (formData) => {
-		setIsMainHeadOffice(formData.isMainHeadOffice);
+		setHeadOfficeType(formData.headOfficeType);
 		setAppType(formData.appType, true);
 
 		localStorage.setItem(APP_APP_TYPE_KEY, formData.appType);
 		localStorage.setItem(
-			APP_IS_MAIN_HEAD_OFFICE,
-			_.toString(formData.isMainHeadOffice ? 1 : 0),
+			APP_HEAD_OFFICE_TYPE,
+			_.toString(formData.headOfficeType),
 		);
 		localStorage.setItem(APP_ONLINE_BRANCH_ID_KEY, formData.branchId);
 		localStorage.setItem(APP_LOCAL_API_URL_KEY, formData.localApiUrl);
@@ -94,13 +94,13 @@ export const AppSettingsModal = ({ onSuccess, onClose }: Props) => {
 			title="App Settings"
 			centered
 			closable
-			visible
+			open
 			onCancel={onClose}
 		>
 			<AppSettingsForm
 				appType={getAppType()}
 				branchId={getOnlineBranchId()}
-				isMainHeadOffice={getIsMainHeadOffice()}
+				headOfficeType={getHeadOfficeType()}
 				localApiUrl={getLocalApiUrl()}
 				onlineApiUrl={getOnlineApiUrl()}
 				printerFontFamily={getAppReceiptPrinterFontFamily()}

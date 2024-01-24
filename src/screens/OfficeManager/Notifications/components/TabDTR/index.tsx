@@ -31,7 +31,7 @@ const attendanceTableColumns: ColumnsType = [
 				dataIndex: 'scheduledDateTime',
 			},
 			{
-				title: 'Real',
+				title: 'Actual',
 				dataIndex: 'realDateTime',
 			},
 			{
@@ -54,7 +54,7 @@ const trackerTableColumns: ColumnsType = [
 				dataIndex: 'scheduledDateTime',
 			},
 			{
-				title: 'Real',
+				title: 'Actual',
 				dataIndex: 'realDateTime',
 			},
 		],

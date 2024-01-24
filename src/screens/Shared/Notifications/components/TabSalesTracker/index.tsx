@@ -1,9 +1,21 @@
-import { Alert, Empty, Spin } from 'antd';
+import { Alert, Col, Empty, Row, Select, Spin } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
+import { Label } from 'components/elements';
 import { MAX_PAGE_SIZE } from 'global';
-import { useSalesTracker, useSiteSettings } from 'hooks';
+import {
+	useBranches,
+	useQueryParams,
+	useSalesTracker,
+	useSiteSettings,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso } from 'utils';
+import { useUserStore } from 'stores';
+import {
+	convertIntoArray,
+	filterOption,
+	formatInPeso,
+	isUserFromOffice,
+} from 'utils';
 
 export const TabSalesTracker = () => {
 	// STATES
@@ -77,6 +89,8 @@ export const TabSalesTracker = () => {
 				withSpaceBottom
 			/>
 
+			<Filter />
+
 			{salesTrackerNotifications.length > 0 ? (
 				salesTrackerNotifications
 			) : (
@@ -123,3 +137,52 @@ const SalesTrackerInvoiceNotification = ({
 		showIcon
 	/>
 );
+
+const Filter = () => {
+	// CUSTOM HOOKS
+	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: isUserFromOffice(user.user_type) },
+	});
+
+	return (
+		<div className="mb-4">
+			<RequestErrors
+				errors={convertIntoArray(branchErrors, 'Branches')}
+				withSpaceBottom
+			/>
+
+			<Row gutter={[16, 16]}>
+				{isUserFromOffice(user.user_type) && (
+					<Col lg={12} span={24}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((branch) => (
+								<Select.Option key={branch.id} value={branch.id}>
+									{branch.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
+			</Row>
+		</div>
+	);
+};

@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table, Tooltip } from 'antd';
+import { Button, Col, Input, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateBalanceAdjustmentLogModal,
@@ -10,13 +10,20 @@ import { Label } from 'components/elements';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
 	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
 } from 'global';
-import { useBranchProducts, useQueryParams } from 'hooks';
+import { useBranchProducts, useBranches, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatQuantity } from 'utils';
+import { useUserStore } from 'stores';
+import {
+	convertIntoArray,
+	filterOption,
+	formatQuantity,
+	isUserFromOffice,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Code', dataIndex: 'code' },
@@ -117,6 +124,15 @@ export const TabBranchProducts = () => {
 const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
+	const {
+		data: { branches },
+		isFetching: isFetchingBranches,
+		error: branchErrors,
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		options: { enabled: isUserFromOffice(user.user_type) },
+	});
 
 	// METHODS
 	const handleSearchDebounced = useCallback(
@@ -127,16 +143,49 @@ const Filter = () => {
 	);
 
 	return (
-		<Row className="mb-4" gutter={[16, 16]}>
-			<Col lg={12}>
-				<Label label="Search" spacing />
-				<Input
-					defaultValue={params.search}
-					prefix={<SearchOutlined />}
-					allowClear
-					onChange={(event) => handleSearchDebounced(event.target.value.trim())}
-				/>
-			</Col>
-		</Row>
+		<div className="mb-4">
+			<RequestErrors
+				errors={convertIntoArray(branchErrors, 'Branches')}
+				withSpaceBottom
+			/>
+
+			<Row gutter={[16, 16]}>
+				<Col lg={12} span={24}>
+					<Label label="Search" spacing />
+					<Input
+						defaultValue={params.search}
+						prefix={<SearchOutlined />}
+						allowClear
+						onChange={(event) =>
+							handleSearchDebounced(event.target.value.trim())
+						}
+					/>
+				</Col>
+
+				{isUserFromOffice(user.user_type) && (
+					<Col lg={12} span={24}>
+						<Label label="Branch" spacing />
+						<Select
+							className="w-100"
+							filterOption={filterOption}
+							loading={isFetchingBranches}
+							optionFilterProp="children"
+							value={params.branchId ? Number(params.branchId) : null}
+							allowClear
+							showSearch
+							onChange={(value) => {
+								setQueryParams({ branchId: value }, { shouldResetPage: true });
+							}}
+						>
+							{branches.map((branch) => (
+								<Select.Option key={branch.id} value={branch.id}>
+									{branch.name}
+								</Select.Option>
+							))}
+						</Select>
+					</Col>
+				)}
+			</Row>
+		</div>
 	);
 };

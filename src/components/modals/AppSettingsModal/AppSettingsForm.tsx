@@ -13,7 +13,7 @@ import {
 	Space,
 } from 'antd';
 import { ErrorMessage, Form, Formik, useFormikContext } from 'formik';
-import { appTypes, serviceTypes } from 'global';
+import { appTypes, headOfficeTypes, serviceTypes } from 'global';
 import { useBranches } from 'hooks';
 import qz from 'qz-tray';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ import { FieldError, Label } from '../../elements';
 interface Props {
 	appType: string;
 	branchId: string;
-	isMainHeadOffice: number;
+	headOfficeType: number;
 	localApiUrl: string;
 	onlineApiUrl: string;
 	printerFontFamily: string;
@@ -46,7 +46,7 @@ const collapseKeys = {
 export const AppSettingsForm = ({
 	appType,
 	branchId,
-	isMainHeadOffice,
+	headOfficeType,
 	localApiUrl,
 	onClose,
 	onlineApiUrl,
@@ -78,7 +78,7 @@ export const AppSettingsForm = ({
 		() => ({
 			DefaultValues: {
 				appType: appType || appTypes.BACK_OFFICE,
-				isMainHeadOffice,
+				headOfficeType,
 				branchId: branchId || '',
 				localApiUrl: localApiUrl || '',
 				onlineApiUrl: onlineApiUrl || '',
@@ -93,9 +93,9 @@ export const AppSettingsForm = ({
 			Schema: Yup.object().shape({
 				appType: Yup.string().label('App Type'),
 				branchId: Yup.string().label('Branch'),
-				isMainHeadOffice: Yup.number().when('appType', {
+				headOfficeType: Yup.number().when('appType', {
 					is: appTypes.HEAD_OFFICE,
-					then: Yup.number().required().label('Main Head Office'),
+					then: Yup.number().required().label('Head Office Type'),
 				}),
 				localApiUrl: Yup.string().required().label('Local API URL').trim(),
 				onlineApiUrl: Yup.string().required().label('Online API URL').trim(),
@@ -123,7 +123,7 @@ export const AppSettingsForm = ({
 		[
 			appType,
 			branchId,
-			isMainHeadOffice,
+			headOfficeType,
 			localApiUrl,
 			onlineApiUrl,
 			printerFontFamily,
@@ -144,10 +144,6 @@ export const AppSettingsForm = ({
 			onSubmit={(values) => {
 				onSubmit({
 					...values,
-					isMainHeadOffice:
-						values.appType === appTypes.HEAD_OFFICE
-							? values.isMainHeadOffice
-							: false,
 					branchId:
 						values.appType === appTypes.HEAD_OFFICE
 							? undefined
@@ -191,20 +187,24 @@ export const AppSettingsForm = ({
 
 						{values.appType === appTypes.HEAD_OFFICE && (
 							<Col span={24}>
-								<Label label="Main Head Office" spacing />
+								<Label label="Head Office Type" spacing />
 								<Radio.Group
 									buttonStyle="solid"
 									options={[
-										{ label: 'Main', value: 1 },
+										{ label: 'Main HO', value: headOfficeTypes.MAIN },
 										{
-											label: 'Not Main',
-											value: 0,
+											label: 'Not Main HO',
+											value: headOfficeTypes.NOT_MAIN,
+										},
+										{
+											label: 'Standalone HO (For testing)',
+											value: headOfficeTypes.TEST,
 										},
 									]}
 									optionType="button"
-									value={values.isMainHeadOffice}
+									value={values.headOfficeType}
 									onChange={(e) => {
-										setFieldValue('isMainHeadOffice', e.target.value);
+										setFieldValue('headOfficeType', e.target.value);
 									}}
 								/>
 								<Alert
@@ -214,7 +214,7 @@ export const AppSettingsForm = ({
 									showIcon
 								/>
 								<ErrorMessage
-									name="isMainHeadOffice"
+									name="headOfficeType"
 									render={(error) => <FieldError error={error} />}
 								/>
 							</Col>

@@ -24,6 +24,7 @@ import {
 	cashBreakdownTypes,
 	deliveryReceiptStatus,
 	EMPTY_CELL,
+	headOfficeTypes,
 	orderSlipStatus,
 	OSDRStatus,
 	preparationSlipStatus,
@@ -41,6 +42,7 @@ import _ from 'lodash';
 import React from 'react';
 import {
 	getAppType,
+	getHeadOfficeType,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 } from 'utils/localStorage';
@@ -538,6 +540,14 @@ export const getId = (object) => {
 	 */
 
 	let id = object?.id;
+
+	if (
+		appType === appTypes.HEAD_OFFICE &&
+		getHeadOfficeType() === headOfficeTypes.TEST
+	) {
+		return id;
+	}
+
 	if (
 		(appType === appTypes.BACK_OFFICE && localApiUrl !== onlineApiUrl) ||
 		appType === appTypes.HEAD_OFFICE

@@ -101,7 +101,7 @@ export const TabDTR = () => {
 						dataIndex: 'scheduledDateTime',
 					},
 					{
-						title: 'Real',
+						title: 'Actual',
 						dataIndex: 'realDateTime',
 					},
 				],

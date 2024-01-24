@@ -9,7 +9,7 @@ if (window.require) {
 const SET_METHOD_NAME = 'setStoreValue';
 const GET_METHOD_NAME = 'getStoreValue';
 const APP_TYPE_KEY = 'appType';
-const MAIN_HEAD_OFFICE_KEY = 'isMainHeadOffice';
+const HEAD_OFFICE_TYPE_KEY = 'headOfficeType';
 
 const useAppType = () => {
 	useEffect(() => {
@@ -17,7 +17,7 @@ const useAppType = () => {
 			const fetchData = async () => {
 				const data = await Promise.all([
 					ipcRenderer.invoke(GET_METHOD_NAME, APP_TYPE_KEY),
-					ipcRenderer.invoke(GET_METHOD_NAME, MAIN_HEAD_OFFICE_KEY),
+					ipcRenderer.invoke(GET_METHOD_NAME, HEAD_OFFICE_TYPE_KEY),
 				]);
 
 				console.log('data', data);
@@ -37,11 +37,11 @@ const useAppType = () => {
 		}
 	};
 
-	const setNewIsMainHeadOffice = (newIsMainHeadOffice, relaunch = false) => {
+	const setNewHeadOfficeType = (newHeadOfficeType, relaunch = false) => {
 		if (ipcRenderer) {
 			ipcRenderer.invoke(SET_METHOD_NAME, {
-				key: MAIN_HEAD_OFFICE_KEY,
-				value: newIsMainHeadOffice,
+				key: HEAD_OFFICE_TYPE_KEY,
+				value: newHeadOfficeType,
 				relaunch,
 			});
 		}
@@ -49,7 +49,7 @@ const useAppType = () => {
 
 	return {
 		setAppType: setNewAppType,
-		setIsMainHeadOffice: setNewIsMainHeadOffice,
+		setHeadOfficeType: setNewHeadOfficeType,
 	};
 };
 

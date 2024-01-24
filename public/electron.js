@@ -171,7 +171,7 @@ function initStore() {
 			type: 'string',
 			default: appTypes.BACK_OFFICE,
 		},
-		isMainHeadOffice: {
+		headOfficeType: {
 			type: 'number',
 			default: 0,
 		},
@@ -208,7 +208,7 @@ function initServer(store) {
 		logStatus('Server: Starting');
 
 		appType = store.get('appType');
-		isMainHeadOffice = store.get('isMainHeadOffice');
+		headOfficeType = store.get('headOfficeType');
 		const apiPath = path.join(process.resourcesPath, 'api');
 
 		spawn('python', ['manage.py', 'migrate'], {
@@ -234,7 +234,7 @@ function initServer(store) {
 
 		logStatus('Server: Started API');
 
-		if (appType === appTypes.HEAD_OFFICE && isMainHeadOffice === 1) {
+		if (appType === appTypes.HEAD_OFFICE && headOfficeType === 1) {
 			logStatus('Server: Starting Tunneling');
 
 			exec(

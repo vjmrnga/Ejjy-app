@@ -7,14 +7,13 @@ import {
 	useBranchProducts,
 	useProblematicAttendanceLogs,
 	useQueryParams,
-	useSalesTracker,
-	useSiteSettings,
+	useSalesTrackerCount,
 } from 'hooks';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { TabBranchProducts } from './components/TabBranchProducts';
+import React from 'react';
+import { TabBranchProducts } from 'screens/Shared/Notifications/components/TabBranchProducts';
+import { TabSalesTracker } from 'screens/Shared/Notifications/components/TabSalesTracker';
 import { TabDTR } from './components/TabDTR';
-import { TabSalesTracker } from './components/TabSalesTracker';
 
 const tabs = {
 	BRANCH_PRODUCTS: 'Branch Products',
@@ -38,7 +37,7 @@ export const Notifications = () => {
 		options: { notifyOnChangeProps: ['data'] },
 	});
 
-	const dtrCount = useDtrHooks();
+	const dtrCount = useDtrNotificationCount();
 	const salesTrackerCount = useSalesTrackerCount();
 
 	// METHODS
@@ -104,7 +103,7 @@ export const Notifications = () => {
 	);
 };
 
-const useDtrHooks = () => {
+const useDtrNotificationCount = () => {
 	const params = {
 		attendanceCategory: attendanceCategories.ATTENDANCE,
 		pageSize: MAX_PAGE_SIZE,
@@ -128,50 +127,4 @@ const useDtrHooks = () => {
 	});
 
 	return problematicAttendanceLogsCount;
-};
-
-const useSalesTrackerCount = () => {
-	// STATES
-	const [salesTrackerCount, setSalesTrackerCount] = useState(0);
-
-	// CUSTOM HOOKS
-	const { data: siteSettings } = useSiteSettings({
-		options: { notifyOnChangeProps: ['data'] },
-	});
-	const {
-		data: { salesTrackers },
-	} = useSalesTracker({
-		params: { pageSize: MAX_PAGE_SIZE },
-		options: { notifyOnChangeProps: ['data'] },
-	});
-
-	useEffect(() => {
-		if (siteSettings) {
-			const resetCounterNotificationThresholdAmount =
-				siteSettings?.reset_counter_notification_threshold_amount;
-			const resetCounterNotificationThresholdInvoiceNumber =
-				siteSettings?.reset_counter_notification_threshold_invoice_number;
-
-			// Reset count
-			const resetCount = salesTrackers.filter(
-				({ total_sales }) =>
-					Number(total_sales) >= resetCounterNotificationThresholdAmount,
-			).length;
-
-			// Transaction count
-			const transactionCount = salesTrackers.filter(
-				({ transaction_count }) =>
-					Number(transaction_count) >=
-					resetCounterNotificationThresholdInvoiceNumber,
-			).length;
-
-			// Set new notification count
-			const newNotificationsCount = resetCount + transactionCount;
-			if (newNotificationsCount !== salesTrackerCount) {
-				setSalesTrackerCount(newNotificationsCount);
-			}
-		}
-	}, [salesTrackers, siteSettings]);
-
-	return salesTrackerCount;
 };

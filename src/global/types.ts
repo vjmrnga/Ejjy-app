@@ -10,6 +10,12 @@ export const appTypes = {
 	HEAD_OFFICE: 'head_office',
 };
 
+export const headOfficeTypes = {
+	TEST: -1,
+	NOT_MAIN: 0,
+	MAIN: 1,
+};
+
 export const printerStatuses = {
 	OK: 'OK',
 	PRINTING: 'PRINTING',

@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.451",
+	"version": "0.1.452",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -26,6 +26,7 @@
 		"build:electron": "electron-builder -w --x64 -p always --config electron-builder.json",
 		"build:electron:headoffice": "electron-builder -w --x64 -p always --config electron-builder-headoffice.json",
 		"publish:backoffice": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron",
+		"publish:headoffice": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron:headoffice",
 		"publish": "npm version patch --no-git-tag-version && npm run build:local && npm run build:electron && npm run build:electron:headoffice"
 	},
 	"dependencies": {

@@ -1,10 +1,13 @@
 import { Badge, Space, Tabs } from 'antd';
 import { Content } from 'components';
 import { Box } from 'components/elements';
-import { useQueryParams } from 'hooks';
+import { useBranchProducts, useQueryParams, useSalesTrackerCount } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import shallow from 'zustand/shallow';
+import { TabSalesTracker } from 'screens/Shared/Notifications/components/TabSalesTracker';
+import { TabBranchProducts } from 'screens/Shared/Notifications/components/TabBranchProducts';
+import { MAX_PAGE_SIZE } from 'global';
 import { TabBranchStatus } from './components/TabBranchStatus';
 import { TabDTR } from './components/TabDTR';
 import { useNotificationStore } from './stores/useNotificationStore';
@@ -12,6 +15,8 @@ import { useNotificationStore } from './stores/useNotificationStore';
 const tabs = {
 	DTR: 'DTR',
 	BRANCH_CONNECTIVITY: 'Branch Connectivity',
+	BRANCH_PRODUCTS: 'Branch Products',
+	SALES_TRACKER: 'Sales Tracker',
 };
 
 export const Notifications = () => {
@@ -27,6 +32,16 @@ export const Notifications = () => {
 		}),
 		shallow,
 	);
+	const {
+		data: { total: branchProductsCount },
+	} = useBranchProducts({
+		params: {
+			hasNegativeBalance: true,
+			pageSize: MAX_PAGE_SIZE,
+		},
+		options: { notifyOnChangeProps: ['data'] },
+	});
+	const salesTrackerCount = useSalesTrackerCount();
 
 	// METHODS
 	const handleTabClick = (selectedTab) => {
@@ -59,6 +74,20 @@ export const Notifications = () => {
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
+						key={tabs.BRANCH_PRODUCTS}
+						tab={
+							<Space align="center">
+								<span>{tabs.BRANCH_PRODUCTS}</span>
+								{branchProductsCount > 0 && (
+									<Badge count={branchProductsCount} overflowCount={999} />
+								)}
+							</Space>
+						}
+					>
+						<TabBranchProducts />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
 						key={tabs.BRANCH_CONNECTIVITY}
 						tab={
 							<Space align="center">
@@ -70,6 +99,20 @@ export const Notifications = () => {
 						}
 					>
 						<TabBranchStatus />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane
+						key={tabs.SALES_TRACKER}
+						tab={
+							<Space align="center">
+								<span>{tabs.SALES_TRACKER}</span>
+								{salesTrackerCount > 0 && (
+									<Badge count={salesTrackerCount} overflowCount={999} />
+								)}
+							</Space>
+						}
+					>
+						<TabSalesTracker />
 					</Tabs.TabPane>
 				</Tabs>
 			</Box>

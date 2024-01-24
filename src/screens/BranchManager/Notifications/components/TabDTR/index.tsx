@@ -33,7 +33,7 @@ const ongoingTableColumns: ColumnsType = [
 				dataIndex: 'scheduledDateTime',
 			},
 			{
-				title: 'Real',
+				title: 'Actual',
 				dataIndex: 'realDateTime',
 			},
 		],
@@ -53,7 +53,7 @@ const pendingTableColumns: ColumnsType = [
 				dataIndex: 'scheduledDateTime',
 			},
 			{
-				title: 'Real',
+				title: 'Actual',
 				dataIndex: 'realDateTime',
 			},
 			{
