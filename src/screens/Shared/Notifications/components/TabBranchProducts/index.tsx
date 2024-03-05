@@ -45,6 +45,7 @@ export const TabBranchProducts = () => {
 		error: branchProductsError,
 	} = useBranchProducts({
 		params: {
+			ordering: '-balance__datetime_updated',
 			hasNegativeBalance: true,
 			...params,
 		},
