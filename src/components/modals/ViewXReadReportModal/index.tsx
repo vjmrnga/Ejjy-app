@@ -225,7 +225,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				>
 					({formatInPeso(report.regular_discount)})
 				</Descriptions.Item>
-				<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
+				<Descriptions.Item label="Special" labelStyle={{ paddingLeft: 30 }}>
 					({formatInPeso(report.special_discount)})
 				</Descriptions.Item>
 				<Descriptions.Item
@@ -271,7 +271,7 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 				size="small"
 			>
 				<Descriptions.Item label="ADJUSTMENT ON VAT">{null}</Descriptions.Item>
-				<Descriptions.Item label="SC/PWD" labelStyle={{ paddingLeft: 30 }}>
+				<Descriptions.Item label="Special" labelStyle={{ paddingLeft: 30 }}>
 					{formatInPeso(report.vat_special_discount)}&nbsp;
 				</Descriptions.Item>
 				<Descriptions.Item label="OTHERS" labelStyle={{ paddingLeft: 30 }}>

@@ -133,7 +133,7 @@ export const DiscountOptions = () => {
 			{ title: 'Type', dataIndex: 'type' },
 			{ title: 'Percentage', dataIndex: 'percentage', align: 'center' },
 			{
-				title: 'SC/PWD',
+				title: 'Special',
 				dataIndex: 'isSpecialDiscount',
 				align: 'center',
 			},

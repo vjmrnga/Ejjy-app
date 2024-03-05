@@ -922,11 +922,11 @@ export const printBirReport = ({ birReports, siteSettings, user }) => {
         </tr>
         <tr class="nested-row" style="font-weight: bold">
           <td>Regular Discount</td>
-          <td>SC/PWD</td>
+          <td>Special</td>
           <td>Returns</td>
           <td>Void</td>
           <td>Total Deductions</td>
-          <td>VAT on SC/PWD</td>
+          <td>VAT on Special</td>
           <td>VAT on Returns</td>
           <td>Others </td>
           <td>Total VAT Adj.</td>
@@ -1280,7 +1280,7 @@ export const printXReadReport = ({
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="padding-left: 15px">Special</td>
         <td style="text-align: right">(${formatInPeso(
 					report.special_discount,
 					PESO_SIGN,
@@ -1315,7 +1315,7 @@ export const printXReadReport = ({
         <td>ADJUSTMENT ON VAT:</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="padding-left: 15px">Special</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_special_discount,
 					PESO_SIGN,
@@ -1549,7 +1549,7 @@ export const printZReadReport = ({
 				)})</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="padding-left: 15px">Special</td>
         <td style="text-align: right">(${formatInPeso(
 					report.special_discount,
 					PESO_SIGN,
@@ -1584,7 +1584,7 @@ export const printZReadReport = ({
         <td>ADJUSTMENT ON VAT:</td>
       </tr>
       <tr>
-        <td style="padding-left: 15px">SC/PWD</td>
+        <td style="padding-left: 15px">Special</td>
         <td style="text-align: right">${formatInPeso(
 					report.vat_special_discount,
 					PESO_SIGN,

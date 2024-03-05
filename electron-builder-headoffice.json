@@ -18,7 +18,7 @@
 	],
 	"nsis": {
 		"oneClick": false,
-		"allowToChangeInstallationDirectory": true
+		"allowToChangeInstallationDirectory": false
 	},
 	"extraMetadata": {
 		"name": "ejjy-inventory-headoffice-app"
