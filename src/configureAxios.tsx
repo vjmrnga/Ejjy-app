@@ -20,7 +20,7 @@ export default function configureAxios() {
 		const modifiedError = { ...error };
 
 		if (error.isAxiosError) {
-			if (error.response.status === 500) {
+			if (error.response?.status === 500) {
 				modifiedError.errors = [GENERIC_STATUS_500_MESSAGE];
 			} else if (typeof error?.response?.data === 'string') {
 				modifiedError.errors = [error.response.data];
