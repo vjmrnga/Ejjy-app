@@ -16,6 +16,7 @@ const useUsers = ({ params, options, shouldFetchOfflineFirst }: Query = {}) =>
 			params?.ordering,
 			params?.page,
 			params?.pageSize,
+			params?.search,
 			params?.serverUrl,
 			params?.serviceType,
 			shouldFetchOfflineFirst,
@@ -50,6 +51,7 @@ const useUsers = ({ params, options, shouldFetchOfflineFirst }: Query = {}) =>
 						is_pending_update_user_type_approval:
 							params?.isPendingUpdateUserTypeApproval,
 						is_pending_delete_approval: params?.isPendingDeleteApproval,
+						search: params?.search,
 					},
 					params?.serverUrl || getLocalApiUrl(),
 				),

@@ -2,11 +2,13 @@ import {
 	DeleteOutlined,
 	DesktopOutlined,
 	EditFilled,
+	SearchOutlined,
 	SelectOutlined,
 } from '@ant-design/icons';
 import {
 	Button,
 	Col,
+	Input,
 	Popconfirm,
 	Row,
 	Select,
@@ -33,6 +35,7 @@ import {
 	DEV_USERNAME,
 	MAX_PAGE_SIZE,
 	NO_BRANCH_ID,
+	SEARCH_DEBOUNCE_TIME,
 	pageSizeOptions,
 	serviceTypes,
 	userPendingApprovalTypes,
@@ -56,7 +59,7 @@ import {
 	getUserTypeName,
 	isUserFromOffice,
 } from 'utils';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import _ from 'lodash';
 
@@ -348,6 +351,12 @@ const Filter = () => {
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: { enabled: isUserFromOffice(user.user_type) },
 	});
+	const handleSearchDebounced = useCallback(
+		_.debounce((search) => {
+			setQueryParams({ search }, { shouldResetPage: true });
+		}, SEARCH_DEBOUNCE_TIME),
+		[],
+	);
 
 	return (
 		<div className="pa-6 pt-0">
@@ -357,6 +366,18 @@ const Filter = () => {
 			/>
 
 			<Row gutter={[16, 16]}>
+				<Col lg={12} span={24}>
+					<Label label="Search" spacing />
+					<Input
+						defaultValue={params.search}
+						prefix={<SearchOutlined />}
+						allowClear
+						onChange={(event) =>
+							handleSearchDebounced(event.target.value.trim())
+						}
+					/>
+				</Col>
+
 				{isUserFromOffice(user.user_type) && (
 					<Col lg={12} span={24}>
 						<Label label="Branch" spacing />
