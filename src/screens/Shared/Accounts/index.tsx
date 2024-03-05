@@ -9,6 +9,7 @@ import { TabCollectionReceipts } from './components/TabCollectionReceipts';
 import { TabCreditRegistrations } from './components/TabCreditRegistration';
 import { TabCreditTransactions } from './components/TabCreditTransactions';
 import { TabOrderOfPayments } from './components/TabOrderOfPayments';
+import { TabEmployees } from './components/TabEmployees';
 import { TabSupplierRegistrations } from './components/TabSupplierRegistration';
 import { accountTabs } from './data';
 
@@ -42,6 +43,10 @@ export const Accounts = () => {
 				>
 					<Tabs.TabPane key={accountTabs.ACCOUNTS} tab={accountTabs.ACCOUNTS}>
 						<TabAccounts disabled={isConnected === false} />
+					</Tabs.TabPane>
+
+					<Tabs.TabPane key={accountTabs.EMPLOYEES} tab={accountTabs.EMPLOYEES}>
+						<TabEmployees disabled={isConnected === false} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane
