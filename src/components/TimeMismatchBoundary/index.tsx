@@ -23,10 +23,12 @@ export const TimeMismatchBoundary = () => {
 		data: { branchMachines },
 		isFetched: isBranchMachinesFetched,
 	} = useBranchMachines();
-	const { data: siteSettings, isFetched: isSiteSettingsFetched } =
-		useSiteSettings({
-			options: { notifyOnChangeProps: ['data', 'isFetched'] },
-		});
+	const {
+		data: siteSettings,
+		isFetched: isSiteSettingsFetched,
+	} = useSiteSettings({
+		options: { notifyOnChangeProps: ['data', 'isFetched'] },
+	});
 
 	// METHODS
 	const serviceFn = async () => {

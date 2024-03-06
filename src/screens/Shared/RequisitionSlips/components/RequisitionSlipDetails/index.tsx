@@ -24,8 +24,10 @@ export const RequisitionSlipDetails = ({ requisitionSlip, type }: Props) => {
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
-	const { editRequisitionSlip, status: requisitionSlipsStatus } =
-		useRequisitionSlips();
+	const {
+		editRequisitionSlip,
+		status: requisitionSlipsStatus,
+	} = useRequisitionSlips();
 
 	// METHODS
 	const handleStatusChange = (status) => {

@@ -42,13 +42,16 @@ export const OrderSlips = ({
 
 	// State: Modal
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
-	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] =
-		useState(false);
+	const [createEditOrderSlipVisible, setCreateEditOrderSlipVisible] = useState(
+		false,
+	);
 	const [createOutOfStockVisible, setCreateOutOfStockVisible] = useState(false);
 
 	// CUSTOM HOOKS
-	const { createDeliveryReceipt, status: deliveryReceiptStatus } =
-		useDeliveryReceipt();
+	const {
+		createDeliveryReceipt,
+		status: deliveryReceiptStatus,
+	} = useDeliveryReceipt();
 	const {
 		orderSlips,
 		getOrderSlipsExtended,

@@ -36,8 +36,9 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
-	const [selectedCreditTransaction, setSelectedCreditTransaction] =
-		useState(null);
+	const [selectedCreditTransaction, setSelectedCreditTransaction] = useState(
+		null,
+	);
 	const [
 		isCreateOrderOfPaymentModalVisible,
 		setIsCreateOrderOfPaymentModalVisible,
@@ -65,8 +66,14 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	useEffect(() => {
 		const data = transactions.map((transaction) => {
-			const { id, invoice, total_amount, teller, datetime_created, payment } =
-				transaction;
+			const {
+				id,
+				invoice,
+				total_amount,
+				teller,
+				datetime_created,
+				payment,
+			} = transaction;
 
 			return {
 				key: id,

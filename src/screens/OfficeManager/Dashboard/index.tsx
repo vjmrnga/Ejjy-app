@@ -35,8 +35,10 @@ const authorizationStatuses = {
 export const Dashboard = () => {
 	// STATES
 	const [branchesStatus, setBranchesStatus] = useState({});
-	const [isBranchesStatusInitialized, setIsBranchesStatusInitialized] =
-		useState(false);
+	const [
+		isBranchesStatusInitialized,
+		setIsBranchesStatusInitialized,
+	] = useState(false);
 
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();

@@ -26,8 +26,10 @@ interface Props {
 
 export const DeliveryReceipt = ({ deliveryReceipt }: Props) => {
 	const [receivedProducts, setReceivedProducts] = useState([]);
-	const [selectedDeliveryReceiptProduct, setSelectedDeliveryReceiptProduct] =
-		useState(null);
+	const [
+		selectedDeliveryReceiptProduct,
+		setSelectedDeliveryReceiptProduct,
+	] = useState(null);
 	const [
 		viewProductAdjustmentsSlipVisible,
 		setViewProductAdjustmentsSlipVisible,

@@ -35,12 +35,11 @@ function* getDeliveryReceiptById({ payload }: any) {
 }
 
 /* WATCHERS */
-const getDeliveryReceiptByIdWatcherSaga =
-	function* getDeliveryReceiptByIdSaga() {
-		yield takeLatest(
-			types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID,
-			getDeliveryReceiptById,
-		);
-	};
+const getDeliveryReceiptByIdWatcherSaga = function* getDeliveryReceiptByIdSaga() {
+	yield takeLatest(
+		types.GET_DELIVERY_RECEIPT_PRODUCT_BY_ID,
+		getDeliveryReceiptById,
+	);
+};
 
 export default [getDeliveryReceiptByIdWatcherSaga()];

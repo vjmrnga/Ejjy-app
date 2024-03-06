@@ -1,15 +1,20 @@
 import { Button, Col, Modal, Row, Table } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
-import { ViewZReadReportModal } from 'components/modals/ViewZReadReportModal';
 import {
 	AUTOMATIC_GENERATED_REPORT_USER_NAME,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-} from 'global';
-import { useQueryParams, useZreadReports } from 'hooks';
+	ViewZReadReportModal,
+	ZReadReport,
+	convertIntoArray,
+	formatDateTime,
+	getFullName,
+	useQueryParams,
+	useZReadReports,
+} from 'ejjy-global';
+import { useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, getFullName } from 'utils';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
@@ -25,45 +30,49 @@ interface Props {
 
 export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
-	const [selectedZReadReport, setSelectedZReadReport] = useState(null);
+	const [selectedZReadReport, setSelectedZReadReport] = useState<ZReadReport>();
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
+
 	const {
-		data: { zReadReports, total },
+		data: zReadReportsData,
 		isFetching: isFetchingZReadReports,
 		error: zReadReportsError,
-	} = useZreadReports({
+	} = useZReadReports({
 		params: {
 			...params,
-			timeRange: params[TIME_RANGE_PARAM_KEY],
+			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
 			branchMachineName: branchMachine.name,
 		},
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedReports = zReadReports.map((report) => ({
-			key: report.id,
-			datetimeCreated: (
-				<Button
-					className="pa-0"
-					type="link"
-					onClick={() => {
-						setSelectedZReadReport(report);
-					}}
-				>
-					{formatDateTime(report.generation_datetime)}
-				</Button>
-			),
-			user: report.generated_by
-				? getFullName(report.generated_by)
-				: AUTOMATIC_GENERATED_REPORT_USER_NAME,
-		}));
+		if (zReadReportsData?.list) {
+			const data = zReadReportsData.list.map((report) => ({
+				key: report.id,
+				datetimeCreated: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => {
+							setSelectedZReadReport(report);
+						}}
+					>
+						{formatDateTime(report.generation_datetime)}
+					</Button>
+				),
+				user: report.generated_by
+					? getFullName(report.generated_by)
+					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
+			}));
 
-		setDataSource(formattedReports);
-	}, [zReadReports]);
+			setDataSource(data);
+		}
+	}, [zReadReportsData?.list]);
 
 	return (
 		<Modal
@@ -88,7 +97,7 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				loading={isFetchingZReadReports}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
-					total,
+					total: zReadReportsData?.total || 0,
 					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page) => {
 						setQueryParams({ page }, { shouldResetPage: false });
@@ -102,6 +111,7 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 			{selectedZReadReport && (
 				<ViewZReadReportModal
 					report={selectedZReadReport}
+					siteSettings={siteSettings}
 					onClose={() => setSelectedZReadReport(null)}
 				/>
 			)}

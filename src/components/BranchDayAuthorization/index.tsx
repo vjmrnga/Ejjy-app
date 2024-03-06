@@ -34,8 +34,10 @@ export const BranchDayAuthorization = ({
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
-	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
-		useSiteSettings();
+	const {
+		data: siteSettings,
+		isFetching: isFetchingSiteSettings,
+	} = useSiteSettings();
 	const {
 		data: fetchedBranchDay,
 		isFetching: isFetchingBranchDayAuthorization,

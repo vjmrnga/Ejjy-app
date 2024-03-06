@@ -28,8 +28,10 @@ export const OrderSlips = ({ requisitionSlipId }: Props) => {
 	// STATES
 	const [selectedOrderSlip, setSelectedOrderSlip] = useState(null);
 	const [viewOrderSlipVisible, setViewOrderSlipVisible] = useState(false);
-	const [receiveDeliveryReceiptVisible, setReceiveDeliveryReceiptVisible] =
-		useState(false);
+	const [
+		receiveDeliveryReceiptVisible,
+		setReceiveDeliveryReceiptVisible,
+	] = useState(false);
 
 	// CUSTOM HOOKS
 	const {

@@ -74,8 +74,9 @@ export const CreateStockOut = () => {
 	// STATES
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
-	const [createStockOutModalVisible, setCreateStockOutModalVisible] =
-		useState(false);
+	const [createStockOutModalVisible, setCreateStockOutModalVisible] = useState(
+		false,
+	);
 
 	// REFS
 	const productsRef = useRef({});
@@ -293,8 +294,13 @@ export const CreateStockOut = () => {
 
 		if (productIds.length > 0) {
 			const products = productIds.map((id) => {
-				const { piecesInBulk, pricePerPiece, quantityType, quantity, remarks } =
-					productsRef.current[id];
+				const {
+					piecesInBulk,
+					pricePerPiece,
+					quantityType,
+					quantity,
+					remarks,
+				} = productsRef.current[id];
 				return {
 					product_id: id,
 					quantity_returned:

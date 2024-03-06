@@ -107,13 +107,12 @@ const fulfillWatcherSaga = function* fulfillWatcherSaga() {
 	yield takeLatest(types.FULFILL_PREPARATION_SLIP, fulfill);
 };
 
-const approveOrDisapproveWatcherSaga =
-	function* approveOrDisapproveWatcherSaga() {
-		yield takeLatest(
-			types.APPROVE_OR_DISAPPROVE_PREPARATION_SLIP,
-			approveOrDisapprove,
-		);
-	};
+const approveOrDisapproveWatcherSaga = function* approveOrDisapproveWatcherSaga() {
+	yield takeLatest(
+		types.APPROVE_OR_DISAPPROVE_PREPARATION_SLIP,
+		approveOrDisapprove,
+	);
+};
 
 export default [
 	listWatcherSaga(),

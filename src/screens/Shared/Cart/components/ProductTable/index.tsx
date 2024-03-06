@@ -38,18 +38,24 @@ export const ProductTable = ({ isLoading }: Props) => {
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
-	const { products, pageNumber, deleteProduct, nextPage, prevPage, resetPage } =
-		useBoundStore(
-			(state: any) => ({
-				products: state.products,
-				pageNumber: state.pageNumber,
-				deleteProduct: state.deleteProduct,
-				nextPage: state.nextPage,
-				prevPage: state.prevPage,
-				resetPage: state.resetPage,
-			}),
-			shallow,
-		);
+	const {
+		products,
+		pageNumber,
+		deleteProduct,
+		nextPage,
+		prevPage,
+		resetPage,
+	} = useBoundStore(
+		(state: any) => ({
+			products: state.products,
+			pageNumber: state.pageNumber,
+			deleteProduct: state.deleteProduct,
+			nextPage: state.nextPage,
+			prevPage: state.prevPage,
+			resetPage: state.resetPage,
+		}),
+		shallow,
+	);
 
 	// METHODS
 	useEffect(() => {

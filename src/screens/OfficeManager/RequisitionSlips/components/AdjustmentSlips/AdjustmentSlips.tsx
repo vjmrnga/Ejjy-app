@@ -23,10 +23,13 @@ export const AdjustmentSlips = ({
 	const [selectedAdjustmentSlip, setSelectedAdjustmentSlip] = useState(null);
 
 	// State: Modal
-	const [viewAdjustmentSlipVisible, setViewAdjustmentSlipVisible] =
-		useState(false);
-	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
-		useState(false);
+	const [viewAdjustmentSlipVisible, setViewAdjustmentSlipVisible] = useState(
+		false,
+	);
+	const [
+		createAdjustmentSlipVisible,
+		setCreateAdjustmentSlipVisible,
+	] = useState(false);
 
 	const {
 		adjustmentSlips,

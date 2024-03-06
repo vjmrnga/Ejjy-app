@@ -75,8 +75,9 @@ export const Users = () => {
 	const [dataSource, setDataSource] = useState([]);
 	const [viewUserModalVisible, setViewUserModalVisible] = useState(false);
 	const [modifyUserModalVisible, setModifyUserModalVisible] = useState(false);
-	const [reassignUserModalVisible, setReassignUserModalVisible] =
-		useState(false);
+	const [reassignUserModalVisible, setReassignUserModalVisible] = useState(
+		false,
+	);
 	const [selectedUser, setSelectedUser] = useState(null);
 
 	// CUSTOM HOOKS

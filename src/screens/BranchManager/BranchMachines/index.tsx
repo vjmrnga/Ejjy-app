@@ -24,8 +24,10 @@ export const BranchMachines = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [modifyBranchMachineModalVisible, setModifyBranchMachineModalVisible] =
-		useState(false);
+	const [
+		modifyBranchMachineModalVisible,
+		setModifyBranchMachineModalVisible,
+	] = useState(false);
 
 	// VARIABLES
 	const branchId = getLocalBranchId();

@@ -21,8 +21,9 @@ const columns: ColumnsType = [
 export const TabStockIn = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [selectedReceivingVoucher, setSelectedReceivingVoucher] =
-		useState(null);
+	const [selectedReceivingVoucher, setSelectedReceivingVoucher] = useState(
+		null,
+	);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();

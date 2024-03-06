@@ -33,8 +33,10 @@ export const ReportsPerMachine = ({
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
 	const [selectedReadReportType, setSelectedReadReportType] = useState(null);
-	const [isExportEjournalModalVisible, setIsExportEjournalModalVisible] =
-		useState(false);
+	const [
+		isExportEjournalModalVisible,
+		setIsExportEjournalModalVisible,
+	] = useState(false);
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);

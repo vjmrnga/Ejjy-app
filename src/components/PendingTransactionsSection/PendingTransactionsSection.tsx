@@ -55,8 +55,12 @@ const PendingTransactionsSectionComponent = (
 		const formattedPendingTransactions = pendingTransactions
 			.filter(({ request_model }) => request_model === transactionType)
 			.map((pendingTransaction) => {
-				const { name, branch, datetime_created, is_pending_approval } =
-					pendingTransaction;
+				const {
+					name,
+					branch,
+					datetime_created,
+					is_pending_approval,
+				} = pendingTransaction;
 
 				const actions = is_pending_approval ? (
 					<PendingApprovalBadgePill />

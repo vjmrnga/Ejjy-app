@@ -90,8 +90,10 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 	// CUSTOM HOOKS
 	const history = useHistory();
 	const user = useUserStore((state) => state.user);
-	const { getPreparationSlipById, status: prepSlipStatus } =
-		usePreparationSlips();
+	const {
+		getPreparationSlipById,
+		status: prepSlipStatus,
+	} = usePreparationSlips();
 	const {
 		fulfillPreparationSlip: fulfillPrepSlip,
 		reset: fulfillPrepSlipReset,

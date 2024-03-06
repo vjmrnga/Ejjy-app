@@ -239,8 +239,9 @@ export const CreateReturnItemSlip = () => {
 
 		if (productIds.length > 0) {
 			const products = productIds.map((id) => {
-				const { piecesInBulk, quantityType, quantity } =
-					productsRef.current[id];
+				const { piecesInBulk, quantityType, quantity } = productsRef.current[
+					id
+				];
 
 				return {
 					product_id: id,

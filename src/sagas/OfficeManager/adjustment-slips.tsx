@@ -59,13 +59,12 @@ function* create({ payload }: any) {
 }
 
 /* WATCHERS */
-const getByDeliveryReceiptIdWatcherSaga =
-	function* getByDeliveryReceiptIdSaga() {
-		yield takeLatest(
-			types.GET_ADJUSTMENT_SLIPS_BY_DELIVERY_RECEIPT_ID,
-			getByDeliveryReceiptId,
-		);
-	};
+const getByDeliveryReceiptIdWatcherSaga = function* getByDeliveryReceiptIdSaga() {
+	yield takeLatest(
+		types.GET_ADJUSTMENT_SLIPS_BY_DELIVERY_RECEIPT_ID,
+		getByDeliveryReceiptId,
+	);
+};
 
 const createWatcherSaga = function* createWatcherSaga() {
 	yield takeLatest(types.CREATE_ADJUSTMENT_SLIP, create);

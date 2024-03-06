@@ -39,30 +39,27 @@ export const CreateAdjustmentSlipModal = ({
 	// METHODS
 	useEffect(() => {
 		if (deliveryReceipt && visible) {
-			const formattedDeliveryReceiptProducts =
-				deliveryReceipt.delivery_receipt_products
-					.filter(
-						({ status }) => status === deliveryReceiptStatus.INVESTIGATION,
-					)
-					.map((product) => {
-						const {
-							id,
-							status,
-							is_adjusted,
-							received_quantity_piece,
-							delivered_quantity_piece,
-							order_slip_product,
-						} = product;
+			const formattedDeliveryReceiptProducts = deliveryReceipt.delivery_receipt_products
+				.filter(({ status }) => status === deliveryReceiptStatus.INVESTIGATION)
+				.map((product) => {
+					const {
+						id,
+						status,
+						is_adjusted,
+						received_quantity_piece,
+						delivered_quantity_piece,
+						order_slip_product,
+					} = product;
 
-						return {
-							id,
-							name: order_slip_product?.product?.name,
-							status,
-							is_adjusted,
-							delivered_quantity_piece,
-							received_quantity_piece,
-						};
-					});
+					return {
+						id,
+						name: order_slip_product?.product?.name,
+						status,
+						is_adjusted,
+						delivered_quantity_piece,
+						received_quantity_piece,
+					};
+				});
 
 			setDeliveryReceiptProducts(formattedDeliveryReceiptProducts);
 		}

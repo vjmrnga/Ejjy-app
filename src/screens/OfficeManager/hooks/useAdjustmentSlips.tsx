@@ -66,8 +66,7 @@ export const useAdjustmentSlips = () => {
 
 	return {
 		adjustmentSlips,
-		getAdjustmentSlipsByDeliveryReceiptId:
-			getAdjustmentSlipsByDeliveryReceiptIdRequest,
+		getAdjustmentSlipsByDeliveryReceiptId: getAdjustmentSlipsByDeliveryReceiptIdRequest,
 		createAdjustmentSlip: createAdjustmentSlipRequest,
 		status,
 		errors,

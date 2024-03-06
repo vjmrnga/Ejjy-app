@@ -85,8 +85,13 @@ function* remove({ payload }: any) {
 }
 
 function* execute({ payload }: any) {
-	const { callback, url, request_body, request_query_params, request_type } =
-		payload;
+	const {
+		callback,
+		url,
+		request_body,
+		request_query_params,
+		request_type,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {

@@ -50,15 +50,19 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	const [title, setTitle] = useState('Invoice');
 
 	// CUSTOM HOOKS
-	const { data: siteSettings, isFetching: isFetchingSiteSettings } =
-		useSiteSettings();
-	const { data: transactionRetrieved, isFetching: isTransactionFetching } =
-		useTransactionRetrieve({
-			id: transaction,
-			options: {
-				enabled: _.isNumber(transaction),
-			},
-		});
+	const {
+		data: siteSettings,
+		isFetching: isFetchingSiteSettings,
+	} = useSiteSettings();
+	const {
+		data: transactionRetrieved,
+		isFetching: isTransactionFetching,
+	} = useTransactionRetrieve({
+		id: transaction,
+		options: {
+			enabled: _.isNumber(transaction),
+		},
+	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `SalesInvoice_${transactionData?.invoice?.or_number}`,
 		print: () =>

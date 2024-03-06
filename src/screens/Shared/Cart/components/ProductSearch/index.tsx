@@ -46,30 +46,32 @@ export const ProductSearch = ({ barcodeScannerRef }: Props) => {
 		}),
 		shallow,
 	);
-	const { isFetching: isFetchingBranchProducts, error: branchProductsError } =
-		useBranchProducts({
-			params: {
-				branchId: getLocalBranchId(),
-				search: searchedText,
-			},
-			options: {
-				enabled: searchedText?.length > 0,
-				onSuccess: (data: any) => {
-					const newSearchableProducts = data.branchProducts
-						.filter(({ product }) => !productKeysInTable.includes(product.key))
-						.map(({ product }) => product);
+	const {
+		isFetching: isFetchingBranchProducts,
+		error: branchProductsError,
+	} = useBranchProducts({
+		params: {
+			branchId: getLocalBranchId(),
+			search: searchedText,
+		},
+		options: {
+			enabled: searchedText?.length > 0,
+			onSuccess: (data: any) => {
+				const newSearchableProducts = data.branchProducts
+					.filter(({ product }) => !productKeysInTable.includes(product.key))
+					.map(({ product }) => product);
 
-					setActiveIndex(0);
-					setSearchableProducts(newSearchableProducts);
-				},
-				onError: () => {
-					message.warning({
-						key: WARNING_MESSAGE_KEY,
-						content: 'Code not recognized.',
-					});
-				},
+				setActiveIndex(0);
+				setSearchableProducts(newSearchableProducts);
 			},
-		});
+			onError: () => {
+				message.warning({
+					key: WARNING_MESSAGE_KEY,
+					content: 'Code not recognized.',
+				});
+			},
+		},
+	});
 
 	// METHODS
 	useEffect(() => {

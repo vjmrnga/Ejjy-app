@@ -1,3 +1,7 @@
+import {
+	ServiceType,
+	useSiteSettings as useSiteSettingsGlobal,
+} from 'ejjy-global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
@@ -5,6 +9,13 @@ import { SiteSettingsService } from 'services';
 import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const SITE_SETTINGS_STALE_TIME = 10000;
+
+export const useSiteSettingsNew = () =>
+	useSiteSettingsGlobal({
+		serviceOptions: {
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
+	});
 
 export const useSiteSettings = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -80,10 +91,8 @@ export const useSiteSettingsEdit = () =>
 					ptu_number: ptuNumber,
 					ptu_valid_until_date: ptuValidUntilDate,
 					reporting_period_day_of_month: reportingPeriodDayOfMonth,
-					reset_counter_notification_threshold_amount:
-						resetCounterNotificationThresholdAmount,
-					reset_counter_notification_threshold_invoice_number:
-						resetCounterNotificationThresholdInvoiceNumber,
+					reset_counter_notification_threshold_amount: resetCounterNotificationThresholdAmount,
+					reset_counter_notification_threshold_invoice_number: resetCounterNotificationThresholdInvoiceNumber,
 					invoice_last_message: invoiceLastMessage,
 					software_developer_address: softwareDeveloperAddress,
 					software_developer_tin: softwareDeveloperTin,

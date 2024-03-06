@@ -44,8 +44,10 @@ export const CashieringAssignment = ({ match }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedDate, setSelectededDate] = useState(null);
-	const [selectedCashieringAssignment, setSelectedCashieringAssignment] =
-		useState(null);
+	const [
+		selectedCashieringAssignment,
+		setSelectedCashieringAssignment,
+	] = useState(null);
 
 	// CUSTOM HOOKS
 	const { isConnected } = usePingOnlineServer();
@@ -81,8 +83,10 @@ export const CashieringAssignment = ({ match }: Props) => {
 			enabled: isSuccessUser,
 		},
 	});
-	const { mutateAsync: deleteCashieringAssignment, error: deleteError } =
-		useCashieringAssignmentDelete();
+	const {
+		mutateAsync: deleteCashieringAssignment,
+		error: deleteError,
+	} = useCashieringAssignmentDelete();
 
 	// METHODS
 	useEffect(() => {

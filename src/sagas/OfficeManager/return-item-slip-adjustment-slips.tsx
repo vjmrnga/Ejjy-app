@@ -30,8 +30,13 @@ function* list({ payload }: any) {
 }
 
 function* create({ payload }: any) {
-	const { returnItemSlipId, creatingUserId, remarks, products, callback } =
-		payload;
+	const {
+		returnItemSlipId,
+		creatingUserId,
+		remarks,
+		products,
+		callback,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	try {

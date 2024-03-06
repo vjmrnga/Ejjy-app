@@ -23,8 +23,10 @@ const Admin = () => {
 	const [notificationsCount, setNotificationsCount] = useState(0);
 
 	// CUSTOM HOOKS
-	const { pendingTransactionsCount, getPendingTransactionsCount } =
-		usePendingTransactions();
+	const {
+		pendingTransactionsCount,
+		getPendingTransactionsCount,
+	} = usePendingTransactions();
 	const { failedTransfers, getFailedTansferCount } = useFailedTransfers();
 	const {
 		data: { branches },

@@ -164,8 +164,10 @@ const AdjustmentSlips = ({
 	retrieveBackOrder,
 }: AdjustmentSlipsProps) => {
 	// STATE
-	const [createAdjustmentSlipVisible, setCreateAdjustmentSlipVisible] =
-		useState(false);
+	const [
+		createAdjustmentSlipVisible,
+		setCreateAdjustmentSlipVisible,
+	] = useState(false);
 	const [selectedAdjustmentSlip, setSelectedAdjustmentSlip] = useState(null);
 
 	// CUSTOM HOOKS

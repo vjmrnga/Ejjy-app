@@ -114,13 +114,12 @@ export const SiteSettings = () => {
 				// posAccreditationDate: siteSettings?.pos_accreditation_date
 				// 	? moment(siteSettings.pos_accreditation_date, 'YYYY-MM-DD')
 				// 	: null,
-				posAccreditationValidUntilDate:
-					siteSettings?.pos_accreditation_valid_until_date
-						? moment(
-								siteSettings.pos_accreditation_valid_until_date,
-								'YYYY-MM-DD',
-						  )
-						: null,
+				posAccreditationValidUntilDate: siteSettings?.pos_accreditation_valid_until_date
+					? moment(
+							siteSettings.pos_accreditation_valid_until_date,
+							'YYYY-MM-DD',
+					  )
+					: null,
 
 				ptuNumber: siteSettings?.ptu_number || '',
 				// ptuDate: siteSettings?.ptu_date
@@ -341,8 +340,9 @@ export const SiteSettings = () => {
 			closeSessionDeadline: formData.closeSessionDeadline.format('HH:mm:ss'),
 			closeDayDeadline: formData.closeDayDeadline.format('HH:mm:ss'),
 			// posAccreditationDate: formData.posAccreditationDate.format('YYYY-MM-DD'),
-			posAccreditationValidUntilDate:
-				formData.posAccreditationValidUntilDate.format('YYYY-MM-DD'),
+			posAccreditationValidUntilDate: formData.posAccreditationValidUntilDate.format(
+				'YYYY-MM-DD',
+			),
 			// ptuDate: formData.ptuDate.format('YYYY-MM-DD'),
 			ptuValidUntilDate: formData.ptuValidUntilDate.format('YYYY-MM-DD'),
 		});

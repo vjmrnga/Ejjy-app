@@ -45,8 +45,8 @@ export const ViewProductAdjustmentSlipsModal = ({
 
 	useEffect(() => {
 		if (visible && deliveryReceiptProduct && status === request.SUCCESS) {
-			const formattedAdjustmentProducts =
-				deliveryReceiptProduct?.adjustment_slips?.map((item) => {
+			const formattedAdjustmentProducts = deliveryReceiptProduct?.adjustment_slips?.map(
+				(item) => {
 					const { id, datetime_created, remarks } = item?.adjustment_slip;
 					const {
 						current_delivered_quantity_piece,
@@ -59,7 +59,8 @@ export const ViewProductAdjustmentSlipsModal = ({
 						`${current_delivered_quantity_piece}/${current_received_quantity_piece}`,
 						remarks,
 					];
-				});
+				},
+			);
 
 			setAdjustmentProducts(formattedAdjustmentProducts);
 		}

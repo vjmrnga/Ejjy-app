@@ -45,8 +45,9 @@ export const TabCreditRegistrations = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedAccount, setSelectedAccount] = useState(null);
-	const [selectedCreditRegistration, setSelectedCreditRegistration] =
-		useState(null);
+	const [selectedCreditRegistration, setSelectedCreditRegistration] = useState(
+		null,
+	);
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
 	// CUSTOM HOOKS

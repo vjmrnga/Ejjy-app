@@ -136,8 +136,13 @@ function* edit({ payload }: any) {
 }
 
 function* editBalance({ payload }: any) {
-	const { callback, branchId, productId, updatingUserId, addedBalance } =
-		payload;
+	const {
+		callback,
+		branchId,
+		productId,
+		updatingUserId,
+		addedBalance,
+	} = payload;
 	callback({ status: request.REQUESTING });
 
 	const baseURL = getBaseUrl(branchId, callback);

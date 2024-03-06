@@ -33,20 +33,22 @@ const NETWORK_RETRY_DELAY_MS = 1000;
 const App = () => {
 	const history = useHistory();
 
-	const { isFetching: isConnectingNetwork, isSuccess: isNetworkSuccess } =
-		useNetwork({
-			options: {
-				retry: NETWORK_RETRY,
-				retryDelay: NETWORK_RETRY_DELAY_MS,
-				enabled: !!getLocalApiUrl() && !!getOnlineApiUrl(),
-				onError: () => {
-					history.replace({
-						pathname: '/error',
-						state: true,
-					});
-				},
+	const {
+		isFetching: isConnectingNetwork,
+		isSuccess: isNetworkSuccess,
+	} = useNetwork({
+		options: {
+			retry: NETWORK_RETRY,
+			retryDelay: NETWORK_RETRY_DELAY_MS,
+			enabled: !!getLocalApiUrl() && !!getOnlineApiUrl(),
+			onError: () => {
+				history.replace({
+					pathname: '/error',
+					state: true,
+				});
 			},
-		});
+		},
+	});
 
 	const {
 		data: { branches },

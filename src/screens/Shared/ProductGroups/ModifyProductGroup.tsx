@@ -64,8 +64,10 @@ export const ModifyProductGroup = ({ match }: Props) => {
 	// STATES
 	const [activeTab, setActiveTab] = useState(tabs.ALL);
 	const [count, setCount] = useState(0);
-	const [modifyProductGroupModalVisible, setModifyProductGroupModalVisible] =
-		useState(false);
+	const [
+		modifyProductGroupModalVisible,
+		setModifyProductGroupModalVisible,
+	] = useState(false);
 
 	// REFS
 	const productsRef = useRef({});

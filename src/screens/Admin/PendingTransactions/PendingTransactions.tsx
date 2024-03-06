@@ -56,8 +56,13 @@ export const PendingTransactions = () => {
 		};
 		const formattedPendingTransactions = pendingTransactions.map(
 			(pendingTransaction) => {
-				const { id, name, branch, datetime_created, request_model } =
-					pendingTransaction;
+				const {
+					id,
+					name,
+					branch,
+					datetime_created,
+					request_model,
+				} = pendingTransaction;
 
 				return {
 					description: name,

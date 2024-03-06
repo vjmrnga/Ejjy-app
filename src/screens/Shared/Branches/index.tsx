@@ -28,8 +28,9 @@ const columns: ColumnsType = [
 export const Branches = () => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
-	const [modifyBranchModalVisible, setModifyBranchModalVisible] =
-		useState(false);
+	const [modifyBranchModalVisible, setModifyBranchModalVisible] = useState(
+		false,
+	);
 	const [selectedBranch, setSelectedBranch] = useState(null);
 
 	// CUSTOM HOOKS

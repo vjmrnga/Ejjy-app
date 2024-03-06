@@ -44,8 +44,12 @@ export const TimeRangeFilter = ({
 				const validatedTimeRange = validateTimeRange(currentParams[queryName]);
 
 				if (validatedTimeRange) {
-					const { areValid, areSameMonth, isStartOfTheMonth, isEndOfTheMonth } =
-						validatedTimeRange;
+					const {
+						areValid,
+						areSameMonth,
+						isStartOfTheMonth,
+						isEndOfTheMonth,
+					} = validatedTimeRange;
 
 					if (
 						areValid &&

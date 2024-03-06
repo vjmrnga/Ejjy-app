@@ -71,10 +71,12 @@ export const ModifyAttendanceScheduleForm = ({
 					...formData,
 					clockInMorningTime: formData.clockInMorningTime.format('HH:mm:ss'),
 					clockOutMorningTime: formData.clockOutMorningTime.format('HH:mm:ss'),
-					clockInAfternoonTime:
-						formData.clockInAfternoonTime.format('HH:mm:ss'),
-					clockOutAfternoonTime:
-						formData.clockOutAfternoonTime.format('HH:mm:ss'),
+					clockInAfternoonTime: formData.clockInAfternoonTime.format(
+						'HH:mm:ss',
+					),
+					clockOutAfternoonTime: formData.clockOutAfternoonTime.format(
+						'HH:mm:ss',
+					),
 				});
 			}}
 		>

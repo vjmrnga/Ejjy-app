@@ -35,8 +35,10 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [modifyBranchMachineModalVisible, setModifyBranchMachineModalVisible] =
-		useState(false);
+	const [
+		modifyBranchMachineModalVisible,
+		setModifyBranchMachineModalVisible,
+	] = useState(false);
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);

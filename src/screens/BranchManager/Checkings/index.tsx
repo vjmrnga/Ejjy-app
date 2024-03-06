@@ -67,8 +67,12 @@ export const Checkings = () => {
 				return true;
 			})
 			.map((productCheck) => {
-				const { id, datetime_created, datetime_fulfilled, is_success } =
-					productCheck;
+				const {
+					id,
+					datetime_created,
+					datetime_fulfilled,
+					is_success,
+				} = productCheck;
 
 				let status = <Tag color="yellow">Pending</Tag>;
 				if (datetime_fulfilled) {

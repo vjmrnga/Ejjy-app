@@ -484,8 +484,12 @@ export const ImageUploadField = () => {
 	const [isUploading, setIsUploading] = useState(false);
 
 	// CUSTOM HOOKS
-	const { values, setFieldValue, setFieldError, setFieldTouched } =
-		useFormikContext();
+	const {
+		values,
+		setFieldValue,
+		setFieldError,
+		setFieldTouched,
+	} = useFormikContext();
 
 	// METHODS
 	const getBase64 = (img: RcFile, callback: (url: string) => void) => {
