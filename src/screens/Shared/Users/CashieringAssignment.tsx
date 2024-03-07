@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
+import { Button, Col, Row, Space, Table, Tooltip, message } from 'antd';
 import {
 	Breadcrumb,
 	ConnectionAlert,
@@ -9,6 +9,7 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import dayjs from 'dayjs';
+import { getFullName } from 'ejjy-global';
 import { GENERIC_ERROR_MESSAGE, MAX_PAGE_SIZE } from 'global';
 import {
 	useCashieringAssignmentDelete,
@@ -21,7 +22,6 @@ import { useUserStore } from 'stores';
 import {
 	confirmPassword,
 	convertIntoArray,
-	getFullName,
 	getUrlPrefix,
 	isUserFromBranch,
 } from 'utils';

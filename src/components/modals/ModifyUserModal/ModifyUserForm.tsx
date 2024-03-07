@@ -1,8 +1,8 @@
 import { Button, Col, Divider, Input, Row, Select } from 'antd';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { userTypeBranchOptions, userTypeOptions, userTypes } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
-import { filterOption } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 

@@ -3,25 +3,20 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Radio, Row, Select, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { TableActions, TableHeader, ViewBranchProductModal } from 'components';
-import { Label } from 'components/elements';
 import { RequestErrors } from 'components/RequestErrors';
+import { Label } from 'components/elements';
+import { filterOption, getProductCode } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	pageSizeOptions,
 } from 'global';
 import { useBranchProducts, useProductCategories, useQueryParams } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	formatQuantity,
-	getId,
-	getProductCode,
-} from 'utils';
+import { convertIntoArray, formatQuantity, getId } from 'utils';
 import { AddBranchProductBalanceModal } from './components/AddBranchProductBalanceModal';
 
 const modals = {

@@ -10,9 +10,9 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components';
 import { PdfButtons } from 'components/Printing';
-import { printStockOutForm } from 'configurePrinter';
 import dayjs from 'dayjs';
-import { backOrderTypes, EMPTY_CELL, vatTypes } from 'global';
+import { getFullName, printStockOutForm } from 'ejjy-global';
+import { EMPTY_CELL, backOrderTypes, vatTypes } from 'global';
 import { useBackOrderRetrieve, usePdf, useSiteSettings } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -22,7 +22,6 @@ import {
 	formatDateTime,
 	formatQuantity,
 	getBackOrderStatus,
-	getFullName,
 } from 'utils';
 
 const { Text } = Typography;
@@ -71,7 +70,7 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 		},
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
-		print: (data) => printStockOutForm({ siteSettings, ...data }),
+		print: () => printStockOutForm(backOrder, siteSettings),
 	});
 
 	// METHODS
@@ -126,20 +125,10 @@ export const ViewBackOrderModal = ({ backOrder, onClose }: Props) => {
 			footer={
 				<PdfButtons
 					key="pdf"
-					downloadPdf={() =>
-						downloadPdf({
-							title: `StockOut_${backOrder.id}.pdf`,
-							printData: { backOrder },
-						})
-					}
+					downloadPdf={downloadPdf}
 					isDisabled={isLoadingPdf}
 					isLoading={isLoadingPdf}
-					previewPdf={() =>
-						previewPdf({
-							title: `StockOut_${backOrder.id}.pdf`,
-							printData: { backOrder },
-						})
-					}
+					previewPdf={previewPdf}
 				/>
 			}
 			title={title}

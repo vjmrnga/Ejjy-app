@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
-import { printDtr } from 'configurePrinter';
+import { printDtr, filterOption, getFullName } from 'ejjy-global';
 import dayjs from 'dayjs';
 import {
 	accountTypes,
@@ -19,12 +19,7 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	formatTimeOnly,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatTimeOnly } from 'utils';
 
 const columns: ColumnsType = [
 	{
@@ -106,7 +101,7 @@ export const TabDTRPrinting = () => {
 				month = `${dateStart.format('MMMM')} - ${dateEnd.format('MMMM')}`;
 			}
 
-			return printDtr({ dtr, month });
+			return printDtr(dtr, month);
 		},
 	});
 

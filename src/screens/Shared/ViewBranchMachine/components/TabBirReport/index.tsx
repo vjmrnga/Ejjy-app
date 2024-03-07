@@ -2,7 +2,7 @@ import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { PdfButtons } from 'components/Printing';
-import { printBirReport } from 'configurePrinter';
+import { printBirReport } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -47,12 +47,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `BIR_Reports.pdf`,
-		print: () =>
-			printBirReport({
-				birReports,
-				siteSettings,
-				user,
-			}),
+		print: () => printBirReport(birReports, siteSettings, user),
 		jsPdfSettings: {
 			orientation: 'l',
 			unit: 'px',

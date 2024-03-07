@@ -8,6 +8,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { BadgePill, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -21,7 +22,7 @@ import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TransactionsCancelled } from 'screens/Shared/Branches/components/TabTransactions/components/TransactionsCancelled';
-import { convertIntoArray, filterOption, formatInPeso } from 'utils';
+import { convertIntoArray, formatInPeso } from 'utils';
 import { Summary } from './components/Summary';
 
 const columns: ColumnsType = [

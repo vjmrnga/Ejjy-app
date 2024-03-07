@@ -1,8 +1,9 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Button, message, Space, Tooltip } from 'antd';
+import { Button, Space, Tooltip, message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import { MAX_PAGE_SIZE, serviceTypes, userPendingApprovalTypes } from 'global';
 import {
 	useUserApproveUserPendingApproval,
@@ -10,12 +11,7 @@ import {
 	useUsers,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	getFullName,
-	getGoogleApiUrl,
-	getUserTypeName,
-} from 'utils';
+import { convertIntoArray, getGoogleApiUrl, getUserTypeName } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name' },

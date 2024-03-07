@@ -9,6 +9,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
+import { getProductCode } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -25,7 +26,6 @@ import {
 	formatDateTime,
 	formatInPeso,
 	formatQuantity,
-	getProductCode,
 } from 'utils';
 
 const columns: ColumnsType = [

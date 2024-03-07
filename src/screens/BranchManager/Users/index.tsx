@@ -9,6 +9,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
 import { useUserDelete, useUsers } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -17,7 +18,6 @@ import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	getFullName,
 	getLocalBranchId,
 	getUserTypeName,
 	isCUDShown,
@@ -52,24 +52,24 @@ export const Users = () => {
 	// METHODS
 	useEffect(() => {
 		const data = users
-			.filter((u) => {
-				const isDev = u.username === DEV_USERNAME;
+			.filter((filteredUser) => {
+				const isDev = filteredUser.username === DEV_USERNAME;
 
 				const isAdminAndNotStandalone =
-					u.user_type === userTypes.ADMIN && !isStandAlone();
+					filteredUser.user_type === userTypes.ADMIN && !isStandAlone();
 
 				return !(isDev || isAdminAndNotStandalone);
 			})
-			.map((u) => ({
-				key: u.id,
-				id: u.employee_id,
-				name: getFullName(u),
-				type: getUserTypeName(u.user_type),
+			.map((mappedUser) => ({
+				key: mappedUser.id,
+				id: mappedUser.employee_id,
+				name: getFullName(mappedUser),
+				type: getUserTypeName(mappedUser.user_type),
 				actions: (
 					<Space>
-						{u.user_type !== userTypes.ADMIN && (
+						{mappedUser.user_type !== userTypes.ADMIN && (
 							<Tooltip title="Cashiering Assignment">
-								<Link to={`/branch-manager/users/assign/${u.id}`}>
+								<Link to={`/branch-manager/users/assign/${mappedUser.id}`}>
 									<Button icon={<DesktopOutlined />} type="primary" ghost />
 								</Link>
 							</Tooltip>
@@ -80,20 +80,20 @@ export const Users = () => {
 								type="primary"
 								ghost
 								onClick={() => {
-									setSelectedUser(u);
+									setSelectedUser(mappedUser);
 									setModifyUserModalVisible(true);
 								}}
 							>
 								Edit
 							</Button>
 						</Tooltip>
-						{u.user_type !== userTypes.ADMIN && (
+						{mappedUser.user_type !== userTypes.ADMIN && (
 							<Popconfirm
 								cancelText="No"
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this user?"
-								onConfirm={() => deleteUser(u.id)}
+								onConfirm={() => deleteUser(mappedUser.id)}
 							>
 								<Button icon={<DeleteOutlined />} type="primary" danger ghost />
 							</Popconfirm>

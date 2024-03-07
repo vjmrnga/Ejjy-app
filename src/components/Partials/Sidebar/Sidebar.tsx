@@ -5,6 +5,7 @@ import iconAccount from 'assets/images/icon-account.svg';
 import iconLogout from 'assets/images/icon-logout.svg';
 import sampleAvatar from 'assets/images/sample-avatar.png';
 import cn from 'classnames';
+import { getFullName } from 'ejjy-global';
 import { userTypes } from 'global';
 import { useAuthLogout, useSiteSettings } from 'hooks';
 import { useUI } from 'hooks/useUI';
@@ -12,7 +13,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
-import { getFullName, getUserTypeName } from 'utils';
+import { getUserTypeName } from 'utils';
 import './style.scss';
 
 interface Props {

@@ -1,14 +1,14 @@
 import { Button, Divider } from 'antd';
 import { AppSettingsModal } from 'components';
 import { Box } from 'components/elements';
-import { appTypes, IS_APP_LIVE } from 'global';
+import { getKeyDownCombination } from 'ejjy-global';
+import { IS_APP_LIVE, appTypes } from 'global';
 import { useAuthLogin, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getAppType,
-	getKeyDownCombination,
 	getLocalApiUrl,
 	getOnlineApiUrl,
 	isUserFromBranch,

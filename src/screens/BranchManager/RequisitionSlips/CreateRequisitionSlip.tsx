@@ -3,6 +3,7 @@ import { Button, Col, Divider, InputNumber, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box, FieldError, FormCheckbox, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Formik } from 'formik';
 import {
 	MAX_PAGE_SIZE,
@@ -23,7 +24,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useUserStore } from 'stores';
-import { convertIntoArray, filterOption, getBranchProductStatus } from 'utils';
+import { convertIntoArray, getBranchProductStatus } from 'utils';
 import * as Yup from 'yup';
 import './style.scss';
 

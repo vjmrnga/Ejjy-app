@@ -8,14 +8,13 @@ import {
 	ReceiptReportSummary,
 	ReceiptUnderlinedValue,
 } from 'components/Printing';
-import { printXReadReport } from 'configurePrinter';
-import { createXReadTxt } from 'configureTxt';
+import { createXReadTxt, printXReadReport } from 'ejjy-global';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
-import { formatDateTime, formatInPeso } from 'utils';
 import React, { useState } from 'react';
-import './style.scss';
 import { useUserStore } from 'stores';
+import { formatDateTime, formatInPeso } from 'utils';
+import './style.scss';
 
 interface Props {
 	report: any;
@@ -43,17 +42,17 @@ export const ViewXReadReportModal = ({ report, onClose }: Props) => {
 						h: 600,
 				  }
 				: null,
-		print: () => printXReadReport({ report, siteSettings, user, isPdf: true }),
+		print: () => printXReadReport(report, siteSettings, user, true),
 	});
 
 	// METHODS
 	const handlePrint = () => {
-		printXReadReport({ report, siteSettings, user });
+		printXReadReport(report, siteSettings, user);
 	};
 
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
-		createXReadTxt({ report, siteSettings, user });
+		createXReadTxt(report, siteSettings, user);
 		setIsCreatingTxt(false);
 	};
 

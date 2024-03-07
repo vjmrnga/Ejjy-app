@@ -2,6 +2,7 @@ import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions } from 'antd';
 import { ViewRequisitionSlipModal } from 'components';
 import { Select } from 'components/elements';
+import { getRequestor } from 'ejjy-global';
 import {
 	request,
 	requisitionSlipActionsOptions,
@@ -11,7 +12,7 @@ import { useRequisitionSlips } from 'hooks/useRequisitionSlips';
 import { upperFirst } from 'lodash';
 import React, { useState } from 'react';
 import { useUserStore } from 'stores';
-import { formatDateTime, getRequestor, isUserFromBranch } from 'utils';
+import { formatDateTime, isUserFromBranch } from 'utils';
 
 interface Props {
 	requisitionSlip: any;

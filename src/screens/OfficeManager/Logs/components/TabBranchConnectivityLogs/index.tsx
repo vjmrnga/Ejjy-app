@@ -7,22 +7,23 @@ import {
 	TimeRangeFilter,
 } from 'components';
 import { Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import {
-	connectivityTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
+	connectivityTypes,
 	pageSizeOptions,
 	timeRangeTypes,
 } from 'global';
 import {
-	useBranches,
 	useBranchMachines,
+	useBranches,
 	useConnectivityLogs,
 	useQueryParams,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, filterOption, formatDateTime } from 'utils';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 export const TabBranchConnectivityLogs = () => {
 	// VARIABLES

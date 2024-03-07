@@ -1,7 +1,8 @@
 import { Badge, Space, Tabs } from 'antd';
 import { Content } from 'components';
 import { Box } from 'components/elements';
-import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
+import { attendanceCategories } from 'ejjy-global';
+import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
 	useAttendanceLogs,
 	useBranchProducts,

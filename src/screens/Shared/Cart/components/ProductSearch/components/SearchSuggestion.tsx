@@ -2,10 +2,10 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Spin } from 'antd';
 import cn from 'classnames';
+import { getProductCode } from 'ejjy-global';
 import React, { useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useBoundStore } from 'screens/Shared/Cart/stores/useBoundStore';
-import { getProductCode } from 'utils';
 import shallow from 'zustand/shallow';
 import { NO_INDEX_SELECTED } from '../../../data';
 import '../style.scss';

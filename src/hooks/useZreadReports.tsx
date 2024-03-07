@@ -3,7 +3,6 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { ZReadReportsService } from 'services';
-import { getLocalApiUrl } from 'utils';
 
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 

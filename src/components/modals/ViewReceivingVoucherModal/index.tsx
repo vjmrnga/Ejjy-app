@@ -2,7 +2,7 @@ import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Modal, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
-import { printReceivingVoucherForm } from 'configurePrinter';
+import { printReceivingVoucherForm } from 'ejjy-global';
 import dayjs from 'dayjs';
 import { vatTypes, VIEW_PRINTING_MODAL_WIDTH } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
@@ -35,11 +35,7 @@ export const ViewReceivingVoucherModal = ({
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `ReceivingVoucher_${receivingVoucher.id}.pdf`,
 		print: () =>
-			printReceivingVoucherForm({
-				receivingVoucher,
-				siteSettings,
-				isPdf: true,
-			}),
+			printReceivingVoucherForm(receivingVoucher, siteSettings, true),
 	});
 
 	// METHODS
@@ -64,7 +60,7 @@ export const ViewReceivingVoucherModal = ({
 	}, [receivingVoucher]);
 
 	const handlePrint = () => {
-		printReceivingVoucherForm({ receivingVoucher, siteSettings });
+		printReceivingVoucherForm(receivingVoucher, siteSettings);
 	};
 
 	return (

@@ -8,11 +8,12 @@ import {
 	ViewAccountModal,
 } from 'components';
 import { Label } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	pageSizeOptions,
 } from 'global';
 import {
 	useQueryParams,
@@ -23,7 +24,7 @@ import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
-import { convertIntoArray, formatDate, getFullName, isCUDShown } from 'utils';
+import { convertIntoArray, formatDate, isCUDShown } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Client Code', dataIndex: 'clientCode' },

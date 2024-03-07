@@ -29,6 +29,7 @@ import {
 	ViewUserModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -49,19 +50,17 @@ import {
 	useUserRequestUserDeletion,
 	useUsers,
 } from 'hooks';
+import _ from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
-	getFullName,
 	getId,
 	getUserTypeName,
 	isUserFromOffice,
 } from 'utils';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useUserStore } from 'stores';
-import _ from 'lodash';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

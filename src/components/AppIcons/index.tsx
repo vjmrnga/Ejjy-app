@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
 import { PrinterOutlined, WifiOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import cn from 'classnames';
-import configurePrinter from 'configurePrinter';
+import { configurePrinter } from 'ejjy-global';
+import { printerStatuses } from 'global';
 import { useConnectivity } from 'hooks';
 import qz from 'qz-tray';
+import React, { useEffect } from 'react';
 import { useUserInterfaceStore, useUserStore } from 'stores';
-import { getAppReceiptPrinterName, isUserFromBranch } from 'utils';
+import {
+	getAppReceiptPrinterFontSize,
+	getAppReceiptPrinterName,
+	getAppTagPrinterFontFamily,
+	isUserFromBranch,
+} from 'utils';
 import './style.scss';
-import { printerStatuses } from 'global';
 
 const Component = () => {
 	// CUSTOM HOOKS
@@ -28,8 +33,6 @@ const Component = () => {
 	}, []);
 
 	const startPrinterConfiguration = () => {
-		configurePrinter();
-
 		if (getAppReceiptPrinterName()) {
 			handlePrinterClick();
 
@@ -67,7 +70,11 @@ const Component = () => {
 	};
 
 	const handlePrinterClick = () => {
-		configurePrinter();
+		configurePrinter(
+			getAppReceiptPrinterName(),
+			getAppReceiptPrinterFontSize(),
+			getAppTagPrinterFontFamily(),
+		);
 	};
 
 	return (

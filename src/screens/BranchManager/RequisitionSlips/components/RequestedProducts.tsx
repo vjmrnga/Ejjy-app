@@ -1,10 +1,10 @@
 import { Divider, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Box, Label } from 'components/elements';
+import { getProductCode } from 'ejjy-global';
 import { requisitionSlipDetailsType } from 'global';
 import React, { useEffect, useState } from 'react';
 import { RequisitionSlipDetails } from 'screens/Shared/RequisitionSlips/components/RequisitionSlipDetails';
-import { getProductCode } from 'utils';
 
 interface Props {
 	requisitionSlip: any;

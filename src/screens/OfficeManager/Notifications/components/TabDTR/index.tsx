@@ -1,25 +1,21 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, message, Space, Table, Tag, Tooltip, Typography } from 'antd';
+import { Button, Space, Table, Tag, Tooltip, Typography, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
 import {
 	attendanceCategories,
 	attendanceTypes,
-	EMPTY_CELL,
-	MAX_PAGE_SIZE,
-} from 'global';
+	getAttendanceLogDescription,
+	getFullName,
+} from 'ejjy-global';
+import { EMPTY_CELL, MAX_PAGE_SIZE } from 'global';
 import {
 	useProblematicAttendanceLogApproveDecline,
 	useProblematicAttendanceLogs,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getAttendanceLogDescription,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const attendanceTableColumns: ColumnsType = [
 	{ title: 'Employee Name', dataIndex: 'name' },

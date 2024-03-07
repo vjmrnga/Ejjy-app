@@ -2,7 +2,7 @@
 import { Spin } from 'antd';
 import { RequestErrors } from 'components';
 import { Box, Button } from 'components/elements';
-import { printCancelledTransactions } from 'configurePrinter';
+import { printCancelledTransactions } from 'ejjy-global';
 import { MAX_PAGE_SIZE } from 'global';
 import { useSiteSettings, useTransactions } from 'hooks';
 import React, { useEffect, useState } from 'react';
@@ -62,17 +62,17 @@ export const TransactionsCancelled = ({
 	const handlePrint = () => {
 		setIsPrinting(true);
 
-		printCancelledTransactions({
+		printCancelledTransactions(
 			amount,
-			filterRange: timeRange,
-			filterStatus: statuses,
+			timeRange,
+			statuses,
 			siteSettings,
 			transactions,
 			user,
-			onComplete: () => {
+			() => {
 				setIsPrinting(false);
 			},
-		});
+		);
 	};
 
 	return (

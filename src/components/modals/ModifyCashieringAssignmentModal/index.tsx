@@ -1,5 +1,6 @@
 import { Button, Col, message, Modal, Row, Select, TimePicker } from 'antd';
 import dayjs from 'dayjs';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import {
@@ -10,7 +11,7 @@ import {
 import moment, { Moment } from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, filterOption } from 'utils';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';

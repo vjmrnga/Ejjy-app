@@ -3,17 +3,13 @@
 import { Col, Divider, Modal, Radio, Row, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Button, Label } from 'components/elements';
-import { printOrderSlip } from 'configurePrinter';
+import { filterOption, printOrderSlip } from 'ejjy-global';
 import { quantityTypes } from 'global';
+import { useSiteSettings } from 'hooks';
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	convertToBulk,
-	filterOption,
-	formatQuantity,
-	getColoredText,
-} from 'utils';
+import { convertToBulk, formatQuantity, getColoredText } from 'utils';
 import { OrderSlipDetails } from './OrderSlipDetails';
 
 const columns: ColumnsType = [
@@ -43,6 +39,7 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
+	const { data: siteSettings } = useSiteSettings();
 
 	// METHODS
 	useEffect(() => {
@@ -117,7 +114,13 @@ export const ViewOrderSlipModal = ({ orderSlip, onClose }: Props) => {
 	const handlePrint = () => {
 		setPrintingDisabled(true);
 
-		const html = printOrderSlip(user, orderSlip, data, quantityType);
+		const html = printOrderSlip(
+			orderSlip,
+			data,
+			user,
+			quantityType,
+			siteSettings,
+		);
 		const pdf = new jsPDF('p', 'pt', 'a4');
 
 		pdf.html(html, {

@@ -8,6 +8,7 @@ import {
 	TimeRangeFilter,
 	ViewTransactionModal,
 } from 'components';
+import { getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -19,12 +20,7 @@ import {
 import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	formatInPeso,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 import { accountTabs } from '../../data';
 import { AccountTotalBalance } from './components/AccountTotalBalance';
 

@@ -28,6 +28,7 @@ import {
 	FormSelect,
 	Label,
 } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
 	DEFAULT_PAGE,
@@ -50,12 +51,7 @@ import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { stockTabs } from 'screens/BranchManager/Stock/data';
-import {
-	convertIntoArray,
-	convertToPieces,
-	filterOption,
-	getLocalBranchId,
-} from 'utils';
+import { convertIntoArray, convertToPieces, getLocalBranchId } from 'utils';
 import * as Yup from 'yup';
 
 const tabs = {

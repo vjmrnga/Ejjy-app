@@ -1,17 +1,12 @@
 import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Col, Descriptions, Modal, Row } from 'antd';
 import { PdfButtons, ReceiptHeader } from 'components/Printing';
-import { printRequisitionSlip } from 'configurePrinter';
 import dayjs from 'dayjs';
+import { getFullName, getRequestor, printRequisitionSlip } from 'ejjy-global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React from 'react';
 import { useUserStore } from 'stores';
-import {
-	formatDateTime,
-	formatQuantity,
-	getFullName,
-	getRequestor,
-} from 'utils';
+import { formatDateTime, formatQuantity } from 'utils';
 
 interface Props {
 	requisitionSlip: any;
@@ -28,17 +23,12 @@ export const ViewRequisitionSlipModal = ({
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `RequisitionSlip_${requisitionSlip.id}.pdf`,
 		print: () =>
-			printRequisitionSlip({
-				requisitionSlip,
-				siteSettings,
-				user,
-				isPdf: true,
-			}),
+			printRequisitionSlip(requisitionSlip, siteSettings, user, true),
 	});
 
 	// METHODS
 	const handlePrint = () => {
-		printRequisitionSlip({ requisitionSlip, siteSettings, user });
+		printRequisitionSlip(requisitionSlip, siteSettings, user);
 	};
 
 	return (

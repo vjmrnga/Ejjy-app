@@ -19,7 +19,7 @@ import {
 } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
-import { printAdjustmentReport } from 'configurePrinter';
+import { getFullName, printAdjustmentReport } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -33,12 +33,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	convertIntoArray,
-	formatDateTime,
-	formatInPeso,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },
@@ -87,7 +82,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 			hotfixes: ['px_scaling'],
 			putOnlyUsedFonts: true,
 		},
-		print: () => printAdjustmentReport({ transactions, user }),
+		print: () => printAdjustmentReport(transactions, user),
 	});
 
 	// METHODS

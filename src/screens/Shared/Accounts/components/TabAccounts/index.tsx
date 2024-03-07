@@ -22,12 +22,13 @@ import {
 	TableHeader,
 } from 'components';
 import { Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
-	accountTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	accountTypes,
+	pageSizeOptions,
 } from 'global';
 import { useAccounts, useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -36,10 +37,8 @@ import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDate,
 	getAccountTypeName,
-	getFullName,
 	isCUDShown,
 } from 'utils';
 

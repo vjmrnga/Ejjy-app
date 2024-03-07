@@ -8,7 +8,7 @@ import {
 } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
-import { printOrderOfPayment } from 'configurePrinter';
+import { getFullName, printOrderOfPayment } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -21,12 +21,7 @@ import {
 import { useAccounts, useOrderOfPayments, usePdf, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	formatInPeso,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'OP #', dataIndex: 'id' },
@@ -58,7 +53,7 @@ export const TabOrderOfPayments = () => {
 	});
 	const { isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		jsPdfSettings: { format: 'legal' },
-		print: (data) => printOrderOfPayment(data),
+		print: (orderOfPayment) => printOrderOfPayment(orderOfPayment),
 	});
 
 	// METHODS

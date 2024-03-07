@@ -249,16 +249,6 @@ export const requisitionSlipDetailsType = {
 	CREATE_EDIT: 'create_edit',
 };
 
-export const attendanceCategories = {
-	ATTENDANCE: 'attendance',
-	TRACKER: 'tracker',
-};
-
-export const attendanceTypes = {
-	IN: 'in',
-	OUT: 'out',
-};
-
 export const attendanceSchedulePeriods = {
 	MORNING: 'morning',
 	AFTERNOON: 'afternoon',

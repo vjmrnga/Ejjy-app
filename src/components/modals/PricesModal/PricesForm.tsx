@@ -11,11 +11,12 @@ import {
 	Tooltip,
 } from 'antd';
 import { FieldError, FormattedInputNumber, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { markdownTypes } from 'global';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { filterOption, formatInPeso, getId } from 'utils';
+import { formatInPeso, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {

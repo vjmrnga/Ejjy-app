@@ -6,6 +6,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Box } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -15,7 +16,7 @@ import {
 import { usePointTransactions, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { formatDateTime, formatInPeso, getFullName } from 'utils';
+import { formatDateTime, formatInPeso } from 'utils';
 import './style.scss';
 
 const columns: ColumnsType = [

@@ -1,6 +1,7 @@
 import { Descriptions, Divider } from 'antd';
+import { getFullName } from 'ejjy-global';
 import React, { useCallback, useEffect, useState } from 'react';
-import { formatDateTime, getDeliveryReceiptStatus, getFullName } from 'utils';
+import { formatDateTime, getDeliveryReceiptStatus } from 'utils';
 import {
 	CheckIcon,
 	ColoredText,

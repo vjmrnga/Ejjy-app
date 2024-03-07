@@ -1,21 +1,22 @@
 /* eslint-disable react/no-this-in-sfc */
-import { Col, Divider, Button, Input, Row, Select, Typography } from 'antd';
+import { Button, Col, Divider, Input, Row, Select, Typography } from 'antd';
 import { ScrollToFieldError } from 'components';
 import {
 	FieldError,
 	FieldWarning,
-	FormattedInputNumber,
 	FormInput,
 	FormRadioButton,
 	FormSelect,
+	FormattedInputNumber,
 	Label,
 } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import {
+	MAX_PAGE_SIZE,
 	booleanOptions,
 	checkingTypesOptions,
 	inputTypes,
-	MAX_PAGE_SIZE,
 	productCheckingTypes,
 	productTypes,
 	unitOfMeasurementTypes,
@@ -23,7 +24,7 @@ import {
 import { useProductCategories, useSiteSettings } from 'hooks';
 import { isInteger } from 'lodash';
 import React, { useCallback } from 'react';
-import { filterOption, formatQuantity, getId } from 'utils';
+import { formatQuantity, getId } from 'utils';
 import * as Yup from 'yup';
 
 const { Text } = Typography;

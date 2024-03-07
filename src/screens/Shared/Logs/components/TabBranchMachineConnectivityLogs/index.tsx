@@ -7,11 +7,12 @@ import {
 	TimeRangeFilter,
 } from 'components';
 import { Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import {
-	connectivityTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
+	connectivityTypes,
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
@@ -21,7 +22,6 @@ import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTime,
 	getLocalBranchId,
 	isUserFromBranch,

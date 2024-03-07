@@ -1,4 +1,5 @@
-import { attendanceCategories, MAX_PAGE_SIZE, serviceTypes } from 'global';
+import { attendanceCategories } from 'ejjy-global';
+import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import { useAttendanceLogs, useProblematicAttendanceLogs } from 'hooks';
 import { useEffect } from 'react';
 import { useNotificationStore } from '../stores/useNotificationStore';

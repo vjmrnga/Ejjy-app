@@ -1,14 +1,10 @@
 import { Button, Col, Input, message, Modal, Row, Select } from 'antd';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { branchMachineTypes } from 'global';
 import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	getBranchMachineTypeName,
-	getId,
-} from 'utils';
+import { convertIntoArray, getBranchMachineTypeName, getId } from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';

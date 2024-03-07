@@ -17,7 +17,6 @@ import {
 	accountTypes,
 	ADMIN_PASSWORD,
 	appTypes,
-	attendanceCategories,
 	backOrdersStatuses,
 	branchMachineTypes,
 	cashBreakdownCategories,
@@ -34,7 +33,6 @@ import {
 	requisitionSlipActions,
 	requisitionSlipProductStatus,
 	returnItemSlipsStatuses,
-	transactionStatuses,
 	unitOfMeasurementTypes,
 	userTypes,
 } from 'global';
@@ -255,38 +253,6 @@ export const getOrderSlipStatusBranchManager = (
 	}
 };
 
-export const getOrderSlipStatusBranchManagerText = (
-	status,
-	screenType,
-	percentage,
-	osdrStatus = null,
-) => {
-	switch (status) {
-		case orderSlipStatus.PREPARING: {
-			return `Preparing (${percentage}%)`;
-		}
-		case orderSlipStatus.PREPARED: {
-			return 'Prepared';
-		}
-		case orderSlipStatus.DELIVERED: {
-			return 'Delivered';
-		}
-		case orderSlipStatus.RECEIVED: {
-			if (osdrStatus === OSDRStatus.DONE) {
-				return 'Received (Done)';
-			}
-
-			if (osdrStatus === OSDRStatus.ERROR) {
-				return 'Received (Error)';
-			}
-
-			return 'Received';
-		}
-		default:
-			return '';
-	}
-};
-
 export const getPreparationSlipStatus = _.memoize((status) => {
 	switch (status) {
 		case preparationSlipStatus.NEW: {
@@ -392,29 +358,6 @@ export const getProductType = _.memoize((type) => {
 	}
 });
 
-export const getTransactionStatusDescription = _.memoize((status) => {
-	switch (status) {
-		case transactionStatuses.NEW: {
-			return 'New';
-		}
-		case transactionStatuses.FULLY_PAID: {
-			return 'Fully Paid';
-		}
-		case transactionStatuses.HOLD: {
-			return 'Hold';
-		}
-		case transactionStatuses.VOID_CANCELLED: {
-			return 'Cancelled';
-		}
-		case transactionStatuses.VOID_EDITED: {
-			return 'Edited';
-		}
-		default: {
-			return EMPTY_CELL;
-		}
-	}
-});
-
 export const getReturnItemSlipStatus = _.memoize((status) => {
 	switch (status) {
 		case returnItemSlipsStatuses.DONE: {
@@ -449,28 +392,6 @@ export const getBackOrderStatus = _.memoize((status) => {
 	}
 });
 
-export const getKeyDownCombination = (keyboardEvent) => {
-	let firstKey = '';
-
-	if (keyboardEvent?.altKey) {
-		firstKey = 'alt+';
-	}
-
-	if (keyboardEvent?.ctrlKey) {
-		firstKey = 'ctrl+';
-	}
-
-	if (keyboardEvent?.metaKey) {
-		firstKey = 'meta+';
-	}
-
-	if (keyboardEvent?.shiftKey) {
-		firstKey = 'shift+';
-	}
-
-	return firstKey + keyboardEvent?.key;
-};
-
 export const getUrlPrefix = _.memoize((userType) => {
 	let prefix = '';
 
@@ -493,14 +414,6 @@ export const getUrlPrefix = _.memoize((userType) => {
 
 	return prefix;
 });
-
-export const getFullName = (user) => {
-	const name = [user?.first_name, user?.middle_name, user?.last_name].filter(
-		Boolean,
-	);
-
-	return name.join(' ');
-};
 
 export const getCashBreakdownTypeDescription = (category, type) => {
 	let description = '';
@@ -558,39 +471,6 @@ export const getId = (object) => {
 	return id;
 };
 
-export const getProductCode = (product) =>
-	product?.barcode ||
-	product?.selling_barcode ||
-	product?.textcode ||
-	EMPTY_CELL;
-
-export const getRequestor = (requisitionSlip) => {
-	const user = requisitionSlip?.requesting_user || {};
-
-	const data = [];
-	if (user) {
-		data.push(getFullName(user));
-	}
-
-	if (user.branch) {
-		data.push(user.branch.name);
-	}
-
-	return data.join(' - ');
-};
-
-export const getAttendanceLogDescription = (category, type) => {
-	let description = '';
-
-	if (category === attendanceCategories.ATTENDANCE) {
-		description = 'Clock';
-	} else if (category === attendanceCategories.TRACKER) {
-		description = 'Time';
-	}
-
-	return `${description} ${_.upperFirst(type)}`;
-};
-
 export const getAccountTypeName = (type) => {
 	let typeName = '';
 
@@ -633,9 +513,6 @@ export const getBranchMachineTypeName = (type) => {
 
 	return typeName;
 };
-
-export const filterOption = (input, option) =>
-	option.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
 // Messages
 

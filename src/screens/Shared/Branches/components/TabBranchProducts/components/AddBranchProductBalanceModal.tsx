@@ -1,15 +1,11 @@
 import { Descriptions, Divider, Modal } from 'antd';
 import { RequestErrors } from 'components';
-import { request, SHOW_HIDE_SHORTCUT } from 'global';
+import { getKeyDownCombination } from 'ejjy-global';
+import { SHOW_HIDE_SHORTCUT, request } from 'global';
 import { useBranchProducts } from 'hooks/useBranchProducts';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	confirmPassword,
-	convertIntoArray,
-	formatQuantity,
-	getKeyDownCombination,
-} from 'utils';
+import { confirmPassword, convertIntoArray, formatQuantity } from 'utils';
 import '../../../style.scss';
 import { AddBranchProductBalanceForm } from './AddBranchProductBalanceForm';
 

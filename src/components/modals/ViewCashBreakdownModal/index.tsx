@@ -3,8 +3,8 @@ import { PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons } from 'components/Printing';
-import { printCashBreakdown, printCashOut } from 'configurePrinter';
 import dayjs from 'dayjs';
+import { getFullName, printCashBreakdown, printCashOut } from 'ejjy-global';
 import { cashBreakdownCategories } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React from 'react';
@@ -13,7 +13,6 @@ import {
 	formatDateTime,
 	formatInPeso,
 	getCashBreakdownTypeDescription,
-	getFullName,
 } from 'utils';
 
 const { Text } = Typography;
@@ -62,27 +61,19 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 		}_${cashBreakdown.id}.pdf`,
 		print: () => {
 			if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
-				return printCashOut({
-					cashOut: cashBreakdown,
-					siteSettings,
-					isPdf: true,
-				});
+				return printCashOut(cashBreakdown, siteSettings, true);
 			}
 
-			return printCashBreakdown({
-				cashBreakdown,
-				siteSettings,
-				isPdf: true,
-			});
+			return printCashBreakdown(cashBreakdown, siteSettings, true);
 		},
 	});
 
 	// METHODS
 	const handlePrint = () => {
 		if (cashBreakdown.category === cashBreakdownCategories.CASH_OUT) {
-			printCashOut(cashBreakdown);
+			printCashOut(cashBreakdown, siteSettings);
 		} else {
-			printCashBreakdown({ cashBreakdown, siteSettings });
+			printCashBreakdown(cashBreakdown, siteSettings);
 		}
 	};
 

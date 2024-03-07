@@ -1,11 +1,12 @@
 import { Button, Col, message, Modal, Select } from 'antd';
 import { RequestErrors } from 'components';
 import { FieldError, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchAssignmentCreate } from 'hooks';
 import React, { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
-import { convertIntoArray, filterOption, getId } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {

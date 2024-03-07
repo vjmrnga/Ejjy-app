@@ -1,6 +1,7 @@
 import { Alert, Col, Empty, Row, Select, Spin } from 'antd';
 import { RequestErrors, TableHeader } from 'components';
 import { Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { MAX_PAGE_SIZE } from 'global';
 import {
 	useBranches,
@@ -10,12 +11,7 @@ import {
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	convertIntoArray,
-	filterOption,
-	formatInPeso,
-	isUserFromOffice,
-} from 'utils';
+import { convertIntoArray, formatInPeso, isUserFromOffice } from 'utils';
 
 export const TabSalesTracker = () => {
 	// STATES

@@ -1,9 +1,9 @@
 import { TableNormal } from 'components';
 import { Button, FieldError, FormInput, FormSelect } from 'components/elements';
+import { getProductCode } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { quantityTypeOptions, quantityTypes } from 'global';
 import React, { useCallback } from 'react';
-import { getProductCode } from 'utils';
 import * as Yup from 'yup';
 
 const columns = [

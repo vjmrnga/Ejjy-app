@@ -20,6 +20,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box, FormCheckbox, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import { Form, Formik } from 'formik';
 import {
 	DEFAULT_PAGE,
@@ -40,7 +41,7 @@ import {
 import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { convertIntoArray, filterOption } from 'utils';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 
 const tabs = {

@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { Input, message, Modal, Spin } from 'antd';
+import { Input, Modal, Spin, message } from 'antd';
 import {
 	CheckIcon,
 	Content,
@@ -9,11 +9,12 @@ import {
 	TableNormal,
 } from 'components';
 import { Box, Button, Label } from 'components/elements';
+import { getKeyDownCombination } from 'ejjy-global';
 import {
 	IS_APP_LIVE,
+	SEARCH_DEBOUNCE_TIME,
 	preparationSlipStatus,
 	request,
-	SEARCH_DEBOUNCE_TIME,
 	unitOfMeasurementTypes,
 } from 'global';
 import { usePreparationSlips } from 'hooks/usePreparationSlips';
@@ -22,9 +23,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import BarcodeReader from 'react-barcode-reader';
 import { useHistory } from 'react-router-dom';
 import { useUserStore } from 'stores';
-import { convertIntoArray, formatQuantity, getKeyDownCombination } from 'utils';
-import { FULFILL_TYPES } from './components/constants';
+import { convertIntoArray, formatQuantity } from 'utils';
 import { FulfillSlipModal } from './components/FulfillSlipModal';
+import { FULFILL_TYPES } from './components/constants';
 import './style.scss';
 
 const columns = [

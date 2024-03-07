@@ -11,11 +11,11 @@ import {
 	Upload,
 } from 'antd';
 import { RcFile } from 'antd/es/upload/interface';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik, useFormikContext } from 'formik';
 import { accountTypes } from 'global';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react';
-import { filterOption } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 

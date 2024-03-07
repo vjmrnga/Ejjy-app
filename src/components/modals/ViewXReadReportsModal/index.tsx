@@ -2,6 +2,7 @@ import { Button, Col, Modal, Row, Table, Tag } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import { ViewXReadReportModal } from 'components/modals/ViewXReadReportModal';
+import { getFullName } from 'ejjy-global';
 import {
 	AUTOMATIC_GENERATED_REPORT_USER_NAME,
 	DEFAULT_PAGE,
@@ -9,7 +10,7 @@ import {
 } from 'global';
 import { useQueryParams, useXreadReports } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTime, getFullName } from 'utils';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },

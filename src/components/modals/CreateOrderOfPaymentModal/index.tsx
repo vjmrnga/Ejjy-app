@@ -6,6 +6,7 @@ import {
 	FormInputLabel,
 	Label,
 } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
 import {
@@ -16,13 +17,7 @@ import {
 import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import {
-	convertIntoArray,
-	filterOption,
-	formatInPeso,
-	getFullName,
-	getId,
-} from 'utils';
+import { convertIntoArray, formatInPeso, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {

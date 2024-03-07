@@ -9,12 +9,17 @@ import {
 } from 'components';
 import { Label } from 'components/elements';
 import {
-	accountTypes,
 	attendanceCategories,
+	filterOption,
+	getAttendanceLogDescription,
+	getFullName,
+} from 'ejjy-global';
+import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
+	accountTypes,
 	pageSizeOptions,
 } from 'global';
 import {
@@ -29,10 +34,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTime,
-	getAttendanceLogDescription,
-	getFullName,
 	getLocalBranchId,
 	isUserFromBranch,
 	isUserFromOffice,

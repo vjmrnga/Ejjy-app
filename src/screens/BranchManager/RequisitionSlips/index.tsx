@@ -2,6 +2,7 @@
 import { Button, Col, message, Row, Select, Space, Table } from 'antd';
 import { Content, RequestErrors } from 'components';
 import { Box, Label } from 'components/elements';
+import { filterOption, getRequestor } from 'ejjy-global';
 import {
 	ALL_OPTION_KEY,
 	DEFAULT_PAGE,
@@ -22,9 +23,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTime,
-	getRequestor,
 	getRequisitionSlipStatus,
 } from 'utils';
 

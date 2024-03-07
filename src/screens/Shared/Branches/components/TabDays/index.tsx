@@ -2,30 +2,29 @@ import { Col, Descriptions, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
-	closingTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
+	closingTypes,
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import {
 	useBranchDays,
-	useBranches,
 	useBranchMachines,
+	useBranches,
 	useQueryParams,
 	useUsers,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTimeShortMonth,
 	formatTimeRange,
-	getFullName,
 } from 'utils';
 
 const branchDayTypes = {

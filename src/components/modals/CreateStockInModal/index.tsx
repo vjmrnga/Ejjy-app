@@ -1,10 +1,11 @@
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
+import { filterOption, getFullName } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
 import { useUsers } from 'hooks';
 import React from 'react';
-import { convertIntoArray, filterOption, getFullName, getId } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 

@@ -9,19 +9,14 @@ import {
 import {
 	attendanceCategories,
 	attendanceTypes,
-	EMPTY_CELL,
-	MAX_PAGE_SIZE,
-	serviceTypes,
-} from 'global';
+	getAttendanceLogDescription,
+	getFullName,
+} from 'ejjy-global';
+import { EMPTY_CELL, MAX_PAGE_SIZE, serviceTypes } from 'global';
 import { useAttendanceLogs, useProblematicAttendanceLogs } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getAttendanceLogDescription,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime } from 'utils';
 
 const ongoingTableColumns: ColumnsType = [
 	{ title: 'Employee Name', dataIndex: 'name' },

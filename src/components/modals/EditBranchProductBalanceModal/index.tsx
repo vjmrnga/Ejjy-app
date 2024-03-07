@@ -1,16 +1,13 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components';
 import { Button, FieldError, FormInputLabel } from 'components/elements';
+import { getKeyDownCombination } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { SHOW_HIDE_SHORTCUT, unitOfMeasurementTypes } from 'global';
 import { useBranchProductEdit } from 'hooks';
 import { isInteger } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	confirmPassword,
-	convertIntoArray,
-	getKeyDownCombination,
-} from 'utils';
+import { confirmPassword, convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {

@@ -12,12 +12,13 @@ import {
 	TableHeader,
 } from 'components';
 import { Label } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import {
-	accountTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	accountTypes,
+	pageSizeOptions,
 } from 'global';
 import { useAccounts, useQueryParams } from 'hooks';
 import _ from 'lodash';
@@ -28,7 +29,6 @@ import {
 	convertIntoArray,
 	formatDate,
 	getAccountTypeName,
-	getFullName,
 	isCUDShown,
 } from 'utils';
 

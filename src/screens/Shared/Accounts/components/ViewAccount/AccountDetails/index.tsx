@@ -1,13 +1,13 @@
 import { QrcodeOutlined } from '@ant-design/icons';
 import { Avatar, Button, Descriptions, Tag } from 'antd';
-import { printEmployeeCode } from 'configurePrinter';
+import { getFullName, printEmployeeCode } from 'ejjy-global';
 import { accountTypes } from 'global';
 import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import _ from 'lodash';
 import QRCode from 'qrcode';
 import React, { useState } from 'react';
-import { formatDate, getAccountTypeName, getFullName } from 'utils';
+import { formatDate, getAccountTypeName } from 'utils';
 
 interface Props {
 	account: any;
@@ -34,12 +34,10 @@ export const AccountDetails = ({ account }: Props) => {
 		setIsPrinting(true);
 
 		const id = _.toString(employee.account_code);
+		const barcode = await getBarcode(id);
+		const qrCode = await getQrCode(id);
 
-		const dataHtml = printEmployeeCode({
-			name: getFullName(employee),
-			barcode: await getBarcode(id),
-			qrCode: await getQrCode(id),
-		});
+		const dataHtml = printEmployeeCode(getFullName(employee), barcode, qrCode);
 
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF({

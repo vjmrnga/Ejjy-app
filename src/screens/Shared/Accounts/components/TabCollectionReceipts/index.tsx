@@ -2,7 +2,11 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader } from 'components';
 import { PdfButtons } from 'components/Printing';
-import { printCollectionReceipt } from 'configurePrinter';
+import {
+	CollectionReceipt,
+	getFullName,
+	printCollectionReceipt,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -16,7 +20,7 @@ import {
 	useSiteSettings,
 } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, formatInPeso, getFullName } from 'utils';
+import { convertIntoArray, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'CR#', dataIndex: 'id' },
@@ -45,7 +49,8 @@ export const TabCollectionReceipts = () => {
 	} = useCollectionReceipts({ options: refetchOptions });
 	const { isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		jsPdfSettings: { format: 'legal' },
-		print: (data) => printCollectionReceipt({ siteSettings, ...data }),
+		print: (collectionReceipt: CollectionReceipt) =>
+			printCollectionReceipt(collectionReceipt, siteSettings),
 	});
 
 	// METHODS
@@ -63,19 +68,9 @@ export const TabCollectionReceipts = () => {
 				actions: (
 					<PdfButtons
 						key="pdf"
-						downloadPdf={() =>
-							downloadPdf({
-								title: `CR_${collectionReceipt.id}.pdf`,
-								printData: { collectionReceipt },
-							})
-						}
+						downloadPdf={() => downloadPdf(collectionReceipt)}
 						isDisabled={isLoadingPdf}
-						previewPdf={() =>
-							previewPdf({
-								title: `CR_${collectionReceipt.id}.pdf`,
-								printData: { collectionReceipt },
-							})
-						}
+						previewPdf={() => previewPdf(collectionReceipt)}
 					/>
 				),
 			};

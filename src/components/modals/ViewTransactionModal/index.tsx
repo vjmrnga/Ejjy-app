@@ -11,9 +11,12 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PdfButtons, ReceiptFooter, ReceiptHeader } from 'components/Printing';
-import { printSalesInvoice } from 'configurePrinter';
-import { createSalesInvoiceTxt } from 'configureTxt';
 import dayjs from 'dayjs';
+import {
+	createSalesInvoiceTxt,
+	getFullName,
+	printSalesInvoice,
+} from 'ejjy-global';
 import { EMPTY_CELL, saleTypes, transactionStatuses, vatTypes } from 'global';
 import { usePdf, useSiteSettings, useTransactionRetrieve } from 'hooks';
 import _ from 'lodash';
@@ -23,7 +26,6 @@ import {
 	formatInPeso,
 	formatQuantity,
 	getComputedDiscount,
-	getFullName,
 } from 'utils';
 
 interface Props {
@@ -65,13 +67,7 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `SalesInvoice_${transactionData?.invoice?.or_number}`,
-		print: () =>
-			printSalesInvoice({
-				transaction: transactionData,
-				siteSettings,
-				isPdf: true,
-				isReprint: true,
-			}),
+		print: () => printSalesInvoice(transactionData, siteSettings, true, true),
 	});
 
 	// METHODS
@@ -161,23 +157,13 @@ export const ViewTransactionModal = ({ transaction, onClose }: Props) => {
 
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
-		createSalesInvoiceTxt({
-			transaction: transactionData,
-			siteSettings,
-			isReprint: true,
-		});
+		createSalesInvoiceTxt(transactionData, siteSettings, true);
 		setIsCreatingTxt(false);
 	};
 
 	const handlePrint = () => {
-		printSalesInvoice({
-			transaction: transactionData,
-			siteSettings,
-			isReprint: true,
-		});
+		printSalesInvoice(transactionData, siteSettings, true);
 	};
-
-	console.log('transaction', transaction);
 
 	return (
 		<Modal

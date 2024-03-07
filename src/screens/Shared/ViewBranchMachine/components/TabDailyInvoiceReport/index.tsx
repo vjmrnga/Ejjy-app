@@ -8,6 +8,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -21,12 +22,7 @@ import { useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	formatInPeso,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Date & Time', dataIndex: 'dateTime' },

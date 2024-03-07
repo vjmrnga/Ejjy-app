@@ -2,6 +2,7 @@ import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -11,20 +12,17 @@ import {
 	serviceTypes,
 } from 'global';
 import {
-	useBranches,
 	useBranchMachines,
+	useBranches,
 	useQueryParams,
 	useUserLogs,
 	useUsers,
 } from 'hooks';
-
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTimeExtended,
-	getFullName,
 	getLocalBranchId,
 	isStandAlone,
 	isUserFromBranch,

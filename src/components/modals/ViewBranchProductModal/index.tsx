@@ -1,12 +1,8 @@
 import { Button, Descriptions, Divider, Modal } from 'antd';
+import { getKeyDownCombination } from 'ejjy-global';
 import { SHOW_HIDE_SHORTCUT } from 'global';
 import React, { useEffect, useState } from 'react';
-import {
-	confirmPassword,
-	formatInPeso,
-	formatQuantity,
-	getKeyDownCombination,
-} from 'utils';
+import { confirmPassword, formatInPeso, formatQuantity } from 'utils';
 
 interface Props {
 	isCurrentBalanceVisible: boolean;

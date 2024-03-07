@@ -1,21 +1,17 @@
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components';
+import { getFullName } from 'ejjy-global';
 import {
-	backOrderTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
+	backOrderTypes,
 	pageSizeOptions,
 } from 'global';
 import { useBackOrders, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	formatDateTime,
-	getBackOrderStatus,
-	getFullName,
-} from 'utils';
+import { convertIntoArray, formatDateTime, getBackOrderStatus } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'ID', dataIndex: 'id' },

@@ -1,6 +1,7 @@
 import { Col, Row, Select, Table } from 'antd';
 import { Content, RequestErrors, TableHeaderRequisitionSlip } from 'components';
 import { Box, Label } from 'components/elements';
+import { filterOption, getRequestor } from 'ejjy-global';
 import {
 	ALL_OPTION_KEY,
 	DEFAULT_PAGE,
@@ -15,9 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTime,
-	getRequestor,
 	getRequisitionSlipStatus,
 } from 'utils';
 import './style.scss';

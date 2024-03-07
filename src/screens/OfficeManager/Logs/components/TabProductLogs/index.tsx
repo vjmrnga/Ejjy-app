@@ -2,12 +2,13 @@ import { Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	pageSizeOptions,
 	serviceTypes,
 	userLogTypes,
 } from 'global';
@@ -15,13 +16,7 @@ import { useProducts, useQueryParams, useUserLogs, useUsers } from 'hooks';
 
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	convertIntoArray,
-	filterOption,
-	formatDateTimeExtended,
-	getFullName,
-	isStandAlone,
-} from 'utils';
+import { convertIntoArray, formatDateTimeExtended, isStandAlone } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },

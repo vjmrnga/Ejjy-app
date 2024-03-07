@@ -1,19 +1,18 @@
 import { FileTextOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Modal, Space, Typography } from 'antd';
+import imgNoTransaction from 'assets/images/no-transaction.png';
 import {
 	PdfButtons,
 	ReceiptFooter,
 	ReceiptHeader,
-	ReceiptUnderlinedValue,
 	ReceiptReportSummary,
+	ReceiptUnderlinedValue,
 } from 'components/Printing';
-import { printZReadReport } from 'configurePrinter';
-import { createZReadTxt } from 'configureTxt';
+import { createZReadTxt, printZReadReport } from 'ejjy-global';
 import { EMPTY_CELL } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React, { useState } from 'react';
 import { useUserStore } from 'stores';
-import imgNoTransaction from 'assets/images/no-transaction.png';
 import { formatDateTime, formatInPeso } from 'utils';
 import './style.scss';
 
@@ -33,17 +32,17 @@ export const ViewZReadReportModal = ({ report, onClose }: Props) => {
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `ZReadReport_${report.id}.pdf`,
-		print: () => printZReadReport({ report, siteSettings, user, isPdf: true }),
+		print: () => printZReadReport(report, siteSettings, user, true),
 	});
 
 	// METHODS
 	const handlePrint = () => {
-		printZReadReport({ report, siteSettings, user });
+		printZReadReport(report, siteSettings, user);
 	};
 
 	const handleCreateTxt = () => {
 		setIsCreatingTxt(true);
-		createZReadTxt({ report, siteSettings, user });
+		createZReadTxt(report, siteSettings, user);
 		setIsCreatingTxt(false);
 	};
 

@@ -10,11 +10,11 @@ import {
 	convertIntoArray,
 	formatDateTime,
 	getFullName,
-	useQueryParams,
 	useZReadReports,
 } from 'ejjy-global';
-import { useSiteSettingsNew } from 'hooks';
+import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { getLocalApiUrl } from 'utils';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
@@ -44,8 +44,11 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	} = useZReadReports({
 		params: {
 			...params,
-			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
 			branchMachineName: branchMachine.name,
+			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
 		},
 	});
 

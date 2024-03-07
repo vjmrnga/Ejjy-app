@@ -12,12 +12,12 @@ import {
 	Slider,
 	Space,
 } from 'antd';
+import { filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik, useFormikContext } from 'formik';
 import { appTypes, headOfficeTypes, serviceTypes } from 'global';
 import { useBranches } from 'hooks';
 import qz from 'qz-tray';
 import React, { useCallback, useEffect, useState } from 'react';
-import { filterOption } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 

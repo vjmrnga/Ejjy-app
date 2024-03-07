@@ -1,6 +1,7 @@
 import { Button, Col, Row, Statistic } from 'antd';
+import { getFullName } from 'ejjy-global';
 import React from 'react';
-import { formatInPeso, getFullName } from 'utils';
+import { formatInPeso } from 'utils';
 import './style.scss';
 
 interface Props {

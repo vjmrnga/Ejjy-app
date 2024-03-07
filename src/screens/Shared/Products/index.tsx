@@ -12,7 +12,6 @@ import {
 	Button,
 	Col,
 	Input,
-	message,
 	Popconfirm,
 	Row,
 	Select,
@@ -20,6 +19,7 @@ import {
 	Table,
 	Tooltip,
 	Upload,
+	message,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import cn from 'classnames';
@@ -35,13 +35,17 @@ import {
 	ViewProductModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
-import { printProductPriceTag } from 'configurePrinter';
+import {
+	filterOption,
+	getProductCode,
+	printProductPriceTag,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
-	pageSizeOptions,
 	SEARCH_DEBOUNCE_TIME,
+	pageSizeOptions,
 } from 'global';
 import {
 	usePingOnlineServer,
@@ -58,10 +62,12 @@ import { useProductsData } from 'screens/Shared/Products/useProductsData';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
-	filterOption,
+	getAppTagPrinterFontFamily,
+	getAppTagPrinterFontSize,
+	getAppTagPrinterPaperHeight,
+	getAppTagPrinterPaperWidth,
 	getId,
 	getLocalBranchId,
-	getProductCode,
 	isCUDShown,
 	isUserFromBranch,
 	isUserFromOffice,
@@ -241,7 +247,12 @@ export const Products = () => {
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF('l', 'px', [113.38582677, 75.590551181]);
 
-		const dataHtml = printProductPriceTag({ product, siteSettings });
+		const dataHtml = printProductPriceTag(product, siteSettings, {
+			paperWidth: Number(getAppTagPrinterPaperWidth()),
+			paperHeight: Number(getAppTagPrinterPaperHeight()),
+			fontSize: Number(getAppTagPrinterFontSize()),
+			fontFamily: getAppTagPrinterFontFamily(),
+		});
 
 		setHtml(dataHtml);
 

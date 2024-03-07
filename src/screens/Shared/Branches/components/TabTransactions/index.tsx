@@ -9,6 +9,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { BadgePill, Label } from 'components/elements';
+import { filterOption } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -20,7 +21,7 @@ import {
 import { useBranchMachines, useQueryParams, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray, filterOption, formatInPeso, getId } from 'utils';
+import { convertIntoArray, formatInPeso, getId } from 'utils';
 import { TransactionsCancelled } from './components/TransactionsCancelled';
 
 const columns: ColumnsType = [

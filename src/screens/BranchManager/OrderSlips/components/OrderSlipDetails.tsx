@@ -1,10 +1,7 @@
 import { Descriptions } from 'antd';
+import { getFullName } from 'ejjy-global';
 import React from 'react';
-import {
-	formatDateTime,
-	getFullName,
-	getOrderSlipStatusBranchManager,
-} from 'utils';
+import { formatDateTime, getOrderSlipStatusBranchManager } from 'utils';
 
 interface Props {
 	orderSlip: any;

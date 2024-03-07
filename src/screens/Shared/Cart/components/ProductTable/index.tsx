@@ -1,18 +1,19 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Modal, Tooltip } from 'antd';
 import { CancelButtonIcon } from 'components';
+import { getKeyDownCombination } from 'ejjy-global';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { EditProductModal } from 'screens/Shared/Cart/components/EditProductModal';
 import { Table } from 'screens/Shared/Cart/components/ProductTable/components/Table';
 import {
-	deleteItemShortcutKeys,
-	editQuantityShortcutKeys,
 	NO_INDEX_SELECTED,
 	PRODUCT_LENGTH_PER_PAGE,
+	deleteItemShortcutKeys,
+	editQuantityShortcutKeys,
 } from 'screens/Shared/Cart/data';
 import { useBoundStore } from 'screens/Shared/Cart/stores/useBoundStore';
-import { formatQuantity, getKeyDownCombination } from 'utils';
+import { formatQuantity } from 'utils';
 import shallow from 'zustand/shallow';
 import './style.scss';
 

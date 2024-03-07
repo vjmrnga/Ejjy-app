@@ -1,10 +1,11 @@
 import { Spin } from 'antd';
 import { Breadcrumb, Content, RequestErrors } from 'components';
 import { Box } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import { useAccountRetrieve } from 'hooks';
 import React, { useCallback } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getFullName, getUrlPrefix } from 'utils';
+import { convertIntoArray, getUrlPrefix } from 'utils';
 import { AccountDetails } from './components/ViewAccount/AccountDetails';
 import { PointTransactions } from './components/ViewAccount/PointTransactions';
 

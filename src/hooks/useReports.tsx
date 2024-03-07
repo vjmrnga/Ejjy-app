@@ -1,9 +1,9 @@
+import dayjs from 'dayjs';
 import {
 	createSalesInvoiceTxt,
 	createXReadTxt,
 	createZReadTxt,
-} from 'configureTxt';
-import dayjs from 'dayjs';
+} from 'ejjy-global';
 import { DEFAULT_PAGE, MAX_PAGE_SIZE } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { useMutation, useQuery } from 'react-query';
@@ -47,12 +47,12 @@ export const useBulkExport = () =>
 								transaction?.teller?.employee_id || 'NO_CASHIER'
 							}`,
 							file_name: `Sales_Invoice_${transaction.invoice.or_number}.txt`,
-							contents: createSalesInvoiceTxt({
+							contents: createSalesInvoiceTxt(
 								transaction,
 								siteSettings,
-								isReprint: true,
-								returnContent: true,
-							}),
+								true,
+								true,
+							),
 						})),
 					},
 					localApiUrl,
@@ -69,12 +69,7 @@ export const useBulkExport = () =>
 							file_name: `XReadReport_${dayjs(
 								report.generation_datetime,
 							).format('MMDDYY')}_${report.id}.txt`,
-							contents: createXReadTxt({
-								report,
-								siteSettings,
-								user,
-								returnContent: true,
-							}),
+							contents: createXReadTxt(report, siteSettings, user, true),
 						})),
 					},
 					localApiUrl,
@@ -91,12 +86,7 @@ export const useBulkExport = () =>
 							file_name: `ZReadReport_${dayjs(
 								report.generation_datetime,
 							).format('MMDDYY')}_${report.id}.txt`,
-							contents: createZReadTxt({
-								report,
-								siteSettings,
-								user,
-								returnContent: true,
-							}),
+							contents: createZReadTxt(report, siteSettings, user, true),
 						})),
 					},
 					localApiUrl,

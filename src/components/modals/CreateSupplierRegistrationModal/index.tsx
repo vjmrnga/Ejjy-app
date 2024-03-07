@@ -1,12 +1,13 @@
 import { Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
 import { Button, FieldError, Label } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE, SEARCH_DEBOUNCE_TIME } from 'global';
 import { useAccounts, useSupplierRegistrationCreate } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getFullName } from 'utils';
+import { convertIntoArray } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {

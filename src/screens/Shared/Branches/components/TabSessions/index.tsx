@@ -2,19 +2,20 @@ import { Col, Descriptions, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
+import { filterOption, getFullName } from 'ejjy-global';
 import {
-	closingTypes,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
+	closingTypes,
 	pageSizeOptions,
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
 import {
-	useBranches,
 	useBranchMachines,
+	useBranches,
 	useQueryParams,
 	useSessions,
 	useUsers,
@@ -22,10 +23,8 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
-	filterOption,
 	formatDateTimeShortMonth,
 	formatTimeRange,
-	getFullName,
 } from 'utils';
 
 const sessionTypes = {
@@ -86,7 +85,7 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 			const {
 				id,
 				branch_machine: branchMachine,
-				user: u,
+				user: sessionUser,
 				datetime_started: datetimeStarted,
 				datetime_ended: datetimeEnded,
 				is_automatically_closed: isAutomaticallyClosed,
@@ -115,7 +114,7 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 				key: id,
 				branch: branchMachine.branch?.name,
 				branchMachine: branchMachine.name,
-				user: getFullName(u),
+				user: getFullName(sessionUser),
 				datetime,
 				unauthorizedTimeRange,
 				status: is_unauthorized ? (

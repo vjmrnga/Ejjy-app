@@ -1,6 +1,7 @@
 import { CloseCircleFilled } from '@ant-design/icons';
 import { message } from 'antd';
 import { ControlledInput } from 'components/elements';
+import { getKeyDownCombination } from 'ejjy-global';
 import { debounce } from 'lodash';
 import React, {
 	forwardRef,
@@ -10,7 +11,6 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
-import { getKeyDownCombination } from 'utils';
 import shallow from 'zustand/shallow';
 import { searchShortcutKeys } from '../../../data';
 import { useBoundStore } from '../../../stores/useBoundStore';

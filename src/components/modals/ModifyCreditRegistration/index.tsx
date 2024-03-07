@@ -1,6 +1,7 @@
 import { Button, Col, message, Modal, Row, Select, Spin } from 'antd';
 import { RequestErrors } from 'components';
 import { FieldError, FormattedInputNumber, Label } from 'components/elements';
+import { getFullName } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE, SEARCH_DEBOUNCE_TIME } from 'global';
 import {
@@ -10,7 +11,7 @@ import {
 } from 'hooks';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { convertIntoArray, getFullName, getId } from 'utils';
+import { convertIntoArray, getId } from 'utils';
 import * as Yup from 'yup';
 
 interface ModalProps {
