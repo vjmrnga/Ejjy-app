@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Descriptions, Row, Space, Table } from 'antd';
+import { Button, Col, DatePicker, Row, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -8,7 +8,7 @@ import {
 	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
-import { getFullName } from 'ejjy-global';
+import { DiscountDisplay, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -100,20 +100,10 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 						</Button>
 					)}
 					{discountOption && (
-						<Descriptions column={1} size="small" bordered>
-							<Descriptions.Item label="Name">
-								{discountOption.name}
-							</Descriptions.Item>
-							<Descriptions.Item label="Type">
-								{_.upperFirst(discountOption.type)}{' '}
-								{discountOption.percentage > 0
-									? `${discountOption.percentage}%`
-									: ''}
-							</Descriptions.Item>
-							<Descriptions.Item label="Amount">
-								{formatInPeso(transaction.overall_discount)}
-							</Descriptions.Item>
-						</Descriptions>
+						<DiscountDisplay
+							discountOption={discountOption}
+							overallDiscount={Number(transaction.overall_discount)}
+						/>
 					)}
 				</Space>
 			);

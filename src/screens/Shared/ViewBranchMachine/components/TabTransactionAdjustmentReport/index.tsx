@@ -1,13 +1,4 @@
-import {
-	Button,
-	Col,
-	DatePicker,
-	Descriptions,
-	Row,
-	Space,
-	Table,
-	Typography,
-} from 'antd';
+import { Button, Col, DatePicker, Row, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	ModeOfPayment,
@@ -19,7 +10,11 @@ import {
 } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
-import { getFullName, printAdjustmentReport } from 'ejjy-global';
+import {
+	DiscountDisplay,
+	getFullName,
+	printAdjustmentReport,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -79,7 +74,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 			orientation: 'l',
 			unit: 'px',
 			format: [1225, 840],
-			hotfixes: ['px_scaling'],
+			// hotfixes: ['px_scaling'],
 			putOnlyUsedFonts: true,
 		},
 		print: () => printAdjustmentReport(transactions, user),
@@ -120,20 +115,10 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 						</Button>
 					)}
 					{discountOption && (
-						<Descriptions column={1} size="small" bordered>
-							<Descriptions.Item label="Name">
-								{discountOption.name}
-							</Descriptions.Item>
-							<Descriptions.Item label="Type">
-								{_.upperFirst(discountOption.type)}{' '}
-								{discountOption.percentage > 0
-									? `${discountOption.percentage}%`
-									: ''}
-							</Descriptions.Item>
-							<Descriptions.Item label="Amount">
-								{formatInPeso(transaction.overall_discount)}
-							</Descriptions.Item>
-						</Descriptions>
+						<DiscountDisplay
+							discountOption={discountOption}
+							overallDiscount={Number(transaction.overall_discount)}
+						/>
 					)}
 				</Space>
 			);
