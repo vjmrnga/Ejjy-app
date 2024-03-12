@@ -1,4 +1,5 @@
 import { AppIcons, Container } from 'components';
+import { useGenerateReports } from 'hooks';
 import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import {
@@ -11,8 +12,8 @@ import { ViewAccount } from 'screens/Shared/Accounts/ViewAccount';
 import { Assignments } from 'screens/Shared/Assignments';
 import { Branches } from 'screens/Shared/Branches';
 import { ViewBranch } from 'screens/Shared/Branches/ViewBranch';
-import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { DTR } from 'screens/Shared/DTR';
+import { DiscountOptions } from 'screens/Shared/DiscountOptions';
 import { PointSystemTags } from 'screens/Shared/PointSystemTags';
 import { ProductCategories } from 'screens/Shared/ProductCategories';
 import { ProductGroups } from 'screens/Shared/ProductGroups';
@@ -24,7 +25,6 @@ import { SiteSettings } from 'screens/Shared/SiteSettings';
 import { CashieringAssignment } from 'screens/Shared/Users/CashieringAssignment';
 import { ViewBranchMachine } from 'screens/Shared/ViewBranchMachine';
 import shallow from 'zustand/shallow';
-import { useGenerateReports } from 'hooks';
 import { BackOrders } from './BackOrders/BackOrders';
 import { ViewBackOrder } from './BackOrders/ViewBackOrder';
 import { Checkings } from './Checkings/Checkings';
