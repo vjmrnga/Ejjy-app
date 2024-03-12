@@ -1,14 +1,9 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { BranchMachinesService } from 'services';
-import {
-	getGoogleApiUrl,
-	getLocalApiUrl,
-	getOnlineApiUrl,
-	isStandAlone,
-} from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const useBranchMachines = ({ params, options }: Query = {}) =>
 	useQuery<any>(
@@ -58,86 +53,5 @@ export const useBranchMachineRetrieve = ({ id, options }: Query) =>
 			...options,
 		},
 	);
-
-export const useBranchMachineCreate = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		({
-			branchId,
-			machineIdentificationNumber,
-			name,
-			permitToUse,
-			posTerminal,
-			serverUrl,
-			type,
-		}: any) =>
-			BranchMachinesService.create(
-				{
-					branch_id: branchId,
-					machine_identification_number: machineIdentificationNumber,
-					name,
-					permit_to_use: permitToUse,
-					pos_terminal: posTerminal,
-					server_url: serverUrl,
-					type,
-				},
-				getGoogleApiUrl(),
-			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranchMachines');
-			},
-		},
-	);
-};
-
-export const useBranchMachineEdit = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		({
-			branchId,
-			id,
-			machineIdentificationNumber,
-			name,
-			permitToUse,
-			posTerminal,
-			serverUrl,
-			type,
-		}: any) =>
-			BranchMachinesService.edit(
-				id,
-				{
-					branch_id: branchId,
-					machine_identification_number: machineIdentificationNumber,
-					name,
-					permit_to_use: permitToUse,
-					pos_terminal: posTerminal,
-					server_url: serverUrl,
-					type,
-				},
-				getGoogleApiUrl(),
-			),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranchMachines');
-			},
-		},
-	);
-};
-
-export const useBranchMachineDelete = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation<any, any, any>(
-		(id: number) => BranchMachinesService.delete(id, getOnlineApiUrl()),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries('useBranchMachines');
-			},
-		},
-	);
-};
 
 export default useBranchMachines;

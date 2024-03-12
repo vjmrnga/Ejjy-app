@@ -1,36 +1,63 @@
 import { Button, Col, Input, message, Modal, Row, Select } from 'antd';
-import { filterOption } from 'ejjy-global';
+import {
+	BranchMachine,
+	filterOption,
+	useBranchMachineCreate,
+	useBranchMachineEdit,
+} from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { branchMachineTypes } from 'global';
-import { useBranchMachineCreate, useBranchMachineEdit } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray, getBranchMachineTypeName, getId } from 'utils';
+import { useQueryClient } from 'react-query';
+import { useUserStore } from 'stores';
+import {
+	convertIntoArray,
+	getBranchMachineTypeName,
+	getGoogleApiUrl,
+	getId,
+	getLocalApiUrl,
+	isCUDShown,
+	isUserFromOffice,
+} from 'utils';
 import * as Yup from 'yup';
 import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';
 
-interface ModalProps {
-	branchId?: any;
-	branchMachine: any;
-	onClose: any;
-}
+type ModalProps = {
+	branchId?: number;
+	branchMachine?: BranchMachine;
+	onClose: () => void;
+};
 
 export const ModifyBranchMachineModal = ({
 	branchId,
 	branchMachine,
 	onClose,
 }: ModalProps) => {
+	const queryClient = useQueryClient();
+	const user = useUserStore((state) => state.user);
+
 	// CUSTOM HOOKS
 	const {
 		mutateAsync: createBranchMachine,
 		isLoading: isCreatingBranchMachine,
 		error: createBranchMachineError,
-	} = useBranchMachineCreate();
+	} = useBranchMachineCreate(
+		null,
+		isUserFromOffice(user.user_type) && isCUDShown(user.user_type)
+			? getLocalApiUrl()
+			: getGoogleApiUrl(),
+	);
 	const {
 		mutateAsync: editBranchMachine,
 		isLoading: isEditingBranchMachine,
 		error: editBranchMachineError,
-	} = useBranchMachineEdit();
+	} = useBranchMachineEdit(
+		null,
+		isUserFromOffice(user.user_type) && isCUDShown(user.user_type)
+			? getLocalApiUrl()
+			: getGoogleApiUrl(),
+	);
 
 	// METHODS
 	const handleSubmit = async (formData) => {
@@ -45,6 +72,7 @@ export const ModifyBranchMachineModal = ({
 			message.success('Branch machine was created successfully');
 		}
 
+		queryClient.invalidateQueries('useBranchMachines');
 		onClose();
 	};
 
@@ -77,11 +105,11 @@ export const ModifyBranchMachineModal = ({
 };
 
 interface FormProps {
-	branchId?: any;
-	branchMachine?: any;
+	branchId?: number;
+	branchMachine?: BranchMachine;
 	isLoading: boolean;
-	onSubmit: any;
-	onClose: any;
+	onSubmit: (formData) => void;
+	onClose: () => void;
 }
 
 export const ModifyBranchMachineForm = ({
@@ -99,7 +127,7 @@ export const ModifyBranchMachineForm = ({
 					branchMachine?.machine_identification_number || '',
 				name: branchMachine?.name || '',
 				permitToUse: branchMachine?.permit_to_use || '',
-				posTerminal: branchMachine?.pos_terminal || '',
+				storageSerialNumber: branchMachine?.storage_serial_number || '',
 				serverUrl: branchMachine?.server_url || '',
 				type: branchMachine?.type || branchMachineTypes.CASHIERING,
 			},
@@ -116,7 +144,11 @@ export const ModifyBranchMachineForm = ({
 					.max(75)
 					.label('Permit To Use')
 					.trim(),
-				posTerminal: Yup.string().required().max(75).label('Serial #').trim(),
+				storageSerialNumber: Yup.string()
+					.required()
+					.max(75)
+					.label('StorageSerialNumber')
+					.trim(),
 				serverUrl: Yup.string().required().max(75).label('Server URL').trim(),
 				type: Yup.string().required().label('Type'),
 			}),
@@ -226,16 +258,16 @@ export const ModifyBranchMachineForm = ({
 						</Col>
 
 						<Col span={24}>
-							<Label label="Serial #" spacing />
+							<Label label="Storage Serial #" spacing />
 							<Input
-								name="posTerminal"
-								value={values['posTerminal']}
+								name="storageSerialNumber"
+								value={values['storageSerialNumber']}
 								onChange={(e) => {
-									setFieldValue('posTerminal', e.target.value);
+									setFieldValue('storageSerialNumber', e.target.value);
 								}}
 							/>
 							<ErrorMessage
-								name="posTerminal"
+								name="storageSerialNumber"
 								render={(error) => <FieldError error={error} />}
 							/>
 						</Col>

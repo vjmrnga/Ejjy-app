@@ -9,15 +9,22 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { useBranchMachineDelete, useBranchMachines } from 'hooks';
+import {
+	ServiceType,
+	useBranchMachineDelete,
+	useBranchMachines,
+} from 'ejjy-global';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getBranchMachineTypeName,
+	getLocalApiUrl,
 	getLocalBranchId,
 	isCUDShown,
+	isStandAlone,
 } from 'utils';
 
 export const BranchMachines = () => {
@@ -30,56 +37,68 @@ export const BranchMachines = () => {
 	] = useState(false);
 
 	// VARIABLES
-	const branchId = getLocalBranchId();
+	const branchId = Number(getLocalBranchId());
 
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const user = useUserStore((state) => state.user);
 	const {
-		data: { branchMachines },
+		data: branchMachinesData,
 		isFetching: isFetchingBranchMachines,
 		error: branchMachinesError,
 	} = useBranchMachines({
 		params: { branchId },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
 	});
 	const {
-		mutate: deleteBranchMachine,
+		mutateAsync: deleteBranchMachine,
 		isLoading: isDeletingBranchMachine,
 		error: deleteBranchMachineError,
-	} = useBranchMachineDelete();
+	} = useBranchMachineDelete(null, getLocalApiUrl());
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
-			key: branchMachine.id,
-			name: (
-				<Link to={`/branch-manager/branch-machines/${branchMachine.id}`}>
-					{branchMachine.name}
-				</Link>
-			),
-			serverUrl: branchMachine.server_url,
-			machineID: branchMachine.machine_identification_number,
-			ptu: branchMachine.permit_to_use,
-			type: getBranchMachineTypeName(branchMachine.type),
-			actions: (
-				<TableActions
-					onEdit={() => handleEdit(branchMachine)}
-					onRemove={() => {
-						message.success('Branch machine was deleted successfully');
-						deleteBranchMachine(branchMachine.id);
-					}}
-				/>
-			),
-		}));
+		if (branchMachinesData?.list) {
+			const data = branchMachinesData.list.map((branchMachine) => ({
+				key: branchMachine.id,
+				name: (
+					<Link to={`/branch-manager/branch-machines/${branchMachine.id}`}>
+						{branchMachine.name}
+					</Link>
+				),
+				serverUrl: branchMachine.server_url,
+				posTerminal: branchMachine.pos_terminal,
+				storageSerialNumber: branchMachine.storage_serial_number,
+				machineID: branchMachine.machine_identification_number,
+				ptu: branchMachine.permit_to_use,
+				type: getBranchMachineTypeName(branchMachine.type),
+				actions: (
+					<TableActions
+						onEdit={() => handleEdit(branchMachine)}
+						onRemove={async () => {
+							await deleteBranchMachine(branchMachine.id);
+							queryClient.invalidateQueries('useBranchMachines');
+							message.success('Branch machine was deleted successfully');
+						}}
+					/>
+				),
+			}));
 
-		setDataSource(formattedBranchMachines);
-	}, [branchMachines]);
+			setDataSource(data);
+		}
+	}, [branchMachinesData?.list]);
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType = [
 			{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
 			{ title: 'Server URL', dataIndex: 'serverUrl' },
-			{ title: 'Machine ID', dataIndex: 'machineID' },
+			{ title: 'POS Terminal', dataIndex: 'posTerminal' },
+			{ title: 'Storage Serial Number', dataIndex: 'storageSerialNumber' },
 			{ title: 'PTU', dataIndex: 'ptu' },
+			{ title: 'Machine ID', dataIndex: 'machineID' },
 			{ title: 'Type', dataIndex: 'type' },
 		];
 

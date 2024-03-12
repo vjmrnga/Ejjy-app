@@ -1,27 +1,37 @@
 import { DeleteOutlined, EditFilled } from '@ant-design/icons';
-import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Button, Popconfirm, Space, Tooltip, message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import {
 	ModifyBranchMachineModal,
 	RequestErrors,
 	TableHeader,
 } from 'components';
-import { useBranchMachineDelete, useBranchMachines } from 'hooks';
+import {
+	ServiceType,
+	useBranchMachineDelete,
+	useBranchMachines,
+} from 'ejjy-global';
 import React, { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getBranchMachineTypeName,
+	getGoogleApiUrl,
 	getId,
+	getLocalApiUrl,
 	getUrlPrefix,
+	isStandAlone,
 } from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'Name', dataIndex: 'name', width: 150, fixed: 'left' },
 	{ title: 'Server URL', dataIndex: 'serverUrl' },
-	{ title: 'Machine ID', dataIndex: 'machineID' },
+	{ title: 'POS Terminal', dataIndex: 'posTerminal' },
+	{ title: 'Storage Serial Number', dataIndex: 'storageSerialNumber' },
 	{ title: 'PTU', dataIndex: 'ptu' },
+	{ title: 'Machine ID', dataIndex: 'machineID' },
 	{ title: 'Type', dataIndex: 'type' },
 	{ title: 'Actions', dataIndex: 'actions' },
 ];
@@ -41,73 +51,83 @@ export const TabBranchMachines = ({ branch, disabled }: Props) => {
 	] = useState(false);
 
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const user = useUserStore((state) => state.user);
 	const {
-		data: { branchMachines },
+		data: branchMachinesData,
 		isFetching: isFetchingBranchMachines,
 		error: branchMachinesError,
 	} = useBranchMachines({
 		params: { branchId: branch?.id },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
 	});
 	const {
 		mutateAsync: deleteBranchMachine,
 		isLoading: isDeletingBranchMachine,
 		error: deleteBranchMachineError,
-	} = useBranchMachineDelete();
+	} = useBranchMachineDelete(null, getGoogleApiUrl());
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
-			key: branchMachine.id,
-			name: (
-				<Link
-					to={`${getUrlPrefix(user.user_type)}/branch-machines/${
-						branchMachine.id
-					}`}
-				>
-					{branchMachine.name}
-				</Link>
-			),
-			serverUrl: branchMachine.server_url,
-			machineID: branchMachine.machine_identification_number,
-			ptu: branchMachine.permit_to_use,
-			type: getBranchMachineTypeName(branchMachine.type),
-			actions: (
-				<Space>
-					<Tooltip title="Edit">
-						<Button
-							disabled={disabled}
-							icon={<EditFilled />}
-							type="primary"
-							ghost
-							onClick={() => {
-								setSelectedBranchMachine(branchMachine);
-								setModifyBranchMachineModalVisible(true);
-							}}
-						/>
-					</Tooltip>
-
-					<Popconfirm
-						cancelText="No"
-						disabled={disabled}
-						okText="Yes"
-						placement="left"
-						title="Are you sure to remove this?"
-						onConfirm={async () => {
-							await deleteBranchMachine(getId(branchMachine));
-							message.success('Branch machine was deleted successfully');
-						}}
+		if (branchMachinesData?.list) {
+			const data = branchMachinesData.list.map((branchMachine) => ({
+				key: branchMachine.id,
+				name: (
+					<Link
+						to={`${getUrlPrefix(user.user_type)}/branch-machines/${
+							branchMachine.id
+						}`}
 					>
-						<Tooltip title="Remove">
-							<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+						{branchMachine.name}
+					</Link>
+				),
+				serverUrl: branchMachine.server_url,
+				posTerminal: branchMachine.pos_terminal,
+				storageSerialNumber: branchMachine.storage_serial_number,
+				machineID: branchMachine.machine_identification_number,
+				ptu: branchMachine.permit_to_use,
+				type: getBranchMachineTypeName(branchMachine.type),
+				actions: (
+					<Space>
+						<Tooltip title="Edit">
+							<Button
+								disabled={disabled}
+								icon={<EditFilled />}
+								type="primary"
+								ghost
+								onClick={() => {
+									setSelectedBranchMachine(branchMachine);
+									setModifyBranchMachineModalVisible(true);
+								}}
+							/>
 						</Tooltip>
-					</Popconfirm>
-				</Space>
-			),
-		}));
 
-		setDataSource(formattedBranchMachines);
-	}, [branchMachines, disabled]);
+						<Popconfirm
+							cancelText="No"
+							disabled={disabled}
+							okText="Yes"
+							placement="left"
+							title="Are you sure to remove this?"
+							onConfirm={async () => {
+								await deleteBranchMachine(branchMachine.id);
+								queryClient.invalidateQueries('useBranchMachines');
+								message.success('Branch machine was deleted successfully');
+							}}
+						>
+							<Tooltip title="Remove">
+								<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+							</Tooltip>
+						</Popconfirm>
+					</Space>
+				),
+			}));
+
+			setDataSource(data);
+		}
+	}, [branchMachinesData?.list, disabled]);
 
 	const handleCreate = () => {
 		setSelectedBranchMachine(null);
