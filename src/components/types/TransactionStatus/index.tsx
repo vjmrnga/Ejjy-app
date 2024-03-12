@@ -1,35 +1,26 @@
-import { BadgePill } from 'components/elements';
+import { Tag } from 'antd';
 import { EMPTY_CELL, transactionStatuses } from 'global';
 import React from 'react';
 
 export const TransactionStatus = ({ status }) => {
-	let component = null;
-
 	switch (status) {
 		case transactionStatuses.NEW: {
-			component = <BadgePill label="New" variant="secondary" />;
-			break;
+			return <Tag color="yellow">New</Tag>;
 		}
 		case transactionStatuses.FULLY_PAID: {
-			component = <BadgePill label="Fully Paid" variant="primary" />;
-			break;
+			return <Tag color="green">Fully Paid</Tag>;
 		}
 		case transactionStatuses.HOLD: {
-			component = <BadgePill label="Hold" variant="secondary" />;
-			break;
+			return <Tag color="yellow">Hold</Tag>;
 		}
 		case transactionStatuses.VOID_CANCELLED: {
-			component = <BadgePill label="Cancelled" />;
-			break;
+			return <Tag color="red">Cancelled</Tag>;
 		}
 		case transactionStatuses.VOID_EDITED: {
-			component = <BadgePill label="Edited" />;
-			break;
+			return <Tag color="blue">Edited</Tag>;
 		}
 		default: {
-			component = EMPTY_CELL;
+			return EMPTY_CELL;
 		}
 	}
-
-	return component;
 };
