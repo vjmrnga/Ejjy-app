@@ -588,10 +588,5 @@ export const isUserFromOffice = _.memoize((userType) =>
 
 export const isStandAlone = () => getLocalApiUrl() === getOnlineApiUrl();
 
-export const isCUDShown = (userType) => {
-	if (isUserFromBranch(userType)) {
-		return isStandAlone();
-	}
-
-	return true;
-};
+export const isCUDShown = (userType) =>
+	isUserFromBranch(userType) ? isStandAlone() : true;
