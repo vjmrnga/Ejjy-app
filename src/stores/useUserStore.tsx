@@ -1,15 +1,27 @@
+import { User } from 'ejjy-global';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const useUserStore = create<any>(
-	persist(
+interface Store {
+	user: User;
+	setUser: (user: User) => void;
+	resetUser: () => void;
+}
+
+const useUserStore = create(
+	persist<Store>(
 		(set) => ({
-			user: {},
-			setUser: (user) => set({ user }),
-			resetUser: () => set({ user: {} }),
+			user: {} as User,
+			setUser: (user) => {
+				set({ user });
+			},
+			resetUser: () => {
+				set({ user: {} as User });
+			},
 		}),
 		{
 			name: 'user-storage',
+			getStorage: () => localStorage,
 		},
 	),
 );
