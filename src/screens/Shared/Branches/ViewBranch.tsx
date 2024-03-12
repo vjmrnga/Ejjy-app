@@ -1,14 +1,16 @@
 import { Spin, Tabs } from 'antd';
 import { Breadcrumb, ConnectionAlert, Content } from 'components';
 import { Box } from 'components/elements';
-import { useBranchRetrieve, usePingOnlineServer, useQueryParams } from 'hooks';
+import { ServiceType, useBranchRetrieve } from 'ejjy-global';
+import { usePingOnlineServer, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { viewBranchTabs } from 'screens/Shared/Branches/data';
 import { useUserStore } from 'stores';
-import { getUrlPrefix } from 'utils';
+import { getLocalApiUrl, getUrlPrefix, isStandAlone } from 'utils';
 import { TabBranchMachines } from './components/TabBranchMachines';
 import { TabBranchProducts } from './components/TabBranchProducts';
+import { TabDiscountedTransactions } from './components/TabDiscountedTransactions';
 import { TabTransactions } from './components/TabTransactions';
 import './style.scss';
 
@@ -28,9 +30,11 @@ export const ViewBranch = ({ match }: Props) => {
 	} = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const { data: branch, isFetching: isFetchingBranch } = useBranchRetrieve({
-		id: branchIdParam,
-		options: {
-			enabled: !!branchIdParam,
+		id: Number(branchIdParam),
+		options: { enabled: !!branchIdParam },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 
@@ -93,6 +97,13 @@ export const ViewBranch = ({ match }: Props) => {
 								tab={viewBranchTabs.TRANSACTIONS}
 							>
 								<TabTransactions branch={branch} />
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={viewBranchTabs.DISCOUNTED_TRANSACTIONS}
+								tab={viewBranchTabs.DISCOUNTED_TRANSACTIONS}
+							>
+								<TabDiscountedTransactions branch={branch} />
 							</Tabs.TabPane>
 						</Tabs>
 					</Box>

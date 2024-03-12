@@ -8,7 +8,7 @@ import { Query } from './inteface';
 const useTransactions = ({ params, options }: Query) =>
 	useQuery<any>(
 		[
-			'useTransactions',
+			'useTransactionsLegacy',
 			params?.branchMachineId,
 			params?.isAdjusted,
 			params?.modeOfPayment,

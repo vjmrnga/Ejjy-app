@@ -50,7 +50,7 @@ const useBranches = ({ key, params, options }: Query = {}) =>
 
 export const useBranchRetrieve = ({ id, params, options }: Query) =>
 	useQuery<any>(
-		['useBranchRetrieve', id, params?.baseURL],
+		['useBranchRetrieveLegacy', id, params?.baseURL],
 		() => {
 			const service = isStandAlone()
 				? BranchesService.retrieve

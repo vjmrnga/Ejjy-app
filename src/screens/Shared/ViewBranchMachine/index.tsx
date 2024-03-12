@@ -6,6 +6,7 @@ import { useBranchMachineRetrieve, useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { TabDiscountedTransactions } from 'screens/Shared/Branches/components/TabDiscountedTransactions';
 import { viewBranchTabs } from 'screens/Shared/Branches/data';
 import { useUserStore } from 'stores';
 import {
@@ -30,6 +31,7 @@ const tabs = {
 	DAILY_INVOICE_REPORT: 'Daily Invoice Report',
 	DAILY_PRODUCT_SALES_REPORT: 'Daily Product Sales Report',
 	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
+	DISCOUNTED_TRANSACTIONS: 'Discounted Transactions',
 	BIR_REPORT: 'BIR Report',
 };
 
@@ -154,6 +156,13 @@ export const ViewBranchMachine = ({ match }: Props) => {
 								<TabTransactionAdjustmentReport
 									branchMachineId={branchMachine.id}
 								/>
+							</Tabs.TabPane>
+
+							<Tabs.TabPane
+								key={tabs.DISCOUNTED_TRANSACTIONS}
+								tab={tabs.DISCOUNTED_TRANSACTIONS}
+							>
+								<TabDiscountedTransactions branchMachineId={branchMachine.id} />
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.BIR_REPORT} tab={tabs.BIR_REPORT}>
