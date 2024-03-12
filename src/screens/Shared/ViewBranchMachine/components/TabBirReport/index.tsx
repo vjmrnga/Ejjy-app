@@ -52,7 +52,7 @@ export const TabBirReport = ({ branchMachineId }: Props) => {
 			orientation: 'l',
 			unit: 'px',
 			format: [1800, 840],
-			hotfixes: ['px_scaling'],
+			// hotfixes: ['px_scaling'],
 			putOnlyUsedFonts: true,
 		},
 	});

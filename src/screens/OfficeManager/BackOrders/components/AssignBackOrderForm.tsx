@@ -4,7 +4,7 @@ import { Button, FieldError, Label } from 'components/elements';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { request } from 'global';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, getFullName, sleep } from 'utils';
+import { convertIntoArray, sleep } from 'utils';
 import * as Yup from 'yup';
 
 interface Props {

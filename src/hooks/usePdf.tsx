@@ -7,7 +7,7 @@ const JSPDF_SETTINGS: jsPDFOptions = {
 	orientation: 'p',
 	unit: 'px',
 	format: [400, 700],
-	hotfixes: ['px_scaling'],
+	// hotfixes: ['px_scaling'],
 };
 
 const usePdf = ({ title = '', print, jsPdfSettings = {}, image = null }) => {
