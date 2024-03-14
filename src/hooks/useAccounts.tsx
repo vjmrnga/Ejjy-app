@@ -3,7 +3,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery } from 'react-query';
 import { AccountsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const useAccounts = ({ params }: Query) =>
 	useQuery<any>(
@@ -17,9 +17,13 @@ const useAccounts = ({ params }: Query) =>
 			params?.withCreditRegistration,
 			params?.withSupplierRegistration,
 		],
-		() =>
-			wrapServiceWithCatch(
-				AccountsService.listOffline(
+		() => {
+			const service = isStandAlone()
+				? AccountsService.list
+				: AccountsService.listOffline;
+
+			return wrapServiceWithCatch(
+				service(
 					{
 						page: params?.page || DEFAULT_PAGE,
 						page_size: params?.pageSize || DEFAULT_PAGE_SIZE,
@@ -30,7 +34,8 @@ const useAccounts = ({ params }: Query) =>
 					},
 					getLocalApiUrl(),
 				),
-			),
+			);
+		},
 		{
 			initialData: { data: { results: [], count: 0 } },
 			select: (query) => ({
@@ -150,7 +155,7 @@ export const useAccountEdit = () =>
 					tin,
 					type,
 				},
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 
@@ -164,7 +169,7 @@ export const useAccountRedeemPoints = () =>
 					redeem_remarks: redeemRemarks,
 					redeemed_points: redeemedPoints,
 				},
-				getLocalApiUrl(),
+				getOnlineApiUrl(),
 			),
 	);
 

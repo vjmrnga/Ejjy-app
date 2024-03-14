@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { BranchProductsService } from 'services';
 import {
 	getLocalApiUrl,
+	isStandAlone,
 	modifiedCallback,
 	modifiedExtraCallback,
 	onCallback,
@@ -219,7 +220,10 @@ const useBranchProductsNew = ({ params, options }: Query) =>
 			params?.search,
 		],
 		() => {
-			let service = BranchProductsService.list;
+			let service = isStandAlone()
+				? BranchProductsService.list
+				: BranchProductsService.listOffline;
+
 			if (serviceTypes.OFFLINE === params?.serviceType) {
 				service = BranchProductsService.listOffline;
 			}

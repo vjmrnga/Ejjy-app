@@ -9,7 +9,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AttendanceLogsService } from 'services';
-import { getLocalApiUrl, getOnlineApiUrl } from 'utils';
+import { getLocalApiUrl, getOnlineApiUrl, isStandAlone } from 'utils';
 
 const useAttendanceLogs = ({ params }: Query) =>
 	useQuery<any>(
@@ -25,7 +25,10 @@ const useAttendanceLogs = ({ params }: Query) =>
 			params?.timeRange,
 		],
 		() => {
-			let service = AttendanceLogsService.list;
+			let service = isStandAlone()
+				? AttendanceLogsService.list
+				: AttendanceLogsService.listOffline;
+
 			if (serviceTypes.OFFLINE === params?.serviceType) {
 				service = AttendanceLogsService.listOffline;
 			}
