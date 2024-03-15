@@ -8,9 +8,9 @@ import qz from 'qz-tray';
 import React, { useEffect } from 'react';
 import { useUserInterfaceStore, useUserStore } from 'stores';
 import {
+	getAppReceiptPrinterFontFamily,
 	getAppReceiptPrinterFontSize,
 	getAppReceiptPrinterName,
-	getAppTagPrinterFontFamily,
 	isUserFromBranch,
 } from 'utils';
 import './style.scss';
@@ -73,7 +73,7 @@ const Component = () => {
 		configurePrinter(
 			getAppReceiptPrinterName(),
 			getAppReceiptPrinterFontSize(),
-			getAppTagPrinterFontFamily(),
+			getAppReceiptPrinterFontFamily(),
 		);
 	};
 
