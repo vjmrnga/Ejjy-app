@@ -1,14 +1,18 @@
 import { Button, Col, Modal, Row, Table, Tag } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
-import { ViewXReadReportModal } from 'components/modals/ViewXReadReportModal';
-import { getFullName } from 'ejjy-global';
+import {
+	BranchMachine,
+	ViewXReadReportModal,
+	getFullName,
+	useXReadReports,
+} from 'ejjy-global';
 import {
 	AUTOMATIC_GENERATED_REPORT_USER_NAME,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 } from 'global';
-import { useQueryParams, useXreadReports } from 'hooks';
+import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime } from 'utils';
 
@@ -20,9 +24,12 @@ const columns = [
 
 const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
 interface Props {
-	branchMachine: any;
-	onClose: any;
+	branchMachine: BranchMachine;
+	onClose: () => void;
 }
+
+// TODO: We only used machine server URL because this was not added to the syncing yet.
+const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
 export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
@@ -31,45 +38,51 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
-		data: { xReadReports, total },
+		data: xReadReportsData,
 		isFetching: isFetchingXReadReports,
 		error: xReadReportsError,
-	} = useXreadReports({
+	} = useXReadReports({
 		params: {
 			...params,
-			timeRange: params[TIME_RANGE_PARAM_KEY],
 			branchMachineName: branchMachine.name,
+			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
 		},
+		serviceOptions: { baseURL: MACHINE_SERVER_URL },
 	});
 
 	// METHODS
 	useEffect(() => {
-		const formattedReports = xReadReports.map((report) => ({
-			key: report.id,
-			datetimeCreated: (
-				<Button
-					className="pa-0"
-					type="link"
-					onClick={() => {
-						setSelectedXReadReport(report);
-					}}
-				>
-					{formatDateTime(report.generation_datetime)}
-				</Button>
-			),
-			type: report.cashiering_session ? (
-				<Tag color="orange">Current Session</Tag>
-			) : (
-				<Tag color="green">Date</Tag>
-			),
-			user: report.generated_by
-				? getFullName(report.generated_by)
-				: AUTOMATIC_GENERATED_REPORT_USER_NAME,
-		}));
+		if (xReadReportsData?.list) {
+			const data = xReadReportsData.list.map((report) => ({
+				key: report.id,
+				datetimeCreated: (
+					<Button
+						className="pa-0"
+						type="link"
+						onClick={() => {
+							setSelectedXReadReport(report);
+						}}
+					>
+						{formatDateTime(report.generation_datetime)}
+					</Button>
+				),
+				type: report.cashiering_session ? (
+					<Tag color="orange">Current Session</Tag>
+				) : (
+					<Tag color="green">Date</Tag>
+				),
+				user: report.generated_by
+					? getFullName(report.generated_by)
+					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
+			}));
 
-		setDataSource(formattedReports);
-	}, [xReadReports]);
+			setDataSource(data);
+		}
+	}, [xReadReportsData?.list]);
+
+	console.log('selectedXReadReport', selectedXReadReport);
 
 	return (
 		<Modal
@@ -94,7 +107,7 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				loading={isFetchingXReadReports}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
-					total,
+					total: xReadReportsData?.total || 0,
 					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page) => {
 						setQueryParams({ page }, { shouldResetPage: false });
@@ -105,9 +118,10 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				}}
 			/>
 
-			{selectedXReadReport && (
+			{selectedXReadReport && siteSettings && (
 				<ViewXReadReportModal
 					report={selectedXReadReport}
+					siteSettings={siteSettings}
 					onClose={() => setSelectedXReadReport(null)}
 				/>
 			)}
