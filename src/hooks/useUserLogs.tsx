@@ -8,7 +8,7 @@ import { wrapServiceWithCatch } from 'hooks/helper';
 import { Query } from 'hooks/inteface';
 import { useQuery } from 'react-query';
 import { UserLogsService } from 'services';
-import { getLocalApiUrl } from 'utils';
+import { getLocalApiUrl, isStandAlone } from 'utils';
 
 const useUserLogs = ({ params }: Query) =>
 	useQuery<any>(
@@ -26,7 +26,10 @@ const useUserLogs = ({ params }: Query) =>
 			params?.type,
 		],
 		() => {
-			let service = UserLogsService.list;
+			let service = isStandAlone()
+				? UserLogsService.list
+				: UserLogsService.listOffline;
+
 			if (serviceTypes.OFFLINE === params?.serviceType) {
 				service = UserLogsService.listOffline;
 			}
