@@ -20,7 +20,9 @@ export const TransactionStatus = ({ status }) => {
 			return <Tag color="blue">Edited</Tag>;
 		}
 		default: {
-			return EMPTY_CELL;
+			return <>{EMPTY_CELL}</>;
 		}
 	}
+
+	return null;
 };
