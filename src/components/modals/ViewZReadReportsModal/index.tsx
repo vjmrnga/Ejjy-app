@@ -3,6 +3,7 @@ import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
 	AUTOMATIC_GENERATED_REPORT_USER_NAME,
+	BranchMachine,
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	ViewZReadReportModal,
@@ -14,7 +15,6 @@ import {
 } from 'ejjy-global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { getLocalApiUrl } from 'utils';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
@@ -24,9 +24,12 @@ const columns = [
 const TIME_RANGE_PARAM_KEY = 'zreadTimeRange';
 
 interface Props {
-	branchMachine: any;
-	onClose: any;
+	branchMachine: BranchMachine;
+	onClose: () => void;
 }
+
+// TODO: We only used machine server URL because this was not added to the syncing yet.
+const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
 export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
@@ -36,7 +39,6 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const { data: siteSettings } = useSiteSettingsNew();
-
 	const {
 		data: zReadReportsData,
 		isFetching: isFetchingZReadReports,
@@ -47,9 +49,7 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 			branchMachineName: branchMachine.name,
 			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
 		},
-		serviceOptions: {
-			baseURL: getLocalApiUrl(),
-		},
+		serviceOptions: { baseURL: MACHINE_SERVER_URL },
 	});
 
 	// METHODS
