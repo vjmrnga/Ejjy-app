@@ -5,10 +5,9 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 	TransactionStatus,
-	ViewTransactionModal,
 } from 'components';
 import { BadgePill, Label } from 'components/elements';
-import { filterOption } from 'ejjy-global';
+import { ViewTransactionModal, filterOption } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -18,7 +17,7 @@ import {
 	timeRangeTypes,
 	transactionStatuses,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useQueryParams, useSiteSettingsNew, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { TransactionsCancelled } from 'screens/Shared/Branches/components/TabTransactions/components/TransactionsCancelled';
@@ -70,6 +69,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { transactions, total },
 		error: transactionsError,
@@ -157,6 +157,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(false)}
 				/>

@@ -6,9 +6,8 @@ import {
 	RequestErrors,
 	TableHeader,
 	TimeRangeFilter,
-	ViewTransactionModal,
 } from 'components';
-import { getFullName } from 'ejjy-global';
+import { ViewTransactionModal, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -17,7 +16,7 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useQueryParams, useSiteSettingsNew, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
@@ -43,6 +42,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { transactions, total },
 		isFetching: isFetchingTransactions,
@@ -183,6 +183,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
 				/>

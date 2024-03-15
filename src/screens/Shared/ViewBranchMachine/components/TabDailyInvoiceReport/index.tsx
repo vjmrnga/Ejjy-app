@@ -5,10 +5,13 @@ import {
 	RequestErrors,
 	TableHeader,
 	ViewBackOrderModal,
-	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
-import { DiscountDisplay, getFullName } from 'ejjy-global';
+import {
+	DiscountDisplay,
+	ViewTransactionModal,
+	getFullName,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -18,7 +21,7 @@ import {
 	timeRangeTypes,
 	transactionStatuses,
 } from 'global';
-import { useQueryParams, useTransactions } from 'hooks';
+import { useQueryParams, useSiteSettingsNew, useTransactions } from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -45,6 +48,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { transactions, total },
 		error: transactionsError,
@@ -165,6 +169,7 @@ export const TabDailyInvoiceReport = ({ branchMachineId }: Props) => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(false)}
 				/>

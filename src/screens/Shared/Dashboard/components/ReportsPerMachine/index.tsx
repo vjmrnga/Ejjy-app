@@ -72,7 +72,7 @@ export const ReportsPerMachine = ({
 							setSelectedReadReportType(readReportTypes.XREAD);
 						}}
 					>
-						View XRead Reports
+						View X-read Reports
 					</Button>
 					<Button
 						type="primary"
@@ -81,7 +81,7 @@ export const ReportsPerMachine = ({
 							setSelectedReadReportType(readReportTypes.ZREAD);
 						}}
 					>
-						View ZRead Reports
+						View Z-read Reports
 					</Button>
 				</Space>
 			) : null,
@@ -110,16 +110,6 @@ export const ReportsPerMachine = ({
 	return (
 		<>
 			<TableHeader
-				buttons={
-					<Button
-						loading={false}
-						type="primary"
-						ghost
-						onClick={() => setIsExportEjournalModalVisible(true)}
-					>
-						Generate E-journal
-					</Button>
-				}
 				title="Reports per Machine"
 				wrapperClassName={tableHeaderClassName}
 			/>

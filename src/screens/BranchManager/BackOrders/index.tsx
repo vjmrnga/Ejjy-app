@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import { Content, ViewBackOrderModal, ViewTransactionModal } from 'components';
+import { Content, ViewBackOrderModal } from 'components';
 import { Box } from 'components/elements';
+import { ViewTransactionModal } from 'ejjy-global';
+import { useSiteSettingsNew } from 'hooks';
 import React, { useRef, useState } from 'react';
 import { BackOrdersTable } from './components/BackOrdersTable';
 import { FulfillBackOrderModal } from './components/FulfillBackOrderModal';
@@ -19,6 +21,9 @@ export const BackOrders = () => {
 
 	// REFS
 	const backOrdersReceiveRef = useRef(null);
+
+	// CUSTOM HOOKS
+	const { data: siteSettings } = useSiteSettingsNew();
 
 	// METHODS
 	const handleOpenModal = (backOrder, type) => {
@@ -76,6 +81,7 @@ export const BackOrders = () => {
 
 				{selectedTransaction && (
 					<ViewTransactionModal
+						siteSettings={siteSettings}
 						transaction={selectedTransaction}
 						onClose={() => setSelectedTransaction(null)}
 					/>

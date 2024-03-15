@@ -6,10 +6,9 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 	TransactionStatus,
-	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
-import { getProductCode } from 'ejjy-global';
+import { ViewTransactionModal, getProductCode } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -19,7 +18,11 @@ import {
 	timeRangeTypes,
 	transactionStatuses,
 } from 'global';
-import { useQueryParams, useTransactionProducts } from 'hooks';
+import {
+	useQueryParams,
+	useSiteSettingsNew,
+	useTransactionProducts,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
 import {
 	convertIntoArray,
@@ -58,6 +61,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { transactionProducts, total },
 		isFetching: isFetchingTransactionProducts,
@@ -178,6 +182,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
 				/>

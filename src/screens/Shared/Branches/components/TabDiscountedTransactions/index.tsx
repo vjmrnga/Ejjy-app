@@ -18,11 +18,11 @@ import {
 	useBranchMachines,
 	useDiscountOptions,
 	useQueryParams,
-	useSiteSettings,
 	useTransactions,
 	useUsers,
 } from 'ejjy-global';
 import { pageSizeOptions } from 'global';
+import { useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, getLocalApiUrl, isStandAlone } from 'utils';
 
@@ -96,12 +96,7 @@ export const TabDiscountedTransactions = ({
 			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
-	const { data: siteSettings } = useSiteSettings({
-		serviceOptions: {
-			baseURL: getLocalApiUrl(),
-			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
-		},
-	});
+	const { data: siteSettings } = useSiteSettingsNew();
 
 	// METHODS
 	useEffect(() => {

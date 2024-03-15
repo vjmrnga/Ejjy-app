@@ -6,7 +6,6 @@ import {
 	TableHeader,
 	TransactionStatus,
 	ViewBackOrderModal,
-	ViewTransactionModal,
 } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
@@ -14,6 +13,7 @@ import {
 	DiscountDisplay,
 	getFullName,
 	printAdjustmentReport,
+	ViewTransactionModal,
 } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
@@ -23,7 +23,12 @@ import {
 	timeRangeTypes,
 	transactionStatuses,
 } from 'global';
-import { usePdf, useQueryParams, useTransactions } from 'hooks';
+import {
+	usePdf,
+	useQueryParams,
+	useSiteSettingsNew,
+	useTransactions,
+} from 'hooks';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -54,6 +59,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { transactions, total },
 		error: transactionsError,
@@ -202,6 +208,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
 				/>

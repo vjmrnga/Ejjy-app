@@ -1,19 +1,19 @@
 import { Button, Col, Row, Spin, Statistic, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
-import {
-	RedeemPointsModal,
-	TableHeader,
-	ViewTransactionModal,
-} from 'components';
+import { RedeemPointsModal, TableHeader } from 'components';
 import { Box } from 'components/elements';
-import { getFullName } from 'ejjy-global';
+import { ViewTransactionModal, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	pageSizeOptions,
 } from 'global';
-import { usePointTransactions, useQueryParams } from 'hooks';
+import {
+	usePointTransactions,
+	useQueryParams,
+	useSiteSettingsNew,
+} from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { formatDateTime, formatInPeso } from 'utils';
@@ -51,6 +51,7 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 	// CUSTOM HOOKS
 	const queryClient = useQueryClient();
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { pointTransactions, total },
 		isFetching: isFetchingPointTransactions,
@@ -152,6 +153,7 @@ export const PointTransactions = ({ account }: PointTransactionsProps) => {
 
 				{selectedTransactionId && (
 					<ViewTransactionModal
+						siteSettings={siteSettings}
 						transaction={selectedTransactionId}
 						onClose={() => setSelectedTransactionId(null)}
 					/>

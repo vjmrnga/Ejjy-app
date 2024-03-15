@@ -1,14 +1,13 @@
 import { Button, Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import {
-	RequestErrors,
-	TableHeader,
-	TimeRangeFilter,
-	ViewTransactionModal,
-} from 'components';
+import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import { PdfButtons } from 'components/Printing';
-import { getFullName, printOrderOfPayment } from 'ejjy-global';
+import {
+	getFullName,
+	printOrderOfPayment,
+	ViewTransactionModal,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -18,7 +17,13 @@ import {
 	SEARCH_DEBOUNCE_TIME,
 	timeRangeTypes,
 } from 'global';
-import { useAccounts, useOrderOfPayments, usePdf, useQueryParams } from 'hooks';
+import {
+	useAccounts,
+	useOrderOfPayments,
+	usePdf,
+	useQueryParams,
+	useSiteSettingsNew,
+} from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
@@ -41,6 +46,7 @@ export const TabOrderOfPayments = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: { orderOfPayments, total },
 		isFetching: isFetchingOrderOfPayments,
@@ -163,6 +169,7 @@ export const TabOrderOfPayments = () => {
 
 			{selectedTransaction && (
 				<ViewTransactionModal
+					siteSettings={siteSettings}
 					transaction={selectedTransaction}
 					onClose={() => setSelectedTransaction(null)}
 				/>
