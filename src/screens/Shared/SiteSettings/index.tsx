@@ -26,17 +26,14 @@ import {
 	Label,
 } from 'components/elements';
 import dayjs from 'dayjs';
+import { DATE_FORMAT_API, useSiteSettingsEdit } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { inputTypes, taxTypes } from 'global';
-import {
-	usePingOnlineServer,
-	useSiteSettings,
-	useSiteSettingsEdit,
-} from 'hooks';
+import { usePingOnlineServer, useSiteSettingsNew } from 'hooks';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, isCUDShown } from 'utils';
+import { convertIntoArray, getOnlineApiUrl, isCUDShown } from 'utils';
 import * as Yup from 'yup';
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
@@ -58,8 +55,27 @@ const getValidDateTest = (label) =>
 	Yup.string()
 		.required()
 		.nullable()
-		.test('is-valid-date', `${label} is not a valid time`, (value) =>
+		.test('is-valid-date', `${label} is not a valid date`, (value) =>
 			moment(value).isValid(),
+		)
+		.label(label);
+
+const getValidDateRangeTest = (label) =>
+	Yup.string()
+		.required()
+		.nullable()
+		.test(
+			'is-valid-date-range',
+			`${label} is not a valid date range`,
+			(value) => {
+				const dates = value.split(',');
+
+				return (
+					dates.length === 2 &&
+					moment(dates[0]).isValid() &&
+					moment(dates[1]).isValid()
+				);
+			},
 		)
 		.label(label);
 
@@ -71,12 +87,12 @@ export const SiteSettings = () => {
 		data: siteSettings,
 		isFetching: isFetchingSiteSettings,
 		error: siteSettingsError,
-	} = useSiteSettings();
+	} = useSiteSettingsNew();
 	const {
 		mutateAsync: editSiteSettings,
 		isLoading: isEditingSiteSettings,
 		error: editSiteSettingsError,
-	} = useSiteSettingsEdit();
+	} = useSiteSettingsEdit(null, getOnlineApiUrl());
 
 	// STATES
 	const [isDisabled] = useState(!isCUDShown(user.user_type));
@@ -111,22 +127,33 @@ export const SiteSettings = () => {
 					siteSettings?.software_developer_address || '',
 
 				posAccreditationNumber: siteSettings?.pos_accreditation_number || '',
-				// posAccreditationDate: siteSettings?.pos_accreditation_date
-				// 	? moment(siteSettings.pos_accreditation_date, 'YYYY-MM-DD')
-				// 	: null,
+				posAccreditationDate: siteSettings?.pos_accreditation_date
+					? moment(siteSettings.pos_accreditation_date, DATE_FORMAT_API)
+					: null,
 				posAccreditationValidUntilDate: siteSettings?.pos_accreditation_valid_until_date
 					? moment(
 							siteSettings.pos_accreditation_valid_until_date,
-							'YYYY-MM-DD',
+							DATE_FORMAT_API,
 					  )
 					: null,
+				// TODO: Remove this shit once sprint is finished (03/15/24)
+				// 	? siteSettings?.pos_accreditation_date
+				// 			.split(',')
+				// 			.map((date) => moment(date, DATE_FORMAT_API))
+				// 	: null,
+				// posAccreditationValidUntilDate:
+				// 	siteSettings?.pos_accreditation_valid_until_date,
+				// ? siteSettings?.pos_accreditation_valid_until_date
+				// 		.split(',')
+				// 		.map((date) => moment(date, DATE_FORMAT_API))
+				// : null,
 
 				ptuNumber: siteSettings?.ptu_number || '',
 				// ptuDate: siteSettings?.ptu_date
-				// 	? moment(siteSettings.ptu_date, 'YYYY-MM-DD')
+				// 	? moment(siteSettings.ptu_date, DATE_FORMAT_API)
 				// 	: null,
-				ptuValidUntilDate: siteSettings?.ptu_valid_until_date
-					? moment(siteSettings.ptu_valid_until_date, 'YYYY-MM-DD')
+				ptuValidUntilDate: siteSettings?.pos_accreditation_date
+					? moment(siteSettings.ptu_valid_until_date, DATE_FORMAT_API)
 					: null,
 
 				// productVersion: siteSettings?.product_version || '',
@@ -197,7 +224,6 @@ export const SiteSettings = () => {
 				posAccreditationNumber: Yup.string()
 					.required()
 					.label('POS Accreditation Number'),
-				// posAccreditationDate: getValidDateTest('POS Accreditation Date'),
 				posAccreditationValidUntilDate: getValidDateTest(
 					'POS Accreditation Valid Until Date',
 				),
@@ -252,7 +278,7 @@ export const SiteSettings = () => {
 				allowClear={false}
 				className="w-100"
 				disabled={isDisabled}
-				format="YYYY-MM-DD"
+				format={DATE_FORMAT_API}
 				value={values[name]}
 				onSelect={(value) => setFieldValue(name, value)}
 			/>
@@ -262,6 +288,28 @@ export const SiteSettings = () => {
 			/>
 		</>
 	);
+
+	// const renderRangePicker = ({ name, label, values, setFieldValue }) => (
+	// 	<>
+	// 		<Label id={name} label={label} spacing />
+	// 		<DatePicker.RangePicker
+	// 			allowClear={false}
+	// 			className="w-100"
+	// 			disabled={isDisabled}
+	// 			format={DATE_FORMAT_API}
+	// 			value={values[name]}
+	// 			onCalendarChange={(dates) => {
+	// 				if (dates?.[0] && dates?.[1]) {
+	// 					setFieldValue(name, dates);
+	// 				}
+	// 			}}
+	// 		/>
+	// 		<ErrorMessage
+	// 			name={name}
+	// 			render={(error) => <FieldError error={error} />}
+	// 		/>
+	// 	</>
+	// );
 
 	const renderTimePicker = ({ name, label, values, setFieldValue }) => (
 		<>
@@ -339,12 +387,14 @@ export const SiteSettings = () => {
 			...formData,
 			closeSessionDeadline: formData.closeSessionDeadline.format('HH:mm:ss'),
 			closeDayDeadline: formData.closeDayDeadline.format('HH:mm:ss'),
-			// posAccreditationDate: formData.posAccreditationDate.format('YYYY-MM-DD'),
-			posAccreditationValidUntilDate: formData.posAccreditationValidUntilDate.format(
-				'YYYY-MM-DD',
+			posAccreditationDate: formData.posAccreditationDate.format(
+				DATE_FORMAT_API,
 			),
-			// ptuDate: formData.ptuDate.format('YYYY-MM-DD'),
-			ptuValidUntilDate: formData.ptuValidUntilDate.format('YYYY-MM-DD'),
+			posAccreditationValidUntilDate: formData.posAccreditationValidUntilDate.format(
+				DATE_FORMAT_API,
+			),
+			// ptuDate: formData.ptuDate.format(DATE_FORMAT_API),
+			ptuValidUntilDate: formData.ptuValidUntilDate.format(DATE_FORMAT_API),
 		});
 
 		message.success('Settings updated successfully');
@@ -525,7 +575,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'proprietor',
 											label: 'Proprietor',
@@ -543,7 +593,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										<Label label="VAT Type" spacing />
 										<Radio.Group
 											disabled={isDisabled}
@@ -563,7 +613,7 @@ export const SiteSettings = () => {
 										/>
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'tin',
 											label: 'TIN',
@@ -574,7 +624,7 @@ export const SiteSettings = () => {
 
 									<Divider>Receipt Footer</Divider>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'softwareDeveloper',
 											label: 'Software Developer',
@@ -582,7 +632,7 @@ export const SiteSettings = () => {
 											values,
 										})}
 									</Col>
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'softwareDeveloperTin',
 											label: 'Software Developer TIN',
@@ -601,12 +651,56 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={8} span={24}>
 										{renderInputField({
 											name: 'posAccreditationNumber',
 											label: 'POS Accreditation Number',
 											setFieldValue,
 											values,
+										})}
+									</Col>
+
+									<Col lg={8} span={24}>
+										{renderDatePicker({
+											name: 'posAccreditationDate',
+											label: 'POS Accreditation Date',
+											values,
+											setFieldValue,
+										})}
+									</Col>
+
+									<Col lg={8} span={24}>
+										{renderDatePicker({
+											name: 'posAccreditationValidUntilDate',
+											label: 'POS Accreditation Valid Until Date',
+											values,
+											setFieldValue,
+										})}
+									</Col>
+
+									<Col lg={12} span={24}>
+										{renderInputField({
+											name: 'ptuNumber',
+											label: 'PTU Number',
+											setFieldValue,
+											values,
+										})}
+									</Col>
+									{/* <Col sm={8} xs={24}>
+										{renderDatePicker({
+											name: 'ptuDate',
+											label: 'PTU Date',
+											values,
+											setFieldValue,
+										})}
+									</Col> */}
+
+									<Col lg={12} span={24}>
+										{renderDatePicker({
+											name: 'ptuValidUntilDate',
+											label: 'PTU Valid Until Date',
+											values,
+											setFieldValue,
 										})}
 									</Col>
 
@@ -629,53 +723,9 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									{/* <Col sm={8} xs={24}>
-										{renderDatePicker({
-											name: 'posAccreditationDate',
-											label: 'POS Accreditation Date',
-											values,
-											setFieldValue,
-										})}
-									</Col> */}
-
-									<Col sm={12} xs={24}>
-										{renderDatePicker({
-											name: 'posAccreditationValidUntilDate',
-											label: 'POS Accreditation Valid Until Date',
-											values,
-											setFieldValue,
-										})}
-									</Col>
-
-									<Col sm={12} xs={24}>
-										{renderInputField({
-											name: 'ptuNumber',
-											label: 'PTU Number',
-											setFieldValue,
-											values,
-										})}
-									</Col>
-									{/* <Col sm={8} xs={24}>
-										{renderDatePicker({
-											name: 'ptuDate',
-											label: 'PTU Date',
-											values,
-											setFieldValue,
-										})}
-									</Col> */}
-
-									<Col sm={12} xs={24}>
-										{renderDatePicker({
-											name: 'ptuValidUntilDate',
-											label: 'PTU Valid Until Date',
-											values,
-											setFieldValue,
-										})}
-									</Col>
-
 									<Divider>Cashiering Details</Divider>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderTimePicker({
 											name: 'closeSessionDeadline',
 											label: 'End Session Deadline',
@@ -684,7 +734,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderTimePicker({
 											name: 'closeDayDeadline',
 											label: 'Close Day Deadline',
@@ -693,7 +743,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'reportingPeriodDayOfMonth',
 											label: 'Reporting Day of the Month',
@@ -703,7 +753,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									{/* <Col sm={12} xs={24}>
+									{/* <Col lg={12} span={24}>
 										{renderInputField({
 											name: 'productVersion',
 											label: 'Product Version',
@@ -714,7 +764,7 @@ export const SiteSettings = () => {
 
 									<Divider>Notification</Divider>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'resetCounterNotificationThresholdAmount',
 											label: 'Reset Counter Notification Threshold Amount',
@@ -724,7 +774,7 @@ export const SiteSettings = () => {
 										})}
 									</Col>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'resetCounterNotificationThresholdInvoiceNumber',
 											label:
@@ -737,7 +787,7 @@ export const SiteSettings = () => {
 
 									<Divider>App Display</Divider>
 
-									<Col sm={12} xs={24}>
+									<Col lg={12} span={24}>
 										{renderInputField({
 											name: 'appDescription',
 											label: 'App Description',
