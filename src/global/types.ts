@@ -286,11 +286,6 @@ export const pdfButtonsKey = {
 	PREVIEW: 'preview',
 };
 
-export const readReportTypes = {
-	XREAD: 'xread',
-	ZREAD: 'zread',
-};
-
 export const authorizationStatuses = {
 	UNOPENED: 'unopened',
 	OPENED: 'opened',

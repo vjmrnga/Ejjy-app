@@ -3,9 +3,11 @@ import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
 	BranchMachine,
-	ViewXReadReportModal,
 	getFullName,
+	reportCategories,
+	ReportCategory,
 	useXReadReports,
+	ViewXReadReportModal,
 } from 'ejjy-global';
 import {
 	AUTOMATIC_GENERATED_REPORT_USER_NAME,
@@ -14,6 +16,7 @@ import {
 } from 'global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import { convertIntoArray, formatDateTime } from 'utils';
 
 const columns = [
@@ -25,19 +28,25 @@ const columns = [
 const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
 interface Props {
 	branchMachine: BranchMachine;
+	category: ReportCategory;
 	onClose: () => void;
 }
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
-export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
+export const ViewXReportsModal = ({
+	branchMachine,
+	category,
+	onClose,
+}: Props) => {
 	// STATES
 	const [selectedXReadReport, setSelectedXReadReport] = useState(null);
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: xReadReportsData,
@@ -61,9 +70,7 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 					<Button
 						className="pa-0"
 						type="link"
-						onClick={() => {
-							setSelectedXReadReport(report);
-						}}
+						onClick={() => setSelectedXReadReport(report)}
 					>
 						{formatDateTime(report.generation_datetime)}
 					</Button>
@@ -73,22 +80,24 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				) : (
 					<Tag color="green">Date</Tag>
 				),
-				user: report.generated_by
-					? getFullName(report.generated_by)
-					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
+				user: report.generated_by ? (
+					getFullName(report.generated_by)
+				) : (
+					<Tag color="blue">{AUTOMATIC_GENERATED_REPORT_USER_NAME}</Tag>
+				),
 			}));
 
 			setDataSource(data);
 		}
 	}, [xReadReportsData?.list]);
 
-	console.log('selectedXReadReport', selectedXReadReport);
-
 	return (
 		<Modal
 			className="Modal__hasFooter Modal__large"
 			footer={<Button onClick={onClose}>Close</Button>}
-			title="X-Read Reports"
+			title={`X-${
+				category === reportCategories.EJournals ? 'report' : 'accrued'
+			} Reports`}
 			centered
 			closable
 			open
@@ -122,6 +131,7 @@ export const ViewXReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				<ViewXReadReportModal
 					report={selectedXReadReport}
 					siteSettings={siteSettings}
+					user={user}
 					onClose={() => setSelectedXReadReport(null)}
 				/>
 			)}

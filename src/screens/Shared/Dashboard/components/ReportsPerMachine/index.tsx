@@ -4,10 +4,11 @@ import {
 	ReportTimeRangeModal,
 	RequestErrors,
 	TableHeader,
-	ViewXReadReportsModal,
-	ViewZReadReportsModal,
+	ViewXReportsModal,
+	ViewZReportsModal,
 } from 'components';
-import { MAX_PAGE_SIZE, branchMachineTypes, readReportTypes } from 'global';
+import { readReportTypes, reportCategories, ReportCategory } from 'ejjy-global';
+import { branchMachineTypes, MAX_PAGE_SIZE } from 'global';
 import { useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
@@ -32,7 +33,13 @@ export const ReportsPerMachine = ({
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [selectedReadReportType, setSelectedReadReportType] = useState(null);
+	const [selectedReadReportType, setSelectedReadReportType] = useState<
+		string | null
+	>(null);
+	const [
+		selectedReportCategory,
+		setSelectedReportCategory,
+	] = useState<ReportCategory | null>(null);
 	const [
 		isExportEjournalModalVisible,
 		setIsExportEjournalModalVisible,
@@ -55,37 +62,45 @@ export const ReportsPerMachine = ({
 
 	// METHODS
 	useEffect(() => {
-		const formattedBranchMachines = branchMachines.map((branchMachine) => ({
-			key: branchMachine.id,
-			machine: branchMachine.name,
-			connectivityStatus: branchMachine.is_online ? (
-				<Tag color="green">Online</Tag>
-			) : (
-				<Tag color="red">Offline</Tag>
-			),
-			actions: branchMachineCashieringTypes.includes(branchMachine.type) ? (
-				<Space>
-					<Button
-						type="primary"
-						onClick={() => {
-							setSelectedBranchMachine(branchMachine);
-							setSelectedReadReportType(readReportTypes.XREAD);
-						}}
-					>
-						View X-read Reports
-					</Button>
-					<Button
-						type="primary"
-						onClick={() => {
-							setSelectedBranchMachine(branchMachine);
-							setSelectedReadReportType(readReportTypes.ZREAD);
-						}}
-					>
-						View Z-read Reports
-					</Button>
-				</Space>
-			) : null,
-		}));
+		const formattedBranchMachines = branchMachines.map((branchMachine) => {
+			const isCashiering = branchMachineCashieringTypes.includes(
+				branchMachine.type,
+			);
+
+			return {
+				key: branchMachine.id,
+				machine: branchMachine.name,
+				connectivityStatus: branchMachine.is_online ? (
+					<Tag color="green">Online</Tag>
+				) : (
+					<Tag color="red">Offline</Tag>
+				),
+				actions: isCashiering && (
+					<Space>
+						<Button
+							type="primary"
+							onClick={() => {
+								setSelectedBranchMachine(branchMachine);
+								setSelectedReadReportType(readReportTypes.XREAD);
+								setSelectedReportCategory(reportCategories.EJournals);
+							}}
+						>
+							View X-read Reports
+						</Button>
+						<Button
+							type="primary"
+							onClick={() => {
+								setSelectedBranchMachine(branchMachine);
+								setSelectedReadReportType(readReportTypes.ZREAD);
+								setSelectedReportCategory(reportCategories.EJournals);
+							}}
+						>
+							View Z-read Reports
+						</Button>
+					</Space>
+				),
+			};
+		});
 
 		setDataSource(formattedBranchMachines);
 	}, [branchMachines]);
@@ -106,6 +121,12 @@ export const ReportsPerMachine = ({
 
 		return columns;
 	}, [user]);
+
+	const handleClose = () => {
+		setSelectedBranchMachine(null);
+		setSelectedReadReportType(null);
+		setSelectedReportCategory(null);
+	};
 
 	return (
 		<>
@@ -136,24 +157,22 @@ export const ReportsPerMachine = ({
 			)}
 
 			{selectedBranchMachine &&
+				selectedReportCategory &&
 				readReportTypes.XREAD === selectedReadReportType && (
-					<ViewXReadReportsModal
+					<ViewXReportsModal
 						branchMachine={selectedBranchMachine}
-						onClose={() => {
-							setSelectedBranchMachine(null);
-							setSelectedReadReportType(null);
-						}}
+						category={selectedReportCategory}
+						onClose={handleClose}
 					/>
 				)}
 
 			{selectedBranchMachine &&
+				selectedReportCategory &&
 				readReportTypes.ZREAD === selectedReadReportType && (
-					<ViewZReadReportsModal
+					<ViewZReportsModal
 						branchMachine={selectedBranchMachine}
-						onClose={() => {
-							setSelectedBranchMachine(null);
-							setSelectedReadReportType(null);
-						}}
+						category={selectedReportCategory}
+						onClose={handleClose}
 					/>
 				)}
 		</>

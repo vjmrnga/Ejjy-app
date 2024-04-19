@@ -1,4 +1,4 @@
-import { Button, Col, Modal, Row, Table } from 'antd';
+import { Button, Col, Modal, Row, Table, Tag } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
@@ -12,9 +12,12 @@ import {
 	formatDateTime,
 	getFullName,
 	useZReadReports,
+	ReportCategory,
+	reportCategories,
 } from 'ejjy-global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 
 const columns = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
@@ -25,19 +28,25 @@ const TIME_RANGE_PARAM_KEY = 'zreadTimeRange';
 
 interface Props {
 	branchMachine: BranchMachine;
+	category: ReportCategory;
 	onClose: () => void;
 }
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
-export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
+export const ViewZReportsModal = ({
+	branchMachine,
+	category,
+	onClose,
+}: Props) => {
 	// STATES
 	const [selectedZReadReport, setSelectedZReadReport] = useState<ZReadReport>();
 	const [dataSource, setDataSource] = useState([]);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: zReadReportsData,
@@ -68,9 +77,11 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 						{formatDateTime(report.generation_datetime)}
 					</Button>
 				),
-				user: report.generated_by
-					? getFullName(report.generated_by)
-					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
+				user: report.generated_by ? (
+					getFullName(report.generated_by)
+				) : (
+					<Tag color="blue">{AUTOMATIC_GENERATED_REPORT_USER_NAME}</Tag>
+				),
 			}));
 
 			setDataSource(data);
@@ -81,7 +92,9 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 		<Modal
 			className="Modal__hasFooter Modal__large"
 			footer={<Button onClick={onClose}>Close</Button>}
-			title="Z-Read Reports"
+			title={`Z-${
+				category === reportCategories.EJournals ? 'report' : 'accrued'
+			} Reports`}
 			centered
 			closable
 			open
@@ -115,6 +128,7 @@ export const ViewZReadReportsModal = ({ branchMachine, onClose }: Props) => {
 				<ViewZReadReportModal
 					report={selectedZReadReport}
 					siteSettings={siteSettings}
+					user={user}
 					onClose={() => setSelectedZReadReport(null)}
 				/>
 			)}
