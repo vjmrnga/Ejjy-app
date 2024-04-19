@@ -17,7 +17,7 @@ TODO on sprint break:
 - Refactor debounce method
 - Use navlink instead of history for button
 - Replace md={12} with lg={12} span={24}
-- Make the disabled filter fields disabled when other list are still fetching
+- Make the filter fields disabled when other list are still fetching
 - Change isFetched with isFetchedAfterMount for polling list
 - Add Branch Machine ID in filter in Cashiering Assingments (Assignments -> Session)
 - Add `daily` directly in the service para dili magdoble ug request

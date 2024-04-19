@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.459",
+	"version": "0.1.460",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -68,8 +68,8 @@
 		"react-markdown": "8.0.3",
 		"react-query": "3.34.15",
 		"react-redux": "7.2.2",
-		"react-router": "5.2.0",
-		"react-router-dom": "^5.3.4",
+		"react-router": "5.3.4",
+		"react-router-dom": "5.3.4",
 		"react-scripts": "4.0.3",
 		"react-sortable-hoc": "2.0.0",
 		"react-window": "1.8.5",

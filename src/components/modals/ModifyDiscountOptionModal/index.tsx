@@ -1,5 +1,6 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Input, message, Modal, Radio, Row } from 'antd';
+import { DiscountOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { discountTypes } from 'global';
 import {
@@ -15,8 +16,8 @@ import { RequestErrors } from '../..';
 import { FieldError, Label } from '../../elements';
 
 interface ModalProps {
-	discountOption: any;
-	onClose: any;
+	discountOption: DiscountOption;
+	onClose: () => void;
 }
 
 export const ModifyDiscountOptionModal = ({
@@ -82,7 +83,7 @@ interface FormProps {
 	discountOption?: any;
 	isLoading: boolean;
 	onSubmit: any;
-	onClose: any;
+	onClose: () => void;
 }
 
 export const ModifyDiscountOptionForm = ({
@@ -102,11 +103,6 @@ export const ModifyDiscountOptionForm = ({
 				code: discountOption?.code || '',
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
-				isSpecialDiscount: discountOption?.is_special_discount || false,
-				// isVatInclusive:
-				// 	siteSettings.tax_type === taxTypes.NVAT
-				// 		? true
-				// 		: !!discountOption?.is_vat_inclusive,
 				isVatInclusive: false,
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
@@ -136,7 +132,6 @@ export const ModifyDiscountOptionForm = ({
 							)
 							.label('Percentage'),
 					}),
-				isSpecialDiscount: Yup.boolean().required().label('Special'),
 				additionalFields: Yup.array()
 					.of(Yup.string().required().label('Field'))
 					.notRequired(),
@@ -189,22 +184,6 @@ export const ModifyDiscountOptionForm = ({
 							<ErrorMessage
 								name="code"
 								render={(error) => <FieldError error={error} />}
-							/>
-						</Col>
-
-						<Col lg={12} span={24}>
-							<Label id="isSpecialDiscount" label="Discount Type" spacing />
-							<Radio.Group
-								options={[
-									{ label: 'Regular', value: false },
-									{ label: 'Special', value: true },
-								]}
-								optionType="button"
-								value={values.isSpecialDiscount}
-								onChange={(e) => {
-									const { value } = e.target;
-									setFieldValue('isSpecialDiscount', value);
-								}}
 							/>
 						</Col>
 

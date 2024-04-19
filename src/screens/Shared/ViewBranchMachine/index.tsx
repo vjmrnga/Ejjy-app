@@ -121,7 +121,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 						</div>
 					)}
 
-					{branchMachine?.server_url && (
+					{branchMachine && (
 						<Tabs
 							activeKey={_.toString(tab)}
 							className="pa-6"
@@ -166,7 +166,7 @@ export const ViewBranchMachine = ({ match }: Props) => {
 							</Tabs.TabPane>
 
 							<Tabs.TabPane key={tabs.BIR_REPORT} tab={tabs.BIR_REPORT}>
-								<TabBirReport branchMachineId={branchMachine.id} />
+								<TabBirReport branchMachine={branchMachine} />
 							</Tabs.TabPane>
 						</Tabs>
 					)}
