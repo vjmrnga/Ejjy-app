@@ -1,8 +1,15 @@
-import { Col, Row, Table } from 'antd';
+import { Col, message, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { PdfButtons } from 'components/Printing';
-import { printBirReport, useBirReports } from 'ejjy-global';
+import {
+	BirReportsService,
+	GENERIC_ERROR_MESSAGE,
+	MAX_PAGE_SIZE,
+	NO_TRANSACTION_REMARK,
+	printBirReport,
+	useBirReports,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -20,8 +27,6 @@ import { tabs } from './data';
 interface Props {
 	branchMachineId: number;
 }
-
-const NO_TRANSACTION_REMARK = 'No transaction';
 
 const columns: ColumnsType = [
 	{ title: 'Date', dataIndex: 'date', fixed: 'left' },
@@ -117,13 +122,28 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `BIR_Reports.pdf`,
-		print: () => printBirReport(birReportsData.list, siteSettings, user),
 		jsPdfSettings: {
 			orientation: 'l',
 			unit: 'px',
-			format: [1800, 840],
-			// hotfixes: ['px_scaling'],
+			format: [2000, 840],
 			putOnlyUsedFonts: true,
+		},
+		print: async () => {
+			const response = await BirReportsService.list({
+				branch_machine_id: branchMachineId,
+				page_size: MAX_PAGE_SIZE,
+				page: DEFAULT_PAGE,
+				time_range: params?.timeRange as string,
+			});
+
+			const birReports = response.results;
+
+			if (!birReports.length) {
+				message.error(GENERIC_ERROR_MESSAGE);
+				return undefined;
+			}
+
+			return printBirReport(birReportsData.list, siteSettings, user);
 		},
 	});
 
