@@ -2,7 +2,7 @@ import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { PdfButtons } from 'components/Printing';
-import { printBirReport } from 'ejjy-global';
+import { printBirReport, useBirReports } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -11,8 +11,8 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { useBirReports, usePdf, useQueryParams, useSiteSettings } from 'hooks';
-import React, { useCallback, useEffect, useState } from 'react';
+import { usePdf, useQueryParams, useSiteSettings } from 'hooks';
+import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray, formatDate, formatInPeso } from 'utils';
 import { tabs } from './data';
@@ -20,6 +20,75 @@ import { tabs } from './data';
 interface Props {
 	branchMachineId: number;
 }
+
+const NO_TRANSACTION_REMARK = 'No transaction';
+
+const columns: ColumnsType = [
+	{ title: 'Date', dataIndex: 'date', fixed: 'left' },
+	{ title: 'Beginning SI/OR No.', dataIndex: 'beginningOrNumber' },
+	{ title: 'Ending SI/OR No.', dataIndex: 'endingOrNumber' },
+	{
+		title: 'Grand Accum. Sales Ending Balance',
+		dataIndex: 'grandAccumulatedSalesEndingBalance',
+	},
+	{
+		title: 'Grand Accum. Sales Beg. Balance',
+		dataIndex: 'grandAccumulatedSalesBeginningBalance',
+	},
+	{
+		title: 'Sales Issued w/ Manual SI/OR (per RR 16-2018)',
+		dataIndex: 'salesIssueWithManual',
+	},
+	{ title: 'Gross Sales for the Day', dataIndex: 'grossSalesForTheDay' },
+	{ title: 'VATable Sales', dataIndex: 'vatableSales' },
+	{ title: 'VAT Amount', dataIndex: 'vatAmount' },
+	{ title: 'VAT-Exempt Sales', dataIndex: 'vatExemptSales' },
+	{ title: 'Zero Rated Sales', dataIndex: 'zeroRatedSales' },
+	{
+		title: 'Deductions',
+		children: [
+			{
+				title: 'Discount',
+				children: [
+					{ title: 'SC', dataIndex: 'scDiscount' },
+					{ title: 'PWD', dataIndex: 'pwdDiscount' },
+					{ title: 'NAAC', dataIndex: 'naacDiscount' },
+					{ title: 'Solo Parent', dataIndex: 'spDiscount' },
+					{ title: 'Others', dataIndex: 'othersDiscount' },
+				],
+			},
+			{ title: 'Returns', dataIndex: 'returns' },
+			{ title: 'Void', dataIndex: 'void' },
+			{ title: 'Total Deductions', dataIndex: 'totalDeductions' },
+		],
+	},
+	{
+		title: 'Adjustment on VAT',
+		children: [
+			{
+				title: 'Discount',
+				children: [
+					{ title: 'SC', dataIndex: 'vatScDiscount' },
+					{ title: 'PWD', dataIndex: 'vatPwdDiscount' },
+					{ title: 'Others', dataIndex: 'vatOthersDiscount' },
+				],
+			},
+			{ title: 'VAT on Returns', dataIndex: 'vatOnReturns' },
+			{ title: 'Others', dataIndex: 'vatOthers' },
+			{ title: 'Total VAT Adjustment', dataIndex: 'totalVatAdjusted' },
+		],
+	},
+	{ title: 'VAT Payable', dataIndex: 'vatPayable' },
+	{
+		title: 'Net Sales',
+		dataIndex: 'netSales',
+	},
+	{ title: 'Sales Overrun/Overflow', dataIndex: 'salesOverrunOrOverflow' },
+	{ title: 'Total Income', dataIndex: 'totalIncome' },
+	{ title: 'Reset Counter', dataIndex: 'resetCounter' },
+	{ title: 'Z-Counter', dataIndex: 'zCounter' },
+	{ title: 'Remarks', dataIndex: 'remarks' },
+];
 
 export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 	// STATES
@@ -34,7 +103,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 		error: siteSettingsError,
 	} = useSiteSettings();
 	const {
-		data: { birReports, total },
+		data: birReportsData,
 		isFetching: isFetchingBirReports,
 		isFetched: isBirReportsFetched,
 		error: birReportsError,
@@ -48,7 +117,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `BIR_Reports.pdf`,
-		print: () => printBirReport(birReports, siteSettings, user),
+		print: () => printBirReport(birReportsData.list, siteSettings, user),
 		jsPdfSettings: {
 			orientation: 'l',
 			unit: 'px',
@@ -60,106 +129,58 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		const data = birReports.map((report) => ({
-			key: report.id,
-			date: formatDate(report.date),
-			beginningOrNumber: report?.beginning_or?.or_number || EMPTY_CELL,
-			endingOrNumber: report?.ending_or?.or_number || EMPTY_CELL,
-			grandAccumulatedSalesEndingBalance: formatInPeso(
-				report.grand_accumulated_sales_ending_balance,
-			),
-			grandAccumulatedSalesBeginningBalance: formatInPeso(
-				report.grand_accumulated_sales_beginning_balance,
-			),
-			grossSalesForTheDay: formatInPeso(report.gross_sales_for_the_day),
-			salesIssueWithManual: formatInPeso(report.sales_issue_with_manual),
-			grossSalesFromPos: formatInPeso(report.gross_sales_from_pos),
-			vatableSales: formatInPeso(report.vatable_sales),
-			vatAmount: formatInPeso(report.vat_amount),
-			vatExemptSales: formatInPeso(report.vat_exempt_sales),
-			zeroRatedSales: formatInPeso(report.zero_rated_sales),
-			regularDiscount: formatInPeso(report.regular_discount),
-			specialDiscount: formatInPeso(report.special_discount),
-			returns: formatInPeso(report.returns),
-			void: formatInPeso(report.void),
-			totalDeductions: formatInPeso(report.total_deductions),
-			vatOnSpecialDiscounts: formatInPeso(report.vat_on_special_discounts),
-			vatOnReturns: formatInPeso(report.vat_on_returns),
-			others: formatInPeso(report.others),
-			totalVatAdjusted: formatInPeso(report.total_vat_adjusted),
-			vatPayable: formatInPeso(report.vat_payable),
-			netSales: formatInPeso(report.net_sales),
-			otherIncome: formatInPeso(report.other_income),
-			salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
-			totalNetSales: formatInPeso(report.total_net_sales),
-			resetCounter: report.reset_counter,
-			remarks:
-				Number(report.gross_sales_for_the_day) === 0
-					? 'No transaction'
-					: report.remarks,
-		}));
+		if (birReportsData?.list) {
+			const data = birReportsData.list.map((report) => ({
+				key: report.id,
+				date: formatDate(report.date),
+				beginningOrNumber: report?.beginning_or?.or_number || EMPTY_CELL,
+				endingOrNumber: report?.ending_or?.or_number || EMPTY_CELL,
 
-		setDataSource(data);
-	}, [birReports, siteSettings]);
+				grandAccumulatedSalesEndingBalance: formatInPeso(
+					report.grand_accumulated_sales_ending_balance,
+				),
+				grandAccumulatedSalesBeginningBalance: formatInPeso(
+					report.grand_accumulated_sales_beginning_balance,
+				),
+				salesIssueWithManual: formatInPeso(report.sales_issue_with_manual),
+				grossSalesForTheDay: formatInPeso(report.gross_sales_for_the_day),
 
-	const getColumns = useCallback(
-		(): ColumnsType => [
-			{ title: 'Date', dataIndex: 'date' },
-			{ title: 'Beginning SI/OR No.', dataIndex: 'beginningOrNumber' },
-			{ title: 'Ending SI/OR No.', dataIndex: 'endingOrNumber' },
-			{
-				title: 'Grand Accum. Sales Ending Balance',
-				dataIndex: 'grandAccumulatedSalesEndingBalance',
-			},
-			{
-				title: 'Grand Accum. Sales Beginning Balance',
-				dataIndex: 'grandAccumulatedSalesBeginningBalance',
-			},
-			{ title: 'Gross Sales For The Day', dataIndex: 'grossSalesForTheDay' },
-			{
-				title: 'Sales Issued with Manual SI/OR (per RR16-2018)',
-				dataIndex: 'salesIssueWithManual',
-			},
-			{ title: 'Gross Sales From POS', dataIndex: 'grossSalesFromPos' },
-			{ title: 'VATable Sales', dataIndex: 'vatableSales' },
-			{ title: 'VAT Amount (12%)', dataIndex: 'vatAmount' },
-			{ title: 'VAT-Exempt Sales', dataIndex: 'vatExemptSales' },
-			{ title: 'Zero Rated Sales', dataIndex: 'zeroRatedSales' },
-			{
-				title: 'Deductions',
-				children: [
-					{ title: 'Regular Discount', dataIndex: 'regularDiscount' },
-					{ title: 'Special', dataIndex: 'specialDiscount' },
-					{ title: 'Returns', dataIndex: 'returns' },
-					{ title: 'Void', dataIndex: 'void' },
-					{ title: 'Total Deductions', dataIndex: 'totalDeductions' },
-				],
-			},
-			{
-				title: 'Adjustments on VAT',
-				children: [
-					{
-						title: 'VAT On Special',
-						dataIndex: 'vatOnSpecialDiscounts',
-					},
-					{ title: 'VAT On Returns', dataIndex: 'vatOnReturns' },
-					{ title: 'Others', dataIndex: 'others' },
-					{ title: 'Total VAT Adjusted', dataIndex: 'totalVatAdjusted' },
-				],
-			},
-			{ title: 'VAT Payable', dataIndex: 'vatPayable' },
-			{
-				title: 'Net Sales',
-				dataIndex: 'netSales',
-			},
-			{ title: 'Other Income', dataIndex: 'otherIncome' },
-			{ title: 'Sales Overrun/Overflow', dataIndex: 'salesOverrunOrOverflow' },
-			{ title: 'Total Net Sales', dataIndex: 'totalNetSales' },
-			{ title: 'Reset Counter', dataIndex: 'resetCounter' },
-			{ title: 'Remarks', dataIndex: 'remarks' },
-		],
-		[siteSettings],
-	);
+				vatableSales: formatInPeso(report.vatable_sales),
+				vatAmount: formatInPeso(report.vat_amount),
+				vatExemptSales: formatInPeso(report.vat_exempt_sales),
+				zeroRatedSales: formatInPeso(report.zero_rated_sales),
+
+				scDiscount: formatInPeso(report.sc_discount),
+				pwdDiscount: formatInPeso(report.pwd_discount),
+				naacDiscount: formatInPeso(report.naac_discount),
+				spDiscount: formatInPeso(report.sp_discount),
+				othersDiscount: formatInPeso(report.others_discount),
+				returns: formatInPeso(report.returns),
+				void: formatInPeso(report.void),
+				totalDeductions: formatInPeso(report.total_deductions),
+
+				vatScDiscount: formatInPeso(report.vat_sc_discount),
+				vatPwdDiscount: formatInPeso(report.vat_pwd_discount),
+				vatOthersDiscount: formatInPeso(report.vat_others_discount),
+				vatOnReturns: formatInPeso(report.vat_returns),
+				vatOthers: formatInPeso(report.vat_others),
+				totalVatAdjusted: formatInPeso(report.total_vat_adjusted),
+
+				vatPayable: formatInPeso(report.vat_payable),
+				netSales: formatInPeso(report.net_sales),
+				salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
+				totalIncome: formatInPeso(report.total_income),
+				resetCounter: report.reset_counter,
+				zCounter: report.z_counter,
+				remarks:
+					Number(report.gross_sales_for_the_day) === 0
+						? NO_TRANSACTION_REMARK
+						: report.remarks,
+			}));
+
+			setDataSource(data);
+		}
+	}, [birReportsData?.list]);
 
 	return (
 		<>
@@ -193,7 +214,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 			/>
 
 			<Table
-				columns={getColumns()}
+				columns={columns}
 				dataSource={dataSource}
 				loading={
 					(isFetchingBirReports && !isBirReportsFetched) ||
@@ -202,7 +223,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 				}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
-					total,
+					total: birReportsData?.total,
 					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams(
@@ -217,7 +238,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
-				scroll={{ x: 3000 }}
+				scroll={{ x: 5000 }}
 				size="middle"
 				bordered
 			/>
