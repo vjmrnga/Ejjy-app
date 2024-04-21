@@ -19,6 +19,7 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
+import { ServiceType, useDiscountOptions } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -27,14 +28,19 @@ import {
 } from 'global';
 import {
 	useDiscountOptionDelete,
-	useDiscountOptions,
 	usePingOnlineServer,
 	useQueryParams,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getId, isCUDShown } from 'utils';
+import {
+	convertIntoArray,
+	getId,
+	getLocalApiUrl,
+	isCUDShown,
+	isStandAlone,
+} from 'utils';
 
 interface DataType {
 	key: React.Key;
@@ -60,10 +66,16 @@ export const DiscountOptions = () => {
 	const { isConnected } = usePingOnlineServer();
 	const user = useUserStore((state) => state.user);
 	const {
-		data: { discountOptions, total },
+		data: discountOptionsData,
 		isFetching: isFetchingDiscountOptions,
 		error: discountOptionsError,
-	} = useDiscountOptions({ params });
+	} = useDiscountOptions({
+		params,
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
+	});
 	const {
 		mutate: deleteDiscountOption,
 		isLoading: isDeletingDiscountOption,
@@ -72,59 +84,66 @@ export const DiscountOptions = () => {
 
 	// METHODS
 	useEffect(() => {
-		const data = discountOptions.map((discountOption) => ({
-			key: discountOption.id,
-			name: discountOption.name,
-			code: discountOption.code,
-			type: _.upperFirst(discountOption.type),
-			percentage: discountOption.percentage
-				? `${Number(discountOption.percentage)}%`
-				: EMPTY_CELL,
-			isSpecialDiscount: discountOption.is_special_discount ? (
-				<Tag color="green">Yes</Tag>
-			) : (
-				<Tag color="blue">No</Tag>
-			),
-			fields: discountOption.additional_fields,
-			actions: (
-				<Space>
-					{isCUDShown(user.user_type) && (
-						<Tooltip title="Edit">
-							<Button
-								disabled={isConnected === false}
-								icon={<EditFilled />}
-								type="primary"
-								ghost
-								onClick={() => {
-									setSelectedDiscountOption(discountOption);
-									setModifyDiscountOptionModalVisible(true);
-								}}
-							/>
-						</Tooltip>
-					)}
-					{isCUDShown(user.user_type) && (
-						<Popconfirm
-							cancelText="No"
-							disabled={isConnected === false}
-							okText="Yes"
-							placement="left"
-							title="Are you sure to remove this?"
-							onConfirm={() => {
-								deleteDiscountOption(getId(discountOption));
-								message.success('Discount option was deleted successfully');
-							}}
-						>
-							<Tooltip title="Remove">
-								<Button icon={<DeleteOutlined />} type="primary" danger ghost />
+		if (discountOptionsData?.list) {
+			const data = discountOptionsData.list.map((discountOption) => ({
+				key: discountOption.id,
+				name: discountOption.name,
+				code: discountOption.code,
+				type: _.upperFirst(discountOption.type),
+				percentage: discountOption.percentage
+					? `${Number(discountOption.percentage)}%`
+					: EMPTY_CELL,
+				isSpecialDiscount: discountOption.is_special_discount ? (
+					<Tag color="green">Yes</Tag>
+				) : (
+					<Tag color="blue">No</Tag>
+				),
+				fields: discountOption.additional_fields,
+				actions: !discountOption.is_special_discount && (
+					<Space>
+						{isCUDShown(user.user_type) && (
+							<Tooltip title="Edit">
+								<Button
+									disabled={isConnected === false}
+									icon={<EditFilled />}
+									type="primary"
+									ghost
+									onClick={() => {
+										setSelectedDiscountOption(discountOption);
+										setModifyDiscountOptionModalVisible(true);
+									}}
+								/>
 							</Tooltip>
-						</Popconfirm>
-					)}
-				</Space>
-			),
-		}));
+						)}
+						{isCUDShown(user.user_type) && (
+							<Popconfirm
+								cancelText="No"
+								disabled={isConnected === false}
+								okText="Yes"
+								placement="left"
+								title="Are you sure to remove this?"
+								onConfirm={() => {
+									deleteDiscountOption(getId(discountOption));
+									message.success('Discount option was deleted successfully');
+								}}
+							>
+								<Tooltip title="Remove">
+									<Button
+										icon={<DeleteOutlined />}
+										type="primary"
+										danger
+										ghost
+									/>
+								</Tooltip>
+							</Popconfirm>
+						)}
+					</Space>
+				),
+			}));
 
-		setDataSource(data);
-	}, [discountOptions, isConnected]);
+			setDataSource(data);
+		}
+	}, [discountOptionsData?.list, isConnected]);
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType<DataType> = [
@@ -177,7 +196,7 @@ export const DiscountOptions = () => {
 						expandedRowRender: (item) => (
 							<List
 								dataSource={item.fields.split(',')}
-								header={<Typography.Title level={5}>FIELDS:</Typography.Title>}
+								header={<Typography.Text strong>FIELDS:</Typography.Text>}
 								renderItem={(field) => <List.Item>{field}</List.Item>}
 								size="small"
 								bordered
@@ -188,7 +207,7 @@ export const DiscountOptions = () => {
 					loading={isFetchingDiscountOptions || isDeletingDiscountOption}
 					pagination={{
 						current: Number(params.page) || DEFAULT_PAGE,
-						total,
+						total: discountOptionsData?.total,
 						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 						onChange: (page, newPageSize) => {
 							setQueryParams({
