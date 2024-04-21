@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import {
@@ -12,7 +12,9 @@ import {
 	SCFields,
 	SPFields,
 	SpecialDiscountCode,
+	Transaction,
 	TransactionsService,
+	ViewTransactionModal,
 	convertIntoArray,
 	formatDate,
 	formatInPeso,
@@ -46,6 +48,10 @@ export const AnnexTransactionsTab = ({
 }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
+	const [
+		selectedTransaction,
+		setSelectedTransaction,
+	] = useState<Transaction | null>(null);
 
 	// CUSTOM HOOKS
 	const user = useUserStore((state) => state.user);
@@ -145,7 +151,14 @@ export const AnnexTransactionsTab = ({
 				const content = {
 					key: transaction.id,
 					date: formatDate(transaction.datetime_created),
-					orNumber: transaction.invoice.or_number,
+					orNumber: (
+						<Button
+							type="link"
+							onClick={() => setSelectedTransaction(transaction)}
+						>
+							{transaction.invoice.or_number}
+						</Button>
+					),
 					netSales: formatInPeso(transaction.invoice.vat_sales),
 				};
 
@@ -312,6 +325,14 @@ export const AnnexTransactionsTab = ({
 				size="middle"
 				bordered
 			/>
+
+			{selectedTransaction && (
+				<ViewTransactionModal
+					siteSettings={siteSettings}
+					transaction={selectedTransaction}
+					onClose={() => setSelectedTransaction(null)}
+				/>
+			)}
 
 			<div
 				// eslint-disable-next-line react/no-danger
