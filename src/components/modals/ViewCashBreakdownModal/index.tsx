@@ -9,7 +9,6 @@ import { cashBreakdownCategories } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React from 'react';
 import {
-	calculateCashBreakdownTotal,
 	formatDateTime,
 	formatInPeso,
 	getCashBreakdownTypeDescription,
@@ -51,7 +50,6 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 	const session = cashBreakdown.cashiering_session;
 
 	// CUSTOM HOOKS
-
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `${
@@ -101,7 +99,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 			title={`[View] ${type}`}
 			centered
 			closable
-			visible
+			open
 			onCancel={onClose}
 		>
 			{cashBreakdown.category === cashBreakdownCategories.CASH_OUT ? (
@@ -262,26 +260,22 @@ const CashBreakdownDetails = ({ cashBreakdown, type }) => (
 			]}
 			pagination={false}
 			rowKey={(record: any) => record?.key || record.denom}
-			summary={() => {
-				const total = calculateCashBreakdownTotal(cashBreakdown);
-
-				return (
-					<>
-						<Table.Summary.Row>
-							<Table.Summary.Cell index={0}>
-								<Typography.Title className="ma-0" level={4}>
-									Total
-								</Typography.Title>
-							</Table.Summary.Cell>
-							<Table.Summary.Cell align="right" colSpan={2} index={1}>
-								<Typography.Title className="ma-0" level={4}>
-									{formatInPeso(total)}
-								</Typography.Title>
-							</Table.Summary.Cell>
-						</Table.Summary.Row>
-					</>
-				);
-			}}
+			summary={() => (
+				<>
+					<Table.Summary.Row>
+						<Table.Summary.Cell index={0}>
+							<Typography.Title className="ma-0" level={4}>
+								Total
+							</Typography.Title>
+						</Table.Summary.Cell>
+						<Table.Summary.Cell align="right" colSpan={2} index={1}>
+							<Typography.Title className="ma-0" level={4}>
+								{formatInPeso(cashBreakdown.total_amount)}
+							</Typography.Title>
+						</Table.Summary.Cell>
+					</Table.Summary.Row>
+				</>
+			)}
 			bordered
 		/>
 	</>
