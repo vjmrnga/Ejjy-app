@@ -8,6 +8,7 @@ import { getFullName, printCashBreakdown, printCashOut } from 'ejjy-global';
 import { cashBreakdownCategories } from 'global';
 import { usePdf, useSiteSettings } from 'hooks';
 import React from 'react';
+import { useUserStore } from 'stores';
 import {
 	formatDateTime,
 	formatInPeso,
@@ -50,6 +51,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 	const session = cashBreakdown.cashiering_session;
 
 	// CUSTOM HOOKS
+	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettings();
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `${
@@ -62,7 +64,7 @@ export const ViewCashBreakdownModal = ({ cashBreakdown, onClose }: Props) => {
 				return printCashOut(cashBreakdown, siteSettings, true);
 			}
 
-			return printCashBreakdown(cashBreakdown, siteSettings, true);
+			return printCashBreakdown(cashBreakdown, siteSettings, user, true);
 		},
 	});
 
