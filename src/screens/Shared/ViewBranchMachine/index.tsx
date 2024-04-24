@@ -32,7 +32,7 @@ const tabs = {
 	DAILY_PRODUCT_SALES_REPORT: 'Daily Product Sales Report',
 	TRANSACTION_ADJUSTMENTS_REPORT: 'Transaction Adjustments Report',
 	DISCOUNTED_TRANSACTIONS: 'Discounted Transactions',
-	BIR_REPORT: 'BIR Report',
+	BIR_REPORT: 'BIR Sales Summary',
 };
 
 export const ViewBranchMachine = ({ match }: Props) => {
