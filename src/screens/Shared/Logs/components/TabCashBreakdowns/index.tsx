@@ -1,14 +1,9 @@
 import { EyeFilled } from '@ant-design/icons';
 import { Button, Col, Row, Select, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
-import {
-	RequestErrors,
-	TableHeader,
-	TimeRangeFilter,
-	ViewCashBreakdownModal,
-} from 'components';
+import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { filterOption, getFullName, ViewCashBreakdownModal } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -23,6 +18,7 @@ import {
 	useBranches,
 	useCashBreakdowns,
 	useQueryParams,
+	useSiteSettingsNew,
 	useUsers,
 } from 'hooks';
 import _ from 'lodash';
@@ -74,6 +70,7 @@ export const TabCashBreakdowns = () => {
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
+	const { data: siteSettings } = useSiteSettingsNew();
 	const user = useUserStore((state) => state.user);
 	const {
 		data: { cashBreakdowns, total },
@@ -151,6 +148,8 @@ export const TabCashBreakdowns = () => {
 			{selectedCashBreakdown && (
 				<ViewCashBreakdownModal
 					cashBreakdown={selectedCashBreakdown}
+					siteSettings={siteSettings}
+					user={user}
 					onClose={() => {
 						setSelectedCashBreakdown(null);
 					}}
