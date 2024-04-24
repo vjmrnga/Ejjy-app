@@ -21,7 +21,12 @@ import {
 import { usePdf, useQueryParams, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
-import { convertIntoArray, formatDate, formatInPeso } from 'utils';
+import {
+	convertIntoArray,
+	formatDate,
+	formatInPeso,
+	getLocalApiUrl,
+} from 'utils';
 import { tabs } from './data';
 
 interface Props {
@@ -119,6 +124,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 			...params,
 		},
 		options: refetchOptions,
+		serviceOptions: { baseURL: getLocalApiUrl() },
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
 		title: `BIR_Reports.pdf`,
