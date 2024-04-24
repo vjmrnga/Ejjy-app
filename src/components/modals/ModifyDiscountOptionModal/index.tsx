@@ -206,7 +206,9 @@ export const ModifyDiscountOptionForm = ({
 
 						{values.type === discountTypes.PERCENTAGE && (
 							<Col lg={12} span={24}>
+								<Label id="type" label="Percentage (%)" spacing />
 								<Input
+									placeholder="ex: 20"
 									type="number"
 									value={values.percentage}
 									onChange={(e) => {
