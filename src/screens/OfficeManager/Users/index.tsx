@@ -256,6 +256,11 @@ export const Users = () => {
 
 			<Box>
 				<Spin spinning={isFetchingBranches || isFetchingUserPendingApprovals}>
+					<TableHeader
+						buttonName="Create User"
+						onCreate={() => setModifyUserModalVisible(true)}
+					/>
+
 					<RequestErrors
 						className="px-6"
 						errors={[
@@ -271,11 +276,6 @@ export const Users = () => {
 							),
 						]}
 						withSpaceBottom
-					/>
-
-					<TableHeader
-						buttonName="Create User"
-						onCreate={() => setModifyUserModalVisible(true)}
 					/>
 
 					<Filter />
