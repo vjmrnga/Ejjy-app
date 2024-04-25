@@ -30,6 +30,7 @@ const columns: ColumnsType = [
 	{
 		title: 'Invoice #',
 		dataIndex: 'invoiceNumber',
+		fixed: 'left',
 	},
 	{
 		title: 'Client Name',
@@ -157,6 +158,7 @@ export const TabDiscountedTransactions = ({
 					position: ['bottomCenter'],
 					pageSizeOptions,
 				}}
+				scroll={{ x: 800 }}
 				bordered
 			/>
 
