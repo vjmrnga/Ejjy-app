@@ -181,7 +181,6 @@ const Filter = ({ branchMachineId }: FilterProps) => {
 		error: usersError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
-		options: { enabled: !branchMachineId },
 		serviceOptions: {
 			baseURL: getLocalApiUrl(),
 			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
