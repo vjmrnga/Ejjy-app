@@ -58,7 +58,7 @@ export const ModifyDiscountOptionModal = ({
 			title={`${discountOption ? '[Edit]' : '[Create]'} Discount Option`}
 			centered
 			closable
-			visible
+			open
 			onCancel={onClose}
 		>
 			<RequestErrors
@@ -80,9 +80,9 @@ export const ModifyDiscountOptionModal = ({
 };
 
 interface FormProps {
-	discountOption?: any;
+	discountOption?: DiscountOption;
 	isLoading: boolean;
-	onSubmit: any;
+	onSubmit: (formData) => void;
 	onClose: () => void;
 }
 
@@ -103,6 +103,7 @@ export const ModifyDiscountOptionForm = ({
 				code: discountOption?.code || '',
 				type: discountOption?.type || discountTypes.AMOUNT,
 				percentage: discountOption?.percentage || undefined,
+				isSpecialDiscount: discountOption?.is_special_discount || false,
 				isVatInclusive: false,
 				additionalFields: discountOption?.additional_fields?.split(',') || [],
 			},
