@@ -3,27 +3,24 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
-	AUTOMATIC_GENERATED_REPORT_USER_NAME,
-	BranchMachine,
-	DEFAULT_PAGE,
-	DEFAULT_PAGE_SIZE,
-	EMPTY_CELL,
-	User,
-	ViewZReadReportModal,
-	ZReadReport,
-	convertIntoArray,
-	formatDate,
-	getFullName,
-	useZReadReports,
-	userTypes,
-} from 'ejjy-global';
-import {
 	AuthorizationModal,
-	Props as AuthorizationModalProps,
-} from 'ejjy-global/dist/components/modals/AuthorizationModal';
+	BranchMachine,
+	DailySales,
+	DATE_FORMAT,
+	formatDate,
+	useDailySales,
+	User,
+	userTypes,
+	ViewDailySalesModal,
+} from 'ejjy-global';
+import { Props as AuthorizationModalProps } from 'ejjy-global/dist/components/modals/AuthorizationModal';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { getLocalApiUrl } from 'utils';
+import { convertIntoArray } from 'utils';
+
+const TIME_RANGE_PARAM_KEY = 'dailySalesTimeRange';
 
 type TableRow = {
 	key: number;
@@ -34,8 +31,6 @@ const columns: ColumnsType<TableRow> = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
 ];
 
-const TIME_RANGE_PARAM_KEY = 'zreadTimeRange';
-
 interface Props {
 	branchMachine: BranchMachine;
 	onClose: () => void;
@@ -44,10 +39,17 @@ interface Props {
 // TODO: We only used machine server URL because this was not added to the syncing yet.
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
-export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
+export const ViewDailySalesReportsModal = ({
+	branchMachine,
+	onClose,
+}: Props) => {
 	// STATES
-	const [selectedZReadReport, setSelectedZReadReport] = useState<ZReadReport>();
+	// STATES
 	const [dataSource, setDataSource] = useState<TableRow[]>([]);
+	const [
+		selectedDailySales,
+		setSelectedDailySales,
+	] = useState<DailySales | null>(null);
 	const [
 		authorizeConfig,
 		setAuthorizeConfig,
@@ -58,81 +60,90 @@ export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const { data: siteSettings } = useSiteSettingsNew();
 	const {
-		data: zReadReportsData,
-		isFetching: isFetchingZReadReports,
-		error: zReadReportsError,
-	} = useZReadReports({
+		data: dailySalesData,
+		isFetching: isFetchingDailySales,
+		error: dailySalesErrors,
+	} = useDailySales({
 		params: {
 			...params,
+			isWithDailySalesData: true,
 			branchMachineName: branchMachine.name,
-			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
 		},
 		serviceOptions: { baseURL: MACHINE_SERVER_URL },
 	});
 
 	// METHODS
 	useEffect(() => {
-		if (zReadReportsData?.list) {
-			const data = zReadReportsData.list.map((report) => ({
-				key: report.id,
-				datetimeCreated: (
-					<Button
-						className="pa-0"
-						type="link"
-						onClick={() => {
-							setAuthorizeConfig({
-								description: 'Authorize Viewing of Z-Read Report',
-								userTypes: [
-									userTypes.ADMIN,
-									userTypes.OFFICE_MANAGER,
-									userTypes.BRANCH_MANAGER,
-								],
-								onSuccess: (user) => {
-									setUserPrinter(user);
-									setSelectedZReadReport(report);
-								},
-							});
-						}}
-					>
-						{report.generation_datetime
-							? formatDate(report.generation_datetime)
-							: EMPTY_CELL}
-					</Button>
-				),
-				user: report.generated_by
-					? getFullName(report.generated_by)
-					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
-			}));
+		const firstDate = moment().clone().startOf('month').format(DATE_FORMAT);
+		const lastDate = moment().clone().endOf('month').format(DATE_FORMAT);
 
-			setDataSource(data);
+		setQueryParams(
+			{ [TIME_RANGE_PARAM_KEY]: [firstDate, lastDate].join(',') },
+			{ shouldResetPage: true },
+		);
+	}, []);
+
+	useEffect(() => {
+		if (dailySalesData?.list) {
+			const formattedDailySales = dailySalesData.list.map((dailySale) => {
+				const { daily_sales_data: dsData } = dailySale;
+
+				return {
+					key: dailySale.id,
+					datetimeCreated: (
+						<Button
+							className="pa-0"
+							type="link"
+							onClick={() => {
+								setAuthorizeConfig({
+									description: 'Authorize Viewing of Daily Sales',
+									userTypes: [
+										userTypes.ADMIN,
+										userTypes.OFFICE_MANAGER,
+										userTypes.BRANCH_MANAGER,
+									],
+									onSuccess: (user) => {
+										setUserPrinter(user);
+										setSelectedDailySales(dailySale);
+									},
+								});
+							}}
+						>
+							{formatDate(dsData.date)}
+						</Button>
+					),
+				};
+			});
+
+			setDataSource(formattedDailySales);
 		}
-	}, [zReadReportsData?.list]);
+	}, [dailySalesData?.list]);
 
 	return (
 		<Modal
 			className="Modal__hasFooter"
 			footer={<Button onClick={onClose}>Close</Button>}
-			title="Z-report Reports"
+			title="Daily Sales"
 			width={500}
 			centered
 			closable
 			open
 			onCancel={onClose}
 		>
-			<Filter isLoading={isFetchingZReadReports} />
+			<Filter isLoading={isFetchingDailySales} />
 
 			<RequestErrors
-				errors={convertIntoArray(zReadReportsError)}
+				errors={convertIntoArray(dailySalesErrors)}
 				withSpaceBottom
 			/>
 
 			<Table
 				columns={columns}
 				dataSource={dataSource}
-				loading={isFetchingZReadReports}
+				loading={isFetchingDailySales}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
-					total: zReadReportsData?.total || 0,
+					total: dailySalesData?.total || 0,
 					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page) => {
 						setQueryParams({ page }, { shouldResetPage: false });
@@ -143,19 +154,18 @@ export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
 				}}
 			/>
 
-			{selectedZReadReport && siteSettings && (
-				<ViewZReadReportModal
-					report={selectedZReadReport}
+			{selectedDailySales && siteSettings && userPrinter && (
+				<ViewDailySalesModal
+					dailySales={selectedDailySales}
 					siteSettings={siteSettings}
 					user={userPrinter}
-					onClose={() => setSelectedZReadReport(undefined)}
+					onClose={() => setSelectedDailySales(null)}
 				/>
 			)}
 
 			{authorizeConfig && (
 				<AuthorizationModal
 					{...authorizeConfig}
-					baseURL={getLocalApiUrl()}
 					onCancel={() => setAuthorizeConfig(null)}
 				/>
 			)}

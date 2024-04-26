@@ -1,52 +1,58 @@
-import { Button, Col, Modal, Row, Table, Tag } from 'antd';
+import { Button, Col, Modal, Row, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
+	AuthorizationModal,
 	BranchMachine,
-	getFullName,
-	reportCategories,
-	ReportCategory,
+	EMPTY_CELL,
+	formatDate,
+	User,
+	userTypes,
 	useXReadReports,
 	ViewXReadReportModal,
+	XReadReport,
 } from 'ejjy-global';
-import {
-	AUTOMATIC_GENERATED_REPORT_USER_NAME,
-	DEFAULT_PAGE,
-	DEFAULT_PAGE_SIZE,
-} from 'global';
+import { Props as AuthorizationModalProps } from 'ejjy-global/dist/components/modals/AuthorizationModal';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import React, { useEffect, useState } from 'react';
-import { useUserStore } from 'stores';
-import { convertIntoArray, formatDateTime } from 'utils';
-
-const columns = [
-	{ title: 'Date', dataIndex: 'datetimeCreated' },
-	{ title: 'Type', dataIndex: 'type' },
-	{ title: 'User', dataIndex: 'user' },
-];
+import { convertIntoArray, getLocalApiUrl } from 'utils';
 
 const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
+
+type TableRow = {
+	key: number;
+	datetimeCreated: React.ReactElement;
+};
+
+const columns: ColumnsType<TableRow> = [
+	{ title: 'Date', dataIndex: 'datetimeCreated' },
+];
+
 interface Props {
 	branchMachine: BranchMachine;
-	category: ReportCategory;
 	onClose: () => void;
 }
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
 
-export const ViewXReportsModal = ({
-	branchMachine,
-	category,
-	onClose,
-}: Props) => {
+export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
-	const [selectedXReadReport, setSelectedXReadReport] = useState(null);
-	const [dataSource, setDataSource] = useState([]);
+	const [
+		selectedXReadReport,
+		setSelectedXReadReport,
+	] = useState<XReadReport | null>(null);
+	const [dataSource, setDataSource] = useState<TableRow[]>([]);
+	const [
+		authorizeConfig,
+		setAuthorizeConfig,
+	] = useState<AuthorizationModalProps | null>(null);
+	const [userPrinter, setUserPrinter] = useState<User | null>(null);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
-	const user = useUserStore((state) => state.user);
 	const { data: siteSettings } = useSiteSettingsNew();
 	const {
 		data: xReadReportsData,
@@ -70,20 +76,25 @@ export const ViewXReportsModal = ({
 					<Button
 						className="pa-0"
 						type="link"
-						onClick={() => setSelectedXReadReport(report)}
+						onClick={() => {
+							setAuthorizeConfig({
+								description: 'Authorize Viewing of X-Read Report',
+								userTypes: [
+									userTypes.ADMIN,
+									userTypes.OFFICE_MANAGER,
+									userTypes.BRANCH_MANAGER,
+								],
+								onSuccess: (user) => {
+									setUserPrinter(user);
+									setSelectedXReadReport(report);
+								},
+							});
+						}}
 					>
-						{formatDateTime(report.generation_datetime)}
+						{report.generation_datetime
+							? formatDate(report.generation_datetime)
+							: EMPTY_CELL}
 					</Button>
-				),
-				type: report.cashiering_session ? (
-					<Tag color="orange">Current Session</Tag>
-				) : (
-					<Tag color="green">Date</Tag>
-				),
-				user: report.generated_by ? (
-					getFullName(report.generated_by)
-				) : (
-					<Tag color="blue">{AUTOMATIC_GENERATED_REPORT_USER_NAME}</Tag>
 				),
 			}));
 
@@ -93,11 +104,10 @@ export const ViewXReportsModal = ({
 
 	return (
 		<Modal
-			className="Modal__hasFooter Modal__large"
+			className="Modal__hasFooter"
 			footer={<Button onClick={onClose}>Close</Button>}
-			title={`X-${
-				category === reportCategories.EJournals ? 'report' : 'accrued'
-			} Reports`}
+			title="X-read Reports"
+			width={500}
 			centered
 			closable
 			open
@@ -131,8 +141,16 @@ export const ViewXReportsModal = ({
 				<ViewXReadReportModal
 					report={selectedXReadReport}
 					siteSettings={siteSettings}
-					user={user}
+					user={userPrinter}
 					onClose={() => setSelectedXReadReport(null)}
+				/>
+			)}
+
+			{authorizeConfig && (
+				<AuthorizationModal
+					{...authorizeConfig}
+					baseURL={getLocalApiUrl()}
+					onCancel={() => setAuthorizeConfig(null)}
 				/>
 			)}
 		</Modal>
@@ -145,7 +163,7 @@ interface FilterProps {
 
 const Filter = ({ isLoading }: FilterProps) => (
 	<Row className="mb-4" gutter={[16, 16]}>
-		<Col lg={12} span={24}>
+		<Col span={24}>
 			<TimeRangeFilter disabled={isLoading} queryName={TIME_RANGE_PARAM_KEY} />
 		</Col>
 	</Row>

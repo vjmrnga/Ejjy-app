@@ -4,10 +4,11 @@ import {
 	ReportTimeRangeModal,
 	RequestErrors,
 	TableHeader,
+	ViewDailySalesReportsModal,
 	ViewXReportsModal,
 	ViewZReportsModal,
 } from 'components';
-import { readReportTypes, reportCategories, ReportCategory } from 'ejjy-global';
+import { reportTypes } from 'ejjy-global';
 import { branchMachineTypes, MAX_PAGE_SIZE } from 'global';
 import { useBranchMachines } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -33,13 +34,9 @@ export const ReportsPerMachine = ({
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedBranchMachine, setSelectedBranchMachine] = useState(null);
-	const [selectedReadReportType, setSelectedReadReportType] = useState<
+	const [selectedReportType, setSelectedReadReportType] = useState<
 		string | null
 	>(null);
-	const [
-		selectedReportCategory,
-		setSelectedReportCategory,
-	] = useState<ReportCategory | null>(null);
 	const [
 		isExportEjournalModalVisible,
 		setIsExportEjournalModalVisible,
@@ -81,8 +78,7 @@ export const ReportsPerMachine = ({
 							type="primary"
 							onClick={() => {
 								setSelectedBranchMachine(branchMachine);
-								setSelectedReadReportType(readReportTypes.XREAD);
-								setSelectedReportCategory(reportCategories.EJournals);
+								setSelectedReadReportType(reportTypes.XREAD);
 							}}
 						>
 							View X-read Reports
@@ -91,11 +87,19 @@ export const ReportsPerMachine = ({
 							type="primary"
 							onClick={() => {
 								setSelectedBranchMachine(branchMachine);
-								setSelectedReadReportType(readReportTypes.ZREAD);
-								setSelectedReportCategory(reportCategories.EJournals);
+								setSelectedReadReportType(reportTypes.ZREAD);
 							}}
 						>
 							View Z-read Reports
+						</Button>
+						<Button
+							type="primary"
+							onClick={() => {
+								setSelectedBranchMachine(branchMachine);
+								setSelectedReadReportType(reportTypes.DAILY_SALES);
+							}}
+						>
+							View Daily Sales
 						</Button>
 					</Space>
 				),
@@ -125,7 +129,6 @@ export const ReportsPerMachine = ({
 	const handleClose = () => {
 		setSelectedBranchMachine(null);
 		setSelectedReadReportType(null);
-		setSelectedReportCategory(null);
 	};
 
 	return (
@@ -156,22 +159,24 @@ export const ReportsPerMachine = ({
 				/>
 			)}
 
-			{selectedBranchMachine &&
-				selectedReportCategory &&
-				readReportTypes.XREAD === selectedReadReportType && (
-					<ViewXReportsModal
-						branchMachine={selectedBranchMachine}
-						category={selectedReportCategory}
-						onClose={handleClose}
-					/>
-				)}
+			{selectedBranchMachine && reportTypes.XREAD === selectedReportType && (
+				<ViewXReportsModal
+					branchMachine={selectedBranchMachine}
+					onClose={handleClose}
+				/>
+			)}
+
+			{selectedBranchMachine && reportTypes.ZREAD === selectedReportType && (
+				<ViewZReportsModal
+					branchMachine={selectedBranchMachine}
+					onClose={handleClose}
+				/>
+			)}
 
 			{selectedBranchMachine &&
-				selectedReportCategory &&
-				readReportTypes.ZREAD === selectedReadReportType && (
-					<ViewZReportsModal
+				reportTypes.DAILY_SALES === selectedReportType && (
+					<ViewDailySalesReportsModal
 						branchMachine={selectedBranchMachine}
-						category={selectedReportCategory}
 						onClose={handleClose}
 					/>
 				)}

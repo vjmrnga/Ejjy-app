@@ -29,6 +29,7 @@ export * from './ViewAccountModal';
 export * from './ViewBackOrderModal';
 export * from './ViewBranchProductChartModal';
 export * from './ViewBranchProductModal';
+export * from './ViewDailySalesReportsModal';
 export * from './ViewProductModal';
 export * from './ViewReceivingVoucherModal';
 export * from './ViewRequisitionSlipModal';
