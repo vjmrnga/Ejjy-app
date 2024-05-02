@@ -97,11 +97,7 @@ export const ViewDailySalesReportsModal = ({
 							onClick={() => {
 								setAuthorizeConfig({
 									description: 'Authorize Viewing of Daily Sales',
-									userTypes: [
-										userTypes.ADMIN,
-										userTypes.OFFICE_MANAGER,
-										userTypes.BRANCH_MANAGER,
-									],
+									userTypes: [userTypes.ADMIN],
 									onSuccess: (user) => {
 										setUserPrinter(user);
 										setSelectedDailySales(dailySale);

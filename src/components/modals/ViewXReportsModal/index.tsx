@@ -79,11 +79,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 						onClick={() => {
 							setAuthorizeConfig({
 								description: 'Authorize Viewing of X-Read Report',
-								userTypes: [
-									userTypes.ADMIN,
-									userTypes.OFFICE_MANAGER,
-									userTypes.BRANCH_MANAGER,
-								],
+								userTypes: [userTypes.ADMIN],
 								onSuccess: (user) => {
 									setUserPrinter(user);
 									setSelectedXReadReport(report);
