@@ -29,6 +29,7 @@ const summaryInitialValues = {
 	creditPayments: 0,
 	cashOut: 0,
 	cashIn: 0,
+	cashOnHand: 0,
 };
 
 interface Props {
@@ -88,6 +89,12 @@ export const BranchSales = ({ branchId }: Props) => {
 			};
 		});
 
+		newSummary.cashOnHand =
+			summary.cashSales +
+			summary.creditPayments +
+			summary.cashIn -
+			summary.cashOut;
+
 		setSummary(newSummary);
 		setDataSource(data);
 	}, [branchMachines]);
@@ -134,12 +141,11 @@ export const BranchSales = ({ branchId }: Props) => {
 						<Col md={5}>
 							<Statistic
 								title="Cash On Hand"
-								value={formatInPeso(
-									summary.cashSales +
-										summary.creditPayments +
-										summary.cashIn -
-										summary.cashOut,
-								)}
+								value={[
+									summary.cashOnHand < 0 ? '(' : '',
+									formatInPeso(Math.abs(summary.cashOnHand)),
+									summary.cashOnHand < 0 ? ')' : '',
+								].join('')}
 							/>
 						</Col>
 						<Col md={5}>
@@ -160,7 +166,7 @@ export const BranchSales = ({ branchId }: Props) => {
 						<Col md={4}>
 							<Statistic
 								title="Cash Out"
-								value={`(${formatInPeso(summary.cashOut)})`}
+								value={formatInPeso(summary.cashOut)}
 							/>
 						</Col>
 					</Row>
