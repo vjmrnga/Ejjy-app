@@ -6,7 +6,7 @@ import {
 	FormInputLabel,
 	Label,
 } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { filterOption, getFullName, Transaction } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { orderOfPaymentPurposes, SEARCH_DEBOUNCE_TIME } from 'global';
 import {
@@ -18,14 +18,15 @@ import _, { debounce } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import { convertIntoArray, formatInPeso, getId } from 'utils';
+import { Payor } from 'utils/type';
 import * as Yup from 'yup';
 
-interface ModalProps {
-	payor: any;
-	transaction?: any;
-	onSuccess: any;
-	onClose: any;
-}
+type ModalProps = {
+	payor: Payor;
+	transaction?: Transaction;
+	onSuccess: () => void;
+	onClose: () => void;
+};
 
 export const CreateOrderOfPaymentModal = ({
 	payor,
@@ -92,7 +93,7 @@ export const CreateOrderOfPaymentModal = ({
 			title="[Create] Order of Payment"
 			centered
 			closable
-			visible
+			open
 			onCancel={onClose}
 		>
 			<RequestErrors
@@ -119,11 +120,11 @@ export const CreateOrderOfPaymentModal = ({
 };
 
 interface FormProps {
-	payor: any;
-	transaction?: any;
+	payor: Payor;
+	transaction?: Transaction;
 	isLoading: boolean;
-	onSubmit: any;
-	onClose: any;
+	onSubmit: (formData) => void;
+	onClose: () => void;
 }
 
 export const CreateOrderOfPaymentForm = ({
@@ -141,7 +142,10 @@ export const CreateOrderOfPaymentForm = ({
 	const {
 		isFetching: isFetchingAccount,
 		data: { accounts },
-	} = useAccounts({ params: { search: accountSearch } });
+	} = useAccounts({
+		params: { search: accountSearch },
+		options: { enabled: !payor },
+	});
 
 	// METHODS
 	useEffect(() => {
@@ -202,25 +206,30 @@ export const CreateOrderOfPaymentForm = ({
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
 							<Label label="Payor" spacing />
-							<Select
-								className="w-100"
-								defaultActiveFirstOption={false}
-								disabled={payor !== null}
-								filterOption={false}
-								notFoundContent={isFetchingAccount ? <Spin /> : null}
-								value={values.payorId}
-								showSearch
-								onChange={(value) => {
-									setFieldValue('payorId', value);
-								}}
-								onSearch={handleSearchDebounced}
-							>
-								{accounts.map((account) => (
-									<Select.Option key={account.id} value={account.id}>
-										{getFullName(account)}
-									</Select.Option>
-								))}
-							</Select>
+							{payor ? (
+								<Input value={getFullName(payor.account)} disabled />
+							) : (
+								<Select
+									className="w-100"
+									defaultActiveFirstOption={false}
+									disabled={payor !== null}
+									filterOption={false}
+									notFoundContent={isFetchingAccount ? <Spin /> : null}
+									value={values.payorId}
+									showSearch
+									onChange={(value) => {
+										setFieldValue('payorId', value);
+									}}
+									onSearch={handleSearchDebounced}
+								>
+									{accounts.map((account) => (
+										<Select.Option key={account.id} value={account.id}>
+											{getFullName(account)}
+										</Select.Option>
+									))}
+								</Select>
+							)}
+
 							<ErrorMessage
 								name="payorId"
 								render={(error) => <FieldError error={error} />}

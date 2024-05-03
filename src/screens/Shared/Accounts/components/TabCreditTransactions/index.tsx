@@ -7,7 +7,7 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 } from 'components';
-import { ViewTransactionModal, getFullName } from 'ejjy-global';
+import { Transaction, ViewTransactionModal, getFullName } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -20,25 +20,27 @@ import { useQueryParams, useSiteSettingsNew, useTransactions } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
+import { Payor } from 'utils/type';
 import { accountTabs } from '../../data';
 import { AccountTotalBalance } from './components/AccountTotalBalance';
 
-interface Props {
+type Props = {
 	disabled: boolean;
-}
+};
 
 export const TabCreditTransactions = ({ disabled }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
-	const [selectedCreditTransaction, setSelectedCreditTransaction] = useState(
-		null,
-	);
+	const [
+		selectedCreditTransaction,
+		setSelectedCreditTransaction,
+	] = useState<Transaction | null>(null);
 	const [
 		isCreateOrderOfPaymentModalVisible,
 		setIsCreateOrderOfPaymentModalVisible,
 	] = useState(false);
-	const [payor, setPayor] = useState(null);
+	const [payor, setPayor] = useState<Payor | null>(null);
 
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
@@ -204,9 +206,9 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	);
 };
 
-interface FilterProps {
+type FilterProps = {
 	isLoading: boolean;
-}
+};
 
 const Filter = ({ isLoading }: FilterProps) => (
 	<Row className="mb-4" gutter={[16, 16]}>

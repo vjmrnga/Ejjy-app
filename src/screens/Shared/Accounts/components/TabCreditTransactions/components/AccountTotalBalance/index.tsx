@@ -1,15 +1,15 @@
 import { Button, Col, Row, Statistic } from 'antd';
-import { getFullName } from 'ejjy-global';
+import { Account, getFullName } from 'ejjy-global';
 import React from 'react';
 import { formatInPeso } from 'utils';
 import './style.scss';
 
-interface Props {
-	account: any;
-	totalBalance: number;
+type Props = {
+	account: Account;
+	totalBalance: string;
 	disabled: boolean;
-	onClick: any;
-}
+	onClick: () => void;
+};
 
 export const AccountTotalBalance = ({
 	account,
