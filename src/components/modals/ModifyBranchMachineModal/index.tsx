@@ -45,8 +45,8 @@ export const ModifyBranchMachineModal = ({
 	} = useBranchMachineCreate(
 		null,
 		isUserFromOffice(user.user_type) && isCUDShown(user.user_type)
-			? getLocalApiUrl()
-			: getGoogleApiUrl(),
+			? getGoogleApiUrl()
+			: getLocalApiUrl(),
 	);
 	const {
 		mutateAsync: editBranchMachine,
@@ -55,8 +55,8 @@ export const ModifyBranchMachineModal = ({
 	} = useBranchMachineEdit(
 		null,
 		isUserFromOffice(user.user_type) && isCUDShown(user.user_type)
-			? getLocalApiUrl()
-			: getGoogleApiUrl(),
+			? getGoogleApiUrl()
+			: getLocalApiUrl(),
 	);
 
 	// METHODS
@@ -147,7 +147,7 @@ export const ModifyBranchMachineForm = ({
 				storageSerialNumber: Yup.string()
 					.required()
 					.max(75)
-					.label('StorageSerialNumber')
+					.label('Storage Serial Number')
 					.trim(),
 				serverUrl: Yup.string().required().max(75).label('Server URL').trim(),
 				type: Yup.string().required().label('Type'),
