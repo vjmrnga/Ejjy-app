@@ -3,8 +3,8 @@ import { Button, Space, Tooltip, message } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { Content, RequestErrors, TableHeader } from 'components';
 import { Box } from 'components/elements';
-import { getFullName } from 'ejjy-global';
-import { MAX_PAGE_SIZE, serviceTypes, userPendingApprovalTypes } from 'global';
+import { getFullName, userPendingApprovalTypes } from 'ejjy-global';
+import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
 	useUserApproveUserPendingApproval,
 	useUserDeclineUserPendingApproval,
