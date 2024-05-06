@@ -1,7 +1,7 @@
 import { Button, Col, message, Modal, Select } from 'antd';
 import { RequestErrors } from 'components';
 import { FieldError, Label } from 'components/elements';
-import { filterOption } from 'ejjy-global';
+import { Branch, filterOption } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { useBranchAssignmentCreate } from 'hooks';
 import React, { useCallback } from 'react';
@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 
 interface Props {
 	user: any;
-	branches: any;
+	branches: Branch[];
 	onClose: any;
 }
 
