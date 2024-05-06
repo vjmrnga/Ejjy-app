@@ -1,9 +1,10 @@
 import { Col, Divider, message, Modal, Row } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
+import { useUserAuthenticate } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
-import { useAccountRedeemPoints, useUserAuthenticate } from 'hooks';
+import { useAccountRedeemPoints } from 'hooks';
 import React, { useCallback } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getLocalApiUrl } from 'utils';
 import * as Yup from 'yup';
 import { Button, FieldError, FormInputLabel } from '../../elements';
 
@@ -24,7 +25,7 @@ export const RedeemPointsModal = ({ account, onSuccess, onClose }: Props) => {
 		mutateAsync: authenticateUser,
 		isLoading: isAuthenticatingUser,
 		error: authenticateUserError,
-	} = useUserAuthenticate();
+	} = useUserAuthenticate(null, getLocalApiUrl());
 
 	// METHODS
 	const getFormDetails = useCallback(

@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Space, Table, Tooltip, message } from 'antd';
+import { Button, Col, message, Row, Space, Table, Tooltip } from 'antd';
 import {
 	Breadcrumb,
 	ConnectionAlert,
@@ -9,20 +9,21 @@ import {
 } from 'components';
 import { Box } from 'components/elements';
 import dayjs from 'dayjs';
-import { getFullName } from 'ejjy-global';
+import { getFullName, ServiceType, useUserRetrieve } from 'ejjy-global';
 import { GENERIC_ERROR_MESSAGE, MAX_PAGE_SIZE } from 'global';
 import {
 	useCashieringAssignmentDelete,
 	useCashieringAssignments,
 	usePingOnlineServer,
-	useUserRetrieve,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	confirmPassword,
 	convertIntoArray,
+	getLocalApiUrl,
 	getUrlPrefix,
+	isStandAlone,
 	isUserFromBranch,
 } from 'utils';
 
@@ -68,6 +69,10 @@ export const CashieringAssignment = ({ match }: Props) => {
 					message.error(GENERIC_ERROR_MESSAGE);
 				}
 			},
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 	const {

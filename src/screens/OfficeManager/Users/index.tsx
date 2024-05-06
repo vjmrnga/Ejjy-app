@@ -30,10 +30,11 @@ import {
 } from 'components';
 import { Box, Label } from 'components/elements';
 import {
+	ServiceType,
 	filterOption,
 	getFullName,
-	ServiceType,
 	useBranches,
+	useUserRequestUserDeletion,
 	useUsers,
 	userPendingApprovalTypes,
 } from 'ejjy-global';
@@ -51,8 +52,8 @@ import {
 	usePingOnlineServer,
 	useQueryParams,
 	useUserPendingApprovals,
-	useUserRequestUserDeletion,
 } from 'hooks';
+import { getBaseUrl } from 'hooks/helper';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -116,7 +117,7 @@ export const Users = () => {
 		mutateAsync: requestUserDeletion,
 		isLoading: isRequestingUserDeletion,
 		error: requestUserDeletionError,
-	} = useUserRequestUserDeletion();
+	} = useUserRequestUserDeletion(null, getBaseUrl());
 
 	// METHODS
 	useEffect(() => {

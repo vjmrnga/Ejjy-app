@@ -2,7 +2,7 @@ import { Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { filterOption, getFullName, ServiceType, useUsers } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -10,18 +10,15 @@ import {
 	pageSizeOptions,
 	timeRangeTypes,
 } from 'global';
-import {
-	useBranchAssignments,
-	useBranches,
-	useQueryParams,
-	useUsers,
-} from 'hooks';
+import { useBranchAssignments, useBranches, useQueryParams } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTime,
+	getLocalApiUrl,
 	getLocalBranchId,
+	isStandAlone,
 	isUserFromBranch,
 	isUserFromOffice,
 } from 'utils';
@@ -115,15 +112,19 @@ const Filter = () => {
 		options: { enabled: isUserFromOffice(user.user_type) },
 	});
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: isUserFromBranch(user.user_type)
-				? getLocalBranchId()
-				: params.branchId,
+			branchId: Number(
+				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
+			),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 
@@ -176,7 +177,7 @@ const Filter = () => {
 							setQueryParams({ userId: value }, { shouldResetPage: true });
 						}}
 					>
-						{users.map((u) => (
+						{usersData?.list.map((u) => (
 							<Select.Option key={u.id} value={u.id}>
 								{getFullName(u)}
 							</Select.Option>

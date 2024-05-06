@@ -1,11 +1,10 @@
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
 import { RequestErrors } from 'components/RequestErrors';
-import { filterOption, getFullName } from 'ejjy-global';
+import { filterOption, getFullName, ServiceType, useUsers } from 'ejjy-global';
 import { ErrorMessage, Form, Formik } from 'formik';
 import { MAX_PAGE_SIZE } from 'global';
-import { useUsers } from 'hooks';
 import React from 'react';
-import { convertIntoArray, getId } from 'utils';
+import { convertIntoArray, getId, getLocalApiUrl, isStandAlone } from 'utils';
 import * as Yup from 'yup';
 import { FieldError, Label } from '../../elements';
 
@@ -26,20 +25,24 @@ const formDetails = {
 	}),
 };
 
-interface Props {
+type Props = {
 	isLoading: boolean;
-	onSubmit: any;
-	onClose: any;
-}
+	onSubmit: (formData) => void;
+	onClose: () => void;
+};
 
 export const CreateStockInModal = ({ isLoading, onSubmit, onClose }: Props) => {
 	// CUSTOM HOOKS
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: userError,
 	} = useUsers({
 		params: { pageSize: MAX_PAGE_SIZE },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
 	});
 
 	return (
@@ -119,7 +122,7 @@ export const CreateStockInModal = ({ isLoading, onSubmit, onClose }: Props) => {
 										setFieldValue('encodedById', value);
 									}}
 								>
-									{users.map((user) => {
+									{usersData?.list.map((user) => {
 										const id = getId(user);
 
 										return id ? (
@@ -147,7 +150,7 @@ export const CreateStockInModal = ({ isLoading, onSubmit, onClose }: Props) => {
 										setFieldValue('checkedById', value);
 									}}
 								>
-									{users.map((user) => {
+									{usersData?.list.map((user) => {
 										const id = getId(user);
 
 										return id ? (

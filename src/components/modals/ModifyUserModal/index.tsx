@@ -4,8 +4,10 @@ import {
 	useUserCreate,
 	useUserEdit,
 	useUserRequestUserTypeChange,
-} from 'hooks';
+} from 'ejjy-global';
+import { getBaseUrl } from 'hooks/helper';
 import React from 'react';
+import { useQueryClient } from 'react-query';
 import { convertIntoArray, getId } from 'utils';
 import { ModifyUserForm } from './ModifyUserForm';
 
@@ -23,21 +25,31 @@ export const ModifyUserModal = ({
 	user,
 }: Props) => {
 	// CUSTOM HOOKS
+	const queryClient = useQueryClient();
 	const {
 		mutateAsync: createUser,
 		isLoading: isCreatingUser,
 		error: createUserError,
-	} = useUserCreate({ clearAfterRequest: false });
+	} = useUserCreate(
+		{ onSuccess: () => queryClient.invalidateQueries('useUsers') },
+		getBaseUrl(),
+	);
 	const {
 		mutateAsync: editUser,
 		isLoading: isEditingUser,
 		error: editUserError,
-	} = useUserEdit({ clearAfterRequest: false });
+	} = useUserEdit(
+		{ onSuccess: () => queryClient.invalidateQueries('useUsers') },
+		getBaseUrl(),
+	);
 	const {
 		mutateAsync: requestUserTypeChange,
 		isLoading: isRequestingUserTypeChange,
 		error: requestUserTypeChangeError,
-	} = useUserRequestUserTypeChange();
+	} = useUserRequestUserTypeChange(
+		{ onSuccess: () => queryClient.invalidateQueries('useUsers') },
+		getBaseUrl(),
+	);
 
 	// METHODS
 	const handleSubmit = async (formData) => {

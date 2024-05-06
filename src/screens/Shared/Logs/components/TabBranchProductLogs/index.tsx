@@ -2,7 +2,7 @@ import { Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { ServiceType, filterOption, getFullName, useUsers } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -18,7 +18,6 @@ import {
 	useBranches,
 	useQueryParams,
 	useUserLogs,
-	useUsers,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -26,6 +25,7 @@ import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTimeExtended,
+	getLocalApiUrl,
 	getLocalBranchId,
 	isStandAlone,
 	isUserFromBranch,
@@ -132,15 +132,19 @@ const Filter = () => {
 		options: { enabled: !isUserFromBranch(user.user_type) },
 	});
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: isUserFromBranch(user.user_type)
-				? getLocalBranchId()
-				: params.branchId,
+			branchId: Number(
+				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
+			),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 	const {
@@ -220,7 +224,7 @@ const Filter = () => {
 							);
 						}}
 					>
-						{users.map((u) => (
+						{usersData?.list.map((u) => (
 							<Select.Option key={u.id} value={u.id}>
 								{getFullName(u)}
 							</Select.Option>

@@ -9,15 +9,16 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { getFullName } from 'ejjy-global';
+import { getFullName, ServiceType, useUserDelete, useUsers } from 'ejjy-global';
 import { DEV_USERNAME, MAX_PAGE_SIZE, userTypes } from 'global';
-import { useUserDelete, useUsers } from 'hooks';
+import { getBaseUrl } from 'hooks/helper';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
+	getLocalApiUrl,
 	getLocalBranchId,
 	getUserTypeName,
 	isCUDShown,
@@ -34,24 +35,31 @@ export const Users = () => {
 	const queryClient = useQueryClient();
 	const user = useUserStore((state) => state.user);
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: isStandAlone() ? undefined : getLocalBranchId(),
+			branchId: isStandAlone() ? undefined : Number(getLocalBranchId()),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 	const {
 		mutate: deleteUser,
 		isLoading: isDeletingUser,
 		error: deleteUserError,
-	} = useUserDelete();
+	} = useUserDelete(
+		{ onSuccess: () => queryClient.invalidateQueries('useUsers') },
+		getBaseUrl(),
+	);
 
 	// METHODS
 	useEffect(() => {
-		const data = users
+		const data = usersData?.list
 			.filter((filteredUser) => {
 				const isDev = filteredUser.username === DEV_USERNAME;
 
@@ -103,7 +111,7 @@ export const Users = () => {
 			}));
 
 		setDataSource(data);
-	}, [users]);
+	}, [usersData?.list]);
 
 	const getColumns = useCallback(() => {
 		const columns: ColumnsType = [

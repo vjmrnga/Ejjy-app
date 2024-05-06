@@ -3,7 +3,13 @@ import { Button, Col, Row, Select, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName, ViewCashBreakdownModal } from 'ejjy-global';
+import {
+	ServiceType,
+	ViewCashBreakdownModal,
+	filterOption,
+	getFullName,
+	useUsers,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -19,7 +25,6 @@ import {
 	useCashBreakdowns,
 	useQueryParams,
 	useSiteSettingsNew,
-	useUsers,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -28,7 +33,9 @@ import {
 	convertIntoArray,
 	formatDateTime,
 	getCashBreakdownTypeDescription,
+	getLocalApiUrl,
 	getLocalBranchId,
+	isStandAlone,
 	isUserFromBranch,
 } from 'utils';
 
@@ -183,15 +190,19 @@ const Filter = () => {
 		},
 	});
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: isUserFromBranch(user.user_type)
-				? getLocalBranchId()
-				: params.branchId,
+			branchId: Number(
+				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
+			),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 
@@ -273,7 +284,7 @@ const Filter = () => {
 							);
 						}}
 					>
-						{users.map((u) => (
+						{usersData?.list.map((u) => (
 							<Select.Option key={u.id} value={u.id}>
 								{getFullName(u)}
 							</Select.Option>

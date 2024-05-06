@@ -76,5 +76,3 @@ export { default as useTransactions } from './useTransactions';
 export { default as useUserLogs } from './useUserLogs';
 export * from './useUserPendingApprovals';
 export { default as useUserPendingApprovals } from './useUserPendingApprovals';
-export * from './useUsers';
-export { default as useUsers } from './useUsers';

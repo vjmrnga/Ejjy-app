@@ -2,21 +2,26 @@ import { Col, Row, Select, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { filterOption, getFullName, ServiceType, useUsers } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
-	SEARCH_DEBOUNCE_TIME,
 	pageSizeOptions,
+	SEARCH_DEBOUNCE_TIME,
 	serviceTypes,
 	userLogTypes,
 } from 'global';
-import { useProducts, useQueryParams, useUserLogs, useUsers } from 'hooks';
+import { useProducts, useQueryParams, useUserLogs } from 'hooks';
 
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import { convertIntoArray, formatDateTimeExtended, isStandAlone } from 'utils';
+import {
+	convertIntoArray,
+	formatDateTimeExtended,
+	getLocalApiUrl,
+	isStandAlone,
+} from 'utils';
 
 const columns: ColumnsType = [
 	{ title: 'User', dataIndex: 'user' },
@@ -97,13 +102,17 @@ const Filter = () => {
 	// CUSTOM HOOKS
 	const { params, setQueryParams } = useQueryParams();
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: params.branchId,
+			branchId: Number(params.branchId),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 	const {
@@ -155,7 +164,7 @@ const Filter = () => {
 							);
 						}}
 					>
-						{users.map((user) => (
+						{usersData?.list.map((user) => (
 							<Select.Option key={user.id} value={user.id}>
 								{getFullName(user)}
 							</Select.Option>

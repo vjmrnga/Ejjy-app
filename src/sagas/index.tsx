@@ -9,7 +9,6 @@ import { officeManagerSagas } from './OfficeManager';
 import orderSlipsSagas from './order-slips';
 import preparationSlipsSagas from './preparation-slips';
 import requisitionSlipsSagas from './requisition-slips';
-import usersSagas from './users';
 
 export default function* rootSaga() {
 	yield all([
@@ -20,7 +19,6 @@ export default function* rootSaga() {
 		...orderSlipsSagas,
 		...preparationSlipsSagas,
 		...requisitionSlipsSagas,
-		...usersSagas,
 		...adminSagas,
 		...officeManagerSagas,
 		...branchManagerSagas,

@@ -2,7 +2,7 @@ import { Col, Descriptions, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import { ServiceType, filterOption, getFullName, useUsers } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -18,13 +18,14 @@ import {
 	useBranchMachines,
 	useBranches,
 	useQueryParams,
-	useUsers,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
 	formatTimeRange,
+	getLocalApiUrl,
+	isStandAlone,
 } from 'utils';
 
 const branchDayTypes = {
@@ -263,13 +264,17 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 		},
 	});
 	const {
-		data: { users },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: userErrors,
 	} = useUsers({
 		params: {
-			branchId: params.branchId,
+			branchId: Number(params.branchId),
 			pageSize: MAX_PAGE_SIZE,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
 		},
 	});
 
@@ -350,7 +355,7 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 							setQueryParams({ userId: value }, { shouldResetPage: true });
 						}}
 					>
-						{users.map((u) => (
+						{usersData?.list.map((u) => (
 							<Select.Option key={u.id} value={u.id}>
 								{getFullName(u)}
 							</Select.Option>
