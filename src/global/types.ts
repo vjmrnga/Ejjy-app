@@ -147,12 +147,6 @@ export const timeRangeTypes = {
 	DATE_RANGE: 'date_range',
 };
 
-export const userPendingApprovalTypes = {
-	CREATE: 'create',
-	UPDATE_USER_TYPE: 'update_user_type',
-	DELETE: 'delete',
-};
-
 export const returnItemSlipsStatuses = {
 	DONE: 'done',
 	PENDING: 'pending',
