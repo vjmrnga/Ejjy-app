@@ -90,6 +90,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 								onSuccess: (user) => {
 									setUserPrinter(user);
 									setSelectedXReadReport(report);
+									setAuthorizeConfig(null);
 								},
 							});
 						}}

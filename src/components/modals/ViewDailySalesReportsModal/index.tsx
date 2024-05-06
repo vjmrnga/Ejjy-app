@@ -101,6 +101,7 @@ export const ViewDailySalesReportsModal = ({
 									onSuccess: (user) => {
 										setUserPrinter(user);
 										setSelectedDailySales(dailySale);
+										setAuthorizeConfig(null);
 									},
 								});
 							}}

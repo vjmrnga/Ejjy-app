@@ -86,6 +86,7 @@ export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
 								onSuccess: (user) => {
 									setUserPrinter(user);
 									setSelectedZReadReport(report);
+									setAuthorizeConfig(null);
 								},
 							});
 						}}
