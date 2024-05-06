@@ -4,9 +4,12 @@ import { RequestErrors } from 'components/RequestErrors';
 import { TimeRangeFilter } from 'components/TimeRangeFilter';
 import {
 	AuthorizationModal,
+	AUTOMATIC_GENERATED_REPORT_USER_NAME,
 	BranchMachine,
 	EMPTY_CELL,
 	formatDate,
+	formatTime,
+	getFullName,
 	User,
 	userTypes,
 	useXReadReports,
@@ -24,16 +27,20 @@ const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
 type TableRow = {
 	key: number;
 	datetimeCreated: React.ReactElement;
+	generationTime: string;
+	user: string;
 };
 
 const columns: ColumnsType<TableRow> = [
 	{ title: 'Date', dataIndex: 'datetimeCreated' },
+	{ title: 'Generation Datetime', dataIndex: 'generationTime' },
+	{ title: 'User', dataIndex: 'user' },
 ];
 
-interface Props {
+type Props = {
 	branchMachine: BranchMachine;
 	onClose: () => void;
-}
+};
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
 const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
@@ -92,6 +99,10 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 							: EMPTY_CELL}
 					</Button>
 				),
+				generationTime: formatTime(report.generation_datetime),
+				user: report.cashiering_session?.user
+					? getFullName(report.cashiering_session.user)
+					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
 			}));
 
 			setDataSource(data);
@@ -103,7 +114,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 			className="Modal__hasFooter"
 			footer={<Button onClick={onClose}>Close</Button>}
 			title="X-read Reports"
-			width={500}
+			width={600}
 			centered
 			closable
 			open
