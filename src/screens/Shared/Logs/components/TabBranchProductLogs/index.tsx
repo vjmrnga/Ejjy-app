@@ -45,6 +45,9 @@ export const TabBranchProductLogs = () => {
 	} = useUserLogs({
 		params: {
 			...params,
+			branchId: isUserFromBranch(user.user_type)
+				? getLocalBranchId()
+				: params.branchId,
 			serviceType: isStandAlone() ? serviceTypes.NORMAL : serviceTypes.OFFLINE,
 			type: userLogTypes.BRANCH_PRODUCTS,
 		},
