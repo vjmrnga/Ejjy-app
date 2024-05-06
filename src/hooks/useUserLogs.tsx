@@ -34,6 +34,10 @@ const useUserLogs = ({ params }: Query) =>
 				service = UserLogsService.listOffline;
 			}
 
+			if (serviceTypes.NORMAL === params?.serviceType) {
+				service = UserLogsService.list;
+			}
+
 			return wrapServiceWithCatch(
 				service(
 					{

@@ -29,7 +29,14 @@ import {
 	ViewUserModal,
 } from 'components';
 import { Box, Label } from 'components/elements';
-import { filterOption, getFullName } from 'ejjy-global';
+import {
+	filterOption,
+	getFullName,
+	ServiceType,
+	useBranches,
+	useUsers,
+	userPendingApprovalTypes,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -38,17 +45,13 @@ import {
 	NO_BRANCH_ID,
 	SEARCH_DEBOUNCE_TIME,
 	pageSizeOptions,
-	serviceTypes,
-	userPendingApprovalTypes,
 	userTypes,
 } from 'global';
 import {
-	useBranches,
 	usePingOnlineServer,
 	useQueryParams,
 	useUserPendingApprovals,
 	useUserRequestUserDeletion,
-	useUsers,
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -58,7 +61,9 @@ import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	getId,
+	getLocalApiUrl,
 	getUserTypeName,
+	isStandAlone,
 	isUserFromOffice,
 } from 'utils';
 
@@ -84,7 +89,7 @@ export const Users = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
 	const {
-		data: { branches },
+		data: branchesData,
 		isFetching: isFetchingBranches,
 		error: branchesError,
 	} = useBranches();
@@ -93,22 +98,19 @@ export const Users = () => {
 		isFetching: isFetchingUserPendingApprovals,
 		error: userPendingApprovalsError,
 	} = useUserPendingApprovals({
-		options: {
-			onSuccess: () => {
-				queryClient.invalidateQueries('useUsers');
-			},
-		},
+		options: { onSuccess: () => queryClient.invalidateQueries('useUsers') },
 	});
 	const {
-		data: { users, total },
+		data: usersData,
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
-		params: {
-			...params,
-			serviceType: serviceTypes.OFFLINE,
-		},
+		params,
 		options: { enabled: isUserPendingApprovalsFetched },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
 	});
 	const {
 		mutateAsync: requestUserDeletion,
@@ -125,10 +127,10 @@ export const Users = () => {
 		if (branchId === NO_BRANCH_ID) {
 			branch = { id: NO_BRANCH_ID, online_id: NO_BRANCH_ID };
 		} else {
-			branch = branches?.filter(({ id }) => id === branchId);
+			branch = branchesData?.list.filter(({ id }) => id === branchId);
 		}
 
-		const formattedUsers = users
+		const formattedUsers = usersData?.list
 			.filter((user) => user.username !== DEV_USERNAME)
 			.map((user) => ({
 				key: user.id,
@@ -220,7 +222,7 @@ export const Users = () => {
 			}));
 
 		setDataSource(formattedUsers);
-	}, [users, params?.branchId, branches, isConnected]);
+	}, [usersData?.list, params?.branchId, branchesData?.list, isConnected]);
 
 	const handleUserCreateSuccess = (user) => {
 		if (!user.online_id) {
@@ -286,7 +288,7 @@ export const Users = () => {
 						loading={isFetchingUsers || isRequestingUserDeletion}
 						pagination={{
 							current: Number(params.page) || DEFAULT_PAGE,
-							total,
+							total: usersData?.total || 0,
 							pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 							onChange: (page, newPageSize) => {
 								setQueryParams({
@@ -325,7 +327,7 @@ export const Users = () => {
 
 					{reassignUserModalVisible && selectedUser && (
 						<BranchAssignmentUserModal
-							branches={branches}
+							branches={branchesData?.list || []}
 							user={selectedUser}
 							onClose={() => {
 								setReassignUserModalVisible(false);
@@ -344,12 +346,16 @@ const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
 	const user = useUserStore((state) => state.user);
 	const {
-		data: { branches },
+		data: branchesData,
 		isFetching: isFetchingBranches,
 		error: branchErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
 		options: { enabled: isUserFromOffice(user.user_type) },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
 	});
 	const handleSearchDebounced = useCallback(
 		_.debounce((search) => {
@@ -396,7 +402,7 @@ const Filter = () => {
 							<Select.Option key={NO_BRANCH_ID} value={NO_BRANCH_ID}>
 								Unassigned
 							</Select.Option>
-							{branches.map((branch) => (
+							{branchesData?.list.map((branch) => (
 								<Select.Option key={branch.id} value={branch.id}>
 									{branch.name}
 								</Select.Option>
