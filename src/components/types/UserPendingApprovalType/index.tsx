@@ -1,5 +1,6 @@
 import { Tag } from 'antd';
-import { EMPTY_CELL, userPendingApprovalTypes } from 'global';
+import { userPendingApprovalTypes } from 'ejjy-global';
+import { EMPTY_CELL } from 'global';
 import React from 'react';
 
 export const UserPendingApprovalType = ({ type }) => {
