@@ -26,14 +26,14 @@ const TIME_RANGE_PARAM_KEY = 'xreadTimeRange';
 
 type TableRow = {
 	key: number;
-	datetimeCreated: React.ReactElement;
-	generationTime: string;
+	date: React.ReactElement;
+	time: string;
 	user: string;
 };
 
 const columns: ColumnsType<TableRow> = [
-	{ title: 'Date', dataIndex: 'datetimeCreated' },
-	{ title: 'Generation Datetime', dataIndex: 'generationTime' },
+	{ title: 'Date', dataIndex: 'date' },
+	{ title: 'Time', dataIndex: 'time' },
 	{ title: 'User', dataIndex: 'user' },
 ];
 
@@ -79,7 +79,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 		if (xReadReportsData?.list) {
 			const data = xReadReportsData.list.map((report) => ({
 				key: report.id,
-				datetimeCreated: (
+				date: (
 					<Button
 						className="pa-0"
 						type="link"
@@ -99,7 +99,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 							: EMPTY_CELL}
 					</Button>
 				),
-				generationTime: formatTime(report.generation_datetime),
+				time: formatTime(report.generation_datetime),
 				user: report.cashiering_session?.user
 					? getFullName(report.cashiering_session.user)
 					: AUTOMATIC_GENERATED_REPORT_USER_NAME,
