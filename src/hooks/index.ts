@@ -27,7 +27,6 @@ export * from './useCashieringAssignments';
 export { default as useCashieringAssignments } from './useCashieringAssignments';
 export { default as useCashieringSessions } from './useCashieringSessions';
 export { default as useCheckInvoiceValidity } from './useCheckInvoiceValidity';
-export { default as useCollectionReceipts } from './useCollectionReceipts';
 export { default as useConnectivity } from './useConnectivity';
 export { default as useConnectivityLogs } from './useConnectivityLogs';
 export * from './useCreditRegistrations';
