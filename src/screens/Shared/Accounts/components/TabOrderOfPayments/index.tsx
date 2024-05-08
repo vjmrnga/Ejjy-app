@@ -178,9 +178,9 @@ export const TabOrderOfPayments = () => {
 	);
 };
 
-interface FilterProps {
+type FilterProps = {
 	isLoading: boolean;
-}
+};
 
 const Filter = ({ isLoading }: FilterProps) => {
 	// STATES
