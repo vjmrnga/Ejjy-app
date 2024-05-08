@@ -1,5 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Table, Tooltip } from 'antd';
+import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateOrderOfPaymentModal,
@@ -18,7 +17,7 @@ import {
 } from 'global';
 import { useQueryParams, useSiteSettingsNew, useTransactions } from 'hooks';
 import _ from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatDateTime, formatInPeso } from 'utils';
 import { Payor } from 'utils/type';
 import { accountTabs } from '../../data';
@@ -27,6 +26,15 @@ import { AccountTotalBalance } from './components/AccountTotalBalance';
 type Props = {
 	disabled: boolean;
 };
+
+const columns: ColumnsType = [
+	{ title: 'Date & Time', dataIndex: 'datetime' },
+	{ title: 'Client Code', dataIndex: 'clientCode' },
+	{ title: 'Invoice Number', dataIndex: 'invoiceNumber' },
+	{ title: 'Amount', dataIndex: 'amount' },
+	{ title: 'Cashier', dataIndex: 'cashier' },
+	{ title: 'Authorizer', dataIndex: 'authorizer' },
+];
 
 export const TabCreditTransactions = ({ disabled }: Props) => {
 	// STATES
@@ -61,7 +69,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 	});
 
 	// METHODS
-
 	useEffect(() => {
 		const data = transactions.map((transaction) => {
 			const {
@@ -89,17 +96,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				amount: formatInPeso(total_amount),
 				cashier: getFullName(teller),
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
-				actions: (
-					<Tooltip title="Create Order of Payment">
-						<Button
-							disabled={disabled}
-							icon={<PlusOutlined />}
-							type="primary"
-							ghost
-							onClick={() => setSelectedCreditTransaction(transaction)}
-						/>
-					</Tooltip>
-				),
 			};
 		});
 
@@ -111,28 +107,6 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			setPayor(JSON.parse(_.toString(params.payor)));
 		}
 	}, [params.payor]);
-
-	const getColumns = useCallback(() => {
-		const columns: ColumnsType = [
-			{ title: 'Date & Time', dataIndex: 'datetime' },
-			{ title: 'Client Code', dataIndex: 'clientCode' },
-			{ title: 'Invoice Number', dataIndex: 'invoiceNumber' },
-			{ title: 'Amount', dataIndex: 'amount' },
-			{ title: 'Cashier', dataIndex: 'cashier' },
-			{ title: 'Authorizer', dataIndex: 'authorizer' },
-		];
-
-		if (payor) {
-			columns.push({
-				title: 'Actions',
-				dataIndex: 'actions',
-				width: 150,
-				fixed: 'right',
-			});
-		}
-
-		return columns;
-	}, [payor]);
 
 	const handleCreateOrderOfPaymentsSuccess = () => {
 		setQueryParams(
@@ -162,7 +136,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 			<Filter isLoading={isFetchingTransactions && !isTransactionsFetched} />
 
 			<Table
-				columns={getColumns()}
+				columns={columns}
 				dataSource={dataSource}
 				loading={isFetchingTransactions && !isTransactionsFetched}
 				pagination={{
