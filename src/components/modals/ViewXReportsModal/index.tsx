@@ -70,6 +70,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 			...params,
 			branchMachineName: branchMachine.name,
 			timeRange: params[TIME_RANGE_PARAM_KEY] as string,
+			isWithDailySalesData: false,
 		},
 		serviceOptions: { baseURL: MACHINE_SERVER_URL },
 	});

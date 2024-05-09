@@ -1,6 +1,6 @@
 {
 	"name": "ejjy-inventory-app",
-	"version": "0.1.480",
+	"version": "0.1.481",
 	"private": true,
 	"homepage": "./",
 	"main": "./public/electron.js",
@@ -36,7 +36,7 @@
 		"antd": "4.24.8",
 		"antd-css-utilities": "1.0.3",
 		"array-move": "4.0.0",
-		"axios": "0.21.1",
+		"axios": "^0.20.0",
 		"classnames": "2.2.6",
 		"connected-react-router": "6.8.0",
 		"dayjs": "1.10.4",
