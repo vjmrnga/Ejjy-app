@@ -106,10 +106,7 @@ const Filter = () => {
 		isFetching: isFetchingUsers,
 		error: usersError,
 	} = useUsers({
-		params: {
-			branchId: Number(params.branchId),
-			pageSize: MAX_PAGE_SIZE,
-		},
+		params: { pageSize: MAX_PAGE_SIZE },
 		serviceOptions: {
 			baseURL: getLocalApiUrl(),
 			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,

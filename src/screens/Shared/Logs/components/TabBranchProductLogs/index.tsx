@@ -138,7 +138,9 @@ const Filter = () => {
 	} = useUsers({
 		params: {
 			branchId: Number(
-				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
+				isUserFromBranch(user.user_type)
+					? getLocalBranchId()
+					: params.branchId || null,
 			),
 			pageSize: MAX_PAGE_SIZE,
 		},
