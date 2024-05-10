@@ -6,7 +6,7 @@
 	width: calc(100% - 281px);
 	overflow-x: hidden;
 
-	@include breakpoint-down(768px) {
+	@include breakpoint-down(991px) {
 		width: calc(100%) !important;
 	}
 

@@ -35,7 +35,7 @@ export const Sidebar = ({ items }: Props) => {
 
 	return (
 		<Layout.Sider
-			breakpoint="md"
+			breakpoint="lg"
 			className={cn('Sidebar', { Sidebar__collapsed: isSidebarCollapsed })}
 			collapsedWidth="0"
 			theme="light"
