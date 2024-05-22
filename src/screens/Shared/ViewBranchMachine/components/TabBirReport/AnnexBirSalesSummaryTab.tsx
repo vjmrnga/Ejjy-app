@@ -27,7 +27,7 @@ import {
 	formatInPeso,
 	getLocalApiUrl,
 } from 'utils';
-import { tabs } from './data';
+import { birAnnexTransactionsTabs as tabs } from 'ejjy-global/dist/components/BirAnnexTransactions/data';
 
 interface Props {
 	branchMachineId: number;
@@ -197,7 +197,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 				salesOverrunOrOverflow: formatInPeso(report.sales_overrun_or_overflow),
 				totalIncome: formatInPeso(report.total_income),
 				resetCounter: report.reset_counter,
-				zCounter: report.z_counter,
+				zCounter: report.z_counter || '',
 				remarks:
 					Number(report.gross_sales_for_the_day) === 0
 						? NO_TRANSACTION_REMARK

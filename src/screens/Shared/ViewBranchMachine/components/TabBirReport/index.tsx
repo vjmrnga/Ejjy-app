@@ -3,9 +3,9 @@ import { useQueryParams } from 'hooks';
 import _ from 'lodash';
 import React from 'react';
 import { BranchMachine, specialDiscountCodes } from 'ejjy-global';
+import { birAnnexTransactionsTabs as tabs } from 'ejjy-global/dist/components/BirAnnexTransactions/data';
 import { AnnexTransactionsTab } from './AnnexTransactionsTab';
 import { AnnexBirSalesSummaryTab } from './AnnexBirSalesSummaryTab';
-import { tabs } from './data';
 
 type Props = {
 	branchMachine: BranchMachine;
