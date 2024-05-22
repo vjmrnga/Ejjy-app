@@ -1,4 +1,4 @@
-import { message, Modal, Tabs } from 'antd';
+import { message, Modal, Spin, Tabs } from 'antd';
 import { RequestErrors } from 'components';
 import { MAX_PAGE_SIZE, serviceTypes } from 'global';
 import {
@@ -108,6 +108,8 @@ export const PricesModal = ({ product, onClose }: Props) => {
 		onClose();
 	};
 
+	const isLoading = isFetchingBranches || isFetchingBranchProducts;
+
 	return (
 		<Modal
 			footer={null}
@@ -139,63 +141,62 @@ export const PricesModal = ({ product, onClose }: Props) => {
 				withSpaceBottom
 			/>
 
-			{isUserFromBranch(user.user_type) ? (
-				<PricesForm
-					branches={branches}
-					branchProducts={branchProducts}
-					isLoading={
-						isFetchingBranches ||
-						isFetchingBranchProducts ||
-						isCreatingPriceMarkdown ||
-						isEditingBranchProductPriceCost ||
-						isEditingProduct
-					}
-					onClose={onClose}
-					onSubmit={handleSubmit}
-				/>
-			) : (
-				<Tabs
-					defaultActiveKey={
-						isUserFromOffice(user.user_type) ? tabs.ALL : tabs.BRANCHES
-					}
-					type="card"
-					destroyInactiveTabPane
-				>
-					<Tabs.TabPane key={tabs.BRANCHES} tab={tabs.BRANCHES}>
-						<PricesForm
-							branches={branches}
-							branchProducts={branchProducts}
-							isLoading={
-								isFetchingBranches ||
-								isFetchingBranchProducts ||
-								isCreatingPriceMarkdown ||
-								isEditingBranchProductPriceCost ||
-								isEditingProduct
-							}
-							product={product}
-							onClose={onClose}
-							onSubmit={handleSubmit}
-						/>
-					</Tabs.TabPane>
+			<Spin spinning={isLoading}>
+				{isUserFromBranch(user.user_type) ? (
+					<PricesForm
+						branches={branches}
+						branchProducts={branchProducts}
+						isLoading={isLoading}
+						isSubmitting={
+							isCreatingPriceMarkdown ||
+							isEditingBranchProductPriceCost ||
+							isEditingProduct
+						}
+						onClose={onClose}
+						onSubmit={handleSubmit}
+					/>
+				) : (
+					<Tabs
+						defaultActiveKey={
+							isUserFromOffice(user.user_type) ? tabs.ALL : tabs.BRANCHES
+						}
+						type="card"
+						destroyInactiveTabPane
+					>
+						<Tabs.TabPane key={tabs.BRANCHES} tab={tabs.BRANCHES}>
+							<PricesForm
+								branches={branches}
+								branchProducts={branchProducts}
+								isLoading={isLoading}
+								isSubmitting={
+									isCreatingPriceMarkdown ||
+									isEditingBranchProductPriceCost ||
+									isEditingProduct
+								}
+								product={product}
+								onClose={onClose}
+								onSubmit={handleSubmit}
+							/>
+						</Tabs.TabPane>
 
-					<Tabs.TabPane key={tabs.ALL} tab={tabs.ALL}>
-						<PricesForm
-							branches={branches}
-							isLoading={
-								isFetchingBranches ||
-								isFetchingBranchProducts ||
-								isCreatingPriceMarkdown ||
-								isEditingBranchProductPriceCost ||
-								isEditingProduct
-							}
-							product={product}
-							isBulkEdit
-							onClose={onClose}
-							onSubmit={handleSubmit}
-						/>
-					</Tabs.TabPane>
-				</Tabs>
-			)}
+						<Tabs.TabPane key={tabs.ALL} tab={tabs.ALL}>
+							<PricesForm
+								branches={branches}
+								isLoading={isLoading}
+								isSubmitting={
+									isCreatingPriceMarkdown ||
+									isEditingBranchProductPriceCost ||
+									isEditingProduct
+								}
+								product={product}
+								isBulkEdit
+								onClose={onClose}
+								onSubmit={handleSubmit}
+							/>
+						</Tabs.TabPane>
+					</Tabs>
+				)}
+			</Spin>
 		</Modal>
 	);
 };

@@ -26,6 +26,7 @@ interface Props {
 	onSubmit: any;
 	onClose: any;
 	isLoading: boolean;
+	isSubmitting: boolean;
 	isBulkEdit?: boolean;
 }
 
@@ -91,6 +92,7 @@ export const PricesForm = ({
 	onSubmit,
 	onClose,
 	isLoading,
+	isSubmitting,
 	isBulkEdit,
 }: Props) => {
 	// STATES
@@ -632,10 +634,19 @@ export const PricesForm = ({
 					)}
 
 					<div className="ModalCustomFooter">
-						<Button disabled={isLoading} htmlType="button" onClick={onClose}>
+						<Button
+							disabled={isLoading || isSubmitting}
+							htmlType="button"
+							onClick={onClose}
+						>
 							Cancel
 						</Button>
-						<Button htmlType="submit" loading={isLoading} type="primary">
+						<Button
+							disabled={isLoading || isSubmitting}
+							htmlType="submit"
+							loading={isSubmitting}
+							type="primary"
+						>
 							Submit
 						</Button>
 					</div>
