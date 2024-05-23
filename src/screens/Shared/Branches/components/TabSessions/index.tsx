@@ -2,7 +2,14 @@ import { Col, Descriptions, Radio, Row, Select, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
-import { ServiceType, filterOption, getFullName, useUsers } from 'ejjy-global';
+import {
+	Branch,
+	ServiceType,
+	filterOption,
+	getFullName,
+	isUserFromBranch,
+	useUsers,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -20,11 +27,13 @@ import {
 	useSessions,
 } from 'hooks';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from 'stores';
 import {
 	convertIntoArray,
 	formatDateTimeShortMonth,
 	formatTimeRange,
 	getLocalApiUrl,
+	getLocalBranchId,
 	isStandAlone,
 } from 'utils';
 
@@ -35,8 +44,8 @@ const sessionTypes = {
 };
 
 interface Props {
-	branch?: any;
-	branchMachineId?: any;
+	branch?: Branch;
+	branchMachineId?: number;
 }
 
 export const TabSessions = ({ branch, branchMachineId }: Props) => {
@@ -209,14 +218,15 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 	);
 };
 
-interface FilterProps {
-	branch?: any;
-	branchMachineId?: any;
+type FilterProps = {
+	branch?: Branch;
+	branchMachineId?: number;
 	isLoading: boolean;
-}
+};
 
 const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
+	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
 		isFetching: isFetchingBranches,
@@ -241,7 +251,9 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 		error: userErrors,
 	} = useUsers({
 		params: {
-			branchId: Number(params.branchId),
+			branchId: Number(
+				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
+			),
 			pageSize: MAX_PAGE_SIZE,
 		},
 		serviceOptions: {
