@@ -81,7 +81,7 @@ export const RequisitionSlips = () => {
 			const dateTime = formatDateTime(datetime_created);
 
 			const isOwnRequisitionSlip =
-				user?.branch?.id === requesting_user?.branch?.id;
+				user?.branch_assignment?.branch?.id === requesting_user?.branch?.id;
 			const _action = isOwnRequisitionSlip
 				? getRequisitionSlipStatus(action, userTypes.BRANCH_MANAGER)
 				: EMPTY_CELL;

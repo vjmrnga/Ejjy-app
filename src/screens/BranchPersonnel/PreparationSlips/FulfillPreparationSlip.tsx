@@ -269,7 +269,7 @@ export const FulfillPreparationSlips = ({ match }: Props) => {
 		const preparationSlipData = {
 			id: preparationSlip.id,
 			is_prepared: isPrepared,
-			assigned_store_id: user.branch.id,
+			assigned_store_id: user.branch_assignment.branch.id,
 			is_online: IS_APP_LIVE,
 			products: Object.keys(psProducts).map((key) => {
 				const psProduct = psProducts[key];

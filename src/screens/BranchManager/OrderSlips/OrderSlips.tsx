@@ -36,7 +36,7 @@ export const OrderSlips = () => {
 	// Effect: Fetch order slips
 	useEffect(() => {
 		getOrderSlipsExtended({
-			assigned_store_id: user.branch?.id,
+			assigned_store_id: user?.branch_assignment?.branch?.id,
 			requisition_slip_id: null,
 			page: 1,
 		});
@@ -77,7 +77,7 @@ export const OrderSlips = () => {
 	const handlePageChange = (page, newPageSize) => {
 		getOrderSlipsExtended(
 			{
-				assigned_store_id: user?.branch?.id,
+				assigned_store_id: user?.branch_assignment?.branch?.id,
 				requisition_slip_id: null,
 				page,
 				pageSize: newPageSize,

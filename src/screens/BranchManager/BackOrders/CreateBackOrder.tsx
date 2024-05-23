@@ -68,7 +68,7 @@ export const CreateBackOrder = () => {
 	} = useBackOrders();
 
 	// VARIABLES
-	const branchId = user?.branch?.id;
+	const branchId = user?.branch_assignment?.branch?.id;
 
 	// METHODS
 	useEffect(() => {
@@ -294,7 +294,7 @@ export const CreateBackOrder = () => {
 					onStatusSelect={(status) => {
 						getBranchProducts(
 							{
-								branchId: user?.branch?.id,
+								branchId: user?.branch_assignment?.branch?.id,
 								search: searchedKeyword,
 								productStatus: status === 'all' ? null : status,
 								isSoldInBranch: true,

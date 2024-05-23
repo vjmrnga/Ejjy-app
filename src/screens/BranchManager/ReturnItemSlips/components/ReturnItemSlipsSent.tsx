@@ -41,7 +41,7 @@ export const ReturnItemSlipsSent = ({ selectReturnItemSlip }: Props) => {
 	} = useReturnItemSlips({
 		params: {
 			...params,
-			senderBranchId: user?.branch?.id,
+			senderBranchId: user?.branch_assignment?.branch?.id,
 		},
 	});
 
