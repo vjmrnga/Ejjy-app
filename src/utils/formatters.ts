@@ -25,7 +25,8 @@ export const formatDate = _.memoize((date) =>
 
 export const formatTime = _.memoize((time) => dayjs.tz(time).format('h:mmA'));
 
-export const formatTimeOnly = (time) => dayjs(time, 'HH:mm:ss').format('h:mmA');
+export const formatTimeOnly = (time) =>
+	dayjs.tz(time, 'HH:mm:ss').format('h:mmA');
 
 export const formatTimeRange = (date1, date2) => {
 	const MODIFIED_EMPTY_CELL = '';
