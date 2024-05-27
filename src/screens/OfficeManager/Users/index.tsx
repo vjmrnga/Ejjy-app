@@ -93,7 +93,14 @@ export const Users = () => {
 		data: branchesData,
 		isFetching: isFetchingBranches,
 		error: branchesError,
-	} = useBranches();
+	} = useBranches({
+		params: { pageSize: MAX_PAGE_SIZE },
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
+	});
+
 	const {
 		isFetchedAfterMount: isUserPendingApprovalsFetched,
 		isFetching: isFetchingUserPendingApprovals,
