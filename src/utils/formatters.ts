@@ -25,16 +25,15 @@ export const formatDate = _.memoize((date) =>
 
 export const formatTime = _.memoize((time) => dayjs.tz(time).format('h:mmA'));
 
-export const formatTimeOnly = (time) =>
-	dayjs.tz(time, 'HH:mm:ss').format('h:mmA');
+export const formatTimeOnly = (time) => dayjs(time, 'HH:mm:ss').format('h:mmA');
 
 export const formatTimeRange = (date1, date2) => {
 	const MODIFIED_EMPTY_CELL = '';
 	let timeRange = MODIFIED_EMPTY_CELL;
 
 	if (dayjs.tz(date1).isSame(dayjs.tz(date2), 'day')) {
-		timeRange = `${formatDate(date1)} ${formatTimeOnly(date1)} – ${
-			date2 ? formatTimeOnly(date2) : MODIFIED_EMPTY_CELL
+		timeRange = `${formatDate(date1)} ${formatTime(date1)} – ${
+			date2 ? formatTime(date2) : MODIFIED_EMPTY_CELL
 		}`;
 	} else {
 		timeRange = `${
