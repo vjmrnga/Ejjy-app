@@ -168,6 +168,8 @@ export const TabCashBreakdowns = () => {
 
 const Filter = () => {
 	const { params, setQueryParams } = useQueryParams();
+	const branchId = params.branchId ? Number(params.branchId) : undefined;
+
 	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
@@ -195,9 +197,9 @@ const Filter = () => {
 		error: usersError,
 	} = useUsers({
 		params: {
-			branchId: Number(
-				isUserFromBranch(user.user_type) ? getLocalBranchId() : params.branchId,
-			),
+			branchId: isUserFromBranch(user.user_type)
+				? Number(getLocalBranchId())
+				: branchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		serviceOptions: {
