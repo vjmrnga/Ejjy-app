@@ -6,9 +6,9 @@ import React from 'react';
 import { convertIntoArray, formatInPeso } from 'utils';
 import './style.scss';
 
-interface Props {
+type Props = {
 	branchMachineId: number;
-}
+};
 
 export const Summary = ({ branchMachineId }: Props) => {
 	const { params } = useQueryParams();
