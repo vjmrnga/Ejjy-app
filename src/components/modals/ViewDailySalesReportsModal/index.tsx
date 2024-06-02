@@ -18,7 +18,7 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from 'global';
 import { useQueryParams, useSiteSettingsNew } from 'hooks';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { convertIntoArray } from 'utils';
+import { convertIntoArray, getLocalApiUrl } from 'utils';
 
 const TIME_RANGE_PARAM_KEY = 'dailySalesTimeRange';
 
@@ -163,6 +163,7 @@ export const ViewDailySalesReportsModal = ({
 			{authorizeConfig && (
 				<AuthorizationModal
 					{...authorizeConfig}
+					baseURL={getLocalApiUrl()}
 					onCancel={() => setAuthorizeConfig(null)}
 				/>
 			)}
