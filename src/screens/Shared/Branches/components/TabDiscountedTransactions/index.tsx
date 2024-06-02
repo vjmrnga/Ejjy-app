@@ -8,11 +8,15 @@ import {
 	DEFAULT_PAGE_SIZE,
 	EMPTY_CELL,
 	MAX_PAGE_SIZE,
+	NaacFields,
+	PWDFields,
 	ServiceType,
+	SpecialDiscountCode,
 	Transaction,
 	ViewTransactionModal,
 	filterOption,
 	formatInPeso,
+	getDiscountFields,
 	getFullName,
 	timeRangeTypes,
 	useBranchMachines,
@@ -104,6 +108,19 @@ export const TabDiscountedTransactions = ({
 		if (transactionsData?.list) {
 			const data = transactionsData.list.map((transaction) => {
 				const discountOption = transaction.adjustment_remarks.discount_option;
+				let cliendId = transaction.client?.id?.toString();
+				let clientName = transaction.client?.name;
+
+				if (discountOption.is_special_discount) {
+					const fields = getDiscountFields(
+						discountOption.code as SpecialDiscountCode,
+						transaction.discount_option_additional_fields_values || '',
+					);
+
+					cliendId = fields.id;
+					clientName =
+						(fields as NaacFields).coach || (fields as PWDFields).name;
+				}
 
 				return {
 					key: transaction.id,
@@ -115,8 +132,8 @@ export const TabDiscountedTransactions = ({
 							{transaction.invoice.or_number}
 						</Button>
 					),
-					clientName: transaction.client?.name || EMPTY_CELL,
-					idNumber: transaction.client?.id || EMPTY_CELL,
+					clientName: clientName || EMPTY_CELL,
+					idNumber: cliendId || EMPTY_CELL,
 					discountName: discountOption.name,
 					grossAmount: formatInPeso(transaction.gross_amount),
 					discount: formatInPeso(transaction.overall_discount),
