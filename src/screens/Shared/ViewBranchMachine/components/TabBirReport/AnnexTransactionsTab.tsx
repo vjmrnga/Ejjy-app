@@ -60,8 +60,23 @@ export const AnnexTransactionsTab = ({
 			baseURL: getLocalApiUrl(),
 		},
 	});
+
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
-		title: `BIR_Reports.pdf`,
+		title: (() => {
+			let title = '';
+
+			if (discountCode === 'SC') {
+				title = 'AnnexE2_00';
+			} else if (discountCode === 'PWD') {
+				title = 'AnnexE3_00';
+			} else if (discountCode === 'NAAC') {
+				title = 'AnnexE4_00';
+			} else if (discountCode === 'SP') {
+				title = 'AnnexE5_00';
+			}
+
+			return title;
+		})(),
 		print: async () => {
 			let content = '';
 

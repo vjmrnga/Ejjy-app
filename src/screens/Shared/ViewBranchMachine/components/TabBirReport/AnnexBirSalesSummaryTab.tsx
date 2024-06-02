@@ -9,6 +9,7 @@ import {
 	NO_TRANSACTION_REMARK,
 	printBirReport,
 	useBirReports,
+	usePdf,
 } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
@@ -18,7 +19,7 @@ import {
 	refetchOptions,
 	timeRangeTypes,
 } from 'global';
-import { usePdf, useQueryParams, useSiteSettings } from 'hooks';
+import { useQueryParams, useSiteSettings } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from 'stores';
 import {
@@ -127,7 +128,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 		serviceOptions: { baseURL: getLocalApiUrl() },
 	});
 	const { htmlPdf, isLoadingPdf, previewPdf, downloadPdf } = usePdf({
-		title: `BIR_Reports.pdf`,
+		title: `AnnexE1.pdf`,
 		jsPdfSettings: {
 			orientation: 'l',
 			unit: 'px',
@@ -135,12 +136,15 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 			putOnlyUsedFonts: true,
 		},
 		print: async () => {
-			const response = await BirReportsService.list({
-				branch_machine_id: branchMachineId,
-				page_size: MAX_PAGE_SIZE,
-				page: DEFAULT_PAGE,
-				time_range: params?.timeRange as string,
-			});
+			const response = await BirReportsService.list(
+				{
+					branch_machine_id: branchMachineId,
+					page_size: MAX_PAGE_SIZE,
+					page: DEFAULT_PAGE,
+					time_range: params?.timeRange as string,
+				},
+				getLocalApiUrl(),
+			);
 
 			const birReports = response.results;
 
@@ -149,7 +153,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 				return undefined;
 			}
 
-			return printBirReport(birReportsData.list, siteSettings, user);
+			return printBirReport(birReports, siteSettings, user);
 		},
 	});
 
