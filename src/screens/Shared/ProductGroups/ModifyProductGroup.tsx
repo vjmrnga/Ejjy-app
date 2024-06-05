@@ -1,4 +1,3 @@
-/* eslint-disable react/no-this-in-sfc */
 import { SearchOutlined } from '@ant-design/icons';
 import {
 	Button,
@@ -40,8 +39,8 @@ import {
 } from 'hooks';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { convertIntoArray } from 'utils';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { convertIntoArray, isStandAlone } from 'utils';
 import * as Yup from 'yup';
 
 const tabs = {
@@ -54,9 +53,7 @@ const columns: ColumnsType = [
 	{ title: 'Type', dataIndex: 'type', align: 'center' },
 ];
 
-interface Props {
-	match: any;
-}
+type Props = RouteComponentProps<{ id: string }>;
 
 export const ModifyProductGroup = ({ match }: Props) => {
 	// VARIABLES
@@ -82,8 +79,8 @@ export const ModifyProductGroup = ({ match }: Props) => {
 		isFetched: isGroupProductFetched,
 		error: productGroupErrors,
 	} = useProductGroupRetrieve({
-		id: productGroupId,
-		shouldFetchOfflineFirst: true,
+		id: Number(productGroupId),
+		shouldFetchOfflineFirst: !isStandAlone(),
 		options: {
 			enabled: !!productGroupId,
 		},
@@ -205,7 +202,7 @@ export const ModifyProductGroup = ({ match }: Props) => {
 	return (
 		<Content title={`[${productGroupId ? 'Edit' : 'Create'}] Product Group`}>
 			<Box>
-				<Spin spinning={productGroupId && isFetchingGroupProduct}>
+				<Spin spinning={isFetchingGroupProduct} tip="Fetching products">
 					<TableHeader
 						searchDisabled={activeTab === tabs.SELECTED}
 						title="Product Group"
@@ -385,9 +382,9 @@ const ProductsTable = ({
 	);
 };
 
-interface FilterProps {
+type FilterProps = {
 	isLoading: boolean;
-}
+};
 
 const Filter = ({ isLoading }: FilterProps) => {
 	// CUSTOM HOOKS

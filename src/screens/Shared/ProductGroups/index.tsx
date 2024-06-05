@@ -14,7 +14,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUserStore } from 'stores';
-import { convertIntoArray, getId, isCUDShown } from 'utils';
+import { convertIntoArray, getId, isCUDShown, isStandAlone } from 'utils';
 
 export const ProductGroups = () => {
 	// STATES
@@ -30,7 +30,7 @@ export const ProductGroups = () => {
 		error: productGroupsError,
 	} = useProductGroups({
 		params,
-		shouldFetchOfflineFirst: true,
+		shouldFetchOfflineFirst: !isStandAlone(),
 	});
 	const {
 		mutate: deleteProductGroup,
