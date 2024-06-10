@@ -70,6 +70,7 @@ export const BranchSales = ({ branchId }: Props) => {
 			newSummary.creditPayments += Number(branchMachine.sales.credit_payments);
 			newSummary.cashIn += Number(branchMachine.sales.cash_in);
 			newSummary.cashOut += Number(branchMachine.sales.cash_out);
+			newSummary.cashOnHand += Number(branchMachine.sales.cash_on_hand);
 
 			return {
 				key: branchMachine.id,
@@ -88,12 +89,6 @@ export const BranchSales = ({ branchId }: Props) => {
 				netSalesNVAT: formatInPeso(branchMachine.sales.net_sales_vat_exclusive),
 			};
 		});
-
-		newSummary.cashOnHand =
-			summary.cashSales +
-			summary.creditPayments +
-			summary.cashIn -
-			summary.cashOut;
 
 		setSummary(newSummary);
 		setDataSource(data);
