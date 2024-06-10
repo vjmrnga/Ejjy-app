@@ -19,7 +19,12 @@ import {
 	TableHeader,
 } from 'components';
 import { Box } from 'components/elements';
-import { ServiceType, useDiscountOptions } from 'ejjy-global';
+import {
+	DiscountOption,
+	ServiceType,
+	useDiscountOptions,
+	User,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -54,7 +59,6 @@ interface DataType {
 
 export const DiscountOptions = () => {
 	// STATES
-	const [dataSource, setDataSource] = useState<DataType[]>([]);
 	const [selectedDiscountOption, setSelectedDiscountOption] = useState(null);
 	const [
 		modifyDiscountOptionModalVisible,
@@ -62,27 +66,118 @@ export const DiscountOptions = () => {
 	] = useState(false);
 
 	// CUSTOM HOOKS
-	const { params, setQueryParams } = useQueryParams();
 	const { isConnected } = usePingOnlineServer();
 	const user = useUserStore((state) => state.user);
-	const {
-		data: discountOptionsData,
-		isFetching: isFetchingDiscountOptions,
-		error: discountOptionsError,
-	} = useDiscountOptions({
-		params,
-		serviceOptions: {
-			baseURL: getLocalApiUrl(),
-			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
-		},
-	});
 	const {
 		mutate: deleteDiscountOption,
 		isLoading: isDeletingDiscountOption,
 		error: deleteDiscountOptionError,
 	} = useDiscountOptionDelete();
 
-	// METHODS
+	const handleSelect = (discountOption: DiscountOption) => {
+		setSelectedDiscountOption(discountOption);
+		setModifyDiscountOptionModalVisible(true);
+	};
+
+	const handleDelete = (discountOption: DiscountOption) => {
+		deleteDiscountOption(getId(discountOption));
+		message.success('Discount option was deleted successfully');
+	};
+
+	return (
+		<Content title="Discount Options">
+			<ConnectionAlert />
+
+			<Box>
+				{isCUDShown(user.user_type) && (
+					<TableHeader
+						buttonName="Create Discount Option"
+						onCreate={() => setModifyDiscountOptionModalVisible(true)}
+						onCreateDisabled={isConnected === false}
+					/>
+				)}
+
+				<RequestErrors
+					className={cn('px-6', {
+						'mt-6': !isCUDShown(user.user_type),
+					})}
+					errors={convertIntoArray(deleteDiscountOptionError?.errors)}
+					withSpaceBottom
+				/>
+
+				<DiscountOptionTable
+					isConnected={isConnected}
+					isLoading={isDeletingDiscountOption}
+					title="Special Discounts"
+					user={user}
+					isSpecialDiscount
+					onDelete={handleDelete}
+					onSelect={handleSelect}
+				/>
+
+				<div className="mt-8">
+					<DiscountOptionTable
+						isConnected={isConnected}
+						isLoading={isDeletingDiscountOption}
+						isSpecialDiscount={false}
+						title="Non-special Discounts"
+						user={user}
+						onDelete={handleDelete}
+						onSelect={handleSelect}
+					/>
+				</div>
+
+				{modifyDiscountOptionModalVisible && (
+					<ModifyDiscountOptionModal
+						discountOption={selectedDiscountOption}
+						onClose={() => {
+							setSelectedDiscountOption(null);
+							setModifyDiscountOptionModalVisible(false);
+						}}
+					/>
+				)}
+			</Box>
+		</Content>
+	);
+};
+
+type DiscountOptionTableProps = {
+	isConnected: boolean;
+	isLoading: boolean;
+	isSpecialDiscount: boolean;
+	title: string;
+	user: User;
+	onSelect: (discountOption: DiscountOption) => void;
+	onDelete: (discountOption: DiscountOption) => void;
+};
+
+const DiscountOptionTable = ({
+	isConnected,
+	isLoading,
+	isSpecialDiscount,
+	title,
+	user,
+	onDelete,
+	onSelect,
+}: DiscountOptionTableProps) => {
+	const [dataSource, setDataSource] = useState<DataType[]>([]);
+
+	const { params, setQueryParams } = useQueryParams();
+	const {
+		data: discountOptionsData,
+		isFetching: isFetchingDiscountOptions,
+		error: discountOptionsError,
+	} = useDiscountOptions({
+		params: {
+			...params,
+			isSpecialDiscount,
+		},
+		serviceOptions: {
+			baseURL: getLocalApiUrl(),
+			type: isStandAlone() ? ServiceType.ONLINE : ServiceType.OFFLINE,
+		},
+	});
+
 	useEffect(() => {
 		if (discountOptionsData?.list) {
 			const data = discountOptionsData.list.map((discountOption) => ({
@@ -93,11 +188,6 @@ export const DiscountOptions = () => {
 				percentage: discountOption.percentage
 					? `${Number(discountOption.percentage)}%`
 					: EMPTY_CELL,
-				isSpecialDiscount: discountOption.is_special_discount ? (
-					<Tag color="green">Yes</Tag>
-				) : (
-					<Tag color="blue">No</Tag>
-				),
 				fields: discountOption.additional_fields,
 				actions: !discountOption.is_special_discount && (
 					<Space>
@@ -108,10 +198,7 @@ export const DiscountOptions = () => {
 									icon={<EditFilled />}
 									type="primary"
 									ghost
-									onClick={() => {
-										setSelectedDiscountOption(discountOption);
-										setModifyDiscountOptionModalVisible(true);
-									}}
+									onClick={() => onSelect(discountOption)}
 								/>
 							</Tooltip>
 						)}
@@ -122,10 +209,7 @@ export const DiscountOptions = () => {
 								okText="Yes"
 								placement="left"
 								title="Are you sure to remove this?"
-								onConfirm={() => {
-									deleteDiscountOption(getId(discountOption));
-									message.success('Discount option was deleted successfully');
-								}}
+								onConfirm={() => onDelete(discountOption)}
 							>
 								<Tooltip title="Remove">
 									<Button
@@ -151,14 +235,9 @@ export const DiscountOptions = () => {
 			{ title: 'Code', dataIndex: 'code' },
 			{ title: 'Type', dataIndex: 'type' },
 			{ title: 'Percentage', dataIndex: 'percentage', align: 'center' },
-			{
-				title: 'Special',
-				dataIndex: 'isSpecialDiscount',
-				align: 'center',
-			},
 		];
 
-		if (isCUDShown(user.user_type)) {
+		if (isCUDShown(user.user_type) && !isSpecialDiscount) {
 			columns.push({ title: 'Actions', dataIndex: 'actions' });
 		}
 
@@ -166,73 +245,51 @@ export const DiscountOptions = () => {
 	}, [user]);
 
 	return (
-		<Content title="Discount Options">
-			<ConnectionAlert />
+		<>
+			<RequestErrors
+				className="px-6"
+				errors={convertIntoArray(discountOptionsError)}
+				withSpaceBottom
+			/>
 
-			<Box>
-				{isCUDShown(user.user_type) && (
-					<TableHeader
-						buttonName="Create Discount Option"
-						onCreate={() => setModifyDiscountOptionModalVisible(true)}
-						onCreateDisabled={isConnected === false}
-					/>
+			<Table
+				title={() => (
+					<Typography.Text className="pl-4" strong>
+						{title}
+					</Typography.Text>
 				)}
-
-				<RequestErrors
-					className={cn('px-6', {
-						'mt-6': !isCUDShown(user.user_type),
-					})}
-					errors={[
-						...convertIntoArray(discountOptionsError),
-						...convertIntoArray(deleteDiscountOptionError?.errors),
-					]}
-					withSpaceBottom
-				/>
-
-				<Table
-					columns={getColumns()}
-					dataSource={dataSource}
-					expandable={{
-						expandedRowRender: (item) => (
-							<List
-								dataSource={item.fields.split(',')}
-								header={<Typography.Text strong>FIELDS:</Typography.Text>}
-								renderItem={(field) => <List.Item>{field}</List.Item>}
-								size="small"
-								bordered
-							/>
-						),
-						rowExpandable: (item) => !_.isEmpty(item.fields),
-					}}
-					loading={isFetchingDiscountOptions || isDeletingDiscountOption}
-					pagination={{
-						current: Number(params.page) || DEFAULT_PAGE,
-						total: discountOptionsData?.total,
-						pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
-						onChange: (page, newPageSize) => {
-							setQueryParams({
-								page,
-								pageSize: newPageSize,
-							});
-						},
-						disabled: !dataSource,
-						position: ['bottomCenter'],
-						pageSizeOptions,
-					}}
-					scroll={{ x: 800 }}
-					bordered
-				/>
-
-				{modifyDiscountOptionModalVisible && (
-					<ModifyDiscountOptionModal
-						discountOption={selectedDiscountOption}
-						onClose={() => {
-							setSelectedDiscountOption(null);
-							setModifyDiscountOptionModalVisible(false);
-						}}
-					/>
-				)}
-			</Box>
-		</Content>
+				columns={getColumns()}
+				dataSource={dataSource}
+				expandable={{
+					expandedRowRender: (item) => (
+						<List
+							dataSource={item.fields.split(',')}
+							header={<Typography.Text strong>FIELDS:</Typography.Text>}
+							renderItem={(field) => <List.Item>{field}</List.Item>}
+							size="small"
+							bordered
+						/>
+					),
+					rowExpandable: (item) => !_.isEmpty(item.fields),
+				}}
+				loading={isFetchingDiscountOptions || isLoading}
+				pagination={{
+					current: Number(params.page) || DEFAULT_PAGE,
+					total: discountOptionsData?.total,
+					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
+					onChange: (page, newPageSize) => {
+						setQueryParams({
+							page,
+							pageSize: newPageSize,
+						});
+					},
+					disabled: !dataSource,
+					position: ['bottomCenter'],
+					pageSizeOptions,
+				}}
+				scroll={{ x: 800 }}
+				bordered
+			/>
+		</>
 	);
 };
