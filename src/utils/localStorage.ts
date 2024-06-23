@@ -20,6 +20,7 @@ import {
 	TAG_DEFAULT_PAPER_WIDTH,
 	APP_BRANCH_KEY_KEY,
 	headOfficeTypes,
+	APP_GOOGLE_API_URL_KEY,
 } from 'global';
 
 export const getAppType = () => localStorage.getItem(APP_APP_TYPE_KEY);
@@ -50,7 +51,10 @@ export const getGoogleApiUrl = () => {
 		return getLocalApiUrl();
 	}
 
-	return 'https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1';
+	return (
+		localStorage.getItem(APP_GOOGLE_API_URL_KEY) ||
+		'https://ejjy-api-production-ftmuaasxva-de.a.run.app/v1'
+	);
 };
 
 export const getAppReceiptPrinterName = () =>
