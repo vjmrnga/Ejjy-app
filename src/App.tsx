@@ -1,9 +1,9 @@
 import { Spin } from 'antd';
 import { CommonRoute, NoAuthRoute, PageInformation } from 'components';
 import {
-	appTypes,
 	APP_BRANCH_KEY_KEY,
 	APP_LOCAL_BRANCH_ID_KEY,
+	appTypes,
 	userTypes,
 } from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
