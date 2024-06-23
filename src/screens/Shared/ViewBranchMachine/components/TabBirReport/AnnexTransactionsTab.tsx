@@ -66,13 +66,13 @@ export const AnnexTransactionsTab = ({
 			let title = '';
 
 			if (discountCode === 'SC') {
-				title = 'AnnexE2_00';
+				title = 'AnnexE2';
 			} else if (discountCode === 'PWD') {
-				title = 'AnnexE3_00';
+				title = 'AnnexE3';
 			} else if (discountCode === 'NAAC') {
-				title = 'AnnexE4_00';
+				title = 'AnnexE4';
 			} else if (discountCode === 'SP') {
-				title = 'AnnexE5_00';
+				title = 'AnnexE5';
 			}
 
 			return title;
