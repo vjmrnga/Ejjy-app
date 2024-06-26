@@ -17,8 +17,8 @@ const useBranches = ({ key, params, options }: Query = {}) =>
 		],
 		() => {
 			let service = isStandAlone()
-				? BranchesService.list
-				: BranchesService.listOffline;
+				? BranchesService.listOffline
+				: BranchesService.list;
 
 			if (serviceTypes.NORMAL === params?.serviceType) {
 				service = BranchesService.list;
