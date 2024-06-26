@@ -4,6 +4,7 @@ import {
 	APP_BRANCH_KEY_KEY,
 	APP_LOCAL_BRANCH_ID_KEY,
 	appTypes,
+	serviceTypes,
 	userTypes,
 } from 'global';
 import { useBranches, useInitializeData, useNetwork } from 'hooks';
@@ -57,15 +58,14 @@ const App = () => {
 	} = useBranches({
 		key: 'App',
 		params: {
-			baseURL:
-				getAppType() === appTypes.BACK_OFFICE
-					? getLocalApiUrl()
-					: getOnlineApiUrl(),
+			serviceType: serviceTypes.OFFLINE,
+			baseURL: getLocalApiUrl(),
 		},
 	});
 
 	const { isLoading: isInitializingData } = useInitializeData({
 		params: {
+			isHeadOffice: getAppType() === appTypes.HEAD_OFFICE,
 			branchId:
 				getAppType() === appTypes.BACK_OFFICE ? getOnlineBranchId() : undefined,
 			branchIds:

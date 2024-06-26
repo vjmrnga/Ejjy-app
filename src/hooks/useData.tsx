@@ -8,7 +8,12 @@ const REFETCH_INTERVAL_MS = 30_000;
 
 export const useInitializeData = ({ params, options }: Query) =>
 	useQuery(
-		['useInitializeData', params?.branchId, params?.branchIds],
+		[
+			'useInitializeData',
+			params?.branchId,
+			params?.branchIds,
+			params?.isHeadOffice,
+		],
 		async () => {
 			const baseURL = getLocalApiUrl();
 			let service = null;
@@ -27,6 +32,10 @@ export const useInitializeData = ({ params, options }: Query) =>
 				} catch (e) {
 					console.error('Initialize Data', e);
 				}
+			}
+
+			if (params?.isHeadOffice) {
+				await DataService.initialize({ is_head_office: true }, baseURL);
 			}
 
 			return service;

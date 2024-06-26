@@ -2,6 +2,7 @@ import axios from 'axios';
 
 interface Initialize {
 	branch_id?: number;
+	is_head_office?: boolean;
 }
 
 interface Upload {
