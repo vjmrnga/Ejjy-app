@@ -45,6 +45,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	SEARCH_DEBOUNCE_TIME,
+	TAG_MM_TO_PX,
 	pageSizeOptions,
 } from 'global';
 import {
@@ -244,12 +245,18 @@ export const Products = () => {
 	const handleCreatePdf = (product) => {
 		setIsCreatingPdf(product.id);
 
+		const tagWidth = Number(getAppTagPrinterPaperWidth());
+		const tagHeight = Number(getAppTagPrinterPaperHeight());
+
 		// eslint-disable-next-line new-cap
-		const pdf = new jsPDF('l', 'px', [113.38582677, 75.590551181]);
+		const pdf = new jsPDF('l', 'px', [
+			tagWidth * TAG_MM_TO_PX,
+			tagHeight * TAG_MM_TO_PX,
+		]);
 
 		const dataHtml = printProductPriceTag(product, siteSettings, {
-			paperWidth: Number(getAppTagPrinterPaperWidth()),
-			paperHeight: Number(getAppTagPrinterPaperHeight()),
+			paperWidth: tagWidth,
+			paperHeight: tagHeight,
 			fontSize: Number(getAppTagPrinterFontSize()),
 			fontFamily: getAppTagPrinterFontFamily(),
 		});
