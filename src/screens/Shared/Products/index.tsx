@@ -263,11 +263,9 @@ export const Products = () => {
 
 		setHtml(dataHtml);
 
-		const paddingX = tagWidth * TAG_MM_TO_PX * 0.15;
-		const paddingY = 10;
 		setTimeout(() => {
 			pdf.html(dataHtml, {
-				margin: [paddingY, paddingX, paddingY, paddingX],
+				margin: 20,
 				filename: `ProductPriceTag_${product.print_details}`,
 				callback: (instance) => {
 					window.open(instance.output('bloburl').toString());
