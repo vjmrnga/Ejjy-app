@@ -250,8 +250,8 @@ export const Products = () => {
 
 		// eslint-disable-next-line new-cap
 		const pdf = new jsPDF('l', 'px', [
-			tagWidth * TAG_MM_TO_PX * 0.9,
-			tagHeight * TAG_MM_TO_PX * 0.9,
+			tagWidth * TAG_MM_TO_PX,
+			tagHeight * TAG_MM_TO_PX,
 		]);
 
 		const dataHtml = printProductPriceTag(product, siteSettings, {
@@ -263,8 +263,8 @@ export const Products = () => {
 
 		setHtml(dataHtml);
 
-		const paddingX = tagWidth * TAG_MM_TO_PX * 0.1;
-		const paddingY = tagHeight * TAG_MM_TO_PX * 0.1;
+		const paddingX = tagWidth * TAG_MM_TO_PX * 0.15;
+		const paddingY = 10;
 		setTimeout(() => {
 			pdf.html(dataHtml, {
 				margin: [paddingY, paddingX, paddingY, paddingX],
