@@ -5,7 +5,6 @@ import {
 	message,
 	Popconfirm,
 	Space,
-	Tag,
 	Tooltip,
 	Typography,
 } from 'antd';
@@ -253,11 +252,6 @@ const DiscountOptionTable = ({
 			/>
 
 			<Table
-				title={() => (
-					<Typography.Text className="pl-4" strong>
-						{title}
-					</Typography.Text>
-				)}
 				columns={getColumns()}
 				dataSource={dataSource}
 				expandable={{
@@ -288,6 +282,11 @@ const DiscountOptionTable = ({
 					pageSizeOptions,
 				}}
 				scroll={{ x: 800 }}
+				title={() => (
+					<Typography.Text className="pl-4" strong>
+						{title}
+					</Typography.Text>
+				)}
 				bordered
 			/>
 		</>
