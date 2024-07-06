@@ -70,7 +70,7 @@ export const Logs = () => {
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.BRANCH_DAYS} tab={tabs.BRANCH_DAYS}>
-						<TabDays branch={{ id: getLocalBranchId() }} />
+						<TabDays branchId={Number(getLocalBranchId())} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.CASH_BREAKDOWNS} tab={tabs.CASH_BREAKDOWNS}>
@@ -81,7 +81,7 @@ export const Logs = () => {
 						key={tabs.CASHIERING_SESSIONS}
 						tab={tabs.CASHIERING_SESSIONS}
 					>
-						<TabSessions branch={{ id: getLocalBranchId() }} />
+						<TabSessions branchId={Number(getLocalBranchId())} />
 					</Tabs.TabPane>
 
 					<Tabs.TabPane key={tabs.USERS} tab={tabs.USERS}>
