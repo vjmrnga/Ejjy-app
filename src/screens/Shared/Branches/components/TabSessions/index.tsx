@@ -3,7 +3,6 @@ import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { Label } from 'components/elements';
 import {
-	Branch,
 	ServiceType,
 	filterOption,
 	getFullName,
@@ -44,11 +43,11 @@ const sessionTypes = {
 };
 
 interface Props {
-	branch?: Branch;
+	branchId?: number;
 	branchMachineId?: number;
 }
 
-export const TabSessions = ({ branch, branchMachineId }: Props) => {
+export const TabSessions = ({ branchId, branchMachineId }: Props) => {
 	// STATES
 	const [dataSource, setDataSource] = useState([]);
 
@@ -62,7 +61,7 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 	} = useSessions({
 		params: {
 			...params,
-			branchId: branch?.id || params?.branchId,
+			branchId: branchId || params?.branchId,
 			branchMachineId: branchMachineId || params?.branchMachineId,
 			timeRange: params?.timeRange || timeRangeTypes.DAILY,
 			isAutomaticallyClosed: (() => {
@@ -174,19 +173,19 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 			columns.unshift({ title: 'Branch Machine', dataIndex: 'branchMachine' });
 		}
 
-		if (!branch?.id && !branchMachineId) {
+		if (!branchId && !branchMachineId) {
 			columns.unshift({ title: 'Branch', dataIndex: 'branch' });
 		}
 
 		return columns;
-	}, [branch, branchMachineId]);
+	}, [branchId, branchMachineId]);
 
 	return (
 		<div className="ViewBranchMachineSessions">
 			<TableHeader title="Sessions" wrapperClassName="pt-2 px-0" />
 
 			<Filter
-				branch={branch}
+				branchId={branchId}
 				branchMachineId={branchMachineId}
 				isLoading={isFetchingSessions && !isSessionsFetchedAfterMount}
 			/>
@@ -219,14 +218,14 @@ export const TabSessions = ({ branch, branchMachineId }: Props) => {
 };
 
 type FilterProps = {
-	branch?: Branch;
+	branchId?: number;
 	branchMachineId?: number;
 	isLoading: boolean;
 };
 
-const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
+const Filter = ({ branchId, branchMachineId, isLoading }: FilterProps) => {
 	const { params, setQueryParams } = useQueryParams();
-	const branchId = params.branchId ? Number(params.branchId) : undefined;
+	const paramBranchId = params.branchId ? Number(params.branchId) : undefined;
 	const user = useUserStore((state) => state.user);
 	const {
 		data: { branches },
@@ -234,7 +233,7 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 		error: branchErrors,
 	} = useBranches({
 		params: { pageSize: MAX_PAGE_SIZE },
-		options: { enabled: !branch?.id },
+		options: { enabled: !branchId },
 	});
 	const {
 		data: { branchMachines },
@@ -242,7 +241,7 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 		error: branchMachinesError,
 	} = useBranchMachines({
 		params: {
-			branchId: branch?.id || params.branchId,
+			branchId: branchId || params.branchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 	});
@@ -254,7 +253,7 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 		params: {
 			branchId: isUserFromBranch(user.user_type)
 				? Number(getLocalBranchId())
-				: branchId,
+				: paramBranchId,
 			pageSize: MAX_PAGE_SIZE,
 		},
 		serviceOptions: {
@@ -275,7 +274,7 @@ const Filter = ({ branch, branchMachineId, isLoading }: FilterProps) => {
 			/>
 
 			<Row className="mb-4" gutter={[16, 16]}>
-				{!branch?.id && !branchMachineId && (
+				{!branchId && !branchMachineId && (
 					<Col md={12}>
 						<Label label="Branch" spacing />
 						<Select
