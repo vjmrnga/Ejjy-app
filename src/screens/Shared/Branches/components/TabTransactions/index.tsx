@@ -2,27 +2,24 @@ import { Button, Col, Row, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	RequestErrors,
-	RequestWarnings,
 	TableHeader,
 	TimeRangeFilter,
 	TransactionStatus,
 } from 'components';
-import { BadgePill, Label } from 'components/elements';
-import { ViewTransactionModal, filterOption } from 'ejjy-global';
+import { Label } from 'components/elements';
+import {
+	ViewTransactionModal,
+	filterOption,
+	useTransactions,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	MAX_PAGE_SIZE,
 	pageSizeOptions,
-	paymentTypes,
 	transactionStatuses,
 } from 'global';
-import {
-	useBranchMachines,
-	useQueryParams,
-	useSiteSettingsNew,
-	useTransactions,
-} from 'hooks';
+import { useBranchMachines, useQueryParams, useSiteSettingsNew } from 'hooks';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { convertIntoArray, formatInPeso, getId } from 'utils';
@@ -71,7 +68,7 @@ export const TabTransactions = ({ branch }: Props) => {
 	const { params, setQueryParams } = useQueryParams();
 	const { data: siteSettings } = useSiteSettingsNew();
 	const {
-		data: { transactions, total, warning },
+		data: transactionsData,
 		isFetching: isFetchingTransactions,
 		error: transactionsError,
 	} = useTransactions({
@@ -83,40 +80,30 @@ export const TabTransactions = ({ branch }: Props) => {
 
 	// METHODS
 	useEffect(() => {
-		const data = transactions.map((branchTransaction) => {
-			const {
-				id,
-				invoice,
-				total_amount,
-				payment,
-				status: branchTransactionStatus,
-				branch_machine,
-			} = branchTransaction;
+		if (transactionsData?.list) {
+			const data = transactionsData.list.map((transaction) => {
+				const { id, invoice, total_amount, branch_machine } = transaction;
 
-			return {
-				key: id,
-				invoice: (
-					<Button
-						className="pa-0"
-						type="link"
-						onClick={() => setSelectedTransaction(branchTransaction)}
-					>
-						{invoice?.or_number}
-					</Button>
-				),
-				amount: formatInPeso(total_amount),
-				status:
-					payment.mode === paymentTypes.CREDIT ? (
-						<BadgePill label="Collectible" variant="secondary" />
-					) : (
-						<TransactionStatus status={branchTransactionStatus} />
+				return {
+					key: id,
+					invoice: (
+						<Button
+							className="pa-0"
+							type="link"
+							onClick={() => setSelectedTransaction(transaction)}
+						>
+							{invoice?.or_number}
+						</Button>
 					),
-				branchMachine: branch_machine.name,
-			};
-		});
+					amount: formatInPeso(total_amount),
+					status: <TransactionStatus transaction={transaction} />,
+					branchMachine: branch_machine.name,
+				};
+			});
 
-		setDataSource(data);
-	}, [transactions]);
+			setDataSource(data);
+		}
+	}, [transactionsData]);
 
 	return (
 		<>
@@ -125,7 +112,6 @@ export const TabTransactions = ({ branch }: Props) => {
 			<Filter isLoading={isFetchingTransactions} />
 
 			<RequestErrors errors={convertIntoArray(transactionsError)} />
-			<RequestWarnings warnings={convertIntoArray(warning)} />
 
 			{[
 				transactionStatuses.VOID_CANCELLED,
@@ -144,7 +130,7 @@ export const TabTransactions = ({ branch }: Props) => {
 				loading={isFetchingTransactions}
 				pagination={{
 					current: Number(params.page) || DEFAULT_PAGE,
-					total,
+					total: transactionsData?.total || 0,
 					pageSize: Number(params.pageSize) || DEFAULT_PAGE_SIZE,
 					onChange: (page, newPageSize) => {
 						setQueryParams({

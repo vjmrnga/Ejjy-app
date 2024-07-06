@@ -6,13 +6,12 @@ import {
 	TimeRangeFilter,
 	TransactionStatus,
 } from 'components';
-import { BadgePill, Label } from 'components/elements';
+import { Label } from 'components/elements';
 import { ViewTransactionModal, filterOption } from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
 	pageSizeOptions,
-	paymentTypes,
 	refetchOptions,
 	timeRangeTypes,
 	transactionStatuses,
@@ -87,7 +86,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 	// METHODS
 	useEffect(() => {
 		const data = transactions.map((transaction) => {
-			const { id, invoice, total_amount, status, payment } = transaction;
+			const { id, invoice, total_amount } = transaction;
 
 			return {
 				key: id,
@@ -102,12 +101,7 @@ export const TabTransactions = ({ branchMachineId }: Props) => {
 					</Button>
 				),
 				amount: formatInPeso(total_amount),
-				status:
-					payment.mode === paymentTypes.CREDIT ? (
-						<BadgePill label="Collectible" variant="secondary" />
-					) : (
-						<TransactionStatus status={status} />
-					),
+				status: <TransactionStatus transaction={transaction} />,
 			};
 		});
 

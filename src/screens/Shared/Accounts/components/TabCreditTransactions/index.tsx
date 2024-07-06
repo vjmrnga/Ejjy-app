@@ -1,4 +1,4 @@
-import { Button, Col, Row, Table } from 'antd';
+import { Button, Col, Row, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
 	CreateOrderOfPaymentModal,
@@ -6,7 +6,12 @@ import {
 	TableHeader,
 	TimeRangeFilter,
 } from 'components';
-import { Transaction, ViewTransactionModal, getFullName } from 'ejjy-global';
+import {
+	Transaction,
+	ViewTransactionModal,
+	getFullName,
+	transactionStatuses,
+} from 'ejjy-global';
 import {
 	DEFAULT_PAGE,
 	DEFAULT_PAGE_SIZE,
@@ -34,6 +39,7 @@ const columns: ColumnsType = [
 	{ title: 'Amount', dataIndex: 'amount' },
 	{ title: 'Cashier', dataIndex: 'cashier' },
 	{ title: 'Authorizer', dataIndex: 'authorizer' },
+	{ title: 'Remarks', dataIndex: 'remarks' },
 ];
 
 export const TabCreditTransactions = ({ disabled }: Props) => {
@@ -78,7 +84,15 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				teller,
 				datetime_created,
 				payment,
+				status,
 			} = transaction;
+
+			let remarks = null;
+			if (status === transactionStatuses.FULLY_PAID) {
+				remarks = <Tag color="green">Completed</Tag>;
+			} else if (status === transactionStatuses.FULLY_PAID) {
+				remarks = <Tag color="red">Cancelled</Tag>;
+			}
 
 			return {
 				key: id,
@@ -96,6 +110,7 @@ export const TabCreditTransactions = ({ disabled }: Props) => {
 				amount: formatInPeso(total_amount),
 				cashier: getFullName(teller),
 				authorizer: getFullName(transaction.payment.credit_payment_authorizer),
+				remarks,
 			};
 		});
 
