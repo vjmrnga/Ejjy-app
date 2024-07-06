@@ -117,7 +117,7 @@ export const TabDiscountedTransactions = ({
 						transaction.discount_option_additional_fields_values || '',
 					);
 
-					cliendId = fields.id;
+					cliendId = fields?.id;
 					clientName =
 						(fields as NaacFields).coach || (fields as PWDFields).name;
 				}
