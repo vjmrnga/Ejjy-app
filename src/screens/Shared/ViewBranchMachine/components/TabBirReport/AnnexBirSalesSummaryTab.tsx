@@ -1,10 +1,9 @@
-import { Col, message, Row, Table } from 'antd';
+import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { RequestErrors, TableHeader, TimeRangeFilter } from 'components';
 import { PdfButtons } from 'components/Printing';
 import {
 	BirReportsService,
-	GENERIC_ERROR_MESSAGE,
 	MAX_PAGE_SIZE,
 	NO_TRANSACTION_REMARK,
 	printBirReport,
@@ -132,7 +131,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 		jsPdfSettings: {
 			orientation: 'l',
 			unit: 'px',
-			format: [2000, 840],
+			format: [2020, 840],
 			putOnlyUsedFonts: true,
 		},
 		print: async () => {
@@ -147,11 +146,6 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 			);
 
 			const birReports = response.results;
-
-			if (!birReports.length) {
-				message.error(GENERIC_ERROR_MESSAGE);
-				return undefined;
-			}
 
 			return printBirReport(birReports, siteSettings, user);
 		},
@@ -220,7 +214,7 @@ export const AnnexBirSalesSummaryTab = ({ branchMachineId }: Props) => {
 						key="pdf"
 						downloadPdf={downloadPdf}
 						isDisabled={isLoadingPdf}
-						isLoading={isLoadingPdf || dataSource.length === 0}
+						isLoading={isLoadingPdf}
 						previewPdf={previewPdf}
 					/>
 				}
