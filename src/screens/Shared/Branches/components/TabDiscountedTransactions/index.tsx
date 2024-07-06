@@ -119,7 +119,7 @@ export const TabDiscountedTransactions = ({
 
 					cliendId = fields?.id;
 					clientName =
-						(fields as NaacFields).coach || (fields as PWDFields).name;
+						(fields as NaacFields)?.coach || (fields as PWDFields)?.name;
 				}
 
 				return {
