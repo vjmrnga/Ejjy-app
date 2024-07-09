@@ -110,7 +110,7 @@ export const TabTransactionAdjustmentReport = ({ branchMachineId }: Props) => {
 						</Button>
 					)}
 					{transaction.status === transactionStatuses.VOID_CANCELLED && (
-						<TransactionStatus status={transaction.status} />
+						<TransactionStatus transaction={transaction} />
 					)}
 					{newTransaction && (
 						<Button

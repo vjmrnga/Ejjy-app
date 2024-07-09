@@ -102,7 +102,7 @@ export const TabDailyProductSalesReport = ({ branchMachineId }: Props) => {
 				transactionStatuses.VOID_CANCELLED,
 				transactionStatuses.VOID_EDITED,
 			].includes(transaction.status) && (
-				<TransactionStatus status={transaction.status} />
+				<TransactionStatus transaction={transaction} />
 			);
 
 			return {
