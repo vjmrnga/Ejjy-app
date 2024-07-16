@@ -31,7 +31,7 @@ export const EditAttendanceLogModal = ({
 			...formData,
 			id: getId(attendanceLog),
 		});
-		message.success('Attendae log has been edited successfully');
+		message.success('Attendance log has been edited successfully');
 
 		onClose();
 	};
