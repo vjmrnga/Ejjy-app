@@ -37,7 +37,7 @@ interface Props {
 }
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
-const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
+const MACHINE_SERVER_URL = 'http://localhost:8001/v1';
 
 export const ViewDailySalesReportsModal = ({
 	branchMachine,
@@ -97,7 +97,7 @@ export const ViewDailySalesReportsModal = ({
 							onClick={() => {
 								setAuthorizeConfig({
 									description: 'Authorize Viewing of Daily Sales',
-									userTypes: [userTypes.ADMIN],
+									userTypes: [userTypes.OFFICE_MANAGER],
 									onSuccess: (user) => {
 										setUserPrinter(user);
 										setSelectedDailySales(dailySale);

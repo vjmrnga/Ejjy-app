@@ -35,7 +35,7 @@ export const TimeMismatchBoundary = () => {
 		try {
 			// NOTE: Get time from timeapi.io
 			const response = await axios.get('/api/timezone/Asia/Manila/', {
-				baseURL: TIME_API_BASE_URL,
+				baseURL: 'http://127.0.0.1:8002/',
 			});
 
 			return response;
@@ -44,7 +44,7 @@ export const TimeMismatchBoundary = () => {
 			for (const branchMachine of branchMachines) {
 				try {
 					const response = await axios.get('/server/time/', {
-						baseURL: branchMachine.server_url,
+						baseURL: 'http://127.0.0.1:8002/',
 					});
 					return response;
 				} catch (error) {

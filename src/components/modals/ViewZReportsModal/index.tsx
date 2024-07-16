@@ -42,7 +42,7 @@ interface Props {
 }
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
-const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
+const MACHINE_SERVER_URL = 'http://localhost:8000/v1';
 
 export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
@@ -82,7 +82,7 @@ export const ViewZReportsModal = ({ branchMachine, onClose }: Props) => {
 						onClick={() => {
 							setAuthorizeConfig({
 								description: 'Authorize Viewing of Z-Read Report',
-								userTypes: [userTypes.ADMIN],
+								userTypes: [userTypes.OFFICE_MANAGER],
 								onSuccess: (user) => {
 									setUserPrinter(user);
 									setSelectedZReadReport(report);

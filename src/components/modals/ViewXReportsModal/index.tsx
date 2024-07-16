@@ -43,7 +43,7 @@ type Props = {
 };
 
 // TODO: We only used machine server URL because this was not added to the syncing yet.
-const MACHINE_SERVER_URL = 'http://localhost:8005/v1';
+const MACHINE_SERVER_URL = 'http://localhost:8001/v1';
 
 export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 	// STATES
@@ -87,7 +87,7 @@ export const ViewXReportsModal = ({ branchMachine, onClose }: Props) => {
 						onClick={() => {
 							setAuthorizeConfig({
 								description: 'Authorize Viewing of X-Read Report',
-								userTypes: [userTypes.ADMIN],
+								userTypes: [userTypes.OFFICE_MANAGER],
 								onSuccess: (user) => {
 									setUserPrinter(user);
 									setSelectedXReadReport(report);

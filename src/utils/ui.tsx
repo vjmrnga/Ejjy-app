@@ -465,7 +465,7 @@ export const getId = (object) => {
 		(appType === appTypes.BACK_OFFICE && localApiUrl !== onlineApiUrl) ||
 		appType === appTypes.HEAD_OFFICE
 	) {
-		id = object?.online_id;
+		id = object?.id;
 	}
 
 	return id;

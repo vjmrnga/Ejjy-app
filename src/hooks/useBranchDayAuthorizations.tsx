@@ -76,7 +76,7 @@ export const useBranchDayAuthorizationCreate = () => {
 					branch_ids: branchIds,
 					started_by_id: startedById,
 				},
-				getGoogleApiUrl(),
+				getLocalApiUrl(),
 			),
 		{
 			onSuccess: () => {
